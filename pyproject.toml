@@ -1,0 +1,182 @@
+# See the NOTICE file distributed with this work for additional information
+# regarding copyright ownership.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+[project]
+name = "template-python"
+description = "Ensembl Python project template"
+requires-python = ">= 3.10"
+dynamic = [
+    "version",
+]
+readme = "README.md"
+authors = [
+    {name = "Ensembl", email = "dev@ensembl.org"},
+]
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+keywords = [
+    "template",
+    "ensembl",
+    "bioinformatics",
+    "python",
+    "setup",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+# dependencies = [
+#     "biopython",
+#     "ensembl-utils @ git+https://github.com/Ensembl/ensembl-utils.git",
+# ]
+
+[project.optional-dependencies]
+# build = [
+#     "build",
+#     "setuptools",
+#     "setuptools-scm",
+#     "wheel",
+# ]
+cicd = [
+    "black",
+    "coverage",
+    "genbadge[coverage]",
+    "mypy",
+    "pylint",
+    "pytest-dependency",
+    "types-requests",
+]
+docs = [
+    "mkdocs >= 1.5.3",
+    "mkdocs-autorefs",
+    "mkdocs-coverage",
+    "mkdocs-gen-files",
+    "mkdocs-literate-nav",
+    "mkdocs-material",
+    "mkdocs-material-extensions",
+    "mkdocs-section-index",
+    "mkdocstrings",
+    "mkdocstrings-python",
+]
+# mysql = [
+#     "mysqlclient",
+# ]
+
+[project.urls]
+Homepage = "https://www.ensembl.org"
+# Documentation = "https://ensembl.github.io/template-python/"
+Repository = "https://github.com/Ensembl/template-python"
+Issues = "https://github.com/Ensembl/template-python/issues"
+
+[project.scripts]
+hello_cmd = "ensembl.template.hello_world:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.dynamic]
+version = {attr = "ensembl.template.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# For additional information on `setuptools` configuration see:
+#    https://setuptools.pypa.io/en/latest/userguide/quickstart.html
+#    https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
+#    https://packaging.python.org/en/latest/specifications/declaring-project-metadata/
+
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = [
+    "setuptools",
+    "setuptools-scm",
+    "wheel",
+]
+
+[tool.black]
+line-length = 110
+
+[tool.pylint.main]
+max-line-length = 110
+disable = [
+    "invalid-name",
+    "logging-fstring-interpolation",
+    "similarities",
+    "too-few-public-methods",
+    "too-many-arguments",
+    "too-many-locals",
+    "too-many-statements",
+    "unspecified-encoding",
+    "wildcard-import",
+]
+
+[tool.ruff]
+line-length = 110
+show-fixes = true
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore `F403` (unable to detect undefined names) in all `__init__.py` files
+"__init__.py" = ["F403"]
+
+[tool.mypy]
+mypy_path = "src/ensembl"
+disallow_untyped_defs = true
+explicit_package_bases = true
+ignore_missing_imports = true
+show_error_codes = true
+warn_unused_configs = true
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+    "--tb=native",
+]
+testpaths = ["tests"]
+norecursedirs = ["docs", "*.egg_info"]
+
+[tool.coverage.run]
+branch = true
+source = [
+    "ensembl.template",
+]
+
+[tool.coverage.report]
+exclude_also = [
+    # Do not complain about missing debug-only code
+    "def __repr__",
+    "if self\\.debug",
+    "if settings\\.DEBUG",
+    # Do not complain if tests do not hit defensive assertion code
+    "raise AssertionError",
+    "raise NotImplementedError",
+    # Do not complain if non-runnable code is not run
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "def main",
+    "def .*_cli",
+    # Do not complain about abstract methods, they are not run
+    "@(abc\\.)?abstractmethod",
+]
