@@ -39,13 +39,25 @@ jobs:
           python-version: ${{ inputs.python-version }}
           tags: "cicd,docs"
 
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-llvm-cov
+
       - name: Generate coverage report
         run: |
           uv run coverage run -m pytest
           uv run coverage lcov -o ./reports/pytest.lcov
 
-          cargo install cargo-llvm-cov
-          cargo llvm-cov --lcov --output-path ./reports/rust.lcov
+          cargo llvm-cov --lcov --output-path rust-coverage.lcov
+          cargo llvm-cov --html --output-dir rust-coverage-html
+
+      - name: Generate coverage badge
+        run: |
+          bash .github/scripts/generate_coverage_badge.sh rust-coverage.lcov .github/badges
+
+          mkdir -p docs/assets/badges
+          cp .github/badges/coverage.json docs/assets/badges/
+          cp -r rust-coverage-html docs/coverage
 
       - name: Generate coverage badge
         run: |
