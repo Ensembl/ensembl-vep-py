@@ -11,11 +11,27 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Unit tests for hello_world module"""
+"""Hello world module"""
 
-from ensembl.template.hello_world import hello
+__all__ = ["hello"]
+
+import argparse
+from ._ensembl_vep_core import sum_as_string
 
 
-def test_hello_success() -> None:
-    """Test `hello_world.hello()` function"""
-    assert hello("world!") == "Hello world!"
+def hello(word: str) -> str:
+    """Returns the concatenation of "Hello " with the given string.
+
+    Args:
+        word: The string you want to concatenate to "Hello ".
+
+    """
+    return sum_as_string("Hello ", word)
+
+
+def main() -> None:
+    """Module's entry-point."""
+    parser = argparse.ArgumentParser(prog="Greetings program", description="Says 'hi' to the argument given")
+    parser.add_argument("word")
+    args = parser.parse_args()
+    print(hello(args.word))

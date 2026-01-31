@@ -1,0 +1,22 @@
+[package]
+name = "ensembl_vep_core"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+pyo3 = "0.27.0"
+
+[profile.release-lto]
+inherits = "release"
+lto = true
+
+[lib]
+name = "_ensembl_vep_core"
+path = "src/rust/lib.rs"
+crate-type = ["cdylib"]
+
+# for cargo test you need to first run: 
+## export DYLD_LIBRARY_PATH="/path/to/dir/with/libpython3.10.dylib:$DYLD_LIBRARY_PATH"
+## need an alternative to that
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+# See also PyO3 docs on writing Cargo.toml files at https://pyo3.rs
