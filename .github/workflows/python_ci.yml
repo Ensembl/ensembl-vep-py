@@ -41,8 +41,8 @@ jobs:
 
       - name: Run pylint
         run: |
-          pylint --rcfile pyproject.toml src/python/ensembl
-          pylint --rcfile pyproject.toml src/python/tests
+          uv run pylint --rcfile pyproject.toml src/python/ensembl
+          uv run pylint --rcfile pyproject.toml src/python/tests
 
   mypy:
     runs-on: ubuntu-latest
@@ -57,8 +57,8 @@ jobs:
 
       - name: Run mypy
         run: |
-          mypy --config-file pyproject.toml src/python/ensembl
-          mypy --config-file pyproject.toml src/python/tests
+          uv run mypy --config-file pyproject.toml src/python/ensembl
+          uv run mypy --config-file pyproject.toml src/python/tests
 
   black:
     runs-on: ubuntu-latest
@@ -73,7 +73,7 @@ jobs:
 
       - name: Run black
         run: |
-          black --config pyproject.toml --check .
+          uv run black --config pyproject.toml --check .
 
   pytest:
     runs-on: ubuntu-latest
@@ -92,9 +92,9 @@ jobs:
 
       - name: Run pytest with coverage
         run: |
-          coverage run -m pytest --junitxml=./reports/test_results.xml
-          coverage xml -o ./reports/coverage.xml
-          coverage report -m
+          uv run coverage run -m pytest --junitxml=./reports/test_results.xml
+          uv run coverage xml -o ./reports/coverage.xml
+          uv run coverage report -m
 
       - name: Add coverage reports
         if: ${{ github.event_name == 'pull_request' }}
