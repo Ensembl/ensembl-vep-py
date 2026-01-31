@@ -1,7 +1,7 @@
 # Ensembl Python project template
 
-[![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](https://github.com/Ensembl/template-python/blob/main/LICENSE)
-[![Coverage](https://ensembl.github.io/template-python/coverage/coverage-badge.svg)](https://ensembl.github.io/template-python/coverage)
+[![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](https://github.com/Ensembl/ensembl-vep-py/blob/main/LICENSE)
+[![Coverage](https://ensembl.github.io/template-python/coverage/coverage-badge.svg)](https://ensembl.github.io/ensembl-vep-py/coverage)
 [![CI](https://github.com/Ensembl/template-python/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Ensembl/ensembl-utilstemplate-python/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/pypi/v/template-python)](https://pypi.org/project/template-python)
 

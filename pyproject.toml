@@ -102,7 +102,7 @@ where = ["src/python"]
 
 [[tool.setuptools-rust.ext-modules]]
 # Private Rust extension module to be nested into the Python package
-target = "ensembl.vep._ensembl_vep_core"
+target = "ensembl.vep.ensembl_vep_core"
 path = "Cargo.toml"
 binding = "PyO3"
 
