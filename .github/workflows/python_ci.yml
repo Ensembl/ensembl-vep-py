@@ -37,12 +37,7 @@ jobs:
       - uses: ./.github/actions/python_build
         with:
           python-version: ${{ inputs.python-version }}
-          tags: "[cicd]"
-
-      - name: Install package
-        run: |
-          uv pip install -e .
-        shell: bash
+          tags: "cicd"
 
       - name: Run pylint
         run: |
@@ -58,7 +53,7 @@ jobs:
       - uses: ./.github/actions/python_build
         with:
           python-version: ${{ inputs.python-version }}
-          tags: "[cicd]"
+          tags: "cicd"
 
       - name: Run mypy
         run: |
@@ -74,7 +69,7 @@ jobs:
       - uses: ./.github/actions/python_build
         with:
           python-version: ${{ inputs.python-version }}
-          tags: "[cicd]"
+          tags: "cicd"
 
       - name: Run black
         run: |
@@ -93,7 +88,7 @@ jobs:
       - uses: ./.github/actions/python_build
         with:
           python-version: ${{ inputs.python-version }}
-          tags: "[cicd]"
+          tags: "cicd"
 
       - name: Run pytest with coverage
         run: |
