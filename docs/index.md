@@ -1,10 +1,8 @@
-# [Ensembl Python project template](https://github.com/Ensembl/template-python)
+# [Ensembl VEP](https://github.com/Ensembl/ensembl-vep-py)
 
-*Ensembl Python project template documentation*
+Ensembl VEP (Variant Effect Predictor) predicts the functional effects of genomic variants.
 
-This repository structure can be forked and used as the base template for developing a Python package (app or 
-library). It contains boilerplate code and configuration for unit testing, linting, type checking, automatic 
-documentation and CI/CD.
+> **_NOTE:_**  This project is in an initial development phase. Many features are incomplete, APIs may change without notice, and documentation is partial. Use at your own risk and feel free to open issues or contribute; your feedback is welcome.
 
 ## Contents
 Check out [installation](install.md) section for further information on how to install the project.
@@ -13,5 +11,5 @@ Check out [installation](install.md) section for further information on how to i
 2. [Usage](usage.md)
 
 ## License
-Software as part of [Ensembl Python project template](https://github.com/Ensembl/template-python) is 
+Software as part of [Ensembl VEP](https://github.com/Ensembl/ensembl-vep-py) is 
 distributed under the [Apache-2.0 License](https://www.apache.org/licenses/LICENSE-2.0.txt).

@@ -46,18 +46,22 @@ jobs:
       - name: Generate coverage report
         run: |
           uv run coverage run -m pytest
-          uv run coverage lcov -o ./reports/pytest.lcov
+          uv run coverage lcov -o pytest-coverage.lcov
+          uv run coverage html -d pytest-coverage-html
 
           cargo llvm-cov --lcov --output-path rust-coverage.lcov
           cargo llvm-cov --html --output-dir rust-coverage-html
 
       - name: Generate coverage badge
         run: |
-          bash .github/scripts/generate_coverage_badge.sh rust-coverage.lcov .github/badges
+          bash .github/scripts/generate_coverage_badge.sh pytest-coverage.lcov .github/badges/python
+          bash .github/scripts/generate_coverage_badge.sh rust-coverage.lcov .github/badges/rust
 
           mkdir -p docs/assets/badges
-          cp .github/badges/coverage.json docs/assets/badges/
-          cp -r rust-coverage-html docs/coverage
+          cp .github/badges/python/coverage.json docs/assets/badges/python_coverage.json
+          cp .github/badges/rust/coverage.json docs/assets/badges/rust_coverage.json
+          cp -r pytest-coverage-html docs/coverage/python
+          cp -r rust-coverage-html/html docs/coverage/rust
 
       - name: Generate coverage badge
         run: |

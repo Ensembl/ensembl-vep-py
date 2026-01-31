@@ -14,13 +14,16 @@
 
 site_name: Ensembl VEP
 site_url: https://ensembl.github.io/ensembl-vep-py
+site_description: Ensembl VEP (Variant Effect Predictor) predicts the functional effects of genomic variants.
+
 repo_url: https://github.com/Ensembl/ensembl-vep-py
 repo_name: GitHub repository
+
 copyright: Copyright &copy; [2016-<script>document.write(new Date().getFullYear())</script>] <a href="https://www.ebi.ac.uk">EMBL-European Bioinformatics Institute</a>
 
 theme:
   name: "material"
-  logo: img/ebang.png
+  logo: img/ensembl-logo.png
   icon:
     repo: fontawesome/brands/github
   palette:
@@ -30,9 +33,6 @@ theme:
     code: IBM Plex Mono
   features:
       - content.tooltips
-      - navigation.expand
-      - navigation.tabs
-      - navigation.tabs.sticky
       - navigation.top
       - search.highlight
       - search.suggest
@@ -65,16 +65,15 @@ plugins:
           show_source: true
           show_symbol_type_heading: true
           show_symbol_type_toc: true
-- coverage:
-    page_name: coverage
-    html_report_dir: reports/htmlcov
 
 nav:
-  - Home:
-    - Overview: index.md
-    - Install: install.md
-    - Usage: usage.md
-  - Development:
-    - Code of Conduct: code_of_conduct.md
-    - Coverage report: coverage.md
+  - Home: index.md
+  - Install: install.md
+  - Usage: usage.md
+  - Code of Conduct: code_of_conduct.md
   - Code reference: reference/
+  - Coverage report: coverage.md
+
+extra:
+  python_coverage_badge: assets/badges/python_coverage.json
+  rust_coverage_badge: assets/badges/rust_coverage.json

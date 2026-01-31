@@ -1,8 +1,8 @@
 # Ensembl Python project template
 
 [![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](https://github.com/Ensembl/ensembl-vep-py/blob/main/LICENSE)
-[![Rust-Coverage](https://ensembl.github.io/template-python/coverage/coverage-badge.svg)](https://ensembl.github.io/ensembl-vep-py/coverage)
-[![Py-Coverage](https://ensembl.github.io/template-python/coverage/coverage-badge.svg)](https://ensembl.github.io/ensembl-vep-py/coverage)
+[![Python-Coverage](https://img.shields.io/endpoint?url=https://ensembl.github.io/ensembl-vep-py/assets/badges/python_coverage.json)](https://ensembl.github.io/ensembl-vep-py/coverage)
+[![Rust-Coverage](https://img.shields.io/endpoint?url=https://ensembl.github.io/ensembl-vep-py/assets/badges/rust_coverage.json)](https://ensembl.github.io/ensembl-vep-py/coverage)
 [![CI](https://github.com/Ensembl/template-python/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Ensembl/ensembl-utilstemplate-python/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/pypi/v/ensembl-vep)](https://pypi.org/project/ensembl-vep)
 
