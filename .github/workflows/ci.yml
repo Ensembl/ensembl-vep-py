@@ -39,3 +39,7 @@ jobs:
     uses: ./.github/workflows/python_ci.yml
     with:
       python-version: "3.10"
+
+  rust_ci:
+    name: Rust CI
+    uses: ./.github/workflows/rust_ci.yml

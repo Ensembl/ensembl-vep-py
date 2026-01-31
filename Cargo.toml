@@ -25,9 +25,13 @@ inherits = "release"
 lto = true
 
 [lib]
-name = "_ensembl_vep_core"
+name = "ensembl_vep_core"
 path = "src/rust/lib.rs"
 crate-type = ["cdylib"]
+
+[[test]]
+name = "ensembl_vep_core"
+path = "src/rust/tests/integration_tests.rs"
 
 # for cargo test you need to first run: 
 ## export DYLD_LIBRARY_PATH="/path/to/dir/with/libpython3.10.dylib:$DYLD_LIBRARY_PATH"

@@ -1,11 +1,11 @@
 // See the NOTICE file distributed with this work for additional information
 // regarding copyright ownership.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 // http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,7 +15,7 @@
 use pyo3::prelude::*;
 
 #[pymodule]
-mod _ensembl_vep_core {
+mod ensembl_vep_core {
     use pyo3::prelude::*;
 
     /// Concatenates two strings and returns the result.
@@ -28,21 +28,20 @@ mod _ensembl_vep_core {
 #[cfg(test)]
 mod py_integration_tests {
     use super::*;
-    use pyo3::prelude::*;
 
     #[test]
     fn test_sum_as_string_python() {
         // Register this module for the embedded Python interpreter
-        pyo3::append_to_inittab!(_ensembl_vep_core);
+        pyo3::append_to_inittab!(ensembl_vep_core);
 
         // Prepare Python for use from multiple threads (required in tests)
-        pyo3::prepare_freethreaded_python();
+        Python::initialize();
 
-        Python::with_gil(|py| {
+        Python::attach(|py| {
             // Import the module as Python would
             let module = py
-                .import_bound("_ensembl_vep_core")
-                .expect("Failed to import _ensembl_vep_core");
+                .import("ensembl_vep_core")
+                .expect("Failed to import ensembl_vep_core");
 
             // Get the Python-exposed function
             let func = module
