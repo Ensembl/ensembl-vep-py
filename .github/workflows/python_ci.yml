@@ -39,7 +39,7 @@ jobs:
           python-version: ${{ inputs.python-version }}
           tags: "[cicd]"
 
-      - uses: Install package
+      - name: Install package
         run: |
           uv pip install -e .
         shell: bash
