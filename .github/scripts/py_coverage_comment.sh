@@ -16,7 +16,7 @@
 
 set -euo pipefail
 
-COVERAGE_FILE=$1
+LCOV_FILE=$1
 COVERAGE_THRESHOLD=${COVERAGE_THRESHOLD:-90}
 MARKER="<!-- python-lcov-coverage-report -->"
 

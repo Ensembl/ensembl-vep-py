@@ -52,11 +52,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-llvm-cov
         
       - name: Run tests with coverage
         run: |
-          cargo install cargo-llvm-cov
-          llvm-cov --lcov --output-path coverage.lcov
+          cargo llvm-cov --lcov --output-path coverage.lcov
         
       - name: Add coverage reports
         if: github.event_name == 'pull_request'
