@@ -93,10 +93,12 @@ jobs:
       - name: Run pytest with coverage
         run: |
           uv run coverage run -m pytest
-          uv run coverage report > coverage.txt
+          uv run coverage lcov -o coverage.lcov
 
       - name: Add coverage reports
         if: ${{ github.event_name == 'pull_request' }}
         continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          bash .github/scripts/py_coverage_comment.sh coverage.txt
+          bash .github/scripts/py_coverage_comment.sh coverage.lcov
