@@ -16,7 +16,7 @@
 __all__ = ["hello"]
 
 import argparse
-from ._ensembl_vep_core import sum_as_string
+from .ensembl_vep_core import sum_as_string  # noqa: F401,F403 pylint: disable=E0401,E0611
 
 
 def hello(word: str) -> str:
@@ -31,7 +31,9 @@ def hello(word: str) -> str:
 
 def main() -> None:
     """Module's entry-point."""
+
     parser = argparse.ArgumentParser(prog="Greetings program", description="Says 'hi' to the argument given")
     parser.add_argument("word")
     args = parser.parse_args()
+
     print(hello(args.word))

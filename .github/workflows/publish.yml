@@ -48,11 +48,11 @@ jobs:
       - uses: ./.github/actions/python_build
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          tags: "[build]"
+          tags: "build"
 
       - name: Build package
         run: |
-          python -m build
+          uv build
 
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
