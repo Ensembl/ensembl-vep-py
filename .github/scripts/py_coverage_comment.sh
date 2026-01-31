@@ -1,0 +1,123 @@
+#!/usr/bin/env bash
+
+# See the NOTICE file distributed with this work for additional information
+# regarding copyright ownership.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+set -euo pipefail
+
+COVERAGE_FILE=$1
+COVERAGE_THRESHOLD=${COVERAGE_THRESHOLD:-90}
+MARKER="<!-- Python coverage report -->"
+
+# Required env vars (fail fast)
+: "${GITHUB_TOKEN:?Missing GITHUB_TOKEN}"
+: "${GITHUB_REPOSITORY:?Missing GITHUB_REPOSITORY}"
+: "${GITHUB_EVENT_PATH:?Missing GITHUB_EVENT_PATH}"
+
+# Extract PR number
+PR_NUMBER=$(jq -r '.pull_request.number' "$GITHUB_EVENT_PATH")
+
+if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" ]]; then
+  echo "Not running on a pull request. Exiting."
+  exit 0
+fi
+
+# Parse TOTAL coverage line
+TOTAL_LINE=$(grep -E '^TOTAL' "$COVERAGE_FILE" || true)
+
+if [[ -z "$TOTAL_LINE" ]]; then
+  echo "Could not find TOTAL line in coverage report"
+  exit 1
+fi
+
+TOTAL_COVERAGE_RAW=$(echo "$TOTAL_LINE" | awk '{print $NF}')
+TOTAL_COVERAGE=$(echo "$TOTAL_COVERAGE_RAW" | tr -d '%')
+
+# Compare coverage (supports decimals)
+COVERAGE_OK=$(awk -v cov="$TOTAL_COVERAGE" -v th="$COVERAGE_THRESHOLD" \
+  'BEGIN { print (cov >= th) ? "yes" : "no" }')
+
+if [[ "$COVERAGE_OK" == "yes" ]]; then
+  STATUS_ICON="✅"
+  STATUS_TEXT="Coverage meets threshold"
+else
+  STATUS_ICON="❌"
+  STATUS_TEXT="Coverage below ${COVERAGE_THRESHOLD}% threshold"
+fi
+
+
+# Build markdown table (optional but nice)
+TABLE=$(awk '
+BEGIN {
+  print "| File | Coverage |"
+  print "|------|----------|"
+}
+$1 != "Name" && $1 != "TOTAL" && $1 !~ /^-+/ {
+  print "| " $1 " | " $NF " |"
+}
+' "$COVERAGE_FILE")
+
+# Final comment body
+COMMENT_BODY=$(cat <<EOF
+$MARKER
+### 🧪 Python Coverage Report
+
+**Total coverage:** **$TOTAL_COVERAGE_RAW**
+
+<details>
+<summary>File breakdown</summary>
+
+$TABLE
+
+</details>
+EOF
+)
+
+# GitHub API base
+API_URL="https://api.github.com"
+COMMENTS_URL="$API_URL/repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments"
+
+AUTH_HEADER="Authorization: Bearer $GITHUB_TOKEN"
+
+# Find existing comment with marker
+EXISTING_COMMENT_ID=$(curl -s \
+  -H "$AUTH_HEADER" \
+  -H "Accept: application/vnd.github+json" \
+  "$COMMENTS_URL" \
+  | jq -r ".[] | select(.body | contains(\"$MARKER\")) | .id")
+
+if [[ -n "$EXISTING_COMMENT_ID" ]]; then
+  echo "Updating existing coverage comment (ID: $EXISTING_COMMENT_ID)"
+
+  curl -s -X PATCH \
+    -H "$AUTH_HEADER" \
+    -H "Accept: application/vnd.github+json" \
+    "$API_URL/repos/$GITHUB_REPOSITORY/issues/comments/$EXISTING_COMMENT_ID" \
+    -d "$(jq -nc --arg body "$COMMENT_BODY" '{body: $body}')"
+
+else
+  echo "Creating new coverage comment"
+
+  curl -s -X POST \
+    -H "$AUTH_HEADER" \
+    -H "Accept: application/vnd.github+json" \
+    "$COMMENTS_URL" \
+    -d "$(jq -nc --arg body "$COMMENT_BODY" '{body: $body}')"
+fi
+
+# Fail the job after commenting
+if [[ "$COVERAGE_OK" != "yes" ]]; then
+  echo "Coverage ${TOTAL_COVERAGE}% is below threshold ${COVERAGE_THRESHOLD}%"
+  exit 1
+fi
