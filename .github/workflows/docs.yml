@@ -37,7 +37,7 @@ jobs:
       - uses: ./.github/actions/python_build
         with:
           python-version: ${{ inputs.python-version }}
-          tags: "cicd docs"
+          tags: "cicd,docs"
 
       - name: Generate coverage report
         run: |

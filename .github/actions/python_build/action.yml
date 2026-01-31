@@ -40,6 +40,8 @@ runs:
         enable-cache: true
 
     - name: Install dependencies
+      EXTRAS="${{ inputs.extras }}"
+      EXTRA_FLAGS=$(echo "$EXTRAS" | tr ',' '\n' | sed 's/^/--extra /' | tr '\n' ' ')
       shell: bash
       run: |
-        uv sync --extra ${{ inputs.tags }}
+        uv sync $EXTRA_FLAGS
