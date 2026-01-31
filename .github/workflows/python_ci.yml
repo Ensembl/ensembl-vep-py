@@ -92,14 +92,13 @@ jobs:
 
       - name: Run pytest with coverage
         run: |
-          uv run coverage run -m pytest --junitxml=./reports/test_results.xml
-          uv run coverage xml -o ./reports/coverage.xml
-          uv run coverage report -m
+          uv run coverage run -m pytest
+          uv run coverage lcov -o coverage.lcov
 
       - name: Add coverage reports
         if: ${{ github.event_name == 'pull_request' }}
         continue-on-error: true
-        uses: MishaKav/pytest-coverage-comment@main
-        with:
-          pytest-xml-coverage-path: ./reports/coverage.xml
-          junitxml-path: ./reports/test_results.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          bash .github/scripts/py_coverage_comment.sh coverage.lcov
