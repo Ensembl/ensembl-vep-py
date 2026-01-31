@@ -48,12 +48,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
         
       - name: Run tests + generate coverage
-        run: cargo llvm-cov --html
+        run: |
+          cargo install cargo-llvm-cov
+          cargo llvm-cov --html
         
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
