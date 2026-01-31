@@ -31,7 +31,9 @@ def hello(word: str) -> str:
 
 def main() -> None:
     """Module's entry-point."""
+
     parser = argparse.ArgumentParser(prog="Greetings program", description="Says 'hi' to the argument given")
     parser.add_argument("word")
     args = parser.parse_args()
+
     print(hello(args.word))
