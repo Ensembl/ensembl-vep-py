@@ -20,7 +20,7 @@ fn sum_as_string_impl(a: &str, b: &str) -> String {
 }
 
 #[pymodule]
-mod _ensembl_vep_core {
+mod ensembl_vep_core {
     use super::sum_as_string_impl;
     use pyo3::prelude::*;
 

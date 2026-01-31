@@ -41,11 +41,38 @@ jobs:
 
       - name: Generate coverage report
         run: |
-          coverage run -m pytest
-          coverage html -d ./reports/htmlcov
-          coverage xml -o ./reports/coverage.xml
-          genbadge coverage -i ./reports/coverage.xml -o ./reports/htmlcov/coverage-badge.svg
+          uv run coverage run -m pytest
+          uv run coverage lcov -o ./reports/pytest.lcov
+
+          cargo install cargo-llvm-cov
+          cargo llvm-cov --lcov --output-path ./reports/rust.lcov
+
+      - name: Generate coverage badge
+        run: |
+          PY_COVERAGE=$(awk -F: '
+            /^LH:/ { hit += $2 }
+            /^LF:/ { total += $2 }
+            END { 
+              if (total > 0) 
+                printf "%.2f", (hit/total)*100 
+              else 
+                print "0.00"
+            }
+          ' ./reports/pytest.lcov)
+          curl -s "https://img.shields.io/badge/coverage-${PY_COVERAGE}%25-brightgreen?logo=rust" > ./reports/htmlcov/py-coverage-badge.svg
+
+          RUST_COVERAGE=$(awk -F: '
+            /^LH:/ { hit += $2 }
+            /^LF:/ { total += $2 }
+            END { 
+              if (total > 0) 
+                printf "%.2f", (hit/total)*100 
+              else 
+                print "0.00"
+            }
+          ' ./reports/rust.lcov)
+          curl -s "https://img.shields.io/badge/coverage-${RUST_COVERAGE}%25-brightgreen?logo=rust" > ./reports/htmlcov/rust-coverage-badge.svg
 
       - name: Run mkdocs
         run: |
-          mkdocs gh-deploy --force
+          uv run mkdocs gh-deploy --force
