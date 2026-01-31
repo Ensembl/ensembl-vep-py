@@ -42,3 +42,4 @@ runs:
     - name: Install dependencies
       run: |
         uv sync --extra ${{ inputs.tags }}
+      shell: bash
