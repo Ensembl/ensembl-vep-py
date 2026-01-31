@@ -120,8 +120,10 @@ requires = [
 [tool.black]
 line-length = 110
 
-[tool.pylint.main]
+[tool.pylint.format]
 max-line-length = 110
+
+[tool.pylint.messages_control]
 disable = [
     "invalid-name",
     "logging-fstring-interpolation",

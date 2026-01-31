@@ -24,5 +24,6 @@ header:
     - 'NOTICE'
     # symlinks
     - 'tests/database/test_dbconnection'
+    - '**/*.lock'
 
   comment: on-failure

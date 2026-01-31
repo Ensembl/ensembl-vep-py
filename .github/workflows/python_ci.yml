@@ -39,6 +39,11 @@ jobs:
           python-version: ${{ inputs.python-version }}
           tags: "[cicd]"
 
+      - uses: Install package
+        run: |
+          uv pip install -e .
+        shell: bash
+
       - name: Run pylint
         run: |
           pylint --rcfile pyproject.toml src/python/ensembl

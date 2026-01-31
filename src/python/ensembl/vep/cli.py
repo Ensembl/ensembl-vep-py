@@ -16,7 +16,7 @@
 __all__ = ["hello"]
 
 import argparse
-from ._ensembl_vep_core import sum_as_string
+from ._ensembl_vep_core import sum_as_string # noqa: F401,F403 pylint: disable=import-error
 
 
 def hello(word: str) -> str:
