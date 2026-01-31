@@ -14,9 +14,6 @@ Ensembl VEP (Variant Effect Predictor) predicts the functional effects of genomi
 
 Full documentation is available at: https://ensembl.github.io/ensembl-vep-py/
 
-**Key Features:**
-TODO
-
 ## Installation
 
 ### Requirements
