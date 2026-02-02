@@ -35,12 +35,26 @@ uv pip install ensembl-vep
 
 ### Development Installation
 
-```bash
-git clone https://github.com/Ensembl/ensembl-vep-py.git
-cd ensembl-vep-py
-cargo install
-uv sync --extra dev,test
-```
+(Until the repo is private)
+1. fork the repository and clone it
+    ```bash
+    git clone https://github.com/yourusername/ensembl-vep-py.git
+    git remote add upstream https://github.com/Ensembl/ensembl-vep-py.git
+    ```
+
+2. Create a branch with upstream to a feature/** or bugfix/** branch
+    ```bash
+    cd ensembl-vep-py
+    git checkout -b some_developement upstream/feature/some_feature
+    ```
+
+3. Develop
+    ```bash
+    git clone https://github.com/Ensembl/ensembl-vep-py.git
+    cd ensembl-vep-py
+    cargo install
+    uv sync --extra dev,test
+    ```
 
 ## Quick Start
 

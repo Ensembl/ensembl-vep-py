@@ -42,18 +42,19 @@ Ensembl VEP (Variant Effect Predictor) predicts the functional effects of genomi
 ### 1. Branching Strategy
 ```
 main          # Stable releases
-develop       # Integration branch  
+release/xxx   # Release branches  
 feature/xxx   # New features (e.g., feature/faster-vcf-parsing)
-hotfix/xxx    # Critical bug fixes
+bugfix/xxx    # Bug fixes
 ```
 
-Create branches from `develop`:
+Create branches from `feature/xxx` or `bugfix/xxx`:
 ```bash
-git checkout develop
-git checkout -b feature/your-feature-name
+git checkout feature/some_feature
+git checkout -b some_development
 ```
 
 ### 2. Commit Messages
+(TBD)
 Follow [Conventional Commits](https://www.conventionalcommits.org/):
 ```
 feat: add support for GRCh38.p14
@@ -64,6 +65,7 @@ refactor: extract variant parser into separate module
 ```
 
 ### 3. Pre-commit Checks
+(TBD)
 ```bash
 # Format code
 cargo fmt
@@ -80,7 +82,7 @@ pytest src/python/ --cov=src/python
 ```
 
 ## 🧪 Testing Requirements
-
+(TBD)
 All PRs must:
 
 - ✅ Pass all existing tests
@@ -100,30 +102,11 @@ Coverage reports are automatically generated and posted to PRs. Maintain:
 
 ## 🔧 Code Style
 
-### Rust
-```
-# Cargo.toml
-[tool.clippy]
-# See .clippy.toml for full config
-
-[fmt]
-edition = "2021"
-max_width = 100
-```
-
-### Python  
-```
-# pyproject.toml (ruff + mypy)
-[tool.ruff]
-line-length = 110
-target-version = "py311"
-
-[tool.ruff.lint]
-ignore = ["N", "G004"]  # Naming, logging f-strings
-```
+- For Python see `pyproject.toml`
+- For Rust see `Cargo.toml`
 
 ## 🐛 Bug Reports
-
+(TBD)
 1. Use the [GitHub Issues](https://github.com/ensembl-vep-py/issues) template
 2. Include:
    - VEP version
@@ -133,7 +116,7 @@ ignore = ["N", "G004"]  # Naming, logging f-strings
    - Environment (OS, Python/Rust versions)
 
 ## ✨ Feature Requests
-
+(TBD)
 1. Open an issue with:
    - Use case (scientific/biological motivation)
    - Proposed API changes
@@ -144,6 +127,7 @@ ignore = ["N", "G004"]  # Naming, logging f-strings
 
 ## 🔬 Pull Request Checklist
 
+(TBD)
 ```markdown
 - [ ] Passes `cargo test --all-features`
 - [ ] Passes `pytest --cov-fail-under=90`
@@ -152,7 +136,7 @@ ignore = ["N", "G004"]  # Naming, logging f-strings
 - [ ] Passes `mypy src/python/`
 - [ ] Updated documentation
 - [ ] Added/changed tests
-- [ ] Maintains ≥85% Rust / ≥90% Python coverage
+- [ ] Maintains 90% Rust / ≥90% Python coverage
 - [ ] Squash merged commits
 ```
 
