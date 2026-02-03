@@ -88,7 +88,7 @@ Upstream Repo                          Your Fork
                 .         │ 
    release/1.1 ─┤         │ PR (reviewed by maintainers)
                 │         │           
-                ├─ feature/xxx ◄─────┤
+                ├─ feature/xxx ◄─────┐
                 │                    │
                 │                    │ PR (your contribution)
                 │                    │
