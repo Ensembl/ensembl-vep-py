@@ -47,12 +47,6 @@ feature/xxx   # New features (e.g., feature/faster-vcf-parsing)
 bugfix/xxx    # Bug fixes
 ```
 
-Create branches from `feature/xxx` or `bugfix/xxx`:
-```bash
-git checkout feature/some_feature
-git checkout -b some_development
-```
-
 #### Workflow for Contributors
 
 1. **Fork the repository** to your GitHub account
@@ -69,10 +63,6 @@ git checkout -b some_development
 3. **Make your changes** and commit them with clear messages
 
 4. **Ensure CI passes** locally and in your fork:
-```bash
-   # Run tests locally
-   nf-test test
-```
    - Push to your fork and verify all GitHub Actions pass
    - Fix any failing tests before creating a PR
 
@@ -92,25 +82,28 @@ git checkout -b some_development
 Upstream Repo                          Your Fork
 ─────────────                          ─────────
 
-main ◄─────────────────┐
-  │                     │
-  │                     │ PR (reviewed by maintainers)
-  │                     │
-  ├─ feature/xxx ◄──────┤
-  │                     │
-  │                     │ PR (your contribution)
-  │                     │
-  │                     └─── my-feature-name (your branch)
-  │
-  ├─ bugfix/xxx ◄───────┐
-  │                     │
-  │                     │ PR (your contribution)
-  │                     │
-  │                     └─── my-bugfix-name (your branch)
-  │
-  └─ release/1.0
-     release/1.1
-     ...
+                main ◄────┐
+                .         │
+                .         │
+                .         │ 
+   release/1.1 ─┤         │ PR (reviewed by maintainers)
+                │         │           
+                ├─ feature/xxx ◄─────┤
+                │                    │
+                │                    │ PR (your contribution)
+                │                    │
+                │                    └─── my-feature-name (your branch)
+                │
+                ├─ bugfix/xxx ◄──────┐
+                │                    │
+                │                    │ PR (your contribution)
+                │                    │
+                │                    └─── my-bugfix-name (your branch)
+   release/1.0 ─┤
+                │
+                .
+                .
+                .
 
 
 Timeline Flow:
