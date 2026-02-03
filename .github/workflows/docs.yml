@@ -37,15 +37,32 @@ jobs:
       - uses: ./.github/actions/python_build
         with:
           python-version: ${{ inputs.python-version }}
-          tags: "[cicd,docs]"
+          tags: "cicd,docs"
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-llvm-cov
 
       - name: Generate coverage report
         run: |
-          coverage run -m pytest
-          coverage html -d ./reports/htmlcov
-          coverage xml -o ./reports/coverage.xml
-          genbadge coverage -i ./reports/coverage.xml -o ./reports/htmlcov/coverage-badge.svg
+          uv run coverage run -m pytest
+          uv run coverage lcov -o pytest-coverage.lcov
+          uv run coverage html -d pytest-coverage-html
+
+          cargo llvm-cov --lcov --output-path rust-coverage.lcov
+          cargo llvm-cov --html --output-dir rust-coverage-html
+
+      - name: Generate coverage badge
+        run: |
+          bash .github/scripts/generate_coverage_badge.sh pytest-coverage.lcov .github/badges/python
+          bash .github/scripts/generate_coverage_badge.sh rust-coverage.lcov .github/badges/rust
+
+          mkdir -p docs/assets/badges
+          cp .github/badges/python/coverage.json docs/assets/badges/python_coverage.json
+          cp .github/badges/rust/coverage.json docs/assets/badges/rust_coverage.json
+          cp -r pytest-coverage-html docs/coverage/python
+          cp -r rust-coverage-html/html docs/coverage/rust
 
       - name: Run mkdocs
         run: |
-          mkdocs gh-deploy --force
+          uv run mkdocs gh-deploy --force

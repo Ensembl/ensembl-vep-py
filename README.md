@@ -1,187 +1,118 @@
-# Ensembl Python project template
+# Ensembl VEP
 
-[![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](https://github.com/Ensembl/template-python/blob/main/LICENSE)
-[![Coverage](https://ensembl.github.io/template-python/coverage/coverage-badge.svg)](https://ensembl.github.io/template-python/coverage)
-[![CI](https://github.com/Ensembl/template-python/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Ensembl/ensembl-utilstemplate-python/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/pypi/v/template-python)](https://pypi.org/project/template-python)
+[![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](https://github.com/Ensembl/ensembl-vep-py/blob/main/LICENSE)
+[![Python-Coverage](https://img.shields.io/endpoint?url=https://ensembl.github.io/ensembl-vep-py/assets/badges/python_coverage.json)](https://ensembl.github.io/ensembl-vep-py/coverage)
+[![Rust-Coverage](https://img.shields.io/endpoint?url=https://ensembl.github.io/ensembl-vep-py/assets/badges/rust_coverage.json)](https://ensembl.github.io/ensembl-vep-py/coverage)
+[![CI](https://github.com/Ensembl/ensembl-vep-py/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Ensembl/ensembl-utilstemplate-python/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/pypi/v/ensembl-vep)](https://pypi.org/project/ensembl-vep)
 
-This repo structure can be forked and used as the base template for developing a Python package (app or library). It contains boilerplate code and configuration for unit testing, linting, type checking, automatic documentation and CI/CD.
+Ensembl VEP (Variant Effect Predictor) predicts the functional effects of genomic variants.
 
-For more information, please consult this repository's [GitHub pages](https://ensembl.github.io/template-python/).
+> **_NOTE:_**  This project is in an initial development phase. Many features are incomplete, APIs may change without notice, and documentation is partial. Use at your own risk and feel free to open issues or contribute; your feedback is welcome.
 
-## Getting Started
+## Documentation
 
-This template is a simple but fully functioning Python project.
+Full documentation is available at: https://ensembl.github.io/ensembl-vep-py/
 
-### Template Project Layout
+## Installation
 
-```plain
-.
-├── .github               <- GitHub Actions workflows
-│   ├── actions
-│   │   └── python_build
-│   │       └── action.yml
-│   ├── workflows
-│   │   ├── ci_dev.yml
-│   │   ├── ci.yml
-│   │   ├── docs.yml
-│   │   ├── notice.yml
-│   │   ├── publish.yml
-│   │   └── python_ci.yml
-│   └── dependabot.yml
-├── docs                  <- Folder with boilerplate for auto-generated mkdocs documentation
-│   ├── img
-│   │   └── ebang.png
-│   ├── scripts
-│   │   └── gen_ref_pages.sh  <- Script to generate reference pages and build the documentation
-│   ├── stylesheets
-│   │   └── extra.css
-│   ├── code_of_conduct.md
-│   ├── index.md
-│   ├── install.md
-│   └── usage.md
-├── src                   <- Root folder for this project source code
-│   └── ensembl
-│       └── template
-│           ├── __init__.py
-│           └── hello_world.py
-├── tests                 <- Root folder for tests code
-│   └── test_hello_world.py
-├── .gitignore            <- File patterns to be ignored by Git
-├── .licenserc.yml        <- License header template expected in every file in this repository
-├── LICENSE               <- License text
-├── mkdocs.yml            <- mkdocs configuration file
-├── NOTICE                <- Notice file (required by License)
-├── pyproject.toml        <- This project and Python tools packaging configuration
-├── README.md             <- Information about this project, e.g. description, typical installation and usage
-└── setup.py              <- Setuptools stub required to install the project in edit mode (`pip install -e`)
-```
+### Requirements
 
-### Creating a new project
+- Python 3.10 or higher
+- Dependencies listed in `pyproject.toml` and `Cargo.toml`
 
-The best and easiest way to use this template is to go to [GitHub](https://github.com/Ensembl/template-python) and on the top right click on the button "Use this template -> Create a new repository" and follow the steps to create your own repository based on the code found here.
-
-Alternatively, you can also clone this repository:
+### Using pip
 
 ```bash
-git clone --depth 1 --branch main https://github.com/Ensembl/template-python.git
+pip install ensembl-vep
 ```
 
-Next, remove the `git` repository data and rename the main folder:
+### Using uv (recommended)
 
 ```bash
-rm -rf template-python/.git
-mv template-python <NEW_PROJECT_NAME>
-cd <NEW_PROJECT_NAME>
-git init
+uv pip install ensembl-vep
 ```
 
-Later, the following files (or folder names) will need to be modified:
+### Development Installation
 
-- `NOTICE`: Substitute "Ensembl Python Template" with your project's name
-- `pyproject.toml`: Change package name and other settings
-- `mkdocs.yml`: Change accordingly to project's name
-- `docs/*.md`: Change documentation accordingly to new project folder structure and instructions
-- `README.md`: Write a meaningful README for your project
+(Until the repo is private)
+1. fork the repository and clone it
+    ```bash
+    git clone https://github.com/yourusername/ensembl-vep-py.git
+    git remote add upstream https://github.com/Ensembl/ensembl-vep-py.git
+    ```
 
-Finally, once done with the basic customisation, create the initial commit:
+2. Create a branch with upstream to a feature/** or bugfix/** branch
+    ```bash
+    cd ensembl-vep-py
+    git checkout -b some_developement upstream/feature/some_feature
+    ```
+
+3. Develop
+    ```bash
+    git clone https://github.com/Ensembl/ensembl-vep-py.git
+    cd ensembl-vep-py
+    cargo install
+    uv sync --extra dev,test
+    ```
+
+See more details in the [Contributing Guide](CONTRIBUTING.md) guide.
+
+## Quick Start
+
+### Basic Usage
+
+```python
+from ensembl_vep import hello
+
+print(hello("world!"))
+```
+
+### Command-Line Interface
 
 ```bash
-cd <NEW_PROJECT_NAME>
-git add .
-git commit -m 'Initial commit'
+vep world!
 ```
 
-### Installing the development environment with `venv`
+## Configuration
+
+### Cache Files
+TODO
+
+## Testing
+
+Run the test suite:
 
 ```bash
-python -m venv <VIRTUAL_ENVIRONMENT_NAME>
-source <VIRTUAL_ENVIRONMENT_NAME>/bin/activate
-pip install -e .[cicd,doc]
+# Run pytest with coverage
+uv run coverage run -m pytest
+
+# Run Rust llvm-cov
+cargo llvm-cov
 ```
 
-### Testing with `pytest`
+## Contributing
 
-Run test suite:
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
-```bash
-cd <NEW_PROJECT_NAME>
-pytest
-```
+## Citation
 
-To run tests, calculate and display testing coverage stats:
+If you use this software, please cite:
 
-```bash
-cd <NEW_PROJECT_NAME>
-coverage run -m pytest
-coverage report -m
-```
+McLaren W, Gil L, Hunt SE, Riat HS, Ritchie GR, Thormann A, Flicek P, Cunningham F.  
+The Ensembl Variant Effect Predictor.  
+*Genome Biology* Jun 6;17(1):122. (2016)  
+doi:[10.1186/s13059-016-0974-4](https://doi.org/10.1186/s13059-016-0974-4)
 
-### Generate documentation via `mkdocs`
+## Support
 
-```bash
-cd <NEW_PROJECT_NAME>
-mkdocs build
-```
+- Bugs: [Issues](https://github.com/ensembl-vep-py/issues)
+- Features: [Discussions → Ideas](https://github.com/ensembl-vep-py/discussions/categories/ideas)
 
-Open automatically generated documentation page at `site/index.html`.
+## Changelog
 
-### Automatic formatting (PEP8 compliance)
+See [CHANGELOG.md](CHANGELOG.md) for version history and updates.
 
-```bash
-cd <NEW_PROJECT_NAME>
-black --check src tests
-```
+## Acknowledgments
 
-Use `--diff` to print a diff of what Black would change, without actually changing the files.
-
-To actually reformat all files contained in `src` and `test`:
-
-```bash
-cd <NEW_PROJECT_NAME>
-black src tests
-```
-
-### Linting and type checking
-
-```bash
-cd <NEW_PROJECT_NAME>
-pylint src tests
-mypy src tests
-```
-
-`pylint` will check the code for syntax, name errors and formatting style. `mypy` will use type hints to statically type check the code.
-
-It should be relatively easy (and definitely useful) to integrate both `pylint` and `mypy` in your IDE/Text editor.
-
-## Useful resources
-
-### Python Documentation
-- [Official Python Docs](https://docs.python.org/3/)
-
-### Python virtual environments management
-- [Python venv](https://docs.python.org/3/library/venv.html)
-
-### Auto-generating documentation
-- [mkdocs](https://www.mkdocs.org)
-
-### Linting, type checking and formatting
-- [Pylint](https://www.pylint.org/)
-- [Mypy](https://mypy.readthedocs.io/en/stable/)
-- [Black](https://black.readthedocs.io/en/stable/)
-- [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings)
-
-### Testing
-- [pytest](https://docs.pytest.org/en/6.2.x/)
-- [Coverage](https://coverage.readthedocs.io/)
-
-### CI/CD
-- [GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-
-### Development tools
-- [IPython](https://ipython.org/)
-
-### Distributing
-- [Packaging Python](https://packaging.python.org/tutorials/packaging-projects/)
-- [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0#apply)
-- [Semantic Versioning](https://semver.org/)
+TODO

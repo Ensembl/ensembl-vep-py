@@ -13,8 +13,8 @@
 # limitations under the License.
 
 [project]
-name = "template-python"
-description = "Ensembl Python project template"
+name = "ensembl-vep"
+description = "Ensembl VEP (Variant Effect Predictor) predicts the functional effects of genomic variants."
 requires-python = ">= 3.10"
 dynamic = [
     "version",
@@ -26,11 +26,12 @@ authors = [
 license = "Apache-2.0"
 license-files = ["LICENSE", "NOTICE"]
 keywords = [
-    "template",
-    "ensembl",
+"ensembl",
+    "ensembl-vep",
     "bioinformatics",
+    "annotation",
+    "variants",
     "python",
-    "setup",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -45,18 +46,20 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Bio-Informatics",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
+
 # dependencies = [
 #     "biopython",
 #     "ensembl-utils @ git+https://github.com/Ensembl/ensembl-utils.git",
 # ]
 
 [project.optional-dependencies]
-# build = [
-#     "build",
-#     "setuptools",
-#     "setuptools-scm",
-#     "wheel",
-# ]
+build = [
+    "build",
+    "setuptools",
+    "setuptools-rust",
+    "setuptools-scm",
+    "wheel",
+]
 cicd = [
     "black",
     "coverage",
@@ -64,12 +67,10 @@ cicd = [
     "mypy",
     "pylint",
     "pytest-dependency",
-    "types-requests",
 ]
 docs = [
     "mkdocs >= 1.5.3",
     "mkdocs-autorefs",
-    "mkdocs-coverage",
     "mkdocs-gen-files",
     "mkdocs-literate-nav",
     "mkdocs-material",
@@ -78,46 +79,50 @@ docs = [
     "mkdocstrings",
     "mkdocstrings-python",
 ]
-# mysql = [
-#     "mysqlclient",
-# ]
 
 [project.urls]
 Homepage = "https://www.ensembl.org"
-# Documentation = "https://ensembl.github.io/template-python/"
-Repository = "https://github.com/Ensembl/template-python"
-Issues = "https://github.com/Ensembl/template-python/issues"
+Documentation = "https://ensembl.github.io/ensembl-vep-py"
+Repository = "https://github.com/Ensembl/ensembl-vep-py"
+Issues = "https://github.com/Ensembl/ensembl-vep-py/issues"
+Changelog = "ithub.com/Ensembl/ensembl-vep-py/blob/main/CHANGELOG.md"
 
 [project.scripts]
-hello_cmd = "ensembl.template.hello_world:main"
+vep = "ensembl.vep.cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
 
 [tool.setuptools.dynamic]
-version = {attr = "ensembl.template.__version__"}
+version = {attr = "ensembl.vep.__version__"}
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["src/python"]
 
-# For additional information on `setuptools` configuration see:
-#    https://setuptools.pypa.io/en/latest/userguide/quickstart.html
-#    https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
-#    https://packaging.python.org/en/latest/specifications/declaring-project-metadata/
+[[tool.setuptools-rust.ext-modules]]
+# Private Rust extension module to be nested into the Python package
+target = "ensembl.vep.ensembl_vep_core"
+path = "Cargo.toml"
+binding = "PyO3"
 
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = [
     "setuptools",
+    "setuptools-rust",
     "setuptools-scm",
     "wheel",
 ]
 
+[tool.setuptools-scm]
+
 [tool.black]
 line-length = 110
 
-[tool.pylint.main]
+[tool.pylint.format]
 max-line-length = 110
+
+[tool.pylint.messages_control]
 disable = [
     "invalid-name",
     "logging-fstring-interpolation",
@@ -142,7 +147,7 @@ docstring-code-format = true
 "__init__.py" = ["F403"]
 
 [tool.mypy]
-mypy_path = "src/ensembl"
+mypy_path = "src/python"
 disallow_untyped_defs = true
 explicit_package_bases = true
 ignore_missing_imports = true
@@ -154,13 +159,13 @@ addopts = [
     "--import-mode=importlib",
     "--tb=native",
 ]
-testpaths = ["tests"]
+testpaths = ["src/python/tests"]
 norecursedirs = ["docs", "*.egg_info"]
 
 [tool.coverage.run]
 branch = true
 source = [
-    "ensembl.template",
+    "ensembl.vep",
 ]
 
 [tool.coverage.report]

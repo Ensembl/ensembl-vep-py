@@ -30,3 +30,7 @@ jobs:
     uses: ./.github/workflows/python_ci.yml
     with:
       python-version: ${{ inputs.python-version }}
+
+  rust_ci:
+    name: Rust CI
+    uses: ./.github/workflows/rust_ci.yml
