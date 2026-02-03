@@ -41,6 +41,7 @@ Ensembl VEP (Variant Effect Predictor) predicts the functional effects of genomi
 
 ### 1. Branching Strategy
 ```
+<<<<<<< Updated upstream
 main          # Stable releases
 release/xxx   # Release branches  
 feature/xxx   # New features (e.g., feature/faster-vcf-parsing)
@@ -51,6 +52,104 @@ Create branches from `feature/xxx` or `bugfix/xxx`:
 ```bash
 git checkout feature/some_feature
 git checkout -b some_development
+=======
+main          # Stable releases only
+release/xxx   # Release branches for specific versions
+feature/xxx   # Feature integration branches (in upstream repo)
+bugfix/xxx    # Bug fix integration branches (in upstream repo)
+```
+
+#### Workflow for Contributors
+
+1. **Fork the repository** to your GitHub account
+
+2. **Create your development branch** from the relevant upstream branch:
+```bash
+   # For new features
+   git checkout -b my-feature-name origin/feature/xxx
+   
+   # For bug fixes
+   git checkout -b my-bugfix-name origin/bugfix/xxx
+```
+
+3. **Make your changes** and commit them with clear messages
+
+4. **Ensure CI passes** locally and in your fork:
+```bash
+   # Run tests locally
+   nf-test test
+```
+   - Push to your fork and verify all GitHub Actions pass
+   - Fix any failing tests before creating a PR
+
+5. **Create a Pull Request**:
+   - **From:** your fork's branch (`my-feature-name`)
+   - **To:** upstream's `feature/xxx` or `bugfix/xxx` branch
+   - NOT directly to `main`
+
+6. **After review and approval**, maintainers will merge your PR to the feature/bugfix branch
+
+7. **Maintainers** will create a separate PR from `feature/xxx` or `bugfix/xxx` to `main` when ready
+
+8. **Releases** are created from `main` by tagging specific commits as `release/xxx`
+
+#### Branch Flow Diagram
+```
+Upstream Repo                          Your Fork
+─────────────                          ─────────
+
+main ◄─────────────────┐
+  │                     │
+  │                     │ PR (reviewed by maintainers)
+  │                     │
+  ├─ feature/xxx ◄──────┤
+  │                     │
+  │                     │ PR (your contribution)
+  │                     │
+  │                     └─── my-feature-name (your branch)
+  │
+  ├─ bugfix/xxx ◄───────┐
+  │                     │
+  │                     │ PR (your contribution)
+  │                     │
+  │                     └─── my-bugfix-name (your branch)
+  │
+  └─ release/1.0
+     release/1.1
+     ...
+
+
+Timeline Flow:
+──────────────
+
+1. Fork repo
+2. Create branch from feature/xxx or bugfix/xxx
+3. Make changes → Run tests → Push to fork
+4. ✓ CI passes in your fork
+5. Create PR to upstream feature/xxx or bugfix/xxx
+6. Code review & approval
+7. Merge to feature/xxx or bugfix/xxx
+8. Maintainers merge to main
+9. Release created from main
+```
+
+#### Key Points
+
+- ✅ **DO**: Create PR to `feature/xxx` or `bugfix/xxx` branches
+- ✅ **DO**: Ensure all CI checks pass before creating PR
+- ✅ **DO**: Keep your branch up-to-date with upstream
+- ❌ **DON'T**: Create PR directly to `main`
+- ❌ **DON'T**: Create PR with failing tests
+
+#### Keeping Your Branch Updated
+```bash
+# Add upstream remote (one time only)
+git remote add upstream https://github.com/original-org/repo.git
+
+# Update your branch with latest changes
+git fetch upstream
+git rebase upstream/feature/xxx
+>>>>>>> Stashed changes
 ```
 
 ### 2. Commit Messages

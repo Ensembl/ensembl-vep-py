@@ -56,6 +56,8 @@ uv pip install ensembl-vep
     uv sync --extra dev,test
     ```
 
+See more details in the [Contributing Guide](CONTRIBUTING.md) guide.
+
 ## Quick Start
 
 ### Basic Usage
