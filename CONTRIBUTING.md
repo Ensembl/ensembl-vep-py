@@ -41,7 +41,6 @@ Ensembl VEP (Variant Effect Predictor) predicts the functional effects of genomi
 
 ### 1. Branching Strategy
 ```
-<<<<<<< Updated upstream
 main          # Stable releases
 release/xxx   # Release branches  
 feature/xxx   # New features (e.g., feature/faster-vcf-parsing)
@@ -52,11 +51,6 @@ Create branches from `feature/xxx` or `bugfix/xxx`:
 ```bash
 git checkout feature/some_feature
 git checkout -b some_development
-=======
-main          # Stable releases only
-release/xxx   # Release branches for specific versions
-feature/xxx   # Feature integration branches (in upstream repo)
-bugfix/xxx    # Bug fix integration branches (in upstream repo)
 ```
 
 #### Workflow for Contributors
@@ -149,7 +143,6 @@ git remote add upstream https://github.com/original-org/repo.git
 # Update your branch with latest changes
 git fetch upstream
 git rebase upstream/feature/xxx
->>>>>>> Stashed changes
 ```
 
 ### 2. Commit Messages
