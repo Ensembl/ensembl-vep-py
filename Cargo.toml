@@ -34,7 +34,7 @@ name = "ensembl_vep_core"
 path = "src/rust/tests/integration_tests.rs"
 
 # for cargo test you need to first run: 
-## export DYLD_LIBRARY_PATH="/path/to/dir/with/libpython3.10.dylib:$DYLD_LIBRARY_PATH"
+## export DYLD_LIBRARY_PATH="/path/to/dir/with/libpython3.10.dylib:$DYLD_LIBRARY_PATH" (or, 3.12)
 ## need an alternative to that
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 # See also PyO3 docs on writing Cargo.toml files at https://pyo3.rs
