@@ -1,0 +1,362 @@
+from __future__ import annotations
+
+import pytest
+
+from ensembl.vep.common import ClassSOTerm
+from ensembl.vep.models.variation import Variation, VariationLocus
+from ensembl.vep.models.slice import Slice
+
+
+@pytest.fixture
+def slice():
+    """Create a slice object for testing."""
+    return Slice(
+        coord_system="chromosome",
+        seq_region_name="1",
+        seq_region_length=12,
+        start=1,
+        end=12,
+        strand=1,
+        seq="ATCGATCGATCG"
+    )
+
+@pytest.fixture
+def variation(slice):
+    """Returns a bi-allelic Variation object for testing."""
+    return Variation(
+        start=5,
+        end=5,
+        strand=1,
+        slice=slice,
+        allele_string="A/T",
+    )
+
+@pytest.fixture
+def multiallelic_variation(slice):
+    """Returns a multiallelic Variation object for testing."""
+    return Variation(
+        start=5,
+        end=5,
+        strand=1,
+        slice=slice,
+        allele_string="A/T/G/C",
+    )
+
+@pytest.fixture
+def insertion_variation(slice):
+    """Returns an insertion Variation object for testing."""
+    return Variation(
+        start=5,
+        end=5,
+        strand=1,
+        slice=slice,
+        allele_string="A/ATT",
+    )
+
+@pytest.fixture
+def deletion_variation(slice):
+    """Returns a deletion Variation object for testing."""
+    return Variation(
+        start=5,
+        end=7,
+        strand=1,
+        slice=slice,
+        allele_string="ATC/A",
+    )
+
+class TestVariationLocus:
+    """Tests for the VariationLocus frozen attrs class."""
+
+    def test_initialization(self):
+        """Test that a VariationLocus can be initialized with the correct attributes."""
+        locus = VariationLocus(start=100, end=200, allele_string="A/T")
+        assert locus.start == 100
+        assert locus.end == 200
+        assert locus.allele_string == "A/T"
+
+    def test_immutability(self):
+        """Test that the attributes of VariationLocus cannot be modified after initialization."""
+        locus = VariationLocus(start=100, end=200, allele_string="A/T")
+        with pytest.raises(AttributeError):
+            locus.start = 200
+
+    def test_equality(self):
+        """Test that two VariationLocus instances with the same attributes are considered equal."""
+        locus1 = VariationLocus(start=100, end=200, allele_string="A/T")
+        locus2 = VariationLocus(start=100, end=200, allele_string="A/T")
+        assert locus1 == locus2
+
+    def test_inequality(self):
+        """Test that two VariationLocus instances with different attributes are considered not equal."""
+        locus1 = VariationLocus(start=100, end=200, allele_string="A/T")
+        locus2 = VariationLocus(start=100, end=200, allele_string="A/G")
+        assert locus1 != locus2
+
+
+class TestVariationProperties:
+    """Tests property accessors and default values."""
+
+    def test_initialization(self, variation):
+        """Test that a Variation can be initialized with the correct attributes."""
+        assert variation.start == 5
+        assert variation.end == 5
+        assert variation.strand == 1
+        assert variation.allele_string == "A/T"
+
+    def test_initialization_wihout_keywords(self):
+        """Test Variation initialization without keyword raises error."""
+        with pytest.raises(TypeError, match="takes 1 positional argument"):
+            _ = Variation(
+                100, end=100, strand=1, slice=None, allele_string="A/T"
+            )
+
+    def test_defaults(self, variation):
+        """Test default values for optional attributes."""
+        assert variation.stable_id is None
+        assert variation.is_somatic is False
+        assert variation.minimise_alleles is False
+        assert variation.shift_alleles is False
+
+    def test_variation_alleles_immutable(self, variation):
+        """Test that variation_alleles cannot be directly set."""
+        with pytest.raises(AttributeError, match="'variation_alleles' is a cached property and cannot be reassigned"):
+            variation.variation_alleles = []
+
+    def test_most_severe_consequence_immutable(self, variation):
+        """Test that most_severe_consequence cannot be directly set."""
+        with pytest.raises(AttributeError, match="'most_severe_consequence' is a cached property and cannot be reassigned"):
+            variation.most_severe_consequence = "some value"
+
+    def test_class_so_term_immutable(self, variation):
+        """Test that class_so_term cannot be directly set."""
+        with pytest.raises(AttributeError, match="'class_so_term' is a cached property and cannot be reassigned"):
+            variation.class_so_term = "some value"
+
+
+class TestVariationAlleles:
+    """Tests for the variation_alleles cached property."""
+
+    def test_single_alt_allele(self, variation):
+        """Test that a bi-allelic variation returns the correct VariationAllele."""
+        alleles = variation.variation_alleles
+        
+        assert len(alleles) == 1
+        assert alleles[0].reference_allele == "A"
+        assert alleles[0].alternate_allele == "T"
+
+    def test_multiple_alt_alleles(self, multiallelic_variation):
+        """Test that a multi-allelic variation returns the correct VariationAlleles."""
+        alleles = multiallelic_variation.variation_alleles
+        
+        assert len(alleles) == 3
+        assert alleles[0].alternate_allele == "T"
+        assert alleles[1].alternate_allele == "G"
+        assert alleles[2].alternate_allele == "C"
+        # All share the same reference
+        assert all(a.reference_allele == "A" for a in alleles)
+
+    def test_insertion_alleles(self, insertion_variation):
+        """Test that an insertion variation returns the correct VariationAllele."""
+        alleles = insertion_variation.variation_alleles
+
+        assert len(alleles) == 1
+        assert alleles[0].reference_allele == "A"
+        assert alleles[0].alternate_allele == "ATT"
+
+    def test_deletion_alleles(self, deletion_variation):
+        """Test that a deletion variation returns the correct VariationAllele."""
+        alleles = deletion_variation.variation_alleles
+
+        assert len(alleles) == 1
+        assert alleles[0].reference_allele == "ATC"
+        assert alleles[0].alternate_allele == "A"
+
+    def test_alleles_inherit_coordinates(self, variation):
+        """Test that variation alleles inherit coordinates from the variation."""
+        alleles = variation.variation_alleles
+
+        assert alleles[0].start == 5
+        assert alleles[0].end == 5
+        assert alleles[0].strand == 1
+        assert alleles[0].slice == variation.slice
+
+    def test_none_allele_string_returns_empty(self, slice):
+        var = Variation(
+            start=100,
+            end=100,
+            strand=1,
+            slice=slice,
+            allele_string=None,
+        )
+        alleles = var.variation_alleles
+        assert alleles == []
+
+
+class TestVariationMinimisation:
+    """Tests for the minimise_alleles of Variation."""
+
+    def test_cannot_reset_minimise_alleles(self, variation):
+        """Test that once minimise_alleles is set to True, it cannot be reset to False."""
+        assert variation.minimise_alleles is False
+        variation.minimise_alleles = True
+        with pytest.raises(AttributeError, match="Cannot reset 'minimise_alleles'"):
+            variation.minimise_alleles = False
+
+    def test_minimise_called_when_flag_set(self):
+        """Test that the minimise method is called on each VariationAllele when minimise_alleles is set to True."""
+        var = Variation(
+            start=100,
+            end=102,
+            strand=1,
+            slice=None,
+            allele_string="AAT/AT",
+        )
+        var.minimise_alleles = True
+        for variantion_allele in var.variation_alleles:
+            assert variantion_allele.minimised is True
+            assert variantion_allele.reference_allele == "A"
+            assert variantion_allele.alternate_allele == ""
+            assert variantion_allele.start == 101
+            assert variantion_allele.end == 101
+            assert variantion_allele.original_locus == VariationLocus(start=100, end=102, allele_string="AAT/AT")
+            assert variantion_allele.minimised_locus == VariationLocus(start=101, end=101, allele_string="A/")
+
+
+class TestVariationShifting:
+    """Tests for the shift_alleles of Variation."""
+
+    def test_cannot_reset_shift_alleles(self, variation):
+        """Test that once shift_alleles is set to True, it cannot be reset to False."""
+        assert variation.shift_alleles is False
+        variation.shift_alleles = True
+        with pytest.raises(AttributeError, match="Cannot reset 'shift_alleles'"):
+            variation.shift_alleles = False
+
+    def test_shift_called_when_flag_set(self, slice):
+        """Test that the shift method is called on each VariationAllele when shift_alleles is set to True."""
+        var = Variation(
+            start=2,
+            end=5,
+            strand=1,
+            slice=slice,
+            allele_string="TCGA/-",
+        )
+        var.shift_alleles = True
+        for variantion_allele in var.variation_alleles:
+            assert variantion_allele.shifted is True
+            assert variantion_allele.reference_allele == "TCGA"
+            assert variantion_allele.alternate_allele == "-"
+            assert variantion_allele.start == 6
+            assert variantion_allele.end == 9
+            assert variantion_allele.original_locus == VariationLocus(start=2, end=5, allele_string="TCGA/-")
+            assert variantion_allele.shifted_locus == VariationLocus(start=6, end=9, allele_string="TCGA/-")
+
+
+class TestMostSevereConsequence:
+    """Tests for the most_severe_consequence cached property."""
+    pass
+
+
+class TestClassSOTerm:
+    """Tests for the class_so_term cached property."""
+
+    @pytest.mark.parametrize(
+        "allele_string, expected",
+        [
+            ("A/T", ClassSOTerm.SNV),
+            ("A/G", ClassSOTerm.SNV),
+            ("A/T/G", ClassSOTerm.SNV),
+            ("A/T/G/C", ClassSOTerm.SNV),
+        ],
+    )
+    def test_snv(self, slice, allele_string, expected):
+        var = Variation(
+            start=100, end=100, strand=1, slice=slice, allele_string=allele_string
+        )
+        assert var.class_so_term == expected
+
+    @pytest.mark.parametrize(
+        "allele_string, expected",
+        [
+            ("(CAG)8/(CAG)9", ClassSOTerm.TANDEM_REPEAT),
+            ("(AT)5/(AT)7", ClassSOTerm.TANDEM_REPEAT),
+        ],
+    )
+    def test_tandem_repeat(self, slice, allele_string, expected):
+        var = Variation(
+            start=100, end=100, strand=1, slice=slice, allele_string=allele_string
+        )
+        assert var.class_so_term == expected
+
+    @pytest.mark.parametrize(
+        "allele_string, expected",
+        [
+            ("-/ATT", ClassSOTerm.INSERTION),
+            ("-/A", ClassSOTerm.INSERTION),
+            ("A/ATT", ClassSOTerm.INDEL),
+            ("A/AT", ClassSOTerm.INDEL),
+            ("-/LARGEINSERTION", ClassSOTerm.INSERTION),
+            ("(LARGEINSERTION)", ClassSOTerm.INSERTION)
+        ],
+    )
+    def test_insertion(self, slice, allele_string, expected):
+        var = Variation(
+            start=100, end=100, strand=1, slice=slice, allele_string=allele_string
+        )
+        assert var.class_so_term == expected
+
+    @pytest.mark.parametrize(
+        "allele_string, expected",
+        [
+            ("A/-", ClassSOTerm.DELETION),
+            ("ATT/-", ClassSOTerm.DELETION),
+            ("AT/A", ClassSOTerm.INDEL),
+            ("ATT/A", ClassSOTerm.INDEL),
+            ("(LARGEDELETION)/-", ClassSOTerm.DELETION),
+            ("(LARGEDELETION)", ClassSOTerm.DELETION),
+            ("(2345 BP DELETION)/-", ClassSOTerm.DELETION)
+        ],
+    )
+    def test_deletion(self, slice, allele_string, expected):
+        var = Variation(
+            start=100, end=102, strand=1, slice=slice, allele_string=allele_string
+        )
+        assert var.class_so_term == expected
+
+    @pytest.mark.parametrize(
+        "allele_string, expected",
+        [
+            ("AA/TT", ClassSOTerm.SUBSTITUTION),
+            ("ACT/TCG", ClassSOTerm.SUBSTITUTION),
+        ],
+    )
+    def test_substitution(self, slice, allele_string, expected):
+        var = Variation(
+            start=100, end=101, strand=1, slice=slice, allele_string=allele_string
+        )
+        assert var.class_so_term == expected
+
+    @pytest.mark.parametrize(
+        "allele_string, expected",
+        [
+            ("AA/TTTT", ClassSOTerm.INDEL),
+            ("AAAA/TT", ClassSOTerm.INDEL),
+        ],
+    )
+    def test_indel(self, slice, allele_string, expected):
+        var = Variation(
+            start=100, end=103, strand=1, slice=slice, allele_string=allele_string
+        )
+        assert var.class_so_term == expected
+
+    def test_empty_allele_string_defaults_to_sequence_alteration(self, slice):
+        var = Variation(
+            start=100, end=100, strand=1, slice=slice, allele_string=""
+        )
+        assert var.class_so_term == ClassSOTerm.SEQUENCE_ALTERATION
+
+    def test_none_allele_string_defaults_to_sequence_alteration(self, slice):
+        var = Variation(
+            start=100, end=100, strand=1, slice=slice, allele_string=None
+        )
+        assert var.class_so_term == ClassSOTerm.SEQUENCE_ALTERATION
