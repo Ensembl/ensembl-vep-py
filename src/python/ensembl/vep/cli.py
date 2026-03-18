@@ -16,6 +16,9 @@
 __all__ = ["hello"]
 
 import argparse
+import logging
+import os
+import sys
 from .ensembl_vep_core import sum_as_string  # noqa: F401,F403 pylint: disable=E0401,E0611
 
 
