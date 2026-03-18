@@ -34,7 +34,7 @@ def trim_sequences(
         ValueError: If ref or alt is None.
     """
     if ref is None or alt is None:
-        raise ValueError("Missing reference or alternate sequence")
+        raise ValueError("Missing reference or alternate sequence for trimming")
 
     if end is None:
         end = start + (len(ref) - 1)

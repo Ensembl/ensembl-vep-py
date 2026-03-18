@@ -24,7 +24,7 @@ All code must use explicit type annotations for function signatures, class attri
 
 **Rules:**
 - Use standard Python typing (PEP 484, PEP 604).
-- For return types that may be a value or None, use `Type | None` instead of `Optional[Type]`.
+- For return types that may be a value or None, use `Type | None` instead of `Optional[Type]`. This is more cleaner. Also type checking does not happen at runtime, so does not affect users using python < 3.10 unless we are using type introspection dynamically at runtime.
 
   - Example:
     ```python
@@ -37,7 +37,6 @@ All code must use explicit type annotations for function signatures, class attri
         ...
     ```
 - Use built-in types where possible (e.g., `list`, `dict`, `str`).
-- Use `typing` module for advanced types (e.g., `Union`, `Callable`, `Any`).
 - Always annotate arguments and return values in public class, functions etc. Exceptions can be tests and private functions.
 
 ## Logging Implementation
@@ -291,3 +290,6 @@ class MyClass:
         from some_module import SomeClass
         instance = SomeClass()
 ```
+
+## Containers
+We are using containers where we do not want to implement any behavior for an object, but useful to have a named and grouped representation of the data. They are defined using `@frozen` from `attrs` to create immutable data structures and available in `ensembl.vep.common.(containers)`.

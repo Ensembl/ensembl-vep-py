@@ -1,18 +1,14 @@
-from __future__ import annotations
+from attrs import define, field
+from typing import TYPE_CHECKING
 
-from dataclasses import dataclass, field 
-from enum import Enum, auto
-from typing import Optional
-from ..sequence import Slice 
-from ..genic import Transcript
+from ensembl.vep.common import ExternalReference
+if TYPE_CHECKING:
+    from ensembl.vep.models.genic import Transcript
 
-@dataclass
+@define(kw_only=True, auto_attribs=True)
 class Gene:
     """
-    Lightweight reference to an Ensembl transcript (Core API object).
-
-    For full transcript data (exons, CDS, UTRs …) the actual Core API
-    transcript object should be fetched via the transcript adaptor.
+    Represents a gene in the Ensembl database.
 
     Attributes:
         stable_id:  Ensembl stable transcript identifier (e.g. "ENST00000366667").
@@ -22,11 +18,9 @@ class Gene:
         version:    Version of the stable identifier.
     """
     stable_id: str
-    name: str
-    symbol: str
-    alternative_symbols: list[str]
-    alternative_names: list[str]
-    version: int
-    slice: Slice
-    transcripts: list[Transcript]
-    biotype: str
+    version: int | None = None
+    name: str | None = None
+    symbol: str | None = None
+    alternative_names: list[ExternalReference] | None = None
+    transcripts: list[Transcript] | None = None
+    biotype: str | None = None

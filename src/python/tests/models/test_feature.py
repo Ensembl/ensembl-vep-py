@@ -16,7 +16,7 @@
 import pytest
 
 from ensembl.vep.models import Feature
-from ensembl.vep.models.slice import Slice
+from ensembl.vep.models.sequence import Slice
 
 
 class TestFeatureInitialization:

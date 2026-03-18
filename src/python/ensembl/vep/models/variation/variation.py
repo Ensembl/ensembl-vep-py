@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from attrs import define, field, frozen
+from attrs import define, field
 from typing import TYPE_CHECKING
 from functools import cached_property
 from threading import Lock
@@ -11,19 +11,6 @@ from ensembl.vep.models import Feature
 from ensembl.vep.models.overlap import OverlapConsequence
 if TYPE_CHECKING:
     from ensembl.vep.models.variation import VariationAllele
-
-
-@frozen
-class VariationLocus:
-    """A lightweight, immutable representation of a variation's genomic position and alleles.
-    
-    Args:
-        start (int): Start position of the variation.
-        end (int): End position of the variation.
-        allele_string (str): String representation of the alleles."""
-    start: int
-    end: int
-    allele_string: str
 
 
 @define(kw_only=True, auto_attribs=True)

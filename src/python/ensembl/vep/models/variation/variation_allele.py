@@ -1,16 +1,14 @@
 from __future__ import annotations
 
 from attrs import define, field
-from typing import TYPE_CHECKING
 from functools import cached_property
 
-from ensembl.vep.common import trim_sequences, shift_sequence
+from ensembl.vep.common import VariationLocus, trim_sequences, shift_sequence
 from ensembl.vep.models import Feature
 # from ensembl.vep.models.overlap import OverlapConsequence, TranscriptVariation, RegulatoryVariation, MotifVariation, IntergenicVariation
-if TYPE_CHECKING:
-    from ensembl.vep.models.variation import VariationLocus
 
 MAX_SEARCH_AREA = 1000
+
 
 @define(kw_only=True, auto_attribs=True)
 class VariationAllele(Feature):
@@ -66,7 +64,6 @@ class VariationAllele(Feature):
             ValueError: If reference or alternate allele is None.
         """
         if self.original_locus is None:
-            from ensembl.vep.models.variation import VariationLocus # local import to avoid circular import
             self.original_locus = VariationLocus(
                 start=self.start,
                 end=self.end,
@@ -98,8 +95,10 @@ class VariationAllele(Feature):
         Raises:
             ValueError: If reference or alternate allele is None.
         """
+        if self.reference_allele is None or self.alternate_allele is None:
+            raise ValueError("Missing reference or alternate allele for shifting")
+
         if self.original_locus is None:
-            from ensembl.vep.models.variation import VariationLocus # local import to avoid circular import
             self.original_locus = VariationLocus(
                 start=self.start,
                 end=self.end,

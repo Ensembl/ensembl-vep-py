@@ -11,8 +11,8 @@ from attrs import define, field
 from functools import cached_property
 from threading import Lock
 
-from ensembl.vep.models.slice import Slice
-from ensembl.vep.models.coord import CoordSystem
+from ensembl.vep.models.sequence import Slice
+from ensembl.vep.models.sequence.coord_system import CoordSystem
 from ensembl.vep.common import CachedAttributeGuardMixin, Strand
 
 logger = logging.getLogger(__name__)

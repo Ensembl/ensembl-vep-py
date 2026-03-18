@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from ensembl.vep.common import ClassSOTerm
-from ensembl.vep.models.variation import Variation, VariationLocus
-from ensembl.vep.models.slice import Slice
+from ensembl.vep.common import ClassSOTerm, VariationLocus
+from ensembl.vep.models.variation import Variation
+from ensembl.vep.models.sequence import Slice
 
 
 @pytest.fixture
