@@ -16,7 +16,7 @@
 import pytest
 from copy import deepcopy
 
-from ensembl.vep.models.slice import Slice
+from ensembl.vep.models.sequence import Slice
 
 
 class TestSliceInitialization:

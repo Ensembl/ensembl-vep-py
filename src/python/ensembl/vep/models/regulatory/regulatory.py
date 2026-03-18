@@ -1,13 +1,7 @@
-@dataclass
-class RegulatoryFeature:
-    """
-    Lightweight reference to an Ensembl regulatory feature (Regulation API).
+from attrs import define
 
-    Attributes:
-        stable_id:       Ensembl stable regulatory feature identifier.
-        feature_type:    Regulatory feature type (e.g. "promoter", "enhancer").
-        slice:           Genomic location.
-    """
-    stable_id: str
-    feature_type: str
-    slice: Optional[Slice] = None
+from ensembl.vep.models import Feature
+
+@define(kw_only=True, auto_attribs=True)
+class Regulatory(Feature):
+    pass
