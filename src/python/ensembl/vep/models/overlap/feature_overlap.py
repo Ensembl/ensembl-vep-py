@@ -11,16 +11,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""FeatureOverlap class."""
 
 from __future__ import annotations
 
-from attr import define, field
 from typing import TYPE_CHECKING
 from functools import cached_property
 from threading import Lock
+from attr import define, field
 
 from ensembl.vep.models import Feature
 from ensembl.vep.common import invalidates
+
 if TYPE_CHECKING:
     from ensembl.vep.models.overlap import OverlapConsequence
 
@@ -29,15 +31,18 @@ if TYPE_CHECKING:
 class FeatureOverlap:
     """
     Represents an overlap between a feature and a overlapping feature, along with the consequences of that overlap.
-    
+
     Attributes:
         feature: The feature that is getting overlapped.
         overlapping_feature: The feature that is overlapping.
         overlap_consequences: A list of consequences the overlapping feature has on the feature.
     """
+
     feature: Feature
     overlapping_feature: Feature
-    overlap_consequences: list[OverlapConsequence] = field(factory=list, init=False, on_setattr=invalidates("__most_severe_consequence", "__consequence_terms"))
+    overlap_consequences: list[OverlapConsequence] = field(
+        factory=list, init=False, on_setattr=invalidates("__most_severe_consequence", "__consequence_terms")
+    )
     _lock: Lock = field(factory=Lock, init=False, repr=False)
 
     @property
@@ -66,7 +71,7 @@ class FeatureOverlap:
                     most_severe_consequence = consequence
                     current_rank = consequence.rank
             return most_severe_consequence
-    
+
     @property
     def consequence_terms(self) -> set[str]:
         """
@@ -76,7 +81,7 @@ class FeatureOverlap:
             set[str]: A set of all consequence terms.
         """
         return self.__consequence_terms
-    
+
     @cached_property
     def __consequence_terms(self) -> set[str]:
         """

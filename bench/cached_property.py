@@ -37,16 +37,16 @@ Result:
     WithCachedPropertyMangling: get                      37.0 ns/call
     WithCachedPropertyMangling: trivial get              39.6 ns/call
 
-As expected, WithProperty is very slow on get due to no caching. WithCachedProperty and WithCachedPropertyMangling 
-are much faster due to caching, there is a small overhead in WithCachedPropertyMangling due to calling the property 
-method to access the cached value, but it is still very fast. WithSetAttr is also fast on get, but object 
-initialization is slow because of __setattr__ being called on object initialization. WithManualCache is slower than 
-WithCachedProperty due to the overhead of the __set__ method in the custom descriptor, it make the attribute a 
-data descriptor instead of a non-data descriptor, which means the descriptor's __get__ method will be called on every 
+As expected, WithProperty is very slow on get due to no caching. WithCachedProperty and WithCachedPropertyMangling
+are much faster due to caching, there is a small overhead in WithCachedPropertyMangling due to calling the property
+method to access the cached value, but it is still very fast. WithSetAttr is also fast on get, but object
+initialization is slow because of __setattr__ being called on object initialization. WithManualCache is slower than
+WithCachedProperty due to the overhead of the __set__ method in the custom descriptor, it make the attribute a
+data descriptor instead of a non-data descriptor, which means the descriptor's __get__ method will be called on every
 access, and not directly from the instance's __dict__ after the first access.
 
-WithCachedPropertyMangling seems to be the best option in terms of performance and safety, it is almost as 
-fast as WithCachedProperty but with the added benefit of making the cached value less accessible and preventing 
+WithCachedPropertyMangling seems to be the best option in terms of performance and safety, it is almost as
+fast as WithCachedProperty but with the added benefit of making the cached value less accessible and preventing
 direct assignment.
 """
 
@@ -54,11 +54,13 @@ import timeit
 import functools
 import statistics
 
+
 class MyCachedProperty(functools.cached_property):
     def __set__(self, obj, value):
         raise AttributeError(
             f"'{self.attrname}' is a cached property — assign to its dependencies, not to it directly"
         )
+
 
 class WithSetAttr:
     def __init__(self):
@@ -70,14 +72,15 @@ class WithSetAttr:
                 f"'{name}' is a cached property — assign to its dependencies, not to it directly"
             )
         super().__setattr__(name, value)
-    
+
     @functools.cached_property
     def value(self):
         return sum(range(self.x))
 
     @functools.cached_property
     def tvalue(self):
-        return self.x * 2       # trivial compute
+        return self.x * 2  # trivial compute
+
 
 class WithProperty:
     def __init__(self):
@@ -86,10 +89,11 @@ class WithProperty:
     @property
     def value(self):
         return sum(range(self.x))
-    
+
     @property
     def tvalue(self):
-        return self.x * 2       # trivial compute
+        return self.x * 2  # trivial compute
+
 
 class WithCachedProperty:
     def __init__(self):
@@ -98,10 +102,11 @@ class WithCachedProperty:
     @functools.cached_property
     def value(self):
         return sum(range(self.x))
-    
+
     @functools.cached_property
     def tvalue(self):
-        return self.x * 2       # trivial compute
+        return self.x * 2  # trivial compute
+
 
 class WithManualCache:
     def __init__(self):
@@ -110,11 +115,12 @@ class WithManualCache:
     @MyCachedProperty
     def value(self):
         return sum(range(self.x))
-    
+
     @MyCachedProperty
     def tvalue(self):
-        return self.x * 2       # trivial compute
-    
+        return self.x * 2  # trivial compute
+
+
 class WithCachedPropertyMangling:
     def __init__(self):
         self.x = 1000
@@ -126,30 +132,32 @@ class WithCachedPropertyMangling:
     @functools.cached_property
     def __value(self):
         return sum(range(self.x))
-    
+
     @property
     def tvalue(self):
         return self.__tvalue
 
     @functools.cached_property
     def __tvalue(self):
-        return self.x * 2       # trivial compute
+        return self.x * 2  # trivial compute
+
 
 def bench(cls, n=10_000_000):
-    obj = cls()                            # warm up
+    obj = cls()  # warm up
     times = timeit.repeat("cls()", globals={"cls": cls}, number=n, repeat=5)
     mean_ns = statistics.mean(times) / n * 1e9
     print(f"{cls.__name__:22}:", f"{'init':22}", f"{mean_ns:6.1f} ns/call")
 
-    _ = obj.value                  # warm up
+    _ = obj.value  # warm up
     times = timeit.repeat("obj.value", globals={"obj": obj}, number=n, repeat=5)
     mean_ns = statistics.mean(times) / n * 1e9
     print(f"{cls.__name__:22}:", f"{'get':22}", f"{mean_ns:6.1f} ns/call")
 
-    _ = obj.tvalue                  # warm up
+    _ = obj.tvalue  # warm up
     times = timeit.repeat("obj.tvalue", globals={"obj": obj}, number=n, repeat=5)
     mean_ns = statistics.mean(times) / n * 1e9
     print(f"{cls.__name__:22}:", f"{'trivial get':22}", f"{mean_ns:6.1f} ns/call")
+
 
 bench(WithSetAttr)
 bench(WithProperty)

@@ -26,14 +26,15 @@ class TestSliceInitialization:
         """Test Slice initialization without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = Slice(
-                "chromosome", 
-                seq_region_name="1", 
-                seq_region_length=1000, 
-                start=10, 
-                end=200, 
+                "chromosome",
+                seq_region_name="1",
+                seq_region_length=1000,
+                start=10,
+                end=200,
                 strand=1,
-                seq=None
+                seq=None,
             )
+
 
 class TestSliceProperties:
     """Test property accessors."""
@@ -42,15 +43,15 @@ class TestSliceProperties:
     def slice(self) -> Slice:
         """Create a Slice instance for testing."""
         return Slice(
-            coord_system="chromosome", 
-            seq_region_name="1", 
-            seq_region_length=1000, 
-            start=10, 
-            end=200, 
+            coord_system="chromosome",
+            seq_region_name="1",
+            seq_region_length=1000,
+            start=10,
+            end=200,
             strand=1,
-            seq=None
+            seq=None,
         )
-    
+
     def test_core_properties(self, slice: Slice) -> None:
         """Test core properties are set correctly."""
         assert slice.coord_system == "chromosome"
@@ -61,6 +62,7 @@ class TestSliceProperties:
         assert slice.strand == 1
         assert slice.seq is None
 
+
 class TestSliceEquality:
     """Test equality comparison."""
 
@@ -68,13 +70,13 @@ class TestSliceEquality:
     def slice(self) -> Slice:
         """Create first Slice instance for testing."""
         return Slice(
-            coord_system="chromosome", 
-            seq_region_name="1", 
-            seq_region_length=1000, 
-            start=10, 
-            end=200, 
+            coord_system="chromosome",
+            seq_region_name="1",
+            seq_region_length=1000,
+            start=10,
+            end=200,
             strand=1,
-            seq=None
+            seq=None,
         )
 
     def test_equal_slices(self, slice: Slice) -> None:
@@ -120,15 +122,17 @@ class TestSliceEquality:
 
     def test_different_type(self, slice: Slice) -> None:
         """Test comparing Slice to different type returns False."""
+
         class AnotherSlice(Slice):
             pass
+
         slice2 = AnotherSlice(
-            coord_system="chromosome", 
-            seq_region_name="1", 
-            seq_region_length=1000, 
-            start=10, 
-            end=200, 
+            coord_system="chromosome",
+            seq_region_name="1",
+            seq_region_length=1000,
+            start=10,
+            end=200,
             strand=1,
-            seq=None
+            seq=None,
         )
         assert slice != slice2

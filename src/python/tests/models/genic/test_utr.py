@@ -18,22 +18,15 @@ import pytest
 from ensembl.vep.models.genic.utr import UTR
 from ensembl.vep.models.genic.transcript import Transcript
 
+
 @pytest.fixture
 def transcript():
-    return Transcript(
-        start=1, 
-        end=100, 
-        strand=1,
-        stable_id="ENST00000000001"
-    )
+    return Transcript(start=1, end=100, strand=1, stable_id="ENST00000000001")
+
 
 @pytest.fixture
 def utr(transcript):
-        return UTR(
-            start=10, 
-            end=20, 
-            strand=1
-        )
+    return UTR(start=10, end=20, strand=1)
 
 
 class TestUTRInitialization:
@@ -43,6 +36,7 @@ class TestUTRInitialization:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = UTR(10, end=20, strand=1)
+
 
 class TestUTRProperties:
     """Test UTR properties."""

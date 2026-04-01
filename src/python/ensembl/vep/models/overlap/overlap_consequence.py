@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""OverlapConsequence class."""
 
 from __future__ import annotations
 
@@ -19,12 +20,13 @@ from attrs import define, field
 from ensembl.vep.models import Feature
 from ensembl.vep.common import ConsequenceImpact
 
+
 @define(kw_only=True, auto_attribs=True)
 class OverlapConsequence:
     """
-    A predicted consequence of an overlap between a feature and a base feature. 
-    
-    This is typically used to represent the consequence of a variant on a transcript, but it can be used 
+    A predicted consequence of an overlap between a feature and a base feature.
+
+    This is typically used to represent the consequence of a variant on a transcript, but it can be used
     for any type of feature overlap.
 
     Attributes:
@@ -39,6 +41,7 @@ class OverlapConsequence:
         feature_type: The type of the overlapped feature that is affected by this consequence type, e.g. Transcript.
         overlapping_feature_type: The type of the overlapping feature that causes this consequence type, e.g. VariationAllele.
     """
+
     term: str
     accession: str
     is_default: bool = field(default=False)

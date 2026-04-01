@@ -11,13 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Translation class."""
 
 from __future__ import annotations
 
-from attrs import define, field
 from typing import TYPE_CHECKING
 from functools import cached_property
 from threading import Lock
+from attrs import define, field
 
 from ensembl.vep.common import invalidates
 
@@ -26,7 +27,7 @@ if TYPE_CHECKING:
 
 
 @define(kw_only=True, auto_attribs=True)
-class Translation():
+class Translation:
     """
     Represents a transcript.
 
@@ -36,6 +37,7 @@ class Translation():
         exon_coding_start: The position of the first coding base in the start exon, relative to the start of the exon. This is 1-based and defaults to 1.
         exon_coding_end: The position of the last coding base in the end exon, relative to the start of the exon. This is 1-based and defaults to length of the end exon.
     """
+
     start: int = field(on_setattr=invalidates("__length"))
     end: int = field(on_setattr=invalidates("__length"))
     stable_id: str
@@ -92,10 +94,10 @@ class Translation():
             int | None: The position of the last coding base in the end exon, relative to the start of the exon.
         """
         if (
-                self.transcript is None
-                or self.transcript.spliced_exons is None
-                or len(self.transcript.spliced_exons) == 0
+            self.transcript is None
+            or self.transcript.spliced_exons is None
+            or len(self.transcript.spliced_exons) == 0
         ):
             return None
-        
+
         return len(self.transcript.spliced_exons[-1].seq)

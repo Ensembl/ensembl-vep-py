@@ -11,13 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Common functions."""
 
 from collections import deque
 from contextlib import suppress
 import logging
 import os
+import sys
 
 logger = logging.getLogger(__name__)
+
 
 def invalidates(*cached_names):
     """
@@ -29,16 +32,21 @@ def invalidates(*cached_names):
     Returns:
         Callable: An on_setattr hook function.
     """
-    def hook(instance, attrib, new_value):
+
+    def hook(instance, _, new_value):
         for name in cached_names:
             if not name.startswith("__"):
-                logger.debug(f"Invalidation only works for private properties (starting with __), but got '{name}'")
+                logger.debug(
+                    f"Invalidation only works for private properties (starting with __), but got '{name}'"
+                )
             with suppress(AttributeError):
                 object.__delattr__(instance, f"_{type(instance).__name__}{name}")
 
         # attrs requires the hook to return the value
         return new_value
+
     return hook
+
 
 def trim_sequences(
     ref: str,
@@ -128,6 +136,7 @@ def trim_sequences(
 
     return (ref, alt, start, end, changed)
 
+
 def shift_sequence(
     seq: str,
     post_seq: str,
@@ -156,7 +165,7 @@ def shift_sequence(
     """
     if seq is None or post_seq is None or pre_seq is None:
         raise ValueError("Missing sequence to shift")
-    
+
     if seq == "":
         return (0, seq, start, end, False)
 
@@ -207,15 +216,16 @@ def shift_sequence(
 
             changed = True
 
-    return (
-        shift_length,
-        "".join(seq_d),
-        start,
-        end,
-        changed
-    )
+    return (shift_length, "".join(seq_d), start, end, changed)
 
-def setup_logging(level: str = "INFO"):
+
+def setup_logging(level: str = "INFO") -> None:
+    """Set up logging configuration.
+
+    Args:
+        level (str): The logging level to use (default: "INFO").
+    """
+    output_file = "DUMMY_OUTPUT_FILE"
     logging.basicConfig(
         level=getattr(logging, level.upper()),
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
@@ -223,5 +233,5 @@ def setup_logging(level: str = "INFO"):
         handlers=[
             logging.StreamHandler(sys.stdout),
             logging.FileHandler(os.path.join(output_file, "_warnings.txt")),
-        ]
+        ],
     )

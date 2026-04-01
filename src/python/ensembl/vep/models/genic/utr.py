@@ -11,15 +11,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""UTR class."""
 
 from __future__ import annotations
 
-from attrs import define, field
 from typing import TYPE_CHECKING
+from attrs import define, field
 
 from ensembl.vep.models import Feature
+
 if TYPE_CHECKING:
     from ensembl.vep.models.genic import Transcript
+
 
 @define(kw_only=True, auto_attribs=True)
 class UTR(Feature):
@@ -29,4 +32,5 @@ class UTR(Feature):
     Attributes:
         transcript: The transcript to which this UTR belongs.
     """
+
     transcript: Transcript | None = field(default=None, init=False)

@@ -18,39 +18,26 @@ import pytest
 from ensembl.vep.models.genic import Transcript, Exon, Intron, Translation, CDS
 from ensembl.vep.common import Attribute
 
+
 @pytest.fixture
 def exon():
-    return Exon(
-        start=1, 
-        end=10, 
-        strand=1, 
-        stable_id="ENSE00000000001"
-    )
+    return Exon(start=1, end=10, strand=1, stable_id="ENSE00000000001")
+
 
 @pytest.fixture
 def intron():
-    return Intron(
-        start=11, 
-        end=19, 
-        strand=1
-    )
+    return Intron(start=11, end=19, strand=1)
+
 
 @pytest.fixture
 def transcript(exon, intron):
-    return Transcript(
-        start=1, 
-        end=100, 
-        strand=1, 
-        stable_id="ENST00000000001"
-    )
+    return Transcript(start=1, end=100, strand=1, stable_id="ENST00000000001")
+
 
 @pytest.fixture
 def translation():
-    return Translation(
-        start=10, 
-        end=90,
-        stable_id="ENSP00000000001"
-    )
+    return Translation(start=10, end=90, stable_id="ENSP00000000001")
+
 
 class TestTranscriptInitialization:
     """Test Transcript initialization."""
@@ -59,6 +46,7 @@ class TestTranscriptInitialization:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = Transcript(1, end=100, strand=1, stable_id="ENST00000000001")
+
 
 class TestTranscriptProperties:
     """Test Transcript properties."""
@@ -101,9 +89,9 @@ class TestTranscriptProperties:
         assert transcript.end_exon_index == -1
 
         transcript.spliced_exons = [
-            Exon(start=1, end=10, strand=1, stable_id="ENSE00000000001"), 
+            Exon(start=1, end=10, strand=1, stable_id="ENSE00000000001"),
             Exon(start=20, end=30, strand=1, stable_id="ENSE00000000002"),
-            Exon(start=40, end=50, strand=1, stable_id="ENSE00000000003")
+            Exon(start=40, end=50, strand=1, stable_id="ENSE00000000003"),
         ]
 
         assert transcript.end_exon_index == 2
@@ -113,9 +101,9 @@ class TestTranscriptProperties:
         assert transcript.spliced_seq is None
 
         transcript.spliced_exons = [
-            Exon(start=1, end=10, strand=1, stable_id="ENSE00000000001"), 
+            Exon(start=1, end=10, strand=1, stable_id="ENSE00000000001"),
             Exon(start=20, end=30, strand=1, stable_id="ENSE00000000002"),
-            Exon(start=40, end=50, strand=1, stable_id="ENSE00000000003")
+            Exon(start=40, end=50, strand=1, stable_id="ENSE00000000003"),
         ]
 
         # Mock exon sequences for testing
@@ -134,20 +122,16 @@ class TestTranscriptProperties:
 
         # Mock spliced_seq for testing
         transcript.spliced_exons = [
-            Exon(start=1, end=10, strand=1, stable_id="ENSE00000000001"), 
+            Exon(start=1, end=10, strand=1, stable_id="ENSE00000000001"),
             Exon(start=20, end=30, strand=1, stable_id="ENSE00000000002"),
-            Exon(start=40, end=50, strand=1, stable_id="ENSE00000000003")
+            Exon(start=40, end=50, strand=1, stable_id="ENSE00000000003"),
         ]
 
         transcript.spliced_exons[0].seq = "A" * 10
         transcript.spliced_exons[1].seq = "C" * 11
         transcript.spliced_exons[2].seq = "G" * 11
 
-        cds = CDS(
-            start=1, 
-            end=50, 
-            strand=1
-        )
+        cds = CDS(start=1, end=50, strand=1)
         cds.seq = "A" * 10 + "C" * 11 + "G" * 11
         cds.transcript = transcript
         cds.translation = translation
@@ -171,9 +155,9 @@ class TestTranscriptProperties:
 
         transcript.translation = translation
         transcript.spliced_exons = [
-            Exon(start=1, end=10, strand=1, stable_id="ENSE00000000001"), 
+            Exon(start=1, end=10, strand=1, stable_id="ENSE00000000001"),
             Exon(start=20, end=30, strand=1, stable_id="ENSE00000000002"),
-            Exon(start=40, end=50, strand=1, stable_id="ENSE00000000003")
+            Exon(start=40, end=50, strand=1, stable_id="ENSE00000000003"),
         ]
         assert transcript.cdna_coding_end == 32
 
@@ -187,9 +171,9 @@ class TestTranscriptProperties:
         assert transcript.cds_start is None
 
         transcript.spliced_exons = [
-            Exon(start=1, end=10, strand=1, stable_id="ENSE00000000001"), 
+            Exon(start=1, end=10, strand=1, stable_id="ENSE00000000001"),
             Exon(start=20, end=30, strand=1, stable_id="ENSE00000000002"),
-            Exon(start=40, end=50, strand=1, stable_id="ENSE00000000003")
+            Exon(start=40, end=50, strand=1, stable_id="ENSE00000000003"),
         ]
         assert transcript.cds_start == 1
 
@@ -201,22 +185,22 @@ class TestTranscriptProperties:
         assert transcript.cds_end is None
 
         transcript.spliced_exons = [
-            Exon(start=1, end=10, strand=1, stable_id="ENSE00000000001"), 
+            Exon(start=1, end=10, strand=1, stable_id="ENSE00000000001"),
             Exon(start=20, end=30, strand=1, stable_id="ENSE00000000002"),
-            Exon(start=40, end=50, strand=1, stable_id="ENSE00000000003")
+            Exon(start=40, end=50, strand=1, stable_id="ENSE00000000003"),
         ]
         assert transcript.cds_end == 50
 
     def test_5_prime_utr(self, transcript, translation):
         """Test that 5_prime_utr is calculated correctly."""
-        # assert transcript.five_prime_utr is None 
-        
+        # assert transcript.five_prime_utr is None
+
         # 5_prime_utr accesses spliced_seq and gets into deadlock, workaround?
 
     def test_3_prime_utr(self, transcript, translation):
         """Test that 3_prime_utr is calculated correctly."""
         # assert transcript.three_prime_utr is None
-        
+
         # 3_prime_utr accesses spliced_seq and gets into deadlock, workaround?
 
     def test_translated_seq(self, transcript, translation):
@@ -226,4 +210,5 @@ class TestTranscriptProperties:
 
 class TestTranscriptEquality:
     """Test equality comparison."""
+
     pass

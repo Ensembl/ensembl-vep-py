@@ -11,11 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""TranscriptHaplotype class."""
 
 from attrs import define
 
-from ensembl.vep.models.overlap import MultiFeatureOverlap
+from ensembl.vep.models.overlap import MultipleFeatureOverlap
+
 
 @define(kw_only=True, auto_attribs=True)
-class TranscriptHaplotype(MultiFeatureOverlap):
+class TranscriptHaplotype(MultipleFeatureOverlap):
     pass
