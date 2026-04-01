@@ -37,7 +37,7 @@ class FeatureOverlap:
     """
     feature: Feature
     overlapping_feature: Feature
-    overlap_consequences: list[OverlapConsequence] = field(default=[], init=False, on_setattr=invalidates("most_severe_consequence, consequence_terms"))
+    overlap_consequences: list[OverlapConsequence] = field(factory=list, init=False, on_setattr=invalidates("__most_severe_consequence", "__consequence_terms"))
     _lock: Lock = field(factory=Lock, init=False, repr=False)
 
     @property
@@ -59,11 +59,13 @@ class FeatureOverlap:
             OverlapConsequence | None: The most severe consequence, or None if there are no consequences.
         """
         with self._lock:
+            most_severe_consequence = None
             current_rank = -1
             for consequence in self.overlap_consequences:
                 if consequence.rank > current_rank:
-                    self.most_severe_consequence = consequence
+                    most_severe_consequence = consequence
                     current_rank = consequence.rank
+            return most_severe_consequence
     
     @property
     def consequence_terms(self) -> set[str]:

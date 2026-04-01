@@ -17,6 +17,7 @@ from __future__ import annotations
 from attrs import define, field
 
 from ensembl.vep.models import Feature
+from ensembl.vep.common import ConsequenceImpact
 
 @define(kw_only=True, auto_attribs=True)
 class OverlapConsequence:
@@ -40,9 +41,9 @@ class OverlapConsequence:
     """
     term: str
     accession: str
-    is_default: bool = field(default=False, init=False)
-    rank: int = field(default=0, init=False)
-    tier: int = field(default=0, init=False)
-    impact: str | None = field(default=None, init=False)
-    feature_type: type[Feature] | None = field(default=None, init=False)
-    overlapping_feature_type: type[Feature] | None = field(default=None, init=False)
+    is_default: bool = field(default=False)
+    rank: int = field(default=0)
+    tier: int = field(default=0)
+    impact: ConsequenceImpact | None = field(default=ConsequenceImpact.LOW)
+    feature_type: type[Feature] | None = field(default=type(Feature))
+    overlapping_feature_type: type[Feature] | None = field(default=type(Feature))
