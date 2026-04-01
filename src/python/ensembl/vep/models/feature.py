@@ -1,8 +1,3 @@
-"""
-Feature class: Python version of Ensembl Feature.pm
-
-Implements core feature logic using attrs, following project developer guide.
-"""
 from __future__ import annotations
 
 import logging
@@ -13,13 +8,13 @@ from threading import Lock
 
 from ensembl.vep.models.sequence import Slice
 from ensembl.vep.models.sequence.coord_system import CoordSystem
-from ensembl.vep.common import CachedAttributeGuardMixin, Strand
+from ensembl.vep.common import Strand, invalidates
 
 logger = logging.getLogger(__name__)
 
 
 @define(kw_only=True, auto_attribs=True)
-class Feature(CachedAttributeGuardMixin):
+class Feature():
     """
     Represents an Ensembl-specific sequence feature describing a location on a sequence in an arbitrary coordinate system.
 
@@ -37,27 +32,25 @@ class Feature(CachedAttributeGuardMixin):
         slice (Slice | None): Slice object describing the feature context.
         seq (Any | None): Associated biological sequence.
     """
-    start: int
-    end: int
-    strand: Strand
-    slice: "Slice | None"
-    seq: Any | None = field(default = None)
+    start: int = field(on_setattr=invalidates("__length", "__seq_region_start"))
+    end: int = field(on_setattr=invalidates("__length", "__seq_region_end"))
+    strand: Strand = field(on_setattr=invalidates("__seq_region_strand"))
+    slice: Slice | None = field(default=None, on_setattr=invalidates("__seq_region_start", "__seq_region_end", "__seq_region_strand"))
+    seq: Any | None = field(default=None)
     _lock: Lock = field(factory=Lock, init=False, repr=False)
-    _DERIVED = frozenset({
-        "length", 
-        "seq_region_start", 
-        "seq_region_end", 
-        "seq_region_strand"
-    })
-    _INVALIDATES = {
-        "start":["length", "seq_region_start"],
-        "end":["length", "seq_region_end"],
-        "strand":["seq_region_strand"],
-        "slice":["seq_region_start", "seq_region_end", "seq_region_strand"]
-    }
 
-    @cached_property
+    @property
     def length(self) -> int:
+        """
+        Public accessor for the __length.
+
+        Returns:
+            int: The length of the feature.
+        """
+        return self.__length
+        
+    @cached_property
+    def __length(self) -> int:
         """
         Returns the length of the feature.
 
@@ -67,8 +60,18 @@ class Feature(CachedAttributeGuardMixin):
         with self._lock:
             return self.end - self.start + 1
     
-    @cached_property
+    @property
     def seq_region_start(self) -> int:
+        """
+        Public accessor for the __seq_region_start.
+
+        Returns:
+            int: The start position in the sequence region.
+        """
+        return self.__seq_region_start
+
+    @cached_property
+    def __seq_region_start(self) -> int:
         """
         Returns the start position in the sequence region.
 
@@ -81,8 +84,18 @@ class Feature(CachedAttributeGuardMixin):
                 return None
             return self.slice.start + self.start
 
-    @cached_property
+    @property
     def seq_region_end(self) -> int:
+        """
+        Public accessor for the __seq_region_end.
+
+        Returns:
+            int: The end position in the sequence region.
+        """
+        return self.__seq_region_end
+    
+    @cached_property
+    def __seq_region_end(self) -> int:
         """
         Returns the end position in the sequence region.
 
@@ -95,8 +108,18 @@ class Feature(CachedAttributeGuardMixin):
                 return None
             return self.slice.start + self.end
 
-    @cached_property
+    @property
     def seq_region_strand(self) -> Strand:
+        """
+        Public accessor for the __seq_region_strand.
+
+        Returns:
+            Strand: The strand in the sequence region.
+        """
+        return self.__seq_region_strand
+
+    @cached_property
+    def __seq_region_strand(self) -> Strand:
         """
         Returns the strand in the sequence region.
 

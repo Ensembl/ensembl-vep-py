@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from functools import cached_property
 from threading import Lock
 
-from ensembl.vep.common import ClassSOTerm
+from ensembl.vep.common import ClassSOTerm, invalidates
 from ensembl.vep.models import Feature
 from ensembl.vep.models.overlap import OverlapConsequence
 if TYPE_CHECKING:
@@ -32,47 +32,32 @@ class Variation(Feature):
         class_so_term (str | None): Sequence Ontology term describing the class of the variation.
         most_severe_consequence (OverlapConsequence | None): Most severe consequence type for the variation.
     """
-    stable_id: str | None = None
-    allele_string: str | None = None
-    is_somatic: bool | None = False
-    minimise_alleles: bool = False
-    shift_alleles: bool = False
+    stable_id: str | None = field(default=None)
+    allele_string: str | None = field(default=None, on_setattr=invalidates("variation_alleles", "class_so_term"))
+    is_somatic: bool = field(default=False)
     _lock: Lock = field(factory=Lock, init=False, repr=False)
-    _DERIVED = frozenset({
-        "variation_alleles",
-        "most_severe_consequence",
-        "class_so_term"
-    })
-    _INVALIDATES = {
-        "variation_alleles":["most_severe_consequence"],
-        "allele_string":["variation_alleles", "class_so_term"]
-    }
 
-    def __setattr__(self, name, value):
-        if name == "minimise_alleles":
-            if getattr(self, "minimise_alleles", False) and not value:
-                raise AttributeError(f"Cannot reset '{name}' after it has been set.")
-            elif value:
-                for variation_allele in self.variation_alleles or []:
-                    variation_allele.minimise()
-        if name == "shift_alleles":
-            if getattr(self, "shift_alleles", False) and not value:
-                raise AttributeError(f"Cannot reset '{name}' after it has been set.")
-            elif value:
-                for variation_allele in self.variation_alleles or []:
-                    variation_allele.shift()
-        return super().__setattr__(name, value)
-
-    @cached_property
+    @property
     def variation_alleles(self) -> list[VariationAllele]:
+        """Public accessor for the __variation_alleles.
+        
+        Returns:
+            list[VariationAllele]: The list of VariationAllele objects for the variation.
+        """
+        return self.__variation_alleles
+    
+    @cached_property
+    def __variation_alleles(self) -> list[VariationAllele]:
         """Returns the list of VariationAllele objects for the variation.
         
         Returns:
             list[VariationAllele]: List of VariationAllele objects.
         """
-        from ensembl.vep.models.variation import VariationAllele # local import to avoid circular import
+        invalidates("most_severe_consequence")
 
         with self._lock:
+            from ensembl.vep.models.variation import VariationAllele
+
             variation_alleles = []
             alleles = (self.allele_string or "").split("/")
 
@@ -89,18 +74,21 @@ class Variation(Feature):
                     alternate_allele=alt
                 )
 
-                if self.minimise_alleles:
-                    variation_allele.minimise()
-
-                if self.shift_alleles:
-                    variation_allele.shift()
-                
                 variation_alleles.append(variation_allele)
 
             return variation_alleles
 
-    @cached_property
+    @property
     def most_severe_consequence(self) -> OverlapConsequence | None:
+        """Public accessor for the __most_severe_consequence.
+        
+        Returns:
+            OverlapConsequence | None: The most severe consequence type for the variation or None if not deducible.
+        """
+        return self.__most_severe_consequence
+    
+    @cached_property
+    def __most_severe_consequence(self) -> OverlapConsequence | None:
         """Returns the most severe consequence type for the variation.
         
         Returns:
@@ -118,8 +106,17 @@ class Variation(Feature):
         
         return highest
     
+    @property
+    def class_so_term(self) -> ClassSOTerm | None:
+        """Public accessor for the __class_so_term.
+        
+        Returns:
+            ClassSOTerm | None: The SO term for the class of the variation.
+        """
+        return self.__class_so_term
+    
     @cached_property
-    def class_so_term(self: str, ref_correct: bool = True) -> ClassSOTerm | None:
+    def __class_so_term(self: str, ref_correct: bool = True) -> ClassSOTerm | None:
         """
         Return the SO term for the class of the variation.
 
@@ -186,3 +183,13 @@ class Variation(Feature):
                     cls = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
 
         return cls
+    
+    def minimise_alleles(self) -> None:
+        """Minimises all alleles."""
+        for variation_allele in self.variation_alleles or []:
+            variation_allele.minimise()
+
+    def shift_alleles(self) -> None:
+        """Shifts all alleles."""
+        for variation_allele in self.variation_alleles or []:
+            variation_allele.shift()

@@ -72,8 +72,11 @@ class TestFeatureProperties:
 
     def test_length_immutable(self, feature: Feature) -> None:
         """Test length cannot be directly set."""
-        with pytest.raises(AttributeError, match="'length' is a cached property and cannot be reassigned"):
+        with pytest.raises(AttributeError, match="property 'length' of 'Feature' object has no setter"):
             feature.length = None
+
+        with pytest.raises(AttributeError, match="'Feature' object has no attribute '_TestFeatureProperties__length'"):
+            feature.__length = None
 
     def test_length_update(self, feature: Feature) -> None:
         """Test length updates when start or end changes."""
@@ -99,8 +102,11 @@ class TestFeatureProperties:
 
     def test_seq_region_start_immutable(self, feature: Feature) -> None:
         """Test seq_region_start cannot be directly set."""
-        with pytest.raises(AttributeError, match="'seq_region_start' is a cached property and cannot be reassigned"):
+        with pytest.raises(AttributeError, match="property 'seq_region_start' of 'Feature' object has no setter"):
             feature.seq_region_start = None
+
+        with pytest.raises(AttributeError, match="'Feature' object has no attribute '_TestFeatureProperties__seq_region_start'"):
+            feature.__seq_region_start = None
 
     def test_seq_region_start_update(self, feature: Feature, slice: Slice) -> None:
         """Test seq_region_start updates when start changes."""
@@ -124,8 +130,11 @@ class TestFeatureProperties:
 
     def test_seq_region_end_immutable(self, feature: Feature) -> None:
         """Test seq_region_end cannot be directly set."""
-        with pytest.raises(AttributeError, match="'seq_region_end' is a cached property and cannot be reassigned"):
+        with pytest.raises(AttributeError, match="property 'seq_region_end' of 'Feature' object has no setter"):
             feature.seq_region_end = None
+
+        with pytest.raises(AttributeError, match="'Feature' object has no attribute '_TestFeatureProperties__seq_region_end'"):
+            feature.__seq_region_end = None
 
     def test_seq_region_end_update(self, feature: Feature, slice: Slice) -> None:
         """Test seq_region_end updates when end changes."""
@@ -155,8 +164,11 @@ class TestFeatureProperties:
 
     def test_seq_region_strand_immutable(self, feature: Feature) -> None:
         """Test seq_region_strand cannot be directly set."""
-        with pytest.raises(AttributeError, match="'seq_region_strand' is a cached property and cannot be reassigned"):
+        with pytest.raises(AttributeError, match="property 'seq_region_strand' of 'Feature' object has no setter"):
             feature.seq_region_strand = None
+
+        with pytest.raises(AttributeError, match="'Feature' object has no attribute '_TestFeatureProperties__seq_region_strand'"):
+            feature.__seq_region_strand = None
 
     def test_seq_region_strand_update(self, feature: Feature, slice: Slice) -> None:
         """Test seq_region_strand updates when strand changes."""

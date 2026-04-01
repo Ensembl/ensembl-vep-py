@@ -43,18 +43,24 @@ class TestCoordSystemProperties:
         assert coord.alias_to is None
         assert coord.rank is None
 
-    def test_is_chromosome_level(self, coord):
+    def test_is_some_level(self, coord):
         """Test is_chromosome_level property."""
         assert coord.is_chromosome_level is True
         assert coord.is_sequence_level is False
         assert coord.is_toplevel is False
 
-    def test_is_chromosome_level_immutable(self, coord):
+    def test_is_some_level_immutable(self, coord):
         """Test is_chromosome_level property is cached and immutable."""
-        with pytest.raises(AttributeError, match="'is_chromosome_level' is a cached property and cannot be reassigned"):
+        with pytest.raises(AttributeError, match="property 'is_chromosome_level' of 'CoordSystem' object has no setter"):
             coord.is_chromosome_level = False
 
-    def test_is_chromosome_level_update(self, coord):
+        with pytest.raises(AttributeError, match="property 'is_sequence_level' of 'CoordSystem' object has no setter"):
+            coord.is_sequence_level = True
+
+        with pytest.raises(AttributeError, match="property 'is_toplevel' of 'CoordSystem' object has no setter"):
+            coord.is_toplevel = True
+
+    def test_is_some_level_update(self, coord):
         """Test is_chromosome_level property update."""
         assert coord.is_chromosome_level is True
         assert coord.is_sequence_level is False

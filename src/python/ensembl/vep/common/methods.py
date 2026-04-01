@@ -1,7 +1,31 @@
 
 from collections import deque
+from contextlib import suppress
 import logging
 import os
+
+logger = logging.getLogger(__name__)
+
+def invalidates(*cached_names):
+    """
+    Returns an attrs on_setattr hook that clears the named cached_property entries whenever the field is set.
+
+    Args:
+        *cached_names: The names of the cached properties to invalidate.
+
+    Returns:
+        Callable: An on_setattr hook function.
+    """
+    def hook(instance, attrib, new_value):
+        for name in cached_names:
+            if not name.startswith("__"):
+                logger.debug(f"Invalidation only works for private properties (starting with __), but got '{name}'")
+            with suppress(AttributeError):
+                object.__delattr__(instance, f"_{type(instance).__name__}{name}")
+
+        # attrs requires the hook to return the value
+        return new_value
+    return hook
 
 def trim_sequences(
     ref: str,
@@ -115,19 +139,21 @@ def shift_sequence(
         reverse: If True, shift in the 5' direction; otherwise 3'.
 
     Returns:
-        Tuple of (shift_length, shifted_seq, new_start, new_end).
+        Tuple of (shift_length, shifted_seq, new_start, new_end, changed).
     """
     if seq is None or post_seq is None or pre_seq is None:
         raise ValueError("Missing sequence to shift")
     
     if seq == "":
-        return (0, seq, start, end)
+        return (0, seq, start, end, False)
 
     seq_len = len(seq)
     shift_length = 0
 
     # Use deques for O(1) rotation instead of repeated string slicing
     seq_d = deque(seq)
+
+    changed = False
 
     if reverse:
         pre_len = len(pre_seq)
@@ -146,6 +172,8 @@ def shift_sequence(
 
             # Rotate allele: move last char to front
             seq_d.rotate(1)
+
+            changed = True
     else:
         post_len = len(post_seq)
         loop_limit = post_len - seq_len + 1
@@ -164,11 +192,14 @@ def shift_sequence(
             # Rotate allele: move first char to end
             seq_d.rotate(-1)
 
+            changed = True
+
     return (
         shift_length,
         "".join(seq_d),
         start,
         end,
+        changed
     )
 
 def setup_logging(level: str = "INFO"):

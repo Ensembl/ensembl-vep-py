@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from ensembl.vep.common import ClassSOTerm, VariationLocus
+from ensembl.vep.common import ClassSOTerm, Locus
 from ensembl.vep.models.variation import Variation
 from ensembl.vep.models.sequence import Slice
 
@@ -64,34 +64,6 @@ def deletion_variation(slice):
         allele_string="ATC/A",
     )
 
-class TestVariationLocus:
-    """Tests for the VariationLocus frozen attrs class."""
-
-    def test_initialization(self):
-        """Test that a VariationLocus can be initialized with the correct attributes."""
-        locus = VariationLocus(start=100, end=200, allele_string="A/T")
-        assert locus.start == 100
-        assert locus.end == 200
-        assert locus.allele_string == "A/T"
-
-    def test_immutability(self):
-        """Test that the attributes of VariationLocus cannot be modified after initialization."""
-        locus = VariationLocus(start=100, end=200, allele_string="A/T")
-        with pytest.raises(AttributeError):
-            locus.start = 200
-
-    def test_equality(self):
-        """Test that two VariationLocus instances with the same attributes are considered equal."""
-        locus1 = VariationLocus(start=100, end=200, allele_string="A/T")
-        locus2 = VariationLocus(start=100, end=200, allele_string="A/T")
-        assert locus1 == locus2
-
-    def test_inequality(self):
-        """Test that two VariationLocus instances with different attributes are considered not equal."""
-        locus1 = VariationLocus(start=100, end=200, allele_string="A/T")
-        locus2 = VariationLocus(start=100, end=200, allele_string="A/G")
-        assert locus1 != locus2
-
 
 class TestVariationProperties:
     """Tests property accessors and default values."""
@@ -114,22 +86,20 @@ class TestVariationProperties:
         """Test default values for optional attributes."""
         assert variation.stable_id is None
         assert variation.is_somatic is False
-        assert variation.minimise_alleles is False
-        assert variation.shift_alleles is False
 
     def test_variation_alleles_immutable(self, variation):
         """Test that variation_alleles cannot be directly set."""
-        with pytest.raises(AttributeError, match="'variation_alleles' is a cached property and cannot be reassigned"):
+        with pytest.raises(AttributeError, match="property 'variation_alleles' of 'Variation' object has no setter"):
             variation.variation_alleles = []
 
     def test_most_severe_consequence_immutable(self, variation):
         """Test that most_severe_consequence cannot be directly set."""
-        with pytest.raises(AttributeError, match="'most_severe_consequence' is a cached property and cannot be reassigned"):
+        with pytest.raises(AttributeError, match="property 'most_severe_consequence' of 'Variation' object has no setter"):
             variation.most_severe_consequence = "some value"
 
     def test_class_so_term_immutable(self, variation):
         """Test that class_so_term cannot be directly set."""
-        with pytest.raises(AttributeError, match="'class_so_term' is a cached property and cannot be reassigned"):
+        with pytest.raises(AttributeError, match="property 'class_so_term' of 'Variation' object has no setter"):
             variation.class_so_term = "some value"
 
 
@@ -195,15 +165,8 @@ class TestVariationAlleles:
 class TestVariationMinimisation:
     """Tests for the minimise_alleles of Variation."""
 
-    def test_cannot_reset_minimise_alleles(self, variation):
-        """Test that once minimise_alleles is set to True, it cannot be reset to False."""
-        assert variation.minimise_alleles is False
-        variation.minimise_alleles = True
-        with pytest.raises(AttributeError, match="Cannot reset 'minimise_alleles'"):
-            variation.minimise_alleles = False
-
     def test_minimise_called_when_flag_set(self):
-        """Test that the minimise method is called on each VariationAllele when minimise_alleles is set to True."""
+        """Test that the minimise_alleles method is called when the minimise_alleles flag is set."""
         var = Variation(
             start=100,
             end=102,
@@ -211,29 +174,22 @@ class TestVariationMinimisation:
             slice=None,
             allele_string="AAT/AT",
         )
-        var.minimise_alleles = True
+        var.minimise_alleles()
         for variantion_allele in var.variation_alleles:
             assert variantion_allele.minimised is True
             assert variantion_allele.reference_allele == "A"
             assert variantion_allele.alternate_allele == ""
             assert variantion_allele.start == 101
             assert variantion_allele.end == 101
-            assert variantion_allele.original_locus == VariationLocus(start=100, end=102, allele_string="AAT/AT")
-            assert variantion_allele.minimised_locus == VariationLocus(start=101, end=101, allele_string="A/")
+            assert variantion_allele.original_locus == Locus(start=100, end=102, allele_string="AAT/AT")
+            assert variantion_allele.minimised_locus == Locus(start=101, end=101, allele_string="A/")
 
 
 class TestVariationShifting:
     """Tests for the shift_alleles of Variation."""
 
-    def test_cannot_reset_shift_alleles(self, variation):
-        """Test that once shift_alleles is set to True, it cannot be reset to False."""
-        assert variation.shift_alleles is False
-        variation.shift_alleles = True
-        with pytest.raises(AttributeError, match="Cannot reset 'shift_alleles'"):
-            variation.shift_alleles = False
-
-    def test_shift_called_when_flag_set(self, slice):
-        """Test that the shift method is called on each VariationAllele when shift_alleles is set to True."""
+    def test_shift_alleles(self, slice):
+        """Test that the shift_alleles method shifts the alleles correctly."""
         var = Variation(
             start=2,
             end=5,
@@ -241,15 +197,15 @@ class TestVariationShifting:
             slice=slice,
             allele_string="TCGA/-",
         )
-        var.shift_alleles = True
+        var.shift_alleles()
         for variantion_allele in var.variation_alleles:
             assert variantion_allele.shifted is True
             assert variantion_allele.reference_allele == "TCGA"
             assert variantion_allele.alternate_allele == "-"
             assert variantion_allele.start == 6
             assert variantion_allele.end == 9
-            assert variantion_allele.original_locus == VariationLocus(start=2, end=5, allele_string="TCGA/-")
-            assert variantion_allele.shifted_locus == VariationLocus(start=6, end=9, allele_string="TCGA/-")
+            assert variantion_allele.original_locus == Locus(start=2, end=5, allele_string="TCGA/-")
+            assert variantion_allele.shifted_locus == Locus(start=6, end=9, allele_string="TCGA/-")
 
 
 class TestMostSevereConsequence:
