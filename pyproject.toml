@@ -46,6 +46,9 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Bio-Informatics",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
+dependencies = [
+    "attrs>=24.1.0",
+]
 
 # dependencies = [
 #     "biopython",
