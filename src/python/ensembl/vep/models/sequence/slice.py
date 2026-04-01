@@ -1,4 +1,6 @@
-from attrs import define
+from __future__ import annotations
+
+from attrs import define, field
 from typing import Any
 
 from ensembl.vep.common import Strand
@@ -32,8 +34,8 @@ class Slice:
     start: int
     end: int
     strand: Strand
-    seq_region_length: int | None = None 
-    seq: Any | None = None
+    seq_region_length: int | None = field(default=None) 
+    seq: Any | None = field(default=None)
 
     def __eq__(self, other: "Slice") -> bool:
         """Compare two Slice using various criteria.

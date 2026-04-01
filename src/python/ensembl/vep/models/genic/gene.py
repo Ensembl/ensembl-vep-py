@@ -1,14 +1,17 @@
+from __future__ import annotations
+
 from attrs import define, field
 from typing import TYPE_CHECKING
 
 from ensembl.vep.common import ExternalReference
+from ensembl.vep.models import Feature
 if TYPE_CHECKING:
     from ensembl.vep.models.genic import Transcript
 
 @define(kw_only=True, auto_attribs=True)
-class Gene:
+class Gene(Feature):
     """
-    Represents a gene in the Ensembl database.
+    Represents a gene.
 
     Attributes:
         stable_id:  Ensembl stable transcript identifier (e.g. "ENST00000366667").
@@ -18,9 +21,9 @@ class Gene:
         version:    Version of the stable identifier.
     """
     stable_id: str
-    version: int | None = None
-    name: str | None = None
-    symbol: str | None = None
-    alternative_names: list[ExternalReference] | None = None
-    transcripts: list[Transcript] | None = None
-    biotype: str | None = None
+    version: int | None = field(default=None, init=False)
+    name: str | None = field(default=None, init=False)
+    symbol: str | None = field(default=None, init=False)
+    alternative_names: list[ExternalReference] | None = field(default=[], init=False)
+    transcripts: list[Transcript] | None = field(default=[], init=False)
+    biotype: str | None = field(default=None, init=False)

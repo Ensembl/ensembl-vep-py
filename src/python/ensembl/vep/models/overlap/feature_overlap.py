@@ -1,41 +1,73 @@
-@dataclass
-class TranscriptVariation:
+from __future__ import annotations
+
+from attr import define, field
+from typing import TYPE_CHECKING
+from functools import cached_property
+from threading import Lock
+
+from ensembl.vep.models import Feature
+from ensembl.vep.common import invalidates
+if TYPE_CHECKING:
+    from ensembl.vep.models.overlap import OverlapConsequence
+
+
+@define(kw_only=True, auto_attribs=True)
+class FeatureOverlap:
     """
-    All allele-level consequences of a VariationFeature overlapping a Transcript.
-
-    Groups all TranscriptVariationAllele objects that share the same VF and
-    Transcript, providing a convenient per-transcript view.
-
-    Attributes:
-        variation_feature: The source VF.
-        transcript:        The overlapped transcript.
-        alleles:           All TVA objects for each alt (and optionally ref) VFA.
-    """
-    variation_feature: VariationFeature
-    transcript: Transcript
-    alleles: list[TranscriptVariationAllele] = field(default_factory=list)
-
-    def get_all_consequences(self) -> list[OverlapConsequence]:
-        """Collect all unique consequences across all alleles."""
-        seen: set[str] = set()
-        out: list[OverlapConsequence] = []
-        for tva in self.alleles:
-            for c in tva.consequences:
-                if c.so_term.value not in seen:
-                    seen.add(c.so_term.value)
-                    out.append(c)
-        return out
+    Represents an overlap between a feature and a overlapping feature, along with the consequences of that overlap.
     
-@dataclass
-class RegulatoryFeatureVariation:
-    """
-    All allele-level consequences of a VF overlapping a RegulatoryFeature.
-
     Attributes:
-        variation_feature:  The source VF.
-        regulatory_feature: The overlapped regulatory feature.
-        alleles:            All RFVA objects.
+        feature: The feature that is getting overlapped.
+        overlapping_feature: The feature that is overlapping.
+        overlap_consequences: A list of consequences the overlapping feature has on the feature.
     """
-    variation_feature: VariationFeature
-    regulatory_feature: RegulatoryFeature
-    alleles: list[RegulatoryFeatureVariationAllele] = field(default_factory=list)
+    feature: Feature
+    overlapping_feature: Feature
+    overlap_consequences: list[OverlapConsequence] = field(default=[], init=False, on_setattr=invalidates("most_severe_consequence, consequence_terms"))
+    _lock: Lock = field(factory=Lock, init=False, repr=False)
+
+    @property
+    def most_severe_consequence(self) -> OverlapConsequence | None:
+        """
+        Public accessor for __most_severe_consequence.
+
+        Returns:
+            OverlapConsequence | None: The most severe consequence, or None if there are no consequences.
+        """
+        return self.__most_severe_consequence
+
+    @cached_property
+    def __most_severe_consequence(self) -> OverlapConsequence | None:
+        """
+        Returns the most severe consequence, or None if there are no consequences.
+
+        Returns:
+            OverlapConsequence | None: The most severe consequence, or None if there are no consequences.
+        """
+        with self._lock:
+            current_rank = -1
+            for consequence in self.overlap_consequences:
+                if consequence.rank > current_rank:
+                    self.most_severe_consequence = consequence
+                    current_rank = consequence.rank
+    
+    @property
+    def consequence_terms(self) -> set[str]:
+        """
+        Public accessor for __consequence_terms.
+
+        Returns:
+            set[str]: A set of all consequence terms.
+        """
+        return self.__consequence_terms
+    
+    @cached_property
+    def __consequence_terms(self) -> set[str]:
+        """
+        Returns a set of all consequence terms.
+
+        Returns:
+            set[str]: A set of all consequence terms.
+        """
+        with self._lock:
+            return set(consequence.term for consequence in self.overlap_consequences)

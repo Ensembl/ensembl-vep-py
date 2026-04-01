@@ -1,1 +1,2 @@
-from ensembl.vep.models.regulatory.regulatory import *
+from .regulatory import *
+from .motif import *

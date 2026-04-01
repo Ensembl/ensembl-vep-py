@@ -1,17 +1,35 @@
 from attrs import frozen
 
 @frozen
-class VariationLocus:
-    """Container for a variation's genomic position and alleles.
+class Locus:
+    """Container for a genomic position and (optionally) alleles.
     
     Args:
-        start (int): Start position of the variation.
-        end (int): End position of the variation.
-        allele_string (str): String representation of the alleles.
+        start (int): Start position of the locus.
+        end (int): End position of the locus.
+        allele_string (str | None): String representation of the alleles. 
+            It could be in the format "{reference_allele}/{alternate_allele}", or just "allele" 
+            where allele could be either reference or alternate.
     """
     start: int
     end: int
-    allele_string: str
+    allele_string: str | None = None
+
+
+@frozen
+class Attribute:
+    """Container for a attribute of a feature.
+
+    Args:
+        name (str): Name of the attribute.
+        value (str): Value of the attribute.
+        code (str | None): Code of the attribute.
+        description (str | None): Description of the attribute.
+    """
+    name: str
+    value: str
+    code: str | None = None
+    description: str | None = None
 
 
 @frozen
@@ -50,3 +68,25 @@ class ExternalReference:
     assignment_method: str | None = None
     url: str | None = None
     source: ExternalDB | None = None
+
+
+@frozen
+class PredictionResult:
+    """Container for a prediction result of a program.
+    
+    Args:
+        plugin_name (str): Name of the plugin that generated this prediction.
+        consequence (str): Consequence term predicted by the plugin.
+        score (float | None): Score associated with the prediction, if applicable.
+        description (str | None): Description of the prediction.
+    """
+    tool: str
+    # need something more generic and can be used for both plugins and custom annotation
+    #     plugin gets attached to FeatureOverlap and works on FeatureOverlap after overlap computation is done
+    #     custom annotation after doing overlap computation gets attached to VFA
+    # score: int
+    # result: str
+    # classification: float | None = None
+    version: str | None = None
+    modes: list[str] = []
+    reference_data: list[ExternalDB] = []

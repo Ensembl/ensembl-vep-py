@@ -1,10 +1,14 @@
 
 from __future__ import annotations
 
+import logging
 import pytest
 
 from ensembl.vep.models.variation.variation_allele import VariationAllele
 from ensembl.vep.models.sequence import Slice
+
+logger = logging.getLogger(__name__)
+
 
 @pytest.fixture
 def slice():
@@ -12,11 +16,11 @@ def slice():
     return Slice(
         coord_system="chromosome",
         seq_region_name="1",
-        seq_region_length=12,
+        seq_region_length=13,
         start=1,
-        end=12,
+        end=13,
         strand=1,
-        seq="ATCGATCGATCG"
+        seq="ATCGATCGATCGG"
     )
 
 @pytest.fixture
@@ -105,6 +109,21 @@ class TestVariationAlleleMinimise:
         assert variation_allele.minimised_locus.allele_string == f"{variation_allele.reference_allele}/{variation_allele.alternate_allele}"
         assert variation_allele.original_locus is not None
 
+    def test_minimise_forced(self, variation_allele, caplog):
+        """Test that calling minimise with force=True re-minimises even if already minimised."""
+        variation_allele.minimise()
+        original_locus = variation_allele.original_locus
+        minimised_locus = variation_allele.minimised_locus
+        
+        with caplog.at_level(logging.DEBUG):
+            variation_allele.minimise()
+            assert "Variation allele is already minimised. Use force=True to re-minimise." in caplog.text
+
+        variation_allele.minimise(force=True)
+        assert variation_allele.minimised is True
+        assert variation_allele.original_locus == original_locus
+        assert variation_allele.minimised_locus == minimised_locus
+
 
 class TestVariationAlleleShift:
     """Tests for the shift method of VariationAllele."""
@@ -130,6 +149,10 @@ class TestVariationAlleleShift:
         assert variation_allele.shifted_locus.allele_string == f"{variation_allele.reference_allele}/{variation_allele.alternate_allele}"
         assert variation_allele.original_locus is not None
 
+
+class TestVariationAlleleMinimiseAndShift:
+    """Tests for interaction between minimise and shift methods."""
+
     def test_minimise_and_shift_independent(self, variation_allele):
         """Test that minimise and shift can be called independently and set their respective flags."""
         variation_allele.minimise()
@@ -141,3 +164,45 @@ class TestVariationAlleleShift:
         variation_allele2.shift()
         assert variation_allele2.shifted is True
         assert variation_allele2.minimised is False
+
+    def test_minimise_then_shift(self, variation_allele):
+        """Test that calling shift after minimise retains the original locus and sets flags correctly."""
+        variation_allele.minimise()
+        original_locus = variation_allele.original_locus
+        variation_allele.shift()
+        assert variation_allele.shifted is True
+        # minimise should still be True as shift does not change minimised status
+        assert variation_allele.minimised is True
+        assert variation_allele.original_locus == original_locus
+
+        variation_allele2 = VariationAllele(
+            start=12, end=12, strand=1, slice=variation_allele.slice, reference_allele="G", alternate_allele="T"
+        )
+        variation_allele2.minimise()
+        original_locus2 = variation_allele2.original_locus
+        variation_allele2.shift()
+        assert variation_allele2.shifted is True
+        # minimise should should be False as shift changes coordinate and we do not know if it is still minimised
+        assert variation_allele2.minimised is False
+        assert variation_allele2.original_locus == original_locus2
+
+    def test_shift_then_minimise(self, variation_allele):
+        """Test that calling minimise after shift retains the original locus and sets flags correctly."""
+        variation_allele.shift()
+        original_locus = variation_allele.original_locus
+        variation_allele.minimise()
+        assert variation_allele.minimised is True
+        # shift should still be True as minimise does not change anything
+        assert variation_allele.shifted is True
+        assert variation_allele.original_locus == original_locus
+
+        variation_allele2 = VariationAllele(
+            start=12, end=12, strand=1, slice=variation_allele.slice, reference_allele="GG", alternate_allele="G"
+        )
+        variation_allele2.shift()
+        original_locus2 = variation_allele2.original_locus
+        variation_allele2.minimise()
+        assert variation_allele2.minimised is True
+        # shift should should be False as minimise changes coordinate and we do not know if it is still shifted
+        assert variation_allele2.shifted is False
+        assert variation_allele2.original_locus == original_locus2

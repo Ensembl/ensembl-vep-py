@@ -1,13 +1,58 @@
+from contextlib import contextmanager
+
+class UnsafeSetterMixin:
+    """
+    Can be used to temporarily disable cache invalidation for faster but unsafe attribute update.
+
+    Caveat:
+    This can be very expansive in terms of storage as it stores the type(self) for every instance. It also create a
+    temporary subclass under the unsafe context although that gets cleaned up after the context exits.
+    """
+    __slots__ = ("_safe_cls",)
+
+    def __attrs_post_init__(self):
+        """Set up the safe class reference for later use in the unsafe context manager."""
+        object.__setattr__(self, "_safe_cls", type(self))
+
+    @contextmanager
+    def unsafe(self):
+        """Context manager that temporarily swaps the class of this instance to a version with an 
+        unsafe __setattr__ that bypasses attrs' on_setattr hooks."""
+        safe_cls = self._safe_cls
+
+        # create a throwaway subclass with a bare __setattr__
+        unsafe_cls = type(
+            f"{safe_cls.__name__}_unsafe",
+            (safe_cls,),
+            {
+                "__slots__":   (),
+                "__setattr__": lambda self_, k, v: object.__setattr__(self_, k, v),
+            }
+        )
+
+        # point this instance at the unsafe subclass
+        object.__setattr__(self, "__class__", unsafe_cls)
+        try:
+            yield self
+        finally:
+            # restore the original class
+            object.__setattr__(self, "__class__", safe_cls)
+
+
 class CachedAttributeGuardMixin:
+    """Mixin that guards against setting attributes that are cached properties and/or invalidate cached properties 
+    when their dependencies change.
+
+    Caveat:
+    These can be very expansive as it will be called on every attribute set but can be used to make sure that
+    functools.cached_property attribute is not externally set. Preferably, use CachedInvalidationMixin to only 
+    call hooks on attributes that are actually dependencies of cached properties.
+    """
     __slots__ = ()
     
     def __setattr__(self, name, value):
-        """Override __setattr__ to guard against setting attributes that are cached properties or invalidate cached properties when their dependencies change.
-
-        TBD: these can be very expansive as it will be called on every attribute set, so we may want to 
-        optimize the checks or use a different approach if performance becomes an issue. Current implemenatation
-        is required because @cached_property attributes cannot be used by attrs.on_setattr. Can we instead 
-        re-implement the caching mechanism using attrs features and avoid the need for @cached_property?  
+        """Override __setattr__ to guard against setting attributes that are cached properties and/or invalidate 
+        cached properties when their dependencies change.
         
         Args:            
             name (str): The name of the attribute being set.

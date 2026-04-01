@@ -1,14 +1,12 @@
 from __future__ import annotations
 
 from attrs import define, field
-from functools import cached_property
-from threading import Lock
 
-from ensembl.vep.common import CoordSystemLevel, CachedAttributeGuardMixin
+from ensembl.vep.common import CoordSystemLevel
 
 
 @define(kw_only=True, auto_attribs=True)
-class CoordSystem(CachedAttributeGuardMixin):
+class CoordSystem():
     """
     Represents a coordinate system in the Ensembl database.
 
@@ -28,24 +26,11 @@ class CoordSystem(CachedAttributeGuardMixin):
     """
     name: str
     level: CoordSystemLevel
-    default: bool = False
-    alias_to: str | None = None
-    rank: int | None = None
-    _lock: Lock = field(factory=Lock, init=False, repr=False)
-    _DERIVED = frozenset({
-        "is_sequence_level",
-        "is_chromosome_level", 
-        "is_toplevel"
-    })
-    _INVALIDATES = {
-        "level":[
-            "is_sequence_level",
-            "is_chromosome_level", 
-            "is_toplevel"
-        ]
-    }
+    default: bool = field(default=False)
+    alias_to: str | None = field(default=None)
+    rank: int | None = field(default=None)
 
-    @cached_property
+    @property
     def is_sequence_level(self) -> bool:
         """
         Returns True if the coordinate system is sequence-level (e.g. contig), False otherwise.
@@ -53,10 +38,9 @@ class CoordSystem(CachedAttributeGuardMixin):
         Returns:
             bool: True if sequence-level, False otherwise.
         """
-        with self._lock:
-            return self.level == CoordSystemLevel.CONTIG
+        return self.level == CoordSystemLevel.CONTIG
     
-    @cached_property
+    @property
     def is_chromosome_level(self) -> bool:
         """
         Returns True if the coordinate system is chromosome-level, False otherwise.
@@ -64,10 +48,9 @@ class CoordSystem(CachedAttributeGuardMixin):
         Returns:
             bool: True if chromosome-level, False otherwise.
         """
-        with self._lock:
-            return self.level == CoordSystemLevel.CHROMOSOME
+        return self.level == CoordSystemLevel.CHROMOSOME
     
-    @cached_property
+    @property
     def is_toplevel(self) -> bool:
         """
         Returns True if the coordinate system is toplevel, False otherwise.
@@ -75,8 +58,7 @@ class CoordSystem(CachedAttributeGuardMixin):
         Returns:
             bool: True if toplevel, False otherwise.
         """
-        with self._lock:
-            return self.level == CoordSystemLevel.TOPLEVEL
+        return self.level == CoordSystemLevel.TOPLEVEL
         
     def __eq__(self, other: "CoordSystem") -> bool:
         """Compare two CoordSystem objects for equality.
