@@ -19,6 +19,7 @@ from attr import define, field
 from ensembl.vep.models.overlap import FeatureOverlap
 
 
+@define(kw_only=True, auto_attribs=True)
 class TranscriptStructuralVariationAllele(FeatureOverlap):
     """
     Represents the overlap between a transcript and a structural variation allele.
@@ -26,3 +27,4 @@ class TranscriptStructuralVariationAllele(FeatureOverlap):
     ...
     exon_numbers: list[int] = field(default=[], init=False)
     intron_numbers: list[int] = field(default=[], init=False)
+    pass

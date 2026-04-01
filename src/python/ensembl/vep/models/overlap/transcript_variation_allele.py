@@ -40,7 +40,7 @@ class TranscriptVariationAllele(FeatureOverlap):
     """
     feature: Transcript
     overlapping_feature: VariationAllele
-    is_reference: bool = field(default=False, init=False)
+    is_reference: bool = field(default=False)
     cdna_locus: Locus = field(init=False, on_setattr=invalidates("hgvs_transcript"))
     cds_locus: Locus | None = field(default=None, init=False, on_setattr=invalidates("hgvs_transcript", "hgvs_protein"))
     protein_locus: Locus | None = field(default=None, init=False, on_setattr=invalidates("hgvs_protein"))

@@ -44,3 +44,10 @@ class ClassSOTerm(Enum):
     INVERSION = "inversion"
     COPY_NUMBER_VARIATION = "copy_number_variation"
     TANDEM_REPEAT = "tandem_repeat"
+
+class ConsequenceImpact(Enum):
+    """Impact of a consequence."""
+    HIGH = "HIGH"
+    MODERATE = "MODERATE"
+    LOW = "LOW"
+    MODIFIER = "MODIFIER"
