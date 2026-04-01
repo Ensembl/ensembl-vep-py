@@ -11,10 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""StructuralVariation class."""
 
 from attrs import define
 
 from ensembl.vep.models.variation import Variation
+
 
 @define(kw_only=True, auto_attribs=True)
 class StructuralVariation(Variation):

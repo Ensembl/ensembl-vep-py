@@ -19,6 +19,7 @@ from copy import deepcopy
 from ensembl.vep.models.sequence.coord_system import CoordSystem
 from ensembl.vep.common import CoordSystemLevel
 
+
 class TestCoordSystemInitialization:
     """Test CoordSystem initialization."""
 
@@ -51,13 +52,19 @@ class TestCoordSystemProperties:
 
     def test_is_some_level_immutable(self, coord):
         """Test is_chromosome_level property is cached and immutable."""
-        with pytest.raises(AttributeError, match="property 'is_chromosome_level' of 'CoordSystem' object has no setter"):
+        with pytest.raises(
+            AttributeError, match="property 'is_chromosome_level' of 'CoordSystem' object has no setter"
+        ):
             coord.is_chromosome_level = False
 
-        with pytest.raises(AttributeError, match="property 'is_sequence_level' of 'CoordSystem' object has no setter"):
+        with pytest.raises(
+            AttributeError, match="property 'is_sequence_level' of 'CoordSystem' object has no setter"
+        ):
             coord.is_sequence_level = True
 
-        with pytest.raises(AttributeError, match="property 'is_toplevel' of 'CoordSystem' object has no setter"):
+        with pytest.raises(
+            AttributeError, match="property 'is_toplevel' of 'CoordSystem' object has no setter"
+        ):
             coord.is_toplevel = True
 
     def test_is_some_level_update(self, coord):
@@ -65,7 +72,7 @@ class TestCoordSystemProperties:
         assert coord.is_chromosome_level is True
         assert coord.is_sequence_level is False
         assert coord.is_toplevel is False
-        
+
         coord.level = CoordSystemLevel.CONTIG
         assert coord.is_chromosome_level is False
         assert coord.is_sequence_level is True
@@ -76,10 +83,11 @@ class TestCoordSystemProperties:
         assert coord.is_sequence_level is False
         assert coord.is_toplevel is True
 
-        coord.level = CoordSystemLevel.CHROMOSOME # switch back to chromosome
+        coord.level = CoordSystemLevel.CHROMOSOME  # switch back to chromosome
         assert coord.is_chromosome_level is True
         assert coord.is_sequence_level is False
         assert coord.is_toplevel is False
+
 
 class TestCoordSystemEquality:
     """Test equality comparison."""
@@ -121,7 +129,9 @@ class TestCoordSystemEquality:
 
     def test_different_type(self, coord):
         """Test comparing CoordSystem to different type returns False."""
+
         class AnotherCoord(CoordSystem):
             pass
+
         coord2 = AnotherCoord(name="chromosome", level=CoordSystemLevel.CHROMOSOME)
         assert coord != coord2

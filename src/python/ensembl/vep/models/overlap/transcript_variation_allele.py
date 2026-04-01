@@ -11,13 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""TranscriptVariationAllele class."""
 
 from __future__ import annotations
 
-from attr import define, field
 from typing import TYPE_CHECKING
 from functools import cached_property
 from threading import Lock
+from attr import define, field
 
 from ensembl.vep.common import invalidates
 from ensembl.vep.models.overlap import FeatureOverlap
@@ -32,17 +33,20 @@ if TYPE_CHECKING:
 class TranscriptVariationAllele(FeatureOverlap):
     """
     Represents the overlap between a transcript and a variation allele.
-    
+
     Attributes:
         feature: The transcript that is getting overlapped.
         overlapping_feature: The variation allele that is overlapping.
         is_reference: Whether the overlapping variation allele is the reference allele.
     """
+
     feature: Transcript
     overlapping_feature: VariationAllele
     is_reference: bool = field(default=False)
     cdna_locus: Locus = field(init=False, on_setattr=invalidates("hgvs_transcript"))
-    cds_locus: Locus | None = field(default=None, init=False, on_setattr=invalidates("hgvs_transcript", "hgvs_protein"))
+    cds_locus: Locus | None = field(
+        default=None, init=False, on_setattr=invalidates("hgvs_transcript", "hgvs_protein")
+    )
     protein_locus: Locus | None = field(default=None, init=False, on_setattr=invalidates("hgvs_protein"))
     distance_to_transcript: int | None = field(default=None, init=False)
     exon_number: int | None = field(default=None, init=False)
@@ -58,7 +62,7 @@ class TranscriptVariationAllele(FeatureOverlap):
             bool: True if the allele has been shifted, False otherwise.
         """
         return self.__shifted
-    
+
     @cached_property
     def __shifted(self) -> bool:
         """
@@ -68,7 +72,7 @@ class TranscriptVariationAllele(FeatureOverlap):
             bool: True if the allele has been shifted, False otherwise.
         """
         return False
-    
+
     @property
     def shifted_cdna_locus(self) -> Locus | None:
         """
@@ -78,7 +82,7 @@ class TranscriptVariationAllele(FeatureOverlap):
             Locus | None: The cDNA locus of the variation allele after shifting, or None if not applicable.
         """
         return self.__shifted_cdna_locus
-    
+
     @cached_property
     def __shifted_cdna_locus(self) -> Locus | None:
         """
@@ -88,7 +92,7 @@ class TranscriptVariationAllele(FeatureOverlap):
             Locus | None: The cDNA locus of the variation allele after shifting, or None if not applicable.
         """
         return None
-    
+
     @property
     def shifted_cds_locus(self) -> Locus | None:
         """
@@ -98,7 +102,7 @@ class TranscriptVariationAllele(FeatureOverlap):
             Locus | None: The CDS locus of the variation allele after shifting, or None if not applicable.
         """
         return self.__shifted_cds_locus
-    
+
     @cached_property
     def __shifted_cds_locus(self) -> Locus | None:
         """
@@ -108,7 +112,7 @@ class TranscriptVariationAllele(FeatureOverlap):
             Locus | None: The CDS locus of the variation allele after shifting, or None if not applicable.
         """
         return None
-    
+
     @property
     def shifted_protein_locus(self) -> Locus | None:
         """
@@ -118,7 +122,7 @@ class TranscriptVariationAllele(FeatureOverlap):
             Locus | None: The protein locus of the variation allele after shifting, or None if not applicable.
         """
         return self.__shifted_protein_locus
-    
+
     @cached_property
     def __shifted_protein_locus(self) -> Locus | None:
         """
@@ -128,7 +132,7 @@ class TranscriptVariationAllele(FeatureOverlap):
             Locus | None: The protein locus of the variation allele after shifting, or None if not applicable.
         """
         return self.__shifted_protein_locus
-    
+
     @property
     def original_cdna_locus(self) -> Locus | None:
         """Public accessor for __original_cdna_locus.
@@ -137,7 +141,7 @@ class TranscriptVariationAllele(FeatureOverlap):
             Locus | None: The original cDNA locus of the variation allele before shifting, or None if not applicable.
         """
         return self.__original_cdna_locus
-    
+
     @cached_property
     def __original_cdna_locus(self) -> Locus | None:
         """Returns the original cDNA locus of the variation allele before shifting, or None if not applicable.
@@ -146,7 +150,7 @@ class TranscriptVariationAllele(FeatureOverlap):
             Locus | None: The original cDNA locus of the variation allele before shifting, or None if not applicable.
         """
         return None
-    
+
     @property
     def original_cds_locus(self) -> Locus | None:
         """Public accessor for __original_cds_locus.
@@ -155,7 +159,7 @@ class TranscriptVariationAllele(FeatureOverlap):
             Locus | None: The original CDS locus of the variation allele before shifting, or None if not applicable.
         """
         return self.__original_cds_locus
-    
+
     @cached_property
     def __original_cds_locus(self) -> Locus | None:
         """Returns the original CDS locus of the variation allele before shifting, or None if not applicable.
@@ -164,7 +168,7 @@ class TranscriptVariationAllele(FeatureOverlap):
             Locus | None: The original CDS locus of the variation allele before shifting, or None if not applicable.
         """
         return None
-    
+
     @property
     def original_protein_locus(self) -> Locus | None:
         """Public accessor for __original_protein_locus.
@@ -173,7 +177,7 @@ class TranscriptVariationAllele(FeatureOverlap):
             Locus | None: The original protein locus of the variation allele before shifting, or None if not applicable.
         """
         return self.__original_protein_locus
-    
+
     @cached_property
     def __original_protein_locus(self) -> Locus | None:
         """Returns the original protein locus of the variation allele before shifting, or None if not applicable.
@@ -182,15 +186,19 @@ class TranscriptVariationAllele(FeatureOverlap):
             Locus | None: The original protein locus of the variation allele before shifting, or None if not applicable.
         """
         return None
-    
+
     def shift(self) -> None:
-        pass
+        """Shifts the variation allele to its most 3' position on the transcript according to HGVS rules."""
+        return None
 
     def hgvs_genomic(self) -> str | None:
-        pass
+        """Returns the HGVS genomic notation for this variation allele."""
+        return None
 
     def hgvs_transcript(self) -> str | None:
-        pass
+        """Returns the HGVS transcript notation for this variation allele."""
+        return None
 
     def hgvs_protein(self) -> str | None:
-        pass
+        """Returns the HGVS protein notation for this variation allele."""
+        return None

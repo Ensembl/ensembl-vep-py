@@ -19,30 +19,21 @@ from ensembl.vep.models.genic.cds import CDS
 from ensembl.vep.models.genic.transcript import Transcript
 from ensembl.vep.models.genic.translation import Translation
 
+
 @pytest.fixture
 def transcript():
-    return Transcript(
-        stable_id="ENST00000000001",
-        start=1, 
-        end=100, 
-        strand=1
-    )
+    return Transcript(stable_id="ENST00000000001", start=1, end=100, strand=1)
+
 
 @pytest.fixture
 def translation(transcript):
-    return Translation(
-        start=1, 
-        end=90,
-        stable_id="ENSP00000000001"
-    )
+    return Translation(start=1, end=90, stable_id="ENSP00000000001")
+
 
 @pytest.fixture
 def cds():
-    return CDS(
-        start=11, 
-        end=40, 
-        strand=1
-    )
+    return CDS(start=11, end=40, strand=1)
+
 
 class TestCDSInitialization:
     """Test CDS initialization."""
@@ -50,11 +41,7 @@ class TestCDSInitialization:
     def test_initialization_without_keywords(self):
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = CDS(
-                10, 
-                end=50, 
-                strand=1
-            )
+            _ = CDS(10, end=50, strand=1)
 
 
 class TestCDSProperties:

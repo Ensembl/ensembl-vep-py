@@ -16,6 +16,7 @@ import pytest
 
 from ensembl.vep.common import Locus
 
+
 class TestLocus:
     """Tests for the Locus frozen attrs class."""
 

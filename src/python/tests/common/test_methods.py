@@ -71,7 +71,9 @@ class TestShiftSequence:
         post_seq = "TT"
         pre_seq = "AA"
         start, end = 5, 5
-        shift, shifted_seq, new_start, new_end, _ = shift_sequence(seq, post_seq, pre_seq, start, end, reverse=True)
+        shift, shifted_seq, new_start, new_end, _ = shift_sequence(
+            seq, post_seq, pre_seq, start, end, reverse=True
+        )
         assert (shift, shifted_seq, new_start, new_end) == (2, "A", 3, 3)
 
     def test_shift_sequence_no_shift(self):
@@ -92,7 +94,9 @@ class TestShiftSequence:
         shift, shifted_seq, new_start, new_end, _ = shift_sequence(seq, post_seq, pre_seq, start, end)
         assert (shift, shifted_seq, new_start, new_end) == (4, "A", 9, 9)
         # 5' direction
-        shift, shifted_seq, new_start, new_end, _ = shift_sequence(seq, post_seq, pre_seq, start, end, reverse=True)
+        shift, shifted_seq, new_start, new_end, _ = shift_sequence(
+            seq, post_seq, pre_seq, start, end, reverse=True
+        )
         assert (shift, shifted_seq, new_start, new_end) == (4, "A", 1, 1)
 
     def test_shift_sequence_empty_seq(self):

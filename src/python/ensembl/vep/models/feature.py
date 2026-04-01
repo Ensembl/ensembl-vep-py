@@ -11,14 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Feature class."""
 
 from __future__ import annotations
 
 import logging
 from typing import Any
-from attrs import define, field
 from functools import cached_property
 from threading import Lock
+from attrs import define, field
 
 from ensembl.vep.models.sequence import Slice
 from ensembl.vep.models.sequence.coord_system import CoordSystem
@@ -28,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 
 @define(kw_only=True, auto_attribs=True)
-class Feature():
+class Feature:
     """
     Represents an Ensembl-specific sequence feature describing a location on a sequence in an arbitrary coordinate system.
 
@@ -46,10 +47,13 @@ class Feature():
         slice (Slice | None): Slice object describing the feature context.
         seq (Any | None): Associated biological sequence.
     """
+
     start: int = field(on_setattr=invalidates("__length", "__seq_region_start"))
     end: int = field(on_setattr=invalidates("__length", "__seq_region_end"))
     strand: Strand = field(on_setattr=invalidates("__seq_region_strand"))
-    slice: Slice | None = field(default=None, on_setattr=invalidates("__seq_region_start", "__seq_region_end", "__seq_region_strand"))
+    slice: Slice | None = field(
+        default=None, on_setattr=invalidates("__seq_region_start", "__seq_region_end", "__seq_region_strand")
+    )
     seq: Any | None = field(default=None)
     _lock: Lock = field(factory=Lock, init=False, repr=False)
 
@@ -62,7 +66,7 @@ class Feature():
             int: The length of the feature.
         """
         return self.__length
-        
+
     @cached_property
     def __length(self) -> int:
         """
@@ -73,7 +77,7 @@ class Feature():
         """
         with self._lock:
             return self.end - self.start + 1
-    
+
     @property
     def seq_region_start(self) -> int:
         """
@@ -107,7 +111,7 @@ class Feature():
             int: The end position in the sequence region.
         """
         return self.__seq_region_end
-    
+
     @cached_property
     def __seq_region_end(self) -> int:
         """
@@ -146,12 +150,12 @@ class Feature():
                 return None
         return self.slice.strand * self.strand
 
-    def __eq__(self, other: "Feature") -> bool:
+    def __eq__(self, other: object) -> bool:
         """
         Compares two features using various criteria.
 
         Args:
-            other (Feature): Another Feature to compare against.
+            other (object): Another object to compare against.
 
         Returns:
             bool: True if equal, False otherwise.
@@ -166,7 +170,7 @@ class Feature():
             and self.slice == other.slice
         )
 
-    def transform(self, coord_system: CoordSystem) -> "Feature" | None:
+    def transform(self, coord_system: CoordSystem) -> Feature | None:
         """
         Transforms the feature to a new coordinate system.
 
@@ -176,9 +180,9 @@ class Feature():
         Returns:
             Feature | None: The transformed feature or None if transformation is not possible.
         """
-        ...
+        return None
 
-    def transfer(self, slice: Slice = None) -> "Feature" | None:
+    def transfer(self, slice: Slice = None) -> Feature | None:
         """
         Transfers the feature to a new slice.
 
@@ -188,9 +192,9 @@ class Feature():
         Returns:
             Feature | None: The transferred feature or None if transfer is not possible.
         """
-        ...
+        return None
 
-    def overlaps(self, other: "Feature") -> bool | None:
+    def overlaps(self, other: Feature) -> bool | None:
         """
         Checks if this feature overlaps with another feature.
 
@@ -213,7 +217,7 @@ class Feature():
 
         return self.seq_region_start <= other.seq_region_end and self.seq_region_end >= other.seq_region_start
 
-    def feature_slice(self) -> "Slice" | None:
+    def feature_slice(self) -> Slice | None:
         """
         Returns a slice that covers the area of this feature.
 

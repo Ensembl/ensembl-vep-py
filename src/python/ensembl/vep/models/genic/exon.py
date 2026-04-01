@@ -11,14 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Exon class."""
 
 from __future__ import annotations
 
 import logging
-from attrs import define, field
-from typing import TYPE_CHECKING
 from functools import cached_property
 from threading import Lock
+from attrs import define, field
 
 from ensembl.vep.models import Feature
 from ensembl.vep.common import ExonPhase, invalidates
@@ -35,6 +35,7 @@ class Exon(Feature):
         stable_id:  Ensembl stable exon identifier (e.g. "ENSE00003666667").
         version:    Version of the stable identifier.
     """
+
     stable_id: str
     version: int | None = field(default=None, init=False)
     phase: ExonPhase | None = field(default=None, init=False, on_setattr=invalidates("__frame"))
@@ -59,15 +60,19 @@ class Exon(Feature):
             int | None: The frame of the exon.
         """
         if self.phase is None or self.phase == ExonPhase.UNKNOWN:
-            logger.warning(f"Cannot calculate frame for exon {self.stable_id} because phase is None or UNKNOWN")
+            logger.warning(
+                f"Cannot calculate frame for exon {self.stable_id} because phase is None or UNKNOWN"
+            )
             return None
-        
+
         if self.phase == ExonPhase.ZERO:
-            return self.start%3
+            return self.start % 3
         elif self.phase == ExonPhase.ONE:
             return (self.start + 2) % 3
         elif self.phase == ExonPhase.TWO:
             return (self.start + 1) % 3
         else:
-            logger.warning(f"Cannot calculate frame for exon {self.stable_id} because phase is invalid: {self.phase}")
+            logger.warning(
+                f"Cannot calculate frame for exon {self.stable_id} because phase is invalid: {self.phase}"
+            )
             return None

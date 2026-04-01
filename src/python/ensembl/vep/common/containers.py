@@ -11,20 +11,23 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Containers for data without behavior."""
 
 from attrs import frozen
+
 
 @frozen
 class Locus:
     """Container for a genomic position and (optionally) alleles.
-    
+
     Args:
         start (int): Start position of the locus.
         end (int): End position of the locus.
-        allele_string (str | None): String representation of the alleles. 
-            It could be in the format "{reference_allele}/{alternate_allele}", or just "allele" 
+        allele_string (str | None): String representation of the alleles.
+            It could be in the format "{reference_allele}/{alternate_allele}", or just "allele"
             where allele could be either reference or alternate.
     """
+
     start: int
     end: int
     allele_string: str | None = None
@@ -40,6 +43,7 @@ class Attribute:
         code (str | None): Code of the attribute.
         description (str | None): Description of the attribute.
     """
+
     name: str
     value: str
     code: str | None = None
@@ -49,7 +53,7 @@ class Attribute:
 @frozen
 class ExternalDB:
     """Container for external database information.
-    
+
     Args:
         id (str): Unique identifier for the external database.
         name (str): Name of the external database.
@@ -57,6 +61,7 @@ class ExternalDB:
         url (str | None): URL where this external database can be accessed.
         release (str | None): Release version of the external database.
     """
+
     id: str
     name: str
     description: str | None = None
@@ -67,7 +72,7 @@ class ExternalDB:
 @frozen
 class ExternalReference:
     """Container for external reference information.
-    
+
     Args:
         accession_id (str): Accession ID of the external reference.
         name (str): Name of the external reference.
@@ -76,6 +81,7 @@ class ExternalReference:
         url (str | None): URL where this external reference can be accessed.
         source (ExternalDB): Source database for this reference.
     """
+
     accession_id: str
     name: str
     description: str | None = None
@@ -87,13 +93,14 @@ class ExternalReference:
 @frozen
 class PredictionResult:
     """Container for a prediction result of a program.
-    
+
     Args:
         plugin_name (str): Name of the plugin that generated this prediction.
         consequence (str): Consequence term predicted by the plugin.
         score (float | None): Score associated with the prediction, if applicable.
         description (str | None): Description of the prediction.
     """
+
     tool: str
     # need something more generic and can be used for both plugins and custom annotation
     #     plugin gets attached to FeatureOverlap and works on FeatureOverlap after overlap computation is done

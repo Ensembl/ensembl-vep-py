@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""TranscriptStructuralVariationAllele class."""
 
 from __future__ import annotations
 
@@ -24,7 +25,7 @@ class TranscriptStructuralVariationAllele(FeatureOverlap):
     """
     Represents the overlap between a transcript and a structural variation allele.
     """
-    ...
+
     exon_numbers: list[int] = field(default=[], init=False)
     intron_numbers: list[int] = field(default=[], init=False)
-    pass
+    # more ...

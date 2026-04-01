@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""CoordSystem class."""
 
 from __future__ import annotations
 
@@ -20,7 +21,7 @@ from ensembl.vep.common import CoordSystemLevel
 
 
 @define(kw_only=True, auto_attribs=True)
-class CoordSystem():
+class CoordSystem:
     """
     Represents a coordinate system in the Ensembl database.
 
@@ -38,6 +39,7 @@ class CoordSystem():
         alias_to (str | None): Name of another coordinate system this is an alias to, if applicable.
         rank (int | None): Rank of the coordinate system.
     """
+
     name: str
     level: CoordSystemLevel
     default: bool = field(default=False)
@@ -53,7 +55,7 @@ class CoordSystem():
             bool: True if sequence-level, False otherwise.
         """
         return self.level == CoordSystemLevel.CONTIG
-    
+
     @property
     def is_chromosome_level(self) -> bool:
         """
@@ -63,7 +65,7 @@ class CoordSystem():
             bool: True if chromosome-level, False otherwise.
         """
         return self.level == CoordSystemLevel.CHROMOSOME
-    
+
     @property
     def is_toplevel(self) -> bool:
         """
@@ -73,21 +75,17 @@ class CoordSystem():
             bool: True if toplevel, False otherwise.
         """
         return self.level == CoordSystemLevel.TOPLEVEL
-        
-    def __eq__(self, other: "CoordSystem") -> bool:
+
+    def __eq__(self, other: object) -> bool:
         """Compare two CoordSystem objects for equality.
-        
+
         Args:
-            other (CoordSystem): Another CoordSystem to compare against.
-        
+            other (object): Another object to compare against.
+
         Returns:
             bool: True if equal, False otherwise.
         """
         if type(self) is not type(other):
             return False
 
-        return (
-            self.name == other.name
-            and self.level == other.level
-            and self.rank == other.rank
-        )
+        return self.name == other.name and self.level == other.level and self.rank == other.rank

@@ -19,14 +19,11 @@ from ensembl.vep.models.overlap import TranscriptVariationAllele
 from ensembl.vep.models.variation import VariationAllele
 from ensembl.vep.models.genic import Transcript
 
+
 @pytest.fixture
 def transcript():
-    return Transcript(
-        start=1,
-        end=100,
-        strand=1,
-        stable_id="ENST00000000001"
-    )
+    return Transcript(start=1, end=100, strand=1, stable_id="ENST00000000001")
+
 
 @pytest.fixture
 def variation_allele():
@@ -38,12 +35,11 @@ def variation_allele():
         alternate_allele="T",
     )
 
+
 @pytest.fixture
 def transcript_variation_allele(transcript, variation_allele):
-    return TranscriptVariationAllele(
-        feature=transcript, 
-        overlapping_feature=variation_allele
-    )
+    return TranscriptVariationAllele(feature=transcript, overlapping_feature=variation_allele)
+
 
 class TestTranscriptVariationAlleleInitialization:
     """Test TranscriptVariationAllele initialization."""
@@ -52,6 +48,7 @@ class TestTranscriptVariationAlleleInitialization:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = TranscriptVariationAllele(transcript, variation_allele)
+
 
 class TestTranscriptVariationAlleleProperties:
     """Test TranscriptVariationAllele properties."""

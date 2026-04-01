@@ -18,14 +18,11 @@ import pytest
 from ensembl.vep.models.genic.exon import Exon
 from ensembl.vep.common import ExonPhase
 
+
 @pytest.fixture
 def exon():
-    return Exon(
-        start=10, 
-        end=50, 
-        strand=1, 
-        stable_id="ENSE00000000001"
-    )
+    return Exon(start=10, end=50, strand=1, stable_id="ENSE00000000001")
+
 
 class TestExonInitialization:
     """Test Exon initialization."""
@@ -33,12 +30,8 @@ class TestExonInitialization:
     def test_initialization_without_keywords(self):
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = Exon(
-                10, 
-                end=50, 
-                strand=1, 
-                stable_id="ENSE00000000001"
-            )
+            _ = Exon(10, end=50, strand=1, stable_id="ENSE00000000001")
+
 
 class TestExonProperties:
     """Test Exon properties and cached properties."""
@@ -62,7 +55,7 @@ class TestExonProperties:
 
     def test_frame(self, exon):
         """Test that frame is calculated correctly based on phase and end_phase."""
-        assert exon.frame is None   
+        assert exon.frame is None
 
         exon.phase = ExonPhase.ZERO
         assert exon.frame == 1

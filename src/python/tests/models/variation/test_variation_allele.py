@@ -34,20 +34,15 @@ def slice():
         start=1,
         end=13,
         strand=1,
-        seq="ATCGATCGATCGG"
+        seq="ATCGATCGATCGG",
     )
+
 
 @pytest.fixture
 def variation_allele(slice):
     """Returns a VariationAllele object for testing."""
-    return VariationAllele(
-        start=5,
-        end=5,
-        strand=1,
-        slice=slice,
-        reference_allele="A",
-        alternate_allele="T"
-    )
+    return VariationAllele(start=5, end=5, strand=1, slice=slice, reference_allele="A", alternate_allele="T")
+
 
 class TestVariationAlleleProperties:
     """Tests property accessors and defaults."""
@@ -70,13 +65,15 @@ class TestVariationAlleleProperties:
         assert variation_allele.minimised is False
         variation_allele.minimise()
         assert variation_allele.minimised is True
-        
+
         # Check that minimised_locus is set
         assert variation_allele.minimised_locus is not None
         assert variation_allele.original_locus is not None
 
         # Check that minimised is immutable by external code
-        with pytest.raises(AttributeError, match="property 'minimised' of 'VariationAllele' object has no setter"):
+        with pytest.raises(
+            AttributeError, match="property 'minimised' of 'VariationAllele' object has no setter"
+        ):
             variation_allele.minimised = False
 
     def test_shifted(self, variation_allele):
@@ -90,7 +87,9 @@ class TestVariationAlleleProperties:
         assert variation_allele.original_locus is not None
 
         # Check that shifted is immutable by external code
-        with pytest.raises(AttributeError, match="property 'shifted' of 'VariationAllele' object has no setter"):
+        with pytest.raises(
+            AttributeError, match="property 'shifted' of 'VariationAllele' object has no setter"
+        ):
             variation_allele.shifted = False
 
     def test_consequence_types(self, variation_allele):
@@ -105,12 +104,22 @@ class TestVariationAlleleMinimise:
     def test_minimise_raises_if_missing_alleles(self, variation_allele):
         """Test minimise raises if reference or alternate variation_allele is None."""
         a = VariationAllele(
-            start=1, end=1, strand=1, slice=variation_allele.slice, reference_allele=None, alternate_allele="T"
+            start=1,
+            end=1,
+            strand=1,
+            slice=variation_allele.slice,
+            reference_allele=None,
+            alternate_allele="T",
         )
         with pytest.raises(ValueError, match="Missing reference or alternate sequence for trimming"):
             a.minimise()
         b = VariationAllele(
-            start=1, end=1, strand=1, slice=variation_allele.slice, reference_allele="A", alternate_allele=None
+            start=1,
+            end=1,
+            strand=1,
+            slice=variation_allele.slice,
+            reference_allele="A",
+            alternate_allele=None,
         )
         with pytest.raises(ValueError, match="Missing reference or alternate sequence for trimming"):
             b.minimise()
@@ -120,7 +129,10 @@ class TestVariationAlleleMinimise:
         variation_allele.minimise()
         assert variation_allele.minimised_locus.start == variation_allele.start
         assert variation_allele.minimised_locus.end == variation_allele.end
-        assert variation_allele.minimised_locus.allele_string == f"{variation_allele.reference_allele}/{variation_allele.alternate_allele}"
+        assert (
+            variation_allele.minimised_locus.allele_string
+            == f"{variation_allele.reference_allele}/{variation_allele.alternate_allele}"
+        )
         assert variation_allele.original_locus is not None
 
     def test_minimise_forced(self, variation_allele, caplog):
@@ -128,7 +140,7 @@ class TestVariationAlleleMinimise:
         variation_allele.minimise()
         original_locus = variation_allele.original_locus
         minimised_locus = variation_allele.minimised_locus
-        
+
         with caplog.at_level(logging.DEBUG):
             variation_allele.minimise()
             assert "Variation allele is already minimised. Use force=True to re-minimise." in caplog.text
@@ -145,12 +157,22 @@ class TestVariationAlleleShift:
     def test_shift_raises_if_missing_alleles(self, variation_allele):
         """Test shift raises if reference or alternate variation_allele is None."""
         a = VariationAllele(
-            start=1, end=1, strand=1, slice=variation_allele.slice, reference_allele=None, alternate_allele="T"
+            start=1,
+            end=1,
+            strand=1,
+            slice=variation_allele.slice,
+            reference_allele=None,
+            alternate_allele="T",
         )
         with pytest.raises(ValueError, match="Missing reference or alternate allele for shifting"):
             a.shift()
         b = VariationAllele(
-            start=1, end=1, strand=1, slice=variation_allele.slice, reference_allele="A", alternate_allele=None
+            start=1,
+            end=1,
+            strand=1,
+            slice=variation_allele.slice,
+            reference_allele="A",
+            alternate_allele=None,
         )
         with pytest.raises(ValueError, match="Missing reference or alternate allele for shifting"):
             b.shift()
@@ -160,7 +182,10 @@ class TestVariationAlleleShift:
         variation_allele.shift()
         assert variation_allele.shifted_locus.start == variation_allele.start
         assert variation_allele.shifted_locus.end == variation_allele.end
-        assert variation_allele.shifted_locus.allele_string == f"{variation_allele.reference_allele}/{variation_allele.alternate_allele}"
+        assert (
+            variation_allele.shifted_locus.allele_string
+            == f"{variation_allele.reference_allele}/{variation_allele.alternate_allele}"
+        )
         assert variation_allele.original_locus is not None
 
 
@@ -190,7 +215,12 @@ class TestVariationAlleleMinimiseAndShift:
         assert variation_allele.original_locus == original_locus
 
         variation_allele2 = VariationAllele(
-            start=12, end=12, strand=1, slice=variation_allele.slice, reference_allele="G", alternate_allele="T"
+            start=12,
+            end=12,
+            strand=1,
+            slice=variation_allele.slice,
+            reference_allele="G",
+            alternate_allele="T",
         )
         variation_allele2.minimise()
         original_locus2 = variation_allele2.original_locus
@@ -211,7 +241,12 @@ class TestVariationAlleleMinimiseAndShift:
         assert variation_allele.original_locus == original_locus
 
         variation_allele2 = VariationAllele(
-            start=12, end=12, strand=1, slice=variation_allele.slice, reference_allele="GG", alternate_allele="G"
+            start=12,
+            end=12,
+            strand=1,
+            slice=variation_allele.slice,
+            reference_allele="GG",
+            alternate_allele="G",
         )
         variation_allele2.shift()
         original_locus2 = variation_allele2.original_locus

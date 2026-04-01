@@ -25,12 +25,7 @@ class TestFeatureInitialization:
     def test_initialization_without_keywords(self) -> None:
         """Test Feature initialization without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = Feature(
-                10, 
-                end=20, 
-                strand=1, 
-                seq=None
-            )
+            _ = Feature(10, end=20, strand=1, seq=None)
 
 
 class TestFeatureProperties:
@@ -39,25 +34,20 @@ class TestFeatureProperties:
     @pytest.fixture
     def feature(self) -> Feature:
         """Create a Feature instance for testing."""
-        return Feature(
-            start=10, 
-            end=20, 
-            strand=1, 
-            slice=None
-        )
-    
+        return Feature(start=10, end=20, strand=1, slice=None)
+
     @pytest.fixture
     def slice(self) -> Slice:
         """Create a Slice instance for testing."""
         return Slice(
-            coord_system="chromosome", 
-            seq_region_name="1", 
-            seq_region_length=1000, 
-            start=100, 
-            end=200, 
-            strand=1
+            coord_system="chromosome",
+            seq_region_name="1",
+            seq_region_length=1000,
+            start=100,
+            end=200,
+            strand=1,
         )
-    
+
     def test_core_properties(self, feature: Feature) -> None:
         """Test core properties are set correctly."""
         assert feature.start == 10
@@ -75,7 +65,9 @@ class TestFeatureProperties:
         with pytest.raises(AttributeError, match="property 'length' of 'Feature' object has no setter"):
             feature.length = None
 
-        with pytest.raises(AttributeError, match="'Feature' object has no attribute '_TestFeatureProperties__length'"):
+        with pytest.raises(
+            AttributeError, match="'Feature' object has no attribute '_TestFeatureProperties__length'"
+        ):
             feature.__length = None
 
     def test_length_update(self, feature: Feature) -> None:
@@ -102,10 +94,15 @@ class TestFeatureProperties:
 
     def test_seq_region_start_immutable(self, feature: Feature) -> None:
         """Test seq_region_start cannot be directly set."""
-        with pytest.raises(AttributeError, match="property 'seq_region_start' of 'Feature' object has no setter"):
+        with pytest.raises(
+            AttributeError, match="property 'seq_region_start' of 'Feature' object has no setter"
+        ):
             feature.seq_region_start = None
 
-        with pytest.raises(AttributeError, match="'Feature' object has no attribute '_TestFeatureProperties__seq_region_start'"):
+        with pytest.raises(
+            AttributeError,
+            match="'Feature' object has no attribute '_TestFeatureProperties__seq_region_start'",
+        ):
             feature.__seq_region_start = None
 
     def test_seq_region_start_update(self, feature: Feature, slice: Slice) -> None:
@@ -130,10 +127,14 @@ class TestFeatureProperties:
 
     def test_seq_region_end_immutable(self, feature: Feature) -> None:
         """Test seq_region_end cannot be directly set."""
-        with pytest.raises(AttributeError, match="property 'seq_region_end' of 'Feature' object has no setter"):
+        with pytest.raises(
+            AttributeError, match="property 'seq_region_end' of 'Feature' object has no setter"
+        ):
             feature.seq_region_end = None
 
-        with pytest.raises(AttributeError, match="'Feature' object has no attribute '_TestFeatureProperties__seq_region_end'"):
+        with pytest.raises(
+            AttributeError, match="'Feature' object has no attribute '_TestFeatureProperties__seq_region_end'"
+        ):
             feature.__seq_region_end = None
 
     def test_seq_region_end_update(self, feature: Feature, slice: Slice) -> None:
@@ -164,10 +165,15 @@ class TestFeatureProperties:
 
     def test_seq_region_strand_immutable(self, feature: Feature) -> None:
         """Test seq_region_strand cannot be directly set."""
-        with pytest.raises(AttributeError, match="property 'seq_region_strand' of 'Feature' object has no setter"):
+        with pytest.raises(
+            AttributeError, match="property 'seq_region_strand' of 'Feature' object has no setter"
+        ):
             feature.seq_region_strand = None
 
-        with pytest.raises(AttributeError, match="'Feature' object has no attribute '_TestFeatureProperties__seq_region_strand'"):
+        with pytest.raises(
+            AttributeError,
+            match="'Feature' object has no attribute '_TestFeatureProperties__seq_region_strand'",
+        ):
             feature.__seq_region_strand = None
 
     def test_seq_region_strand_update(self, feature: Feature, slice: Slice) -> None:
@@ -189,12 +195,12 @@ class TestFeatureEquality:
     def slice(self) -> Slice:
         """Create a Slice instance for testing."""
         return Slice(
-            coord_system="chromosome", 
-            seq_region_name="1", 
-            seq_region_length=1000, 
-            start=100, 
-            end=200, 
-            strand=1
+            coord_system="chromosome",
+            seq_region_name="1",
+            seq_region_length=1000,
+            start=100,
+            end=200,
+            strand=1,
         )
 
     def test_equal_features(self, slice: Slice) -> None:
@@ -224,12 +230,12 @@ class TestFeatureEquality:
     def test_different_slice(self, slice: Slice) -> None:
         """Test features with different slices are not equal."""
         slice2 = Slice(
-            coord_system="chromosome", 
-            seq_region_name="1", 
-            seq_region_length=1000, 
-            start=200, 
-            end=300, 
-            strand=1
+            coord_system="chromosome",
+            seq_region_name="1",
+            seq_region_length=1000,
+            start=200,
+            end=300,
+            strand=1,
         )
         f1 = Feature(start=10, end=20, strand=1, slice=slice)
         f2 = Feature(start=10, end=20, strand=1, slice=slice2)
@@ -242,6 +248,7 @@ class TestFeatureEquality:
 
         class AnotherFeature(Feature):
             pass
+
         f2 = AnotherFeature(start=10, end=20, strand=1, slice=slice)
         assert f1 != f2
 
@@ -253,12 +260,12 @@ class TestFeatureOverlaps:
     def slice(self) -> Slice:
         """Create a Slice instance for testing."""
         return Slice(
-            coord_system="chromosome", 
-            seq_region_name="1", 
-            seq_region_length=1000, 
-            start=1, 
-            end=1000, 
-            strand=1
+            coord_system="chromosome",
+            seq_region_name="1",
+            seq_region_length=1000,
+            start=1,
+            end=1000,
+            strand=1,
         )
 
     def test_overlaps_same_slice(self, slice: Slice) -> None:
@@ -277,12 +284,12 @@ class TestFeatureOverlaps:
         """Test features on different sequence regions don't overlap."""
         slice1 = slice
         slice2 = Slice(
-            coord_system="chromosome", 
-            seq_region_name="2", 
-            seq_region_length=1000, 
-            start=1, 
-            end=1000, 
-            strand=1
+            coord_system="chromosome",
+            seq_region_name="2",
+            seq_region_length=1000,
+            start=1,
+            end=1000,
+            strand=1,
         )
 
         f1 = Feature(start=10, end=20, strand=1, slice=slice1)
@@ -303,12 +310,12 @@ class TestFeatureFeatureSlice:
     def slice(self) -> Slice:
         """Create a Slice instance for testing."""
         return Slice(
-            coord_system="chromosome", 
-            seq_region_name="1", 
-            seq_region_length=1000, 
-            start=100, 
-            end=200, 
-            strand=1
+            coord_system="chromosome",
+            seq_region_name="1",
+            seq_region_length=1000,
+            start=100,
+            end=200,
+            strand=1,
         )
 
     def test_feature_slice(self, slice: Slice) -> None:
@@ -330,9 +337,11 @@ class TestFeatureFeatureSlice:
 
 class TestFeatureTransform:
     """Test transform method."""
+
     ...
 
 
 class TestFeatureTransfer:
     """Test transfer method."""
+
     ...

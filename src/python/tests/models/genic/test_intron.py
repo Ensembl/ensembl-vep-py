@@ -18,21 +18,18 @@ import pytest
 from ensembl.vep.models.genic.intron import Intron
 from ensembl.vep.models.genic.exon import Exon
 
+
 @pytest.fixture
 def exon():
-    return Exon(
-        start=1, 
-        end=10, 
-        strand=1, 
-        stable_id="ENSE00000000001"
-    )
+    return Exon(start=1, end=10, strand=1, stable_id="ENSE00000000001")
+
 
 @pytest.fixture
 def intron():
     return Intron(
-        start=11, 
-        end=19, 
-        strand=1, 
+        start=11,
+        end=19,
+        strand=1,
     )
 
 
@@ -43,6 +40,7 @@ class TestIntronInitialization:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = Intron(11, end=19, strand=1)
+
 
 class TestIntronProperties:
     """Test Intron properties."""

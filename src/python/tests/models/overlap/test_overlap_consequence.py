@@ -19,9 +19,11 @@ from ensembl.vep.models.overlap import OverlapConsequence
 from ensembl.vep.common import ConsequenceImpact
 from ensembl.vep.models import Feature
 
+
 @pytest.fixture
 def overlap_consequence():
     return OverlapConsequence(term="missense_variant", accession="SO:0001583")
+
 
 class TestOverlapConsequenceInitialization:
     """Test OverlapConsequence initialization."""

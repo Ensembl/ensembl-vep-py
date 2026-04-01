@@ -32,8 +32,9 @@ def slice():
         start=1,
         end=12,
         strand=1,
-        seq="ATCGATCGATCG"
+        seq="ATCGATCGATCG",
     )
+
 
 @pytest.fixture
 def variation(slice):
@@ -46,6 +47,7 @@ def variation(slice):
         allele_string="A/T",
     )
 
+
 @pytest.fixture
 def multiallelic_variation(slice):
     """Returns a multiallelic Variation object for testing."""
@@ -57,6 +59,7 @@ def multiallelic_variation(slice):
         allele_string="A/T/G/C",
     )
 
+
 @pytest.fixture
 def insertion_variation(slice):
     """Returns an insertion Variation object for testing."""
@@ -67,6 +70,7 @@ def insertion_variation(slice):
         slice=slice,
         allele_string="A/ATT",
     )
+
 
 @pytest.fixture
 def deletion_variation(slice):
@@ -93,9 +97,7 @@ class TestVariationProperties:
     def test_initialization_without_keywords(self):
         """Test Variation initialization without keyword raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = Variation(
-                100, end=100, strand=1, slice=None, allele_string="A/T"
-            )
+            _ = Variation(100, end=100, strand=1, slice=None, allele_string="A/T")
 
     def test_defaults(self, variation):
         """Test default values for optional attributes."""
@@ -104,17 +106,23 @@ class TestVariationProperties:
 
     def test_variation_alleles_immutable(self, variation):
         """Test that variation_alleles cannot be directly set."""
-        with pytest.raises(AttributeError, match="property 'variation_alleles' of 'Variation' object has no setter"):
+        with pytest.raises(
+            AttributeError, match="property 'variation_alleles' of 'Variation' object has no setter"
+        ):
             variation.variation_alleles = []
 
     def test_most_severe_consequence_immutable(self, variation):
         """Test that most_severe_consequence cannot be directly set."""
-        with pytest.raises(AttributeError, match="property 'most_severe_consequence' of 'Variation' object has no setter"):
+        with pytest.raises(
+            AttributeError, match="property 'most_severe_consequence' of 'Variation' object has no setter"
+        ):
             variation.most_severe_consequence = "some value"
 
     def test_class_so_term_immutable(self, variation):
         """Test that class_so_term cannot be directly set."""
-        with pytest.raises(AttributeError, match="property 'class_so_term' of 'Variation' object has no setter"):
+        with pytest.raises(
+            AttributeError, match="property 'class_so_term' of 'Variation' object has no setter"
+        ):
             variation.class_so_term = "some value"
 
 
@@ -124,7 +132,7 @@ class TestVariationAlleles:
     def test_single_alt_allele(self, variation):
         """Test that a bi-allelic variation returns the correct VariationAllele."""
         alleles = variation.variation_alleles
-        
+
         assert len(alleles) == 1
         assert alleles[0].reference_allele == "A"
         assert alleles[0].alternate_allele == "T"
@@ -132,7 +140,7 @@ class TestVariationAlleles:
     def test_multiple_alt_alleles(self, multiallelic_variation):
         """Test that a multi-allelic variation returns the correct VariationAlleles."""
         alleles = multiallelic_variation.variation_alleles
-        
+
         assert len(alleles) == 3
         assert alleles[0].alternate_allele == "T"
         assert alleles[1].alternate_allele == "G"
@@ -225,6 +233,7 @@ class TestVariationShifting:
 
 class TestMostSevereConsequence:
     """Tests for the most_severe_consequence cached property."""
+
     pass
 
 
@@ -241,9 +250,7 @@ class TestClassSOTerm:
         ],
     )
     def test_snv(self, slice, allele_string, expected):
-        var = Variation(
-            start=100, end=100, strand=1, slice=slice, allele_string=allele_string
-        )
+        var = Variation(start=100, end=100, strand=1, slice=slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
     @pytest.mark.parametrize(
@@ -254,9 +261,7 @@ class TestClassSOTerm:
         ],
     )
     def test_tandem_repeat(self, slice, allele_string, expected):
-        var = Variation(
-            start=100, end=100, strand=1, slice=slice, allele_string=allele_string
-        )
+        var = Variation(start=100, end=100, strand=1, slice=slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
     @pytest.mark.parametrize(
@@ -267,13 +272,11 @@ class TestClassSOTerm:
             ("A/ATT", ClassSOTerm.INDEL),
             ("A/AT", ClassSOTerm.INDEL),
             ("-/LARGEINSERTION", ClassSOTerm.INSERTION),
-            ("(LARGEINSERTION)", ClassSOTerm.INSERTION)
+            ("(LARGEINSERTION)", ClassSOTerm.INSERTION),
         ],
     )
     def test_insertion(self, slice, allele_string, expected):
-        var = Variation(
-            start=100, end=100, strand=1, slice=slice, allele_string=allele_string
-        )
+        var = Variation(start=100, end=100, strand=1, slice=slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
     @pytest.mark.parametrize(
@@ -285,13 +288,11 @@ class TestClassSOTerm:
             ("ATT/A", ClassSOTerm.INDEL),
             ("(LARGEDELETION)/-", ClassSOTerm.DELETION),
             ("(LARGEDELETION)", ClassSOTerm.DELETION),
-            ("(2345 BP DELETION)/-", ClassSOTerm.DELETION)
+            ("(2345 BP DELETION)/-", ClassSOTerm.DELETION),
         ],
     )
     def test_deletion(self, slice, allele_string, expected):
-        var = Variation(
-            start=100, end=102, strand=1, slice=slice, allele_string=allele_string
-        )
+        var = Variation(start=100, end=102, strand=1, slice=slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
     @pytest.mark.parametrize(
@@ -302,9 +303,7 @@ class TestClassSOTerm:
         ],
     )
     def test_substitution(self, slice, allele_string, expected):
-        var = Variation(
-            start=100, end=101, strand=1, slice=slice, allele_string=allele_string
-        )
+        var = Variation(start=100, end=101, strand=1, slice=slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
     @pytest.mark.parametrize(
@@ -315,19 +314,13 @@ class TestClassSOTerm:
         ],
     )
     def test_indel(self, slice, allele_string, expected):
-        var = Variation(
-            start=100, end=103, strand=1, slice=slice, allele_string=allele_string
-        )
+        var = Variation(start=100, end=103, strand=1, slice=slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
     def test_empty_allele_string_defaults_to_sequence_alteration(self, slice):
-        var = Variation(
-            start=100, end=100, strand=1, slice=slice, allele_string=""
-        )
+        var = Variation(start=100, end=100, strand=1, slice=slice, allele_string="")
         assert var.class_so_term == ClassSOTerm.SEQUENCE_ALTERATION
 
     def test_none_allele_string_defaults_to_sequence_alteration(self, slice):
-        var = Variation(
-            start=100, end=100, strand=1, slice=slice, allele_string=None
-        )
+        var = Variation(start=100, end=100, strand=1, slice=slice, allele_string=None)
         assert var.class_so_term == ClassSOTerm.SEQUENCE_ALTERATION

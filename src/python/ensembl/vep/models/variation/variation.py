@@ -11,18 +11,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Variation class."""
 
 from __future__ import annotations
 
 import re
-from attrs import define, field
 from typing import TYPE_CHECKING
 from functools import cached_property
 from threading import Lock
+from attrs import define, field
 
 from ensembl.vep.common import ClassSOTerm, invalidates
 from ensembl.vep.models import Feature
 from ensembl.vep.models.overlap import OverlapConsequence
+
 if TYPE_CHECKING:
     from ensembl.vep.models.variation import VariationAllele
 
@@ -30,14 +32,14 @@ if TYPE_CHECKING:
 @define(kw_only=True, auto_attribs=True)
 class Variation(Feature):
     """Represents an Ensembl-specific sequence variation describing a location on a sequence in an arbitrary coordinate system.
-    
+
     Args:
         stable_id (str | None): Stable identifier for the variation.
         allele_string (str | None): String representation of the alleles.
         variation_alleles (VariationAllele | None): VariationAllele object describing the alleles of the variation.
         is_somatic (bool | None): Indicates whether the variation is somatic.
         class_so_term (str | None): Sequence Ontology term describing the class of the variation.
-        
+
     Attributes:
         stable_id (str | None): Stable identifier for the variation.
         allele_string (str | None): String representation of the alleles.
@@ -46,24 +48,27 @@ class Variation(Feature):
         class_so_term (str | None): Sequence Ontology term describing the class of the variation.
         most_severe_consequence (OverlapConsequence | None): Most severe consequence type for the variation.
     """
+
     stable_id: str | None = field(default=None)
-    allele_string: str | None = field(default=None, on_setattr=invalidates("variation_alleles", "class_so_term"))
+    allele_string: str | None = field(
+        default=None, on_setattr=invalidates("variation_alleles", "class_so_term")
+    )
     is_somatic: bool = field(default=False)
     _lock: Lock = field(factory=Lock, init=False, repr=False)
 
     @property
     def variation_alleles(self) -> list[VariationAllele]:
         """Public accessor for the __variation_alleles.
-        
+
         Returns:
             list[VariationAllele]: The list of VariationAllele objects for the variation.
         """
         return self.__variation_alleles
-    
+
     @cached_property
     def __variation_alleles(self) -> list[VariationAllele]:
         """Returns the list of VariationAllele objects for the variation.
-        
+
         Returns:
             list[VariationAllele]: List of VariationAllele objects.
         """
@@ -80,12 +85,12 @@ class Variation(Feature):
             for alt in alts:
                 # ref is still same for all alleles, so we can use the start and end for all alleles
                 variation_allele = VariationAllele(
-                    start = self.start,
-                    end = self.end,
-                    strand = self.strand,
-                    slice = self.slice,
-                    reference_allele=ref, 
-                    alternate_allele=alt
+                    start=self.start,
+                    end=self.end,
+                    strand=self.strand,
+                    slice=self.slice,
+                    reference_allele=ref,
+                    alternate_allele=alt,
                 )
 
                 variation_alleles.append(variation_allele)
@@ -95,40 +100,40 @@ class Variation(Feature):
     @property
     def most_severe_consequence(self) -> OverlapConsequence | None:
         """Public accessor for the __most_severe_consequence.
-        
+
         Returns:
             OverlapConsequence | None: The most severe consequence type for the variation or None if not deducible.
         """
         return self.__most_severe_consequence
-    
+
     @cached_property
     def __most_severe_consequence(self) -> OverlapConsequence | None:
         """Returns the most severe consequence type for the variation.
-        
+
         Returns:
             OverlapConsequence | None: The most severe consequence type or None if not deducible.
         """
         highest = None
         for variation_allele in self.variation_alleles or []:
-             for overlap_consequence in variation_allele.overlap_consequences or []:
+            for overlap_consequence in variation_allele.overlap_consequences or []:
                 highest = highest or overlap_consequence
                 if overlap_consequence.rank < highest.rank:
                     highest = overlap_consequence
                 elif overlap_consequence.rank == highest.rank:
                     if overlap_consequence.SO_term < highest.SO_term:
                         highest = overlap_consequence
-        
+
         return highest
-    
+
     @property
     def class_so_term(self) -> ClassSOTerm | None:
         """Public accessor for the __class_so_term.
-        
+
         Returns:
             ClassSOTerm | None: The SO term for the class of the variation.
         """
         return self.__class_so_term
-    
+
     @cached_property
     def __class_so_term(self: str, ref_correct: bool = True) -> ClassSOTerm | None:
         """
@@ -165,9 +170,7 @@ class Variation(Feature):
                         # -/(LARGEDELETION)
                         cls = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
 
-                    if not any(
-                        not re.match(r"^[A-Z]+$|INS", alt) for alt in alts
-                    ):
+                    if not any(not re.match(r"^[A-Z]+$|INS", alt) for alt in alts):
                         # -/ATT, -/(LARGEINSERTION)
                         cls = ClassSOTerm.INSERTION if ref_correct else ClassSOTerm.INDEL
 
@@ -176,9 +179,7 @@ class Variation(Feature):
                         # A/-, A/(LARGEDELETION)
                         cls = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
 
-                    elif re.match(
-                        r"^[A-Z]+(/[A-Z]+)+$", allele_string
-                    ):
+                    elif re.match(r"^[A-Z]+(/[A-Z]+)+$", allele_string):
                         # AA/TT => substitution, AA/TTTT => indel
                         same_size = all(len(alt) == len(ref) for alt in alts)
                         cls = ClassSOTerm.SUBSTITUTION if same_size else ClassSOTerm.INDEL
@@ -197,7 +198,7 @@ class Variation(Feature):
                     cls = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
 
         return cls
-    
+
     def minimise_alleles(self) -> None:
         """Minimises all alleles."""
         for variation_allele in self.variation_alleles or []:
