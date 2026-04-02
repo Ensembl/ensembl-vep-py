@@ -31,17 +31,19 @@ class Gene(Feature):
     Represents a gene.
 
     Attributes:
-        stable_id:  Ensembl stable transcript identifier (e.g. "ENST00000366667").
-        gene_id:    Ensembl stable gene identifier (e.g. "ENSG00000116016").
-        biotype:    Transcript biotype (e.g. "protein_coding").
-        slice:      Genomic location of the transcript.
-        version:    Version of the stable identifier.
+        stable_id (str): Ensembl stable gene identifier (e.g. "ENSG00000116016").
+        version (int | None): Version of the stable identifier.
+        name (str | None): Gene name from known nomenclature such as HGNC(e.g. "BRCA2").
+        symbol (str | None): Gene symbol or short name (e.g. "BRCA2").
+        alternative_names (list[ExternalReference] | None): Alternative names for the gene.
+        transcripts (list[Transcript] | None): List of transcripts associated with the gene.
+        biotype (str | None): Biotype of the gene (e.g. "protein_coding").
     """
 
     stable_id: str
     version: int | None = field(default=None, init=False)
     name: str | None = field(default=None, init=False)
     symbol: str | None = field(default=None, init=False)
-    alternative_names: list[ExternalReference] | None = field(default=[], init=False)
-    transcripts: list[Transcript] | None = field(default=[], init=False)
+    alternative_names: list[ExternalReference] | None = field(factory=list, init=False)
+    transcripts: list[Transcript] | None = field(factory=list, init=False)
     biotype: str | None = field(default=None, init=False)

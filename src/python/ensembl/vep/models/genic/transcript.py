@@ -36,15 +36,21 @@ class Transcript(Feature):
     Represents a transcript.
 
     Attributes:
-        stable_id:  Ensembl stable transcript identifier (e.g. "ENST00000366667").
-        version:    Version of the stable identifier.
+        stable_id (str): Ensembl stable transcript identifier (e.g. "ENST00000366667").
+        version (int | None): Version of the stable identifier.
+        gene (Gene | None): The gene to which this transcript belongs.
+        spliced_exons (list[Exon]): List of exons that are spliced together to form the transcript.
+        introns (list[Intron]): List of introns in the transcript.
+        translation (Translation | None): The translation associated with this transcript, if applicable.
+        alternative_translations (list[Translation] | None): List of alternative translations associated with this transcript, if applicable.
+        attributes (list[Attribute] | None): List of attributes associated with this transcript.
     """
 
     stable_id: str
     version: int | None = field(default=None, init=False)
     gene: Gene | None = field(default=None, init=False)
     spliced_exons: list[Exon] = field(
-        default=[],
+        factory=list,
         init=False,
         on_setattr=invalidates(
             "__end_exon_index",
@@ -59,7 +65,7 @@ class Transcript(Feature):
             "__translated_seq",
         ),
     )
-    introns: list[Intron] = field(default=[], init=False)
+    introns: list[Intron] = field(factory=list, init=False)
     translation: Translation | None = field(
         default=None,
         init=False,
@@ -74,8 +80,8 @@ class Transcript(Feature):
             "__translated_seq",
         ),
     )
-    alternative_translations: list[Translation] | None = field(default=[], init=False)
-    attributes: list[Attribute] | None = field(default=[], init=False)
+    alternative_translations: list[Translation] | None = field(factory=list, init=False)
+    attributes: list[Attribute] | None = field(factory=list, init=False)
     _lock: Lock = field(factory=Lock, init=False, repr=False)
 
     @property
@@ -155,6 +161,12 @@ class Transcript(Feature):
         with self._lock:
             from ensembl.vep.models.genic import CDS
 
+            if self.translation is None:
+                logger.warning(
+                    f"Cannot compute CDS for transcript {self.stable_id} because translation information is not available."
+                )
+                return None
+
             seq = ""
             for idx, exon in enumerate(self.spliced_exons[self.start_exon_index : self.end_exon_index + 1]):
                 if exon.seq is None:
@@ -168,10 +180,16 @@ class Transcript(Feature):
 
                 if idx == self.start_exon_index:
                     exon_coding_seq = exon_coding_seq[self.translation.exon_coding_start - 1 :]
-                    start = exon.start + self.translation.exon_coding_start - 1
+                    if self.translation.exon_coding_start is not None:
+                        start = exon.start + self.translation.exon_coding_start - 1
+                    else:
+                        start = exon.start
                 if idx == self.end_exon_index:
                     exon_coding_seq = exon_coding_seq[: self.translation.exon_coding_end]
-                    end = exon.start + self.translation.exon_coding_end - 1
+                    if self.translation.exon_coding_end is not None:
+                        end = exon.start + self.translation.exon_coding_end - 1
+                    else:
+                        end = exon.end
 
                 seq += exon_coding_seq
 
@@ -188,7 +206,7 @@ class Transcript(Feature):
     @cached_property
     def cdna(self) -> cDNA | None:
         """Returns the cDNA sequence for the transcript, or None if not applicable."""
-        return None
+        raise NotImplementedError("Feature is not implemented yet.")
 
     @property
     def cdna_coding_start(self) -> int | None:
@@ -339,6 +357,12 @@ class Transcript(Feature):
                 )
                 return None
 
+            if self.spliced_seq is None or len(self.spliced_seq) < self.cdna_coding_start:
+                logger.warning(
+                    f"Cannot compute five_prime_utr for transcript {self.stable_id} because spliced_seq is None or too short."
+                )
+                return None
+
             end = self.cds_start - 1
             # spliced sequence is the same as cDNA sequence
             seq = self.spliced_seq[: self.cdna_coding_start - 1]
@@ -373,6 +397,12 @@ class Transcript(Feature):
                 )
                 return None
 
+            if self.spliced_seq is None or len(self.spliced_seq) <= self.cdna_coding_end:
+                logger.warning(
+                    f"Cannot compute three_prime_utr for transcript {self.stable_id} because spliced_seq is None or too short."
+                )
+                return None
+
             start = self.cds_end + 1
             # spliced sequence is the same as cDNA sequence
             seq = self.spliced_seq[self.cdna_coding_end :]
@@ -402,7 +432,8 @@ class Transcript(Feature):
             if self.translation is not None:
                 return self.translation.seq
             elif self.cds is None:
-                _dummy_stuff = "dummy"  # to avoid pylint warning, # TBD: need codon table
+                # to avoid pylint warning, # TBD: need codon table
+                return "dummy"
             else:
                 logger.warning(
                     f"Cannot compute translated_seq for transcript {self.stable_id} because translation and CDS sequence are both not available."

@@ -35,9 +35,15 @@ class TranscriptVariationAllele(FeatureOverlap):
     Represents the overlap between a transcript and a variation allele.
 
     Attributes:
-        feature: The transcript that is getting overlapped.
-        overlapping_feature: The variation allele that is overlapping.
-        is_reference: Whether the overlapping variation allele is the reference allele.
+        feature (Transcript): The transcript that is getting overlapped.
+        overlapping_feature (VariationAllele): The variation allele that is overlapping.
+        is_reference (bool): Whether the overlapping variation allele is the reference allele.
+        cdna_locus (Locus): The locus of the variation allele on the cDNA sequence of the transcript.
+        cds_locus (Locus | None): The locus of the variation allele on the CDS sequence of the transcript.
+        protein_locus (Locus | None): The locus of the variation allele on the protein sequence of the transcript.
+        distance_to_transcript (int | None): The distance from the variation allele to the transcript, or None if the variation allele overlaps the transcript.
+        exon_number (int | None): The exon number of the transcript that is overlapped by the variation allele, or None if the variation allele does not overlap any exon.
+        intron_number (int | None): The intron number of the transcript that is overlapped by the variation allele, or None if the variation allele does not overlap any intron.
     """
 
     feature: Transcript
@@ -185,20 +191,20 @@ class TranscriptVariationAllele(FeatureOverlap):
         Returns:
             Locus | None: The original protein locus of the variation allele before shifting, or None if not applicable.
         """
-        return None
+        raise NotImplementedError("Feature is not implemented yet.")
 
     def shift(self) -> None:
         """Shifts the variation allele to its most 3' position on the transcript according to HGVS rules."""
-        return None
+        raise NotImplementedError("Feature is not implemented yet.")
 
     def hgvs_genomic(self) -> str | None:
         """Returns the HGVS genomic notation for this variation allele."""
-        return None
+        raise NotImplementedError("Feature is not implemented yet.")
 
     def hgvs_transcript(self) -> str | None:
         """Returns the HGVS transcript notation for this variation allele."""
-        return None
+        raise NotImplementedError("Feature is not implemented yet.")
 
     def hgvs_protein(self) -> str | None:
         """Returns the HGVS protein notation for this variation allele."""
-        return None
+        raise NotImplementedError("Feature is not implemented yet.")

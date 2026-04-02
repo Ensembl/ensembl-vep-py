@@ -11,14 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Common mixins."""
+"""Common mixins. Mixins are for reusable behavior without data."""
 
 from contextlib import contextmanager
 
 
 class UnsafeSetterMixin:
     """
-    Can be used to temporarily disable cache invalidation for faster but unsafe attribute update.
+    Can be used to temporarily disable cache invalidation to allow faster but unsafe attribute update.
 
     Caveat:
     This can be very expansive in terms of storage as it stores the type(self) for every instance. It also create a
@@ -27,12 +27,12 @@ class UnsafeSetterMixin:
 
     __slots__ = ("_safe_cls",)
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         """Set up the safe class reference for later use in the unsafe context manager."""
         object.__setattr__(self, "_safe_cls", type(self))
 
     @contextmanager
-    def unsafe(self):
+    def unsafe(self):  # type: ignore
         """Context manager that temporarily swaps the class of this instance to a version with an
         unsafe __setattr__ that bypasses attrs' on_setattr hooks."""
         safe_cls = self._safe_cls
@@ -57,19 +57,20 @@ class UnsafeSetterMixin:
 
 
 class CachedAttributeGuardMixin:
-    """Mixin that guards against setting attributes that are cached properties and/or invalidate cached properties
+    """Mixin that guards against setting attributes that are internal properties and/or invalidate cached properties
     when their dependencies change.
 
     Caveat:
-    These can be very expansive as it will be called on every attribute set but can be used to make sure that
-    functools.cached_property attribute is not externally set. Preferably, use CachedInvalidationMixin to only
-    call hooks on attributes that are actually dependencies of cached properties.
+    These can be very expansive as it will be called every time any attribute is updated.
+
+    Currently not in use as a less preferable method. Instead, name mangling is used for guarding update to
+    internal properties and attrs' on_setattr hook for invalidation.
     """
 
     __slots__ = ()
 
-    def __setattr__(self, name, value):
-        """Override __setattr__ to guard against setting attributes that are cached properties and/or invalidate
+    def __setattr__(self, name, value):  # type: ignore
+        """Override __setattr__ to guard against setting attributes that are internal properties and/or invalidate
         cached properties when their dependencies change.
 
         Args:
@@ -89,6 +90,6 @@ class CachedAttributeGuardMixin:
             try:
                 delattr(self, invalidation_candidate)
             except AttributeError:
-                pass
+                raise NotImplementedError("Feature is not implemented yet.")
 
         return super().__setattr__(name, value)

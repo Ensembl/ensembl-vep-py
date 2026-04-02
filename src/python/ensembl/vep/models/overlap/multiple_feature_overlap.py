@@ -30,12 +30,12 @@ class MultipleFeatureOverlap:
     Represents an overlap between a feature and multiple overlapping features, along with the consequences of that overlap.
 
     Attributes:
-        features: The features that are getting overlapped.
-        overlapping_feature: The feature that is overlapping.
-        overlap_consequences: A list of consequences the overlapping feature has on the feature.
+        feature (Feature): The feature that is getting overlapped.
+        overlapping_features (list[Feature]): The features that are overlapping.
+        overlap_consequences (list[OverlapConsequence]): A list of consequences the overlapping features have on the feature.
     """
 
     feature: Feature
     overlapping_features: list[Feature]
-    overlap_consequences: list[OverlapConsequence] = field(default=[], init=False)
+    overlap_consequences: list[OverlapConsequence] = field(factory=list, init=False)
     # more ...

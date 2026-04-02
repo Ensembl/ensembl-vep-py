@@ -31,14 +31,7 @@ logger = logging.getLogger(__name__)
 @define(kw_only=True, auto_attribs=True)
 class Feature:
     """
-    Represents an Ensembl-specific sequence feature describing a location on a sequence in an arbitrary coordinate system.
-
-    Args:
-        start (int): Start position relative to slice.
-        end (int): End position relative to slice.
-        strand (Strand): Feature orientation relative to slice.
-        slice (Slice | None): Slice object describing the feature context.
-        seq (Any | None): Associated biological sequence.
+    Represents a genomic feature in a specific locus.
 
     Attributes:
         start (int): Start position relative to slice.
@@ -79,22 +72,22 @@ class Feature:
             return self.end - self.start + 1
 
     @property
-    def seq_region_start(self) -> int:
+    def seq_region_start(self) -> int | None:
         """
         Public accessor for the __seq_region_start.
 
         Returns:
-            int: The start position in the sequence region.
+            int | None: The start position in the sequence region, or None if the feature has no attached slice.
         """
         return self.__seq_region_start
 
     @cached_property
-    def __seq_region_start(self) -> int:
+    def __seq_region_start(self) -> int | None:
         """
         Returns the start position in the sequence region.
 
         Returns:
-            int: The start position in the sequence region.
+            int | None: The start position in the sequence region, or None if the feature has no attached slice.
         """
         with self._lock:
             if self.slice is None:
@@ -103,22 +96,22 @@ class Feature:
             return self.slice.start + self.start
 
     @property
-    def seq_region_end(self) -> int:
+    def seq_region_end(self) -> int | None:
         """
         Public accessor for the __seq_region_end.
 
         Returns:
-            int: The end position in the sequence region.
+            int | None: The end position in the sequence region, or None if the feature has no attached slice.
         """
         return self.__seq_region_end
 
     @cached_property
-    def __seq_region_end(self) -> int:
+    def __seq_region_end(self) -> int | None:
         """
         Returns the end position in the sequence region.
 
         Returns:
-            int: The end position in the sequence region.
+            int | None: The end position in the sequence region, or None if the feature has no attached slice.
         """
         with self._lock:
             if self.slice is None:
@@ -127,28 +120,28 @@ class Feature:
             return self.slice.start + self.end
 
     @property
-    def seq_region_strand(self) -> Strand:
+    def seq_region_strand(self) -> Strand | None:
         """
         Public accessor for the __seq_region_strand.
 
         Returns:
-            Strand: The strand in the sequence region.
+            Strand | None: The strand in the sequence region, or None if the feature has no attached slice.
         """
         return self.__seq_region_strand
 
     @cached_property
-    def __seq_region_strand(self) -> Strand:
+    def __seq_region_strand(self) -> Strand | None:
         """
         Returns the strand in the sequence region.
 
         Returns:
-            Strand: The strand in the sequence region.
+            Strand | None: The strand in the sequence region, or None if the feature has no attached slice.
         """
         with self._lock:
             if self.slice is None:
                 logging.warning("Cannot obtain seq_region_strand for a feature without attached slice.")
                 return None
-        return self.slice.strand * self.strand
+            return Strand(self.slice.strand.value * self.strand.value)
 
     def __eq__(self, other: object) -> bool:
         """
@@ -180,9 +173,9 @@ class Feature:
         Returns:
             Feature | None: The transformed feature or None if transformation is not possible.
         """
-        return None
+        raise NotImplementedError("Feature transformation is not implemented yet.")
 
-    def transfer(self, slice: Slice = None) -> Feature | None:
+    def transfer(self, slice: Slice) -> Feature | None:
         """
         Transfers the feature to a new slice.
 
@@ -192,7 +185,7 @@ class Feature:
         Returns:
             Feature | None: The transferred feature or None if transfer is not possible.
         """
-        return None
+        raise NotImplementedError("Feature transfer is not implemented yet.")
 
     def overlaps(self, other: Feature) -> bool | None:
         """
@@ -215,7 +208,20 @@ class Feature:
             )
             return False
 
-        return self.seq_region_start <= other.seq_region_end and self.seq_region_end >= other.seq_region_start
+        if (
+            self.seq_region_start is not None
+            and other.seq_region_start is not None
+            and self.seq_region_end is not None
+            and other.seq_region_end is not None
+        ):
+            return (
+                self.seq_region_start <= other.seq_region_end
+                and self.seq_region_end >= other.seq_region_start
+            )
+        elif self.slice != other.slice:
+            return self.start <= other.end and self.end >= other.start
+        else:
+            return None
 
     def feature_slice(self) -> Slice | None:
         """
@@ -233,6 +239,12 @@ class Feature:
 
         if slice is None:
             logger.warning("Cannot obtain feature_slice for a feature without attached slice.")
+            return None
+
+        if self.seq_region_start is None or self.seq_region_end is None or self.seq_region_strand is None:
+            logger.warning(
+                "Cannot obtain feature_slice for a feature with undefined seq_region_start, seq_region_end, or seq_region_strand."
+            )
             return None
 
         return Slice(

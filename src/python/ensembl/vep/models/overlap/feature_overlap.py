@@ -33,9 +33,9 @@ class FeatureOverlap:
     Represents an overlap between a feature and a overlapping feature, along with the consequences of that overlap.
 
     Attributes:
-        feature: The feature that is getting overlapped.
-        overlapping_feature: The feature that is overlapping.
-        overlap_consequences: A list of consequences the overlapping feature has on the feature.
+        feature (Feature): The feature that is getting overlapped.
+        overlapping_feature (Feature): The feature that is overlapping.
+        overlap_consequences (list[OverlapConsequence]): A list of consequences the overlapping feature has on the feature.
     """
 
     feature: Feature

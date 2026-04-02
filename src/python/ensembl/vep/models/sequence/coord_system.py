@@ -25,13 +25,6 @@ class CoordSystem:
     """
     Represents a coordinate system in the Ensembl database.
 
-    Args:
-        name (str): Name of the coordinate system.
-        level (CoordSystemLevel): Level of the coordinate system (e.g. chromosome, contig, toplevel).
-        default (bool): Whether this is the default coordinate system.
-        alias_to (str | None): Name of another coordinate system this is an alias to, if applicable.
-        rank (int | None): Rank of the coordinate system.
-
     Attributes:
         name (str): Name of the coordinate system.
         level (CoordSystemLevel): Level of the coordinate system (e.g. chromosome, contig, toplevel).

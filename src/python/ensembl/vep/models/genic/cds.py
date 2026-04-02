@@ -33,8 +33,9 @@ class CDS(Feature):
     Represents a CDS.
 
     Attributes:
-        transcript: The transcript to which this CDS belongs.
-        translation: The translation associated with this CDS.
+        seq (str | None): The nucleotide sequence of the CDS.
+        transcript (Transcript | None): The transcript to which this CDS belongs.
+        translation (Translation | None): The translation associated with this CDS.
     """
 
     seq: str | None = field(default=None, on_setattr=invalidates("__neucleotide_length", "__protein_length"))
@@ -47,7 +48,7 @@ class CDS(Feature):
         """Public accessor for __neucleotide_length.
 
         Returns:
-            int | None: Length of the CDS in nucleotides, or None if not applicable.
+            int | None: Length in nucleotides, or None if not applicable.
         """
         return self.__neucleotide_length
 
@@ -56,7 +57,7 @@ class CDS(Feature):
         """Returns the length of the CDS in nucleotides.
 
         Returns:
-            int | None: Length of the CDS in nucleotides, or None if not applicable.
+            int | None: Length in nucleotides, or None if not applicable.
         """
         with self._lock:
             return len(self.seq) if self.seq is not None else None
@@ -66,7 +67,7 @@ class CDS(Feature):
         """Public accessor for __protein_length.
 
         Returns:
-            int | None: Length of the CDS in amino acids, or None if not applicable.
+            int | None: Length in amino acids, or None if not applicable.
         """
         return self.__protein_length
 
@@ -75,7 +76,7 @@ class CDS(Feature):
         """Returns the length of the CDS in amino acids.
 
         Returns:
-            int | None: Length of the CDS in amino acids, or None if not applicable.
+            int | None: Length in amino acids, or None if not applicable.
         """
         with self._lock:
             neucleotide_length = self.__neucleotide_length

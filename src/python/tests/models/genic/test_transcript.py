@@ -30,7 +30,7 @@ def intron():
 
 
 @pytest.fixture
-def transcript(exon, intron):
+def transcript():
     return Transcript(start=1, end=100, strand=1, stable_id="ENST00000000001")
 
 

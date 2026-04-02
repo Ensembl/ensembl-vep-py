@@ -19,5 +19,4 @@ from ensembl.vep.models import Feature
 
 
 @define(kw_only=True, auto_attribs=True)
-class Regulatory(Feature):
-    pass
+class Regulatory(Feature): ...

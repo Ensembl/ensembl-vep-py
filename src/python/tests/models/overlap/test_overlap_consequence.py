@@ -48,5 +48,5 @@ class TestOverlapConsequenceProperties:
         assert overlap_consequence.rank == 0
         assert overlap_consequence.tier == 0
         assert overlap_consequence.impact == ConsequenceImpact.LOW
-        assert overlap_consequence.feature_type is type(Feature)
-        assert overlap_consequence.overlapping_feature_type is type(Feature)
+        assert overlap_consequence.feature_type is Feature
+        assert overlap_consequence.overlapping_feature_type is Feature

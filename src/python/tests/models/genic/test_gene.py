@@ -25,7 +25,7 @@ def transcript():
 
 
 @pytest.fixture
-def gene(transcript):
+def gene():
     return Gene(stable_id="ENSG00000000001", start=10, end=200, strand=1)
 
 

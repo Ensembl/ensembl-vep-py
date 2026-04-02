@@ -19,5 +19,4 @@ from ensembl.vep.models.overlap import MultipleFeatureOverlap
 
 
 @define(kw_only=True, auto_attribs=True)
-class CDSHaplotype(MultipleFeatureOverlap):
-    pass
+class CDSHaplotype(MultipleFeatureOverlap): ...

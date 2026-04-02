@@ -25,7 +25,7 @@ def transcript():
 
 
 @pytest.fixture
-def translation(transcript):
+def translation():
     return Translation(start=10, end=90, stable_id="ENSP00000000001")
 
 

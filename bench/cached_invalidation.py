@@ -18,7 +18,6 @@ The benchmarks include:
 - {calss}: A class that does not invalidate the cached property when its dependencies change.
 - {class}Invalidates: A class that uses `invalidates` on_setattr hook to clear the cached property when
     its dependencies change.
-
 The classes here are different class used in `cached_property.py`.
 
 Result:
@@ -73,7 +72,7 @@ def invalidates(*cached_names):
             for name in cached_names:
                 delattr(instance, name)
         except AttributeError:
-            pass
+            raise NotImplementedError("Feature is not implemented yet.")
 
         # cannot be used with __slots__
         # d = instance.__dict__
@@ -114,7 +113,7 @@ class WithSetAttrInvalidates:
             try:
                 delattr(self, "tvalue")
             except AttributeError:
-                pass
+                raise NotImplementedError("Feature is not implemented yet.")
         super().__setattr__(name, value)
 
     @functools.cached_property

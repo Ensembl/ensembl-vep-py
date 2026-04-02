@@ -17,8 +17,11 @@ from __future__ import annotations
 
 import logging
 import pytest
+from attrs import evolve
 
-from ensembl.vep.models.variation.variation_allele import VariationAllele
+from ensembl.vep.models.variation import VariationAllele
+from ensembl.vep.models.genic import Transcript
+from ensembl.vep.models.overlap import OverlapConsequence, TranscriptVariationAllele
 from ensembl.vep.models.sequence import Slice
 
 logger = logging.getLogger(__name__)
@@ -42,6 +45,15 @@ def slice():
 def variation_allele(slice):
     """Returns a VariationAllele object for testing."""
     return VariationAllele(start=5, end=5, strand=1, slice=slice, reference_allele="A", alternate_allele="T")
+
+
+@pytest.fixture
+def trancript_variation_allele(variation_allele):
+    """Returns a TranscriptVariationAllele object for testing."""
+    return TranscriptVariationAllele(
+        feature=Transcript(start=1, end=100, strand=1, stable_id="ENST00000000001"),
+        overlapping_feature=variation_allele,
+    )
 
 
 class TestVariationAlleleProperties:
@@ -92,10 +104,20 @@ class TestVariationAlleleProperties:
         ):
             variation_allele.shifted = False
 
-    def test_consequence_types(self, variation_allele):
-        """Test that consequence_types returns None or empty if not set."""
-        # The implementation in the model is incomplete, so just check it returns None or list
-        pass
+    def test_overlap_consequences(self, variation_allele, trancript_variation_allele):
+        """Test overlap_consequences property."""
+        variation_allele.transcript_variation_alleles = []
+        assert variation_allele.overlap_consequences == []
+
+        tva1 = trancript_variation_allele
+        tva1.overlap_consequences = [OverlapConsequence(term="missense_variant", accession="SO:0001583")]
+        tva2 = evolve(trancript_variation_allele)
+        tva2.overlap_consequences = [OverlapConsequence(term="synonymous_variant", accession="SO:0001819")]
+        variation_allele.transcript_variation_alleles += [tva1, tva2]
+        assert variation_allele.overlap_consequences == [
+            OverlapConsequence(term="missense_variant", accession="SO:0001583"),
+            OverlapConsequence(term="synonymous_variant", accession="SO:0001819"),
+        ]
 
 
 class TestVariationAlleleMinimise:
@@ -111,7 +133,7 @@ class TestVariationAlleleMinimise:
             reference_allele=None,
             alternate_allele="T",
         )
-        with pytest.raises(ValueError, match="Missing reference or alternate sequence for trimming"):
+        with pytest.raises(ValueError, match="Missing reference or alternate allele for minimisation"):
             a.minimise()
         b = VariationAllele(
             start=1,
@@ -121,7 +143,7 @@ class TestVariationAlleleMinimise:
             reference_allele="A",
             alternate_allele=None,
         )
-        with pytest.raises(ValueError, match="Missing reference or alternate sequence for trimming"):
+        with pytest.raises(ValueError, match="Missing reference or alternate allele for minimisation"):
             b.minimise()
 
     def test_minimise_sets_locus_correctly(self, variation_allele):
@@ -255,3 +277,23 @@ class TestVariationAlleleMinimiseAndShift:
         # shift should should be False as minimise changes coordinate and we do not know if it is still shifted
         assert variation_allele2.shifted is False
         assert variation_allele2.original_locus == original_locus2
+
+
+class TestVariationAlleleGetAllFeatureOverlaps:
+    """Tests for the get_all_feature_overlaps method of VariationAllele."""
+
+    def test_get_all_feature_overlaps_no_overlaps(self, variation_allele):
+        """Test that get_all_feature_overlaps returns empty list if no overlaps."""
+        assert variation_allele.get_all_featureoverlaps() == []
+
+    def test_get_all_feature_overlaps_with_transcript_variation_alleles(
+        self, variation_allele, trancript_variation_allele
+    ):
+        """Test that get_all_feature_overlaps returns transcript variation alleles."""
+        variation_allele.transcript_variation_alleles = [trancript_variation_allele]
+        overlaps = variation_allele.get_all_featureoverlaps()
+
+        assert len(overlaps) == 1
+        # assert overlaps[0] == trancript_variation_allele
+
+        # Needs to add __eq__ for TranscriptVariationAllele

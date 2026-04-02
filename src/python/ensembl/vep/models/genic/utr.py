@@ -30,7 +30,7 @@ class UTR(Feature):
     Represents a UTR.
 
     Attributes:
-        transcript: The transcript to which this UTR belongs.
+        transcript (Transcript | None): The transcript to which this UTR belongs.
     """
 
     transcript: Transcript | None = field(default=None, init=False)
