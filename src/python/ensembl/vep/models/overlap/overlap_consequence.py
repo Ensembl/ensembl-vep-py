@@ -30,16 +30,16 @@ class OverlapConsequence:
     for any type of feature overlap.
 
     Attributes:
-        term: The SO term for the consequence, e.g. "missense_variant".
-        accession: The SO accession for the consequence, e.g. "SO:0001583".
-        is_default: Whether this consequence is the default consequence for the overlapping feature.
+        term (str): The SO term for the consequence, e.g. "missense_variant".
+        accession (str): The SO accession for the consequence, e.g. "SO:0001583".
+        is_default (bool): Whether this consequence is the default consequence for the overlapping feature.
             Only one consequence can be default, for transcript variation allele it is generally intergenic_variant.
-        rank: The rank of the consequence, with 1 being the most severe.
-        tier: The tier of the consequence. If tier 1 consequence are assigned, then no tier 2 consequences will be
+        rank (int): The rank of the consequence, with 1 being the most severe.
+        tier (int): The tier of the consequence. If tier 1 consequence are assigned, then no tier 2 consequences will be
             checked or assigned.
-        impact: The predicted impact of the consequence, e.g. "HIGH", "MODERATE", "LOW", "MODIFIER".
-        feature_type: The type of the overlapped feature that is affected by this consequence type, e.g. Transcript.
-        overlapping_feature_type: The type of the overlapping feature that causes this consequence type, e.g. VariationAllele.
+        impact (ConsequenceImpact | None): The predicted impact of the consequence, e.g. "HIGH", "MODERATE", "LOW", "MODIFIER".
+        feature_type (type[Feature] | None): The type of the overlapped feature that is affected by this consequence type, e.g. Transcript.
+        overlapping_feature_type (type[Feature] | None): The type of the overlapping feature that causes this consequence type, e.g. VariationAllele.
     """
 
     term: str
@@ -48,5 +48,5 @@ class OverlapConsequence:
     rank: int = field(default=0)
     tier: int = field(default=0)
     impact: ConsequenceImpact | None = field(default=ConsequenceImpact.LOW)
-    feature_type: type[Feature] | None = field(default=type(Feature))
-    overlapping_feature_type: type[Feature] | None = field(default=type(Feature))
+    feature_type: type[Feature] | None = field(default=Feature)
+    overlapping_feature_type: type[Feature] | None = field(default=Feature)

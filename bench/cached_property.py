@@ -13,7 +13,7 @@
 # limitations under the License.
 """Benchmarks for class descriptors.
 
-This is used to evaluate different strategies for implementing cached properties, and to compare with regular properties and manual caching. The benchmarks include:
+This is used to evaluate different strategies for implementing cached properties. The benchmarks include:
 - `WithSetAttr`: A class that uses `__setattr__` to prevent direct assignment to the `functools.cached_property` attributes.
 - `WithProperty`: A class that uses a regular `@property` without a setter to prevent direct assignment but no caching.
 - `WithCachedProperty`: A class that uses `functools.cached_property` to cache but no prohibition on direct assignment.

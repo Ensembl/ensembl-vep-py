@@ -21,5 +21,4 @@ from ensembl.vep.models import Feature
 
 
 @define(kw_only=True, auto_attribs=True)
-class CustomFeature(Feature):
-    pass
+class CustomFeature(Feature): ...

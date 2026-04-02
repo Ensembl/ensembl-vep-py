@@ -28,6 +28,10 @@ if TYPE_CHECKING:
 class Intron(Feature):
     """
     Represents an intron.
+
+    Attributes:
+        next_exon (Exon | None): The exon following this intron.
+        prev_exon (Exon | None): The exon preceding this intron.
     """
 
     next_exon: Exon | None = field(default=None, init=False)

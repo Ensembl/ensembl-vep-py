@@ -25,7 +25,7 @@ def transcript():
 
 
 @pytest.fixture
-def utr(transcript):
+def utr():
     return UTR(start=10, end=20, strand=1)
 
 

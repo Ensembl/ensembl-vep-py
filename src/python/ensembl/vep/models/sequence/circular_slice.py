@@ -21,7 +21,7 @@ from ensembl.vep.models.sequence import Slice
 @define(kw_only=True, auto_attribs=True)
 class CircularSlice(Slice):
     """
-    Represents a circular genomic region on a sequence (chromosome, contig, patch, etc.).
+    Represents a circular genomic region.
     """
 
     def is_circular(self) -> bool:

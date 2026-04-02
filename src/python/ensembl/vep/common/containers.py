@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Containers for data without behavior."""
+"""Common containers. Containers are for collection data without behavior."""
 
 from attrs import frozen
 
@@ -35,7 +35,7 @@ class Locus:
 
 @frozen
 class Attribute:
-    """Container for a attribute of a feature.
+    """Container for an attribute of a feature.
 
     Args:
         name (str): Name of the attribute.
@@ -105,9 +105,10 @@ class PredictionResult:
     # need something more generic and can be used for both plugins and custom annotation
     #     plugin gets attached to FeatureOverlap and works on FeatureOverlap after overlap computation is done
     #     custom annotation after doing overlap computation gets attached to VFA
-    # score: int
-    # result: str
-    # classification: float | None = None
+    # the data shape varies widely, e.g. SpliceAI, SIFT/PolyPhen; should we use a dict? the values can be int/str/tuple.
+    score: int
+    result: str
+    classification: float | None = None
     version: str | None = None
     modes: list[str] = []
     reference_data: list[ExternalDB] = []

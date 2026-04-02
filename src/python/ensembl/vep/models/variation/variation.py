@@ -31,14 +31,7 @@ if TYPE_CHECKING:
 
 @define(kw_only=True, auto_attribs=True)
 class Variation(Feature):
-    """Represents an Ensembl-specific sequence variation describing a location on a sequence in an arbitrary coordinate system.
-
-    Args:
-        stable_id (str | None): Stable identifier for the variation.
-        allele_string (str | None): String representation of the alleles.
-        variation_alleles (VariationAllele | None): VariationAllele object describing the alleles of the variation.
-        is_somatic (bool | None): Indicates whether the variation is somatic.
-        class_so_term (str | None): Sequence Ontology term describing the class of the variation.
+    """Represents a variation to genomic sequences in a specific locus.
 
     Attributes:
         stable_id (str | None): Stable identifier for the variation.
@@ -119,9 +112,8 @@ class Variation(Feature):
                 highest = highest or overlap_consequence
                 if overlap_consequence.rank < highest.rank:
                     highest = overlap_consequence
-                elif overlap_consequence.rank == highest.rank:
-                    if overlap_consequence.SO_term < highest.SO_term:
-                        highest = overlap_consequence
+                elif overlap_consequence.rank == highest.rank and overlap_consequence.term < highest.term:
+                    highest = overlap_consequence
 
         return highest
 
@@ -135,7 +127,7 @@ class Variation(Feature):
         return self.__class_so_term
 
     @cached_property
-    def __class_so_term(self: str, ref_correct: bool = True) -> ClassSOTerm | None:
+    def __class_so_term(self, ref_correct: bool = True) -> ClassSOTerm | None:
         """
         Return the SO term for the class of the variation.
 

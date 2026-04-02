@@ -26,15 +26,6 @@ class Slice:
     """
     Represents a genomic region on a sequence (chromosome, contig, patch, etc.).
 
-    Args:
-        coord_system (str): Coordinate system name.
-        seq_region_name (str): Sequence region name.
-        seq_region_length (str): Sequence region length.
-        start (int): Start position relative to sequence region.
-        end (int): End position relative to sequence region.
-        strand (Strand): Slice orientation relative to sequence region.
-        seq (Any | None): Associated biological sequence.
-
     Attributes:
         coord_system (str): Coordinate system name.
         seq_region_name (str): Sequence region name.

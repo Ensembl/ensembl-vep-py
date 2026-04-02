@@ -27,10 +27,10 @@ if TYPE_CHECKING:
 @define(kw_only=True, auto_attribs=True)
 class cDNA(Feature):
     """
-    Represents a CDS.
+    Represents a cDNA.
 
     Attributes:
-        transcript: The transcript to which this cDNA belongs.
+        transcript (Transcript | None): The transcript to which this cDNA belongs.
     """
 
     transcript: Transcript | None = field(default=None, init=False)

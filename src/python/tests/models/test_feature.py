@@ -15,6 +15,7 @@
 
 import pytest
 
+from ensembl.vep.common import Strand
 from ensembl.vep.models import Feature
 from ensembl.vep.models.sequence import Slice
 
@@ -25,7 +26,7 @@ class TestFeatureInitialization:
     def test_initialization_without_keywords(self) -> None:
         """Test Feature initialization without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = Feature(10, end=20, strand=1, seq=None)
+            _ = Feature(10, end=20, strand=Strand.FORWARD, seq=None)
 
 
 class TestFeatureProperties:
@@ -34,7 +35,7 @@ class TestFeatureProperties:
     @pytest.fixture
     def feature(self) -> Feature:
         """Create a Feature instance for testing."""
-        return Feature(start=10, end=20, strand=1, slice=None)
+        return Feature(start=10, end=20, strand=Strand.FORWARD, slice=None)
 
     @pytest.fixture
     def slice(self) -> Slice:
@@ -45,14 +46,14 @@ class TestFeatureProperties:
             seq_region_length=1000,
             start=100,
             end=200,
-            strand=1,
+            strand=Strand.FORWARD,
         )
 
     def test_core_properties(self, feature: Feature) -> None:
         """Test core properties are set correctly."""
         assert feature.start == 10
         assert feature.end == 20
-        assert feature.strand == 1
+        assert feature.strand == Strand.FORWARD
         assert feature.slice is None
         assert feature.seq is None
 
@@ -155,13 +156,13 @@ class TestFeatureProperties:
     def test_seq_region_strand_positive(self, feature: Feature, slice: Slice) -> None:
         """Test seq_region_strand property with slice."""
         feature.slice = slice
-        assert feature.seq_region_strand == 1  # slice.strand * feature.strand
+        assert feature.seq_region_strand == Strand.FORWARD  # slice.strand * feature.strand
 
     def test_seq_region_strand_negative(self, feature: Feature, slice: Slice) -> None:
         """Test seq_region_strand with negative strand feature."""
         feature.slice = slice
-        feature.strand = -1
-        assert feature.seq_region_strand == -1  # slice.strand * feature.strand
+        feature.strand = Strand.REVERSE
+        assert feature.seq_region_strand == Strand.REVERSE  # slice.strand * feature.strand
 
     def test_seq_region_strand_immutable(self, feature: Feature) -> None:
         """Test seq_region_strand cannot be directly set."""
@@ -179,13 +180,13 @@ class TestFeatureProperties:
     def test_seq_region_strand_update(self, feature: Feature, slice: Slice) -> None:
         """Test seq_region_strand updates when strand changes."""
         feature.slice = slice
-        assert feature.seq_region_strand == 1  # slice.strand * feature.strand
+        assert feature.seq_region_strand == Strand.FORWARD  # slice.strand * feature.strand
 
-        feature.strand = -1
-        assert feature.seq_region_strand == -1  # slice.strand * feature.strand
+        feature.strand = Strand.REVERSE
+        assert feature.seq_region_strand == Strand.REVERSE  # slice.strand * feature.strand
 
-        feature.strand = 1
-        assert feature.seq_region_strand == 1  # back to original
+        feature.strand = Strand.FORWARD
+        assert feature.seq_region_strand == Strand.FORWARD  # back to original
 
 
 class TestFeatureEquality:
@@ -200,31 +201,31 @@ class TestFeatureEquality:
             seq_region_length=1000,
             start=100,
             end=200,
-            strand=1,
+            strand=Strand.FORWARD,
         )
 
     def test_equal_features(self, slice: Slice) -> None:
         """Test two equal features are equal."""
-        f1 = Feature(start=10, end=20, strand=1, slice=slice)
-        f2 = Feature(start=10, end=20, strand=1, slice=slice)
+        f1 = Feature(start=10, end=20, strand=Strand.FORWARD, slice=slice)
+        f2 = Feature(start=10, end=20, strand=Strand.FORWARD, slice=slice)
         assert f1 == f2
 
     def test_different_start(self, slice: Slice) -> None:
         """Test features with different start are not equal."""
-        f1 = Feature(start=10, end=20, strand=1, slice=slice)
-        f2 = Feature(start=15, end=20, strand=1, slice=slice)
+        f1 = Feature(start=10, end=20, strand=Strand.FORWARD, slice=slice)
+        f2 = Feature(start=15, end=20, strand=Strand.FORWARD, slice=slice)
         assert f1 != f2
 
     def test_different_end(self, slice: Slice) -> None:
         """Test features with different end are not equal."""
-        f1 = Feature(start=10, end=20, strand=1, slice=slice)
-        f2 = Feature(start=10, end=25, strand=1, slice=slice)
+        f1 = Feature(start=10, end=20, strand=Strand.FORWARD, slice=slice)
+        f2 = Feature(start=10, end=25, strand=Strand.FORWARD, slice=slice)
         assert f1 != f2
 
     def test_different_strand(self, slice: Slice) -> None:
         """Test features with different strand are not equal."""
-        f1 = Feature(start=10, end=20, strand=1, slice=slice)
-        f2 = Feature(start=10, end=20, strand=-1, slice=slice)
+        f1 = Feature(start=10, end=20, strand=Strand.FORWARD, slice=slice)
+        f2 = Feature(start=10, end=20, strand=Strand.REVERSE, slice=slice)
         assert f1 != f2
 
     def test_different_slice(self, slice: Slice) -> None:
@@ -235,21 +236,21 @@ class TestFeatureEquality:
             seq_region_length=1000,
             start=200,
             end=300,
-            strand=1,
+            strand=Strand.FORWARD,
         )
-        f1 = Feature(start=10, end=20, strand=1, slice=slice)
-        f2 = Feature(start=10, end=20, strand=1, slice=slice2)
+        f1 = Feature(start=10, end=20, strand=Strand.FORWARD, slice=slice)
+        f2 = Feature(start=10, end=20, strand=Strand.FORWARD, slice=slice2)
         assert f1.slice != f2.slice
         assert f1 != f2
 
     def test_different_type(self, slice: Slice) -> None:
         """Test features of different types are not equal."""
-        f1 = Feature(start=10, end=20, strand=1, slice=slice)
+        f1 = Feature(start=10, end=20, strand=Strand.FORWARD, slice=slice)
 
         class AnotherFeature(Feature):
             pass
 
-        f2 = AnotherFeature(start=10, end=20, strand=1, slice=slice)
+        f2 = AnotherFeature(start=10, end=20, strand=Strand.FORWARD, slice=slice)
         assert f1 != f2
 
 
@@ -265,19 +266,19 @@ class TestFeatureOverlaps:
             seq_region_length=1000,
             start=1,
             end=1000,
-            strand=1,
+            strand=Strand.FORWARD,
         )
 
     def test_overlaps_same_slice(self, slice: Slice) -> None:
         """Test overlapping features on same slice."""
-        f1 = Feature(start=10, end=20, strand=1, slice=slice)
-        f2 = Feature(start=15, end=25, strand=1, slice=slice)
+        f1 = Feature(start=10, end=20, strand=Strand.FORWARD, slice=slice)
+        f2 = Feature(start=15, end=25, strand=Strand.FORWARD, slice=slice)
         assert f1.overlaps(f2) is True
 
     def test_overlaps_no_overlap(self, slice: Slice) -> None:
         """Test non-overlapping features."""
-        f1 = Feature(start=10, end=20, strand=1, slice=slice)
-        f2 = Feature(start=30, end=40, strand=1, slice=slice)
+        f1 = Feature(start=10, end=20, strand=Strand.FORWARD, slice=slice)
+        f2 = Feature(start=30, end=40, strand=Strand.FORWARD, slice=slice)
         assert f1.overlaps(f2) is False
 
     def test_overlaps_different_seq_regions(self, slice: Slice) -> None:
@@ -289,17 +290,17 @@ class TestFeatureOverlaps:
             seq_region_length=1000,
             start=1,
             end=1000,
-            strand=1,
+            strand=Strand.FORWARD,
         )
 
-        f1 = Feature(start=10, end=20, strand=1, slice=slice1)
-        f2 = Feature(start=10, end=20, strand=1, slice=slice2)
+        f1 = Feature(start=10, end=20, strand=Strand.FORWARD, slice=slice1)
+        f2 = Feature(start=10, end=20, strand=Strand.FORWARD, slice=slice2)
         assert f1.overlaps(f2) is False
 
     def test_overlaps_no_slice(self) -> None:
         """Test features without slices return None."""
-        f1 = Feature(start=10, end=20, strand=1, slice=None)
-        f2 = Feature(start=15, end=25, strand=1, slice=None)
+        f1 = Feature(start=10, end=20, strand=Strand.FORWARD, slice=None)
+        f2 = Feature(start=15, end=25, strand=Strand.FORWARD, slice=None)
         assert f1.overlaps(f2) is None
 
 
@@ -315,23 +316,23 @@ class TestFeatureFeatureSlice:
             seq_region_length=1000,
             start=100,
             end=200,
-            strand=1,
+            strand=Strand.FORWARD,
         )
 
     def test_feature_slice(self, slice: Slice) -> None:
         """Test feature_slice creates correct slice."""
-        f = Feature(start=10, end=20, strand=1, slice=slice)
+        f = Feature(start=10, end=20, strand=Strand.FORWARD, slice=slice)
         feature_slice = f.feature_slice()
 
         assert feature_slice is not None
         assert feature_slice.seq_region_name == "1"
         assert feature_slice.start == 110  # seq_region_start
         assert feature_slice.end == 120  # seq_region_end
-        assert feature_slice.strand == 1  # seq_region_strand
+        assert feature_slice.strand == Strand.FORWARD  # seq_region_strand
 
     def test_feature_slice_no_slice(self) -> None:
         """Test feature_slice returns None when no slice attached."""
-        f = Feature(start=10, end=20, strand=1, slice=None)
+        f = Feature(start=10, end=20, strand=Strand.FORWARD, slice=None)
         assert f.feature_slice() is None
 
 

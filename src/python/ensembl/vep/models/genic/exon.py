@@ -32,8 +32,11 @@ class Exon(Feature):
     Represents an exon.
 
     Attributes:
-        stable_id:  Ensembl stable exon identifier (e.g. "ENSE00003666667").
-        version:    Version of the stable identifier.
+        stable_id (str):  Ensembl stable exon identifier (e.g. "ENSE00003666667").
+        version (int | None): Version of the stable identifier.
+        phase (ExonPhase | None): The phase of the exon, which is the number of bases of the first codon that are on the previous
+            exon/intron. The value can be 0, 1, or 2.
+        end_phase (ExonPhase | None): Number of bases of the last codon if it is incomplete. The value can be 0, 1, or 2.
     """
 
     stable_id: str
@@ -54,7 +57,9 @@ class Exon(Feature):
     @cached_property
     def __frame(self) -> int | None:
         """
-        Returns the frame of the exon, which is the number of bases from the start of the exon to the next codon boundary. This is 0-based and can be 0, 1, or 2. If the phase is None, then the frame is also None.
+        Returns the frame of the exon.
+
+        Frame tells where the exon starts in relation to the reading frame as given by the phase in GFF.
 
         Returns:
             int | None: The frame of the exon.
@@ -65,6 +70,7 @@ class Exon(Feature):
             )
             return None
 
+        # TBD: why we use module of start position? instead would it be simple convert - 0->0, 1->2, 2->1?
         if self.phase == ExonPhase.ZERO:
             return self.start % 3
         elif self.phase == ExonPhase.ONE:

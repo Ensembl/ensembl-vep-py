@@ -22,9 +22,9 @@ import sys
 logger = logging.getLogger(__name__)
 
 
-def invalidates(*cached_names):
+def invalidates(*cached_names):  # type: ignore
     """
-    Returns an attrs on_setattr hook that clears the named cached_property entries whenever the field is set.
+    Returns an attrs on_setattr hook that clears the named cached property whenever the attribute is set.
 
     Args:
         *cached_names: The names of the cached properties to invalidate.
@@ -33,11 +33,11 @@ def invalidates(*cached_names):
         Callable: An on_setattr hook function.
     """
 
-    def hook(instance, _, new_value):
+    def hook(instance, _, new_value):  # type: ignore
         for name in cached_names:
             if not name.startswith("__"):
                 logger.debug(
-                    f"Invalidation only works for private properties (starting with __), but got '{name}'"
+                    f"Invalidation only works for private attributes (starting with __), but got '{name}'"
                 )
             with suppress(AttributeError):
                 object.__delattr__(instance, f"_{type(instance).__name__}{name}")
@@ -144,7 +144,7 @@ def shift_sequence(
     start: int,
     end: int,
     reverse: bool = False,
-) -> tuple[int, str, int, int]:
+) -> tuple[int, str, int, int, bool]:
     """
     Calculate the maximum possible 3' (or 5') shift for an allele sequence.
 
