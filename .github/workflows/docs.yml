@@ -20,7 +20,7 @@ on:
     inputs:
       python-version:
         description: Python version
-        default: '3.10'
+        default: '3.12'
         required: true
         type: string
 

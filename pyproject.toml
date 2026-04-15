@@ -15,7 +15,7 @@
 [project]
 name = "ensembl-vep"
 description = "Ensembl VEP (Variant Effect Predictor) predicts the functional effects of genomic variants."
-requires-python = ">= 3.10"
+requires-python = ">= 3.12"
 dynamic = [
     "version",
 ]
@@ -41,8 +41,8 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]

@@ -18,7 +18,7 @@ Full documentation is available at: https://ensembl.github.io/ensembl-vep-py/
 
 ### Requirements
 
-- Python 3.10 or higher
+- Python 3.12 or higher
 - Dependencies listed in `pyproject.toml` and `Cargo.toml`
 
 ### Using pip

@@ -15,7 +15,7 @@ Please fill in the following sections to help us find the source of your issue a
 ### System
 - VEP version: [e.g. 98 or 98.1] 
 - VEP Cache version: [e.g. 98]
-- Python version: [e.g. 3.10]
+- Python version: [e.g. 3.12]
 - OS: [e.g. MacOS, Ubuntu, CentOS]
 - tabix installed ?
 
