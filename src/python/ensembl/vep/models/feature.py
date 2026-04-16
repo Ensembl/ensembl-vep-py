@@ -34,8 +34,8 @@ class Feature:
     Represents a genomic feature in a specific locus.
 
     Attributes:
-        start (int): Start position relative to slice.
-        end (int): End position relative to slice.
+        start: Start position relative to slice (1-based, inclusive).
+        end: End position relative to slice (1-based, inclusive).
         strand (Strand): Feature orientation relative to slice.
         slice (Slice | None): Slice object describing the feature context.
         seq (Any | None): Associated biological sequence.
@@ -93,7 +93,7 @@ class Feature:
             if self.slice is None:
                 logging.warning("Cannot obtain seq_region_start for a feature without attached slice.")
                 return None
-            return self.slice.start + self.start
+            return self.slice.start + self.start - 1
 
     @property
     def seq_region_end(self) -> int | None:
@@ -117,7 +117,7 @@ class Feature:
             if self.slice is None:
                 logging.warning("Cannot obtain seq_region_end for a feature without attached slice.")
                 return None
-            return self.slice.start + self.end
+            return self.slice.start + self.end - 1
 
     @property
     def seq_region_strand(self) -> Strand | None:

@@ -91,7 +91,7 @@ class TestFeatureProperties:
     def test_seq_region_start_with_slice(self, feature: Feature, slice: Slice) -> None:
         """Test seq_region_start property with slice."""
         feature.slice = slice
-        assert feature.seq_region_start == 110  # slice.start + feature.start
+        assert feature.seq_region_start == 109  # slice.start + feature.start - 1, as positions are 1-based and inclusive
 
     def test_seq_region_start_immutable(self, feature: Feature) -> None:
         """Test seq_region_start cannot be directly set."""
@@ -109,13 +109,13 @@ class TestFeatureProperties:
     def test_seq_region_start_update(self, feature: Feature, slice: Slice) -> None:
         """Test seq_region_start updates when start changes."""
         feature.slice = slice
-        assert feature.seq_region_start == 110  # slice.start + feature.start
+        assert feature.seq_region_start == 109  # slice.start + feature.start - 1, as positions are 1-based and inclusive
 
         feature.start = 15
-        assert feature.seq_region_start == 115  # slice.start + feature.start
+        assert feature.seq_region_start == 114  # slice.start + feature.start - 1, as positions are 1-based and inclusive
 
         feature.start = 10
-        assert feature.seq_region_start == 110  # back to original
+        assert feature.seq_region_start == 109  # back to original
 
     def test_seq_region_end_no_slice(self, feature: Feature) -> None:
         """Test seq_region_end returns None when no slice attached."""
@@ -124,7 +124,7 @@ class TestFeatureProperties:
     def test_seq_region_end_with_slice(self, feature: Feature, slice: Slice) -> None:
         """Test seq_region_end property with slice."""
         feature.slice = slice
-        assert feature.seq_region_end == 120  # slice.start + feature.end
+        assert feature.seq_region_end == 119  # slice.start + feature.end - 1, as positions are 1-based and inclusive
 
     def test_seq_region_end_immutable(self, feature: Feature) -> None:
         """Test seq_region_end cannot be directly set."""
@@ -141,13 +141,13 @@ class TestFeatureProperties:
     def test_seq_region_end_update(self, feature: Feature, slice: Slice) -> None:
         """Test seq_region_end updates when end changes."""
         feature.slice = slice
-        assert feature.seq_region_end == 120  # slice.start + feature.end
+        assert feature.seq_region_end == 119  # slice.start + feature.end - 1, as positions are 1-based and inclusive
 
         feature.end = 25
-        assert feature.seq_region_end == 125  # slice.start + feature.end
+        assert feature.seq_region_end == 124  # slice.start + feature.end - 1, as positions are 1-based and inclusive
 
         feature.end = 20
-        assert feature.seq_region_end == 120  # back to original
+        assert feature.seq_region_end == 119  # back to original
 
     def test_seq_region_strand_no_slice(self, feature: Feature) -> None:
         """Test seq_region_strand returns None when no slice attached."""
@@ -326,8 +326,8 @@ class TestFeatureFeatureSlice:
 
         assert feature_slice is not None
         assert feature_slice.seq_region_name == "1"
-        assert feature_slice.start == 110  # seq_region_start
-        assert feature_slice.end == 120  # seq_region_end
+        assert feature_slice.start == 109  # seq_region_start
+        assert feature_slice.end == 119  # seq_region_end
         assert feature_slice.strand == Strand.FORWARD  # seq_region_strand
 
     def test_feature_slice_no_slice(self) -> None:
