@@ -30,7 +30,7 @@ The following packages are pre-requisites to be able to contribute to the Ensemb
    cargo install
    
    # Python environment
-   uv sync --extra dev,test
+   uv sync --extra cicd,build
    ```
 
 3. **Building the Project**:
@@ -167,11 +167,13 @@ ruff format src/python/
 # Lint
 cargo clippy
 ruff check src/python/
-mypy src/python/
+
+# Static typing
+uv run mypy src/python/
 
 # Test
 cargo test --all-features
-pytest src/python/ --cov=src/python
+uv run pytest src/python/ --cov=src/python
 ```
 
 ## 🧪 Testing Requirements
@@ -185,7 +187,7 @@ All PRs must:
 - ✅ Handle edge cases (multi-allelic variants, structural variants)
 
 **Rust tests**: `cargo test --lib --tests`
-**Python tests**: `pytest src/python/ -v`
+**Python tests**: `uv run pytest src/python/ -v`
 
 ## 📊 Code Coverage
 
