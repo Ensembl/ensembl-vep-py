@@ -8,6 +8,14 @@ Thank you for your interest in contributing to **Ensembl Variant Effect Predicto
 
 Ensembl VEP (Variant Effect Predictor) predicts the functional effects of genomic variants. Contributions should maintain high standards for scientific accuracy, performance, and reproducibility.
 
+## Pre-requisites
+The following packages are pre-requisites to be able to contribute to the Ensembl VEP code:
+ * [Cargo](https://doc.rust-lang.org/cargo/): Rust package manager
+   For convenience, Cargo can be installed using the `Makefile` in this repository by running `make install-cargo`.
+ * [UV](https://docs.astral.sh/uv/): python package manager
+   For convenience, uv can be installed using the `Makefile` in this repository by running `make install-uv`.
+ * Python 3.12 dev library. On Ubuntu, this can be installed with `apt install libpython-3.12-dev`.
+
 ## 🚀 Getting Started
 
 1. **Fork the repository**
