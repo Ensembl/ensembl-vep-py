@@ -45,15 +45,15 @@ class Slice:
     seq: Any | None = field(default=None)
 
     def __eq__(self, other: object) -> bool:
-        """Compare two Slice using various criteria.
+        """Compare two Slice objects and define if they are identical.
 
         Args:
-            other (object): Another object to compare against.
+            other: Another Slice to compare against.
 
         Returns:
             bool: True if equal, False otherwise.
         """
-        if type(self) is not type(other):
+        if not isinstance(other, Slice):
             return False
 
         return (

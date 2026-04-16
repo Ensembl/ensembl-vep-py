@@ -64,12 +64,12 @@ class TestFeatureProperties:
     def test_length_immutable(self, feature: Feature) -> None:
         """Test length cannot be directly set."""
         with pytest.raises(AttributeError, match="property 'length' of 'Feature' object has no setter"):
-            feature.length = None
+            feature.length = None  # type: ignore
 
         with pytest.raises(
             AttributeError, match="'Feature' object has no attribute '_TestFeatureProperties__length'"
         ):
-            feature.__length = None
+            feature.__length = None  # type: ignore
 
     def test_length_update(self, feature: Feature) -> None:
         """Test length updates when start or end changes."""
