@@ -1,6 +1,9 @@
 # macOS metadata
 .DS_Store
 
+# IDE temp files
+.codex
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
