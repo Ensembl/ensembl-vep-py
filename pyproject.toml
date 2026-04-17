@@ -161,7 +161,6 @@ explicit_package_bases = true
 ignore_missing_imports = true
 show_error_codes = true
 warn_unused_configs = true
-plugins = ["mypy_pytest_plugin"]
 
 [tool.pytest.ini_options]
 addopts = [
