@@ -15,18 +15,19 @@
 
 import pytest
 
+from ensembl.vep.common import Strand
 from ensembl.vep.models.genic.gene import Gene
 from ensembl.vep.models.genic.transcript import Transcript
 
 
 @pytest.fixture
 def transcript() -> Transcript:
-    return Transcript(stable_id="ENST00000000001", start=1, end=100, strand=1)
+    return Transcript(stable_id="ENST00000000001", start=1, end=100, strand=Strand.FORWARD)
 
 
 @pytest.fixture
 def gene() -> Gene:
-    return Gene(stable_id="ENSG00000000001", start=10, end=200, strand=1)
+    return Gene(stable_id="ENSG00000000001", start=10, end=200, strand=Strand.FORWARD)
 
 
 class TestGeneInitialization:
@@ -35,7 +36,7 @@ class TestGeneInitialization:
     def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = Gene("ENSG00000000001", start=10, end=200, strand=1)
+            _ = Gene("ENSG00000000001", start=10, end=200, strand=Strand.FORWARD)
 
 
 class TestGeneProperties:

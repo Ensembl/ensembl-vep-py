@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import pytest
 
-from ensembl.vep.common import ClassSOTerm, Locus
+from ensembl.vep.common import ClassSOTerm, Locus, Strand
 from ensembl.vep.models.variation import Variation
 from ensembl.vep.models.sequence import Slice
 
@@ -31,7 +31,7 @@ def slice() -> Slice:
         seq_region_length=12,
         start=1,
         end=12,
-        strand=1,
+        strand=Strand.FORWARD,
         seq="ATCGATCGATCG",
     )
 
@@ -42,7 +42,7 @@ def variation(slice) -> Variation:
     return Variation(
         start=5,
         end=5,
-        strand=1,
+        strand=Strand.FORWARD,
         slice=slice,
         allele_string="A/T",
     )
@@ -54,7 +54,7 @@ def multiallelic_variation(slice) -> Variation:
     return Variation(
         start=5,
         end=5,
-        strand=1,
+        strand=Strand.FORWARD,
         slice=slice,
         allele_string="A/T/G/C",
     )
@@ -66,7 +66,7 @@ def insertion_variation(slice) -> Variation:
     return Variation(
         start=5,
         end=5,
-        strand=1,
+        strand=Strand.FORWARD,
         slice=slice,
         allele_string="A/ATT",
     )
@@ -78,7 +78,7 @@ def deletion_variation(slice) -> Variation:
     return Variation(
         start=5,
         end=7,
-        strand=1,
+        strand=Strand.FORWARD,
         slice=slice,
         allele_string="ATC/A",
     )
@@ -97,7 +97,7 @@ class TestVariationProperties:
     def test_initialization_without_keywords(self) -> None:
         """Test Variation initialization without keyword raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = Variation(100, end=100, strand=1, slice=None, allele_string="A/T")
+            _ = Variation(100, end=100, strand=Strand.FORWARD, slice=None, allele_string="A/T")
 
     def test_defaults(self, variation) -> None:
         """Test default values for optional attributes."""
@@ -177,7 +177,7 @@ class TestVariationAlleles:
         var = Variation(
             start=100,
             end=100,
-            strand=1,
+            strand=Strand.FORWARD,
             slice=slice,
             allele_string=None,
         )
@@ -193,7 +193,7 @@ class TestVariationMinimisation:
         var = Variation(
             start=100,
             end=102,
-            strand=1,
+            strand=Strand.FORWARD,
             slice=None,
             allele_string="AAT/AT",
         )
@@ -216,7 +216,7 @@ class TestVariationShifting:
         var = Variation(
             start=2,
             end=5,
-            strand=1,
+            strand=Strand.FORWARD,
             slice=slice,
             allele_string="TCGA/-",
         )
@@ -250,7 +250,7 @@ class TestClassSOTerm:
         ],
     )
     def test_snv(self, slice, allele_string, expected) -> None:
-        var = Variation(start=100, end=100, strand=1, slice=slice, allele_string=allele_string)
+        var = Variation(start=100, end=100, strand=Strand.FORWARD, slice=slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
     @pytest.mark.parametrize(
@@ -261,7 +261,7 @@ class TestClassSOTerm:
         ],
     )
     def test_tandem_repeat(self, slice, allele_string, expected) -> None:
-        var = Variation(start=100, end=100, strand=1, slice=slice, allele_string=allele_string)
+        var = Variation(start=100, end=100, strand=Strand.FORWARD, slice=slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
     @pytest.mark.parametrize(
@@ -276,7 +276,7 @@ class TestClassSOTerm:
         ],
     )
     def test_insertion(self, slice, allele_string, expected) -> None:
-        var = Variation(start=100, end=100, strand=1, slice=slice, allele_string=allele_string)
+        var = Variation(start=100, end=100, strand=Strand.FORWARD, slice=slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
     @pytest.mark.parametrize(
@@ -292,7 +292,7 @@ class TestClassSOTerm:
         ],
     )
     def test_deletion(self, slice, allele_string, expected) -> None:
-        var = Variation(start=100, end=102, strand=1, slice=slice, allele_string=allele_string)
+        var = Variation(start=100, end=102, strand=Strand.FORWARD, slice=slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
     @pytest.mark.parametrize(
@@ -303,7 +303,7 @@ class TestClassSOTerm:
         ],
     )
     def test_substitution(self, slice, allele_string, expected) -> None:
-        var = Variation(start=100, end=101, strand=1, slice=slice, allele_string=allele_string)
+        var = Variation(start=100, end=101, strand=Strand.FORWARD, slice=slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
     @pytest.mark.parametrize(
@@ -314,13 +314,13 @@ class TestClassSOTerm:
         ],
     )
     def test_indel(self, slice, allele_string, expected) -> None:
-        var = Variation(start=100, end=103, strand=1, slice=slice, allele_string=allele_string)
+        var = Variation(start=100, end=103, strand=Strand.FORWARD, slice=slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
     def test_empty_allele_string_defaults_to_sequence_alteration(self, slice) -> None:
-        var = Variation(start=100, end=100, strand=1, slice=slice, allele_string="")
+        var = Variation(start=100, end=100, strand=Strand.FORWARD, slice=slice, allele_string="")
         assert var.class_so_term == ClassSOTerm.SEQUENCE_ALTERATION
 
     def test_none_allele_string_defaults_to_sequence_alteration(self, slice) -> None:
-        var = Variation(start=100, end=100, strand=1, slice=slice, allele_string=None)
+        var = Variation(start=100, end=100, strand=Strand.FORWARD, slice=slice, allele_string=None)
         assert var.class_so_term == ClassSOTerm.SEQUENCE_ALTERATION

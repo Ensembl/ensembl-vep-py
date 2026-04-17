@@ -15,13 +15,13 @@
 
 import pytest
 
+from ensembl.vep.common import ExonPhase, Strand
 from ensembl.vep.models.genic.exon import Exon
-from ensembl.vep.common import ExonPhase
 
 
 @pytest.fixture
 def exon() -> Exon:
-    return Exon(start=10, end=50, strand=1, stable_id="ENSE00000000001")
+    return Exon(start=10, end=50, strand=Strand.FORWARD, stable_id="ENSE00000000001")
 
 
 class TestExonInitialization:
@@ -30,7 +30,7 @@ class TestExonInitialization:
     def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = Exon(10, end=50, strand=1, stable_id="ENSE00000000001")
+            _ = Exon(10, end=50, strand=Strand.FORWARD, stable_id="ENSE00000000001")
 
 
 class TestExonProperties:

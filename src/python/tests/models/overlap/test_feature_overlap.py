@@ -15,18 +15,19 @@
 
 import pytest
 
+from ensembl.vep.common import Strand
 from ensembl.vep.models import Feature
 from ensembl.vep.models.overlap import FeatureOverlap, OverlapConsequence
 
 
 @pytest.fixture
 def feature() -> Feature:
-    return Feature(start=1, end=100, strand=1)
+    return Feature(start=1, end=100, strand=Strand.FORWARD)
 
 
 @pytest.fixture
 def overlapping_feature() -> Feature:
-    return Feature(start=50, end=150, strand=1)
+    return Feature(start=50, end=150, strand=Strand.FORWARD)
 
 
 @pytest.fixture

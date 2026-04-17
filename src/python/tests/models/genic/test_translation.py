@@ -15,13 +15,14 @@
 
 import pytest
 
+from ensembl.vep.common import Strand
 from ensembl.vep.models.genic.translation import Translation
 from ensembl.vep.models.genic.transcript import Transcript
 
 
 @pytest.fixture
 def transcript() -> Transcript:
-    return Transcript(start=1, end=100, strand=1, stable_id="ENST00000000001")
+    return Transcript(start=1, end=100, strand=Strand.FORWARD, stable_id="ENST00000000001")
 
 
 @pytest.fixture

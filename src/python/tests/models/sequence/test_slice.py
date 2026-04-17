@@ -16,6 +16,7 @@
 import pytest
 from copy import deepcopy
 
+from ensembl.vep.common import Strand
 from ensembl.vep.models.sequence import Slice
 
 
@@ -31,7 +32,7 @@ class TestSliceInitialization:
                 seq_region_length=1000,
                 start=10,
                 end=200,
-                strand=1,
+                strand=Strand.FORWARD,
                 seq=None,
             )
 
@@ -48,7 +49,7 @@ class TestSliceProperties:
             seq_region_length=1000,
             start=10,
             end=200,
-            strand=1,
+            strand=Strand.FORWARD,
             seq=None,
         )
 
@@ -75,7 +76,7 @@ class TestSliceEquality:
             seq_region_length=1000,
             start=10,
             end=200,
-            strand=1,
+            strand=Strand.FORWARD,
             seq=None,
         )
 
@@ -111,7 +112,7 @@ class TestSliceEquality:
     def test_different_strand(self, slice: Slice) -> None:
         """Test two Slices with different strand are not equal."""
         slice2 = deepcopy(slice)
-        slice2.strand = -1
+        slice2.strand = Strand.REVERSE
         assert slice != slice2
 
     def test_diferent_seq_region_length(self, slice: Slice) -> None:
@@ -132,7 +133,7 @@ class TestSliceEquality:
             seq_region_length=1000,
             start=10,
             end=200,
-            strand=1,
+            strand=Strand.FORWARD,
             seq=None,
         )
         assert slice != slice2

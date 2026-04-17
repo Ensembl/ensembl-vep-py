@@ -19,6 +19,7 @@ import logging
 import pytest
 from attrs import evolve
 
+from ensembl.vep.common import Strand
 from ensembl.vep.models.variation import VariationAllele
 from ensembl.vep.models.genic import Transcript
 from ensembl.vep.models.overlap import OverlapConsequence, TranscriptVariationAllele
@@ -36,7 +37,7 @@ def slice() -> Slice:
         seq_region_length=13,
         start=1,
         end=13,
-        strand=1,
+        strand=Strand.FORWARD,
         seq="ATCGATCGATCGG",
     )
 
@@ -44,14 +45,14 @@ def slice() -> Slice:
 @pytest.fixture
 def variation_allele(slice) -> VariationAllele:
     """Returns a VariationAllele object for testing."""
-    return VariationAllele(start=5, end=5, strand=1, slice=slice, reference_allele="A", alternate_allele="T")
+    return VariationAllele(start=5, end=5, strand=Strand.FORWARD, slice=slice, reference_allele="A", alternate_allele="T")
 
 
 @pytest.fixture
 def trancript_variation_allele(variation_allele) -> TranscriptVariationAllele:
     """Returns a TranscriptVariationAllele object for testing."""
     return TranscriptVariationAllele(
-        feature=Transcript(start=1, end=100, strand=1, stable_id="ENST00000000001"),
+        feature=Transcript(start=1, end=100, strand=Strand.FORWARD, stable_id="ENST00000000001"),
         overlapping_feature=variation_allele,
     )
 
@@ -70,7 +71,7 @@ class TestVariationAlleleProperties:
     def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            VariationAllele(5, end=5, strand=1, slice=None, reference_allele="A", alternate_allele="T")
+            VariationAllele(5, end=5, strand=Strand.FORWARD, slice=None, reference_allele="A", alternate_allele="T")
 
     def test_minimised(self, variation_allele) -> None:
         """Test the minimised property before and after calling minimise."""
@@ -128,7 +129,7 @@ class TestVariationAlleleMinimise:
         a = VariationAllele(
             start=1,
             end=1,
-            strand=1,
+            strand=Strand.FORWARD,
             slice=variation_allele.slice,
             reference_allele=None,
             alternate_allele="T",
@@ -138,7 +139,7 @@ class TestVariationAlleleMinimise:
         b = VariationAllele(
             start=1,
             end=1,
-            strand=1,
+            strand=Strand.FORWARD,
             slice=variation_allele.slice,
             reference_allele="A",
             alternate_allele=None,
@@ -181,7 +182,7 @@ class TestVariationAlleleShift:
         a = VariationAllele(
             start=1,
             end=1,
-            strand=1,
+            strand=Strand.FORWARD,
             slice=variation_allele.slice,
             reference_allele=None,
             alternate_allele="T",
@@ -191,7 +192,7 @@ class TestVariationAlleleShift:
         b = VariationAllele(
             start=1,
             end=1,
-            strand=1,
+            strand=Strand.FORWARD,
             slice=variation_allele.slice,
             reference_allele="A",
             alternate_allele=None,
@@ -220,7 +221,7 @@ class TestVariationAlleleMinimiseAndShift:
         assert variation_allele.minimised is True
         assert variation_allele.shifted is False
         variation_allele2 = VariationAllele(
-            start=5, end=5, strand=1, slice=variation_allele.slice, reference_allele="A", alternate_allele="T"
+            start=5, end=5, strand=Strand.FORWARD, slice=variation_allele.slice, reference_allele="A", alternate_allele="T"
         )
         variation_allele2.shift()
         assert variation_allele2.shifted is True
@@ -239,7 +240,7 @@ class TestVariationAlleleMinimiseAndShift:
         variation_allele2 = VariationAllele(
             start=12,
             end=12,
-            strand=1,
+            strand=Strand.FORWARD,
             slice=variation_allele.slice,
             reference_allele="G",
             alternate_allele="T",
@@ -265,7 +266,7 @@ class TestVariationAlleleMinimiseAndShift:
         variation_allele2 = VariationAllele(
             start=12,
             end=12,
-            strand=1,
+            strand=Strand.FORWARD,
             slice=variation_allele.slice,
             reference_allele="GG",
             alternate_allele="G",

@@ -15,18 +15,19 @@
 
 import pytest
 
+from ensembl.vep.common import Strand
 from ensembl.vep.models.genic.cdna import cDNA
 from ensembl.vep.models.genic.transcript import Transcript
 
 
 @pytest.fixture
 def transcript() -> Transcript:
-    return Transcript(stable_id="ENST00000000001", start=1, end=100, strand=1)
+    return Transcript(stable_id="ENST00000000001", start=1, end=100, strand=Strand.FORWARD)
 
 
 @pytest.fixture
 def cdna() -> cDNA:
-    return cDNA(start=10, end=50, strand=1)
+    return cDNA(start=10, end=50, strand=Strand.FORWARD)
 
 
 class TestcDNAInitialization:
@@ -35,7 +36,7 @@ class TestcDNAInitialization:
     def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = cDNA(10, end=50, strand=1)
+            _ = cDNA(10, end=50, strand=Strand.FORWARD)
 
 
 class TestcDNAProperties:

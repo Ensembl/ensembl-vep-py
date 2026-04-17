@@ -15,7 +15,7 @@
 
 import pytest
 
-from ensembl.vep.common import trim_sequences, shift_sequence
+from ensembl.vep.common import trim_sequences, shift_sequence, KnownStrand
 
 
 class TestTrimSequences:
@@ -38,7 +38,7 @@ class TestTrimSequences:
 
     def test_trim_sequences_reverse_strand(self) -> None:
         """Trimming with strand = -1."""
-        ref, alt, start, end, changed = trim_sequences("ACGT", "ACCT", start=10, strand=-1)
+        ref, alt, start, end, changed = trim_sequences("ACGT", "ACCT", start=10, strand=KnownStrand.REVERSE)
         assert (ref, alt, start, end, changed) == ("G", "C", 11, 11, True)
 
     def test_trim_sequences_no_trimming(self) -> None:
