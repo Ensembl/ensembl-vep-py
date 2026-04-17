@@ -37,16 +37,26 @@ class VariationAllele(Feature):
     """Represents a specific allele of a variation.
 
     Attributes:
-        start (int): The start position in relative to slice.
-        end (int): The end position in relative to slice.
-        reference_allele (str | None): The reference allele.
-        alternate_allele (str | None): The alternate allele.
-        transcript_variation_alleles (list[TranscriptVariationAllele]): List of overlaps between this variation allele and transcripts.
-        original_locus (Locus | None): The original locus of the variation allele before any minimisation or shifting.
-        minimised_locus (Locus | None): The locus of the variation allele after minimisation.
-        shifted_locus (Locus | None): The locus of the variation allele after shifting.
-        minimised (bool): Whether the variation allele has been minimised.
-        shifted (bool): Whether the variation allele has been shifted.
+        start (int):
+            The start position in relative to slice.
+        end (int):
+            The end position in relative to slice.
+        reference_allele (str | None):
+            The reference allele.
+        alternate_allele (str | None):
+            The alternate allele.
+        transcript_variation_alleles (list[TranscriptVariationAllele]):
+            List of overlaps between this variation allele and transcripts.
+        original_locus (Locus | None):
+            The original locus of the variation allele before any minimisation or shifting.
+        minimised_locus (Locus | None):
+            The locus of the variation allele after minimisation.
+        shifted_locus (Locus | None):
+            The locus of the variation allele after shifting.
+        minimised (bool):
+            Whether the variation allele has been minimised.
+        shifted (bool):
+            Whether the variation allele has been shifted.
     """
 
     start: int = field(
@@ -296,5 +306,6 @@ class VariationAllele(Feature):
         feature_overlaps = []
         for tva in self.transcript_variation_alleles:
             feature_overlaps.append(tva)
-        # Similarly, we would extend with regulatory_variation_alleles, motif_variation_alleles, etc. when they are implemented.
+        # Similarly, we would extend with regulatory_variation_alleles,
+        #  motif_variation_alleles, etc. when they are implemented.
         return feature_overlaps

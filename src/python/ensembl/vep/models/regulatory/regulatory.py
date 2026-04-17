@@ -19,4 +19,5 @@ from ensembl.vep.models import Feature
 
 
 @define(kw_only=True, auto_attribs=True)
-class Regulatory(Feature): ...
+class Regulatory(Feature):
+    """Regulatory feature class (to be implemented)."""

@@ -22,10 +22,12 @@ from threading import Lock
 from attrs import define, field
 
 from ensembl.vep.models import Feature
+from ensembl.vep.models.genic import CDS, UTR
 from ensembl.vep.common import Attribute, invalidates
 
 if TYPE_CHECKING:
-    from ensembl.vep.models.genic import Gene, Exon, Intron, CDS, cDNA, UTR, Translation
+    from ensembl.vep.models.genic import (Gene, Exon, Intron, cDNA,
+                                          Translation)
 
 logger = logging.getLogger(__name__)
 
@@ -36,14 +38,24 @@ class Transcript(Feature):
     Represents a transcript.
 
     Attributes:
-        stable_id (str): Ensembl stable transcript identifier (e.g. "ENST00000366667").
-        version (int | None): Version of the stable identifier.
-        gene (Gene | None): The gene to which this transcript belongs.
-        spliced_exons (list[Exon]): List of exons that are spliced together to form the transcript.
-        introns (list[Intron]): List of introns in the transcript.
-        translation (Translation | None): The translation associated with this transcript, if applicable.
-        alternative_translations (list[Translation] | None): List of alternative translations associated with this transcript, if applicable.
-        attributes (list[Attribute] | None): List of attributes associated with this transcript.
+        stable_id (str):
+          Ensembl stable transcript identifier (e.g. "ENST00000366667").
+        version (int | None):
+          Version of the stable identifier.
+        gene (Gene | None):
+          The gene to which this transcript belongs.
+        spliced_exons (list[Exon]):
+          List of exons that are spliced together to form the transcript.
+        introns (list[Intron]):
+          List of introns in the transcript.
+        translation (Translation | None):
+          The translation associated with this transcript,
+          if applicable.
+        alternative_translations (list[Translation] | None):
+          List of alternative translations associated with this transcript,
+          if applicable.
+        attributes (list[Attribute] | None):
+          List of attributes associated with this transcript.
     """
 
     stable_id: str
@@ -116,26 +128,37 @@ class Transcript(Feature):
         """Public accessor for __spliced_seq.
 
         Returns:
-            str | None: The spliced sequence of the transcript, or None if sequence information is not available for all exons.
+            The spliced sequence of the transcript,
+            or None if sequence information is not available for all exons.
         """
         return self.__spliced_seq
 
     @cached_property
     def __spliced_seq(self) -> str | None:
         """
-        Returns the spliced sequence of the transcript, or None if sequence information is not available for all exons.
+        The spliced sequence of the transcript,
+        or None if sequence information is not available for all exons.
 
         Returns:
-            str | None: The spliced sequence of the transcript, or None if sequence information is not available for all exons.
+            The spliced sequence of the transcript,
+            or None if sequence information is not available for all exons.
         """
         with self._lock:
             seq = ""
+            warning_template = (
+                'Exon %(exon_id) has no sequence information,'
+                ' adding N instead of the exact sequence for this exon'
+                ' when constructing spliced sequence for transcript %(transcript_id).'
+                ' Spliced sequence may not be accurate.')
+
             for exon in self.spliced_exons:
                 if exon.seq is None:
                     logger.warning(
-                        f"Exon {exon.stable_id} has no sequence information, adding N instead of the exact sequence for this exon "
-                        f"when constructing spliced sequence for transcript {self.stable_id}. Spliced sequence may not be accurate."
-                    )
+                        warning_template,
+                        extra={
+                            "exon_id": exon.stable_id,
+                            "transcript_id": self.stable_id
+                        })
                     seq += "N" * exon.length
                 else:
                     seq += exon.seq
@@ -159,20 +182,28 @@ class Transcript(Feature):
             CDS | None: The CDS associated with this transcript, or None if not applicable.
         """
         with self._lock:
-            from ensembl.vep.models.genic import CDS
-
             if self.translation is None:
                 logger.warning(
-                    f"Cannot compute CDS for transcript {self.stable_id} because translation information is not available."
+                    "Cannot compute CDS for transcript %s because translation information is not available.",
+                    self.stable_id
                 )
                 return None
 
             seq = ""
+            warning_template = (
+                'Exon %(exon_id) has no sequence information,'
+                ' adding N instead of the exact sequence for this exon'
+                ' when constructing CDS sequence for transcript %(transcript_id).'
+                ' Transcript sequence may not be accurate.')
+
             for idx, exon in enumerate(self.spliced_exons[self.start_exon_index : self.end_exon_index + 1]):
                 if exon.seq is None:
                     logger.warning(
-                        f"Exon {exon.stable_id} has no sequence information, adding N instead of the exact sequence for this exon "
-                        f"when constructing CDS sequence for transcript {self.stable_id}. Transcript sequence may not be accurate."
+                        warning_template,
+                        extra={
+                            "exon_id": exon.stable_id,
+                            "transcript_id": self.stable_id
+                        }
                     )
                     exon_coding_seq = "N" * exon.length
                 else:
@@ -280,7 +311,8 @@ class Transcript(Feature):
         """Public accessor for __cds_start.
 
         Returns:
-            int | None: Coordinate of the start of the CDS with respect to the transcript, or None if not applicable.
+            Coordinate of the start of the CDS with respect to the transcript,
+            or None if not applicable.
         """
         return self.__cds_start
 
@@ -290,7 +322,8 @@ class Transcript(Feature):
         Returns the start of the CDS with respect to the transcript, or None if not applicable.
 
         Returns:
-            int | None: Coordinate of the start of the CDS with respect to the transcript, or None if not applicable.
+            Coordinate of the start of the CDS with respect to the transcript,
+            or None if not applicable.
         """
         with self._lock:
             if self.spliced_exons is None or len(self.spliced_exons) == 0 or self.translation is None:
@@ -307,7 +340,8 @@ class Transcript(Feature):
         """Public accessor for __cds_end.
 
         Returns:
-            int | None: Coordinate of the end of the CDS with respect to the transcript, or None if not applicable.
+            Coordinate of the end of the CDS with respect to the transcript,
+            or None if not applicable.
         """
         return self.__cds_end
 
@@ -317,7 +351,8 @@ class Transcript(Feature):
         Returns the end of the CDS with respect to the transcript, or None if not applicable.
 
         Returns:
-            int | None: Coordinate of the end of the CDS with respect to the transcript, or None if not applicable.
+            Coordinate of the end of the CDS with respect to the transcript,
+            or None if not applicable.
         """
         with self._lock:
             if self.spliced_exons is None or len(self.spliced_exons) == 0 or self.translation is None:
@@ -337,7 +372,7 @@ class Transcript(Feature):
         """Public accessor for __five_prime_utr.
 
         Returns:
-            UTR | None: The 5' UTR of the transcript, or None if not applicable.
+            The 5' UTR of the transcript, or None if not applicable.
         """
         return self.__five_prime_utr
 
@@ -346,20 +381,30 @@ class Transcript(Feature):
         """Returns the 5' UTR of the transcript, or None if not applicable.
 
         Returns:
-            UTR | None: The 5' UTR of the transcript, or None if not applicable.
+            The 5' UTR of the transcript, or None if not applicable.
         """
         with self._lock:
-            from ensembl.vep.models.genic import UTR
-
             if self.cds_start is None or self.cdna_coding_start is None:
+                warning_template = (
+                    'Cannot compute five_prime_utr for transcript %(transcript_id)'
+                    ' because cds_start or cdna_coding_start is None.')
+
                 logger.warning(
-                    f"Cannot compute five_prime_utr for transcript {self.stable_id} because cds_start or cdna_coding_start is None."
+                    warning_template,
+                    extra={"transcript_id": self.stable_id}
                 )
                 return None
 
             if self.spliced_seq is None or len(self.spliced_seq) < self.cdna_coding_start:
+                warning_template = (
+                    'Cannot compute five_prime_utr for transcript %(transcript_id)'
+                    ' because spliced_seq is None or too short.')
+
                 logger.warning(
-                    f"Cannot compute five_prime_utr for transcript {self.stable_id} because spliced_seq is None or too short."
+                    warning_template,
+                    extra={
+                        "transcript_id": self.stable_id
+                    }
                 )
                 return None
 
@@ -377,7 +422,7 @@ class Transcript(Feature):
         """Public accessor for __three_prime_utr.
 
         Returns:
-            UTR | None: The 3' UTR of the transcript, or None if not applicable.
+            The 3' UTR of the transcript, or None if not applicable.
         """
         return self.__three_prime_utr
 
@@ -386,20 +431,28 @@ class Transcript(Feature):
         """Returns the 3' UTR of the transcript, or None if not applicable.
 
         Returns:
-            UTR | None: The 3' UTR of the transcript, or None if not applicable.
+            The 3' UTR of the transcript, or None if not applicable.
         """
         with self._lock:
-            from ensembl.vep.models.genic import UTR
-
             if self.cds_end is None or self.cdna_coding_end is None:
+                warning_template = (
+                    'Cannot compute three_prime_utr for transcript %(transcript_id)'
+                    ' because cds_end or cdna_coding_end is None.')
+
                 logger.warning(
-                    f"Cannot compute three_prime_utr for transcript {self.stable_id} because cds_end or cdna_coding_end is None."
+                    warning_template,
+                    extra={"transcript_id": self.stable_id},
                 )
                 return None
 
             if self.spliced_seq is None or len(self.spliced_seq) <= self.cdna_coding_end:
+                warning_template = (
+                    'Cannot compute three_prime_utr for transcript %(transcript_id)'
+                    ' because spliced_seq is None or too short.')
+
                 logger.warning(
-                    f"Cannot compute three_prime_utr for transcript {self.stable_id} because spliced_seq is None or too short."
+                    warning_template,
+                    extra={"transcript_id": self.stable_id},
                 )
                 return None
 
@@ -429,16 +482,25 @@ class Transcript(Feature):
             str | None: The translated sequence of the transcript, or None if not applicable.
         """
         with self._lock:
+            seq: str | None
+
             if self.translation is not None:
-                return self.translation.seq
+                seq = self.translation.seq
             elif self.cds is None:
                 # to avoid pylint warning, # TBD: need codon table
-                return "dummy"
+                seq = "dummy"
             else:
+                warning_template = (
+                    'Cannot compute translated_seq for transcript %(transcript_id)'
+                    ' because translation and CDS sequence are both not available.')
+
                 logger.warning(
-                    f"Cannot compute translated_seq for transcript {self.stable_id} because translation and CDS sequence are both not available."
+                    warning_template,
+                    extra={"transcript_id": self.stable_id}
                 )
-                return None
+                seq = None
+
+            return seq
 
     def __eq__(self, other: object) -> bool:
         """Compare two Transcripts using various criteria.

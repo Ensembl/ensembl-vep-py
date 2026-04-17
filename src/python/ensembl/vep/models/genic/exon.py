@@ -32,11 +32,15 @@ class Exon(Feature):
     Represents an exon.
 
     Attributes:
-        stable_id (str):  Ensembl stable exon identifier (e.g. "ENSE00003666667").
-        version (int | None): Version of the stable identifier.
-        phase (ExonPhase | None): The phase of the exon, which is the number of bases of the first codon that are on the previous
-            exon/intron. The value can be 0, 1, or 2.
-        end_phase (ExonPhase | None): Number of bases of the last codon if it is incomplete. The value can be 0, 1, or 2.
+        stable_id (str):
+            Ensembl stable exon identifier (e.g. "ENSE00003666667").
+        version (int | None):
+            Version of the stable identifier.
+        phase (ExonPhase | None):
+            The phase of the exon, which is the number of bases of the first codon
+            that are on the previous exon/intron. The value can be 0, 1, or 2.
+        end_phase (ExonPhase | None):
+            Number of bases of the last codon if it is incomplete. The value can be 0, 1, or 2.
     """
 
     stable_id: str
@@ -71,14 +75,24 @@ class Exon(Feature):
             return None
 
         # TBD: why we use module of start position? instead would it be simple convert - 0->0, 1->2, 2->1?
+        frame: int | None
         if self.phase == ExonPhase.ZERO:
-            return self.start % 3
+            frame = self.start % 3
         elif self.phase == ExonPhase.ONE:
-            return (self.start + 2) % 3
+            frame = (self.start + 2) % 3
         elif self.phase == ExonPhase.TWO:
-            return (self.start + 1) % 3
+            frame = (self.start + 1) % 3
         else:
+            Warning_template = (
+                'Cannot calculate frame for exon %(exon_id) because phase is invalid: %(phase)')
+
             logger.warning(
-                f"Cannot calculate frame for exon {self.stable_id} because phase is invalid: {self.phase}"
+                Warning_template,
+                extra={
+                    "exon_id": self.stable_id,
+                    "phase": self.phase
+                }
             )
-            return None
+            frame = None
+
+        return frame

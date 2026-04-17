@@ -16,7 +16,6 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING
 from functools import cached_property
 from threading import Lock
 from attrs import define, field
@@ -24,9 +23,7 @@ from attrs import define, field
 from ensembl.vep.common import ClassSOTerm, invalidates
 from ensembl.vep.models import Feature
 from ensembl.vep.models.overlap import OverlapConsequence
-
-if TYPE_CHECKING:
-    from ensembl.vep.models.variation import VariationAllele
+from ensembl.vep.models.variation import VariationAllele
 
 
 @define(kw_only=True, auto_attribs=True)
@@ -34,12 +31,18 @@ class Variation(Feature):
     """Represents a variation to genomic sequences in a specific locus.
 
     Attributes:
-        stable_id (str | None): Stable identifier for the variation.
-        allele_string (str | None): String representation of the alleles.
-        variation_alleles (VariationAllele | None): VariationAllele object describing the alleles of the variation.
-        is_somatic (bool | None): Indicates whether the variation is somatic.
-        class_so_term (str | None): Sequence Ontology term describing the class of the variation.
-        most_severe_consequence (OverlapConsequence | None): Most severe consequence type for the variation.
+        stable_id (str | None):
+            Stable identifier for the variation.
+        allele_string (str | None):
+            String representation of the alleles.
+        variation_alleles (VariationAllele | None):
+            VariationAllele object describing the alleles of the variation.
+        is_somatic (bool | None):
+            Indicates whether the variation is somatic.
+        class_so_term (str | None):
+            Sequence Ontology term describing the class of the variation.
+        most_severe_consequence (OverlapConsequence | None):
+            Most severe consequence type for the variation.
     """
 
     stable_id: str | None = field(default=None)
@@ -54,7 +57,7 @@ class Variation(Feature):
         """Public accessor for the __variation_alleles.
 
         Returns:
-            list[VariationAllele]: The list of VariationAllele objects for the variation.
+            The list of VariationAllele objects for the variation.
         """
         return self.__variation_alleles
 
@@ -63,13 +66,11 @@ class Variation(Feature):
         """Returns the list of VariationAllele objects for the variation.
 
         Returns:
-            list[VariationAllele]: List of VariationAllele objects.
+            List of VariationAllele objects.
         """
         invalidates("most_severe_consequence")
 
         with self._lock:
-            from ensembl.vep.models.variation import VariationAllele
-
             variation_alleles = []
             alleles = (self.allele_string or "").split("/")
 
@@ -95,7 +96,8 @@ class Variation(Feature):
         """Public accessor for the __most_severe_consequence.
 
         Returns:
-            OverlapConsequence | None: The most severe consequence type for the variation or None if not deducible.
+            The most severe consequence type for the variation
+            or None if not deducible.
         """
         return self.__most_severe_consequence
 
@@ -140,15 +142,15 @@ class Variation(Feature):
         allele_string = self.allele_string or ""
 
         # default to sequence_alteration
-        cls = ClassSOTerm.SEQUENCE_ALTERATION
+        so_term = ClassSOTerm.SEQUENCE_ALTERATION
 
         # A/T, A/T/G
         if re.match(r"^[A-Z](/[A-Z])+$", allele_string):
-            cls = ClassSOTerm.SNV
+            so_term = ClassSOTerm.SNV
 
         # (CAG)8/(CAG)9
         elif re.search(r"\)\d+", allele_string):
-            cls = ClassSOTerm.TANDEM_REPEAT
+            so_term = ClassSOTerm.TANDEM_REPEAT
 
         else:
             alleles = allele_string.split("/")
@@ -160,36 +162,36 @@ class Variation(Feature):
                 if ref == "-":
                     if len(alts) == 1 and re.search(r"DEL", alts[0]):
                         # -/(LARGEDELETION)
-                        cls = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
+                        so_term = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
 
                     if not any(not re.match(r"^[A-Z]+$|INS", alt) for alt in alts):
                         # -/ATT, -/(LARGEINSERTION)
-                        cls = ClassSOTerm.INSERTION if ref_correct else ClassSOTerm.INDEL
+                        so_term = ClassSOTerm.INSERTION if ref_correct else ClassSOTerm.INDEL
 
                 elif re.match(r"^[A-Z]+$", ref):
                     if not any(not re.match(r"^-$|DEL", alt) for alt in alts):
                         # A/-, A/(LARGEDELETION)
-                        cls = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
+                        so_term = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
 
                     elif re.match(r"^[A-Z]+(/[A-Z]+)+$", allele_string):
                         # AA/TT => substitution, AA/TTTT => indel
                         same_size = all(len(alt) == len(ref) for alt in alts)
-                        cls = ClassSOTerm.SUBSTITUTION if same_size else ClassSOTerm.INDEL
+                        so_term = ClassSOTerm.SUBSTITUTION if same_size else ClassSOTerm.INDEL
 
                 elif re.search(r"DEL", ref):
                     if not any(alt != "-" for alt in alts):
                         # (LARGEDELETION)/-, (2345 BP DELETION)/-
-                        cls = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
+                        so_term = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
 
             elif len(alleles) == 1:
                 if re.search(r"INS", alleles[0]):
                     # (LARGEINSERTION)
-                    cls = ClassSOTerm.INSERTION if ref_correct else ClassSOTerm.INDEL
+                    so_term = ClassSOTerm.INSERTION if ref_correct else ClassSOTerm.INDEL
                 elif re.search(r"DEL", alleles[0]):
                     # (308 BP DELETION)
-                    cls = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
+                    so_term = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
 
-        return cls
+        return so_term
 
     def minimise_alleles(self) -> None:
         """Minimises all alleles."""

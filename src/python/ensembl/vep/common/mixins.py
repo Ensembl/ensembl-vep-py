@@ -21,8 +21,9 @@ class UnsafeSetterMixin:
     Can be used to temporarily disable cache invalidation to allow faster but unsafe attribute update.
 
     Caveat:
-    This can be very expansive in terms of storage as it stores the type(self) for every instance. It also create a
-    temporary subclass under the unsafe context although that gets cleaned up after the context exits.
+    This can be very expansive in terms of storage as it stores the type(self) for every instance.
+    It also create a temporary subclass under the unsafe context although that gets cleaned up
+    after the context exits.
     """
 
     __slots__ = ("_safe_cls",)
@@ -57,8 +58,8 @@ class UnsafeSetterMixin:
 
 
 class CachedAttributeGuardMixin:
-    """Mixin that guards against setting attributes that are internal properties and/or invalidate cached properties
-    when their dependencies change.
+    """Mixin that guards against setting attributes that are internal properties
+    and/or invalidate cached properties when their dependencies change.
 
     Caveat:
     These can be very expansive as it will be called every time any attribute is updated.
@@ -70,8 +71,8 @@ class CachedAttributeGuardMixin:
     __slots__ = ()
 
     def __setattr__(self, name, value):  # type: ignore
-        """Override __setattr__ to guard against setting attributes that are internal properties and/or invalidate
-        cached properties when their dependencies change.
+        """Override __setattr__ to guard against setting attributes that are internal properties
+        and/or invalidate cached properties when their dependencies change.
 
         Args:
             name (str): The name of the attribute being set.

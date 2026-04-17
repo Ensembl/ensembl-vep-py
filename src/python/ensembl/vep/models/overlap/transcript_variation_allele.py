@@ -35,15 +35,27 @@ class TranscriptVariationAllele(FeatureOverlap):
     Represents the overlap between a transcript and a variation allele.
 
     Attributes:
-        feature (Transcript): The transcript that is getting overlapped.
-        overlapping_feature (VariationAllele): The variation allele that is overlapping.
-        is_reference (bool): Whether the overlapping variation allele is the reference allele.
-        cdna_locus (Locus): The locus of the variation allele on the cDNA sequence of the transcript.
-        cds_locus (Locus | None): The locus of the variation allele on the CDS sequence of the transcript.
-        protein_locus (Locus | None): The locus of the variation allele on the protein sequence of the transcript.
-        distance_to_transcript (int | None): The distance from the variation allele to the transcript, or None if the variation allele overlaps the transcript.
-        exon_number (int | None): The exon number of the transcript that is overlapped by the variation allele, or None if the variation allele does not overlap any exon.
-        intron_number (int | None): The intron number of the transcript that is overlapped by the variation allele, or None if the variation allele does not overlap any intron.
+        feature (Transcript):
+            The transcript that is getting overlapped.
+        overlapping_feature (VariationAllele):
+            The variation allele that is overlapping.
+        is_reference (bool):
+            Whether the overlapping variation allele is the reference allele.
+        cdna_locus (Locus):
+            The locus of the variation allele on the cDNA sequence of the transcript.
+        cds_locus (Locus | None):
+            The locus of the variation allele on the CDS sequence of the transcript.
+        protein_locus (Locus | None):
+            The locus of the variation allele on the protein sequence of the transcript.
+        distance_to_transcript (int | None):
+            The distance from the variation allele to the transcript,
+            or None if the variation allele overlaps the transcript.
+        exon_number (int | None):
+            The exon number of the transcript that is overlapped by the variation allele,
+            or None if the variation allele does not overlap any exon.
+        intron_number (int | None):
+            The intron number of the transcript that is overlapped by the variation allele,
+            or None if the variation allele does not overlap any intron.
     """
 
     feature: Transcript
@@ -85,7 +97,8 @@ class TranscriptVariationAllele(FeatureOverlap):
         Public accessor for __shifted_cdna_locus.
 
         Returns:
-            Locus | None: The cDNA locus of the variation allele after shifting, or None if not applicable.
+            The cDNA locus of the variation allele after shifting,
+            or None if not applicable.
         """
         return self.__shifted_cdna_locus
 
@@ -95,7 +108,8 @@ class TranscriptVariationAllele(FeatureOverlap):
         Returns the cDNA locus of the variation allele after shifting, or None if not applicable.
 
         Returns:
-            Locus | None: The cDNA locus of the variation allele after shifting, or None if not applicable.
+            The cDNA locus of the variation allele after shifting,
+            or None if not applicable.
         """
         return None
 
@@ -105,7 +119,8 @@ class TranscriptVariationAllele(FeatureOverlap):
         Public accessor for __shifted_cds_locus.
 
         Returns:
-            Locus | None: The CDS locus of the variation allele after shifting, or None if not applicable.
+            The CDS locus of the variation allele after shifting,
+            or None if not applicable.
         """
         return self.__shifted_cds_locus
 
@@ -115,7 +130,8 @@ class TranscriptVariationAllele(FeatureOverlap):
         Returns the CDS locus of the variation allele after shifting, or None if not applicable.
 
         Returns:
-            Locus | None: The CDS locus of the variation allele after shifting, or None if not applicable.
+            LThe CDS locus of the variation allele after shifting,
+            or None if not applicable.
         """
         return None
 
@@ -125,7 +141,8 @@ class TranscriptVariationAllele(FeatureOverlap):
         Public accessor for __shifted_protein_locus.
 
         Returns:
-            Locus | None: The protein locus of the variation allele after shifting, or None if not applicable.
+            The protein locus of the variation allele after shifting,
+            or None if not applicable.
         """
         return self.__shifted_protein_locus
 
@@ -135,7 +152,8 @@ class TranscriptVariationAllele(FeatureOverlap):
         Returns the protein locus of the variation allele after shifting, or None if not applicable.
 
         Returns:
-            Locus | None: The protein locus of the variation allele after shifting, or None if not applicable.
+            The protein locus of the variation allele after shifting,
+            or None if not applicable.
         """
         return self.__shifted_protein_locus
 
@@ -144,7 +162,8 @@ class TranscriptVariationAllele(FeatureOverlap):
         """Public accessor for __original_cdna_locus.
 
         Returns:
-            Locus | None: The original cDNA locus of the variation allele before shifting, or None if not applicable.
+            The original cDNA locus of the variation allele before shifting,
+            or None if not applicable.
         """
         return self.__original_cdna_locus
 
@@ -153,7 +172,8 @@ class TranscriptVariationAllele(FeatureOverlap):
         """Returns the original cDNA locus of the variation allele before shifting, or None if not applicable.
 
         Returns:
-            Locus | None: The original cDNA locus of the variation allele before shifting, or None if not applicable.
+            The original cDNA locus of the variation allele before shifting,
+            or None if not applicable.
         """
         return None
 
@@ -162,7 +182,8 @@ class TranscriptVariationAllele(FeatureOverlap):
         """Public accessor for __original_cds_locus.
 
         Returns:
-            Locus | None: The original CDS locus of the variation allele before shifting, or None if not applicable.
+            The original CDS locus of the variation allele before shifting,
+            or None if not applicable.
         """
         return self.__original_cds_locus
 
@@ -171,7 +192,8 @@ class TranscriptVariationAllele(FeatureOverlap):
         """Returns the original CDS locus of the variation allele before shifting, or None if not applicable.
 
         Returns:
-            Locus | None: The original CDS locus of the variation allele before shifting, or None if not applicable.
+            The original CDS locus of the variation allele before shifting,
+            or None if not applicable.
         """
         return None
 
@@ -180,16 +202,19 @@ class TranscriptVariationAllele(FeatureOverlap):
         """Public accessor for __original_protein_locus.
 
         Returns:
-            Locus | None: The original protein locus of the variation allele before shifting, or None if not applicable.
+            The original protein locus of the variation allele before shifting,
+            or None if not applicable.
         """
         return self.__original_protein_locus
 
     @cached_property
     def __original_protein_locus(self) -> Locus | None:
-        """Returns the original protein locus of the variation allele before shifting, or None if not applicable.
+        """The original protein locus of the variation allele before shifting,
+        or None if not applicable.
 
         Returns:
-            Locus | None: The original protein locus of the variation allele before shifting, or None if not applicable.
+            The original protein locus of the variation allele before shifting,
+            or None if not applicable.
         """
         raise NotImplementedError("Feature is not implemented yet.")
 

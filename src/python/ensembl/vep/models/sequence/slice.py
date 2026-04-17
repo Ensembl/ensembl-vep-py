@@ -67,7 +67,8 @@ class Slice:
     def is_circular(self) -> bool:
         """Indicates whether the slice is circular.
 
-        By default, slices are not circular, but this method can be overridden in subclasses to provide specific behavior.
+        By default, slices are not circular, but this method can be
+        overridden in subclasses to provide specific behavior.
 
         Returns:
             bool: False by default, indicating the slice is not circular.

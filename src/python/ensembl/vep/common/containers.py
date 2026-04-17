@@ -102,10 +102,11 @@ class PredictionResult:
     """
 
     tool: str
-    # need something more generic and can be used for both plugins and custom annotation
-    #     plugin gets attached to FeatureOverlap and works on FeatureOverlap after overlap computation is done
-    #     custom annotation after doing overlap computation gets attached to VFA
-    # the data shape varies widely, e.g. SpliceAI, SIFT/PolyPhen; should we use a dict? the values can be int/str/tuple.
+    # Need something more generic and can be used for both plugins and custom annotation
+    #   plugin gets attached to FeatureOverlap and works on FeatureOverlap after overlap computation is done
+    #   custom annotation after doing overlap computation gets attached to VFA
+    # The data shape varies widely, e.g. SpliceAI, SIFT/PolyPhen;
+    #   Should we use a dict? the values can be int/str/tuple.
     score: int
     result: str
     classification: float | None = None

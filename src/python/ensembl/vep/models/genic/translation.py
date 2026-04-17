@@ -32,12 +32,20 @@ class Translation:
     Represents a translation.
 
     Attributes:
-        start (int): The start position of the translation on the transcript, relative to the start of the transcript.
-        end (int): The end position of the translation on the transcript, relative to the start of the transcript.
-        stable_id (str): Ensembl stable transcript identifier (e.g. "ENST00000366667").
-        version (int | None): Version of the stable identifier.
-        seq (str | None): The amino acid sequence of the translation.
-        transcript (Transcript | None): The transcript to which this translation belongs.
+        start (int):
+            The start position of the translation on the transcript,
+            relative to the start of the transcript.
+        end (int):
+            The end position of the translation on the transcript,
+            relative to the start of the transcript.
+        stable_id (str):
+            Ensembl stable transcript identifier (e.g. "ENST00000366667").
+        version (int | None):
+            Version of the stable identifier.
+        seq (str | None):
+            The amino acid sequence of the translation.
+        transcript (Transcript | None):
+            The transcript to which this translation belongs.
     """
 
     start: int = field(on_setattr=invalidates("__length"))
@@ -70,30 +78,35 @@ class Translation:
     @property
     def exon_coding_start(self) -> int:
         """
-        Returns the position of the first coding base in the start exon, relative to the start of the exon.
+        The position of the first coding base in the start exon, relative to the start of the exon.
 
         Returns:
-            int: The position of the first coding base in the start exon, relative to the start of the exon.
+            The position of the first coding base in the start exon,
+            relative to the start of the exon.
         """
         return 1
 
     @property
     def exon_coding_end(self) -> int | None:
         """
-        Returns the position of the last coding base in the end exon, relative to the start of the exon.
+        Returns the position of the last coding base in the end exon,
+        relative to the start of the exon.
 
         Returns:
-            int | None: The position of the last coding base in the end exon, relative to the start of the exon.
+            The position of the last coding base in the end exon,
+            relative to the start of the exon.
         """
         return self.__exon_coding_end
 
     @cached_property
     def __exon_coding_end(self) -> int | None:
         """
-        Returns the position of the last coding base in the end exon, relative to the start of the exon.
+        Returns the position of the last coding base in the end exon,
+        relative to the start of the exon.
 
         Returns:
-            int | None: The position of the last coding base in the end exon, relative to the start of the exon.
+            The position of the last coding base in the end exon,
+            relative to the start of the exon.
         """
         if (
             self.transcript is None

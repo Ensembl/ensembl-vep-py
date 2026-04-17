@@ -30,12 +30,16 @@ if TYPE_CHECKING:
 @define(kw_only=True, auto_attribs=True)
 class FeatureOverlap:
     """
-    Represents an overlap between a feature and a overlapping feature, along with the consequences of that overlap.
+    Represents an overlap between a feature and a overlapping feature,
+    along with the consequences of that overlap.
 
     Attributes:
-        feature (Feature): The feature that is getting overlapped.
-        overlapping_feature (Feature): The feature that is overlapping.
-        overlap_consequences (list[OverlapConsequence]): A list of consequences the overlapping feature has on the feature.
+        feature (Feature):
+            The feature that is getting overlapped.
+        overlapping_feature (Feature):
+            The feature that is overlapping.
+        overlap_consequences (list[OverlapConsequence]):
+            A list of consequences the overlapping feature has on the feature.
     """
 
     feature: Feature

@@ -77,7 +77,8 @@ class Feature:
         Public accessor for the __seq_region_start.
 
         Returns:
-            int | None: The start position in the sequence region, or None if the feature has no attached slice.
+            The start position in the sequence region,
+            or None if the feature has no attached slice.
         """
         return self.__seq_region_start
 
@@ -87,7 +88,8 @@ class Feature:
         Returns the start position in the sequence region.
 
         Returns:
-            int | None: The start position in the sequence region, or None if the feature has no attached slice.
+            The start position in the sequence region,
+            or None if the feature has no attached slice.
         """
         with self._lock:
             if self.slice is None:
@@ -202,9 +204,18 @@ class Feature:
             return None
 
         if self.slice.seq_region_name != other.slice.seq_region_name:
+            warning_template = (
+                'Cannot compare two features on different sequence regions. %(self_classname) is on'
+                ' %(self_seq_region_name) and %(other_classname) is on %(other_seq_region_name).')
+
             logging.warning(
-                f"Cannot compare two features on different sequence regions. {self.__class__.__name__} is on "
-                f"{self.slice.seq_region_name} and {other.__class__.__name__} is on {other.slice.seq_region_name}."
+                warning_template,
+                extra={
+                    "self_classname": self.__class__.__name__,
+                    "self_seq_region_name": self.slice.seq_region_name,
+                    "other_classname": other.__class__.__name__,
+                    "other_seq_region_name": other.slice.seq_region_name,
+                }
             )
             return False
 
@@ -218,22 +229,22 @@ class Feature:
                 self.seq_region_start <= other.seq_region_end
                 and self.seq_region_end >= other.seq_region_start
             )
-        elif self.slice != other.slice:
+
+        if self.slice != other.slice:
             return self.start <= other.end and self.end >= other.start
-        else:
-            return None
+
+        return None
 
     def feature_slice(self) -> Slice | None:
         """
         Returns a slice that covers the area of this feature.
 
         The feature start will be at 1 on the returned slice, and it will have the length of this feature.
+        If the feature has no attached slice, a warning will be logged and None will be returned.
 
         Returns:
-            Slice | None: A Slice object covering the feature area, or None if the feature has no attached slice.
-
-        Raises:
-            Warning: If the feature has no attached slice, a warning is logged and None is returned.
+            A Slice object covering the feature area,
+            or None if the feature has no attached slice.
         """
         slice = self.slice
 
@@ -243,8 +254,8 @@ class Feature:
 
         if self.seq_region_start is None or self.seq_region_end is None or self.seq_region_strand is None:
             logger.warning(
-                "Cannot obtain feature_slice for a feature with undefined seq_region_start, seq_region_end, or seq_region_strand."
-            )
+                ("Cannot obtain feature_slice for a feature with undefined"
+                 " seq_region_start, seq_region_end, or seq_region_strand."))
             return None
 
         return Slice(
