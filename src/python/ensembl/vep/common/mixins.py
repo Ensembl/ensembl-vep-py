@@ -44,7 +44,7 @@ class UnsafeSetterMixin:
             (safe_cls,),
             {
                 "__slots__": (),
-                "__setattr__": lambda self_, k, v: object.__setattr__(self_, k, v),
+                "__setattr__": object.__setattr__,
             },
         )
 
