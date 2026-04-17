@@ -63,7 +63,8 @@ class TestShiftSequence:
         post_seq = "AA"
         pre_seq = "TT"
         start, end = 5, 5
-        shift, shifted_seq, new_start, new_end, _ = shift_sequence(seq, post_seq, pre_seq, start, end)
+        shift, shifted_seq, new_start, new_end, _ = shift_sequence(
+            seq, post_seq=post_seq, pre_seq=pre_seq, start=start, end=end)
         assert (shift, shifted_seq, new_start, new_end) == (2, "A", 7, 7)
 
     def test_shift_sequence_5prime(self):
@@ -73,8 +74,8 @@ class TestShiftSequence:
         pre_seq = "AA"
         start, end = 5, 5
         shift, shifted_seq, new_start, new_end, _ = shift_sequence(
-            seq, post_seq, pre_seq, start, end, reverse=True
-        )
+            seq, post_seq=post_seq, pre_seq=pre_seq, start=start, end=end, reverse=True)
+
         assert (shift, shifted_seq, new_start, new_end) == (2, "A", 3, 3)
 
     def test_shift_sequence_no_shift(self):
@@ -83,7 +84,9 @@ class TestShiftSequence:
         post_seq = "T"
         pre_seq = "G"
         start, end = 5, 5
-        shift, shifted_seq, new_start, new_end, _ = shift_sequence(seq, post_seq, pre_seq, start, end)
+        shift, shifted_seq, new_start, new_end, _ = shift_sequence(
+            seq, post_seq=post_seq, pre_seq=pre_seq, start=start, end=end)
+
         assert (shift, shifted_seq, new_start, new_end) == (0, "A", 5, 5)
 
     def test_shift_sequence_full_shift(self):
@@ -92,12 +95,15 @@ class TestShiftSequence:
         post_seq = "AAAA"
         pre_seq = "AAAA"
         start, end = 5, 5
-        shift, shifted_seq, new_start, new_end, _ = shift_sequence(seq, post_seq, pre_seq, start, end)
+        shift, shifted_seq, new_start, new_end, _ = shift_sequence(
+            seq, post_seq=post_seq, pre_seq=pre_seq, start=start, end=end)
+
         assert (shift, shifted_seq, new_start, new_end) == (4, "A", 9, 9)
+
         # 5' direction
         shift, shifted_seq, new_start, new_end, _ = shift_sequence(
-            seq, post_seq, pre_seq, start, end, reverse=True
-        )
+            seq, post_seq=post_seq, pre_seq=pre_seq, start=start, end=end, reverse=True)
+
         assert (shift, shifted_seq, new_start, new_end) == (4, "A", 1, 1)
 
     def test_shift_sequence_empty_seq(self):
@@ -106,27 +112,32 @@ class TestShiftSequence:
         post_seq = "A"
         pre_seq = "A"
         start, end = 1, 1
-        shift, shifted_seq, new_start, new_end, _ = shift_sequence(seq, post_seq, pre_seq, start, end)
+        shift, shifted_seq, new_start, new_end, _ = shift_sequence(
+            seq, post_seq=post_seq, pre_seq=pre_seq, start=start, end=end)
         assert (shift, shifted_seq, new_start, new_end) == (0, "", 1, 1)
 
         seq = "A"
         post_seq = "A"
         pre_seq = ""
         start, end = 1, 1
-        shift, shifted_seq, new_start, new_end, _ = shift_sequence(seq, post_seq, pre_seq, start, end)
+        shift, shifted_seq, new_start, new_end, _ = shift_sequence(
+            seq, post_seq=post_seq, pre_seq=pre_seq, start=start, end=end)
+
         assert (shift, shifted_seq, new_start, new_end) == (1, "A", 2, 2)
 
         seq = "A"
         post_seq = ""
         pre_seq = "A"
         start, end = 1, 1
-        shift, shifted_seq, new_start, new_end, _ = shift_sequence(seq, post_seq, pre_seq, start, end, True)
+        shift, shifted_seq, new_start, new_end, _ = shift_sequence(
+            seq, post_seq=post_seq, pre_seq=pre_seq, start=start, end=end, reverse=True)
+
         assert (shift, shifted_seq, new_start, new_end) == (1, "A", 0, 0)
 
     def test_shift_sequence_none_input(self):
         """Should raise ValueError if seq, post_seq, or pre_seq is None."""
         with pytest.raises(ValueError):
-            shift_sequence(None, "A", "A", 1, 1)
+            shift_sequence(None, post_seq="A", pre_seq="A", start=1, end=1)
         with pytest.raises(ValueError):
             shift_sequence("A", None, "A", 1, 1)
         with pytest.raises(ValueError):

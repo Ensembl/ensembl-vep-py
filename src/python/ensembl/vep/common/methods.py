@@ -52,6 +52,7 @@ def invalidates(*cached_names):  # type: ignore
 def trim_sequences(
     ref: str,
     alt: str,
+    *,
     start: int = 0,
     end: int | None = None,
     empty_to_dash: bool = False,
@@ -173,6 +174,7 @@ def _trim_common_sequence(
 
 def shift_sequence(
     seq: str,
+    *,
     post_seq: str,
     pre_seq: str,
     start: int,
