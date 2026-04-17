@@ -47,7 +47,7 @@ class TestCDSInitialization:
 class TestCDSProperties:
     """Test CDS properties and cached properties."""
 
-    def test_core_properties(self, cds, transcript, translation) -> None:
+    def test_core_properties(self, cds) -> None:
         """Test that CDS properties are set correctly."""
         assert cds.start == 11
         assert cds.end == 40
@@ -70,7 +70,7 @@ class TestCDSProperties:
         cds.seq = "ATG" * 10
         assert cds.neucleotide_length == 30
 
-    def test_protein_length(self, cds) -> None:
+    def test_protein_length(self, _cds) -> None:
         """Test that CDS cached properties are accessed correctly."""
         # assert cds.protein_length is None
 
