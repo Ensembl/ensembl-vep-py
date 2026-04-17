@@ -23,7 +23,7 @@ from ensembl.vep.common import CoordSystemLevel
 class TestCoordSystemInitialization:
     """Test CoordSystem initialization."""
 
-    def test_initialization_without_keywords(self):
+    def test_initialization_without_keywords(self) -> None:
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = CoordSystem("chromosome", level=CoordSystemLevel.CHROMOSOME)
 
@@ -36,7 +36,7 @@ class TestCoordSystemProperties:
         """Create a CoordSystem instance for testing."""
         return CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME)
 
-    def test_core_properties(self, coord):
+    def test_core_properties(self, coord) -> None:
         """Test core properties are set correctly."""
         assert coord.name == "chromosome"
         assert coord.level == CoordSystemLevel.CHROMOSOME
@@ -44,13 +44,13 @@ class TestCoordSystemProperties:
         assert coord.alias_to is None
         assert coord.rank is None
 
-    def test_is_some_level(self, coord):
+    def test_is_some_level(self, coord) -> None:
         """Test is_chromosome_level property."""
         assert coord.is_chromosome_level is True
         assert coord.is_sequence_level is False
         assert coord.is_toplevel is False
 
-    def test_is_some_level_immutable(self, coord):
+    def test_is_some_level_immutable(self, coord) -> None:
         """Test is_chromosome_level property is cached and immutable."""
         with pytest.raises(
             AttributeError, match="property 'is_chromosome_level' of 'CoordSystem' object has no setter"
@@ -67,7 +67,7 @@ class TestCoordSystemProperties:
         ):
             coord.is_toplevel = True
 
-    def test_is_some_level_update(self, coord):
+    def test_is_some_level_update(self, coord) -> None:
         """Test is_chromosome_level property update."""
         assert coord.is_chromosome_level is True
         assert coord.is_sequence_level is False
@@ -97,37 +97,37 @@ class TestCoordSystemEquality:
         """Create a CoordSystem instance for testing."""
         return CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME)
 
-    def test_equal_coord_systems(self, coord):
+    def test_equal_coord_systems(self, coord) -> None:
         """Test equal CoordSystem instances are considered equal."""
         coord2 = CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME)
         assert coord == coord2
 
-    def test_different_name(self, coord):
+    def test_different_name(self, coord) -> None:
         """Test two CoordSystems with different names are not equal."""
         coord2 = CoordSystem(name="chr1", level=CoordSystemLevel.CHROMOSOME)
         assert coord != coord2
 
-    def test_different_level(self, coord):
+    def test_different_level(self, coord) -> None:
         """Test two CoordSystems with different levels are not equal."""
         coord2 = CoordSystem(name="chromosome", level=CoordSystemLevel.CONTIG)
         assert coord != coord2
 
-    def test_different_default(self, coord):
+    def test_different_default(self, coord) -> None:
         """Test two CoordSystems with different default values are still equal."""
         coord2 = CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME, default=True)
         assert coord == coord2
 
-    def test_different_alias_to(self, coord):
+    def test_different_alias_to(self, coord) -> None:
         """Test two CoordSystems with different alias_to values are still equal."""
         coord2 = CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME, alias_to="NC_000001.11")
         assert coord == coord2
 
-    def test_different_rank(self, coord):
+    def test_different_rank(self, coord) -> None:
         """Test two CoordSystems with different rank values are not equal."""
         coord2 = CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME, rank=5)
         assert coord != coord2
 
-    def test_different_type(self, coord):
+    def test_different_type(self, coord) -> None:
         """Test comparing CoordSystem to different type returns False."""
 
         class AnotherCoord(CoordSystem):

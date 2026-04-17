@@ -23,7 +23,7 @@ from ensembl.vep.models.sequence import Slice
 
 
 @pytest.fixture
-def slice():
+def slice() -> Slice:
     """Create a slice object for testing."""
     return Slice(
         coord_system="chromosome",
@@ -37,7 +37,7 @@ def slice():
 
 
 @pytest.fixture
-def variation(slice):
+def variation(slice) -> Variation:
     """Returns a bi-allelic Variation object for testing."""
     return Variation(
         start=5,
@@ -49,7 +49,7 @@ def variation(slice):
 
 
 @pytest.fixture
-def multiallelic_variation(slice):
+def multiallelic_variation(slice) -> Variation:
     """Returns a multiallelic Variation object for testing."""
     return Variation(
         start=5,
@@ -61,7 +61,7 @@ def multiallelic_variation(slice):
 
 
 @pytest.fixture
-def insertion_variation(slice):
+def insertion_variation(slice) -> Variation:
     """Returns an insertion Variation object for testing."""
     return Variation(
         start=5,
@@ -73,7 +73,7 @@ def insertion_variation(slice):
 
 
 @pytest.fixture
-def deletion_variation(slice):
+def deletion_variation(slice) -> Variation:
     """Returns a deletion Variation object for testing."""
     return Variation(
         start=5,
@@ -87,38 +87,38 @@ def deletion_variation(slice):
 class TestVariationProperties:
     """Tests property accessors and default values."""
 
-    def test_initialization(self, variation):
+    def test_initialization(self, variation) -> None:
         """Test that a Variation can be initialized with the correct attributes."""
         assert variation.start == 5
         assert variation.end == 5
         assert variation.strand == 1
         assert variation.allele_string == "A/T"
 
-    def test_initialization_without_keywords(self):
+    def test_initialization_without_keywords(self) -> None:
         """Test Variation initialization without keyword raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = Variation(100, end=100, strand=1, slice=None, allele_string="A/T")
 
-    def test_defaults(self, variation):
+    def test_defaults(self, variation) -> None:
         """Test default values for optional attributes."""
         assert variation.stable_id is None
         assert variation.is_somatic is False
 
-    def test_variation_alleles_immutable(self, variation):
+    def test_variation_alleles_immutable(self, variation) -> None:
         """Test that variation_alleles cannot be directly set."""
         with pytest.raises(
             AttributeError, match="property 'variation_alleles' of 'Variation' object has no setter"
         ):
             variation.variation_alleles = []
 
-    def test_most_severe_consequence_immutable(self, variation):
+    def test_most_severe_consequence_immutable(self, variation) -> None:
         """Test that most_severe_consequence cannot be directly set."""
         with pytest.raises(
             AttributeError, match="property 'most_severe_consequence' of 'Variation' object has no setter"
         ):
             variation.most_severe_consequence = "some value"
 
-    def test_class_so_term_immutable(self, variation):
+    def test_class_so_term_immutable(self, variation) -> None:
         """Test that class_so_term cannot be directly set."""
         with pytest.raises(
             AttributeError, match="property 'class_so_term' of 'Variation' object has no setter"
@@ -129,7 +129,7 @@ class TestVariationProperties:
 class TestVariationAlleles:
     """Tests for the variation_alleles cached property."""
 
-    def test_single_alt_allele(self, variation):
+    def test_single_alt_allele(self, variation) -> None:
         """Test that a bi-allelic variation returns the correct VariationAllele."""
         alleles = variation.variation_alleles
 
@@ -137,7 +137,7 @@ class TestVariationAlleles:
         assert alleles[0].reference_allele == "A"
         assert alleles[0].alternate_allele == "T"
 
-    def test_multiple_alt_alleles(self, multiallelic_variation):
+    def test_multiple_alt_alleles(self, multiallelic_variation) -> None:
         """Test that a multi-allelic variation returns the correct VariationAlleles."""
         alleles = multiallelic_variation.variation_alleles
 
@@ -148,7 +148,7 @@ class TestVariationAlleles:
         # All share the same reference
         assert all(a.reference_allele == "A" for a in alleles)
 
-    def test_insertion_alleles(self, insertion_variation):
+    def test_insertion_alleles(self, insertion_variation) -> None:
         """Test that an insertion variation returns the correct VariationAllele."""
         alleles = insertion_variation.variation_alleles
 
@@ -156,7 +156,7 @@ class TestVariationAlleles:
         assert alleles[0].reference_allele == "A"
         assert alleles[0].alternate_allele == "ATT"
 
-    def test_deletion_alleles(self, deletion_variation):
+    def test_deletion_alleles(self, deletion_variation) -> None:
         """Test that a deletion variation returns the correct VariationAllele."""
         alleles = deletion_variation.variation_alleles
 
@@ -164,7 +164,7 @@ class TestVariationAlleles:
         assert alleles[0].reference_allele == "ATC"
         assert alleles[0].alternate_allele == "A"
 
-    def test_alleles_inherit_coordinates(self, variation):
+    def test_alleles_inherit_coordinates(self, variation) -> None:
         """Test that variation alleles inherit coordinates from the variation."""
         alleles = variation.variation_alleles
 
@@ -173,7 +173,7 @@ class TestVariationAlleles:
         assert alleles[0].strand == 1
         assert alleles[0].slice == variation.slice
 
-    def test_none_allele_string_returns_empty(self, slice):
+    def test_none_allele_string_returns_empty(self, slice) -> None:
         var = Variation(
             start=100,
             end=100,
@@ -188,7 +188,7 @@ class TestVariationAlleles:
 class TestVariationMinimisation:
     """Tests for the minimise_alleles of Variation."""
 
-    def test_minimise_called_when_flag_set(self):
+    def test_minimise_called_when_flag_set(self) -> None:
         """Test that the minimise_alleles method is called when the minimise_alleles flag is set."""
         var = Variation(
             start=100,
@@ -211,7 +211,7 @@ class TestVariationMinimisation:
 class TestVariationShifting:
     """Tests for the shift_alleles of Variation."""
 
-    def test_shift_alleles(self, slice):
+    def test_shift_alleles(self, slice) -> None:
         """Test that the shift_alleles method shifts the alleles correctly."""
         var = Variation(
             start=2,
@@ -249,7 +249,7 @@ class TestClassSOTerm:
             ("A/T/G/C", ClassSOTerm.SNV),
         ],
     )
-    def test_snv(self, slice, allele_string, expected):
+    def test_snv(self, slice, allele_string, expected) -> None:
         var = Variation(start=100, end=100, strand=1, slice=slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
@@ -260,7 +260,7 @@ class TestClassSOTerm:
             ("(AT)5/(AT)7", ClassSOTerm.TANDEM_REPEAT),
         ],
     )
-    def test_tandem_repeat(self, slice, allele_string, expected):
+    def test_tandem_repeat(self, slice, allele_string, expected) -> None:
         var = Variation(start=100, end=100, strand=1, slice=slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
@@ -275,7 +275,7 @@ class TestClassSOTerm:
             ("(LARGEINSERTION)", ClassSOTerm.INSERTION),
         ],
     )
-    def test_insertion(self, slice, allele_string, expected):
+    def test_insertion(self, slice, allele_string, expected) -> None:
         var = Variation(start=100, end=100, strand=1, slice=slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
@@ -291,7 +291,7 @@ class TestClassSOTerm:
             ("(2345 BP DELETION)/-", ClassSOTerm.DELETION),
         ],
     )
-    def test_deletion(self, slice, allele_string, expected):
+    def test_deletion(self, slice, allele_string, expected) -> None:
         var = Variation(start=100, end=102, strand=1, slice=slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
@@ -302,7 +302,7 @@ class TestClassSOTerm:
             ("ACT/TCG", ClassSOTerm.SUBSTITUTION),
         ],
     )
-    def test_substitution(self, slice, allele_string, expected):
+    def test_substitution(self, slice, allele_string, expected) -> None:
         var = Variation(start=100, end=101, strand=1, slice=slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
@@ -313,14 +313,14 @@ class TestClassSOTerm:
             ("AAAA/TT", ClassSOTerm.INDEL),
         ],
     )
-    def test_indel(self, slice, allele_string, expected):
+    def test_indel(self, slice, allele_string, expected) -> None:
         var = Variation(start=100, end=103, strand=1, slice=slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
-    def test_empty_allele_string_defaults_to_sequence_alteration(self, slice):
+    def test_empty_allele_string_defaults_to_sequence_alteration(self, slice) -> None:
         var = Variation(start=100, end=100, strand=1, slice=slice, allele_string="")
         assert var.class_so_term == ClassSOTerm.SEQUENCE_ALTERATION
 
-    def test_none_allele_string_defaults_to_sequence_alteration(self, slice):
+    def test_none_allele_string_defaults_to_sequence_alteration(self, slice) -> None:
         var = Variation(start=100, end=100, strand=1, slice=slice, allele_string=None)
         assert var.class_so_term == ClassSOTerm.SEQUENCE_ALTERATION

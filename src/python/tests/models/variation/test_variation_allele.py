@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 
 @pytest.fixture
-def slice():
+def slice() -> Slice:
     """Create a slice object for testing."""
     return Slice(
         coord_system="chromosome",
@@ -42,13 +42,13 @@ def slice():
 
 
 @pytest.fixture
-def variation_allele(slice):
+def variation_allele(slice) -> VariationAllele:
     """Returns a VariationAllele object for testing."""
     return VariationAllele(start=5, end=5, strand=1, slice=slice, reference_allele="A", alternate_allele="T")
 
 
 @pytest.fixture
-def trancript_variation_allele(variation_allele):
+def trancript_variation_allele(variation_allele) -> TranscriptVariationAllele:
     """Returns a TranscriptVariationAllele object for testing."""
     return TranscriptVariationAllele(
         feature=Transcript(start=1, end=100, strand=1, stable_id="ENST00000000001"),
@@ -59,7 +59,7 @@ def trancript_variation_allele(variation_allele):
 class TestVariationAlleleProperties:
     """Tests property accessors and defaults."""
 
-    def test_initialization(self, variation_allele):
+    def test_initialization(self, variation_allele) -> None:
         """Test that a VariationAllele can be initialized with the correct attributes."""
         assert variation_allele.start == 5
         assert variation_allele.end == 5
@@ -67,12 +67,12 @@ class TestVariationAlleleProperties:
         assert variation_allele.reference_allele == "A"
         assert variation_allele.alternate_allele == "T"
 
-    def test_initialization_without_keywords(self):
+    def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             VariationAllele(5, end=5, strand=1, slice=None, reference_allele="A", alternate_allele="T")
 
-    def test_minimised(self, variation_allele):
+    def test_minimised(self, variation_allele) -> None:
         """Test the minimised property before and after calling minimise."""
         assert variation_allele.minimised is False
         variation_allele.minimise()
@@ -88,7 +88,7 @@ class TestVariationAlleleProperties:
         ):
             variation_allele.minimised = False
 
-    def test_shifted(self, variation_allele):
+    def test_shifted(self, variation_allele) -> None:
         """Test the shifted property before and after calling shift."""
         assert variation_allele.shifted is False
         variation_allele.shift()
@@ -104,7 +104,7 @@ class TestVariationAlleleProperties:
         ):
             variation_allele.shifted = False
 
-    def test_overlap_consequences(self, variation_allele, trancript_variation_allele):
+    def test_overlap_consequences(self, variation_allele, trancript_variation_allele) -> None:
         """Test overlap_consequences property."""
         variation_allele.transcript_variation_alleles = []
         assert variation_allele.overlap_consequences == []
@@ -123,7 +123,7 @@ class TestVariationAlleleProperties:
 class TestVariationAlleleMinimise:
     """Tests for the minimise method of VariationAllele."""
 
-    def test_minimise_raises_if_missing_alleles(self, variation_allele):
+    def test_minimise_raises_if_missing_alleles(self, variation_allele) -> None:
         """Test minimise raises if reference or alternate variation_allele is None."""
         a = VariationAllele(
             start=1,
@@ -146,7 +146,7 @@ class TestVariationAlleleMinimise:
         with pytest.raises(ValueError, match="Missing reference or alternate allele for minimisation"):
             b.minimise()
 
-    def test_minimise_sets_locus_correctly(self, variation_allele):
+    def test_minimise_sets_locus_correctly(self, variation_allele) -> None:
         """Test that minimise sets minimised_locus and original_locus correctly."""
         variation_allele.minimise()
         assert variation_allele.minimised_locus.start == variation_allele.start
@@ -157,7 +157,7 @@ class TestVariationAlleleMinimise:
         )
         assert variation_allele.original_locus is not None
 
-    def test_minimise_forced(self, variation_allele, caplog):
+    def test_minimise_forced(self, variation_allele, caplog) -> None:
         """Test that calling minimise with force=True re-minimises even if already minimised."""
         variation_allele.minimise()
         original_locus = variation_allele.original_locus
@@ -176,7 +176,7 @@ class TestVariationAlleleMinimise:
 class TestVariationAlleleShift:
     """Tests for the shift method of VariationAllele."""
 
-    def test_shift_raises_if_missing_alleles(self, variation_allele):
+    def test_shift_raises_if_missing_alleles(self, variation_allele) -> None:
         """Test shift raises if reference or alternate variation_allele is None."""
         a = VariationAllele(
             start=1,
@@ -199,7 +199,7 @@ class TestVariationAlleleShift:
         with pytest.raises(ValueError, match="Missing reference or alternate allele for shifting"):
             b.shift()
 
-    def test_shift_sets_locus_correctly(self, variation_allele):
+    def test_shift_sets_locus_correctly(self, variation_allele) -> None:
         """Test that shift sets shifted_locus and original_locus correctly."""
         variation_allele.shift()
         assert variation_allele.shifted_locus.start == variation_allele.start
@@ -214,7 +214,7 @@ class TestVariationAlleleShift:
 class TestVariationAlleleMinimiseAndShift:
     """Tests for interaction between minimise and shift methods."""
 
-    def test_minimise_and_shift_independent(self, variation_allele):
+    def test_minimise_and_shift_independent(self, variation_allele) -> None:
         """Test that minimise and shift can be called independently and set their respective flags."""
         variation_allele.minimise()
         assert variation_allele.minimised is True
@@ -226,7 +226,7 @@ class TestVariationAlleleMinimiseAndShift:
         assert variation_allele2.shifted is True
         assert variation_allele2.minimised is False
 
-    def test_minimise_then_shift(self, variation_allele):
+    def test_minimise_then_shift(self, variation_allele) -> None:
         """Test that calling shift after minimise retains the original locus and sets flags correctly."""
         variation_allele.minimise()
         original_locus = variation_allele.original_locus
@@ -252,7 +252,7 @@ class TestVariationAlleleMinimiseAndShift:
         assert variation_allele2.minimised is False
         assert variation_allele2.original_locus == original_locus2
 
-    def test_shift_then_minimise(self, variation_allele):
+    def test_shift_then_minimise(self, variation_allele) -> None:
         """Test that calling minimise after shift retains the original locus and sets flags correctly."""
         variation_allele.shift()
         original_locus = variation_allele.original_locus
@@ -282,7 +282,7 @@ class TestVariationAlleleMinimiseAndShift:
 class TestVariationAlleleGetAllFeatureOverlaps:
     """Tests for the get_all_feature_overlaps method of VariationAllele."""
 
-    def test_get_all_feature_overlaps_no_overlaps(self, variation_allele):
+    def test_get_all_feature_overlaps_no_overlaps(self, variation_allele) -> None:
         """Test that get_all_feature_overlaps returns empty list if no overlaps."""
         assert variation_allele.get_all_featureoverlaps() == []
 

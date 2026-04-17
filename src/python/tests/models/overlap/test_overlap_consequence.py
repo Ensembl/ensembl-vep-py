@@ -21,14 +21,14 @@ from ensembl.vep.models import Feature
 
 
 @pytest.fixture
-def overlap_consequence():
+def overlap_consequence() -> OverlapConsequence:
     return OverlapConsequence(term="missense_variant", accession="SO:0001583")
 
 
 class TestOverlapConsequenceInitialization:
     """Test OverlapConsequence initialization."""
 
-    def test_initialization_without_keywords(self, overlap_consequence):
+    def test_initialization_without_keywords(self, overlap_consequence) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = OverlapConsequence(overlap_consequence)
@@ -37,12 +37,12 @@ class TestOverlapConsequenceInitialization:
 class TestOverlapConsequenceProperties:
     """Test OverlapConsequence properties."""
 
-    def test_core_properties(self, overlap_consequence):
+    def test_core_properties(self, overlap_consequence) -> None:
         """Test that term and accession properties are set correctly."""
         assert overlap_consequence.term == "missense_variant"
         assert overlap_consequence.accession == "SO:0001583"
 
-    def test_default_properties(self, overlap_consequence):
+    def test_default_properties(self, overlap_consequence) -> None:
         """Test that default properties are set correctly."""
         assert not overlap_consequence.is_default
         assert overlap_consequence.rank == 0
