@@ -126,10 +126,10 @@ class Variation(Feature):
         Returns:
             ClassSOTerm | None: The SO term for the class of the variation.
         """
-        return self.__class_so_term
+        return self.__class_so_term_ref_correct
 
     @cached_property
-    def __class_so_term(self, ref_correct: bool = True) -> ClassSOTerm | None:
+    def __class_so_term_ref_correct(self) -> ClassSOTerm | None:
         """
         Return the SO term for the class of the variation.
 
@@ -162,16 +162,16 @@ class Variation(Feature):
                 if ref == "-":
                     if len(alts) == 1 and re.search(r"DEL", alts[0]):
                         # -/(LARGEDELETION)
-                        so_term = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
+                        so_term = ClassSOTerm.DELETION
 
                     if not any(not re.match(r"^[A-Z]+$|INS", alt) for alt in alts):
                         # -/ATT, -/(LARGEINSERTION)
-                        so_term = ClassSOTerm.INSERTION if ref_correct else ClassSOTerm.INDEL
+                        so_term = ClassSOTerm.INSERTION
 
                 elif re.match(r"^[A-Z]+$", ref):
                     if not any(not re.match(r"^-$|DEL", alt) for alt in alts):
                         # A/-, A/(LARGEDELETION)
-                        so_term = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
+                        so_term = ClassSOTerm.DELETION
 
                     elif re.match(r"^[A-Z]+(/[A-Z]+)+$", allele_string):
                         # AA/TT => substitution, AA/TTTT => indel
@@ -181,15 +181,80 @@ class Variation(Feature):
                 elif re.search(r"DEL", ref):
                     if not any(alt != "-" for alt in alts):
                         # (LARGEDELETION)/-, (2345 BP DELETION)/-
-                        so_term = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
+                        so_term = ClassSOTerm.DELETION
 
             elif len(alleles) == 1:
                 if re.search(r"INS", alleles[0]):
                     # (LARGEINSERTION)
-                    so_term = ClassSOTerm.INSERTION if ref_correct else ClassSOTerm.INDEL
+                    so_term = ClassSOTerm.INSERTION
                 elif re.search(r"DEL", alleles[0]):
                     # (308 BP DELETION)
-                    so_term = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
+                    so_term = ClassSOTerm.DELETION
+
+        return so_term
+
+    # TBD when and how to call __class_so_term_ref_incorrect
+    # instead of __class_so_term_ref_correct
+    @cached_property
+    def __class_so_term_ref_incorrect(self) -> ClassSOTerm | None:  # pylint: disable=unused-private-member
+        """
+        Return the SO term for the class of the variation
+        with the first allele kown not to be the reference.
+
+        Returns:
+            ClassSOTerm | None: The SO term string for the variation.
+        """
+        allele_string = self.allele_string or ""
+
+        # default to sequence_alteration
+        so_term = ClassSOTerm.SEQUENCE_ALTERATION
+
+        # A/T, A/T/G
+        if re.match(r"^[A-Z](/[A-Z])+$", allele_string):
+            so_term = ClassSOTerm.SNV
+
+        # (CAG)8/(CAG)9
+        elif re.search(r"\)\d+", allele_string):
+            so_term = ClassSOTerm.TANDEM_REPEAT
+
+        else:
+            alleles = allele_string.split("/")
+
+            if len(alleles) > 1:
+                ref = alleles[0]
+                alts = alleles[1:]
+
+                if ref == "-":
+                    if len(alts) == 1 and re.search(r"DEL", alts[0]):
+                        # -/(LARGEDELETION)
+                        so_term = ClassSOTerm.INDEL
+
+                    if not any(not re.match(r"^[A-Z]+$|INS", alt) for alt in alts):
+                        # -/ATT, -/(LARGEINSERTION)
+                        so_term = ClassSOTerm.INDEL
+
+                elif re.match(r"^[A-Z]+$", ref):
+                    if not any(not re.match(r"^-$|DEL", alt) for alt in alts):
+                        # A/-, A/(LARGEDELETION)
+                        so_term = ClassSOTerm.INDEL
+
+                    elif re.match(r"^[A-Z]+(/[A-Z]+)+$", allele_string):
+                        # AA/TT => substitution, AA/TTTT => indel
+                        same_size = all(len(alt) == len(ref) for alt in alts)
+                        so_term = ClassSOTerm.SUBSTITUTION if same_size else ClassSOTerm.INDEL
+
+                elif re.search(r"DEL", ref):
+                    if not any(alt != "-" for alt in alts):
+                        # (LARGEDELETION)/-, (2345 BP DELETION)/-
+                        so_term = ClassSOTerm.INDEL
+
+            elif len(alleles) == 1:
+                if re.search(r"INS", alleles[0]):
+                    # (LARGEINSERTION)
+                    so_term = ClassSOTerm.INDEL
+                elif re.search(r"DEL", alleles[0]):
+                    # (308 BP DELETION)
+                    so_term = ClassSOTerm.INDEL
 
         return so_term
 

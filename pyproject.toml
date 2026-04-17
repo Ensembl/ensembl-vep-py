@@ -122,6 +122,9 @@ requires = [
 [tool.black]
 line-length = 110
 
+[tool.pylint]
+max-branches = 15
+
 [tool.pylint.format]
 max-line-length = 110
 
