@@ -18,6 +18,7 @@ from contextlib import suppress
 import logging
 import os
 import sys
+from typing import Literal
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +56,7 @@ def trim_sequences(
     end: int | None = None,
     empty_to_dash: bool = False,
     end_first: bool = False,
-    strand: int = 1,
+    strand: Literal[1, -1] = 1,
 ) -> tuple[str, str, int, int, bool]:
     """
     Trim common sequence from a ref/alt allele pair to give minimal alleles.
@@ -81,34 +82,74 @@ def trim_sequences(
     if ref is None or alt is None:
         raise ValueError("Missing reference or alternate sequence for trimming")
 
-    if end is None:
-        end = start + (len(ref) - 1)
+    end = end or (start + (len(ref) - 1))
 
     changed = False
 
     if end_first:
         # trim from right
-        while ref and alt and ref[-1] == alt[-1]:
-            ref = ref[:-1]
-            alt = alt[:-1]
-            if strand == -1:
-                start += 1
-            else:
-                end -= 1
-            changed = True
+        ref, alt, start, end, right_changed = _trim_common_sequence(
+            ref, alt, start=start, end=end, trim_at='right', strand=strand
+        )
+        changed = right_changed
 
         # trim from left
-        while ref and alt and ref[0] == alt[0]:
-            ref = ref[1:]
-            alt = alt[1:]
-            if strand == -1:
-                end -= 1
-            else:
-                start += 1
-            changed = True
+        ref, alt, start, end, left_changed = _trim_common_sequence(
+            ref, alt, start=start, end=end, trim_at='left', strand=strand
+        )
+        changed = changed or left_changed
 
     else:
         # trim from left
+        ref, alt, start, end, left_changed = _trim_common_sequence(
+            ref, alt, start=start, end=end, trim_at='left', strand=strand
+        )
+        changed = left_changed
+
+        # trim from right
+        ref, alt, start, end, right_changed = _trim_common_sequence(
+            ref, alt, start=start, end=end, trim_at='right', strand=strand
+        )
+        changed = changed or right_changed
+
+    if empty_to_dash:
+        ref = ref or "-"
+        alt = alt or "-"
+
+    return (ref, alt, start, end, changed)
+
+def _trim_common_sequence(
+    ref: str,
+    alt: str,
+    *,
+    start: int = 0,
+    end: int,
+    trim_at: Literal['left', 'right'],
+    strand: Literal[1, -1] = 1
+) -> tuple[str, str, int, int, bool]:
+    """
+    Trim common sequence from start or end of a ref/alt allele pair.
+
+    Trims matching bases from the start or end, adjusting coordinates accordingly.
+
+    Args:
+        ref: Reference allele sequence.
+        alt: Alternate allele sequence.
+        start: Start coordinate (default 0).
+        end: End coordinate (default: start + len(ref) - 1).
+        trim_at: What side to trim from: 'left' or 'right'.
+        strand: 1 for forward, -1 for reverse strand.
+
+    Returns:
+        Tuple of (new_ref, new_alt, new_start, new_end, changed).
+
+    Raises:
+        ValueError: If ref or alt is None.
+    """
+
+    changed = False
+
+    if trim_at == 'left':
         while ref and alt and ref[0] == alt[0]:
             ref = ref[1:]
             alt = alt[1:]
@@ -117,8 +158,7 @@ def trim_sequences(
             else:
                 start += 1
             changed = True
-
-        # trim from right
+    else:
         while ref and alt and ref[-1] == alt[-1]:
             ref = ref[:-1]
             alt = alt[:-1]
@@ -127,12 +167,6 @@ def trim_sequences(
             else:
                 end -= 1
             changed = True
-
-    if empty_to_dash:
-        if ref == "":
-            ref = "-"
-        if alt == "":
-            alt = "-"
 
     return (ref, alt, start, end, changed)
 
