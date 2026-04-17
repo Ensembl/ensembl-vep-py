@@ -21,24 +21,24 @@ from ensembl.vep.models.genic.translation import Translation
 
 
 @pytest.fixture
-def transcript():
+def transcript() -> Transcript:
     return Transcript(stable_id="ENST00000000001", start=1, end=100, strand=1)
 
 
 @pytest.fixture
-def translation():
+def translation() -> Translation:
     return Translation(start=1, end=90, stable_id="ENSP00000000001")
 
 
 @pytest.fixture
-def cds():
+def cds() -> CDS:
     return CDS(start=11, end=40, strand=1)
 
 
 class TestCDSInitialization:
     """Test CDS initialization."""
 
-    def test_initialization_without_keywords(self):
+    def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = CDS(10, end=50, strand=1)
@@ -47,13 +47,13 @@ class TestCDSInitialization:
 class TestCDSProperties:
     """Test CDS properties and cached properties."""
 
-    def test_core_properties(self, cds, transcript, translation):
+    def test_core_properties(self, cds, transcript, translation) -> None:
         """Test that CDS properties are set correctly."""
         assert cds.start == 11
         assert cds.end == 40
         assert cds.strand == 1
 
-    def test_externally_settable_properties(self, cds, transcript, translation):
+    def test_externally_settable_properties(self, cds, transcript, translation) -> None:
         """Test that externally settable properties can be set and accessed."""
         assert cds.transcript is None
         cds.transcript = transcript
@@ -63,14 +63,14 @@ class TestCDSProperties:
         cds.translation = translation
         assert cds.translation == translation
 
-    def test_neucleotide_length(self, cds):
+    def test_neucleotide_length(self, cds) -> None:
         """Test that CDS cached properties are accessed correctly."""
         assert cds.neucleotide_length is None
 
         cds.seq = "ATG" * 10
         assert cds.neucleotide_length == 30
 
-    def test_protein_length(self, cds):
+    def test_protein_length(self, cds) -> None:
         """Test that CDS cached properties are accessed correctly."""
         # assert cds.protein_length is None
 

@@ -20,14 +20,14 @@ from ensembl.vep.common import ExonPhase
 
 
 @pytest.fixture
-def exon():
+def exon() -> Exon:
     return Exon(start=10, end=50, strand=1, stable_id="ENSE00000000001")
 
 
 class TestExonInitialization:
     """Test Exon initialization."""
 
-    def test_initialization_without_keywords(self):
+    def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = Exon(10, end=50, strand=1, stable_id="ENSE00000000001")
@@ -36,14 +36,14 @@ class TestExonInitialization:
 class TestExonProperties:
     """Test Exon properties and cached properties."""
 
-    def test_core_properties(self, exon):
+    def test_core_properties(self, exon) -> None:
         """Test that Exon core properties are set correctly."""
         assert exon.start == 10
         assert exon.end == 50
         assert exon.strand == 1
         assert exon.stable_id == "ENSE00000000001"
 
-    def test_externally_settable_properties(self, exon):
+    def test_externally_settable_properties(self, exon) -> None:
         """Test that externally settable properties can be set and accessed."""
         assert exon.phase is None
         exon.phase = ExonPhase.ZERO
@@ -53,7 +53,7 @@ class TestExonProperties:
         exon.end_phase = ExonPhase.ONE
         assert exon.end_phase == ExonPhase.ONE
 
-    def test_frame(self, exon):
+    def test_frame(self, exon) -> None:
         """Test that frame is calculated correctly based on phase and end_phase."""
         assert exon.frame is None
 

@@ -20,19 +20,19 @@ from ensembl.vep.models.genic.transcript import Transcript
 
 
 @pytest.fixture
-def transcript():
+def transcript() -> Transcript:
     return Transcript(stable_id="ENST00000000001", start=1, end=100, strand=1)
 
 
 @pytest.fixture
-def gene():
+def gene() -> Gene:
     return Gene(stable_id="ENSG00000000001", start=10, end=200, strand=1)
 
 
 class TestGeneInitialization:
     """Test Gene initialization."""
 
-    def test_initialization_without_keywords(self):
+    def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = Gene("ENSG00000000001", start=10, end=200, strand=1)
@@ -41,14 +41,14 @@ class TestGeneInitialization:
 class TestGeneProperties:
     """Test property accessors."""
 
-    def test_core_properties(self, gene):
+    def test_core_properties(self, gene) -> None:
         """Test that core properties are set correctly."""
         assert gene.start == 10
         assert gene.end == 200
         assert gene.strand == 1
         assert gene.stable_id == "ENSG00000000001"
 
-    def test_externally_settable_properties(self, gene, transcript):
+    def test_externally_settable_properties(self, gene, transcript) -> None:
         """Test that externally settable properties can be set and accessed."""
         assert gene.version is None
         gene.version = 2

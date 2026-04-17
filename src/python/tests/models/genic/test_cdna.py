@@ -20,19 +20,19 @@ from ensembl.vep.models.genic.transcript import Transcript
 
 
 @pytest.fixture
-def transcript():
+def transcript() -> Transcript:
     return Transcript(stable_id="ENST00000000001", start=1, end=100, strand=1)
 
 
 @pytest.fixture
-def cdna():
+def cdna() -> cDNA:
     return cDNA(start=10, end=50, strand=1)
 
 
 class TestcDNAInitialization:
     """Test cDNA initialization."""
 
-    def test_initialization_without_keywords(self):
+    def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = cDNA(10, end=50, strand=1)
@@ -41,13 +41,13 @@ class TestcDNAInitialization:
 class TestcDNAProperties:
     """Test cDNA properties."""
 
-    def test_core_properties(self, cdna):
+    def test_core_properties(self, cdna) -> None:
         """Test that cDNA properties are set correctly."""
         assert cdna.start == 10
         assert cdna.end == 50
         assert cdna.strand == 1
 
-    def test_externally_settable_properties(self, cdna, transcript):
+    def test_externally_settable_properties(self, cdna, transcript) -> None:
         """Test that externally settable properties can be set and accessed."""
         assert cdna.transcript is None
         cdna.transcript = transcript

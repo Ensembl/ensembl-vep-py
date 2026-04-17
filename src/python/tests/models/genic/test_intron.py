@@ -20,12 +20,12 @@ from ensembl.vep.models.genic.exon import Exon
 
 
 @pytest.fixture
-def exon():
+def exon() -> Exon:
     return Exon(start=1, end=10, strand=1, stable_id="ENSE00000000001")
 
 
 @pytest.fixture
-def intron():
+def intron() -> Intron:
     return Intron(
         start=11,
         end=19,
@@ -36,7 +36,7 @@ def intron():
 class TestIntronInitialization:
     """Test Intron initialization."""
 
-    def test_initialization_without_keywords(self):
+    def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = Intron(11, end=19, strand=1)
@@ -45,13 +45,13 @@ class TestIntronInitialization:
 class TestIntronProperties:
     """Test Intron properties."""
 
-    def test_core_properties(self, intron):
+    def test_core_properties(self, intron) -> None:
         """Test that Intron core properties are set correctly."""
         assert intron.start == 11
         assert intron.end == 19
         assert intron.strand == 1
 
-    def test_externally_settable_properties(self, intron, exon):
+    def test_externally_settable_properties(self, intron, exon) -> None:
         """Test that externally settable properties can be set and accessed."""
         assert intron.next_exon is None
         intron.next_exon = exon

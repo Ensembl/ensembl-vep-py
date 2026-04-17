@@ -20,19 +20,19 @@ from ensembl.vep.models.genic.transcript import Transcript
 
 
 @pytest.fixture
-def transcript():
+def transcript() -> Transcript:
     return Transcript(start=1, end=100, strand=1, stable_id="ENST00000000001")
 
 
 @pytest.fixture
-def translation():
+def translation() -> Translation:
     return Translation(start=10, end=90, stable_id="ENSP00000000001")
 
 
 class TestTranslationInitialization:
     """Test Translation initialization."""
 
-    def test_initialization_without_keywords(self):
+    def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = Translation(10, end=90, stable_id="ENSP00000000001")
@@ -41,13 +41,13 @@ class TestTranslationInitialization:
 class TestTranslationProperties:
     """Test Translation properties and cached properties."""
 
-    def test_core_properties(self, translation):
+    def test_core_properties(self, translation) -> None:
         """Test that Translation core properties are set correctly."""
         assert translation.start == 10
         assert translation.end == 90
         assert translation.stable_id == "ENSP00000000001"
 
-    def test_externally_settable_properties(self, translation, transcript):
+    def test_externally_settable_properties(self, translation, transcript) -> None:
         """Test that externally settable properties can be set and accessed."""
         assert translation.version is None
         translation.version = 1
@@ -61,7 +61,7 @@ class TestTranslationProperties:
         translation.transcript = transcript
         assert translation.transcript == transcript
 
-    def test_length_cached_property(self, translation):
+    def test_length_cached_property(self, translation) -> None:
         """Test that length cached property is calculated correctly and cached."""
         # Length should be calculated as end - start + 1
         assert translation.length == 81
