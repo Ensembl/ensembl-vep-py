@@ -76,12 +76,7 @@ def trim_sequences(
 
     Returns:
         Tuple of (new_ref, new_alt, new_start, new_end, changed).
-
-    Raises:
-        ValueError: If ref or alt is None.
     """
-    if ref is None or alt is None:
-        raise ValueError("Missing reference or alternate sequence for trimming")
 
     end = end or (start + (len(ref) - 1))
 
@@ -199,8 +194,6 @@ def shift_sequence(
     Returns:
         Tuple of (shift_length, shifted_seq, new_start, new_end, changed).
     """
-    if seq is None or post_seq is None or pre_seq is None:
-        raise ValueError("Missing sequence to shift")
 
     if seq == "":
         return (0, seq, start, end, False)
