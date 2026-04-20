@@ -51,14 +51,16 @@ class TestTranscriptInitialization:
 class TestTranscriptProperties:
     """Test Transcript properties."""
 
-    def test_core_properties(self, transcript) -> None:
+    def test_core_properties(self, transcript: Transcript) -> None:
         """Test that Transcript core properties are set correctly."""
         assert transcript.start == 1
         assert transcript.end == 100
         assert transcript.strand == 1
         assert transcript.stable_id == "ENST00000000001"
 
-    def test_externally_settable_properties(self, transcript, exon, intron, translation) -> None:
+    def test_externally_settable_properties(
+        self, transcript: Transcript, exon: Exon, intron: Intron, translation: Translation
+    ) -> None:
         """Test that externally settable properties can be set and accessed."""
         assert transcript.spliced_exons == []
         transcript.spliced_exons = [exon]
@@ -80,11 +82,11 @@ class TestTranscriptProperties:
         transcript.attributes = [Attribute(name="test_attribute", value="test_value")]
         assert transcript.attributes == [Attribute(name="test_attribute", value="test_value")]
 
-    def test_start_exon_index(self, transcript) -> None:
+    def test_start_exon_index(self, transcript: Transcript) -> None:
         """Test that start_exon_index is calculated correctly."""
         assert transcript.start_exon_index == 0
 
-    def test_end_exon_index(self, transcript) -> None:
+    def test_end_exon_index(self, transcript: Transcript) -> None:
         """Test that end_exon_index is calculated correctly."""
         assert transcript.end_exon_index == -1
 
@@ -96,7 +98,7 @@ class TestTranscriptProperties:
 
         assert transcript.end_exon_index == 2
 
-    def test_spliced_seq(self, transcript) -> None:
+    def test_spliced_seq(self, transcript: Transcript) -> None:
         """Test that spliced_seq is calculated correctly."""
         assert transcript.spliced_seq is None
 
@@ -113,7 +115,7 @@ class TestTranscriptProperties:
 
         assert transcript.spliced_seq == "A" * 10 + "C" * 11 + "G" * 11
 
-    def test_cds(self, transcript, translation) -> None:
+    def test_cds(self, transcript: Transcript, translation: Translation) -> None:
         """Test that cds is calculated correctly."""
         assert transcript.cds is None
 
@@ -140,7 +142,7 @@ class TestTranscriptProperties:
 
         # should be way to assign exon_coding_start for translation?
 
-    def test_cds_cdna_coding_start(self, transcript, translation) -> None:
+    def test_cds_cdna_coding_start(self, transcript: Transcript, translation: Translation) -> None:
         """Test that cds_cdna_coding_start is calculated correctly."""
         assert transcript.cdna_coding_start is None
 
@@ -149,7 +151,7 @@ class TestTranscriptProperties:
 
         # should be way to assign start_exon_index?
 
-    def test_cds_cdna_coding_end(self, transcript, translation) -> None:
+    def test_cds_cdna_coding_end(self, transcript: Transcript, translation: Translation) -> None:
         """Test that cds_cdna_coding_end is calculated correctly."""
         assert transcript.cdna_coding_end is None
 
@@ -163,7 +165,7 @@ class TestTranscriptProperties:
 
         # should be way to assign end_exon_index?
 
-    def test_cds_start(self, transcript, translation) -> None:
+    def test_cds_start(self, transcript: Transcript, translation: Translation) -> None:
         """Test that cds_start is calculated correctly."""
         assert transcript.cds_start is None
 
@@ -177,7 +179,7 @@ class TestTranscriptProperties:
         ]
         assert transcript.cds_start == 1
 
-    def test_cds_end(self, transcript, translation) -> None:
+    def test_cds_end(self, transcript: Transcript, translation: Translation) -> None:
         """Test that cds_end is calculated correctly."""
         assert transcript.cds_end is None
 
@@ -191,19 +193,19 @@ class TestTranscriptProperties:
         ]
         assert transcript.cds_end == 50
 
-    def test_5_prime_utr(self, transcript, translation) -> None:
+    def test_5_prime_utr(self, transcript: Transcript, translation: Translation) -> None:
         """Test that 5_prime_utr is calculated correctly."""
         # assert transcript.five_prime_utr is None
 
         # 5_prime_utr accesses spliced_seq and gets into deadlock, workaround?
 
-    def test_3_prime_utr(self, transcript, translation) -> None:
+    def test_3_prime_utr(self, transcript: Transcript, translation: Translation) -> None:
         """Test that 3_prime_utr is calculated correctly."""
         # assert transcript.three_prime_utr is None
 
         # 3_prime_utr accesses spliced_seq and gets into deadlock, workaround?
 
-    def test_translated_seq(self, _transcript, _translation) -> None:
+    def test_translated_seq(self, _transcript: Transcript, _translation: Translation) -> None:
         """Test that translated_seq is calculated correctly."""
         pass
 

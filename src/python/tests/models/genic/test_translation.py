@@ -42,13 +42,13 @@ class TestTranslationInitialization:
 class TestTranslationProperties:
     """Test Translation properties and cached properties."""
 
-    def test_core_properties(self, translation) -> None:
+    def test_core_properties(self, translation: Translation) -> None:
         """Test that Translation core properties are set correctly."""
         assert translation.start == 10
         assert translation.end == 90
         assert translation.stable_id == "ENSP00000000001"
 
-    def test_externally_settable_properties(self, translation, transcript) -> None:
+    def test_externally_settable_properties(self, translation: Translation, transcript: Transcript) -> None:
         """Test that externally settable properties can be set and accessed."""
         assert translation.version is None
         translation.version = 1
@@ -62,7 +62,7 @@ class TestTranslationProperties:
         translation.transcript = transcript
         assert translation.transcript == transcript
 
-    def test_length_cached_property(self, translation) -> None:
+    def test_length_cached_property(self, translation: Translation) -> None:
         """Test that length cached property is calculated correctly and cached."""
         # Length should be calculated as end - start + 1
         assert translation.length == 81

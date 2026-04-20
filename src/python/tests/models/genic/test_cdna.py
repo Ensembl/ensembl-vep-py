@@ -42,13 +42,13 @@ class TestcDNAInitialization:
 class TestcDNAProperties:
     """Test cDNA properties."""
 
-    def test_core_properties(self, cdna) -> None:
+    def test_core_properties(self, cdna: cDNA) -> None:
         """Test that cDNA properties are set correctly."""
         assert cdna.start == 10
         assert cdna.end == 50
         assert cdna.strand == 1
 
-    def test_externally_settable_properties(self, cdna, transcript) -> None:
+    def test_externally_settable_properties(self, cdna: cDNA, transcript: Transcript) -> None:
         """Test that externally settable properties can be set and accessed."""
         assert cdna.transcript is None
         cdna.transcript = transcript

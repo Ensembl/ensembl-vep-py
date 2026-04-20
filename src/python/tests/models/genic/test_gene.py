@@ -42,14 +42,14 @@ class TestGeneInitialization:
 class TestGeneProperties:
     """Test property accessors."""
 
-    def test_core_properties(self, gene) -> None:
+    def test_core_properties(self, gene: Gene) -> None:
         """Test that core properties are set correctly."""
         assert gene.start == 10
         assert gene.end == 200
         assert gene.strand == 1
         assert gene.stable_id == "ENSG00000000001"
 
-    def test_externally_settable_properties(self, gene, transcript) -> None:
+    def test_externally_settable_properties(self, gene: Gene, transcript: Transcript) -> None:
         """Test that externally settable properties can be set and accessed."""
         assert gene.version is None
         gene.version = 2

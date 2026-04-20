@@ -38,14 +38,18 @@ def variation_allele() -> VariationAllele:
 
 
 @pytest.fixture
-def transcript_variation_allele(transcript, variation_allele) -> TranscriptVariationAllele:
+def transcript_variation_allele(
+    transcript: Transcript, variation_allele: VariationAllele
+) -> TranscriptVariationAllele:
     return TranscriptVariationAllele(feature=transcript, overlapping_feature=variation_allele)
 
 
 class TestTranscriptVariationAlleleInitialization:
     """Test TranscriptVariationAllele initialization."""
 
-    def test_initialization_without_keywords(self, transcript, variation_allele) -> None:
+    def test_initialization_without_keywords(
+        self, transcript: Transcript, variation_allele: VariationAllele
+    ) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = TranscriptVariationAllele(transcript, variation_allele)
@@ -54,15 +58,20 @@ class TestTranscriptVariationAlleleInitialization:
 class TestTranscriptVariationAlleleProperties:
     """Test TranscriptVariationAllele properties."""
 
-    def test_core_properties(self, transcript_variation_allele, transcript, variation_allele) -> None:
+    def test_core_properties(
+        self,
+        transcript_variation_allele: TranscriptVariationAllele,
+        transcript: Transcript,
+        variation_allele: VariationAllele,
+    ) -> None:
         """Test that feature and overlapping_feature properties are set correctly."""
         assert transcript_variation_allele.feature == transcript
         assert transcript_variation_allele.overlapping_feature == variation_allele
 
-    def test_default_properties(self, transcript_variation_allele) -> None:
+    def test_default_properties(self, transcript_variation_allele: TranscriptVariationAllele) -> None:
         """Test that default properties are set correctly."""
         assert transcript_variation_allele.is_reference is False
 
-    def test_cdna_locus(self, transcript_variation_allele) -> None:
+    def test_cdna_locus(self, transcript_variation_allele: TranscriptVariationAllele) -> None:
         """Test cdna_locus property."""
         pass

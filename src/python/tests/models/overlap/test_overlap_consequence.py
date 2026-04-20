@@ -28,7 +28,7 @@ def overlap_consequence() -> OverlapConsequence:
 class TestOverlapConsequenceInitialization:
     """Test OverlapConsequence initialization."""
 
-    def test_initialization_without_keywords(self, overlap_consequence) -> None:
+    def test_initialization_without_keywords(self, overlap_consequence: OverlapConsequence) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = OverlapConsequence(overlap_consequence)
@@ -37,12 +37,12 @@ class TestOverlapConsequenceInitialization:
 class TestOverlapConsequenceProperties:
     """Test OverlapConsequence properties."""
 
-    def test_core_properties(self, overlap_consequence) -> None:
+    def test_core_properties(self, overlap_consequence: OverlapConsequence) -> None:
         """Test that term and accession properties are set correctly."""
         assert overlap_consequence.term == "missense_variant"
         assert overlap_consequence.accession == "SO:0001583"
 
-    def test_default_properties(self, overlap_consequence) -> None:
+    def test_default_properties(self, overlap_consequence: OverlapConsequence) -> None:
         """Test that default properties are set correctly."""
         assert not overlap_consequence.is_default
         assert overlap_consequence.rank == 0

@@ -46,13 +46,13 @@ class TestIntronInitialization:
 class TestIntronProperties:
     """Test Intron properties."""
 
-    def test_core_properties(self, intron) -> None:
+    def test_core_properties(self, intron: Intron) -> None:
         """Test that Intron core properties are set correctly."""
         assert intron.start == 11
         assert intron.end == 19
         assert intron.strand == 1
 
-    def test_externally_settable_properties(self, intron, exon) -> None:
+    def test_externally_settable_properties(self, intron: Intron, exon: Exon) -> None:
         """Test that externally settable properties can be set and accessed."""
         assert intron.next_exon is None
         intron.next_exon = exon

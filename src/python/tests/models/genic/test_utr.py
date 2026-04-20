@@ -42,13 +42,13 @@ class TestUTRInitialization:
 class TestUTRProperties:
     """Test UTR properties."""
 
-    def test_core_properties(self, utr) -> None:
+    def test_core_properties(self, utr: UTR) -> None:
         """Test that UTR core properties are set correctly."""
         assert utr.start == 10
         assert utr.end == 20
         assert utr.strand == 1
 
-    def test_externally_settable_properties(self, utr, transcript) -> None:
+    def test_externally_settable_properties(self, utr: UTR, transcript: Transcript) -> None:
         """Test that externally settable properties can be set and accessed."""
         assert utr.transcript is None
         utr.transcript = transcript

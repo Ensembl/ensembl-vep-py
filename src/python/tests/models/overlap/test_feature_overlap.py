@@ -31,14 +31,16 @@ def overlapping_feature() -> Feature:
 
 
 @pytest.fixture
-def feature_overlap(feature, overlapping_feature) -> FeatureOverlap:
+def feature_overlap(feature: Feature, overlapping_feature: Feature) -> FeatureOverlap:
     return FeatureOverlap(feature=feature, overlapping_feature=overlapping_feature)
 
 
 class TestFeatureOverlapInitialization:
     """Test FeatureOverlap initialization."""
 
-    def test_initialization_without_keywords(self, feature, overlapping_feature) -> None:
+    def test_initialization_without_keywords(
+        self, feature: Feature, overlapping_feature: Feature
+    ) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = FeatureOverlap(feature, overlapping_feature)
@@ -47,12 +49,12 @@ class TestFeatureOverlapInitialization:
 class TestFeatureOverlapProperties:
     """Test FeatureOverlap properties."""
 
-    def test_core_properties(self, feature_overlap) -> None:
+    def test_core_properties(self, feature_overlap: FeatureOverlap) -> None:
         """Test that feature and overlapping_feature properties are set correctly."""
         assert feature_overlap.feature == feature_overlap.feature
         assert feature_overlap.overlapping_feature == feature_overlap.overlapping_feature
 
-    def test_most_severe_consequence(self, feature_overlap) -> None:
+    def test_most_severe_consequence(self, feature_overlap: FeatureOverlap) -> None:
         """Test that most_severe_consequence property can be accessed."""
         assert feature_overlap.most_severe_consequence is None
 
@@ -68,7 +70,7 @@ class TestFeatureOverlapProperties:
 
         # We cannot do feature_overlap.overlap_consequences.append() as it would not trigger on_setattr, workaround?
 
-    def test_consequence_terms(self, feature_overlap) -> None:
+    def test_consequence_terms(self, feature_overlap: FeatureOverlap) -> None:
         """Test that consequence_terms property can be accessed."""
         assert feature_overlap.consequence_terms == set()
 

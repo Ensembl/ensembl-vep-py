@@ -36,14 +36,14 @@ class TestExonInitialization:
 class TestExonProperties:
     """Test Exon properties and cached properties."""
 
-    def test_core_properties(self, exon) -> None:
+    def test_core_properties(self, exon: Exon) -> None:
         """Test that Exon core properties are set correctly."""
         assert exon.start == 10
         assert exon.end == 50
         assert exon.strand == 1
         assert exon.stable_id == "ENSE00000000001"
 
-    def test_externally_settable_properties(self, exon) -> None:
+    def test_externally_settable_properties(self, exon: Exon) -> None:
         """Test that externally settable properties can be set and accessed."""
         assert exon.phase is None
         exon.phase = ExonPhase.ZERO
@@ -53,7 +53,7 @@ class TestExonProperties:
         exon.end_phase = ExonPhase.ONE
         assert exon.end_phase == ExonPhase.ONE
 
-    def test_frame(self, exon) -> None:
+    def test_frame(self, exon: Exon) -> None:
         """Test that frame is calculated correctly based on phase and end_phase."""
         assert exon.frame is None
 
