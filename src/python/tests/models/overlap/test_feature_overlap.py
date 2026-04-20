@@ -73,7 +73,8 @@ class TestFeatureOverlapProperties:
         ]
         assert feature_overlap.most_severe_consequence == feature_overlap.overlap_consequences[0]
 
-        # We cannot do feature_overlap.overlap_consequences.append() as it would not trigger on_setattr, workaround?
+        # We cannot do feature_overlap.overlap_consequences.append()
+        # as it would not trigger on_setattr, workaround?
 
     def test_consequence_terms(self, feature_overlap: FeatureOverlap) -> None:
         """Test that consequence_terms property can be accessed."""

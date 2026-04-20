@@ -93,7 +93,9 @@ class TestFeatureProperties:
     def test_seq_region_start_with_slice(self, feature: Feature, genomic_slice: Slice) -> None:
         """Test seq_region_start property with slice."""
         feature.slice = genomic_slice
-        assert feature.seq_region_start == 109  # slice.start + feature.start - 1, as positions are 1-based and inclusive
+
+        # slice.start + feature.start - 1, as positions are 1-based and inclusive
+        assert feature.seq_region_start == 109
 
     def test_seq_region_start_immutable(self, feature: Feature) -> None:
         """Test seq_region_start cannot be directly set."""
@@ -111,13 +113,16 @@ class TestFeatureProperties:
     def test_seq_region_start_update(self, feature: Feature, genomic_slice: Slice) -> None:
         """Test seq_region_start updates when start changes."""
         feature.slice = genomic_slice
-        assert feature.seq_region_start == 109  # slice.start + feature.start - 1, as positions are 1-based and inclusive
+        # slice.start + feature.start - 1, as positions are 1-based and inclusive
+        assert feature.seq_region_start == 109
 
         feature.start = 15
-        assert feature.seq_region_start == 114  # slice.start + feature.start - 1, as positions are 1-based and inclusive
+        # slice.start + feature.start - 1, as positions are 1-based and inclusive
+        assert feature.seq_region_start == 114
 
         feature.start = 10
-        assert feature.seq_region_start == 109  # back to original
+        # back to original
+        assert feature.seq_region_start == 109
 
     def test_seq_region_end_no_slice(self, feature: Feature) -> None:
         """Test seq_region_end returns None when no slice attached."""
@@ -145,13 +150,16 @@ class TestFeatureProperties:
     def test_seq_region_end_update(self, feature: Feature, genomic_slice: Slice) -> None:
         """Test seq_region_end updates when end changes."""
         feature.slice = genomic_slice
-        assert feature.seq_region_end == 119  # slice.start + feature.end - 1, as positions are 1-based and inclusive
+        # slice.start + feature.end - 1, as positions are 1-based and inclusive
+        assert feature.seq_region_end == 119
 
         feature.end = 25
-        assert feature.seq_region_end == 124  # slice.start + feature.end - 1, as positions are 1-based and inclusive
+        # slice.start + feature.end - 1, as positions are 1-based and inclusive
+        assert feature.seq_region_end == 124
 
         feature.end = 20
-        assert feature.seq_region_end == 119  # back to original
+        # back to original
+        assert feature.seq_region_end == 119
 
     def test_seq_region_strand_no_slice(self, feature: Feature) -> None:
         """Test seq_region_strand returns None when no slice attached."""

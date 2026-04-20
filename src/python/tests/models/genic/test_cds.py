@@ -59,7 +59,9 @@ class TestCDSProperties:
         assert cds.end == 40
         assert cds.strand == 1
 
-    def test_externally_settable_properties(self, cds: CDS, transcript: Transcript, translation: Translation) -> None:
+    def test_externally_settable_properties(
+        self, cds: CDS, transcript: Transcript, translation: Translation
+    ) -> None:
         """Test that externally settable properties can be set and accessed."""
         assert cds.transcript is None
         cds.transcript = transcript

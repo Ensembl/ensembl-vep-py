@@ -74,7 +74,8 @@ class TestVariationAlleleProperties:
     def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            VariationAllele(start=5, end=5, strand=Strand.FORWARD, slice=None, reference_allele="A", alternate_allele="T")
+            VariationAllele(start=5, end=5, strand=Strand.FORWARD,
+                            slice=None, reference_allele="A", alternate_allele="T")
 
     def test_minimised(self, variation_allele: VariationAllele) -> None:
         """Test the minimised property before and after calling minimise."""
@@ -232,7 +233,8 @@ class TestVariationAlleleMinimiseAndShift:
         assert variation_allele.minimised is True
         assert variation_allele.shifted is False
         variation_allele2 = VariationAllele(
-            start=5, end=5, strand=Strand.FORWARD, slice=variation_allele.slice, reference_allele="A", alternate_allele="T"
+            start=5, end=5, strand=Strand.FORWARD, slice=variation_allele.slice,
+            reference_allele="A", alternate_allele="T"
         )
         variation_allele2.shift()
         assert variation_allele2.shifted is True
@@ -260,7 +262,8 @@ class TestVariationAlleleMinimiseAndShift:
         original_locus2 = variation_allele2.original_locus
         variation_allele2.shift()
         assert variation_allele2.shifted is True
-        # minimise should should be False as shift changes coordinate and we do not know if it is still minimised
+        # minimise should be False as shift changes coordinate
+        # and we do not know if it is still minimised
         assert variation_allele2.minimised is False
         assert variation_allele2.original_locus == original_locus2
 
@@ -286,7 +289,8 @@ class TestVariationAlleleMinimiseAndShift:
         original_locus2 = variation_allele2.original_locus
         variation_allele2.minimise()
         assert variation_allele2.minimised is True
-        # shift should should be False as minimise changes coordinate and we do not know if it is still shifted
+        # shift should be False as minimise changes coordinate
+        # and we do not know if it is still shifted
         assert variation_allele2.shifted is False
         assert variation_allele2.original_locus == original_locus2
 
