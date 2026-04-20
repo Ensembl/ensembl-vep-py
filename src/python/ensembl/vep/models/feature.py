@@ -177,7 +177,7 @@ class Feature:
         """
         raise NotImplementedError("Feature transformation is not implemented yet.")
 
-    def transfer(self, slice: Slice) -> Feature | None:
+    def transfer(self, _genomic_slice: Slice) -> Feature | None:
         """
         Transfers the feature to a new slice.
 
@@ -246,9 +246,9 @@ class Feature:
             A Slice object covering the feature area,
             or None if the feature has no attached slice.
         """
-        slice = self.slice
+        genomic_slice = self.slice
 
-        if slice is None:
+        if genomic_slice is None:
             logger.warning("Cannot obtain feature_slice for a feature without attached slice.")
             return None
 
@@ -259,9 +259,9 @@ class Feature:
             return None
 
         return Slice(
-            seq_region_name=slice.seq_region_name,
-            seq_region_length=slice.seq_region_length,
-            coord_system=slice.coord_system,
+            seq_region_name=genomic_slice.seq_region_name,
+            seq_region_length=genomic_slice.seq_region_length,
+            coord_system=genomic_slice.coord_system,
             start=self.seq_region_start,
             end=self.seq_region_end,
             strand=self.seq_region_strand,
