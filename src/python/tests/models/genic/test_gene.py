@@ -15,7 +15,7 @@
 
 import pytest
 
-from ensembl.vep.common import Strand
+from ensembl.vep.common import ExternalReference, Strand
 from ensembl.vep.models.genic.gene import Gene
 from ensembl.vep.models.genic.transcript import Transcript
 
@@ -64,7 +64,7 @@ class TestGeneProperties:
         assert gene.symbol == "G1"
 
         assert gene.alternative_names == []
-        gene.alternative_names.append("GeneOne")
+        gene.alternative_names.append(ExternalReference("mock.1", "GeneOne"))
         assert gene.alternative_names == ["GeneOne"]
 
         assert gene.transcripts == []

@@ -18,7 +18,7 @@ from __future__ import annotations
 import pytest
 
 from ensembl.vep.common import ClassSOTerm, Locus, Strand
-from ensembl.vep.models.variation import Variation
+from ensembl.vep.models.variation import Variation, OverlapConsequence
 from ensembl.vep.models.sequence import Slice
 
 
@@ -83,6 +83,11 @@ def deletion_variation(slice: Slice) -> Variation:
         allele_string="ATC/A",
     )
 
+@pytest.fixture
+def overlap_consequence() -> OverlapConsequence:
+    """Returns an OverlapConsequence object for testing."""
+    return OverlapConsequence(term="missense_variant", accession="SO:0001583")
+
 
 class TestVariationProperties:
     """Tests property accessors and default values."""
@@ -111,19 +116,21 @@ class TestVariationProperties:
         ):
             variation.variation_alleles = []
 
-    def test_most_severe_consequence_immutable(self, variation: Variation) -> None:
+    def test_most_severe_consequence_immutable(
+        self, variation: Variation, overlap_consequence: OverlapConsequence
+    ) -> None:
         """Test that most_severe_consequence cannot be directly set."""
         with pytest.raises(
             AttributeError, match="property 'most_severe_consequence' of 'Variation' object has no setter"
         ):
-            variation.most_severe_consequence = "some value"
+            variation.most_severe_consequence = overlap_consequence
 
     def test_class_so_term_immutable(self, variation: Variation) -> None:
         """Test that class_so_term cannot be directly set."""
         with pytest.raises(
             AttributeError, match="property 'class_so_term' of 'Variation' object has no setter"
         ):
-            variation.class_so_term = "some value"
+            variation.class_so_term = ClassSOTerm.SEQUENCE_ALTERATION
 
 
 class TestVariationAlleles:
