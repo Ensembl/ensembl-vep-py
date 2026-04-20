@@ -114,7 +114,7 @@ class TestVariationProperties:
         with pytest.raises(
             AttributeError, match="property 'variation_alleles' of 'Variation' object has no setter"
         ):
-            variation.variation_alleles = []
+            variation.variation_alleles = []  # type: ignore[misc]
 
     def test_most_severe_consequence_immutable(
         self, variation: Variation, overlap_consequence: OverlapConsequence
@@ -123,14 +123,14 @@ class TestVariationProperties:
         with pytest.raises(
             AttributeError, match="property 'most_severe_consequence' of 'Variation' object has no setter"
         ):
-            variation.most_severe_consequence = overlap_consequence
+            variation.most_severe_consequence = overlap_consequence  # type: ignore[misc]
 
     def test_class_so_term_immutable(self, variation: Variation) -> None:
         """Test that class_so_term cannot be directly set."""
         with pytest.raises(
             AttributeError, match="property 'class_so_term' of 'Variation' object has no setter"
         ):
-            variation.class_so_term = ClassSOTerm.SEQUENCE_ALTERATION
+            variation.class_so_term = ClassSOTerm.SEQUENCE_ALTERATION  # type: ignore[misc]
 
 
 class TestVariationAlleles:

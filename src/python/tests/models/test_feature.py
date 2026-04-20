@@ -64,12 +64,12 @@ class TestFeatureProperties:
     def test_length_immutable(self, feature: Feature) -> None:
         """Test length cannot be directly set."""
         with pytest.raises(AttributeError, match="property 'length' of 'Feature' object has no setter"):
-            feature.length = None  # type: ignore
+            feature.length = 100  # type: ignore[misc]
 
         with pytest.raises(
             AttributeError, match="'Feature' object has no attribute '_TestFeatureProperties__length'"
         ):
-            feature.__length = None  # type: ignore
+            feature.__length = 100
 
     def test_length_update(self, feature: Feature) -> None:
         """Test length updates when start or end changes."""
@@ -98,7 +98,7 @@ class TestFeatureProperties:
         with pytest.raises(
             AttributeError, match="property 'seq_region_start' of 'Feature' object has no setter"
         ):
-            feature.seq_region_start = None
+            feature.seq_region_start = None  # type: ignore[misc]
 
         with pytest.raises(
             AttributeError,
@@ -124,14 +124,16 @@ class TestFeatureProperties:
     def test_seq_region_end_with_slice(self, feature: Feature, slice: Slice) -> None:
         """Test seq_region_end property with slice."""
         feature.slice = slice
-        assert feature.seq_region_end == 119  # slice.start + feature.end - 1, as positions are 1-based and inclusive
+
+        # slice.start + feature.end - 1, as positions are 1-based and inclusive
+        assert feature.seq_region_end == 119
 
     def test_seq_region_end_immutable(self, feature: Feature) -> None:
         """Test seq_region_end cannot be directly set."""
         with pytest.raises(
             AttributeError, match="property 'seq_region_end' of 'Feature' object has no setter"
         ):
-            feature.seq_region_end = None
+            feature.seq_region_end = None  #type: ignore[misc]
 
         with pytest.raises(
             AttributeError, match="'Feature' object has no attribute '_TestFeatureProperties__seq_region_end'"
@@ -169,7 +171,7 @@ class TestFeatureProperties:
         with pytest.raises(
             AttributeError, match="property 'seq_region_strand' of 'Feature' object has no setter"
         ):
-            feature.seq_region_strand = None
+            feature.seq_region_strand = None  #type: ignore[misc]
 
         with pytest.raises(
             AttributeError,

@@ -25,7 +25,7 @@ class TestCoordSystemInitialization:
 
     def test_initialization_without_keywords(self) -> None:
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = CoordSystem("chromosome", level=CoordSystemLevel.CHROMOSOME)  # type: ignore
+            _ = CoordSystem("chromosome", level=CoordSystemLevel.CHROMOSOME)  # type: ignore[call-arg]
 
 
 class TestCoordSystemProperties:
@@ -55,17 +55,17 @@ class TestCoordSystemProperties:
         with pytest.raises(
             AttributeError, match="property 'is_chromosome_level' of 'CoordSystem' object has no setter"
         ):
-            coord.is_chromosome_level = False
+            coord.is_chromosome_level = False  # type: ignore[misc]
 
         with pytest.raises(
             AttributeError, match="property 'is_sequence_level' of 'CoordSystem' object has no setter"
         ):
-            coord.is_sequence_level = True
+            coord.is_sequence_level = True  # type: ignore[misc]
 
         with pytest.raises(
             AttributeError, match="property 'is_toplevel' of 'CoordSystem' object has no setter"
         ):
-            coord.is_toplevel = True
+            coord.is_toplevel = True  # type: ignore[misc]
 
     def test_is_some_level_update(self, coord: CoordSystem) -> None:
         """Test is_chromosome_level property update."""
