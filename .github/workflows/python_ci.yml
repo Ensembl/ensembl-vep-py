@@ -39,9 +39,11 @@ jobs:
           python-version: ${{ inputs.python-version }}
           tags: "cicd"
 
-      - name: Run pylint
+      - name: Run pylint checks on source code
         run: |
           uv run pylint --rcfile pyproject.toml src/python/ensembl
+      - name: Run pylint checks on test code
+        run: |
           uv run pylint --rcfile pyproject.toml src/python/tests
 
   mypy:
@@ -55,9 +57,11 @@ jobs:
           python-version: ${{ inputs.python-version }}
           tags: "cicd"
 
-      - name: Run mypy
+      - name: Run static type checking on source code
         run: |
           uv run mypy --config-file pyproject.toml src/python/ensembl
+      - name: Run static type checking on test code
+        run: |
           uv run mypy --config-file pyproject.toml src/python/tests
 
   black:
