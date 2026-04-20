@@ -190,6 +190,8 @@ class Transcript(Feature):
                 return None
 
             seq = ""
+            cds_start: int | None = None
+            cds_end: int | None = None
             warning_template = (
                 'Exon %(exon_id) has no sequence information,'
                 ' adding N instead of the exact sequence for this exon'
@@ -212,22 +214,22 @@ class Transcript(Feature):
                 if idx == self.start_exon_index:
                     exon_coding_seq = exon_coding_seq[self.translation.exon_coding_start - 1 :]
                     if self.translation.exon_coding_start is not None:
-                        start = exon.start + self.translation.exon_coding_start - 1
+                        cds_start = exon.start + self.translation.exon_coding_start - 1
                     else:
-                        start = exon.start
+                        cds_start = exon.start
                 if idx == self.end_exon_index:
                     exon_coding_seq = exon_coding_seq[: self.translation.exon_coding_end]
                     if self.translation.exon_coding_end is not None:
-                        end = exon.start + self.translation.exon_coding_end - 1
+                        cds_end = exon.start + self.translation.exon_coding_end - 1
                     else:
-                        end = exon.end
+                        cds_end = exon.end
 
                 seq += exon_coding_seq
 
-            if seq == "":
+            if seq == "" or cds_start is None or cds_end is None:
                 return None
 
-            cds = CDS(start=start, end=end, strand=self.strand, slice=self.slice)
+            cds = CDS(start=cds_start, end=cds_end, strand=self.strand, slice=self.slice)
             cds.seq = seq
             cds.transcript = self
             cds.translation = self.translation
