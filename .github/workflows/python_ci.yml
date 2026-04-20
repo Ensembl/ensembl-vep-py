@@ -58,6 +58,7 @@ jobs:
       - name: Run mypy
         run: |
           uv run mypy --config-file pyproject.toml src/python/ensembl
+          uv run mypy --config-file pyproject.toml src/python/tests
 
   black:
     runs-on: ubuntu-latest
