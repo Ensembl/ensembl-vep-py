@@ -63,10 +63,12 @@ class TestGeneProperties:
         gene.symbol = "G1"
         assert gene.symbol == "G1"
 
+        assert gene.alternative_names is not None
         assert gene.alternative_names == []
         gene.alternative_names.append(ExternalReference("mock.1", "GeneOne"))
         assert gene.alternative_names == ["GeneOne"]
 
+        assert gene.transcripts is not None
         assert gene.transcripts == []
         gene.transcripts.append(transcript)
         assert gene.transcripts == [transcript]

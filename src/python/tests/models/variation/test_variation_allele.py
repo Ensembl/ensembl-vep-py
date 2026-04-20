@@ -154,6 +154,7 @@ class TestVariationAlleleMinimise:
     def test_minimise_sets_locus_correctly(self, variation_allele: VariationAllele) -> None:
         """Test that minimise sets minimised_locus and original_locus correctly."""
         variation_allele.minimise()
+        assert variation_allele.minimised_locus is not None
         assert variation_allele.minimised_locus.start == variation_allele.start
         assert variation_allele.minimised_locus.end == variation_allele.end
         assert (
@@ -209,6 +210,7 @@ class TestVariationAlleleShift:
     def test_shift_sets_locus_correctly(self, variation_allele: VariationAllele) -> None:
         """Test that shift sets shifted_locus and original_locus correctly."""
         variation_allele.shift()
+        assert variation_allele.shifted_locus is not None
         assert variation_allele.shifted_locus.start == variation_allele.start
         assert variation_allele.shifted_locus.end == variation_allele.end
         assert (
