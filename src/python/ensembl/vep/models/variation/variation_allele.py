@@ -81,6 +81,29 @@ class VariationAllele(Feature):
             "__original_locus", "__minimised_locus", "__shifted_locus", "__minimised", "__shifted"
         ),
     )
+    __minimised: bool = field(
+        default=False,
+        init=False,
+        on_setattr=invalidates(
+            "__minimised_locus",
+            "__shifted_locus"
+        )
+    )
+    """Whether the variation allele has been minimised."""
+    __original_locus: Locus | None = field(
+        default=None,
+        init=False
+    )
+    """The original locus of the variation allele before any minimisation or shifting (if any occurred)."""
+    __shifted: bool = field(
+        default=False,
+        init=False,
+        on_setattr=invalidates(
+            "__shifted_locus",
+            "__minimised_locus"
+        )
+    )
+    """whether the variation allele has been shifted"""
     _lock: Lock = field(factory=Lock, init=False, repr=False)
     transcript_variation_alleles: list[TranscriptVariationAllele] = field(
         factory=list, init=False, on_setattr=invalidates("__overlap_consequences")
@@ -98,15 +121,6 @@ class VariationAllele(Feature):
         """
         return self.__original_locus
 
-    @cached_property
-    def __original_locus(self) -> Locus | None:
-        """Returns the original locus of the variation allele before any minimisation or shifting.
-
-        Returns:
-            Locus | None: The original locus if available, None otherwise.
-        """
-        return None
-
     @property
     def minimised_locus(self) -> Locus | None:
         """Public accessor for __minimised_locus.
@@ -123,7 +137,13 @@ class VariationAllele(Feature):
         Returns:
             Locus | None: The minimised locus if available, None otherwise.
         """
-        return None
+        if not self.__minimised:
+            return None
+
+        return Locus(
+            start=self.start, end=self.end,
+            allele_string=f"{self.reference_allele}/{self.alternate_allele}"
+        )
 
     @property
     def shifted_locus(self) -> Locus | None:
@@ -141,7 +161,12 @@ class VariationAllele(Feature):
         Returns:
             Locus | None: The shifted locus if available, None otherwise.
         """
-        return None
+        if not self.__shifted:
+            return None
+
+        return Locus(
+            start=self.start, end=self.end, allele_string=f"{self.reference_allele}/{self.alternate_allele}"
+        )
 
     @property
     def minimised(self) -> bool:
@@ -152,15 +177,6 @@ class VariationAllele(Feature):
         """
         return self.__minimised
 
-    @cached_property
-    def __minimised(self) -> bool:
-        """Returns whether the variation allele has been minimised.
-
-        Returns:
-            bool: True if the variation allele has been minimised, False otherwise.
-        """
-        return False
-
     @property
     def shifted(self) -> bool:
         """Public accessor for __shifted.
@@ -169,15 +185,6 @@ class VariationAllele(Feature):
             bool: True if the variation allele has been shifted, False otherwise.
         """
         return self.__shifted
-
-    @cached_property
-    def __shifted(self) -> bool:
-        """Returns whether the variation allele has been shifted.
-
-        Returns:
-            bool: True if the variation allele has been shifted, False otherwise.
-        """
-        return False
 
     def minimise(self, force: bool = False) -> None:
         """Minimises the variation allele by computing the minimal representation of the variant.
@@ -200,22 +207,14 @@ class VariationAllele(Feature):
         original_locus = self.__original_locus or Locus(
             start=self.start, end=self.end, allele_string=f"{self.reference_allele}/{self.alternate_allele}"
         )
-        shifted = self.shifted
-        shifted_locus = self.shifted_locus
 
-        self.reference_allele, self.alternate_allele, self.start, self.end, changed = trim_sequences(
+        self.reference_allele, self.alternate_allele, self.start, self.end, _changed = trim_sequences(
             ref=self.reference_allele, alt=self.alternate_allele, start=self.start, end=self.end
         )
 
         if self.__original_locus is None:
             self.__original_locus = original_locus
-        self.__minimised_locus = Locus(
-            start=self.start, end=self.end, allele_string=f"{self.reference_allele}/{self.alternate_allele}"
-        )
         self.__minimised = True
-        if not changed:
-            self.__shifted = shifted
-            self.__shifted_locus = shifted_locus
 
     def shift(self, force: bool = False) -> None:
         """Shifts the variation allele to the leftmost position in the sequence.
@@ -241,8 +240,6 @@ class VariationAllele(Feature):
         original_locus = self.__original_locus or Locus(
             start=self.start, end=self.end, allele_string=f"{self.reference_allele}/{self.alternate_allele}"
         )
-        minimised = self.minimised
-        minimised_locus = self.minimised_locus
 
         search_start = max(0, self.start - MAX_SEARCH_AREA - 1)
         search_end = min(self.slice.end, self.end + MAX_SEARCH_AREA)
@@ -257,7 +254,7 @@ class VariationAllele(Feature):
             seq_to_check = self.reference_allele
             using_ref = True
 
-        _, shifted_seq, self.start, self.end, changed = shift_sequence(
+        _, shifted_seq, self.start, self.end, _changed = shift_sequence(
             seq=seq_to_check, post_seq=post_seq, pre_seq=pre_seq, start=self.start, end=self.end
         )
         if using_ref:
@@ -267,13 +264,8 @@ class VariationAllele(Feature):
 
         if self.__original_locus is None:
             self.__original_locus = original_locus
-        self.__shifted_locus = Locus(
-            start=self.start, end=self.end, allele_string=f"{self.reference_allele}/{self.alternate_allele}"
-        )
+
         self.__shifted = True
-        if not changed:
-            self.__minimised = minimised
-            self.__minimised_locus = minimised_locus
 
     @property
     def overlap_consequences(self) -> list[OverlapConsequence]:
