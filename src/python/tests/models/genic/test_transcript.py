@@ -45,7 +45,7 @@ class TestTranscriptInitialization:
     def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = Transcript(1, end=100, strand=Strand.FORWARD, stable_id="ENST00000000001")
+            _ = Transcript(start=1, end=100, strand=Strand.FORWARD, stable_id="ENST00000000001")
 
 
 class TestTranscriptProperties:

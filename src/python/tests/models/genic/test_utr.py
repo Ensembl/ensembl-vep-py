@@ -36,7 +36,7 @@ class TestUTRInitialization:
     def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = UTR(10, end=20, strand=Strand.FORWARD)
+            _ = UTR(start=10, end=20, strand=Strand.FORWARD)
 
 
 class TestUTRProperties:

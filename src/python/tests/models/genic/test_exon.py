@@ -30,7 +30,7 @@ class TestExonInitialization:
     def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = Exon(10, end=50, strand=Strand.FORWARD, stable_id="ENSE00000000001")
+            _ = Exon(start=10, end=50, strand=Strand.FORWARD, stable_id="ENSE00000000001")
 
 
 class TestExonProperties:

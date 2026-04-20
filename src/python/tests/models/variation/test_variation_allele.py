@@ -71,7 +71,7 @@ class TestVariationAlleleProperties:
     def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            VariationAllele(5, end=5, strand=Strand.FORWARD, slice=None, reference_allele="A", alternate_allele="T")
+            VariationAllele(start=5, end=5, strand=Strand.FORWARD, slice=None, reference_allele="A", alternate_allele="T")
 
     def test_minimised(self, variation_allele: VariationAllele) -> None:
         """Test the minimised property before and after calling minimise."""

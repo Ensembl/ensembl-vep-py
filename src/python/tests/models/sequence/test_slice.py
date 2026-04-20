@@ -27,7 +27,7 @@ class TestSliceInitialization:
         """Test Slice initialization without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = Slice(
-                "chromosome",
+                coord_system="chromosome",
                 seq_region_name="1",
                 seq_region_length=1000,
                 start=10,
