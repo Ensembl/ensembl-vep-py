@@ -20,7 +20,7 @@ import os
 import sys
 from typing import Literal
 
-from ensembl.vep.common import Strand, KnownStrand
+from ensembl.vep.common import KnownStrand
 
 logger = logging.getLogger(__name__)
 
