@@ -79,4 +79,3 @@ class TestTranscriptVariationAlleleProperties:
 
     def test_cdna_locus(self, transcript_variation_allele: TranscriptVariationAllele) -> None:
         """Test cdna_locus property."""
-        pass

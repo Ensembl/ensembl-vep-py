@@ -260,7 +260,7 @@ class TestFeatureEquality:
         f1 = Feature(start=10, end=20, strand=Strand.FORWARD, slice=genomic_slice)
 
         class AnotherFeature(Feature):
-            pass
+            """Feature subclass for testing."""
 
         f2 = AnotherFeature(start=10, end=20, strand=Strand.FORWARD, slice=genomic_slice)
         assert f1 != f2
@@ -349,12 +349,8 @@ class TestFeatureFeatureSlice:
 
 
 class TestFeatureTransform:
-    """Test transform method."""
-
-    ...
+    """Test transform method (to be implemented)."""
 
 
 class TestFeatureTransfer:
-    """Test transfer method."""
-
-    ...
+    """Test transfer method (to be implemented)."""

@@ -16,7 +16,6 @@
 """Unit tests for CoordSystem class."""
 
 import pytest
-from copy import deepcopy
 
 from ensembl.vep.models.sequence.coord_system import CoordSystem
 from ensembl.vep.common import CoordSystemLevel
@@ -135,7 +134,6 @@ class TestCoordSystemEquality:
 
         class AnotherCoord(CoordSystem):
             """CoordSystem subclass for testing."""
-            pass
 
         coord2 = AnotherCoord(name="chromosome", level=CoordSystemLevel.CHROMOSOME)
         assert coord != coord2

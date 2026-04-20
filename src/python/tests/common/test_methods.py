@@ -13,8 +13,6 @@
 # limitations under the License.
 """Unit tests for common methods."""
 
-import pytest
-
 from ensembl.vep.common import trim_sequences, shift_sequence, KnownStrand
 
 

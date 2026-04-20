@@ -15,8 +15,8 @@
 # pylint: disable=redefined-outer-name
 """Unit tests for BaseFeature class."""
 
-import pytest
 from copy import deepcopy
+import pytest
 
 from ensembl.vep.common import Strand
 from ensembl.vep.models.sequence import Slice
@@ -128,7 +128,6 @@ class TestSliceEquality:
 
         class AnotherSlice(Slice):
             """Slice subclass for testing."""
-            pass
 
         slice2 = AnotherSlice(
             coord_system="chromosome",

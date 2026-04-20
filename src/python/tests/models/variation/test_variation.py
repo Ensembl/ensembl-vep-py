@@ -244,8 +244,6 @@ class TestVariationShifting:
 class TestMostSevereConsequence:
     """Tests for the most_severe_consequence cached property."""
 
-    pass
-
 
 class TestClassSOTerm:
     """Tests for the class_so_term cached property."""

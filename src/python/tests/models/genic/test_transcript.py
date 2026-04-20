@@ -213,9 +213,7 @@ class TestTranscriptProperties:
 
     def test_translated_seq(self, _transcript: Transcript, _translation: Translation) -> None:
         """Test that translated_seq is calculated correctly."""
-        pass
 
 
 class TestTranscriptEquality:
     """Test equality comparison."""
-    pass
