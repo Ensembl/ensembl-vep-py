@@ -25,7 +25,7 @@ class TestCoordSystemInitialization:
 
     def test_initialization_without_keywords(self) -> None:
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = CoordSystem("chromosome", level=CoordSystemLevel.CHROMOSOME)  # type: ignore[call-arg]
+            _ = CoordSystem()  # type: ignore[call-arg]
 
 
 class TestCoordSystemProperties:
