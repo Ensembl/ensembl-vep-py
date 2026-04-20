@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 
 @pytest.fixture
-def slice() -> Slice:
+def genomic_slice() -> Slice:
     """Create a slice object for testing."""
     return Slice(
         coord_system="chromosome",
@@ -45,9 +45,10 @@ def slice() -> Slice:
 
 
 @pytest.fixture
-def variation_allele(slice: Slice) -> VariationAllele:
+def variation_allele(genomic_slice: Slice) -> VariationAllele:
     """Returns a VariationAllele object for testing."""
-    return VariationAllele(start=5, end=5, strand=Strand.FORWARD, slice=slice, reference_allele="A", alternate_allele="T")
+    return VariationAllele(start=5, end=5, strand=Strand.FORWARD,
+                           slice=genomic_slice, reference_allele="A", alternate_allele="T")
 
 
 @pytest.fixture

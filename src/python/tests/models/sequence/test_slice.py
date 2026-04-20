@@ -43,7 +43,7 @@ class TestSliceProperties:
     """Test property accessors."""
 
     @pytest.fixture
-    def slice(self) -> Slice:
+    def genomic_slice(self) -> Slice:
         """Create a Slice instance for testing."""
         return Slice(
             coord_system="chromosome",
@@ -55,22 +55,22 @@ class TestSliceProperties:
             seq=None,
         )
 
-    def test_core_properties(self, slice: Slice) -> None:
+    def test_core_properties(self, genomic_slice: Slice) -> None:
         """Test core properties are set correctly."""
-        assert slice.coord_system == "chromosome"
-        assert slice.seq_region_name == "1"
-        assert slice.seq_region_length == 1000
-        assert slice.start == 10
-        assert slice.end == 200
-        assert slice.strand == 1
-        assert slice.seq is None
+        assert genomic_slice.coord_system == "chromosome"
+        assert genomic_slice.seq_region_name == "1"
+        assert genomic_slice.seq_region_length == 1000
+        assert genomic_slice.start == 10
+        assert genomic_slice.end == 200
+        assert genomic_slice.strand == 1
+        assert genomic_slice.seq is None
 
 
 class TestSliceEquality:
     """Test equality comparison."""
 
     @pytest.fixture
-    def slice(self) -> Slice:
+    def genomic_slice(self) -> Slice:
         """Create first Slice instance for testing."""
         return Slice(
             coord_system="chromosome",
@@ -82,48 +82,48 @@ class TestSliceEquality:
             seq=None,
         )
 
-    def test_equal_slices(self, slice: Slice) -> None:
+    def test_equal_slices(self, genomic_slice: Slice) -> None:
         """Test two identical Slices are equal."""
-        slice2 = deepcopy(slice)
-        assert slice == slice2
+        slice2 = deepcopy(genomic_slice)
+        assert genomic_slice == slice2
 
-    def test_different_coord_system(self, slice: Slice) -> None:
+    def test_different_coord_system(self, genomic_slice: Slice) -> None:
         """Test two Slices with different coord_system are not equal."""
-        slice2 = deepcopy(slice)
+        slice2 = deepcopy(genomic_slice)
         slice2.coord_system = "contig"
-        assert slice != slice2
+        assert genomic_slice != slice2
 
-    def test_different_seq_region_name(self, slice: Slice) -> None:
+    def test_different_seq_region_name(self, genomic_slice: Slice) -> None:
         """Test two Slices with different seq_region_name are not equal."""
-        slice2 = deepcopy(slice)
+        slice2 = deepcopy(genomic_slice)
         slice2.seq_region_name = "2"
-        assert slice != slice2
+        assert genomic_slice != slice2
 
-    def test_different_start(self, slice: Slice) -> None:
+    def test_different_start(self, genomic_slice: Slice) -> None:
         """Test two Slices with different start are not equal."""
-        slice2 = deepcopy(slice)
+        slice2 = deepcopy(genomic_slice)
         slice2.start = 20
-        assert slice != slice2
+        assert genomic_slice != slice2
 
-    def test_different_end(self, slice: Slice) -> None:
+    def test_different_end(self, genomic_slice: Slice) -> None:
         """Test two Slices with different end are not equal."""
-        slice2 = deepcopy(slice)
+        slice2 = deepcopy(genomic_slice)
         slice2.end = 300
-        assert slice != slice2
+        assert genomic_slice != slice2
 
-    def test_different_strand(self, slice: Slice) -> None:
+    def test_different_strand(self, genomic_slice: Slice) -> None:
         """Test two Slices with different strand are not equal."""
-        slice2 = deepcopy(slice)
+        slice2 = deepcopy(genomic_slice)
         slice2.strand = Strand.REVERSE
-        assert slice != slice2
+        assert genomic_slice != slice2
 
-    def test_diferent_seq_region_length(self, slice: Slice) -> None:
+    def test_diferent_seq_region_length(self, genomic_slice: Slice) -> None:
         """Test two Slices with different seq_region_length are still equal."""
-        slice2 = deepcopy(slice)
+        slice2 = deepcopy(genomic_slice)
         slice2.seq_region_length = 2000
-        assert slice == slice2
+        assert genomic_slice == slice2
 
-    def test_different_type(self, slice: Slice) -> None:
+    def test_different_type(self, genomic_slice: Slice) -> None:
         """Test comparing Slice to different type returns False."""
 
         class AnotherSlice(Slice):
@@ -139,4 +139,4 @@ class TestSliceEquality:
             strand=Strand.FORWARD,
             seq=None,
         )
-        assert slice != slice2
+        assert genomic_slice != slice2

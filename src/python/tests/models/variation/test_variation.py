@@ -25,7 +25,7 @@ from ensembl.vep.models.sequence import Slice
 
 
 @pytest.fixture
-def slice() -> Slice:
+def genomic_slice() -> Slice:
     """Create a slice object for testing."""
     return Slice(
         coord_system="chromosome",
@@ -39,49 +39,49 @@ def slice() -> Slice:
 
 
 @pytest.fixture
-def variation(slice: Slice) -> Variation:
+def variation(genomic_slice: Slice) -> Variation:
     """Returns a bi-allelic Variation object for testing."""
     return Variation(
         start=5,
         end=5,
         strand=Strand.FORWARD,
-        slice=slice,
+        slice=genomic_slice,
         allele_string="A/T",
     )
 
 
 @pytest.fixture
-def multiallelic_variation(slice: Slice) -> Variation:
+def multiallelic_variation(genomic_slice: Slice) -> Variation:
     """Returns a multiallelic Variation object for testing."""
     return Variation(
         start=5,
         end=5,
         strand=Strand.FORWARD,
-        slice=slice,
+        slice=genomic_slice,
         allele_string="A/T/G/C",
     )
 
 
 @pytest.fixture
-def insertion_variation(slice: Slice) -> Variation:
+def insertion_variation(genomic_slice: Slice) -> Variation:
     """Returns an insertion Variation object for testing."""
     return Variation(
         start=5,
         end=5,
         strand=Strand.FORWARD,
-        slice=slice,
+        slice=genomic_slice,
         allele_string="A/ATT",
     )
 
 
 @pytest.fixture
-def deletion_variation(slice: Slice) -> Variation:
+def deletion_variation(genomic_slice: Slice) -> Variation:
     """Returns a deletion Variation object for testing."""
     return Variation(
         start=5,
         end=7,
         strand=Strand.FORWARD,
-        slice=slice,
+        slice=genomic_slice,
         allele_string="ATC/A",
     )
 
@@ -182,13 +182,13 @@ class TestVariationAlleles:
         assert alleles[0].strand == 1
         assert alleles[0].slice == variation.slice
 
-    def test_none_allele_string_returns_empty(self, slice: Slice) -> None:
+    def test_none_allele_string_returns_empty(self, genomic_slice: Slice) -> None:
         """Test that an undefined allele string (None) returns an empty list of alleles."""
         var = Variation(
             start=100,
             end=100,
             strand=Strand.FORWARD,
-            slice=slice,
+            slice=genomic_slice,
             allele_string=None,
         )
         alleles = var.variation_alleles
@@ -221,13 +221,13 @@ class TestVariationMinimisation:
 class TestVariationShifting:
     """Tests for the shift_alleles of Variation."""
 
-    def test_shift_alleles(self, slice: Slice) -> None:
+    def test_shift_alleles(self, genomic_slice: Slice) -> None:
         """Test that the shift_alleles method shifts the alleles correctly."""
         var = Variation(
             start=2,
             end=5,
             strand=Strand.FORWARD,
-            slice=slice,
+            slice=genomic_slice,
             allele_string="TCGA/-",
         )
         var.shift_alleles()
@@ -259,9 +259,9 @@ class TestClassSOTerm:
             ("A/T/G/C", ClassSOTerm.SNV),
         ],
     )
-    def test_snv(self, slice: Slice, allele_string: str, expected: ClassSOTerm) -> None:
+    def test_snv(self, genomic_slice: Slice, allele_string: str, expected: ClassSOTerm) -> None:
         """Test that a SNV variation returns the correct ClassSOTerm."""
-        var = Variation(start=100, end=100, strand=Strand.FORWARD, slice=slice, allele_string=allele_string)
+        var = Variation(start=100, end=100, strand=Strand.FORWARD, slice=genomic_slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
     @pytest.mark.parametrize(
@@ -271,9 +271,9 @@ class TestClassSOTerm:
             ("(AT)5/(AT)7", ClassSOTerm.TANDEM_REPEAT),
         ],
     )
-    def test_tandem_repeat(self, slice: Slice, allele_string: str, expected: ClassSOTerm) -> None:
+    def test_tandem_repeat(self, genomic_slice: Slice, allele_string: str, expected: ClassSOTerm) -> None:
         """Test that a tandem repeat variation returns the correct ClassSOTerm."""
-        var = Variation(start=100, end=100, strand=Strand.FORWARD, slice=slice, allele_string=allele_string)
+        var = Variation(start=100, end=100, strand=Strand.FORWARD, slice=genomic_slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
     @pytest.mark.parametrize(
@@ -287,9 +287,9 @@ class TestClassSOTerm:
             ("(LARGEINSERTION)", ClassSOTerm.INSERTION),
         ],
     )
-    def test_insertion(self, slice: Slice, allele_string: str, expected: ClassSOTerm) -> None:
+    def test_insertion(self, genomic_slice: Slice, allele_string: str, expected: ClassSOTerm) -> None:
         """Test that an insertion variation returns the correct ClassSOTerm."""
-        var = Variation(start=100, end=100, strand=Strand.FORWARD, slice=slice, allele_string=allele_string)
+        var = Variation(start=100, end=100, strand=Strand.FORWARD, slice=genomic_slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
     @pytest.mark.parametrize(
@@ -304,9 +304,9 @@ class TestClassSOTerm:
             ("(2345 BP DELETION)/-", ClassSOTerm.DELETION),
         ],
     )
-    def test_deletion(self, slice: Slice, allele_string: str, expected: ClassSOTerm) -> None:
+    def test_deletion(self, genomic_slice: Slice, allele_string: str, expected: ClassSOTerm) -> None:
         """Test that a deletion variation returns the correct ClassSOTerm."""
-        var = Variation(start=100, end=102, strand=Strand.FORWARD, slice=slice, allele_string=allele_string)
+        var = Variation(start=100, end=102, strand=Strand.FORWARD, slice=genomic_slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
     @pytest.mark.parametrize(
@@ -316,9 +316,9 @@ class TestClassSOTerm:
             ("ACT/TCG", ClassSOTerm.SUBSTITUTION),
         ],
     )
-    def test_substitution(self, slice: Slice, allele_string: str, expected: ClassSOTerm) -> None:
+    def test_substitution(self, genomic_slice: Slice, allele_string: str, expected: ClassSOTerm) -> None:
         """Test that a substitution variation returns the correct ClassSOTerm."""
-        var = Variation(start=100, end=101, strand=Strand.FORWARD, slice=slice, allele_string=allele_string)
+        var = Variation(start=100, end=101, strand=Strand.FORWARD, slice=genomic_slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
     @pytest.mark.parametrize(
@@ -328,17 +328,17 @@ class TestClassSOTerm:
             ("AAAA/TT", ClassSOTerm.INDEL),
         ],
     )
-    def test_indel(self, slice: Slice, allele_string: str, expected: ClassSOTerm) -> None:
+    def test_indel(self, genomic_slice: Slice, allele_string: str, expected: ClassSOTerm) -> None:
         """Test that an indel variation returns the correct ClassSOTerm."""
-        var = Variation(start=100, end=103, strand=Strand.FORWARD, slice=slice, allele_string=allele_string)
+        var = Variation(start=100, end=103, strand=Strand.FORWARD, slice=genomic_slice, allele_string=allele_string)
         assert var.class_so_term == expected
 
-    def test_empty_allele_string_defaults_to_sequence_alteration(self, slice: Slice) -> None:
+    def test_empty_allele_string_defaults_to_sequence_alteration(self, genomic_slice: Slice) -> None:
         """Test that an empty allele string returns the correct (default) ClassSOTerm."""
-        var = Variation(start=100, end=100, strand=Strand.FORWARD, slice=slice, allele_string="")
+        var = Variation(start=100, end=100, strand=Strand.FORWARD, slice=genomic_slice, allele_string="")
         assert var.class_so_term == ClassSOTerm.SEQUENCE_ALTERATION
 
-    def test_none_allele_string_defaults_to_sequence_alteration(self, slice: Slice) -> None:
+    def test_none_allele_string_defaults_to_sequence_alteration(self, genomic_slice: Slice) -> None:
         """Test that an undefined (None) allele string returns the correct (default) ClassSOTerm."""
-        var = Variation(start=100, end=100, strand=Strand.FORWARD, slice=slice, allele_string=None)
+        var = Variation(start=100, end=100, strand=Strand.FORWARD, slice=genomic_slice, allele_string=None)
         assert var.class_so_term == ClassSOTerm.SEQUENCE_ALTERATION
