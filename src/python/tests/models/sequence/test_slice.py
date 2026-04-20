@@ -127,6 +127,7 @@ class TestSliceEquality:
         """Test comparing Slice to different type returns False."""
 
         class AnotherSlice(Slice):
+            """Slice subclass for testing."""
             pass
 
         slice2 = AnotherSlice(

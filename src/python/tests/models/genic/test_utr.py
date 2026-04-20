@@ -24,11 +24,13 @@ from ensembl.vep.models.genic.transcript import Transcript
 
 @pytest.fixture
 def transcript() -> Transcript:
+    """Transcript fixture for testing."""
     return Transcript(start=1, end=100, strand=Strand.FORWARD, stable_id="ENST00000000001")
 
 
 @pytest.fixture
 def utr() -> UTR:
+    """UTR fixture for testing."""
     return UTR(start=10, end=20, strand=Strand.FORWARD)
 
 

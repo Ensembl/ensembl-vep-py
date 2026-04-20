@@ -26,6 +26,7 @@ class TestCoordSystemInitialization:
     """Test CoordSystem initialization."""
 
     def test_initialization_without_keywords(self) -> None:
+        """Test CoordSystem initialization without keywords raises expected error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = CoordSystem()  # type: ignore[call-arg]
 
@@ -133,6 +134,7 @@ class TestCoordSystemEquality:
         """Test comparing CoordSystem to different type returns False."""
 
         class AnotherCoord(CoordSystem):
+            """CoordSystem subclass for testing."""
             pass
 
         coord2 = AnotherCoord(name="chromosome", level=CoordSystemLevel.CHROMOSOME)

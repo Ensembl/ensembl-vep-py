@@ -24,16 +24,19 @@ from ensembl.vep.models.overlap import FeatureOverlap, OverlapConsequence
 
 @pytest.fixture
 def feature() -> Feature:
+    """Feature fixture for testing."""
     return Feature(start=1, end=100, strand=Strand.FORWARD)
 
 
 @pytest.fixture
 def overlapping_feature() -> Feature:
+    """Overlapping Feature fixture for testing."""
     return Feature(start=50, end=150, strand=Strand.FORWARD)
 
 
 @pytest.fixture
 def feature_overlap(feature: Feature, overlapping_feature: Feature) -> FeatureOverlap:
+    """FeatureOverlap fixture for testing."""
     return FeatureOverlap(feature=feature, overlapping_feature=overlapping_feature)
 
 

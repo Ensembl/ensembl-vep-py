@@ -23,21 +23,25 @@ from ensembl.vep.models.genic import Transcript, Exon, Intron, Translation, CDS
 
 @pytest.fixture
 def exon() -> Exon:
+    """Exon fixture for testing."""
     return Exon(start=1, end=10, strand=Strand.FORWARD, stable_id="ENSE00000000001")
 
 
 @pytest.fixture
 def intron() -> Intron:
+    """Intron fixture for testing."""
     return Intron(start=11, end=19, strand=Strand.FORWARD)
 
 
 @pytest.fixture
 def transcript() -> Transcript:
+    """Transcript fixture for testing."""
     return Transcript(start=1, end=100, strand=Strand.FORWARD, stable_id="ENST00000000001")
 
 
 @pytest.fixture
 def translation() -> Translation:
+    """Translation fixture for testing."""
     return Translation(start=10, end=90, stable_id="ENSP00000000001")
 
 

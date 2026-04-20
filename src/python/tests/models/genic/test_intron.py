@@ -24,11 +24,13 @@ from ensembl.vep.models.genic.exon import Exon
 
 @pytest.fixture
 def exon() -> Exon:
+    """Exon fixture for testing."""
     return Exon(start=1, end=10, strand=Strand.FORWARD, stable_id="ENSE00000000001")
 
 
 @pytest.fixture
 def intron() -> Intron:
+    """Intron fixture for testing."""
     return Intron(
         start=11,
         end=19,

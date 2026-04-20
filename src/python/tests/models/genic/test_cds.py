@@ -25,16 +25,19 @@ from ensembl.vep.models.genic.translation import Translation
 
 @pytest.fixture
 def transcript() -> Transcript:
+    """Transcript fixture for testing."""
     return Transcript(stable_id="ENST00000000001", start=1, end=100, strand=Strand.FORWARD)
 
 
 @pytest.fixture
 def translation() -> Translation:
+    """Translation fixture for testing."""
     return Translation(start=1, end=90, stable_id="ENSP00000000001")
 
 
 @pytest.fixture
 def cds() -> CDS:
+    """CDS fixture for testing."""
     return CDS(start=11, end=40, strand=Strand.FORWARD)
 
 

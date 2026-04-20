@@ -24,6 +24,7 @@ from ensembl.vep.models import Feature
 
 @pytest.fixture
 def overlap_consequence() -> OverlapConsequence:
+    """OverlapConsequence fixture for testing."""
     return OverlapConsequence(term="missense_variant", accession="SO:0001583")
 
 

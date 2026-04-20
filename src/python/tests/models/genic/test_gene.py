@@ -24,11 +24,13 @@ from ensembl.vep.models.genic.transcript import Transcript
 
 @pytest.fixture
 def transcript() -> Transcript:
+    """Transcript fixture for testing."""
     return Transcript(stable_id="ENST00000000001", start=1, end=100, strand=Strand.FORWARD)
 
 
 @pytest.fixture
 def gene() -> Gene:
+    """Gene fixture for testing."""
     return Gene(stable_id="ENSG00000000001", start=10, end=200, strand=Strand.FORWARD)
 
 

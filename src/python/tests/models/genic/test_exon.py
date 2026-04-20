@@ -23,6 +23,7 @@ from ensembl.vep.models.genic.exon import Exon
 
 @pytest.fixture
 def exon() -> Exon:
+    """Exon fixture for testing."""
     return Exon(start=10, end=50, strand=Strand.FORWARD, stable_id="ENSE00000000001")
 
 
