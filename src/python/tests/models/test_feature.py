@@ -71,7 +71,7 @@ class TestFeatureProperties:
         with pytest.raises(
             AttributeError, match="'Feature' object has no attribute '_TestFeatureProperties__length'"
         ):
-            feature.__length = 100
+            feature.__length = 100  # pylint: disable=protected-access, unused-private-member
 
     def test_length_update(self, feature: Feature) -> None:
         """Test length updates when start or end changes."""
@@ -108,7 +108,7 @@ class TestFeatureProperties:
             AttributeError,
             match="'Feature' object has no attribute '_TestFeatureProperties__seq_region_start'",
         ):
-            feature.__seq_region_start = None
+            feature.__seq_region_start = None  # pylint: disable=protected-access, unused-private-member
 
     def test_seq_region_start_update(self, feature: Feature, genomic_slice: Slice) -> None:
         """Test seq_region_start updates when start changes."""
@@ -145,7 +145,7 @@ class TestFeatureProperties:
         with pytest.raises(
             AttributeError, match="'Feature' object has no attribute '_TestFeatureProperties__seq_region_end'"
         ):
-            feature.__seq_region_end = None
+            feature.__seq_region_end = None  # pylint: disable=protected-access, unused-private-member
 
     def test_seq_region_end_update(self, feature: Feature, genomic_slice: Slice) -> None:
         """Test seq_region_end updates when end changes."""
@@ -187,7 +187,7 @@ class TestFeatureProperties:
             AttributeError,
             match="'Feature' object has no attribute '_TestFeatureProperties__seq_region_strand'",
         ):
-            feature.__seq_region_strand = None
+            feature.__seq_region_strand = None  # pylint: disable=protected-access, unused-private-member
 
     def test_seq_region_strand_update(self, feature: Feature, genomic_slice: Slice) -> None:
         """Test seq_region_strand updates when strand changes."""
