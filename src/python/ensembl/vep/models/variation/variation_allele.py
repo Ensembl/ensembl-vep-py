@@ -82,26 +82,13 @@ class VariationAllele(Feature):
         ),
     )
     __minimised: bool = field(
-        default=False,
-        init=False,
-        on_setattr=invalidates(
-            "__minimised_locus",
-            "__shifted_locus"
-        )
+        default=False, init=False, on_setattr=invalidates("__minimised_locus", "__shifted_locus")
     )
     """Whether the variation allele has been minimised."""
-    __original_locus: Locus | None = field(
-        default=None,
-        init=False
-    )
+    __original_locus: Locus | None = field(default=None, init=False)
     """The original locus of the variation allele before any minimisation or shifting (if any occurred)."""
     __shifted: bool = field(
-        default=False,
-        init=False,
-        on_setattr=invalidates(
-            "__shifted_locus",
-            "__minimised_locus"
-        )
+        default=False, init=False, on_setattr=invalidates("__shifted_locus", "__minimised_locus")
     )
     """whether the variation allele has been shifted"""
     _lock: Lock = field(factory=Lock, init=False, repr=False)
@@ -141,8 +128,7 @@ class VariationAllele(Feature):
             return None
 
         return Locus(
-            start=self.start, end=self.end,
-            allele_string=f"{self.reference_allele}/{self.alternate_allele}"
+            start=self.start, end=self.end, allele_string=f"{self.reference_allele}/{self.alternate_allele}"
         )
 
     @property

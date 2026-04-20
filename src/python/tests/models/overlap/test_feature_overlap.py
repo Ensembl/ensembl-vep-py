@@ -43,9 +43,7 @@ def feature_overlap(feature: Feature, overlapping_feature: Feature) -> FeatureOv
 class TestFeatureOverlapInitialization:
     """Test FeatureOverlap initialization."""
 
-    def test_initialization_without_keywords(
-        self, feature: Feature, overlapping_feature: Feature
-    ) -> None:
+    def test_initialization_without_keywords(self, feature: Feature, overlapping_feature: Feature) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = FeatureOverlap(feature=feature, overlapping_feature=overlapping_feature)

@@ -47,8 +47,9 @@ def genomic_slice() -> Slice:
 @pytest.fixture
 def variation_allele(genomic_slice: Slice) -> VariationAllele:
     """Returns a VariationAllele object for testing."""
-    return VariationAllele(start=5, end=5, strand=Strand.FORWARD,
-                           slice=genomic_slice, reference_allele="A", alternate_allele="T")
+    return VariationAllele(
+        start=5, end=5, strand=Strand.FORWARD, slice=genomic_slice, reference_allele="A", alternate_allele="T"
+    )
 
 
 @pytest.fixture
@@ -74,8 +75,9 @@ class TestVariationAlleleProperties:
     def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            VariationAllele(start=5, end=5, strand=Strand.FORWARD,
-                            slice=None, reference_allele="A", alternate_allele="T")
+            VariationAllele(
+                start=5, end=5, strand=Strand.FORWARD, slice=None, reference_allele="A", alternate_allele="T"
+            )
 
     def test_minimised(self, variation_allele: VariationAllele) -> None:
         """Test the minimised property before and after calling minimise."""
@@ -233,8 +235,12 @@ class TestVariationAlleleMinimiseAndShift:
         assert variation_allele.minimised is True
         assert variation_allele.shifted is False
         variation_allele2 = VariationAllele(
-            start=5, end=5, strand=Strand.FORWARD, slice=variation_allele.slice,
-            reference_allele="A", alternate_allele="T"
+            start=5,
+            end=5,
+            strand=Strand.FORWARD,
+            slice=variation_allele.slice,
+            reference_allele="A",
+            alternate_allele="T",
         )
         variation_allele2.shift()
         assert variation_allele2.shifted is True

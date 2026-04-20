@@ -205,8 +205,9 @@ class Feature:
 
         if self.slice.seq_region_name != other.slice.seq_region_name:
             warning_template = (
-                'Cannot compare two features on different sequence regions. %(self_classname) is on'
-                ' %(self_seq_region_name) and %(other_classname) is on %(other_seq_region_name).')
+                "Cannot compare two features on different sequence regions. %(self_classname) is on"
+                " %(self_seq_region_name) and %(other_classname) is on %(other_seq_region_name)."
+            )
 
             logging.warning(
                 warning_template,
@@ -215,7 +216,7 @@ class Feature:
                     "self_seq_region_name": self.slice.seq_region_name,
                     "other_classname": other.__class__.__name__,
                     "other_seq_region_name": other.slice.seq_region_name,
-                }
+                },
             )
             return False
 
@@ -254,8 +255,11 @@ class Feature:
 
         if self.seq_region_start is None or self.seq_region_end is None or self.seq_region_strand is None:
             logger.warning(
-                ("Cannot obtain feature_slice for a feature with undefined"
-                 " seq_region_start, seq_region_end, or seq_region_strand."))
+                (
+                    "Cannot obtain feature_slice for a feature with undefined"
+                    " seq_region_start, seq_region_end, or seq_region_strand."
+                )
+            )
             return None
 
         return Slice(

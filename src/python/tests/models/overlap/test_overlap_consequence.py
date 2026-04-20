@@ -34,7 +34,7 @@ class TestOverlapConsequenceInitialization:
     def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = OverlapConsequence() # type: ignore[call-arg]
+            _ = OverlapConsequence()  # type: ignore[call-arg]
 
 
 class TestOverlapConsequenceProperties:

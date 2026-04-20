@@ -140,7 +140,7 @@ class TestFeatureProperties:
         with pytest.raises(
             AttributeError, match="property 'seq_region_end' of 'Feature' object has no setter"
         ):
-            feature.seq_region_end = None  #type: ignore[misc]
+            feature.seq_region_end = None  # type: ignore[misc]
 
         with pytest.raises(
             AttributeError, match="'Feature' object has no attribute '_TestFeatureProperties__seq_region_end'"
@@ -181,7 +181,7 @@ class TestFeatureProperties:
         with pytest.raises(
             AttributeError, match="property 'seq_region_strand' of 'Feature' object has no setter"
         ):
-            feature.seq_region_strand = None  #type: ignore[misc]
+            feature.seq_region_strand = None  # type: ignore[misc]
 
         with pytest.raises(
             AttributeError,

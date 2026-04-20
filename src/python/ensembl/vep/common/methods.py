@@ -87,26 +87,26 @@ def trim_sequences(
     if end_first:
         # trim from right
         ref, alt, start, end, right_changed = _trim_common_sequence(
-            ref, alt, start=start, end=end, trim_at='right', strand=strand
+            ref, alt, start=start, end=end, trim_at="right", strand=strand
         )
         changed = right_changed
 
         # trim from left
         ref, alt, start, end, left_changed = _trim_common_sequence(
-            ref, alt, start=start, end=end, trim_at='left', strand=strand
+            ref, alt, start=start, end=end, trim_at="left", strand=strand
         )
         changed = changed or left_changed
 
     else:
         # trim from left
         ref, alt, start, end, left_changed = _trim_common_sequence(
-            ref, alt, start=start, end=end, trim_at='left', strand=strand
+            ref, alt, start=start, end=end, trim_at="left", strand=strand
         )
         changed = left_changed
 
         # trim from right
         ref, alt, start, end, right_changed = _trim_common_sequence(
-            ref, alt, start=start, end=end, trim_at='right', strand=strand
+            ref, alt, start=start, end=end, trim_at="right", strand=strand
         )
         changed = changed or right_changed
 
@@ -116,14 +116,15 @@ def trim_sequences(
 
     return (ref, alt, start, end, changed)
 
+
 def _trim_common_sequence(
     ref: str,
     alt: str,
     *,
     start: int = 0,
     end: int,
-    trim_at: Literal['left', 'right'],
-    strand: KnownStrand = KnownStrand.FORWARD
+    trim_at: Literal["left", "right"],
+    strand: KnownStrand = KnownStrand.FORWARD,
 ) -> tuple[str, str, int, int, bool]:
     """
     Trim common sequence from start or end of a ref/alt allele pair.
@@ -147,7 +148,7 @@ def _trim_common_sequence(
 
     changed = False
 
-    if trim_at == 'left':
+    if trim_at == "left":
         while ref and alt and ref[0] == alt[0]:
             ref = ref[1:]
             alt = alt[1:]
