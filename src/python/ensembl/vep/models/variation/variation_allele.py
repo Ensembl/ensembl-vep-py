@@ -61,24 +61,24 @@ class VariationAllele(Feature):
 
     start: int = field(
         on_setattr=invalidates(
-            "__original_locus", "__minimised_locus", "__shifted_locus", "__minimised", "__shifted"
+            "__minimised_locus", "__shifted_locus", "__minimised", "__shifted"
         )
     )
     end: int = field(
         on_setattr=invalidates(
-            "__original_locus", "__minimised_locus", "__shifted_locus", "__minimised", "__shifted"
+            "__minimised_locus", "__shifted_locus", "__minimised", "__shifted"
         )
     )
     reference_allele: str | None = field(
         default=None,
         on_setattr=invalidates(
-            "__original_locus", "__minimised_locus", "__shifted_locus", "__minimised", "__shifted"
+            "__minimised_locus", "__shifted_locus", "__minimised", "__shifted"
         ),
     )
     alternate_allele: str | None = field(
         default=None,
         on_setattr=invalidates(
-            "__original_locus", "__minimised_locus", "__shifted_locus", "__minimised", "__shifted"
+            "__minimised_locus", "__shifted_locus", "__minimised", "__shifted"
         ),
     )
     __minimised: bool = field(
@@ -198,8 +198,7 @@ class VariationAllele(Feature):
             ref=self.reference_allele, alt=self.alternate_allele, start=self.start, end=self.end
         )
 
-        if self.__original_locus is None:
-            self.__original_locus = original_locus
+        self.__original_locus = self.__original_locus or original_locus
         self.__minimised = True
 
     def shift(self, force: bool = False) -> None:
@@ -248,8 +247,7 @@ class VariationAllele(Feature):
         else:
             self.alternate_allele = shifted_seq
 
-        if self.__original_locus is None:
-            self.__original_locus = original_locus
+        self.__original_locus = self.__original_locus or original_locus
 
         self.__shifted = True
 
