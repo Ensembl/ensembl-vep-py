@@ -44,7 +44,7 @@ class TestIntronInitialization:
     def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = Intron(11, end=19, strand=Strand.FORWARD)
+            _ = Intron(11, end=19, strand=Strand.FORWARD)  # type: ignore[misc]
 
 
 class TestIntronProperties:

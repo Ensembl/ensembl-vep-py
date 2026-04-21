@@ -105,8 +105,9 @@ class TestVariationProperties:
     def test_initialization_without_keywords(self) -> None:
         """Test Variation initialization without keyword raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = Variation(100, end=100, strand=Strand.FORWARD,  # type: ignore[misc]
-                          slice=None, allele_string="A/T")
+            _ = Variation(
+                100, end=100, strand=Strand.FORWARD, slice=None, allele_string="A/T"  # type: ignore[misc]
+            )
 
     def test_defaults(self, variation: Variation) -> None:
         """Test default values for optional attributes."""

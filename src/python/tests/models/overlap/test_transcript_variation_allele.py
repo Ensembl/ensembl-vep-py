@@ -57,7 +57,7 @@ class TestTranscriptVariationAlleleInitialization:
     ) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = TranscriptVariationAllele(transcript, variation_allele)
+            _ = TranscriptVariationAllele(transcript, variation_allele)  # type: ignore[misc]
 
 
 class TestTranscriptVariationAlleleProperties:
