@@ -70,19 +70,19 @@ CONTAINER_TEST_CASES = [
 class TestContainers:  # type: ignore[pytest-classes]
     """General tests for all frozen container classes in ensembl.vep.common.containers."""
 
-    def test_initialization(self, cls, kwargs, _differing_kwargs) -> None:  # type: ignore[no-untyped-def]
+    def test_initialization(self, cls, kwargs, differing_kwargs) -> None:  # type: ignore[no-untyped-def]  # pylint: disable=unused-argument
         """Test that the class can be initialized with the correct attributes."""
         obj = cls(**kwargs)
         for key, value in kwargs.items():
             assert getattr(obj, key) == value
 
-    def test_immutability(self, cls, kwargs, _differing_kwargs) -> None:  # type: ignore[no-untyped-def]
+    def test_immutability(self, cls, kwargs, differing_kwargs) -> None:  # type: ignore[no-untyped-def]  # pylint: disable=unused-argument
         """Test that attributes cannot be modified after initialization."""
         obj = cls(**kwargs)
         with pytest.raises((AttributeError, TypeError)):
             setattr(obj, next(iter(kwargs)), "mutated")
 
-    def test_equality(self, cls, kwargs, _differing_kwargs) -> None:  # type: ignore[no-untyped-def]
+    def test_equality(self, cls, kwargs, differing_kwargs) -> None:  # type: ignore[no-untyped-def]  # pylint: disable=unused-argument
         """Test that two instances with the same attributes are equal."""
         assert cls(**kwargs) == cls(**kwargs)
 
