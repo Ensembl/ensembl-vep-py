@@ -13,6 +13,6 @@
 # limitations under the License.
 """Variation related data models."""
 
-from .variation import *
 from .variation_allele import *
+from .variation import *
 from .structural_variation import *
