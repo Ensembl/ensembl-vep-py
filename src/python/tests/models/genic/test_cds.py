@@ -78,7 +78,7 @@ class TestCDSProperties:
         cds.seq = "ATG" * 10
         assert cds.neucleotide_length == 30
 
-    def test_protein_length(self, _cds: CDS) -> None:
+    def test_protein_length(self, cds: CDS) -> None:
         """Test that CDS cached properties are accessed correctly."""
         # assert cds.protein_length is None
 

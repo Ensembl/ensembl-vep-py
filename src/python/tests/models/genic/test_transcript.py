@@ -213,7 +213,7 @@ class TestTranscriptProperties:
 
         # 3_prime_utr accesses spliced_seq and gets into deadlock, workaround?
 
-    def test_translated_seq(self, _transcript: Transcript, _translation: Translation) -> None:
+    def test_translated_seq(self, transcript: Transcript, translation: Translation) -> None:
         """Test that translated_seq is calculated correctly."""
 
 
