@@ -54,7 +54,7 @@ class TestIntronProperties:
         """Test that Intron core properties are set correctly."""
         assert intron.start == 11
         assert intron.end == 19
-        assert intron.strand == 1
+        assert intron.strand == Strand.FORWARD
 
     def test_externally_settable_properties(self, intron: Intron, exon: Exon) -> None:
         """Test that externally settable properties can be set and accessed."""

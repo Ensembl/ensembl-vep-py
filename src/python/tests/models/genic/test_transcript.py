@@ -61,7 +61,7 @@ class TestTranscriptProperties:
         """Test that Transcript core properties are set correctly."""
         assert transcript.start == 1
         assert transcript.end == 100
-        assert transcript.strand == 1
+        assert transcript.strand == Strand.FORWARD
         assert transcript.stable_id == "ENST00000000001"
 
     def test_externally_settable_properties(

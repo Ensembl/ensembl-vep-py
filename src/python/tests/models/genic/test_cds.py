@@ -57,7 +57,7 @@ class TestCDSProperties:
         """Test that CDS properties are set correctly."""
         assert cds.start == 11
         assert cds.end == 40
-        assert cds.strand == 1
+        assert cds.strand == Strand.FORWARD
 
     def test_externally_settable_properties(
         self, cds: CDS, transcript: Transcript, translation: Translation

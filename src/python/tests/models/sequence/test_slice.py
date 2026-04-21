@@ -62,7 +62,7 @@ class TestSliceProperties:
         assert genomic_slice.seq_region_length == 1000
         assert genomic_slice.start == 10
         assert genomic_slice.end == 200
-        assert genomic_slice.strand == 1
+        assert genomic_slice.strand == Strand.FORWARD
         assert genomic_slice.seq is None
 
 

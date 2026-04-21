@@ -99,7 +99,7 @@ class TestVariationProperties:
         """Test that a Variation can be initialized with the correct attributes."""
         assert variation.start == 5
         assert variation.end == 5
-        assert variation.strand == 1
+        assert variation.strand == Strand.FORWARD
         assert variation.allele_string == "A/T"
 
     def test_initialization_without_keywords(self) -> None:
@@ -180,7 +180,7 @@ class TestVariationAlleles:
 
         assert alleles[0].start == 5
         assert alleles[0].end == 5
-        assert alleles[0].strand == 1
+        assert alleles[0].strand == Strand.FORWARD
         assert alleles[0].slice == variation.slice
 
     def test_none_allele_string_returns_empty(self, genomic_slice: Slice) -> None:

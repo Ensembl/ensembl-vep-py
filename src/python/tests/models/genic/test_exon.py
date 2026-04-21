@@ -43,7 +43,7 @@ class TestExonProperties:
         """Test that Exon core properties are set correctly."""
         assert exon.start == 10
         assert exon.end == 50
-        assert exon.strand == 1
+        assert exon.strand == Strand.FORWARD
         assert exon.stable_id == "ENSE00000000001"
 
     def test_externally_settable_properties(self, exon: Exon) -> None:

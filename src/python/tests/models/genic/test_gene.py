@@ -50,7 +50,7 @@ class TestGeneProperties:
         """Test that core properties are set correctly."""
         assert gene.start == 10
         assert gene.end == 200
-        assert gene.strand == 1
+        assert gene.strand == Strand.FORWARD
         assert gene.stable_id == "ENSG00000000001"
 
     def test_externally_settable_properties(self, gene: Gene, transcript: Transcript) -> None:

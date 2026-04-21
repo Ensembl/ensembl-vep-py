@@ -68,7 +68,7 @@ class TestVariationAlleleProperties:
         """Test that a VariationAllele can be initialized with the correct attributes."""
         assert variation_allele.start == 5
         assert variation_allele.end == 5
-        assert variation_allele.strand == 1
+        assert variation_allele.strand == Strand.FORWARD
         assert variation_allele.reference_allele == "A"
         assert variation_allele.alternate_allele == "T"
 
