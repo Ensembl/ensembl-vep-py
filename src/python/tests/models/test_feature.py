@@ -28,7 +28,7 @@ class TestFeatureInitialization:
     def test_initialization_without_keywords(self) -> None:
         """Test Feature initialization without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = Feature(start=10, end=20, strand=Strand.FORWARD, seq=None)
+            _ = Feature(10, end=20, strand=Strand.FORWARD, seq=None)
 
 
 class TestFeatureProperties:

@@ -40,7 +40,7 @@ class TestTranslationInitialization:
     def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = Translation(start=10, end=90, stable_id="ENSP00000000001")
+            _ = Translation(10, end=90, stable_id="ENSP00000000001")
 
 
 class TestTranslationProperties:

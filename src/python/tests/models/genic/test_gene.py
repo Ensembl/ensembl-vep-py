@@ -40,7 +40,7 @@ class TestGeneInitialization:
     def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = Gene(stable_id="ENSG00000000001", start=10, end=200, strand=Strand.FORWARD)
+            _ = Gene("ENSG00000000001", start=10, end=200, strand=Strand.FORWARD)
 
 
 class TestGeneProperties:
