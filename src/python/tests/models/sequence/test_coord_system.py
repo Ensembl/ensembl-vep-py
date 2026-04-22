@@ -26,7 +26,7 @@ class TestCoordSystemInitialization:
 
     def test_initialization_without_keywords(self) -> None:
         """Test CoordSystem initialization without keywords raises expected error."""
-        with pytest.raises(TypeError, match="takes 1 positional argument"):
+        with pytest.raises(TypeError, match=r"missing \d+ required keyword-only arguments?"):
             _ = CoordSystem()  # type: ignore[call-arg]
 
 
