@@ -18,12 +18,13 @@ from contextlib import suppress
 import logging
 import os
 import sys
-from typing import Literal
+from typing import Any, Callable, Literal, Tuple, TypeVar
 
 from ensembl.vep.common import KnownStrand
 
 logger = logging.getLogger(__name__)
 
+T = TypeVar("T")
 
 def invalidates(*cached_names):  # type: ignore
     """
@@ -46,6 +47,38 @@ def invalidates(*cached_names):  # type: ignore
                 object.__delattr__(instance, f"_{type(instance).__name__}{name}")
 
         # attrs requires the hook to return the value
+        return new_value
+
+    return hook
+
+def reset_attrs(*attrs: Tuple[str, Any]) -> Callable:
+    """
+    Returns an attrs on_setattr hook that resets the named attributes to a default value.
+
+    Args:
+        *attrs: list of tuples (name, default_value) where
+                 * `name` is the attribute name to resent
+                 * `default_value` is the value to reset the attribute to on each call
+
+    Returns:
+        Callable: An on_setattr hook function.
+    """
+
+    def hook(instance: object, _modified_attr: str, new_value: T) -> T:
+        for attr_pair in attrs:
+            name = attr_pair[0]
+            default_value = attr_pair[1]
+            if not name.startswith("__"):
+                logger.debug(
+                    "reset_attrs should only be used for private attributes (starting with __)"
+                    ", but got '%(name)'.",
+                    extra={"name": name}
+                )
+            else:
+                with suppress(AttributeError):
+                    object.__setattr__(instance, name, default_value)
+
+        # attrs requires the hook to return the value on success
         return new_value
 
     return hook

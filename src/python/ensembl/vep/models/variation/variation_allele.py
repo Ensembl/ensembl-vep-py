@@ -22,7 +22,7 @@ from threading import Lock
 from collections.abc import Sequence
 from attrs import define, field
 
-from ensembl.vep.common import Locus, trim_sequences, shift_sequence, invalidates
+from ensembl.vep.common import Locus, trim_sequences, shift_sequence, invalidates, reset_attrs
 from ensembl.vep.models import Feature
 
 if TYPE_CHECKING:
@@ -60,35 +60,51 @@ class VariationAllele(Feature):
     """
 
     start: int = field(
-        on_setattr=invalidates(
-            "__minimised_locus", "__shifted_locus", "__minimised", "__shifted"
-        )
+        on_setattr=[
+            invalidates(
+                "__minimised_locus", "__shifted_locus"
+            ),
+            reset_attrs(
+                ("__minimised", False), ("__shifted", False)
+            )]
     )
     end: int = field(
-        on_setattr=invalidates(
-            "__minimised_locus", "__shifted_locus", "__minimised", "__shifted"
-        )
+        on_setattr=[
+            invalidates(
+                "__minimised_locus", "__shifted_locus"
+            ),
+            reset_attrs(
+                ("__minimised", False), ("__shifted", False)
+            )]
     )
     reference_allele: str | None = field(
         default=None,
-        on_setattr=invalidates(
-            "__minimised_locus", "__shifted_locus", "__minimised", "__shifted"
-        ),
+        on_setattr=[
+            invalidates(
+                "__minimised_locus", "__shifted_locus"
+            ),
+            reset_attrs(
+                ("__minimised", False), ("__shifted", False)
+            )],
     )
     alternate_allele: str | None = field(
         default=None,
-        on_setattr=invalidates(
-            "__minimised_locus", "__shifted_locus", "__minimised", "__shifted"
-        ),
+        on_setattr=[
+            invalidates(
+                "__minimised_locus", "__shifted_locus"
+            ),
+            reset_attrs(
+                ("__minimised", False), ("__shifted", False)
+            )],
     )
     __minimised: bool = field(
-        default=False, init=False, on_setattr=invalidates("__minimised_locus", "__shifted_locus")
+        default=False, init=False, on_setattr=invalidates("__minimised_locus")
     )
     """Whether the variation allele has been minimised."""
     __original_locus: Locus | None = field(default=None, init=False)
     """The original locus of the variation allele before any minimisation or shifting (if any occurred)."""
     __shifted: bool = field(
-        default=False, init=False, on_setattr=invalidates("__shifted_locus", "__minimised_locus")
+        default=False, init=False, on_setattr=invalidates("__shifted_locus")
     )
     """whether the variation allele has been shifted"""
     _lock: Lock = field(factory=Lock, init=False, repr=False)

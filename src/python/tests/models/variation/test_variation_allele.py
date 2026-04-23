@@ -234,22 +234,17 @@ class TestVariationAlleleShift:
 class TestVariationAlleleMinimiseAndShift:
     """Tests for interaction between minimise and shift methods."""
 
-    def test_minimise_and_shift_independent(self, variation_allele: VariationAllele) -> None:
-        """Test that minimise and shift can be called independently and set their respective flags."""
+    def test_minimise_independent(self, variation_allele: VariationAllele) -> None:
+        """Test that minimise can be called independently and respective flags are set."""
         variation_allele.minimise()
         assert variation_allele.minimised is True
         assert variation_allele.shifted is False
-        variation_allele2 = VariationAllele(
-            start=5,
-            end=5,
-            strand=Strand.FORWARD,
-            slice=variation_allele.slice,
-            reference_allele="A",
-            alternate_allele="T",
-        )
-        variation_allele2.shift()
-        assert variation_allele2.shifted is True
-        assert variation_allele2.minimised is False
+
+    def test_shift_independent(self, variation_allele: VariationAllele) -> None:
+        """Test that shift can be called independently and respective flags are set."""
+        variation_allele.shift()
+        assert variation_allele.shifted is True
+        assert variation_allele.minimised is False
 
     def test_minimise_then_shift(self, variation_allele: VariationAllele) -> None:
         """Test that calling shift after minimise retains the original locus and sets flags correctly."""
