@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 
-def invalidates(*cached_names):  # type: ignore
+def invalidates(*cached_names: str) -> Callable:
     """
     Returns an attrs on_setattr hook that clears the named cached property whenever the attribute is set.
 
@@ -37,7 +37,7 @@ def invalidates(*cached_names):  # type: ignore
         Callable: An on_setattr hook function.
     """
 
-    def hook(instance, _, new_value):  # type: ignore
+    def hook(instance: object, _modified_attr: str, new_value: T) -> T:
         for name in cached_names:
             if not name.startswith("__"):
                 logger.debug(
