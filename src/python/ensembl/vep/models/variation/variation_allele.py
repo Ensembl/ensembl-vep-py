@@ -133,6 +133,11 @@ class VariationAllele(Feature):
         """
         return self.__minimised_locus
 
+    @property
+    def __locus(self) -> Locus:
+        return Locus(start=self.start, end=self.end,
+                     allele_string=f"{self.reference_allele}/{self.alternate_allele}")
+
     @cached_property
     def __minimised_locus(self) -> Locus | None:
         """Returns the locus of the variation allele after minimisation.
@@ -143,9 +148,7 @@ class VariationAllele(Feature):
         if not self.__minimised:
             return None
 
-        return Locus(
-            start=self.start, end=self.end, allele_string=f"{self.reference_allele}/{self.alternate_allele}"
-        )
+        return self.__locus
 
     @property
     def shifted_locus(self) -> Locus | None:
@@ -166,9 +169,7 @@ class VariationAllele(Feature):
         if not self.__shifted:
             return None
 
-        return Locus(
-            start=self.start, end=self.end, allele_string=f"{self.reference_allele}/{self.alternate_allele}"
-        )
+        return self.__locus
 
     @property
     def minimised(self) -> bool:
@@ -206,9 +207,7 @@ class VariationAllele(Feature):
         if self.reference_allele is None or self.alternate_allele is None:
             raise ValueError("Missing reference or alternate allele for minimisation")
 
-        original_locus = self.__original_locus or Locus(
-            start=self.start, end=self.end, allele_string=f"{self.reference_allele}/{self.alternate_allele}"
-        )
+        original_locus = self.__original_locus or self.__locus
 
         self.reference_allele, self.alternate_allele, self.start, self.end, _changed = trim_sequences(
             ref=self.reference_allele, alt=self.alternate_allele, start=self.start, end=self.end
@@ -238,9 +237,7 @@ class VariationAllele(Feature):
         if self.slice is None or self.slice.seq is None:
             raise ValueError("Cannot shift variation allele without attached slice sequence.")
 
-        original_locus = self.__original_locus or Locus(
-            start=self.start, end=self.end, allele_string=f"{self.reference_allele}/{self.alternate_allele}"
-        )
+        original_locus = self.__original_locus or self.__locus
 
         search_start = max(0, self.start - MAX_SEARCH_AREA - 1)
         search_end = min(self.slice.end, self.end + MAX_SEARCH_AREA)
