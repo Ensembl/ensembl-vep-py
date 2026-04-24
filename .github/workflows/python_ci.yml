@@ -95,12 +95,13 @@ jobs:
           tags: "cicd"
 
       - name: Run pytest with coverage
+        id: unittest
         run: |
           uv run coverage run -m pytest
           uv run coverage lcov -o coverage.lcov
 
       - name: Add coverage reports
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' && (steps.unittest.outcome == 'success' || (failure() && steps.unittest.outcome == 'failure')) }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

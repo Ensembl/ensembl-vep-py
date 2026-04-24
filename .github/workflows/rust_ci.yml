@@ -58,11 +58,12 @@ jobs:
           tool: cargo-llvm-cov
         
       - name: Run tests with coverage
+        id: unittest
         run: |
           cargo llvm-cov --lcov --output-path coverage.lcov
         
       - name: Add coverage reports
-        if: github.event_name == 'pull_request'
+        if: ${{ github.event_name == 'pull_request' && (steps.unittest.outcome == 'success' || (failure() && steps.unittest.outcome == 'failure')) }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
