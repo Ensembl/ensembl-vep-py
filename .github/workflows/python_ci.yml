@@ -101,7 +101,6 @@ jobs:
 
       - name: Add coverage reports
         if: ${{ github.event_name == 'pull_request' }}
-        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
