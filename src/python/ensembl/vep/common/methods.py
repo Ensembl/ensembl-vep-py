@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 
+
 def invalidates(*cached_names: str) -> Callable:
     """
     Returns an attrs on_setattr hook that clears the named cached property whenever the attribute is set.
@@ -52,6 +53,7 @@ def invalidates(*cached_names: str) -> Callable:
         return new_value
 
     return hook
+
 
 def reset_attrs(*attrs: Tuple[str, Any]) -> Callable:
     """
@@ -80,7 +82,7 @@ def reset_attrs(*attrs: Tuple[str, Any]) -> Callable:
                 logger.debug(
                     "reset_attrs should only be used for private attributes (starting with __)"
                     ", but got '%s'.",
-                    short_name
+                    short_name,
                 )
             else:
                 object.__setattr__(instance, long_name, default_value)

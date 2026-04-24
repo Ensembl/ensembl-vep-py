@@ -153,9 +153,7 @@ class Transcript(Feature):
 
             for exon in self.spliced_exons:
                 if exon.seq is None:
-                    logger.warning(
-                        warning_template, exon.stable_id, self.stable_id
-                    )
+                    logger.warning(warning_template, exon.stable_id, self.stable_id)
                     seq += "N" * exon.length
                 else:
                     seq += exon.seq
@@ -198,9 +196,7 @@ class Transcript(Feature):
 
             for idx, exon in enumerate(self.spliced_exons[self.start_exon_index : self.end_exon_index + 1]):
                 if exon.seq is None:
-                    logger.warning(
-                        warning_template, exon.stable_id, self.stable_id
-                    )
+                    logger.warning(warning_template, exon.stable_id, self.stable_id)
                     exon_coding_seq = "N" * exon.length
                 else:
                     exon_coding_seq = exon.seq

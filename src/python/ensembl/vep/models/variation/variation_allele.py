@@ -60,52 +60,30 @@ class VariationAllele(Feature):
     """
 
     start: int = field(
-        on_setattr=[
-            invalidates(
-                "__minimised_locus", "__shifted_locus"
-            ),
-            reset_attrs(
-                ("__shifted", False)
-            )]
+        on_setattr=[invalidates("__minimised_locus", "__shifted_locus"), reset_attrs(("__shifted", False))]
     )
     end: int = field(
-        on_setattr=[
-            invalidates(
-                "__minimised_locus", "__shifted_locus"
-            ),
-            reset_attrs(
-                ("__shifted", False)
-            )]
+        on_setattr=[invalidates("__minimised_locus", "__shifted_locus"), reset_attrs(("__shifted", False))]
     )
     reference_allele: str | None = field(
         default=None,
         on_setattr=[
-            invalidates(
-                "__minimised_locus", "__shifted_locus"
-            ),
-            reset_attrs(
-                ("__minimised", False), ("__shifted", False)
-            )],
+            invalidates("__minimised_locus", "__shifted_locus"),
+            reset_attrs(("__minimised", False), ("__shifted", False)),
+        ],
     )
     alternate_allele: str | None = field(
         default=None,
         on_setattr=[
-            invalidates(
-                "__minimised_locus", "__shifted_locus"
-            ),
-            reset_attrs(
-                ("__minimised", False), ("__shifted", False)
-            )],
+            invalidates("__minimised_locus", "__shifted_locus"),
+            reset_attrs(("__minimised", False), ("__shifted", False)),
+        ],
     )
-    __minimised: bool = field(
-        default=False, init=False, on_setattr=invalidates("__minimised_locus")
-    )
+    __minimised: bool = field(default=False, init=False, on_setattr=invalidates("__minimised_locus"))
     """Whether the variation allele has been minimised."""
     __original_locus: Locus | None = field(default=None, init=False)
     """The original locus of the variation allele before any minimisation or shifting (if any occurred)."""
-    __shifted: bool = field(
-        default=False, init=False, on_setattr=invalidates("__shifted_locus")
-    )
+    __shifted: bool = field(default=False, init=False, on_setattr=invalidates("__shifted_locus"))
     """whether the variation allele has been shifted"""
     _lock: Lock = field(factory=Lock, init=False, repr=False)
     transcript_variation_alleles: list[TranscriptVariationAllele] = field(
@@ -135,8 +113,9 @@ class VariationAllele(Feature):
 
     @property
     def __locus(self) -> Locus:
-        return Locus(start=self.start, end=self.end,
-                     allele_string=f"{self.reference_allele}/{self.alternate_allele}")
+        return Locus(
+            start=self.start, end=self.end, allele_string=f"{self.reference_allele}/{self.alternate_allele}"
+        )
 
     @cached_property
     def __minimised_locus(self) -> Locus | None:

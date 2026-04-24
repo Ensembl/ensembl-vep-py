@@ -294,7 +294,9 @@ class TestVariationAlleleMinimiseAndShift:
         assert minimised_locus is not None, "minimised_locus returns None after minimise"
         assert minimised_locus.start == original_locus.start, "start was changed by minimise"
         assert minimised_locus.end == original_locus.end, "end was changed by minimise"
-        assert minimised_locus.allele_string == original_locus.allele_string, "ref/alt allele string was changed by minimise"  #pylint: disable=line-too-long
+        assert (
+            minimised_locus.allele_string == original_locus.allele_string
+        ), "ref/alt allele string was changed by minimise"
         minimised_alt_seq = variation_allele2.alternate_allele
         minimised_ref_seq = variation_allele2.reference_allele
 
@@ -350,7 +352,9 @@ class TestVariationAlleleMinimiseAndShift:
         assert shifted_locus is not None, "shifted_locus returns None after shift"
         assert original_locus.start == shifted_locus.start, "start was changed by shift"
         assert original_locus.end == shifted_locus.end, "end was changed by shift"
-        assert original_locus.allele_string == shifted_locus.allele_string, "ref/alt allele string was changed by shift"  # pylint: disable=line-too-long
+        assert (
+            original_locus.allele_string == shifted_locus.allele_string
+        ), "ref/alt allele string was changed by shift"
 
         variation_allele2.minimise()
         assert variation_allele2.minimised is True, "minimised was not set on minimise"
@@ -358,7 +362,9 @@ class TestVariationAlleleMinimiseAndShift:
         assert minimised_locus is not None, "minimised_locus returns None after minimise"
         assert minimised_locus.start != shifted_locus.start, "start was not changed by minimise"
         assert minimised_locus.end == shifted_locus.end, "end was changed by minimise"
-        assert minimised_locus.allele_string != shifted_locus.allele_string, "ref/alt allele string was not changed by minimise"  # pylint: disable=line-too-long
+        assert (
+            minimised_locus.allele_string != shifted_locus.allele_string
+        ), "ref/alt allele string was not changed by minimise"
 
         # shift should be False as minimise changes coordinate
         # and we do not know if it is still shifted
