@@ -319,8 +319,12 @@ class TestVariationAlleleMinimiseAndShift:
          => Shift should reset the minimised state (as ref/alt sequences was changed)."""
         repeat_slice = Slice(
             coord_system="chromosome",
-            seq_region_name="FAKE_CHROMOSOME", start=10, end=23, strand=Strand.FORWARD,
-            seq="TAGCTAGCTAGCTA")
+            seq_region_name="FAKE_CHROMOSOME",
+            start=10,
+            end=23,
+            strand=Strand.FORWARD,
+            seq="TAGCTAGCTAGCTA",
+        )
         variation_allele2 = VariationAllele(
             start=4,
             end=5,
@@ -337,7 +341,9 @@ class TestVariationAlleleMinimiseAndShift:
         assert minimised_locus is not None, "minimised_locus returns None after minimise"
         assert minimised_locus.start == original_locus.start, "start was changed by minimise"
         assert minimised_locus.end == original_locus.end, "end was changed by minimise"
-        assert minimised_locus.allele_string == original_locus.allele_string, "ref/alt allele string was changed by minimise"  #pylint: disable=line-too-long
+        assert (
+            minimised_locus.allele_string == original_locus.allele_string
+        ), "ref/alt allele string was changed by minimise"
 
         variation_allele2.shift()
         assert variation_allele2.shifted is True, "shifted was not set on shift"
@@ -346,7 +352,9 @@ class TestVariationAlleleMinimiseAndShift:
         assert shifted_locus is not None, "shifted_locus returns None after shift"
         assert shifted_locus.start != minimised_locus.start, "start was not changed by shift"
         assert shifted_locus.end != minimised_locus.end, "end was not changed by shift"
-        assert shifted_locus.allele_string != minimised_locus.allele_string, "ref/alt allele string was not changed by shift"  #pylint: disable=line-too-long
+        assert (
+            shifted_locus.allele_string != minimised_locus.allele_string
+        ), "ref/alt allele string was not changed by shift"
         assert variation_allele2.minimised is False, "minimised was not reset on shift"
 
     def test_shift_no_effect_then_minimise_no_effect(self, variation_allele: VariationAllele) -> None:
