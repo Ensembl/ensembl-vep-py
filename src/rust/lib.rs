@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use log::{error, info, warn};
 use pyo3::prelude::*;
-use log::{info, warn, error};
 
 // plain Rust helper, not exposed to Python: useful for threading and unit test
 fn sum_as_string_impl(a: &str, b: &str) -> String {
