@@ -98,7 +98,7 @@ class TestVariationAlleleProperties:
         with pytest.raises(
             AttributeError, match="property 'minimised' of 'VariationAllele' object has no setter"
         ):
-            variation_allele.minimised = False
+            variation_allele.minimised = False  # type: ignore
 
     def test_shifted(self, variation_allele: VariationAllele) -> None:
         """Test the shifted property before and after calling shift."""
@@ -114,7 +114,7 @@ class TestVariationAlleleProperties:
         with pytest.raises(
             AttributeError, match="property 'shifted' of 'VariationAllele' object has no setter"
         ):
-            variation_allele.shifted = False
+            variation_allele.shifted = False  # type: ignore
 
     def test_overlap_consequences(
         self,
