@@ -145,6 +145,18 @@ class TestShiftSequence:
         )
         assert (shift, shifted_seq, new_start, new_end) == (4, "AT", 9, 10)
 
+    def test_shift_sequence_tandem_repeat_3prime_w_seq_change(self) -> None:
+        """Shift to the right (3') on a tandem repeat.
+        Result should have changed position and sequence change (shifted till end of sequence)."""
+        seq = "TAGC"
+        post_seq = "TAGCTAGCTA"
+        pre_seq = "TAGC"
+        start, end = 4, 5
+        shift, shifted_seq, new_start, new_end, _ = shift_sequence(
+            seq, post_seq=post_seq, pre_seq=pre_seq, start=start, end=end
+        )
+        assert (shift, shifted_seq, new_start, new_end) == (10, "GCTA", 14, 14)
+
     def test_shift_sequence_tandem_repeat_5prime_w_seq_change(self) -> None:
         """Shift to the left (5') on a tandem repeat."""
         seq = "AT"

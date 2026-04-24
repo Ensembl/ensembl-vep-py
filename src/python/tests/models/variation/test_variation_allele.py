@@ -311,6 +311,44 @@ class TestVariationAlleleMinimiseAndShift:
         assert variation_allele2.minimised is True, "minimised was reset on shift"
         assert variation_allele2.original_locus == original_locus, "original_locus was changed on shift"
 
+    def test_minimise_no_effect_then_shift_w_seq_change(self) -> None:
+        """Test that calling shift after minimise retains the original locus and sets flags correctly.
+        In this testcase:
+         * Minimise should not change anything
+         * Shift should change the position and ref/alt allele sequence
+         => Shift should reset the minimised state (as ref/alt sequences was changed)."""
+        repeat_slice = Slice(
+            coord_system="chromosome",
+            seq_region_name="FAKE_CHROMOSOME", start=10, end=23, strand=Strand.FORWARD,
+            seq="TAGCTAGCTAGCTA")
+        variation_allele2 = VariationAllele(
+            start=4,
+            end=5,
+            strand=Strand.FORWARD,
+            slice=repeat_slice,
+            reference_allele="",
+            alternate_allele="TAGC",
+        )
+        variation_allele2.minimise()
+        assert variation_allele2.minimised is True, "minimised was not set on minimise"
+        original_locus = variation_allele2.original_locus
+        assert original_locus is not None, "original_locus was not set on minimise"
+        minimised_locus = variation_allele2.minimised_locus
+        assert minimised_locus is not None, "minimised_locus returns None after minimise"
+        assert minimised_locus.start == original_locus.start, "start was changed by minimise"
+        assert minimised_locus.end == original_locus.end, "end was changed by minimise"
+        assert minimised_locus.allele_string == original_locus.allele_string, "ref/alt allele string was changed by minimise"  #pylint: disable=line-too-long
+
+        variation_allele2.shift()
+        assert variation_allele2.shifted is True, "shifted was not set on shift"
+        assert variation_allele2.original_locus == original_locus, "original_locus was changed on shift"
+        shifted_locus = variation_allele2.shifted_locus
+        assert shifted_locus is not None, "shifted_locus returns None after shift"
+        assert shifted_locus.start != minimised_locus.start, "start was not changed by shift"
+        assert shifted_locus.end != minimised_locus.end, "end was not changed by shift"
+        assert shifted_locus.allele_string != minimised_locus.allele_string, "ref/alt allele string was not changed by shift"  #pylint: disable=line-too-long
+        assert variation_allele2.minimised is False, "minimised was not reset on shift"
+
     def test_shift_no_effect_then_minimise_no_effect(self, variation_allele: VariationAllele) -> None:
         """Test that calling minimise after shift retains the original locus and sets flags correctly.
         In this testcase:
