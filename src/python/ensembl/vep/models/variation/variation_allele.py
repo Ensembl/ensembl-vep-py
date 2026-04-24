@@ -209,9 +209,15 @@ class VariationAllele(Feature):
 
         original_locus = self.__original_locus or self.__locus
 
-        self.reference_allele, self.alternate_allele, self.start, self.end, _changed = trim_sequences(
+        new_ref, new_alt, new_start, new_end, _changed = trim_sequences(
             ref=self.reference_allele, alt=self.alternate_allele, start=self.start, end=self.end
         )
+
+        if _changed:
+            self.reference_allele = new_ref
+            self.alternate_allele = new_alt
+            self.start = new_start
+            self.end = new_end
 
         self.__original_locus = self.__original_locus or original_locus
         self.__minimised = True
@@ -252,13 +258,18 @@ class VariationAllele(Feature):
             seq_to_check = self.reference_allele
             using_ref = True
 
-        _, shifted_seq, self.start, self.end, _changed = shift_sequence(
+        _, shifted_seq, new_start, new_end, _changed = shift_sequence(
             seq=seq_to_check, post_seq=post_seq, pre_seq=pre_seq, start=self.start, end=self.end
         )
-        if using_ref:
-            self.reference_allele = shifted_seq
-        else:
-            self.alternate_allele = shifted_seq
+
+        if _changed:
+            if using_ref:
+                self.reference_allele = shifted_seq
+            else:
+                self.alternate_allele = shifted_seq
+
+            self.start = new_start
+            self.end = new_end
 
         self.__original_locus = self.__original_locus or original_locus
 
