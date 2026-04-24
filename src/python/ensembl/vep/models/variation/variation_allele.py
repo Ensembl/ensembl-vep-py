@@ -65,7 +65,7 @@ class VariationAllele(Feature):
                 "__minimised_locus", "__shifted_locus"
             ),
             reset_attrs(
-                ("__minimised", False), ("__shifted", False)
+                ("__shifted", False)
             )]
     )
     end: int = field(
@@ -74,7 +74,7 @@ class VariationAllele(Feature):
                 "__minimised_locus", "__shifted_locus"
             ),
             reset_attrs(
-                ("__minimised", False), ("__shifted", False)
+                ("__shifted", False)
             )]
     )
     reference_allele: str | None = field(
