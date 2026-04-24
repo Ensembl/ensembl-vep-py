@@ -20,6 +20,8 @@ import os
 import sys
 from typing import Any, Callable, Literal, Tuple, TypeVar
 
+from attrs import Attribute
+
 from ensembl.vep.common import KnownStrand
 
 logger = logging.getLogger(__name__)
@@ -64,19 +66,24 @@ def reset_attrs(*attrs: Tuple[str, Any]) -> Callable:
         Callable: An on_setattr hook function.
     """
 
-    def hook(instance: object, _modified_attr: str, new_value: T) -> T:
+    def hook(instance: object, _modified_attr: Attribute, new_value: T) -> T:
+        # nothing to do if the value hasn't changed
+        if object.__getattribute__(instance, _modified_attr.name) == new_value:
+            return new_value
+
+        # Otherwise, reset the attributes defined in attrs
         for attr_pair in attrs:
-            name = attr_pair[0]
+            short_name = attr_pair[0]
+            long_name = f"_{type(instance).__name__}{short_name}"
             default_value = attr_pair[1]
-            if not name.startswith("__"):
+            if not short_name.startswith("__"):
                 logger.debug(
                     "reset_attrs should only be used for private attributes (starting with __)"
-                    ", but got '%(name)'.",
-                    extra={"name": name}
+                    ", but got '%s'.",
+                    short_name
                 )
             else:
-                with suppress(AttributeError):
-                    object.__setattr__(instance, name, default_value)
+                object.__setattr__(instance, long_name, default_value)
 
         # attrs requires the hook to return the value on success
         return new_value
