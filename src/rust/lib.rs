@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use log::{error, info, warn};
+use log::{info};
 use pyo3::prelude::*;
 
 // plain Rust helper, not exposed to Python: useful for threading and unit test
