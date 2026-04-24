@@ -20,7 +20,7 @@ import os
 import sys
 from typing import Any, Callable, Literal, Tuple, TypeVar
 
-from attrs import Attribute
+from attrs import Attribute as AttrsAttribute
 
 from ensembl.vep.common import KnownStrand
 
@@ -39,7 +39,7 @@ def invalidates(*cached_names: str) -> Callable:
         Callable: An on_setattr hook function.
     """
 
-    def hook(instance: object, _modified_attr: str, new_value: T) -> T:
+    def hook(instance: object, _modified_attr: AttrsAttribute, new_value: T) -> T:
         for name in cached_names:
             if not name.startswith("__"):
                 logger.debug(
@@ -66,7 +66,7 @@ def reset_attrs(*attrs: Tuple[str, Any]) -> Callable:
         Callable: An on_setattr hook function.
     """
 
-    def hook(instance: object, _modified_attr: Attribute, new_value: T) -> T:
+    def hook(instance: object, _modified_attr: AttrsAttribute, new_value: T) -> T:
         # nothing to do if the value hasn't changed
         if object.__getattribute__(instance, _modified_attr.name) == new_value:
             return new_value
