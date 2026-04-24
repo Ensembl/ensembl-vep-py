@@ -18,7 +18,7 @@ from __future__ import annotations
 from typing import Any
 from attrs import define, field
 
-from ensembl.vep.common import Strand
+from ensembl.vep.common.enums import Strand
 
 
 @define(kw_only=True, auto_attribs=True)

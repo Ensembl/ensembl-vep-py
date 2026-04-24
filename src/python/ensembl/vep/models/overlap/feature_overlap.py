@@ -24,7 +24,7 @@ from ensembl.vep.models import Feature
 from ensembl.vep.common import invalidates
 
 if TYPE_CHECKING:
-    from ensembl.vep.models.overlap import OverlapConsequence
+    from .overlap_consequence import OverlapConsequence
 
 
 @define(kw_only=True, auto_attribs=True)

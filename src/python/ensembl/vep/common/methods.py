@@ -22,7 +22,7 @@ from typing import Any, Callable, Literal, Tuple, TypeVar
 
 from attrs import Attribute as AttrsAttribute
 
-from ensembl.vep.common import KnownStrand
+from .enums import KnownStrand
 
 logger = logging.getLogger(__name__)
 

@@ -23,7 +23,7 @@ from attrs import define, field
 from ensembl.vep.common import ClassSOTerm, invalidates
 from ensembl.vep.models import Feature
 from ensembl.vep.models.overlap import OverlapConsequence
-from ensembl.vep.models.variation import VariationAllele
+from .variation_allele import VariationAllele
 
 
 @define(kw_only=True, auto_attribs=True)
