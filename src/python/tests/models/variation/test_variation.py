@@ -195,7 +195,7 @@ class TestVariationAlleles:
             allele_string=None,
         )
         alleles = var.variation_alleles
-        assert alleles == []
+        assert len(alleles) == 0
 
 
 class TestVariationMinimisation:
