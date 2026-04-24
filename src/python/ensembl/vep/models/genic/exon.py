@@ -83,9 +83,9 @@ class Exon(Feature):
         elif self.phase == ExonPhase.TWO:
             frame = (self.start + 1) % 3
         else:
-            Warning_template = "Cannot calculate frame for exon %(exon_id) because phase is invalid: %(phase)"
+            Warning_template = "Cannot calculate frame for exon %s because phase is invalid: %s"
 
-            logger.warning(Warning_template, extra={"exon_id": self.stable_id, "phase": self.phase})
+            logger.warning(Warning_template, self.stable_id, self.phase)
             frame = None
 
         return frame

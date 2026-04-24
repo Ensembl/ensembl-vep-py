@@ -205,18 +205,16 @@ class Feature:
 
         if self.slice.seq_region_name != other.slice.seq_region_name:
             warning_template = (
-                "Cannot compare two features on different sequence regions. %(self_classname) is on"
-                " %(self_seq_region_name) and %(other_classname) is on %(other_seq_region_name)."
+                "Cannot compare two features on different sequence regions. %s is on"
+                " %s and %s is on %s."
             )
 
             logging.warning(
                 warning_template,
-                extra={
-                    "self_classname": self.__class__.__name__,
-                    "self_seq_region_name": self.slice.seq_region_name,
-                    "other_classname": other.__class__.__name__,
-                    "other_seq_region_name": other.slice.seq_region_name,
-                },
+                self.__class__.__name__,
+                self.slice.seq_region_name,
+                other.__class__.__name__,
+                other.slice.seq_region_name,
             )
             return False
 
