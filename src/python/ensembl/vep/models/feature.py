@@ -93,7 +93,7 @@ class Feature:
         """
         with self._lock:
             if self.slice is None:
-                logging.warning("Cannot obtain seq_region_start for a feature without attached slice.")
+                logger.warning("Cannot obtain seq_region_start for a feature without attached slice.")
                 return None
             return self.slice.start + self.start - 1
 
@@ -117,7 +117,7 @@ class Feature:
         """
         with self._lock:
             if self.slice is None:
-                logging.warning("Cannot obtain seq_region_end for a feature without attached slice.")
+                logger.warning("Cannot obtain seq_region_end for a feature without attached slice.")
                 return None
             return self.slice.start + self.end - 1
 
@@ -141,7 +141,7 @@ class Feature:
         """
         with self._lock:
             if self.slice is None:
-                logging.warning("Cannot obtain seq_region_strand for a feature without attached slice.")
+                logger.warning("Cannot obtain seq_region_strand for a feature without attached slice.")
                 return None
             return Strand(self.slice.strand.value * self.strand.value)
 
@@ -200,7 +200,7 @@ class Feature:
             bool | None: True if overlaps, False if not, None if slices are missing.
         """
         if self.slice is None or other.slice is None:
-            logging.warning("Cannot compare two features is any of them is without attached slice.")
+            logger.warning("Cannot compare two features is any of them is without attached slice.")
             return None
 
         if self.slice.seq_region_name != other.slice.seq_region_name:
@@ -208,7 +208,7 @@ class Feature:
                 "Cannot compare two features on different sequence regions. %s is on %s and %s is on %s."
             )
 
-            logging.warning(
+            logger.warning(
                 warning_template,
                 self.__class__.__name__,
                 self.slice.seq_region_name,
