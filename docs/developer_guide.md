@@ -338,7 +338,7 @@ Features positioned on a slice have coordinates and strand values expressed rela
 
 ### Coordinate Conventions
 
-All positions on a slice or sequence feature use `start` and `end` coordinates, where the condition `start < end` always holds true.
+All positions on a slice or sequence feature use `start` and `end` coordinates, where the condition `start <= end` always holds true.
 
 **Exception:** 
 1. An insertion variants described in Ensembl's default format can have `end = start - 1`.
