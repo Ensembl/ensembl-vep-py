@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 from functools import cached_property
-from threading import Lock
+from threading import RLock
 from attr import define, field
 
 from ensembl.vep.models import Feature
@@ -47,7 +47,7 @@ class FeatureOverlap:
     overlap_consequences: list[OverlapConsequence] = field(
         factory=list, init=False, on_setattr=invalidates("__most_severe_consequence", "__consequence_terms")
     )
-    _lock: Lock = field(factory=Lock, init=False, repr=False)
+    _lock: RLock = field(factory=RLock, init=False, repr=False)
 
     @property
     def most_severe_consequence(self) -> OverlapConsequence | None:

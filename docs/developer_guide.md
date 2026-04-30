@@ -306,12 +306,12 @@ The `@cached_property` is by default not suitable for use with slotted classes b
 **Warning:** `cached_property` is **not thread-safe** by default. If the class may be accessed concurrently, we use a threading lock to guard the property computation.
 Example:
 ```python
-from threading import Lock
+from threading import RLock
 from attrs import field
 from functools import cached_property
 
 class MyClass:
-    _lock: Lock = field(factory=Lock, init=False)
+    _lock: RLock = field(factory=RLock, init=False)
 
     @cached_property
     def expensive_computation(self):
@@ -320,7 +320,7 @@ class MyClass:
             ...
 ```
 
-There is an inherent problem with this approach when we try to access a cached property from a another cached property. It can lead to deadlock if both properties try to acquire the same lock. How to avoid this? (Re-entrant lock (`threading.RLock`) instead of a regular lock?)
+Note the use of `RLock` instead of `Lock` to prevent deadlocks when trying to access a cached property from a another cached property.
 
 ## Position in a Sequence Region
 

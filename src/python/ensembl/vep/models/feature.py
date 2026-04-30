@@ -18,7 +18,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 from functools import cached_property
-from threading import Lock
+from threading import RLock
 from attrs import define, field
 
 from ensembl.vep.models.sequence import Slice
@@ -48,7 +48,7 @@ class Feature:
         default=None, on_setattr=invalidates("__seq_region_start", "__seq_region_end", "__seq_region_strand")
     )
     seq: Any | None = field(default=None)
-    _lock: Lock = field(factory=Lock, init=False, repr=False)
+    _lock: RLock = field(factory=RLock, init=False, repr=False)
 
     @property
     def length(self) -> int:

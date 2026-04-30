@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 from functools import cached_property
-from threading import Lock
+from threading import RLock
 from attrs import define, field
 
 from ensembl.vep.common import invalidates
@@ -54,7 +54,7 @@ class Translation:
     version: int | None = field(default=None, init=False)
     seq: str | None = field(default=None, init=False)
     transcript: Transcript | None = field(default=None, init=False)
-    _lock: Lock = field(factory=Lock, init=False, repr=False)
+    _lock: RLock = field(factory=RLock, init=False, repr=False)
 
     @property
     def length(self) -> int:

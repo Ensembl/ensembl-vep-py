@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 from functools import cached_property
-from threading import Lock
+from threading import RLock
 from attrs import define, field
 
 from ensembl.vep.models import Feature
@@ -41,7 +41,7 @@ class CDS(Feature):
     seq: str | None = field(default=None, on_setattr=invalidates("__neucleotide_length", "__protein_length"))
     transcript: Transcript | None = field(default=None, init=False)
     translation: Translation | None = field(default=None, init=False)
-    _lock: Lock = field(factory=Lock, init=False, repr=False)
+    _lock: RLock = field(factory=RLock, init=False, repr=False)
 
     @property
     def neucleotide_length(self) -> int | None:

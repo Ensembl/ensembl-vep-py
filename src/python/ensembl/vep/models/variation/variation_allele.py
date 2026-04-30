@@ -18,7 +18,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 from functools import cached_property
-from threading import Lock
+from threading import RLock
 from collections.abc import Sequence
 from attrs import define, field
 
@@ -85,7 +85,7 @@ class VariationAllele(Feature):
     """The original locus of the variation allele before any minimisation or shifting (if any occurred)."""
     __shifted: bool = field(default=False, init=False, on_setattr=invalidates("__shifted_locus"))
     """whether the variation allele has been shifted"""
-    _lock: Lock = field(factory=Lock, init=False, repr=False)
+    _lock: RLock = field(factory=RLock, init=False, repr=False)
     transcript_variation_alleles: list[TranscriptVariationAllele] = field(
         factory=list, init=False, on_setattr=invalidates("__overlap_consequences")
     )

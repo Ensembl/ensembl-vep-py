@@ -201,17 +201,13 @@ class TestTranscriptProperties:
         ]
         assert transcript.cds_end == 50
 
-    def test_5_prime_utr(self, transcript: Transcript, translation: Translation) -> None:
+    def test_5_prime_utr(self, transcript: Transcript, translation: Translation) -> None:  # pylint: disable=unused-argument
         """Test that 5_prime_utr is calculated correctly."""
-        # assert transcript.five_prime_utr is None
+        assert transcript.five_prime_utr is None
 
-        # 5_prime_utr accesses spliced_seq and gets into deadlock, workaround?
-
-    def test_3_prime_utr(self, transcript: Transcript, translation: Translation) -> None:
+    def test_3_prime_utr(self, transcript: Transcript, translation: Translation) -> None:  # pylint: disable=unused-argument
         """Test that 3_prime_utr is calculated correctly."""
-        # assert transcript.three_prime_utr is None
-
-        # 3_prime_utr accesses spliced_seq and gets into deadlock, workaround?
+        assert transcript.three_prime_utr is None
 
     def test_translated_seq(self, transcript: Transcript, translation: Translation) -> None:
         """Test that translated_seq is calculated correctly."""

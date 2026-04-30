@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 from functools import cached_property
-from threading import Lock
+from threading import RLock
 from attr import define, field
 
 from ensembl.vep.common import invalidates
@@ -69,7 +69,7 @@ class TranscriptVariationAllele(FeatureOverlap):
     distance_to_transcript: int | None = field(default=None, init=False)
     exon_number: int | None = field(default=None, init=False)
     intron_number: int | None = field(default=None, init=False)
-    _lock: Lock = field(factory=Lock, init=False, repr=False)
+    _lock: RLock = field(factory=RLock, init=False, repr=False)
 
     @property
     def shifted(self) -> bool:

@@ -18,7 +18,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 from functools import cached_property
-from threading import Lock
+from threading import RLock
 from attrs import define, field
 
 from ensembl.vep.models import Feature
@@ -93,7 +93,7 @@ class Transcript(Feature):
     )
     alternative_translations: list[Translation] | None = field(factory=list, init=False)
     attributes: list[Attribute] | None = field(factory=list, init=False)
-    _lock: Lock = field(factory=Lock, init=False, repr=False)
+    _lock: RLock = field(factory=RLock, init=False, repr=False)
 
     @property
     def start_exon_index(self) -> int:

@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import re
 from functools import cached_property
-from threading import Lock
+from threading import RLock
 from attrs import define, field
 
 from ensembl.vep.common import ClassSOTerm, invalidates
@@ -50,7 +50,7 @@ class Variation(Feature):
         default=None, on_setattr=invalidates("__variation_alleles", "__class_so_term_ref_correct")
     )
     is_somatic: bool = field(default=False)
-    _lock: Lock = field(factory=Lock, init=False, repr=False)
+    _lock: RLock = field(factory=RLock, init=False, repr=False)
 
     @property
     def variation_alleles(self) -> list[VariationAllele]:

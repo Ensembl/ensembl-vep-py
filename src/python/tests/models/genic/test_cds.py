@@ -80,9 +80,7 @@ class TestCDSProperties:
 
     def test_protein_length(self, cds: CDS) -> None:
         """Test that CDS cached properties are accessed correctly."""
-        # assert cds.protein_length is None
+        assert cds.protein_length is None
 
-        # cds.seq = "ATG" * 10
-        # assert cds.protein_length == 10
-
-        # protein_length accesses neucleotide_length and gets into deadlock, workaround?
+        cds.seq = "ATG" * 10
+        assert cds.protein_length == 10
