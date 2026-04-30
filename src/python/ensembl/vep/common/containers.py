@@ -111,5 +111,5 @@ class PredictionResult:
     result: str
     classification: float | None = None
     version: str | None = None
-    modes: list[str] = []
-    reference_data: list[ExternalDB] = []
+    modes: tuple[str] | tuple[()] = ()
+    reference_data: tuple[ExternalDB] | tuple[()] = ()
