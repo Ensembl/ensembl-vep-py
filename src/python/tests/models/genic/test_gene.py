@@ -74,8 +74,8 @@ class TestGeneProperties:
 
         assert gene.alternative_names is not None
         assert gene.alternative_names == []
-        gene.alternative_names.append(ExternalReference("mock.1", "GeneOne"))
-        assert gene.alternative_names == [ExternalReference("mock.1", "GeneOne")]
+        gene.alternative_names.append(ExternalReference(accession_id="mock.1", name="GeneOne"))
+        assert gene.alternative_names == [ExternalReference(accession_id="mock.1", name="GeneOne")]
 
         assert gene.transcripts is not None
         assert gene.transcripts == []

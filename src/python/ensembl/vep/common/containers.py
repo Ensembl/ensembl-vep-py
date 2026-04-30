@@ -16,7 +16,7 @@
 from attrs import frozen
 
 
-@frozen
+@frozen(kw_only=True, auto_attribs=True)
 class Locus:
     """Container for a genomic position and (optionally) alleles.
 
@@ -33,7 +33,7 @@ class Locus:
     allele_string: str | None = None
 
 
-@frozen
+@frozen(kw_only=True, auto_attribs=True)
 class Attribute:
     """Container for an attribute of a feature.
 
@@ -50,7 +50,7 @@ class Attribute:
     description: str | None = None
 
 
-@frozen
+@frozen(kw_only=True, auto_attribs=True)
 class ExternalDB:
     """Container for external database information.
 
@@ -69,7 +69,7 @@ class ExternalDB:
     release: str | None = None
 
 
-@frozen
+@frozen(kw_only=True, auto_attribs=True)
 class ExternalReference:
     """Container for external reference information.
 
@@ -90,7 +90,7 @@ class ExternalReference:
     source: ExternalDB | None = None
 
 
-@frozen
+@frozen(kw_only=True, auto_attribs=True)
 class PredictionResult:
     """Container for a prediction result of a program.
 
