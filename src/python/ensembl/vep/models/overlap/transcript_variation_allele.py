@@ -61,11 +61,11 @@ class TranscriptVariationAllele(FeatureOverlap):
     feature: Transcript
     overlapping_feature: VariationAllele
     is_reference: bool = field(default=False)
-    cdna_locus: Locus = field(init=False, on_setattr=invalidates("hgvs_transcript"))
+    cdna_locus: Locus = field(init=False, on_setattr=invalidates("__hgvs_transcript"))
     cds_locus: Locus | None = field(
-        default=None, init=False, on_setattr=invalidates("hgvs_transcript", "hgvs_protein")
+        default=None, init=False, on_setattr=invalidates("__hgvs_transcript", "__hgvs_protein")
     )
-    protein_locus: Locus | None = field(default=None, init=False, on_setattr=invalidates("hgvs_protein"))
+    protein_locus: Locus | None = field(default=None, init=False, on_setattr=invalidates("__hgvs_protein"))
     distance_to_transcript: int | None = field(default=None, init=False)
     exon_number: int | None = field(default=None, init=False)
     intron_number: int | None = field(default=None, init=False)

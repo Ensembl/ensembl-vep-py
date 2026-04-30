@@ -47,7 +47,7 @@ class Variation(Feature):
 
     stable_id: str | None = field(default=None)
     allele_string: str | None = field(
-        default=None, on_setattr=invalidates("variation_alleles", "class_so_term")
+        default=None, on_setattr=invalidates("__variation_alleles", "__class_so_term_ref_correct")
     )
     is_somatic: bool = field(default=False)
     _lock: Lock = field(factory=Lock, init=False, repr=False)
