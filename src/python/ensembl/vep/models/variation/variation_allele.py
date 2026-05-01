@@ -22,7 +22,7 @@ from threading import RLock
 from collections.abc import Sequence
 from attrs import define, field
 
-from ensembl.vep.common import Locus, trim_sequences, shift_sequence, invalidates, reset_attrs
+from ensembl.vep.common import Locus, trim_sequences, shift_sequence, invalidates, resets_attrs
 from ensembl.vep.models import Feature
 
 if TYPE_CHECKING:
@@ -60,23 +60,23 @@ class VariationAllele(Feature):
     """
 
     start: int = field(
-        on_setattr=[invalidates("__minimised_locus", "__shifted_locus"), reset_attrs(("__shifted", False))]
+        on_setattr=[invalidates("__minimised_locus", "__shifted_locus"), resets_attrs(("__shifted", False))]
     )
     end: int = field(
-        on_setattr=[invalidates("__minimised_locus", "__shifted_locus"), reset_attrs(("__shifted", False))]
+        on_setattr=[invalidates("__minimised_locus", "__shifted_locus"), resets_attrs(("__shifted", False))]
     )
     reference_allele: str | None = field(
         default=None,
         on_setattr=[
             invalidates("__minimised_locus", "__shifted_locus"),
-            reset_attrs(("__minimised", False), ("__shifted", False)),
+            resets_attrs(("__minimised", False), ("__shifted", False)),
         ],
     )
     alternate_allele: str | None = field(
         default=None,
         on_setattr=[
             invalidates("__minimised_locus", "__shifted_locus"),
-            reset_attrs(("__minimised", False), ("__shifted", False)),
+            resets_attrs(("__minimised", False), ("__shifted", False)),
         ],
     )
     __minimised: bool = field(default=False, init=False, on_setattr=invalidates("__minimised_locus"))

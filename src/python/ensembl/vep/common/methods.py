@@ -60,7 +60,7 @@ def invalidates(*cached_names: str) -> Callable:
     return hook
 
 
-def reset_attrs(*attrs: tuple[str, Any]) -> Callable:
+def resets_attrs(*attrs: tuple[str, Any]) -> Callable:
     """
     Returns an attrs on_setattr hook that resets the named attributes to a default value.
 
