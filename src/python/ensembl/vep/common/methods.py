@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 T = TypeVar("T")
 
 
-def invalidate(instance: object, invalidate_names: Sequence[str]) -> None:
+def invalidate(instance: object, *invalidate_names: str) -> None:
     """Clears the named cached properties of a class object when the attributes are set."""
     for name in invalidate_names:
         if not name.startswith("__"):
@@ -52,7 +52,7 @@ def invalidates(*cached_names: str) -> Callable:
     """
 
     def hook(instance: object, _modified_attr: AttrsAttribute, new_value: T) -> T:
-        invalidate(instance, cached_names)
+        invalidate(instance, *cached_names)
 
         # attrs requires the hook to return the value
         return new_value
