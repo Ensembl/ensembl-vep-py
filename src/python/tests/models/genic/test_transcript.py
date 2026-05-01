@@ -202,14 +202,14 @@ class TestTranscriptProperties:
         assert transcript.cds_end == 50
 
     def test_5_prime_utr(
-        self, transcript: Transcript, translation: Translation
-    ) -> None:  # pylint: disable=unused-argument
+        self, transcript: Transcript, translation: Translation  # pylint: disable=unused-argument
+    ) -> None:
         """Test that 5_prime_utr is calculated correctly."""
         assert transcript.five_prime_utr is None
 
     def test_3_prime_utr(
-        self, transcript: Transcript, translation: Translation
-    ) -> None:  # pylint: disable=unused-argument
+        self, transcript: Transcript, translation: Translation  # pylint: disable=unused-argument
+    ) -> None:
         """Test that 3_prime_utr is calculated correctly."""
         assert transcript.three_prime_utr is None
 
