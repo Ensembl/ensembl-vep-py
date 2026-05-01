@@ -18,7 +18,7 @@ from contextlib import suppress
 import logging
 import os
 import sys
-from typing import Any, Callable, Literal, Tuple, TypeVar, Sequence
+from typing import Any, Callable, Literal, TypeVar, Sequence
 
 from attrs import Attribute as AttrsAttribute
 
@@ -60,7 +60,7 @@ def invalidates(*cached_names: str) -> Callable:
     return hook
 
 
-def reset_attrs(*attrs: Tuple[str, Any]) -> Callable:
+def reset_attrs(*attrs: tuple[str, Any]) -> Callable:
     """
     Returns an attrs on_setattr hook that resets the named attributes to a default value.
 
