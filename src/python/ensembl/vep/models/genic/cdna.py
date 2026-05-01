@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
 
 @define(kw_only=True, auto_attribs=True)
-class cDNA(Feature):
+class CDNA(Feature):
     """
     Represents a cDNA.
 

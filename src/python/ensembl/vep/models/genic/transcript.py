@@ -26,7 +26,7 @@ from ensembl.vep.models.genic import CDS, UTR
 from ensembl.vep.common import Attribute, invalidates
 
 if TYPE_CHECKING:
-    from ensembl.vep.models.genic import Gene, Exon, Intron, cDNA, Translation
+    from ensembl.vep.models.genic import Gene, Exon, Intron, CDNA, Translation
 
 logger = logging.getLogger(__name__)
 
@@ -227,7 +227,7 @@ class Transcript(Feature):
             return cds
 
     @cached_property
-    def cdna(self) -> cDNA | None:
+    def cdna(self) -> CDNA | None:
         """Returns the cDNA sequence for the transcript, or None if not applicable."""
         raise NotImplementedError("Feature is not implemented yet.")
 

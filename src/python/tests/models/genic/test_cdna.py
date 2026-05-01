@@ -18,7 +18,7 @@
 import pytest
 
 from ensembl.vep.common import Strand
-from ensembl.vep.models.genic.cdna import cDNA
+from ensembl.vep.models.genic.cdna import CDNA
 from ensembl.vep.models.genic.transcript import Transcript
 
 
@@ -29,9 +29,9 @@ def transcript() -> Transcript:
 
 
 @pytest.fixture
-def cdna() -> cDNA:
+def cdna() -> CDNA:
     """cDNA fixture for testing."""
-    return cDNA(start=10, end=50, strand=Strand.FORWARD)
+    return CDNA(start=10, end=50, strand=Strand.FORWARD)
 
 
 class TestcDNAInitialization:
@@ -40,19 +40,19 @@ class TestcDNAInitialization:
     def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = cDNA(10, end=50, strand=Strand.FORWARD)  # type: ignore[misc]
+            _ = CDNA(10, end=50, strand=Strand.FORWARD)  # type: ignore[misc]
 
 
 class TestcDNAProperties:
     """Test cDNA properties."""
 
-    def test_core_properties(self, cdna: cDNA) -> None:
+    def test_core_properties(self, cdna: CDNA) -> None:
         """Test that cDNA properties are set correctly."""
         assert cdna.start == 10
         assert cdna.end == 50
         assert cdna.strand == Strand.FORWARD
 
-    def test_externally_settable_properties(self, cdna: cDNA, transcript: Transcript) -> None:
+    def test_externally_settable_properties(self, cdna: CDNA, transcript: Transcript) -> None:
         """Test that externally settable properties can be set and accessed."""
         assert cdna.transcript is None
         cdna.transcript = transcript
