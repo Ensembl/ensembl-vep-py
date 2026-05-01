@@ -18,8 +18,7 @@ from contextlib import suppress
 import logging
 import os
 import sys
-from typing import Any, Callable, Literal, TypeVar, Sequence
-
+from typing import Any, Callable, Literal, TypeVar
 from attrs import Attribute as AttrsAttribute
 
 from .enums import KnownStrand
