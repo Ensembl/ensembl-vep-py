@@ -20,7 +20,7 @@ from functools import cached_property
 from threading import RLock
 from attrs import define, field
 
-from ensembl.vep.common import ClassSOTerm, invalidates
+from ensembl.vep.common import ClassSOTerm, invalidate, invalidates
 from ensembl.vep.models import Feature
 from ensembl.vep.models.overlap import OverlapConsequence
 from .variation_allele import VariationAllele
@@ -68,7 +68,7 @@ class Variation(Feature):
         Returns:
             List of VariationAllele objects.
         """
-        invalidates("most_severe_consequence")
+        invalidate(self, "__most_severe_consequence")
 
         with self._lock:
             variation_alleles = []

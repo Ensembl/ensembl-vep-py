@@ -18,7 +18,7 @@ from contextlib import suppress
 import logging
 import os
 import sys
-from typing import Any, Callable, Literal, Tuple, TypeVar
+from typing import Any, Callable, Literal, Tuple, TypeVar, Sequence
 
 from attrs import Attribute as AttrsAttribute
 
@@ -27,6 +27,17 @@ from .enums import KnownStrand
 logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
+
+
+def invalidate(instance: object, invalidate_names: Sequence[str]) -> None:
+    """Clears the named cached properties of a class object when the attributes are set."""
+    for name in invalidate_names:
+        if not name.startswith("__"):
+            logger.debug(
+                f"Invalidation only works for private attributes (starting with __), but got '{name}'"
+            )
+        with suppress(AttributeError):
+            object.__delattr__(instance, f"_{type(instance).__name__}{name}")
 
 
 def invalidates(*cached_names: str) -> Callable:
@@ -41,13 +52,7 @@ def invalidates(*cached_names: str) -> Callable:
     """
 
     def hook(instance: object, _modified_attr: AttrsAttribute, new_value: T) -> T:
-        for name in cached_names:
-            if not name.startswith("__"):
-                logger.debug(
-                    f"Invalidation only works for private attributes (starting with __), but got '{name}'"
-                )
-            with suppress(AttributeError):
-                object.__delattr__(instance, f"_{type(instance).__name__}{name}")
+        invalidate(instance, cached_names)
 
         # attrs requires the hook to return the value
         return new_value
