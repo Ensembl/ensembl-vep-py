@@ -30,7 +30,12 @@ T = TypeVar("T")
 
 
 def invalidate(instance: object, *invalidate_names: str) -> None:
-    """Clears the named cached properties of a class object when the attributes are set."""
+    """Clears the named cached properties of a class object when the attributes are set.
+
+    Args:
+        instance: The class object to invalidate attributes of.
+        *invalidate_names: The names of the cached properties to invalidate.
+    """
     for name in invalidate_names:
         if not name.startswith("__"):
             logger.debug(
