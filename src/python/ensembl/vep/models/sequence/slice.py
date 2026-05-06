@@ -53,7 +53,7 @@ class Slice:
         Returns:
             bool: True if equal, False otherwise.
         """
-        if not isinstance(other, Slice) or type(self) is not type(other):
+        if type(self) is not type(other):
             return False
 
         return (
