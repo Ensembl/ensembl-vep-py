@@ -13,6 +13,8 @@
 # limitations under the License.
 """Unit tests for common methods."""
 
+import pytest
+
 from ensembl.vep.common import trim_sequences, shift_sequence, KnownStrand
 
 
@@ -38,6 +40,13 @@ class TestTrimSequences:
         """Trimming with strand = -1."""
         ref, alt, start, end, changed = trim_sequences("ACGT", "ACCT", start=10, strand=KnownStrand.REVERSE)
         assert (ref, alt, start, end, changed) == ("G", "C", 11, 11, True)
+
+    def test_trim_sequences_none_input(self):
+        """Should raise ValueError if ref or alt is None."""
+        with pytest.raises(ValueError):
+            trim_sequences(None, "A")
+        with pytest.raises(ValueError):
+            trim_sequences("A", None)
 
     def test_trim_sequences_no_trimming(self) -> None:
         """No common bases, no trimming."""
@@ -167,3 +176,12 @@ class TestShiftSequence:
             seq, post_seq=post_seq, pre_seq=pre_seq, start=start, end=end, reverse=True
         )
         assert (shift, shifted_seq, new_start, new_end) == (3, "TA", 2, 3)
+
+    def test_shift_sequence_none_input(self):
+        """Should raise ValueError if seq, post_seq, or pre_seq is None."""
+        with pytest.raises(ValueError):
+            shift_sequence(None, post_seq="A", pre_seq="A", start=1, end=1)
+        with pytest.raises(ValueError):
+            shift_sequence("A", post_seq=None, pre_seq="A", start=1, end=1)
+        with pytest.raises(ValueError):
+            shift_sequence("A", post_seq="A", pre_seq=None, start=1, end=1)
