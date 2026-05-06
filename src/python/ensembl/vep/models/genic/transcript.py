@@ -22,11 +22,10 @@ from threading import RLock
 from attrs import define, field
 
 from ensembl.vep.models import Feature
-from ensembl.vep.models.genic import CDS, UTR
 from ensembl.vep.common import Attribute, invalidates
 
 if TYPE_CHECKING:
-    from ensembl.vep.models.genic import Gene, Exon, Intron, CDNA, Translation
+    from ensembl.vep.models.genic import Gene, Exon, Intron, CDS, CDNA, UTR, Translation
 
 logger = logging.getLogger(__name__)
 
@@ -177,6 +176,7 @@ class Transcript(Feature):
             CDS | None: The CDS associated with this transcript, or None if not applicable.
         """
         with self._lock:
+            from ensembl.vep.models.genic import CDS
             if self.translation is None:
                 logger.warning(
                     "Cannot compute CDS for transcript %s because translation information is not available.",
@@ -376,6 +376,8 @@ class Transcript(Feature):
             The 5' UTR of the transcript, or None if not applicable.
         """
         with self._lock:
+            from ensembl.vep.models.genic import UTR
+
             if self.cds_start is None or self.cdna_coding_start is None:
                 warning_template = (
                     "Cannot compute five_prime_utr for transcript %s"
@@ -420,6 +422,8 @@ class Transcript(Feature):
             The 3' UTR of the transcript, or None if not applicable.
         """
         with self._lock:
+            from ensembl.vep.models.genic import UTR
+
             if self.cds_end is None or self.cdna_coding_end is None:
                 warning_template = (
                     "Cannot compute three_prime_utr for transcript %s"
@@ -470,23 +474,17 @@ class Transcript(Feature):
             str | None: The translated sequence of the transcript, or None if not applicable.
         """
         with self._lock:
-            seq: str | None
-
             if self.translation is not None:
-                seq = self.translation.seq
-            elif self.cds is None:
+                return self.translation.seq
+            if self.cds is None:
                 # to avoid pylint warning, # TBD: need codon table
-                seq = "dummy"
-            else:
-                warning_template = (
-                    "Cannot compute translated_seq for transcript %s"
-                    " because translation and CDS sequence are both not available."
-                )
+                return "dummy"
 
-                logger.warning(warning_template, self.stable_id)
-                seq = None
-
-            return seq
+            logger.warning(
+                f"Cannot compute translated_seq for transcript {self.stable_id} because "
+                f"translation and CDS sequence are both not available."
+            )
+            return None
 
     def __eq__(self, other: object) -> bool:
         """Compare two Transcripts using various criteria.

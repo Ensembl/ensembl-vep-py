@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 import re
+from typing import TYPE_CHECKING
 from functools import cached_property
 from threading import RLock
 from attrs import define, field
@@ -24,6 +25,9 @@ from ensembl.vep.common import ClassSOTerm, invalidate, invalidates
 from ensembl.vep.models import Feature
 from ensembl.vep.models.overlap import OverlapConsequence
 from .variation_allele import VariationAllele
+
+if TYPE_CHECKING:
+    from ensembl.vep.models.variation import VariationAllele
 
 
 @define(kw_only=True, auto_attribs=True)
@@ -60,7 +64,7 @@ class Variation(Feature):
         """Public accessor for the __variation_alleles.
 
         Returns:
-            The list of VariationAllele objects for the variation.
+            list[VariationAllele]: The list of VariationAllele objects for the variation.
         """
         return self.__variation_alleles
 
@@ -69,11 +73,13 @@ class Variation(Feature):
         """Returns the list of VariationAllele objects for the variation.
 
         Returns:
-            List of VariationAllele objects.
+            list[VariationAllele]: The list of VariationAllele objects for the variation.
         """
         invalidate(self, "__most_severe_consequence")
 
         with self._lock:
+            from ensembl.vep.models.variation import VariationAllele
+
             variation_alleles = []
             alleles = (self.allele_string or "").split("/")
 
@@ -99,8 +105,8 @@ class Variation(Feature):
         """Public accessor for the __most_severe_consequence.
 
         Returns:
-            The most severe consequence type for the variation
-            or None if not deducible.
+            OverlapConsequence | None: The most severe consequence type for the variation 
+                or None if not deducible.
         """
         return self.__most_severe_consequence
 

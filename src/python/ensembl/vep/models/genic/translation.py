@@ -78,7 +78,8 @@ class Translation:
     @property
     def exon_coding_start(self) -> int:
         """
-        The position of the first coding base in the start exon, relative to the start of the exon.
+        Returns the position of the first coding base in the start exon, 
+        relative to the start of the exon.
 
         Returns:
             The position of the first coding base in the start exon,
