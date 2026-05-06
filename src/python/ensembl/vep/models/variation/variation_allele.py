@@ -94,6 +94,12 @@ class VariationAllele(Feature):
     # intergenic_variation_alleles: list[IntergenicVariationAllele] = field(factory=list, init=False)
 
     @property
+    def __locus(self) -> Locus:
+        return Locus(
+            start=self.start, end=self.end, allele_string=f"{self.reference_allele}/{self.alternate_allele}"
+        )
+
+    @property
     def original_locus(self) -> Locus | None:
         """Public accessor for __original_locus.
 
@@ -110,12 +116,6 @@ class VariationAllele(Feature):
             Locus | None: The minimised locus if available, None otherwise.
         """
         return self.__minimised_locus
-
-    @property
-    def __locus(self) -> Locus:
-        return Locus(
-            start=self.start, end=self.end, allele_string=f"{self.reference_allele}/{self.alternate_allele}"
-        )
 
     @cached_property
     def __minimised_locus(self) -> Locus | None:
