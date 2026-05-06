@@ -75,17 +75,14 @@ class Exon(Feature):
             return None
 
         # TBD: why we use module of start position? instead would it be simple convert - 0->0, 1->2, 2->1?
-        frame: int | None
         if self.phase == ExonPhase.ZERO:
-            frame = self.start % 3
-        elif self.phase == ExonPhase.ONE:
-            frame = (self.start + 2) % 3
-        elif self.phase == ExonPhase.TWO:
-            frame = (self.start + 1) % 3
-        else:
-            Warning_template = "Cannot calculate frame for exon %s because phase is invalid: %s"
+            return self.start % 3
+        if self.phase == ExonPhase.ONE:
+            return (self.start + 2) % 3
+        if self.phase == ExonPhase.TWO:
+            return (self.start + 1) % 3
 
-            logger.warning(Warning_template, self.stable_id, self.phase)
-            frame = None
-
-        return frame
+        logger.warning(
+            f"Cannot calculate frame for exon {self.stable_id} because phase is invalid: {self.phase}"
+        )
+        return None
