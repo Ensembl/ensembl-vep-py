@@ -26,17 +26,13 @@ class UnsafeSetterMixin:
     after the context exits.
     """
 
-    __slots__ = ("_safe_cls",)
-
-    def __attrs_post_init__(self) -> None:
-        """Set up the safe class reference for later use in the unsafe context manager."""
-        object.__setattr__(self, "_safe_cls", type(self))
+    __slots__ = ()
 
     @contextmanager
     def unsafe(self):  # type: ignore
         """Context manager that temporarily swaps the class of this instance to a version with an
         unsafe __setattr__ that bypasses attrs' on_setattr hooks."""
-        safe_cls = self._safe_cls
+        safe_cls = type(self)
 
         # create a throwaway subclass with a bare __setattr__
         unsafe_cls = type(
