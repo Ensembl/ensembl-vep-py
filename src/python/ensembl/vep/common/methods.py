@@ -21,7 +21,7 @@ import sys
 from typing import Any, Callable, Literal, TypeVar
 from attrs import Attribute as AttrsAttribute
 
-from .enums import KnownStrand
+from .enums import Strand
 
 logger = logging.getLogger(__name__)
 
@@ -110,7 +110,7 @@ def trim_sequences(
     end: int | None = None,
     empty_to_dash: bool = False,
     end_first: bool = False,
-    strand: KnownStrand = KnownStrand.FORWARD,
+    strand: Strand = Strand.FORWARD,
 ) -> tuple[str, str, int, int, bool]:
     """
     Trim common sequence from a ref/alt allele pair to give minimal alleles.
@@ -180,7 +180,7 @@ def _trim_common_sequence(
     start: int = 0,
     end: int,
     trim_at: Literal["left", "right"],
-    strand: KnownStrand = KnownStrand.FORWARD,
+    strand: Strand = Strand.FORWARD,
 ) -> tuple[str, str, int, int, bool]:
     """
     Trim common sequence from start or end of a ref/alt allele pair.
@@ -205,7 +205,7 @@ def _trim_common_sequence(
         while ref and alt and ref[0] == alt[0]:
             ref = ref[1:]
             alt = alt[1:]
-            if strand == KnownStrand.REVERSE:
+            if strand == Strand.REVERSE:
                 end -= 1
             else:
                 start += 1
@@ -214,7 +214,7 @@ def _trim_common_sequence(
         while ref and alt and ref[-1] == alt[-1]:
             ref = ref[:-1]
             alt = alt[:-1]
-            if strand == KnownStrand.REVERSE:
+            if strand == Strand.REVERSE:
                 start += 1
             else:
                 end -= 1

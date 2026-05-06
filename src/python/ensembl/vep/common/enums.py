@@ -24,13 +24,6 @@ class Strand(Enum):
     UNKNOWN = 0
 
 
-class KnownStrand(Enum):
-    """Known Genomic strand."""
-
-    FORWARD = Strand.FORWARD
-    REVERSE = Strand.REVERSE
-
-
 class CoordSystemLevel(Enum):
     """Coordinate system level."""
 
