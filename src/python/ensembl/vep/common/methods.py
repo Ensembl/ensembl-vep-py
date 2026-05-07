@@ -133,7 +133,7 @@ def trim_sequences(
     Raises:
         ValueError: If ref or alt is None.
     """
-    if not ref or not alt:
+    if ref is None or alt is None:
         raise ValueError("Missing reference or alternate sequence for trimming")
 
     end = end or (start + (len(ref) - 1))

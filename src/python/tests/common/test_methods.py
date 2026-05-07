@@ -41,12 +41,12 @@ class TestTrimSequences:
         ref, alt, start, end, changed = trim_sequences("ACGT", "ACCT", start=10, strand=Strand.REVERSE)
         assert (ref, alt, start, end, changed) == ("G", "C", 11, 11, True)
 
-    def test_trim_sequences_none_input(self):
+    def test_trim_sequences_none_input(self) -> None:
         """Should raise ValueError if ref or alt is None."""
         with pytest.raises(ValueError):
-            trim_sequences(None, "A")
+            trim_sequences(None, "A")   # type: ignore[arg-type]
         with pytest.raises(ValueError):
-            trim_sequences("A", None)
+            trim_sequences("A", None)   # type: ignore[arg-type]
 
     def test_trim_sequences_no_trimming(self) -> None:
         """No common bases, no trimming."""
@@ -177,11 +177,11 @@ class TestShiftSequence:
         )
         assert (shift, shifted_seq, new_start, new_end) == (3, "TA", 2, 3)
 
-    def test_shift_sequence_none_input(self):
+    def test_shift_sequence_none_input(self) -> None:
         """Should raise ValueError if seq, post_seq, or pre_seq is None."""
         with pytest.raises(ValueError):
-            shift_sequence(None, post_seq="A", pre_seq="A", start=1, end=1)
+            shift_sequence(None, post_seq="A", pre_seq="A", start=1, end=1) # type: ignore[arg-type]
         with pytest.raises(ValueError):
-            shift_sequence("A", post_seq=None, pre_seq="A", start=1, end=1)
+            shift_sequence("A", post_seq=None, pre_seq="A", start=1, end=1) # type: ignore[arg-type]
         with pytest.raises(ValueError):
-            shift_sequence("A", post_seq="A", pre_seq=None, start=1, end=1)
+            shift_sequence("A", post_seq="A", pre_seq=None, start=1, end=1) # type: ignore[arg-type]

@@ -287,9 +287,9 @@ class TestVariationAlleleMinimiseAndShift:
             alternate_allele="T",
         )
         variation_allele2.minimise()
-        assert variation_allele2.minimised is True, "minimised was not set on minimise"
+        assert variation_allele2.minimised is True, "minimised was set on minimise"
         original_locus = variation_allele2.original_locus
-        assert original_locus is not None, "original_locus was not set on minimise"
+        assert original_locus is not None, "original_locus was set on minimise"
         minimised_locus = variation_allele2.minimised_locus
         assert minimised_locus is not None, "minimised_locus returns None after minimise"
         assert minimised_locus.start == original_locus.start, "start was changed by minimise"
@@ -311,7 +311,29 @@ class TestVariationAlleleMinimiseAndShift:
         assert variation_allele2.minimised is True, "minimised was reset on shift"
         assert variation_allele2.original_locus == original_locus, "original_locus was changed on shift"
 
-    def test_minimise_no_effect_then_shift_w_seq_change(self) -> None:
+    @pytest.mark.parametrize(
+        (
+            "slice_start", 
+            "slice_seq", 
+            "variation_allele_start", 
+            "variation_allele_end", 
+            "ref_allele", 
+            "alt_allele"
+        ),
+        [
+            (10, "TAGCTAGCTAGCTA", 5, 4, "", "TAGC"),
+            (20, "ATATCTCTACT", 4, 3, "", "TC"),
+        ],
+    )
+    def test_minimise_no_effect_then_shift_w_seq_change(
+            self,
+            slice_start: int,
+            slice_seq: str,
+            variation_allele_start: int,
+            variation_allele_end: int,
+            ref_allele: str,
+            alt_allele: str
+        ) -> None:
         """Test that calling shift after minimise retains the original locus and sets flags correctly.
         In this testcase:
          * Minimise should not change anything
@@ -320,18 +342,18 @@ class TestVariationAlleleMinimiseAndShift:
         repeat_slice = Slice(
             coord_system="chromosome",
             seq_region_name="FAKE_CHROMOSOME",
-            start=10,
-            end=23,
+            start=slice_start,
+            end=slice_start + len(slice_seq) - 1,
             strand=Strand.FORWARD,
-            seq="TAGCTAGCTAGCTA",
+            seq=slice_seq,
         )
         variation_allele2 = VariationAllele(
-            start=4,
-            end=5,
+            start=variation_allele_start,
+            end=variation_allele_end,
             strand=Strand.FORWARD,
             slice=repeat_slice,
-            reference_allele="",
-            alternate_allele="TAGC",
+            reference_allele=ref_allele,
+            alternate_allele=alt_allele,
         )
         variation_allele2.minimise()
         assert variation_allele2.minimised is True, "minimised was not set on minimise"
