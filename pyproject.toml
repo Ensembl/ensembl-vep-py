@@ -194,3 +194,8 @@ exclude_also = [
     # Do not complain about abstract methods, they are not run
     "@(abc\\.)?abstractmethod",
 ]
+omit = [
+    "src/python/ensembl/vep/models/regulatory/*",
+    "src/python/ensembl/vep/models/haplotype/*",
+    "src/python/ensembl/vep/models/custom_feature.py"
+]
