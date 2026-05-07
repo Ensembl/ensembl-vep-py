@@ -89,9 +89,8 @@ def resets_attrs(*attrs: tuple[str, Any]) -> Callable:
             default_value = attr_pair[1]
             if not short_name.startswith("__"):
                 logger.debug(
-                    "reset_attrs should only be used for private attributes (starting with __)"
-                    ", but got '%s'.",
-                    short_name,
+                    "reset_attrs should only be used for private attributes (starting with __),"
+                    f" but got '{short_name}'."
                 )
             else:
                 object.__setattr__(instance, long_name, default_value)

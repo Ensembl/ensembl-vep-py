@@ -166,7 +166,6 @@ class TestShiftSequence:
         )
         assert (shift, shifted_seq, new_start, new_end) == (10, "GCTA", 15, 14)
 
-    
     def test_shift_sequence_incomplete_dt_loop_limit(self) -> None:
         """Shift to the right (3') on a tandem repeat.
         Result should have changed position and sequence change but not to complete right.

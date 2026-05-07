@@ -145,16 +145,15 @@ class Transcript(Feature):
         """
         with self._lock:
             seq = ""
-            warning_template = (
-                "Exon %s has no sequence information,"
-                " adding N instead of the exact sequence for this exon"
-                " when constructing spliced sequence for transcript %s."
-                " Spliced sequence may not be accurate."
-            )
 
             for exon in self.spliced_exons:
                 if exon.seq is None:
-                    logger.warning(warning_template, exon.stable_id, self.stable_id)
+                    logger.warning(
+                        f"Exon {exon.stable_id} has no sequence information,"
+                        f" adding N instead of the exact sequence for this exon"
+                        f" when constructing spliced sequence for transcript {self.stable_id}."
+                        f" Spliced sequence may not be accurate."
+                    )
                     seq += "N" * exon.length
                 else:
                     seq += exon.seq
@@ -180,24 +179,23 @@ class Transcript(Feature):
         with self._lock:
             if self.translation is None:
                 logger.warning(
-                    "Cannot compute CDS for transcript %s because translation information is not available.",
-                    self.stable_id,
+                    f"Cannot compute CDS for transcript {self.stable_id} because translation"
+                    " information is not available."
                 )
                 return None
 
             seq = ""
             cds_start: int | None = None
             cds_end: int | None = None
-            warning_template = (
-                "Exon %s has no sequence information,"
-                " adding N instead of the exact sequence for this exon"
-                " when constructing CDS sequence for transcript %s."
-                " Transcript sequence may not be accurate."
-            )
 
             for idx, exon in enumerate(self.spliced_exons[self.start_exon_index : self.end_exon_index + 1]):
                 if exon.seq is None:
-                    logger.warning(warning_template, exon.stable_id, self.stable_id)
+                    logger.warning(
+                        f"Exon {exon.stable_id} has no sequence information,"
+                        f" adding N instead of the exact sequence for this exon"
+                        f" when constructing CDS sequence for transcript {self.stable_id}."
+                        f" Transcript sequence may not be accurate."
+                    )
                     exon_coding_seq = "N" * exon.length
                 else:
                     exon_coding_seq = exon.seq
@@ -378,21 +376,17 @@ class Transcript(Feature):
         """
         with self._lock:
             if self.cds_start is None or self.cdna_coding_start is None:
-                warning_template = (
-                    "Cannot compute five_prime_utr for transcript %s"
+                logger.warning(
+                    f"Cannot compute five_prime_utr for transcript {self.stable_id}"
                     " because cds_start or cdna_coding_start is None."
                 )
-
-                logger.warning(warning_template, self.stable_id)
                 return None
 
             if self.spliced_seq is None or len(self.spliced_seq) < self.cdna_coding_start:
-                warning_template = (
-                    "Cannot compute five_prime_utr for transcript %s"
+                logger.warning(
+                    f"Cannot compute five_prime_utr for transcript {self.stable_id}"
                     " because spliced_seq is None or too short."
                 )
-
-                logger.warning(warning_template, self.stable_id)
                 return None
 
             end = self.cds_start - 1
@@ -422,26 +416,16 @@ class Transcript(Feature):
         """
         with self._lock:
             if self.cds_end is None or self.cdna_coding_end is None:
-                warning_template = (
-                    "Cannot compute three_prime_utr for transcript %s"
-                    " because cds_end or cdna_coding_end is None."
-                )
-
                 logger.warning(
-                    warning_template,
-                    self.stable_id,
+                    f"Cannot compute three_prime_utr for transcript {self.stable_id}"
+                    " because cds_end or cdna_coding_end is None."
                 )
                 return None
 
             if self.spliced_seq is None or len(self.spliced_seq) <= self.cdna_coding_end:
-                warning_template = (
-                    "Cannot compute three_prime_utr for transcript %s"
-                    " because spliced_seq is None or too short."
-                )
-
                 logger.warning(
-                    warning_template,
-                    self.stable_id,
+                    f"Cannot compute three_prime_utr for transcript {self.stable_id}"
+                    " because spliced_seq is None or too short."
                 )
                 return None
 
