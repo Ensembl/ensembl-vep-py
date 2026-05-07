@@ -15,7 +15,7 @@
 
 from attrs import define
 
-from .slice import Slice
+from ensembl.vep.models.sequence.slice import Slice
 
 
 @define(kw_only=True, auto_attribs=True)

@@ -141,8 +141,7 @@ disable = [
     "too-many-locals",
     "too-many-statements",
     "unspecified-encoding",
-    "wildcard-import",
-    "import-outside-toplevel"
+    "wildcard-import"
 ]
 
 [tool.ruff]

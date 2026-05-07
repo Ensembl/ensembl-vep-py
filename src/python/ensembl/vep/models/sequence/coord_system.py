@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from attrs import define, field
 
-from ensembl.vep.common.enums import CoordSystemLevel
+from ensembl.vep.common import CoordSystemLevel
 
 
 @define(kw_only=True, auto_attribs=True)

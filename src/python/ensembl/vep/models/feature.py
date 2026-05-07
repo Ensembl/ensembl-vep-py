@@ -21,8 +21,7 @@ from functools import cached_property
 from threading import RLock
 from attrs import define, field
 
-from ensembl.vep.models.sequence import Slice
-from ensembl.vep.models.sequence.coord_system import CoordSystem
+from ensembl.vep.models.sequence import Slice, CoordSystem
 from ensembl.vep.common import Strand, invalidates
 
 logger = logging.getLogger(__name__)

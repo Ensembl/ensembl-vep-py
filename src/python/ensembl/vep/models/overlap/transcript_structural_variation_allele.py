@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from attr import define, field
 
-from .feature_overlap import FeatureOverlap
+from ensembl.vep.models.overlap.feature_overlap import FeatureOverlap
 
 
 @define(kw_only=True, auto_attribs=True)

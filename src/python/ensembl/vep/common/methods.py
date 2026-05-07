@@ -21,7 +21,7 @@ import sys
 from typing import Any, Callable, Literal, TypeVar
 from attrs import Attribute as AttrsAttribute
 
-from .enums import Strand
+from ensembl.vep.common.enums import Strand
 
 logger = logging.getLogger(__name__)
 

@@ -15,7 +15,7 @@
 
 from attrs import define
 
-from .variation import Variation
+from ensembl.vep.models.variation.variation import Variation
 
 
 @define(kw_only=True, auto_attribs=True)

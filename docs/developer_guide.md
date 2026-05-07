@@ -384,25 +384,44 @@ This convention is also convenient for calculating pre and post sequence for shi
 
 ## Getting away with circular dependency
 
-The heavy use of subfolders to group similar objects means that, depending on the way we structure our modules, there could be circular dependencies during import.
+The heavy use of subfolders to group similar objects means that, depending on the way we structure our modules, there could be circular dependencies during import. The main source of circular dependencies here comes from using `__init__.py` files to expose a package's public API.
 
-In some cases, it occurs becuase we are using type annotations to refer to classes that are defined in the same module or in a different module that also refers back to the first module. We can get around it by -
+The circular import is avoided using the following approaches:
+
+### When importing from same package
+When importing within the same package, always import directly from the concrete module rather than through a package's public API.
+
+**Prefer:**
+```python
+from ensembl.vep.models.genic.transcript import Transcript
 ```
+**Over:**
+```python
+from ensembl.vep.models.genic import Transcript
+```
+
+We also prefer absolute imports over relative imports, even within the same package:
+**Prefer:**
+```python
+from ensembl.vep.models.genic.transcript import Transcript
+```
+**Over:**
+```python
+from .transcript import Transcript
+```
+Absolute imports are more explicit, easier to trace, and consistent with [PEP 8](https://peps.python.org/pep-0008/#imports).
+
+### Importing for type annotations
+When we are importing some module that is solely used for type annotations, `typing.TYPE_CHECKING` should be used -
+```python
 if typing.TYPE_CHECKING:
     from some_module import some_function
 ```
+
 It allows importing the module only when type checking is performed (e.g. by static analysis tools), but not during runtime.
 
-When we are actually instantiating the class that would cause circular import error. In that case, we can use local import instead of top-level import to delay the import until it is actually needed at runtime.
-
-```python
-class MyClass:
-    def some_function():
-        from some_module import SomeClass
-        instance = SomeClass()
-```
-
-Another case is when we are using the class as base class for inferitance. In that case, we need to do global import. We need to make sure we keep one-way dependency direction, i.e. the base class cannot inherit from any of the descendant classes.
+### Prevent direct circular import
+And, of course, we need to prevent direct circular imports (module A importing module B, and module B importing module A) by making sure we keep one-way dependency direction, i.e. the base class cannot inherit from any of the descendant classes.
 
 ## Containers
 We are using containers where we do not want to implement any behavior for an object, but useful to have a named and grouped representation of the data. They are defined using `@frozen` from `attrs` to create immutable data structures and available in `ensembl.vep.common.(containers)`.

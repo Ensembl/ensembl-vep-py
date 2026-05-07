@@ -21,7 +21,7 @@ from attr import define, field
 from ensembl.vep.models import Feature
 
 if TYPE_CHECKING:
-    from .overlap_consequence import OverlapConsequence
+    from ensembl.vep.models.overlap import OverlapConsequence
 
 
 @define(kw_only=True, auto_attribs=True)

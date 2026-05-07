@@ -16,7 +16,6 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING
 from functools import cached_property
 from threading import RLock
 from attrs import define, field
@@ -24,10 +23,7 @@ from attrs import define, field
 from ensembl.vep.common import ClassSOTerm, invalidate, invalidates
 from ensembl.vep.models import Feature
 from ensembl.vep.models.overlap import OverlapConsequence
-from .variation_allele import VariationAllele
-
-if TYPE_CHECKING:
-    from ensembl.vep.models.variation import VariationAllele
+from ensembl.vep.models.variation.variation_allele import VariationAllele
 
 
 @define(kw_only=True, auto_attribs=True)
@@ -39,8 +35,8 @@ class Variation(Feature):
             Stable identifier for the variation.
         allele_string (str | None):
             String representation of the alleles.
-        variation_alleles (VariationAllele | None):
-            VariationAllele object describing the alleles of the variation.
+        variation_alleles (list[VariationAllele] | None):
+            List of VariationAllele objects describing the alleles of the variation.
         is_somatic (bool | None):
             Indicates whether the variation is somatic.
         class_so_term (str | None):
@@ -78,8 +74,6 @@ class Variation(Feature):
         invalidate(self, "__most_severe_consequence")
 
         with self._lock:
-            from ensembl.vep.models.variation import VariationAllele
-
             variation_alleles = []
             alleles = (self.allele_string or "").split("/")
 

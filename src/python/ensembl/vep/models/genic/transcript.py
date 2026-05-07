@@ -22,10 +22,12 @@ from threading import RLock
 from attrs import define, field
 
 from ensembl.vep.models import Feature
+from ensembl.vep.models.genic.cds import CDS
+from ensembl.vep.models.genic.utr import UTR
 from ensembl.vep.common import Attribute, invalidates
 
 if TYPE_CHECKING:
-    from ensembl.vep.models.genic import Gene, Exon, Intron, CDS, CDNA, UTR, Translation
+    from ensembl.vep.models.genic import Gene, Exon, Intron, CDNA, Translation
 
 logger = logging.getLogger(__name__)
 
@@ -176,7 +178,6 @@ class Transcript(Feature):
             CDS | None: The CDS associated with this transcript, or None if not applicable.
         """
         with self._lock:
-            from ensembl.vep.models.genic import CDS
             if self.translation is None:
                 logger.warning(
                     "Cannot compute CDS for transcript %s because translation information is not available.",
@@ -376,8 +377,6 @@ class Transcript(Feature):
             The 5' UTR of the transcript, or None if not applicable.
         """
         with self._lock:
-            from ensembl.vep.models.genic import UTR
-
             if self.cds_start is None or self.cdna_coding_start is None:
                 warning_template = (
                     "Cannot compute five_prime_utr for transcript %s"
@@ -422,8 +421,6 @@ class Transcript(Feature):
             The 3' UTR of the transcript, or None if not applicable.
         """
         with self._lock:
-            from ensembl.vep.models.genic import UTR
-
             if self.cds_end is None or self.cdna_coding_end is None:
                 warning_template = (
                     "Cannot compute three_prime_utr for transcript %s"

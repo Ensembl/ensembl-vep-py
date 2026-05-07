@@ -21,7 +21,7 @@ from threading import RLock
 from attr import define, field
 
 from ensembl.vep.common import invalidates
-from .feature_overlap import FeatureOverlap
+from ensembl.vep.models.overlap.feature_overlap import FeatureOverlap
 
 if TYPE_CHECKING:
     from ensembl.vep.models.genic import Transcript

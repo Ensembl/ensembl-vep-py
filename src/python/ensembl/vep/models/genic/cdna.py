@@ -21,7 +21,7 @@ from attrs import define, field
 from ensembl.vep.models import Feature
 
 if TYPE_CHECKING:
-    from ensembl.vep.models.genic import Transcript, Translation
+    from ensembl.vep.models.genic.transcript import Transcript
 
 
 @define(kw_only=True, auto_attribs=True)
