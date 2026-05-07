@@ -158,13 +158,27 @@ class TestShiftSequence:
         """Shift to the right (3') on a tandem repeat.
         Result should have changed position and sequence change (shifted till end of sequence)."""
         seq = "TAGC"
-        post_seq = "TAGCTAGCTA"
+        post_seq = "TAGCTAGCTATGCGA"
         pre_seq = "TAGC"
-        start, end = 4, 5
+        start, end = 5, 4
         shift, shifted_seq, new_start, new_end, _ = shift_sequence(
             seq, post_seq=post_seq, pre_seq=pre_seq, start=start, end=end
         )
-        assert (shift, shifted_seq, new_start, new_end) == (10, "GCTA", 14, 14)
+        assert (shift, shifted_seq, new_start, new_end) == (10, "GCTA", 15, 14)
+
+    
+    def test_shift_sequence_incomplete_dt_loop_limit(self) -> None:
+        """Shift to the right (3') on a tandem repeat.
+        Result should have changed position and sequence change but not to complete right.
+        The post_seq is short and thus reach loop limit before reaching end of sequence."""
+        seq = "TAGC"
+        post_seq = "TAGCTAGCTA"
+        pre_seq = "TAGC"
+        start, end = 5, 4
+        shift, shifted_seq, new_start, new_end, _ = shift_sequence(
+            seq, post_seq=post_seq, pre_seq=pre_seq, start=start, end=end
+        )
+        assert (shift, shifted_seq, new_start, new_end) == (7, "CTAG", 12, 11)
 
     def test_shift_sequence_tandem_repeat_5prime_w_seq_change(self) -> None:
         """Shift to the left (5') on a tandem repeat."""
