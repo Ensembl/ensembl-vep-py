@@ -258,50 +258,14 @@ class TestClassSOTerm:
             ("A/G", ClassSOTerm.SNV),
             ("A/T/G", ClassSOTerm.SNV),
             ("A/T/G/C", ClassSOTerm.SNV),
-        ],
-    )
-    def test_snv(self, genomic_slice: Slice, allele_string: str, expected: ClassSOTerm) -> None:
-        """Test that a SNV variation returns the correct ClassSOTerm."""
-        var = Variation(
-            start=100, end=100, strand=Strand.FORWARD, slice=genomic_slice, allele_string=allele_string
-        )
-        assert var.class_so_term == expected
-
-    @pytest.mark.parametrize(
-        "allele_string, expected",
-        [
             ("(CAG)8/(CAG)9", ClassSOTerm.TANDEM_REPEAT),
             ("(AT)5/(AT)7", ClassSOTerm.TANDEM_REPEAT),
-        ],
-    )
-    def test_tandem_repeat(self, genomic_slice: Slice, allele_string: str, expected: ClassSOTerm) -> None:
-        """Test that a tandem repeat variation returns the correct ClassSOTerm."""
-        var = Variation(
-            start=100, end=100, strand=Strand.FORWARD, slice=genomic_slice, allele_string=allele_string
-        )
-        assert var.class_so_term == expected
-
-    @pytest.mark.parametrize(
-        "allele_string, expected",
-        [
             ("-/ATT", ClassSOTerm.INSERTION),
             ("-/A", ClassSOTerm.INSERTION),
             ("A/ATT", ClassSOTerm.INDEL),
             ("A/AT", ClassSOTerm.INDEL),
             ("-/LARGEINSERTION", ClassSOTerm.INSERTION),
             ("(LARGEINSERTION)", ClassSOTerm.INSERTION),
-        ],
-    )
-    def test_insertion(self, genomic_slice: Slice, allele_string: str, expected: ClassSOTerm) -> None:
-        """Test that an insertion variation returns the correct ClassSOTerm."""
-        var = Variation(
-            start=100, end=100, strand=Strand.FORWARD, slice=genomic_slice, allele_string=allele_string
-        )
-        assert var.class_so_term == expected
-
-    @pytest.mark.parametrize(
-        "allele_string, expected",
-        [
             ("A/-", ClassSOTerm.DELETION),
             ("ATT/-", ClassSOTerm.DELETION),
             ("AT/A", ClassSOTerm.INDEL),
@@ -309,40 +273,16 @@ class TestClassSOTerm:
             ("(LARGEDELETION)/-", ClassSOTerm.DELETION),
             ("(LARGEDELETION)", ClassSOTerm.DELETION),
             ("(2345 BP DELETION)/-", ClassSOTerm.DELETION),
-        ],
-    )
-    def test_deletion(self, genomic_slice: Slice, allele_string: str, expected: ClassSOTerm) -> None:
-        """Test that a deletion variation returns the correct ClassSOTerm."""
-        var = Variation(
-            start=100, end=102, strand=Strand.FORWARD, slice=genomic_slice, allele_string=allele_string
-        )
-        assert var.class_so_term == expected
-
-    @pytest.mark.parametrize(
-        "allele_string, expected",
-        [
             ("AA/TT", ClassSOTerm.SUBSTITUTION),
             ("ACT/TCG", ClassSOTerm.SUBSTITUTION),
-        ],
-    )
-    def test_substitution(self, genomic_slice: Slice, allele_string: str, expected: ClassSOTerm) -> None:
-        """Test that a substitution variation returns the correct ClassSOTerm."""
-        var = Variation(
-            start=100, end=101, strand=Strand.FORWARD, slice=genomic_slice, allele_string=allele_string
-        )
-        assert var.class_so_term == expected
-
-    @pytest.mark.parametrize(
-        "allele_string, expected",
-        [
             ("AA/TTTT", ClassSOTerm.INDEL),
             ("AAAA/TT", ClassSOTerm.INDEL),
         ],
     )
-    def test_indel(self, genomic_slice: Slice, allele_string: str, expected: ClassSOTerm) -> None:
-        """Test that an indel variation returns the correct ClassSOTerm."""
+    def test_correct_terms(self, genomic_slice: Slice, allele_string: str, expected: ClassSOTerm) -> None:
+        """Test that a variation returns the correct ClassSOTerm."""
         var = Variation(
-            start=100, end=103, strand=Strand.FORWARD, slice=genomic_slice, allele_string=allele_string
+            start=100, end=100, strand=Strand.FORWARD, slice=genomic_slice, allele_string=allele_string
         )
         assert var.class_so_term == expected
 
@@ -355,3 +295,12 @@ class TestClassSOTerm:
         """Test that an undefined (None) allele string returns the correct (default) ClassSOTerm."""
         var = Variation(start=100, end=100, strand=Strand.FORWARD, slice=genomic_slice, allele_string=None)
         assert var.class_so_term == ClassSOTerm.SEQUENCE_ALTERATION
+
+    def test_allele_string_change_invalidates_class_so_term(self, genomic_slice: Slice) -> None:
+        """Test that changing the allele_string invalidates the cached class_so_term."""
+        var = Variation(start=100, end=100, strand=Strand.FORWARD, slice=genomic_slice, allele_string="A/T")
+        assert var.class_so_term == ClassSOTerm.SNV
+
+        # Change allele_string and check that class_so_term is updated
+        var.allele_string = "A/ATT"
+        assert var.class_so_term == ClassSOTerm.INDEL

@@ -15,12 +15,11 @@
 
 from __future__ import annotations
 
-import re
 from functools import cached_property
 from threading import RLock
 from attrs import define, field
 
-from ensembl.vep.common import ClassSOTerm, invalidate, invalidates
+from ensembl.vep.common import ClassSOTerm, invalidate, invalidates, infer_variant_so_term
 from ensembl.vep.models import Feature
 from ensembl.vep.models.overlap import OverlapConsequence
 from ensembl.vep.models.variation.variation_allele import VariationAllele
@@ -48,9 +47,7 @@ class Variation(Feature):
     stable_id: str | None = field(default=None)
     allele_string: str | None = field(
         default=None,
-        on_setattr=invalidates(
-            "__variation_alleles", "__class_so_term_ref_correct", "__most_severe_consequence"
-        ),
+        on_setattr=invalidates("__variation_alleles", "__class_so_term", "__most_severe_consequence"),
     )
     is_somatic: bool = field(default=False)
     _lock: RLock = field(factory=RLock, init=False, repr=False)
@@ -129,137 +126,17 @@ class Variation(Feature):
         Returns:
             ClassSOTerm | None: The SO term for the class of the variation.
         """
-        return self.__class_so_term_ref_correct
+        return self.__class_so_term
 
     @cached_property
-    def __class_so_term_ref_correct(self) -> ClassSOTerm | None:
+    def __class_so_term(self) -> ClassSOTerm | None:
         """
         Return the SO term for the class of the variation.
 
-        Args:
-            ref_correct: Whether the first allele is known to be the reference.
-
         Returns:
             ClassSOTerm | None: The SO term string for the variation.
         """
-        allele_string = self.allele_string or ""
-
-        # default to sequence_alteration
-        so_term = ClassSOTerm.SEQUENCE_ALTERATION
-
-        # A/T, A/T/G
-        if re.match(r"^[A-Z](/[A-Z])+$", allele_string):
-            so_term = ClassSOTerm.SNV
-
-        # (CAG)8/(CAG)9
-        elif re.search(r"\)\d+", allele_string):
-            so_term = ClassSOTerm.TANDEM_REPEAT
-
-        else:
-            alleles = allele_string.split("/")
-
-            if len(alleles) > 1:
-                ref = alleles[0]
-                alts = alleles[1:]
-
-                if ref == "-":
-                    if len(alts) == 1 and re.search(r"DEL", alts[0]):
-                        # -/(LARGEDELETION)
-                        so_term = ClassSOTerm.DELETION
-
-                    if not any(not re.match(r"^[A-Z]+$|INS", alt) for alt in alts):
-                        # -/ATT, -/(LARGEINSERTION)
-                        so_term = ClassSOTerm.INSERTION
-
-                elif re.match(r"^[A-Z]+$", ref):
-                    if not any(not re.match(r"^-$|DEL", alt) for alt in alts):
-                        # A/-, A/(LARGEDELETION)
-                        so_term = ClassSOTerm.DELETION
-
-                    elif re.match(r"^[A-Z]+(/[A-Z]+)+$", allele_string):
-                        # AA/TT => substitution, AA/TTTT => indel
-                        same_size = all(len(alt) == len(ref) for alt in alts)
-                        so_term = ClassSOTerm.SUBSTITUTION if same_size else ClassSOTerm.INDEL
-
-                elif re.search(r"DEL", ref):
-                    if not any(alt != "-" for alt in alts):
-                        # (LARGEDELETION)/-, (2345 BP DELETION)/-
-                        so_term = ClassSOTerm.DELETION
-
-            elif len(alleles) == 1:
-                if re.search(r"INS", alleles[0]):
-                    # (LARGEINSERTION)
-                    so_term = ClassSOTerm.INSERTION
-                elif re.search(r"DEL", alleles[0]):
-                    # (308 BP DELETION)
-                    so_term = ClassSOTerm.DELETION
-
-        return so_term
-
-    # TBD when and how to call __class_so_term_ref_incorrect
-    # instead of __class_so_term_ref_correct
-    @cached_property
-    def __class_so_term_ref_incorrect(self) -> ClassSOTerm | None:  # pylint: disable=unused-private-member
-        """
-        Return the SO term for the class of the variation
-        with the first allele kown not to be the reference.
-
-        Returns:
-            ClassSOTerm | None: The SO term string for the variation.
-        """
-        allele_string = self.allele_string or ""
-
-        # default to sequence_alteration
-        so_term = ClassSOTerm.SEQUENCE_ALTERATION
-
-        # A/T, A/T/G
-        if re.match(r"^[A-Z](/[A-Z])+$", allele_string):
-            so_term = ClassSOTerm.SNV
-
-        # (CAG)8/(CAG)9
-        elif re.search(r"\)\d+", allele_string):
-            so_term = ClassSOTerm.TANDEM_REPEAT
-
-        else:
-            alleles = allele_string.split("/")
-
-            if len(alleles) > 1:
-                ref = alleles[0]
-                alts = alleles[1:]
-
-                if ref == "-":
-                    if len(alts) == 1 and re.search(r"DEL", alts[0]):
-                        # -/(LARGEDELETION)
-                        so_term = ClassSOTerm.INDEL
-
-                    if not any(not re.match(r"^[A-Z]+$|INS", alt) for alt in alts):
-                        # -/ATT, -/(LARGEINSERTION)
-                        so_term = ClassSOTerm.INDEL
-
-                elif re.match(r"^[A-Z]+$", ref):
-                    if not any(not re.match(r"^-$|DEL", alt) for alt in alts):
-                        # A/-, A/(LARGEDELETION)
-                        so_term = ClassSOTerm.INDEL
-
-                    elif re.match(r"^[A-Z]+(/[A-Z]+)+$", allele_string):
-                        # AA/TT => substitution, AA/TTTT => indel
-                        same_size = all(len(alt) == len(ref) for alt in alts)
-                        so_term = ClassSOTerm.SUBSTITUTION if same_size else ClassSOTerm.INDEL
-
-                elif re.search(r"DEL", ref):
-                    if not any(alt != "-" for alt in alts):
-                        # (LARGEDELETION)/-, (2345 BP DELETION)/-
-                        so_term = ClassSOTerm.INDEL
-
-            elif len(alleles) == 1:
-                if re.search(r"INS", alleles[0]):
-                    # (LARGEINSERTION)
-                    so_term = ClassSOTerm.INDEL
-                elif re.search(r"DEL", alleles[0]):
-                    # (308 BP DELETION)
-                    so_term = ClassSOTerm.INDEL
-
-        return so_term
+        return infer_variant_so_term(self.allele_string or "", ref_correct=True)
 
     def minimise_alleles(self) -> None:
         """Minimises all alleles."""

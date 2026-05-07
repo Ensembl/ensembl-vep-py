@@ -23,9 +23,11 @@ from attrs import define, field
 from ensembl.vep.common import invalidates
 from ensembl.vep.common import UnsafeSetterMixin, CachedAttributeGuardMixin
 
+
 @define
 class DummyUnsafeSetter(UnsafeSetterMixin):
     """Dummy class for UnsafeSetterMixin tests."""
+
     x: int = field(on_setattr=invalidates("__y"))
     __y: int = field(init=False, default=99)
 
@@ -38,6 +40,7 @@ class DummyUnsafeSetter(UnsafeSetterMixin):
 @define
 class DummyCachedAttributeGuard(CachedAttributeGuardMixin):
     """Dummy class for CachedAttributeGuardMixin tests."""
+
     a: int = field()
     _DERIVED = {"b"}
     _INVALIDATES = {"a": ("b",)}
@@ -66,6 +69,7 @@ class TestUnsafeSetterMixin:
         assert d.x == 100
         assert d.y == 99
 
+
 class TestCachedAttributeGuardMixin:
     """Tests for CachedAttributeGuardMixin."""
 
@@ -81,4 +85,4 @@ class TestCachedAttributeGuardMixin:
 
         # Test invalidation
         d.a = 5
-        assert d.b == 10    # b gets invalidated and recalculated
+        assert d.b == 10  # b gets invalidated and recalculated

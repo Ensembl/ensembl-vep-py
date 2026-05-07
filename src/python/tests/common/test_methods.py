@@ -15,7 +15,7 @@
 
 import pytest
 
-from ensembl.vep.common import trim_sequences, shift_sequence, Strand
+from ensembl.vep.common import trim_sequences, shift_sequence, Strand, ClassSOTerm, infer_variant_so_term
 
 
 class TestTrimSequences:
@@ -198,3 +198,88 @@ class TestShiftSequence:
             shift_sequence("A", post_seq=None, pre_seq="A", start=1, end=1)  # type: ignore[arg-type]
         with pytest.raises(ValueError):
             shift_sequence("A", post_seq="A", pre_seq=None, start=1, end=1)  # type: ignore[arg-type]
+
+
+class TestInferVariantSOTerm:
+    """Tests for the infer_variant_so_term function."""
+
+    @pytest.mark.parametrize(
+        "allele_string, expected",
+        [
+            ("A/T", ClassSOTerm.SNV),
+            ("A/G", ClassSOTerm.SNV),
+            ("A/T/G", ClassSOTerm.SNV),
+            ("A/T/G/C", ClassSOTerm.SNV),
+        ],
+    )
+    def test_snv(self, allele_string: str, expected: ClassSOTerm) -> None:
+        """Test that a SNV variation returns the correct ClassSOTerm."""
+        assert infer_variant_so_term(allele_string, ref_correct=True) == expected
+
+    @pytest.mark.parametrize(
+        "allele_string, expected",
+        [
+            ("(CAG)8/(CAG)9", ClassSOTerm.TANDEM_REPEAT),
+            ("(AT)5/(AT)7", ClassSOTerm.TANDEM_REPEAT),
+        ],
+    )
+    def test_tandem_repeat(self, allele_string: str, expected: ClassSOTerm) -> None:
+        """Test that a tandem repeat variation returns the correct ClassSOTerm."""
+        assert infer_variant_so_term(allele_string, ref_correct=True) == expected
+
+    @pytest.mark.parametrize(
+        "allele_string, expected",
+        [
+            ("-/ATT", ClassSOTerm.INSERTION),
+            ("-/A", ClassSOTerm.INSERTION),
+            ("A/ATT", ClassSOTerm.INDEL),
+            ("A/AT", ClassSOTerm.INDEL),
+            ("-/LARGEINSERTION", ClassSOTerm.INSERTION),
+            ("(LARGEINSERTION)", ClassSOTerm.INSERTION),
+        ],
+    )
+    def test_insertion(self, allele_string: str, expected: ClassSOTerm) -> None:
+        """Test that an insertion variation returns the correct ClassSOTerm."""
+        assert infer_variant_so_term(allele_string, ref_correct=True) == expected
+
+    @pytest.mark.parametrize(
+        "allele_string, expected",
+        [
+            ("A/-", ClassSOTerm.DELETION),
+            ("ATT/-", ClassSOTerm.DELETION),
+            ("AT/A", ClassSOTerm.INDEL),
+            ("ATT/A", ClassSOTerm.INDEL),
+            ("(LARGEDELETION)/-", ClassSOTerm.DELETION),
+            ("(LARGEDELETION)", ClassSOTerm.DELETION),
+            ("(2345 BP DELETION)/-", ClassSOTerm.DELETION),
+        ],
+    )
+    def test_deletion(self, allele_string: str, expected: ClassSOTerm) -> None:
+        """Test that a deletion variation returns the correct ClassSOTerm."""
+        assert infer_variant_so_term(allele_string, ref_correct=True) == expected
+
+    @pytest.mark.parametrize(
+        "allele_string, expected",
+        [
+            ("AA/TT", ClassSOTerm.SUBSTITUTION),
+            ("ACT/TCG", ClassSOTerm.SUBSTITUTION),
+        ],
+    )
+    def test_substitution(self, allele_string: str, expected: ClassSOTerm) -> None:
+        """Test that a substitution variation returns the correct ClassSOTerm."""
+        assert infer_variant_so_term(allele_string, ref_correct=True) == expected
+
+    @pytest.mark.parametrize(
+        "allele_string, expected",
+        [
+            ("AA/TTTT", ClassSOTerm.INDEL),
+            ("AAAA/TT", ClassSOTerm.INDEL),
+        ],
+    )
+    def test_indel(self, allele_string: str, expected: ClassSOTerm) -> None:
+        """Test that an indel variation returns the correct ClassSOTerm."""
+        assert infer_variant_so_term(allele_string, ref_correct=True) == expected
+
+    def test_empty_allele_string_defaults_to_sequence_alteration(self) -> None:
+        """Test that an empty allele string returns the correct (default) ClassSOTerm."""
+        assert infer_variant_so_term("", ref_correct=True) == ClassSOTerm.SEQUENCE_ALTERATION

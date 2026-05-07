@@ -18,10 +18,11 @@ from contextlib import suppress
 import logging
 import os
 import sys
+import re
 from typing import Any, Callable, Literal, TypeVar
 from attrs import Attribute as AttrsAttribute
 
-from ensembl.vep.common.enums import Strand
+from ensembl.vep.common import Strand, ClassSOTerm
 
 logger = logging.getLogger(__name__)
 
@@ -306,6 +307,70 @@ def shift_sequence(
             changed = True
 
     return (shift_length, "".join(seq_d), start, end, changed)
+
+
+def infer_variant_so_term(allele_string: str, ref_correct: bool = False) -> ClassSOTerm | None:
+    """
+    Return the SO term for the class of the variation.
+
+    Args:
+        allele_string: The allele string for the variation.
+        ref_correct: Whether the first allele is known to be the reference.
+
+    Returns:
+        ClassSOTerm | None: The SO term string for the variation.
+    """
+    # default to sequence_alteration
+    so_term = ClassSOTerm.SEQUENCE_ALTERATION
+
+    # A/T, A/T/G
+    if re.match(r"^[A-Z](/[A-Z])+$", allele_string):
+        so_term = ClassSOTerm.SNV
+
+    # (CAG)8/(CAG)9
+    elif re.search(r"\)\d+", allele_string):
+        so_term = ClassSOTerm.TANDEM_REPEAT
+
+    else:
+        alleles = allele_string.split("/")
+
+        if len(alleles) > 1:
+            ref = alleles[0]
+            alts = alleles[1:]
+
+            if ref == "-":
+                if len(alts) == 1 and re.search(r"DEL", alts[0]):
+                    # -/(LARGEDELETION)
+                    so_term = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
+
+                if not any(not re.match(r"^[A-Z]+$|INS", alt) for alt in alts):
+                    # -/ATT, -/(LARGEINSERTION)
+                    so_term = ClassSOTerm.INSERTION if ref_correct else ClassSOTerm.INDEL
+
+            elif re.match(r"^[A-Z]+$", ref):
+                if not any(not re.match(r"^-$|DEL", alt) for alt in alts):
+                    # A/-, A/(LARGEDELETION)
+                    so_term = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
+
+                elif re.match(r"^[A-Z]+(/[A-Z]+)+$", allele_string):
+                    # AA/TT => substitution, AA/TTTT => indel
+                    same_size = all(len(alt) == len(ref) for alt in alts)
+                    so_term = ClassSOTerm.SUBSTITUTION if same_size else ClassSOTerm.INDEL
+
+            elif re.search(r"DEL", ref):
+                if not any(alt != "-" for alt in alts):
+                    # (LARGEDELETION)/-, (2345 BP DELETION)/-
+                    so_term = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
+
+        elif len(alleles) == 1:
+            if re.search(r"INS", alleles[0]):
+                # (LARGEINSERTION)
+                so_term = ClassSOTerm.INSERTION if ref_correct else ClassSOTerm.INDEL
+            elif re.search(r"DEL", alleles[0]):
+                # (308 BP DELETION)
+                so_term = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
+
+    return so_term
 
 
 def setup_logging(level: str = "INFO") -> None:
