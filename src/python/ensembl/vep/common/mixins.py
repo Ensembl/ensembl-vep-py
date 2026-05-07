@@ -86,7 +86,7 @@ class CachedAttributeGuardMixin:
         for invalidation_candidate in type(self)._INVALIDATES.get(name, ()):
             try:
                 delattr(self, invalidation_candidate)
-            except AttributeError as exc:
-                raise NotImplementedError("Feature is not implemented yet.") from exc
+            except AttributeError:
+                pass  # If the attribute doesn't exist, we can ignore it
 
         return super().__setattr__(name, value)
