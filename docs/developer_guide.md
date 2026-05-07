@@ -9,6 +9,7 @@
         - [Core Attributes](#core-attributes)
         - [Derived Attributes](#derived-attributes)
         - [Externally-set attributes](#externally-set-attributes)
+            - [Cache invalidation](#cache-invalidation)
     - [Use of attrs](#use-of-attrs)
     - [Multiple Inheritance](#multiple-inheritance)
     - [Inheritance and Mixins](#inheritance-and-mixins)
@@ -99,10 +100,6 @@ Core attributes are those that are set during object initialization and are esse
 
 Core attributes are not lazy-loaded or cached. Instead, they are used to generate derived attributes that are lazy-loaded and in some occassion cached.
 
-It is expected that core attributes are not changed after initialization. In the unlikely event they do need to be updated, the related derived attributes needs to be invalidated. This can be automatically handled by using the `invalidates` hook with `on_setattr`. This has speed penalty for object creation and assignment of core attributes. Core attributes are not expected to be updated that much.
-
-In some cases, we may want to allow updating core attributes without invalidating derived attributes. In that case, we can also use the `UnsafeSetterMixin` mixin. It allows using context managers to temporarily disable cache invalidation for faster but unsafe attribute update. Generally this should not be necessary.
-
 ```python
 from ensembl.vep.common import UnsafeSetterMixin, invalidates
 class MyClass(UnsafeSetterMixin):
@@ -120,7 +117,7 @@ with cls.unsafe():
 
 #### Derived Attributes
 
-Derived attributes are read-only properties derived from one or more core attributes. They are lazy-loaded (not part of `__init__`) and can be cached (using `functools.cached_property`).
+Derived attributes are read-only properties derived from one or more attributes. They are lazy-loaded (not part of `__init__`) and can be cached (using `functools.cached_property`).
 
 **Read-only enforcement** is handled by the using a combination of name mangling with a private variable (prefixing name with `__`) and a public variable property with no setter. The name mangling makes it difficult to assign to the private variable directly from outside the class and prevents accidental overwriting. But it is ultimately upon the developer to not forcefully assign to the mangled attribute name (e.g. `instance._ClassName__derived_attr = value`).
 
@@ -133,12 +130,13 @@ Derived attributes are read-only properties derived from one or more core attrib
 ```python
 class MyClass(CachedAttributeGuardMixin):
     core_attr1: int
+    __derived_attr3: int = field(init=False, default=0)    # default value for non-cached derived attribute that is set by internal computation
 
     @property
     def derived_attr1(self) -> int:
         return self.__derived_attr1
 
-    @functools.cached_property
+    @cached_property
     def __derived_attr1(self) -> int:
         # perform expensive computation here using core_attr1
         return sum(range(self.core_attr1 * 2))
@@ -146,6 +144,7 @@ class MyClass(CachedAttributeGuardMixin):
     @property
     def derived_attr2(self) -> int:
         # perform cheap computation here using core_attr1
+        # does not justify caching
         return self.core_attr1 + 1
 
     @property
@@ -155,11 +154,13 @@ class MyClass(CachedAttributeGuardMixin):
 
     @cached_property
     def __derived_attr3(self) -> int:
-        # some default value
+        # alternative to defining default value at attribute definition
+        # can be used for some minor compuations for initial value assignment
         return 0
 
     def some_internal_computation(self):
         # perform some internal computation here and set derived_attr3
+        # cannot do caching
         self.__derived_attr3 = self.core_attr1 * 2
 ```
 
@@ -176,43 +177,73 @@ class MyClass():
 cls = MyClass(core_attr=1)
 cls.externally_set_attr = some_external_method()
 ```
-<!-- 
-#### Derived Attributes
 
-**Cache invalidation** is triggered automatically through `__setattr__` whenever a core attribute is updated.
+##### Cache invalidation
+It is expected that core attributes are not changed after initialization. In the unlikely event they do need to be updated, the related derived attributes needs to be invalidated. Some derived attribute may also depend on other derived attributes, we may need to invalidate those as well.
 
-Both of the above are implemented in the `ensembl.vep.common.CachedAttributeGuardMixin` to provide a consistent mechanism for managing dependent attributes across all classes that require this functionality. It uses `_DERIVED` and `_INVALIDATES` list defined in the class body to determine which attributes are cached and which core attributes invalidate which cached attributes.
-
+**Invalidating cache dependent on core attributes**: This is handled by using the `invalidates` hook with `on_setattr`. This has speed penalty for object creation and assignment of core attributes. Core attributes are not expected to be updated that much.
 ```python
-class MyClass(CachedAttributeGuardMixin):
-    core_attr1: int
-    core_attr2: str
-    _DERIVED = ['derived_attr1', 'derived_attr2']   # make sure these attributes are immutable
-    _INVALIDATES = {
-        'core_attr1': ['derived_attr1'],
-        'core_attr2': ['derived_attr1', 'derived_attr2']
-    }                                               # make sure these attributes are invalidated when relevant core attributes are updated
+class MyClass:
+    core_attr1: int = field(on_setattr=invalidates('__derived_attr1'))
+    
+    @property
+    def derived_attr1(self) -> int:
+        return self.__derived_attr1
+
+    @cached_property
+    def __derived_attr1(self) -> int:
+        # perform expensive computation here using core_attr1
+        return sum(range(self.core_attr1 * 2))
 ```
 
-#### Non-cached non-core attributes
-Some non-core attributes may not require caching. 
-- Attributes that are derived and assigned by external code (e.g. attaching overlap feature to VariationAllele). The class is not responsible for calculating these attributes, so it should not enforce immutability or caching.
-- Attributes that are too small or cheap to compute to justify caching (e.g. a lock object for thread safety). They are still derived attributes and should not be assigned by external code, so we enforce immutability by using getters and no setters.
+**Invalidating cache dependent on derived attributes**: Derived attributes may not be defined in the attribute list, so we cannot use `invalidates` hook. Instead, we can directly call `invalidate` function from the function that calculates the derived attribute that the other derived attribute depends on.
 
 ```python
 class MyClass():
-    core_attr: int
-    _non_cached_assignable_attr: int = field(default=0, init=False)             # non-cached attribute that can be assigned by external code
-    _non_cached_derived_attr: int = field(default=0, init=False, repr=False)    # non-cached derived attribute
+    core_attr1: int
 
     @property
-    def non_cached_derived_attr(self) -> int:
-        ...
-    
-    # no setter for non_cached_derived_attr to enforce immutability
+    def derived_attr1(self) -> int:
+        return self.__derived_attr1
+
+    @cached_property
+    def __derived_attr1(self) -> int:
+        invalidate(self, '__derived_attr2')  # invalidate dependent derived attribute
+
+        # perform expensive computation here using core_attr1
+        return sum(range(self.core_attr1 * 2))
+
+    @property
+    def derived_attr2(self) -> int:
+        return self.__derived_attr2
+
+    @cached_property
+    def __derived_attr2(self) -> int:
+        # perform expensive computation here using derived_attr1
+        return self.derived_attr1 + 1
 ```
 
-**Note** Both the second and third types of non-core attributes still need to be defined in the class body (with type annotations) to be compatible with `slots=True` and to ensure they are tracked properly. -->
+**Resetting derived attribute which does not have its own function**: In some cases, the derived attribute is set by some internal computation and does not have its own function to be decorated with `@cached_property` (third case mentioned in [Derived Attributes](#derived-attributes)). So, if we invalidate the attribute and in some place we try to access it, we will run into error. In such cases, we can use `reset_attrs` that will instead of invalidating the attribute, reset it to its default state.
+
+
+> **Note:** In some cases, we may want to allow updating core attributes without invalidating derived attributes. In that case, we can also use the `UnsafeSetterMixin` mixin. It allows using context managers to temporarily disable cache invalidation for faster but unsafe attribute update. Generally this should not be necessary.
+ ```python
+class MyClass(UnsafeSetterMixin):
+    core_attr1: int = field(on_setattr=invalidates('__derived_attr1'))
+    
+    @property
+    def derived_attr1(self) -> int:
+        return self.__derived_attr1
+
+    @cached_property
+    def __derived_attr1(self) -> int:
+        # perform expensive computation here using core_attr1
+        return sum(range(self.core_attr1 * 2))
+
+cls = MyClass(core_attr1=1)
+with cls.unsafe():
+    cls.core_attr1 = 2  # does not invalidate derived_attr1
+```
 
 ### Use of attrs
 
@@ -306,12 +337,12 @@ The `@cached_property` is by default not suitable for use with slotted classes b
 **Warning:** `cached_property` is **not thread-safe** by default. If the class may be accessed concurrently, we use a threading lock to guard the property computation.
 Example:
 ```python
-from threading import Lock
+from threading import RLock
 from attrs import field
 from functools import cached_property
 
 class MyClass:
-    _lock: Lock = field(factory=Lock, init=False)
+    _lock: RLock = field(factory=RLock, init=False)
 
     @cached_property
     def expensive_computation(self):
@@ -320,7 +351,7 @@ class MyClass:
             ...
 ```
 
-There is an inherent problem with this approach when we try to access a cached property from a another cached property. It can lead to deadlock if both properties try to acquire the same lock. How to avoid this? (Re-entrant lock (`threading.RLock`) instead of a regular lock?)
+> **Note:** The use of `RLock` instead of `Lock` to prevent deadlocks when trying to access a cached property from a another cached property.
 
 ## Position in a Sequence Region
 
@@ -338,36 +369,59 @@ Features positioned on a slice have coordinates and strand values expressed rela
 
 ### Coordinate Conventions
 
-All positions on a slice or sequence feature use `start` and `end` coordinates, where the condition `start < end` always holds true.
+All positions on a slice or sequence feature use `start` and `end` coordinates, where the condition `start <= end` always holds true.
 
 **Exception:** 
 1. An insertion variants described in Ensembl's default format can have `end = start - 1`.
 2. Circular slice on a bacterial or mitochondrial DNA can have `end < start`.
 
-We use **1-based inclusive** coordinates for all positions. This means that the first base of a sequence is at position 1, and both `start` and `end` positions are included in the feature span.
+We use **1-based inclusive (closed)** coordinates for all positions. This means that the first base of a sequence is at position 1, and both `start` and `end` positions are included in the feature span.
 
+### Insertion coordinates
+As convention in Ensembl, for insertion variants, the `start` and `end` coordinates are defined such that `end = start - 1`. This is because in 1-based inclusive coordinates, length is represented as `end - start + 1`. An insertion has a length of 0, furthermore the adjacent start and end coordinates clearly indicate the position of the insertion between two bases.
+
+This convention is also convenient for calculating pre and post sequence for shifting algorithm. Nonetheless, it can be a source of confusion and errors, so it is important to be aware of this special case when working with insertion variants.
 
 ## Getting away with circular dependency
 
-The heavy use of subfolders to group similar objects means that, depending on the way we structure our modules, there could be circular dependencies during import.
+The heavy use of subfolders to group similar objects means that, depending on the way we structure our modules, there could be circular dependencies during import. The main source of circular dependencies here comes from using `__init__.py` files to expose a package's public API.
 
-In some cases, it occurs becuase we are using type annotations to refer to classes that are defined in the same module or in a different module that also refers back to the first module. We can get around it by -
+The circular import is avoided using the following approaches:
+
+### When importing from same package
+When importing within the same package, always import directly from the concrete module rather than through a package's public API.
+
+**Prefer:**
+```python
+from ensembl.vep.models.genic.transcript import Transcript
 ```
+**Over:**
+```python
+from ensembl.vep.models.genic import Transcript
+```
+
+We also prefer absolute imports over relative imports, even within the same package:
+**Prefer:**
+```python
+from ensembl.vep.models.genic.transcript import Transcript
+```
+**Over:**
+```python
+from .transcript import Transcript
+```
+Absolute imports are more explicit, easier to trace, and consistent with [PEP 8](https://peps.python.org/pep-0008/#imports).
+
+### Importing for type annotations
+When we are importing some module that is solely used for type annotations, `typing.TYPE_CHECKING` should be used -
+```python
 if typing.TYPE_CHECKING:
     from some_module import some_function
 ```
+
 It allows importing the module only when type checking is performed (e.g. by static analysis tools), but not during runtime.
 
-When we are actually instantiating the class that would cause circular import error. In that case, we can use local import instead of top-level import to delay the import until it is actually needed at runtime.
-
-```python
-class MyClass:
-    def some_function():
-        from some_module import SomeClass
-        instance = SomeClass()
-```
-
-Another case is when we are using the class as base class for inferitance. In that case, we need to do global import. We need to make sure we keep one-way dependency direction, i.e. the base class cannot inherit from any of the descendant classes.
+### Prevent direct circular import
+And, of course, we need to prevent direct circular imports (module A importing module B, and module B importing module A) by making sure we keep one-way dependency direction, i.e. the base class cannot inherit from any of the descendant classes.
 
 ## Containers
 We are using containers where we do not want to implement any behavior for an object, but useful to have a named and grouped representation of the data. They are defined using `@frozen` from `attrs` to create immutable data structures and available in `ensembl.vep.common.(containers)`.

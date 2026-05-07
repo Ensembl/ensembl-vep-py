@@ -46,6 +46,9 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Bio-Informatics",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
+dependencies = [
+    "attrs>=24.1.0",
+]
 
 # dependencies = [
 #     "biopython",
@@ -119,20 +122,26 @@ requires = [
 [tool.black]
 line-length = 110
 
+[tool.pylint]
+max-branches = 15
+
 [tool.pylint.format]
 max-line-length = 110
 
 [tool.pylint.messages_control]
 disable = [
+    "abstract-method",
     "invalid-name",
     "logging-fstring-interpolation",
     "similarities",
     "too-few-public-methods",
     "too-many-arguments",
+    "too-many-instance-attributes",
+    "too-many-positional-arguments",
     "too-many-locals",
     "too-many-statements",
     "unspecified-encoding",
-    "wildcard-import",
+    "wildcard-import"
 ]
 
 [tool.ruff]
@@ -184,4 +193,9 @@ exclude_also = [
     "def .*_cli",
     # Do not complain about abstract methods, they are not run
     "@(abc\\.)?abstractmethod",
+]
+omit = [
+    "src/python/ensembl/vep/models/regulatory/*",
+    "src/python/ensembl/vep/models/haplotype/*",
+    "src/python/ensembl/vep/models/custom_feature.py"
 ]

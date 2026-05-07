@@ -32,39 +32,43 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: ./.github/actions/python_build
         with:
           python-version: ${{ inputs.python-version }}
           tags: "cicd"
 
-      - name: Run pylint
+      - name: Run pylint checks on source code
         run: |
           uv run pylint --rcfile pyproject.toml src/python/ensembl
+      - name: Run pylint checks on test code
+        run: |
           uv run pylint --rcfile pyproject.toml src/python/tests
 
   mypy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: ./.github/actions/python_build
         with:
           python-version: ${{ inputs.python-version }}
           tags: "cicd"
 
-      - name: Run mypy
+      - name: Run static type checking on source code
         run: |
           uv run mypy --config-file pyproject.toml src/python/ensembl
+      - name: Run static type checking on test code
+        run: |
           uv run mypy --config-file pyproject.toml src/python/tests
 
   black:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: ./.github/actions/python_build
         with:
@@ -83,7 +87,7 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: ./.github/actions/python_build
         with:
@@ -91,14 +95,14 @@ jobs:
           tags: "cicd"
 
       - name: Run pytest with coverage
+        id: unittest
         run: |
           uv run coverage run -m pytest
-          uv run coverage lcov -o coverage.lcov
 
       - name: Add coverage reports
-        if: ${{ github.event_name == 'pull_request' }}
-        continue-on-error: true
+        if: ${{ github.event_name == 'pull_request' && (steps.unittest.outcome == 'success' || (failure() && steps.unittest.outcome == 'failure')) }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          uv run coverage lcov -o coverage.lcov
           bash .github/scripts/py_coverage_comment.sh coverage.lcov
