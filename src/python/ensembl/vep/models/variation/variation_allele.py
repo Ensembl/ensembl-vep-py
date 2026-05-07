@@ -60,16 +60,10 @@ class VariationAllele(Feature):
     """
 
     start: int = field(
-        on_setattr=[
-            invalidates("__minimised_locus", "__shifted_locus"),
-            resets_attrs(("__shifted", False))
-        ]
+        on_setattr=[invalidates("__minimised_locus", "__shifted_locus"), resets_attrs(("__shifted", False))]
     )
     end: int = field(
-        on_setattr=[
-            invalidates("__minimised_locus", "__shifted_locus"),
-            resets_attrs(("__shifted", False))
-        ]
+        on_setattr=[invalidates("__minimised_locus", "__shifted_locus"), resets_attrs(("__shifted", False))]
     )
     reference_allele: str | None = field(
         default=None,

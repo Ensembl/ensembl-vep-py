@@ -313,12 +313,12 @@ class TestVariationAlleleMinimiseAndShift:
 
     @pytest.mark.parametrize(
         (
-            "slice_start", 
-            "slice_seq", 
-            "variation_allele_start", 
-            "variation_allele_end", 
-            "ref_allele", 
-            "alt_allele"
+            "slice_start",
+            "slice_seq",
+            "variation_allele_start",
+            "variation_allele_end",
+            "ref_allele",
+            "alt_allele",
         ),
         [
             (10, "TAGCTAGCTAGCTA", 5, 4, "", "TAGC"),
@@ -326,14 +326,14 @@ class TestVariationAlleleMinimiseAndShift:
         ],
     )
     def test_minimise_no_effect_then_shift_w_seq_change(
-            self,
-            slice_start: int,
-            slice_seq: str,
-            variation_allele_start: int,
-            variation_allele_end: int,
-            ref_allele: str,
-            alt_allele: str
-        ) -> None:
+        self,
+        slice_start: int,
+        slice_seq: str,
+        variation_allele_start: int,
+        variation_allele_end: int,
+        ref_allele: str,
+        alt_allele: str,
+    ) -> None:
         """Test that calling shift after minimise retains the original locus and sets flags correctly.
         In this testcase:
          * Minimise should not change anything

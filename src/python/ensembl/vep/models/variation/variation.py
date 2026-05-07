@@ -99,7 +99,7 @@ class Variation(Feature):
         """Public accessor for the __most_severe_consequence.
 
         Returns:
-            OverlapConsequence | None: The most severe consequence type for the variation 
+            OverlapConsequence | None: The most severe consequence type for the variation
                 or None if not deducible.
         """
         return self.__most_severe_consequence

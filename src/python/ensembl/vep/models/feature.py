@@ -204,7 +204,7 @@ class Feature:
 
         if self.slice.seq_region_name != other.slice.seq_region_name:
             logger.warning(
-                "Cannot compare two features on different sequence regions." 
+                "Cannot compare two features on different sequence regions."
                 f" {self.__class__.__name__} is on {self.slice.seq_region_name}"
                 f" and {other.__class__.__name__} is on {other.slice.seq_region_name}."
             )
