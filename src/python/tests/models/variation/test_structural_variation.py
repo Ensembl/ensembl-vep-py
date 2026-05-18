@@ -19,10 +19,8 @@ from __future__ import annotations
 
 import pytest
 
-# from ensembl.vep.common import ClassSOTerm, Locus, Strand
 from ensembl.vep.common import ClassSOTerm, Strand
-# from ensembl.vep.models.variation import StructuralVariation, OverlapConsequence
-from ensembl.vep.models.variation import StructuralVariation
+from ensembl.vep.models.variation import StructuralVariation, OverlapConsequence
 from ensembl.vep.models.sequence import Slice
 
 @pytest.fixture
@@ -49,6 +47,15 @@ def structural_variation(genomic_slice: Slice) -> StructuralVariation:
         allele_string="-/(LARGEDELETION)",
     )
 
+@pytest.fixture
+def structural_variation_no_alleles(genomic_slice: Slice) -> StructuralVariation:
+    """Returns a StructuralVariation object with no allele_string for testing."""
+    return StructuralVariation(
+        start=5,
+        end=150,
+        strand=Strand.FORWARD,
+        slice=genomic_slice,
+    )
 
 @pytest.fixture
 def deletion_structural_variation(structural_variation: StructuralVariation) -> StructuralVariation:
@@ -90,6 +97,11 @@ def multiallelic_structural_variation(genomic_slice: Slice) -> StructuralVariati
         allele_string="(CAG)9/(CAG)12/(CAG)15",
     )
 
+@pytest.fixture
+def overlap_consequence() -> OverlapConsequence:
+    """Returns an OverlapConsequence object for testing."""
+    return OverlapConsequence(term="transcript_ablation", accession="SO:0001893")
+
 class TestStructuralVariationProperties:
     """Tests property accessors and default values."""
 
@@ -121,15 +133,15 @@ class TestStructuralVariationProperties:
         assert structural_variation.inner_end is None
         assert structural_variation.outer_end is None
 
-    # def test_most_severe_consequence_immutable(
-    #     self, structural_variation: StructuralVariation, overlap_consequence: OverlapConsequence
-    # ) -> None:
-    #     """Test that most_severe_consequence cannot be directly set."""
-    #     with pytest.raises(
-    #         AttributeError,
-    #         match="property 'most_severe_consequence' of 'StructuralVariation' object has no setter"
-    #     ):
-    #         structural_variation.most_severe_consequence = overlap_consequence  # type: ignore[misc]
+    def test_most_severe_consequence_immutable(
+        self, structural_variation: StructuralVariation, overlap_consequence: OverlapConsequence
+    ) -> None:
+        """Test that most_severe_consequence cannot be directly set."""
+        with pytest.raises(
+            AttributeError,
+            match="property 'most_severe_consequence' of 'StructuralVariation' object has no setter"
+        ):
+            structural_variation.most_severe_consequence = overlap_consequence  # type: ignore[misc]
 
     def test_class_so_term_immutable(self, structural_variation: StructuralVariation) -> None:
         """Test that class_so_term cannot be directly set."""
@@ -138,26 +150,9 @@ class TestStructuralVariationProperties:
         ):
             structural_variation.class_so_term = ClassSOTerm.SEQUENCE_ALTERATION  # type: ignore[misc]
 
-class TestClassSOTerm:
-    """Tests for the class_so_term cached property."""
-
-    def test_correct_term_deletion(self, structural_variation: StructuralVariation) -> None:
-        """Test StructuralVariation object for deletion produces correct ClassSOTerm"""
-        assert structural_variation.class_so_term == ClassSOTerm.DELETION
-
-    def test_correct_term_insertion(self, insertion_structural_variation: StructuralVariation) -> None:
-        """Test StructuralVariation object for deletion produces correct ClassSOTerm"""
-        assert insertion_structural_variation.class_so_term == ClassSOTerm.INSERTION
-
-    def test_correct_term_tandem_repeat(
-        self, tandem_repeat_structural_variation: StructuralVariation
-    ) -> None:
-        """Test StructuralVariation object for deletion produces correct ClassSOTerm"""
-        assert tandem_repeat_structural_variation.class_so_term == ClassSOTerm.TANDEM_REPEAT
-
 
 class TestStructuralVariationAlleles:
-    """Tests for the variation_alleles cached property."""
+    """Tests for the structural_variation_alleles cached property."""
 
     def test_single_alt_allele(self, structural_variation: StructuralVariation) -> None:
         """Test that a bi-allelic structural_variation returns the correct StructuralVariationAllele."""
@@ -213,3 +208,27 @@ class TestStructuralVariationAlleles:
         )
         alleles = var.structural_variation_alleles
         assert len(alleles) == 0
+
+
+class TestClassSOTerm:
+    """Tests for the class_so_term cached property."""
+
+    def test_correct_term_deletion(self, structural_variation: StructuralVariation) -> None:
+        """Test StructuralVariation object for deletion produces correct ClassSOTerm"""
+        assert structural_variation.class_so_term == ClassSOTerm.DELETION
+
+    def test_correct_term_insertion(self, insertion_structural_variation: StructuralVariation) -> None:
+        """Test StructuralVariation object for deletion produces correct ClassSOTerm"""
+        assert insertion_structural_variation.class_so_term == ClassSOTerm.INSERTION
+
+    def test_correct_term_tandem_repeat(
+        self, tandem_repeat_structural_variation: StructuralVariation
+    ) -> None:
+        """Test StructuralVariation object for deletion produces correct ClassSOTerm"""
+        assert tandem_repeat_structural_variation.class_so_term == ClassSOTerm.TANDEM_REPEAT
+
+
+class TestMostSevereConsequence:
+    """Tests for the most_severe_consequence cached property."""
+    def test_no_csqs(self, structural_variation_no_alleles: StructuralVariation) -> None:
+        assert structural_variation_no_alleles.most_severe_consequence is None

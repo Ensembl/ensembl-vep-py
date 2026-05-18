@@ -19,6 +19,7 @@ from attrs import define, field
 
 from ensembl.vep.common import ClassSOTerm, invalidate, invalidates, infer_variant_so_term
 from ensembl.vep.models import Feature
+from ensembl.vep.models.overlap import OverlapConsequence
 from ensembl.vep.models.variation.structural_variation_allele import StructuralVariationAllele
 
 
@@ -105,6 +106,34 @@ class StructuralVariation(Feature):
                 structural_variation_alleles.append(structural_variation_allele)
 
             return structural_variation_alleles
+
+    @property
+    def most_severe_consequence(self) -> OverlapConsequence | None:
+        """Public accessor for the __most_severe_consequence.
+
+        Returns:
+            OverlapConsequence | None: The most severe consequence type for the variation
+                or None if not deducible.
+        """
+        return self.__most_severe_consequence
+
+    @cached_property
+    def __most_severe_consequence(self) -> OverlapConsequence | None:
+        """Returns the most severe consequence type for the variation.
+
+        Returns:
+            OverlapConsequence | None: The most severe consequence type or None if not deducible.
+        """
+        highest = None
+        for structural_variation_allele in self.structural_variation_alleles or []:
+            for overlap_consequence in structural_variation_allele.overlap_consequences or []:
+                highest = highest or overlap_consequence
+                if overlap_consequence.rank < highest.rank:
+                    highest = overlap_consequence
+                elif overlap_consequence.rank == highest.rank and overlap_consequence.term < highest.term:
+                    highest = overlap_consequence
+
+        return highest
 
     @property
     def class_so_term(self) -> ClassSOTerm | None:
