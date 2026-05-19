@@ -14,6 +14,9 @@
 
 use pyo3::prelude::*;
 
+// Keep this crate root as PyO3 module registration glue only. Rust logic should
+// live in submodules where it can be tested directly; coverage jobs ignore this
+// file with cargo-llvm-cov --ignore-filename-regex so stable Rust is sufficient.
 mod hello;
 
 #[pymodule]

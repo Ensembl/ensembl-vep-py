@@ -49,8 +49,8 @@ jobs:
           uv run coverage lcov -o pytest-coverage.lcov
           uv run coverage html -d pytest-coverage-html
 
-          cargo llvm-cov --lcov --output-path rust-coverage.lcov
-          cargo llvm-cov --html --output-dir rust-coverage-html
+          cargo llvm-cov --ignore-filename-regex '(^|/)src/rust/lib\.rs$' --lcov --output-path rust-coverage.lcov
+          cargo llvm-cov --ignore-filename-regex '(^|/)src/rust/lib\.rs$' --html --output-dir rust-coverage-html
 
       - name: Generate coverage badge
         run: |
