@@ -12,41 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#![feature(coverage_attribute)]
-
-use log::info;
 use pyo3::prelude::*;
 
-// plain Rust helper, not exposed to Python: useful for threading and unit test
-#[pyfunction]
-fn sum_as_string(a: &str, b: &str) -> String {
-    info!("Adding the numbers - {} and {}", a, b);
-    a.to_owned() + b
-}
+mod hello;
 
 #[pymodule]
 mod ensembl_vep_core {
     use pyo3::prelude::*;
 
     #[pymodule_init]
-    #[cfg_attr(coverage_nightly, coverage(off))]
     fn init(_m: &Bound<'_, PyModule>) -> PyResult<()> {
         pyo3_log::init();
         Ok(())
     }
 
     #[pymodule_export]
-    use super::sum_as_string;
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_sum_as_string_impl() {
-        assert_eq!(sum_as_string("1", "2"), "12");
-        assert_eq!(sum_as_string("foo", "bar"), "foobar");
-        assert_eq!(sum_as_string("", "x"), "x");
-    }
+    use crate::hello::sum_as_string;
 }
