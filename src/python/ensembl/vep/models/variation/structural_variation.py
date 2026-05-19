@@ -58,7 +58,7 @@ class StructuralVariation(Variation):
         ),
     )
     is_somatic: bool = field(default=False)
-    copy_number: float | None = field(default=None)
+    copy_number: int | None = field(default=None)
     inner_start: int | None = field(default=None)
     outer_start: int | None = field(default=None)
     inner_end: int | None = field(default=None)

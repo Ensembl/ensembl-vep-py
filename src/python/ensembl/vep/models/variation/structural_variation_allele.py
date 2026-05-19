@@ -25,7 +25,6 @@ if TYPE_CHECKING:
     from ensembl.vep.models.overlap import TranscriptStructuralVariationAllele
 
 logger = logging.getLogger(__name__)
-MAX_SEARCH_AREA = 1000
 
 
 @define(kw_only=True, auto_attribs=True)
