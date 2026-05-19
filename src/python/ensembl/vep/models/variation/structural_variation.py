@@ -18,17 +18,16 @@ from threading import RLock
 from attrs import define, field
 
 from ensembl.vep.common import ClassSOTerm, invalidate, invalidates, infer_variant_so_term
-from ensembl.vep.models import Feature
 from ensembl.vep.models.overlap import OverlapConsequence
+from ensembl.vep.models.variation.variation import Variation
 from ensembl.vep.models.variation.structural_variation_allele import StructuralVariationAllele
 
 
 @define(kw_only=True, auto_attribs=True)
-class StructuralVariation(Feature):
+class StructuralVariation(Variation):
     """Represents a structural variation to genomic sequences in a specific locus.
 
     Attributes:
-        stable_id (str | None):
             Stable identifier for the variation.
         allele_string (str | None):
             String representation of the alleles.
@@ -47,13 +46,11 @@ class StructuralVariation(Feature):
             The inner bound on the end position when the variant is imprecise
         outer_end (int | None):
             The outer bound on the end position when the variant is imprecise
-        class_so_term (str | None):
             Sequence Ontology term describing the class of the variation.
         most_severe_consequence (OverlapConsequence | None):
             Most severe consequence type for the variation.
     """
 
-    stable_id: str | None = field(default=None)
     allele_string: str | None = field(
         default=None,
         on_setattr=invalidates(
@@ -135,21 +132,3 @@ class StructuralVariation(Feature):
 
         return highest
 
-    @property
-    def class_so_term(self) -> ClassSOTerm | None:
-        """Public accessor for the __class_so_term.
-
-        Returns:
-            ClassSOTerm | None: The SO term for the class of the strucutural variation.
-        """
-        return self.__class_so_term
-
-    @cached_property
-    def __class_so_term(self) -> ClassSOTerm | None:
-        """
-        Return the SO term for the class of the strucutural variation.
-
-        Returns:
-            ClassSOTerm | None: The SO term string for the strucutural variation.
-        """
-        return infer_variant_so_term(self.allele_string or "", ref_correct=True)
