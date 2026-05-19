@@ -29,21 +29,8 @@ MAX_SEARCH_AREA = 1000
 
 
 @define(kw_only=True, auto_attribs=True)
-class StructuralVariationAllele(Feature):
-    """Represents a specific allele of a structural variation.
-
-    Attributes:
-        start (int):
-            The start position in relative to slice.
-        end (int):
-            The end position in relative to slice.
-        reference_allele (str | None):
-            The reference allele.
-        alternate_allele (str | None):
-            The alternate allele.
-        transcript_structural_variation_alleles (list[TranscriptStructuralVariationAllele]):
-            List of overlaps between this variation allele and transcripts.
-    """
+class StructuralVariationAllele(VariationAllele):
+    """Represents a specific allele of a structural variation."""
 
     start: int
     end: int
