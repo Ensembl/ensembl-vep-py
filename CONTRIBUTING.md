@@ -185,6 +185,11 @@ Coverage reports are automatically generated and posted to PRs. Maintain:
 - **Rust**: ≥90% line coverage
 - **Python**: ≥90% line coverage
 
+Rust coverage is generated with stable Rust through `cargo llvm-cov`. The crate
+root `src/rust/lib.rs` is intentionally limited to PyO3 module registration glue
+and is excluded with `--ignore-filename-regex`; add new testable Rust logic in
+submodules instead.
+
 ## 🔧 Code Style
 
 - For Python see `pyproject.toml`

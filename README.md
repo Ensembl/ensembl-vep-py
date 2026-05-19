@@ -88,8 +88,12 @@ Run the test suite:
 uv run coverage run -m pytest
 
 # Run Rust llvm-cov
-cargo llvm-cov
+cargo llvm-cov --ignore-filename-regex '(^|/)src/rust/lib\.rs$'
 ```
+
+The Rust crate root `src/rust/lib.rs` is reserved for PyO3 module registration
+glue. Keep testable Rust logic in submodules; coverage runs ignore `lib.rs` so
+the project can use stable Rust without nightly-only coverage attributes.
 
 ## Contributing
 
