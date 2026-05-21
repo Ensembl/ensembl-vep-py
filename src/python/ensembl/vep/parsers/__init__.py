@@ -13,7 +13,6 @@
 # limitations under the License.
 """Parser interfaces."""
 
-from ensembl.vep.parsers.gff import GFFParser, GFFRecord
 from ensembl.vep.parsers.tabix import TabixParser
 
-__all__ = ["GFFParser", "GFFRecord", "TabixParser"]
+__all__ = ["TabixParser"]

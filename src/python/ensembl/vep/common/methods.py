@@ -312,6 +312,39 @@ def shift_sequence(
     return (shift_length, "".join(seq_d), start, end, changed)
 
 
+def format_region_string(
+    region: str | None = None,
+    *,
+    seqid: str | None = None,
+    start: int | None = None,
+    end: int | None = None,
+) -> str:
+    """Format a region string from either an existing region or seqid/start/end values."""
+
+    if region is not None:
+        if any(value is not None for value in (seqid, start, end)):
+            raise ValueError("pass either region or seqid/start/end, not both")
+
+        return region
+
+    if seqid is None:
+        raise ValueError("region requires either region or seqid")
+
+    if start is None and end is None:
+        return seqid
+
+    if start is None or end is None:
+        raise ValueError("both start and end are required for bounded region")
+
+    if start < 1 or end < 1:
+        raise ValueError("regions are 1-based and must be positive")
+
+    if start > end:
+        raise ValueError("start must be less than or equal to end")
+
+    return f"{seqid}:{start}-{end}"
+
+
 def infer_variant_so_term(allele_string: str, ref_correct: bool = False) -> ClassSOTerm | None:
     """
     Return the SO term for the class of the variation.
