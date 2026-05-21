@@ -18,6 +18,7 @@ use pyo3::prelude::*;
 // live in submodules where it can be tested directly; coverage jobs ignore this
 // file with cargo-llvm-cov --ignore-filename-regex so stable Rust is sufficient.
 mod hello;
+mod parsers;
 
 #[pymodule]
 mod ensembl_vep_core {
@@ -31,4 +32,7 @@ mod ensembl_vep_core {
 
     #[pymodule_export]
     use crate::hello::sum_as_string;
+
+    #[pymodule_export]
+    use crate::parsers::tabix::TabixParser;
 }
