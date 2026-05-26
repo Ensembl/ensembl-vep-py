@@ -8,6 +8,18 @@ Thank you for your interest in contributing to **Ensembl Variant Effect Predicto
 
 Ensembl VEP (Variant Effect Predictor) predicts the functional effects of genomic variants. Contributions should maintain high standards for scientific accuracy, performance, and reproducibility.
 
+## Pre-requisites
+While most code in this repository is developer-platform agnostic, ensembl-vep is assumed to be run mainly on *NIX systems (linux or MacOS).
+If you are developing on Windows, you are advised to use a linux distribution (such as Ubuntu) through WSL as your development environment,
+to ensure full compatibility with all tools used by this repository (such as `make`).
+
+The following packages are pre-requisites to be able to contribute to the Ensembl VEP code:
+ * [Cargo](https://doc.rust-lang.org/cargo/): Rust package manager
+   For convenience, Cargo can be installed using the `Makefile` in this repository by running `make install-cargo`.
+ * [UV](https://docs.astral.sh/uv/): python package manager
+   For convenience, uv can be installed using the `Makefile` in this repository by running `make install-uv`.
+ * Python 3.12 dev library. On Ubuntu, this can be installed with `apt install libpython-3.12-dev`.
+
 ## 🚀 Getting Started
 
 1. **Fork the repository**
@@ -22,7 +34,7 @@ Ensembl VEP (Variant Effect Predictor) predicts the functional effects of genomi
    cargo install
    
    # Python environment
-   uv sync --extra dev,test
+   uv sync --extra cicd,build
    ```
 
 3. **Building the Project**:
@@ -159,11 +171,13 @@ ruff format src/python/
 # Lint
 cargo clippy
 ruff check src/python/
-mypy src/python/
+
+# Static typing
+uv run mypy src/python/
 
 # Test
 cargo test --all-features
-pytest src/python/ --cov=src/python
+uv run pytest src/python/ --cov=src/python
 ```
 
 ## 🧪 Testing Requirements
@@ -177,7 +191,7 @@ All PRs must:
 - ✅ Handle edge cases (multi-allelic variants, structural variants)
 
 **Rust tests**: `cargo test --lib --tests`
-**Python tests**: `pytest src/python/ -v`
+**Python tests**: `uv run pytest src/python/ -v`
 
 ## 📊 Code Coverage
 
