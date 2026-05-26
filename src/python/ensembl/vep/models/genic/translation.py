@@ -48,8 +48,8 @@ class Translation:
             The transcript to which this translation belongs.
     """
 
-    start: int = field(on_setattr=invalidates("__length"))
-    end: int = field(on_setattr=invalidates("__length"))
+    start: int = field(on_setattr=invalidates("_length"))
+    end: int = field(on_setattr=invalidates("_length"))
     stable_id: str
     version: int | None = field(default=None, init=False)
     seq: str | None = field(default=None, init=False)
@@ -58,15 +58,15 @@ class Translation:
 
     @property
     def length(self) -> int:
-        """Public accessor for __length.
+        """Public accessor for _length.
 
         Returns:
             int: The length of the translation.
         """
-        return self.__length
+        return self._length
 
     @cached_property
-    def __length(self) -> int:
+    def _length(self) -> int:
         """
         Returns the length of the feature.
 
@@ -97,10 +97,10 @@ class Translation:
             The position of the last coding base in the end exon,
             relative to the start of the exon.
         """
-        return self.__exon_coding_end
+        return self._exon_coding_end
 
     @cached_property
-    def __exon_coding_end(self) -> int | None:
+    def _exon_coding_end(self) -> int | None:
         """
         Returns the position of the last coding base in the end exon,
         relative to the start of the exon.

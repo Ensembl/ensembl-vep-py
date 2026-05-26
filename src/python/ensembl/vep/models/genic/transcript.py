@@ -65,16 +65,16 @@ class Transcript(Feature):
         factory=list,
         init=False,
         on_setattr=invalidates(
-            "__end_exon_index",
-            "__spliced_seq",
-            "__cds",
-            "__cdna_coding_start",
-            "__cdna_coding_end",
-            "__cds_start",
-            "__cds_end",
-            "__five_prime_utr",
-            "__three_prime_utr",
-            "__translated_seq",
+            "_end_exon_index",
+            "_spliced_seq",
+            "_cds",
+            "_cdna_coding_start",
+            "_cdna_coding_end",
+            "_cds_start",
+            "_cds_end",
+            "_five_prime_utr",
+            "_three_prime_utr",
+            "_translated_seq",
         ),
     )
     introns: list[Intron] = field(factory=list, init=False)
@@ -82,14 +82,14 @@ class Transcript(Feature):
         default=None,
         init=False,
         on_setattr=invalidates(
-            "__cds",
-            "__cdna_coding_start",
-            "__cdna_coding_end",
-            "__cds_start",
-            "__cds_end",
-            "__five_prime_utr",
-            "__three_prime_utr",
-            "__translated_seq",
+            "_cds",
+            "_cdna_coding_start",
+            "_cdna_coding_end",
+            "_cds_start",
+            "_cds_end",
+            "_five_prime_utr",
+            "_three_prime_utr",
+            "_translated_seq",
         ),
     )
     alternative_translations: list[Translation] | None = field(factory=list, init=False)
@@ -107,15 +107,15 @@ class Transcript(Feature):
 
     @property
     def end_exon_index(self) -> int:
-        """Public accessor for __end_exon_index.
+        """Public accessor for _end_exon_index.
 
         Returns:
             int: Index of the exon containing the stop codon.
         """
-        return self.__end_exon_index
+        return self._end_exon_index
 
     @cached_property
-    def __end_exon_index(self) -> int:
+    def _end_exon_index(self) -> int:
         """Returns the index of the exon containing the stop codon.
 
         Returns:
@@ -125,16 +125,16 @@ class Transcript(Feature):
 
     @property
     def spliced_seq(self) -> str | None:
-        """Public accessor for __spliced_seq.
+        """Public accessor for _spliced_seq.
 
         Returns:
             The spliced sequence of the transcript,
             or None if sequence information is not available for all exons.
         """
-        return self.__spliced_seq
+        return self._spliced_seq
 
     @cached_property
-    def __spliced_seq(self) -> str | None:
+    def _spliced_seq(self) -> str | None:
         """
         The spliced sequence of the transcript,
         or None if sequence information is not available for all exons.
@@ -161,15 +161,15 @@ class Transcript(Feature):
 
     @property
     def cds(self) -> CDS | None:
-        """Public accessor for __cds.
+        """Public accessor for _cds.
 
         Returns:
             CDS | None: The CDS of the transcript, or None if not applicable.
         """
-        return self.__cds
+        return self._cds
 
     @cached_property
-    def __cds(self) -> CDS | None:
+    def _cds(self) -> CDS | None:
         """
         Returns the CDS associated with this transcript, or None if not applicable.
 
@@ -232,15 +232,15 @@ class Transcript(Feature):
 
     @property
     def cdna_coding_start(self) -> int | None:
-        """Public accessor for __cdna_coding_start.
+        """Public accessor for _cdna_coding_start.
 
         Returns:
             int | None: cDNA coordinate of the start of the coding sequence, or None if not applicable.
         """
-        return self.__cdna_coding_start
+        return self._cdna_coding_start
 
     @cached_property
-    def __cdna_coding_start(self) -> int | None:
+    def _cdna_coding_start(self) -> int | None:
         """
         Returns the start of the coding sequence with respect to the cDNA, or None if not applicable.
 
@@ -264,15 +264,15 @@ class Transcript(Feature):
 
     @property
     def cdna_coding_end(self) -> int | None:
-        """Public accessor for __cdna_coding_end.
+        """Public accessor for _cdna_coding_end.
 
         Returns:
             int | None: cDNA coordinate of the end of the coding sequence, or None if not applicable.
         """
-        return self.__cdna_coding_end
+        return self._cdna_coding_end
 
     @cached_property
-    def __cdna_coding_end(self) -> int | None:
+    def _cdna_coding_end(self) -> int | None:
         """
         Returns the end of the coding sequence with respect to the cDNA, or None if not applicable.
 
@@ -299,16 +299,16 @@ class Transcript(Feature):
 
     @property
     def cds_start(self) -> int | None:
-        """Public accessor for __cds_start.
+        """Public accessor for _cds_start.
 
         Returns:
             Coordinate of the start of the CDS with respect to the transcript,
             or None if not applicable.
         """
-        return self.__cds_start
+        return self._cds_start
 
     @cached_property
-    def __cds_start(self) -> int | None:
+    def _cds_start(self) -> int | None:
         """
         Returns the start of the CDS with respect to the transcript, or None if not applicable.
 
@@ -328,16 +328,16 @@ class Transcript(Feature):
 
     @property
     def cds_end(self) -> int | None:
-        """Public accessor for __cds_end.
+        """Public accessor for _cds_end.
 
         Returns:
             Coordinate of the end of the CDS with respect to the transcript,
             or None if not applicable.
         """
-        return self.__cds_end
+        return self._cds_end
 
     @cached_property
-    def __cds_end(self) -> int | None:
+    def _cds_end(self) -> int | None:
         """
         Returns the end of the CDS with respect to the transcript, or None if not applicable.
 
@@ -360,15 +360,15 @@ class Transcript(Feature):
 
     @property
     def five_prime_utr(self) -> UTR | None:
-        """Public accessor for __five_prime_utr.
+        """Public accessor for _five_prime_utr.
 
         Returns:
             The 5' UTR of the transcript, or None if not applicable.
         """
-        return self.__five_prime_utr
+        return self._five_prime_utr
 
     @cached_property
-    def __five_prime_utr(self) -> UTR | None:
+    def _five_prime_utr(self) -> UTR | None:
         """Returns the 5' UTR of the transcript, or None if not applicable.
 
         Returns:
@@ -400,15 +400,15 @@ class Transcript(Feature):
 
     @property
     def three_prime_utr(self) -> UTR | None:
-        """Public accessor for __three_prime_utr.
+        """Public accessor for _three_prime_utr.
 
         Returns:
             The 3' UTR of the transcript, or None if not applicable.
         """
-        return self.__three_prime_utr
+        return self._three_prime_utr
 
     @cached_property
-    def __three_prime_utr(self) -> UTR | None:
+    def _three_prime_utr(self) -> UTR | None:
         """Returns the 3' UTR of the transcript, or None if not applicable.
 
         Returns:
@@ -440,15 +440,15 @@ class Transcript(Feature):
 
     @property
     def translated_seq(self) -> str | None:
-        """Public accessor for __translated_seq.
+        """Public accessor for _translated_seq.
 
         Returns:
             str | None: The translated sequence of the transcript, or None if not applicable.
         """
-        return self.__translated_seq
+        return self._translated_seq
 
     @cached_property
-    def __translated_seq(self) -> str | None:
+    def _translated_seq(self) -> str | None:
         """Returns the translated sequence of the transcript, or None if not applicable.
 
         Returns:

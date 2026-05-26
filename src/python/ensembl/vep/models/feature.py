@@ -40,11 +40,11 @@ class Feature:
         seq (Any | None): Associated biological sequence.
     """
 
-    start: int = field(on_setattr=invalidates("__length", "__seq_region_start"))
-    end: int = field(on_setattr=invalidates("__length", "__seq_region_end"))
-    strand: Strand = field(on_setattr=invalidates("__seq_region_strand"))
+    start: int = field(on_setattr=invalidates("_length", "_seq_region_start"))
+    end: int = field(on_setattr=invalidates("_length", "_seq_region_end"))
+    strand: Strand = field(on_setattr=invalidates("_seq_region_strand"))
     slice: Slice | None = field(
-        default=None, on_setattr=invalidates("__seq_region_start", "__seq_region_end", "__seq_region_strand")
+        default=None, on_setattr=invalidates("_seq_region_start", "_seq_region_end", "_seq_region_strand")
     )
     seq: Any | None = field(default=None)
     _lock: RLock = field(factory=RLock, init=False, repr=False)
@@ -52,15 +52,15 @@ class Feature:
     @property
     def length(self) -> int:
         """
-        Public accessor for the __length.
+        Public accessor for the _length.
 
         Returns:
             int: The length of the feature.
         """
-        return self.__length
+        return self._length
 
     @cached_property
-    def __length(self) -> int:
+    def _length(self) -> int:
         """
         Returns the length of the feature.
 
@@ -73,16 +73,16 @@ class Feature:
     @property
     def seq_region_start(self) -> int | None:
         """
-        Public accessor for the __seq_region_start.
+        Public accessor for the _seq_region_start.
 
         Returns:
             The start position in the sequence region,
             or None if the feature has no attached slice.
         """
-        return self.__seq_region_start
+        return self._seq_region_start
 
     @cached_property
-    def __seq_region_start(self) -> int | None:
+    def _seq_region_start(self) -> int | None:
         """
         Returns the start position in the sequence region.
 
@@ -99,15 +99,15 @@ class Feature:
     @property
     def seq_region_end(self) -> int | None:
         """
-        Public accessor for the __seq_region_end.
+        Public accessor for the _seq_region_end.
 
         Returns:
             int | None: The end position in the sequence region, or None if the feature has no attached slice.
         """
-        return self.__seq_region_end
+        return self._seq_region_end
 
     @cached_property
-    def __seq_region_end(self) -> int | None:
+    def _seq_region_end(self) -> int | None:
         """
         Returns the end position in the sequence region.
 
@@ -123,15 +123,15 @@ class Feature:
     @property
     def seq_region_strand(self) -> Strand | None:
         """
-        Public accessor for the __seq_region_strand.
+        Public accessor for the _seq_region_strand.
 
         Returns:
             Strand | None: The strand in the sequence region, or None if the feature has no attached slice.
         """
-        return self.__seq_region_strand
+        return self._seq_region_strand
 
     @cached_property
-    def __seq_region_strand(self) -> Strand | None:
+    def _seq_region_strand(self) -> Strand | None:
         """
         Returns the strand in the sequence region.
 
