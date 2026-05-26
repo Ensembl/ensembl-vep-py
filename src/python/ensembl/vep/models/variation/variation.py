@@ -47,28 +47,28 @@ class Variation(Feature):
     stable_id: str | None = field(default=None)
     allele_string: str | None = field(
         default=None,
-        on_setattr=invalidates("__variation_alleles", "__class_so_term", "__most_severe_consequence"),
+        on_setattr=invalidates("_variation_alleles", "_class_so_term", "_most_severe_consequence"),
     )
     is_somatic: bool = field(default=False)
     _lock: RLock = field(factory=RLock, init=False, repr=False)
 
     @property
     def variation_alleles(self) -> list[VariationAllele]:
-        """Public accessor for the __variation_alleles.
+        """Public accessor for the _variation_alleles.
 
         Returns:
             list[VariationAllele]: The list of VariationAllele objects for the variation.
         """
-        return self.__variation_alleles
+        return self._variation_alleles
 
     @cached_property
-    def __variation_alleles(self) -> list[VariationAllele]:
+    def _variation_alleles(self) -> list[VariationAllele]:
         """Returns the list of VariationAllele objects for the variation.
 
         Returns:
             list[VariationAllele]: The list of VariationAllele objects for the variation.
         """
-        invalidate(self, "__most_severe_consequence")
+        invalidate(self, "_most_severe_consequence")
 
         with self._lock:
             variation_alleles = []
@@ -93,16 +93,16 @@ class Variation(Feature):
 
     @property
     def most_severe_consequence(self) -> OverlapConsequence | None:
-        """Public accessor for the __most_severe_consequence.
+        """Public accessor for the _most_severe_consequence.
 
         Returns:
             OverlapConsequence | None: The most severe consequence type for the variation
                 or None if not deducible.
         """
-        return self.__most_severe_consequence
+        return self._most_severe_consequence
 
     @cached_property
-    def __most_severe_consequence(self) -> OverlapConsequence | None:
+    def _most_severe_consequence(self) -> OverlapConsequence | None:
         """Returns the most severe consequence type for the variation.
 
         Returns:
@@ -121,15 +121,15 @@ class Variation(Feature):
 
     @property
     def class_so_term(self) -> ClassSOTerm | None:
-        """Public accessor for the __class_so_term.
+        """Public accessor for the _class_so_term.
 
         Returns:
             ClassSOTerm | None: The SO term for the class of the variation.
         """
-        return self.__class_so_term
+        return self._class_so_term
 
     @cached_property
-    def __class_so_term(self) -> ClassSOTerm | None:
+    def _class_so_term(self) -> ClassSOTerm | None:
         """
         Return the SO term for the class of the variation.
 

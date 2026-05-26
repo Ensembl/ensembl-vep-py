@@ -45,22 +45,22 @@ class FeatureOverlap:
     feature: Feature
     overlapping_feature: Feature
     overlap_consequences: list[OverlapConsequence] = field(
-        factory=list, init=False, on_setattr=invalidates("__most_severe_consequence", "__consequence_terms")
+        factory=list, init=False, on_setattr=invalidates("_most_severe_consequence", "_consequence_terms")
     )
     _lock: RLock = field(factory=RLock, init=False, repr=False)
 
     @property
     def most_severe_consequence(self) -> OverlapConsequence | None:
         """
-        Public accessor for __most_severe_consequence.
+        Public accessor for _most_severe_consequence.
 
         Returns:
             OverlapConsequence | None: The most severe consequence, or None if there are no consequences.
         """
-        return self.__most_severe_consequence
+        return self._most_severe_consequence
 
     @cached_property
-    def __most_severe_consequence(self) -> OverlapConsequence | None:
+    def _most_severe_consequence(self) -> OverlapConsequence | None:
         """
         Returns the most severe consequence, or None if there are no consequences.
 
@@ -79,15 +79,15 @@ class FeatureOverlap:
     @property
     def consequence_terms(self) -> set[str]:
         """
-        Public accessor for __consequence_terms.
+        Public accessor for _consequence_terms.
 
         Returns:
             set[str]: A set of all consequence terms.
         """
-        return self.__consequence_terms
+        return self._consequence_terms
 
     @cached_property
-    def __consequence_terms(self) -> set[str]:
+    def _consequence_terms(self) -> set[str]:
         """
         Returns a set of all consequence terms.
 
