@@ -299,20 +299,16 @@ impl<I: BinningIndex> NoodlesBackend<I> {
 
     fn seek(&mut self, region: &str) -> io::Result<()> {
         let region = parse_region(region)?;
+        let index = self.reader.index();
 
-        let header = self
-            .reader
-            .index()
+        let header = index
             .header()
             .map(QueryHeader::from)
             .ok_or_else(|| io::Error::new(ErrorKind::InvalidInput, "missing index header"))?;
 
-        let reference_sequence_id = header.reference_sequence_id(self.reader.index(), &region)?;
+        let reference_sequence_id = self.reference_sequence_id(&region)?;
 
-        let chunks = self
-            .reader
-            .index()
-            .query(reference_sequence_id, region.interval())?;
+        let chunks = index.query(reference_sequence_id, region.interval())?;
 
         self.query = Some(NoodlesQuery {
             region,
@@ -418,6 +414,22 @@ impl<I: BinningIndex> NoodlesBackend<I> {
 
         Ok(self.cached_headers.as_deref().unwrap())
     }
+
+    fn reference_sequence_id(&self, region: &Region) -> io::Result<usize> {
+        self.reader
+            .index()
+            .header()
+            .and_then(|h| h.reference_sequence_names().get_index_of(region.name()))
+            .ok_or_else(|| {
+                io::Error::new(
+                    ErrorKind::InvalidInput,
+                    format!(
+                        "missing reference sequence name: {}",
+                        String::from_utf8_lossy(region.name())
+                    ),
+                )
+            })
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -434,25 +446,6 @@ struct QueryHeader {
 }
 
 impl QueryHeader {
-    fn reference_sequence_id<I: BinningIndex>(
-        &self,
-        index: &I,
-        region: &Region,
-    ) -> io::Result<usize> {
-        index
-            .header()
-            .and_then(|h| h.reference_sequence_names().get_index_of(region.name()))
-            .ok_or_else(|| {
-                io::Error::new(
-                    ErrorKind::InvalidInput,
-                    format!(
-                        "missing reference sequence name: {}",
-                        String::from_utf8_lossy(region.name())
-                    ),
-                )
-            })
-    }
-
     fn line_intersects_region(&self, line: &str, region: &Region) -> io::Result<bool> {
         if line
             .as_bytes()
@@ -483,15 +476,15 @@ impl QueryHeader {
             Some(i) => fields
                 .get(i)
                 .ok_or_else(|| io::Error::new(ErrorKind::InvalidData, "missing end position"))
-                .and_then(|s| parse_end_position(s))?,
+                .and_then(|s| self.parse_end_position(s))?,
             None => start,
         };
 
         Ok(Interval::from(start..=end).intersects(region.interval()))
     }
 
-    fn parse_start_position(&self, s: &str) -> io::Result<Position> {
-        let raw = s
+    fn parse_start_position(&self, start: &str) -> io::Result<Position> {
+        let raw = start
             .parse::<usize>()
             .map_err(|e| io::Error::new(ErrorKind::InvalidData, e))?;
 
@@ -500,6 +493,20 @@ impl QueryHeader {
             CoordinateSystem::Bed => raw
                 .checked_add(1)
                 .ok_or_else(|| io::Error::new(ErrorKind::InvalidData, "position overflow"))?,
+        };
+
+        pos.try_into()
+            .map_err(|e| io::Error::new(ErrorKind::InvalidData, e))
+    }
+
+    fn parse_end_position(&self, end: &str) -> io::Result<Position> {
+        let raw = end
+            .parse::<usize>()
+            .map_err(|e| io::Error::new(ErrorKind::InvalidData, e))?;
+
+        let pos = match self.coordinate_system {
+            CoordinateSystem::Gff => raw,
+            CoordinateSystem::Bed => raw.max(1),
         };
 
         pos.try_into()
@@ -614,13 +621,6 @@ impl TabixParser {
 // Helpers
 // ---------------------------------------------------------------------------
 
-fn parse_end_position(s: &str) -> io::Result<Position> {
-    s.parse::<usize>()
-        .map_err(|e| io::Error::new(ErrorKind::InvalidData, e))?
-        .try_into()
-        .map_err(|e| io::Error::new(ErrorKind::InvalidData, e))
-}
-
 fn parse_region(region: &str) -> io::Result<Region> {
     region.parse().map_err(|e| {
         io::Error::new(
@@ -663,8 +663,10 @@ mod tests {
     use super::*;
     use noodles_bgzf as bgzf;
     use noodles_csi::binning_index::index::header::{
+        Builder as HeaderBuilder, 
         Format, format::CoordinateSystem,
     };
+    use noodles_tabix::index::Indexer;
     use std::{env, fs, io::Write};
 
     // -----------------------------------------------------------------------
@@ -689,6 +691,234 @@ mod tests {
             .build();
         QueryHeader::from(&header)
     }
+
+    fn write_bgzf_file(dir: &Path, lines: Vec<String>, file_name: Option<&str>) -> io::Result<PathBuf> {
+        let file_name = file_name.unwrap_or("test.gff3.gz");
+        let path = dir.join(file_name);
+        let file = File::create(&path)?;
+        let mut writer = bgzf::io::Writer::new(file);
+        for line in lines {
+            writer.write_all(line.as_bytes())?;
+            writer.write_all(b"\n")?;
+        }
+        writer.finish()?;
+        Ok(path)
+    }
+
+    fn write_gff3_with_tbi(dir: &Path, lines: Option<Vec<String>>) -> io::Result<(PathBuf, PathBuf)> {
+        let default_lines = vec![
+            "##gff-version 3".to_string(),
+            "chr1\tsource\tgene\t1\t50\t.\t+\t.\tID=gene1".to_string(),
+            "chr1\tsource\tgene\t100\t200\t.\t+\t.\tID=gene2".to_string(),
+            "chr1\tsource\tgene\t200\t300\t.\t+\t.\tID=gene3".to_string(),
+            "chr1\tsource\tgene\t400\t500\t.\t+\t.\tID=gene4".to_string(),
+            "chr2\tsource\tgene\t100\t200\t.\t+\t.\tID=gene5".to_string(),
+        ];
+        let lines = lines.unwrap_or(default_lines);
+
+        let gz_path  = dir.join("test.gff3.gz");
+        let tbi_path = dir.join("test.gff3.gz.tbi");
+
+        // --- Write BGZF ---
+        write_bgzf_file(dir, lines, Some("test.gff3.gz"))?;
+
+        // --- Read back and index ---
+        let file = File::open(&gz_path)?;
+        let mut reader = bgzf::io::Reader::new(file);
+
+        let header = Header::builder()
+            .set_format(Format::Generic(CoordinateSystem::Gff))
+            .build();
+
+        let mut indexer = Indexer::default();
+        indexer.set_header(header);
+
+        loop {
+            // Snapshot vpos BEFORE reading — this is the chunk start
+            let chunk_start = reader.virtual_position();
+
+            let mut buf = String::new();
+            if reader.read_line(&mut buf)? == 0 {
+                break;
+            }
+
+            let line = buf.trim_end_matches(['\n', '\r']);
+
+            if line.starts_with('#') || line.is_empty() {
+                continue;
+            }
+
+            let fields: Vec<&str> = line.splitn(9, '\t').collect();
+            if fields.len() < 5 {
+                continue;
+            }
+
+            // Snapshot vpos AFTER reading — this is the chunk end
+            let chunk_end = reader.virtual_position();
+
+            let chrom = fields[0];
+
+            // GFF3 columns 4 and 5 are 1-based inclusive — matches Position directly
+            let start: usize = fields[3].parse().map_err(|e| {
+                io::Error::new(io::ErrorKind::InvalidData, format!("bad start: {e}"))
+            })?;
+            let end: usize = fields[4].parse().map_err(|e| {
+                io::Error::new(io::ErrorKind::InvalidData, format!("bad end: {e}"))
+            })?;
+
+            let start = Position::try_from(start)
+                .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
+            let end = Position::try_from(end)
+                .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
+
+            // Wrap the two VirtualPositions into a Chunk
+            let chunk = Chunk::new(chunk_start, chunk_end);
+
+            indexer.add_record(chrom, start, end, chunk)?;
+        }
+
+        let index = indexer.build();
+        tabix::fs::write(&tbi_path, &index)?;
+
+        Ok((gz_path, tbi_path))
+    }
+
+    fn write_bed_with_tbi(dir: &Path, lines: Option<Vec<String>>) -> io::Result<(PathBuf, PathBuf)> {
+        let default_lines = vec![
+            "chr1\t0\t50\tgene1".to_string(),
+            "chr1\t99\t200\tgene2".to_string(),
+            "chr1\t199\t300\tgene3".to_string(),
+            "chr1\t399\t500\tgene4".to_string(),
+            "chr2\t99\t200\tgene5".to_string(),
+        ];
+        let lines = lines.unwrap_or(default_lines);
+
+        let gz_path  = dir.join("test.bed.gz");
+        let tbi_path = dir.join("test.bed.gz.tbi");
+
+        // --- Write BGZF ---
+        write_bgzf_file(dir, lines, Some("test.bed.gz"))?;
+
+        // --- Read back and index ---
+        let file = File::open(&gz_path)?;
+        let mut reader = bgzf::io::Reader::new(file);
+ 
+        let header = HeaderBuilder::bed().build();
+
+        let mut indexer = Indexer::default();
+        indexer.set_header(header);
+
+        loop {
+            // Snapshot vpos BEFORE reading — this is the chunk start
+            let chunk_start = reader.virtual_position();
+
+            let mut buf = String::new();
+            if reader.read_line(&mut buf)? == 0 {
+                break;
+            }
+
+            let line = buf.trim_end_matches(['\n', '\r']);
+
+            if line.starts_with('#') || line.is_empty() {
+                continue;
+            }
+
+            let fields: Vec<&str> = line.splitn(4, '\t').collect();
+            if fields.len() < 3 {
+                continue;
+            }
+
+            // Snapshot vpos AFTER reading — this is the chunk end
+            let chunk_end = reader.virtual_position();
+
+            let chrom = fields[0];
+
+            // BED columns 2 and 3 are 0-based half-open — add 1 to start to convert to Position
+            let start: usize = fields[1].parse().map_err(|e| {
+                io::Error::new(io::ErrorKind::InvalidData, format!("bad start: {e}"))
+            })?;
+            let end: usize = fields[2].parse().map_err(|e| {
+                io::Error::new(io::ErrorKind::InvalidData, format!("bad end: {e}"))
+            })?;
+
+            let start = Position::try_from(start + 1)
+                .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
+            let end = Position::try_from(end.max(1))
+                .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
+
+            // Wrap the two VirtualPositions into a Chunk
+            let chunk = Chunk::new(chunk_start, chunk_end);
+
+            indexer.add_record(chrom, start, end, chunk)?;
+        }
+
+        let index = indexer.build();
+        tabix::fs::write(&tbi_path, &index)?;
+
+        Ok((gz_path, tbi_path))
+    }
+
+    macro_rules! require_tabix {
+        ($path:expr) => {
+            if !SystemBackend::is_available($path)? {
+                eprintln!("skipping test: tabix not installed");
+                return Ok(());
+            }
+        };
+    }
+
+    // -----------------------------------------------------------------------
+    // tabix_py_error — error kind mapping
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_tabix_py_error_invalid_data_maps_to_value_error() {
+        let err = io::Error::new(ErrorKind::InvalidData, "bad data");
+        let py_err = tabix_py_error(err);
+
+        Python::initialize();
+        let type_name = Python::attach(|py| {
+            py_err
+                .get_type(py)
+                .name()
+                .unwrap()
+                .to_string()
+        });
+
+        assert_eq!(type_name, "ValueError");
+    }
+
+    #[test]
+    fn test_tabix_py_error_not_found_maps_to_io_error() {
+        let err = io::Error::new(ErrorKind::NotFound, "not found");
+        let py_err = tabix_py_error(err);
+
+        Python::initialize();
+        let type_name = Python::attach(|py| {
+            py_err
+                .get_type(py)
+                .name()
+                .unwrap()
+                .to_string()
+        });
+
+        assert_eq!(type_name, "OSError");
+    }
+
+    #[test]
+    fn test_tabix_py_error_kind_routing() {
+        // Verify some expected error kinds are mapped without panicking.
+        for kind in [
+            ErrorKind::InvalidData,
+            ErrorKind::InvalidInput,
+            ErrorKind::NotFound,
+            ErrorKind::Other,
+            ErrorKind::PermissionDenied,
+        ] {
+            let _ = tabix_py_error(io::Error::new(kind, "test"));
+        }
+    }
+
 
     // -----------------------------------------------------------------------
     // trim_newline
@@ -764,30 +994,69 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
-    // parse_end_position
+    // TabixParser::reader
+    // -----------------------------------------------------------------------
+    #[test]
+    fn test_tabix_parser_reader_initialization() -> io::Result<()> {
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-reader-init-{}",
+            std::process::id()
+        ));
+        fs::create_dir_all(&dir)?;
+        let (gz_path, _tbi_path) = write_gff3_with_tbi(&dir, None)?;
+
+        let mut parser = TabixParser::new(Some(gz_path.to_string_lossy().to_string()), Some("tabix-nonexistent-binary-for-test".to_string()))?;
+        let reader = parser.reader()?;
+        
+        assert!(matches!(reader, TabixReader { backend: Backend::Tbi(_), buffered_line: None }));
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // QueryHeader::parse_end_position
     // -----------------------------------------------------------------------
 
     #[test]
     fn test_parse_end_position_valid() {
-        assert!(parse_end_position("100").is_ok());
+        let qh = gff_query_header();
+        assert!(qh.parse_end_position("100").is_ok());
+
+        let qh = bed_query_header();
+        assert!(qh.parse_end_position("100").is_ok());
     }
 
     #[test]
     fn test_parse_end_position_zero() {
         // Position is 1-based so 0 is invalid
-        let err = parse_end_position("0").unwrap_err();
+        let qh = gff_query_header();
+        let err = qh.parse_end_position("0").unwrap_err();
         assert_eq!(err.kind(), ErrorKind::InvalidData);
+
+        // BED end position can be 0 if start is also 0, inserion before 0 position
+        // System tabix does not allow it but noodles backend does
+        let qh = bed_query_header();
+        assert_eq!(qh.parse_end_position("0").unwrap(), Position::try_from(1).unwrap());
     }
 
     #[test]
     fn test_parse_end_position_non_numeric() {
-        let err = parse_end_position("abc").unwrap_err();
+        let qh = gff_query_header();
+        let err = qh.parse_end_position("abc").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidData);
+    
+        let qh = bed_query_header();
+        let err = qh.parse_end_position("abc").unwrap_err();
         assert_eq!(err.kind(), ErrorKind::InvalidData);
     }
 
     #[test]
     fn test_parse_end_position_negative() {
-        let err = parse_end_position("-1").unwrap_err();
+        let qh = gff_query_header();
+        let err = qh.parse_end_position("-1").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidData);
+    
+        let qh = bed_query_header();
+        let err = qh.parse_end_position("-1").unwrap_err();
         assert_eq!(err.kind(), ErrorKind::InvalidData);
     }
 
@@ -835,7 +1104,7 @@ mod tests {
         let qh = gff_query_header();
         let region = parse_region("chr1:15-25")?;
         assert!(qh.line_intersects_region(
-            "chr1\tsrc\tgene\t10\t20\t.\t+\t.\tID=1",
+            "chr1\tsrc\tgene\t10\t20\t.\t+\t.\tID=gene1",
             &region
         )?);
         Ok(())
@@ -847,7 +1116,7 @@ mod tests {
         let region = parse_region("chr1:15-25")?;
         // feature ends at 14, region starts at 15 — no overlap
         assert!(!qh.line_intersects_region(
-            "chr1\tsrc\tgene\t5\t14\t.\t+\t.\tID=1",
+            "chr1\tsrc\tgene\t5\t14\t.\t+\t.\tID=gene1",
             &region
         )?);
         Ok(())
@@ -859,7 +1128,7 @@ mod tests {
         let region = parse_region("chr1:15-25")?;
         // feature starts at 26, region ends at 25 — no overlap
         assert!(!qh.line_intersects_region(
-            "chr1\tsrc\tgene\t26\t35\t.\t+\t.\tID=1",
+            "chr1\tsrc\tgene\t26\t35\t.\t+\t.\tID=gene1",
             &region
         )?);
         Ok(())
@@ -871,7 +1140,7 @@ mod tests {
         let region = parse_region("chr1:15-25")?;
         // feature exactly matches region boundary
         assert!(qh.line_intersects_region(
-            "chr1\tsrc\tgene\t15\t25\t.\t+\t.\tID=1",
+            "chr1\tsrc\tgene\t15\t25\t.\t+\t.\tID=gene1",
             &region
         )?);
         Ok(())
@@ -882,7 +1151,7 @@ mod tests {
         let qh = gff_query_header();
         let region = parse_region("chr1:15-25")?;
         assert!(!qh.line_intersects_region(
-            "chr2\tsrc\tgene\t10\t20\t.\t+\t.\tID=1",
+            "chr2\tsrc\tgene\t10\t20\t.\t+\t.\tID=gene1",
             &region
         )?);
         Ok(())
@@ -897,14 +1166,29 @@ mod tests {
     }
 
     #[test]
-    fn test_line_intersects_region_missing_start_field() {
+    fn test_line_intersects_region_missing_start_field() -> io::Result<()> {
         let qh = gff_query_header();
-        let region = parse_region("chr1:15-25").unwrap();
-        // only 2 fields — start_position_index (3) is missing
+        let region = parse_region("chr1:15-25")?;
+        // only 3 fields — start_position_index (3) is missing
         let err = qh
-            .line_intersects_region("chr1\tsrc", &region)
+            .line_intersects_region("chr1\tsrc\tgene", &region)
             .unwrap_err();
         assert_eq!(err.kind(), ErrorKind::InvalidData);
+        assert!(err.to_string().contains("start"), "unexpected error: {err}");
+        Ok(())
+    }
+
+    #[test]
+    fn test_line_intersects_region_missing_end_field() -> io::Result<()> {
+        let qh = gff_query_header();
+        let region = parse_region("chr1:15-25")?;
+        // only 4 fields — end_position_index (4) is missing
+        let err = qh
+            .line_intersects_region("chr1\tsrc\tgene\t10", &region)
+            .unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidData);
+        assert!(err.to_string().contains("end"), "unexpected error: {err}");
+        Ok(())
     }
 
     // -----------------------------------------------------------------------
@@ -921,11 +1205,168 @@ mod tests {
     }
 
     #[test]
-    fn test_line_intersects_region_bed_no_overlap() -> io::Result<()> {
+    fn test_line_intersects_region_bed_no_overlap_before() -> io::Result<()> {
         let qh = bed_query_header();
-        // BED: chr1  0  9  (0-based = 1-based 1..=9), region 15-25
+        // BED: chr1  4  14  (0-based = 1-based 5..=14), region 15-25
         let region = parse_region("chr1:15-25")?;
-        assert!(!qh.line_intersects_region("chr1\t0\t9\tfeature", &region)?);
+        assert!(!qh.line_intersects_region("chr1\t4\t14\tfeature", &region)?);
+        Ok(())
+    }
+
+    #[test]
+    fn test_line_intersects_region_bed_no_overlap_after() -> io::Result<()> {
+        let qh = bed_query_header();
+        // BED: chr1  25  35  (0-based = 1-based 26..=35), region 15-25
+        let region = parse_region("chr1:15-25")?;
+        assert!(!qh.line_intersects_region("chr1\t25\t35\tfeature", &region)?);
+        Ok(())
+    }
+
+    #[test]
+    fn test_line_intersects_region_bed_exact_boundary() -> io::Result<()> {
+        let qh = bed_query_header();
+        // BED: chr1  24  35  (0-based = 1-based 25..=35), region 15-25
+        let region = parse_region("chr1:15-25")?;
+        assert!(qh.line_intersects_region("chr1\t24\t35\tfeature", &region)?);
+        Ok(())
+    }
+
+    #[test]
+    fn test_line_intersects_region_bed_wrong_chrom() -> io::Result<()> {
+        let qh = bed_query_header();
+        let region = parse_region("chr1:15-25")?;
+        assert!(!qh.line_intersects_region("chr2\t9\t20\tfeature", &region)?);
+        Ok(())
+    }
+
+    #[test]
+    fn test_line_intersects_region_bed_comment_line() -> io::Result<()> {
+        let qh = bed_query_header();
+        let region = parse_region("chr1:15-25")?;
+        assert!(!qh.line_intersects_region("#comment line", &region)?);
+        Ok(())
+    }
+
+    #[test]
+    fn test_line_intersects_region_bed_missing_start_field() -> io::Result<()> {
+        let qh = bed_query_header();
+        let region = parse_region("chr1:15-25")?;
+        let err = qh
+            .line_intersects_region("chr1", &region).unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidData);
+        assert!(err.to_string().contains("start"), "unexpected error: {err}");
+        Ok(())
+    }
+
+    #[test]
+    fn test_line_intersects_region_bed_missing_end_field() -> io::Result<()> {
+        let qh = bed_query_header();
+        let region = parse_region("chr1:15-25")?;
+        let err = qh
+            .line_intersects_region("chr1\t9", &region).unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidData);
+        assert!(err.to_string().contains("end"), "unexpected error: {err}");
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // QueryHeader::line_intersects_region — missing header configuration
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_line_intersects_region_no_ref_seq_index() -> io::Result<()> {
+        // invalid reference sequence name index (10) — line does not has 11 fields
+        let header = Header::builder()
+            .set_reference_sequence_name_index(10)
+            .set_start_position_index(3)
+            .set_end_position_index(Some(4))
+            .build();
+        let qh = QueryHeader::from(&header);
+        let region = parse_region("chr1:15-25")?;
+        // only 3 fields — start_position_index (3) is missing
+        let err = qh
+            .line_intersects_region(
+                "chr1\tsrc\tgene\t15\t25\t.\t+\t.\tID=gene1",
+                &region
+            )
+            .unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidData);
+        assert!(
+            err.to_string().contains("reference sequence"), "unexpected error: {err}"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_line_intersects_region_no_end_position_index() -> io::Result<()> {
+        // VCF does not have end position field
+        let header = Header::builder()
+            .set_reference_sequence_name_index(0)
+            .set_start_position_index(2)
+            .set_end_position_index(None)
+            .build();
+        let qh = QueryHeader::from(&header);
+        let region = parse_region("chr1:15-25")?;
+        assert!(qh.line_intersects_region("chr1\tvar1\t20\tA\tT", &region)?);
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // NoodlesBackend::reference_sequence_id
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_reference_sequence_id() -> io::Result<()> {
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-ref-seq-id-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+
+        let (gz_file, tbi_file) = write_gff3_with_tbi(&dir, None)?;
+        let index = tabix::fs::read(&tbi_file)?;
+        let backend =
+            NoodlesBackend::new(csi::io::IndexedReader::new(File::open(gz_file)?, index));
+        
+        assert_eq!(backend.reference_sequence_id(&parse_region("chr1")?)?, 0);
+        assert_eq!(backend.reference_sequence_id(&parse_region("chr2")?)?, 1);
+        let err = backend.reference_sequence_id(&parse_region("chr3")?).unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(err.to_string().contains("chr3"), "unexpected error: {err}");
+        
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // NoodlesBackend::open — CSI branch
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_backend_opens_csi_when_present() -> io::Result<()> {
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-csi-open-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+
+        let path = write_bgzf_file(
+            &dir,
+            vec!["##gff-version 3".to_string()],
+            Some("test.gff3.gz"),
+        )?;
+
+        // Write a minimal CSI index
+        let index = csi::Index::default();
+        csi::fs::write(associated_index_path(&path, "csi"), &index)?;
+
+        // Should open via CSI backend, not TBI
+        let reader = TabixReader::open(&path, "tabix-nonexistent-binary-for-test")?;
+        assert!(matches!(reader.backend, Backend::Csi(_)));
+
+        fs::remove_dir_all(dir)?;
         Ok(())
     }
 
@@ -933,38 +1374,27 @@ mod tests {
     // NoodlesBackend::header_lines — reads from real BGZF data
     // -----------------------------------------------------------------------
 
-    /// Build a minimal in-memory TBI index pointing at `src` with a GFF
-    /// header so `NoodlesBackend` can open without a real `.tbi` file.
-    fn write_test_bgzf_file(dir: &Path, lines: &[&str]) -> io::Result<PathBuf> {
-        let path = dir.join("test.gff3.gz");
-        let file = File::create(&path)?;
-        let mut writer = bgzf::io::Writer::new(file);
-        for line in lines {
-            writer.write_all(line.as_bytes())?;
-            writer.write_all(b"\n")?;
-        }
-        writer.finish()?;
-        Ok(path)
-    }
-
     #[test]
     fn test_noodles_backend_header_lines() -> io::Result<()> {
-        let dir =
-            env::temp_dir().join(format!("tabix-test-headers-{}", std::process::id()));
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-noodles-headers-{}",
+            std::process::id()
+        ));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir)?;
 
-        let file_lines = &[
-            "##gff-version 3",
-            "##sequence-region chr1 1 1000",
-            "# a regular comment",
-            "chr1\tsrc\tgene\t1\t100\t.\t+\t.\tID=1",
-        ];
+        let path = write_bgzf_file(
+            &dir,
+            vec![
+                "##gff-version 3".to_string(),
+                "##sequence-region chr1 1 1000".to_string(),
+                "# a regular comment".to_string(),
+                "chr1\tsrc\tgene\t1\t100\t.\t+\t.\tID=gene1".to_string(),
+            ],
+            Some("test.gff3.gz"),
+        )?;
 
-        let path = write_test_bgzf_file(&dir, file_lines)?;
-
-        // Build a minimal CSI index with a GFF header so the backend has
-        // the comment prefix available.
+        // Write a minimal CSI index
         let index = csi::Index::default();
         let file = File::open(&path)?;
         let mut backend =
@@ -978,7 +1408,8 @@ mod tests {
         assert_eq!(headers[1], "##sequence-region chr1 1 1000");
         assert_eq!(headers[2], "# a regular comment");
 
-        // Second call should return cached result without re-reading.
+        // Second call should return cached result
+        assert!(backend.cached_headers.is_some());
         let headers2 = backend.header_lines()?;
         assert_eq!(headers2.len(), 3);
 
@@ -988,15 +1419,18 @@ mod tests {
 
     #[test]
     fn test_noodles_backend_header_lines_no_headers() -> io::Result<()> {
-        let dir =
-            env::temp_dir().join(format!("tabix-test-no-headers-{}", std::process::id()));
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-noodles-no-headers-{}",
+            std::process::id()
+        ));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir)?;
 
         // File with no comment lines at all
-        let path = write_test_bgzf_file(
+        let path = write_bgzf_file(
             &dir,
-            &["chr1\tsrc\tgene\t1\t100\t.\t+\t.\tID=1"],
+            vec!["chr1\tsrc\tgene\t1\t100\t.\t+\t.\tID=gene1".to_string()],
+            Some("test.gff3.gz"),
         )?;
 
         let index = csi::Index::default();
@@ -1013,15 +1447,21 @@ mod tests {
 
     #[test]
     fn test_noodles_backend_header_lines_only_headers() -> io::Result<()> {
-        let dir =
-            env::temp_dir().join(format!("tabix-test-only-headers-{}", std::process::id()));
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-noodles-only-headers-{}",
+            std::process::id()
+        ));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir)?;
 
         // File that is entirely header/comment lines
-        let path = write_test_bgzf_file(
+        let path = write_bgzf_file(
             &dir,
-            &["##gff-version 3", "##sequence-region chr1 1 1000"],
+            vec![
+                "##gff-version 3".to_string(), 
+                "##sequence-region chr1 1 1000".to_string()
+            ],
+            Some("test.gff3.gz"),
         )?;
 
         let index = csi::Index::default();
@@ -1041,18 +1481,20 @@ mod tests {
     /// next call to next() still returns the expected record.
     #[test]
     fn test_noodles_backend_header_lines_preserves_bgzf_position() -> io::Result<()> {
-        // This test verifies the save/restore logic in header_lines() by
-        // checking that virtual_position() is unchanged after the call.
         let dir = env::temp_dir().join(format!(
-            "tabix-test-pos-preserve-{}",
+            "tabix-test-noodles-pos-preserve-{}",
             std::process::id()
         ));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir)?;
 
-        let path = write_test_bgzf_file(
+        let path = write_bgzf_file(
             &dir,
-            &["##gff-version 3", "chr1\tsrc\tgene\t1\t100\t.\t+\t.\tID=1"],
+            vec![
+                "##gff-version 3".to_string(), 
+                "chr1\tsrc\tgene\t1\t100\t.\t+\t.\tID=gene1".to_string()
+            ],
+            Some("test.gff3.gz"),
         )?;
 
         let index = csi::Index::default();
@@ -1071,13 +1513,257 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
-    // SystemBackend::header_lines — mock tabix executable
+    // NoodlesBackend::header_lines — with real tbi file
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_noodles_backend_header_lines_with_tbi() -> io::Result<()> {
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-noodles-headers-tbi-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+
+        let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
+        let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        let headers = reader.header_lines()?;
+        assert_eq!(headers.len(), 1);
+        assert_eq!(headers[0], "##gff-version 3");
+
+        // second call should return cached result
+        let headers2 = reader.header_lines()?;
+        assert_eq!(headers2.len(), 1);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // NoodlesBackend::seek — missing reference sequence name
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_noodles_backend_seek_unknown_region() -> io::Result<()> {
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-noodles-unknown-region-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+
+        let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
+        let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        // "chrZ" is not in the index — should return InvalidInput
+        let err = reader.seek("chrZ:1-100").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(
+            err.to_string().contains("chrZ"), "unexpected error: {err}"
+        );
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // NoodlesBackend::seek — invalid region string
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_noodles_backend_seek_invalid_region_string() -> io::Result<()> {
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-noodles-invalid-region-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+
+        let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
+        let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        let err = reader.seek(":::invalid:::").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // NoodlesBackend::next
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_noodles_backend_seek_subregion() -> io::Result<()> {
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-noodles-tbi-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+
+        let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
+        let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        // overlaps records 2 and 3 only
+        assert!(reader.seek("chr1:150-250")?);
+        let rec1 = reader.next()?.expect("expected first record");
+        assert!(rec1.contains("ID=gene2"), "expected ID=gene2, got: {rec1}");
+        let rec2 = reader.next()?.expect("expected second record");
+        assert!(rec2.contains("ID=gene3"), "expected ID=gene3, got: {rec2}");
+        assert_eq!(reader.next()?, None);
+
+        // re-seek: record 1 only
+        assert!(reader.seek("chr1:1-50")?);
+        let rec = reader.next()?.expect("expected record");
+        assert!(rec.contains("ID=gene1"), "expected ID=gene1, got: {rec}");
+        assert_eq!(reader.next()?, None);
+
+        // empty region
+        assert!(!reader.seek("chr1:600-700")?);
+        assert_eq!(reader.next()?, None);
+
+        // different chromosome
+        assert!(reader.seek("chr2:100-200")?);
+        let rec = reader.next()?.expect("expected chr2 record");
+        assert!(rec.contains("ID=gene5"), "expected ID=gene5, got: {rec}");
+        assert_eq!(reader.next()?, None);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_noodles_backend_seek_full_chromosome() -> io::Result<()> {
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-noodles-full-chrom-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+
+        let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
+        let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        assert!(reader.seek("chr1")?);
+        let records: Vec<String> = std::iter::from_fn(|| reader.next().ok()?)
+            .collect();
+
+        assert_eq!(records.len(), 4, "expected 4 chr1 records, got {}", records.len());
+        assert!(records[0].contains("ID=gene1"));
+        assert!(records[1].contains("ID=gene2"));
+        assert!(records[2].contains("ID=gene3"));
+        assert!(records[3].contains("ID=gene4"));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_noodles_backend_seek_empty_region() -> io::Result<()> {
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-noodles-empty-region-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+
+        let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
+        let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        assert!(!reader.seek("chr1:600-700")?);
+        assert_eq!(reader.next()?, None);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // NoodlesBackend::next — edge cases
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_noodles_backend_0_based_positions() -> io::Result<()> {
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-noodles-0-based-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+
+        let lines = vec![
+            "chr1\t0\t0\tgene1".to_string(), 
+            "chr1\t99\t99\tgene2".to_string(),
+            "chr1\t199\t299\tgene3".to_string(),
+        ];
+        let (gz_path, _) = write_bed_with_tbi(&dir, Some(lines))?;
+        let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        assert!(reader.seek("chr1:1-500")?);
+        let records: Vec<String> = std::iter::from_fn(|| reader.next().ok()?)
+            .collect();
+
+        assert_eq!(records.len(), 3, "expected 3 chr1 records, got {}", records.len());
+        assert!(records[0].contains("gene1"));  // Noodles backend return 0=..0 based records unlike system tabix
+        assert!(records[1].contains("gene2"));
+        assert!(records[2].contains("gene3"));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // SystemBackend::is_available — non-NotFound error propagates
+    // -----------------------------------------------------------------------
+
+    #[test]
+    #[cfg(unix)]
+    fn test_system_backend_is_available_not_found() {
+        let result = SystemBackend::is_available("tabix-nonexistent-binary-for-test");
+        assert!(result.is_ok());
+        assert!(!result.unwrap());
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn test_system_backend_is_available_permission_error() -> io::Result<()> {
+        use std::os::unix::fs::PermissionsExt;
+
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-sys-perm-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+
+        // Create a non-executable file — spawning it gives PermissionDenied,
+        // not NotFound, so is_available should propagate the error rather than
+        // returning Ok(false).
+        let tabix_path = dir.join("tabix");
+        fs::write(&tabix_path, b"#!/bin/sh\n")?;
+        let mut perms = fs::metadata(&tabix_path)?.permissions();
+        perms.set_mode(0o644); // not executable
+        fs::set_permissions(&tabix_path, perms)?;
+
+        let result = SystemBackend::is_available(tabix_path.to_str().unwrap());
+        assert!(result.is_err());
+        let err = result.unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::PermissionDenied);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // SystemBackend::header_lines
     // -----------------------------------------------------------------------
 
     #[test]
     #[cfg(unix)]
     fn test_system_backend_header_lines() -> io::Result<()> {
-        use std::os::unix::fs::PermissionsExt;
+        let tabix_path = "tabix";
+        require_tabix!(tabix_path);
 
         let dir = env::temp_dir().join(format!(
             "tabix-test-sys-headers-{}",
@@ -1086,39 +1772,19 @@ mod tests {
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir)?;
 
-        // Mock tabix that prints headers on `-H` and a record otherwise
-        let tabix_path = dir.join("tabix");
-        fs::write(
-            &tabix_path,
-            "#!/bin/sh\n\
-             if [ \"$1\" = '--version' ]; then echo 'tabix 1.0'; exit 0; fi\n\
-             if [ \"$1\" = '-H' ]; then\n\
-               printf '##gff-version 3\\n##sequence-region sq0 1 100\\n'\n\
-               exit 0\n\
-             fi\n\
-             printf '%s\\n' 'sq0\ttabix\tgene\t8\t13\t.\t+\t.\tID=1'\n",
-        )?;
-        let mut perms = fs::metadata(&tabix_path)?.permissions();
-        perms.set_mode(0o755);
-        fs::set_permissions(&tabix_path, perms)?;
-
-        let data_path = dir.join("sample.gff3.gz");
-        fs::write(&data_path, [])?;
+        let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
 
         let mut backend =
-            SystemBackend::new(&data_path, tabix_path.to_str().unwrap());
+            SystemBackend::new(&gz_path, tabix_path);
 
         let headers = backend.header_lines()?;
-        assert_eq!(headers.len(), 2);
+        assert_eq!(headers.len(), 1);
         assert_eq!(headers[0], "##gff-version 3");
-        assert_eq!(headers[1], "##sequence-region sq0 1 100");
 
-        // Second call returns cached value — mock would be called again if
-        // caching is broken, but since it always returns the same output that
-        // would be a silent bug; we verify the cache flag directly.
+        // second call should return cached result
         assert!(backend.cached_headers.is_some());
         let headers2 = backend.header_lines()?;
-        assert_eq!(headers2.len(), 2);
+        assert_eq!(headers2.len(), 1);
 
         fs::remove_dir_all(dir)?;
         Ok(())
@@ -1127,7 +1793,8 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn test_system_backend_header_lines_empty() -> io::Result<()> {
-        use std::os::unix::fs::PermissionsExt;
+        let tabix_path = "tabix";
+        require_tabix!(tabix_path);
 
         let dir = env::temp_dir().join(format!(
             "tabix-test-sys-no-headers-{}",
@@ -1136,24 +1803,12 @@ mod tests {
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir)?;
 
-        // Mock tabix that returns nothing for -H
-        let tabix_path = dir.join("tabix");
-        fs::write(
-            &tabix_path,
-            "#!/bin/sh\n\
-             if [ \"$1\" = '--version' ]; then echo 'tabix 1.0'; exit 0; fi\n\
-             if [ \"$1\" = '-H' ]; then exit 0; fi\n\
-             printf '%s\\n' 'sq0\ttabix\tgene\t8\t13\t.\t+\t.\tID=1'\n",
-        )?;
-        let mut perms = fs::metadata(&tabix_path)?.permissions();
-        perms.set_mode(0o755);
-        fs::set_permissions(&tabix_path, perms)?;
-
-        let data_path = dir.join("sample.gff3.gz");
-        fs::write(&data_path, [])?;
+        let (gz_path, _) = write_gff3_with_tbi(&dir, Some(vec![
+            "chr1\tsrc\tgene\t1\t100\t.\t+\t.\tID=gene1".to_string()
+        ]))?;
 
         let mut backend =
-            SystemBackend::new(&data_path, tabix_path.to_str().unwrap());
+            SystemBackend::new(&gz_path, tabix_path);
 
         let headers = backend.header_lines()?;
         assert!(headers.is_empty());
@@ -1162,8 +1817,90 @@ mod tests {
         Ok(())
     }
 
+    #[test]
+    #[cfg(unix)]
+    fn test_system_backend_header_lines_command_fails() -> io::Result<()> {
+        use std::os::unix::fs::PermissionsExt;
+
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-sys-header-fail-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+
+        let tabix_path = dir.join("tabix");
+        fs::write(
+            &tabix_path,
+            "#!/bin/sh\n\
+            if [ \"$1\" = '--version' ]; then echo 'tabix 1.0'; exit 0; fi\n\
+            if [ \"$1\" = '-H' ]; then exit 2; fi\n",
+        )?;
+        let mut perms = fs::metadata(&tabix_path)?.permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&tabix_path, perms)?;
+
+        let data_path = dir.join("sample.gff3.gz");
+        fs::write(&data_path, [])?;
+
+        let mut backend = SystemBackend::new(&data_path, tabix_path.to_str().unwrap());
+        let err = backend.header_lines().unwrap_err();
+        assert!(
+            err.to_string().contains("tabix -H failed"),
+            "unexpected error: {err}"
+        );
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
     // -----------------------------------------------------------------------
-    // System tabix seek + next
+    // SystemBackend::seek — error propagates in next() after seek spawns child
+    // -----------------------------------------------------------------------
+
+    #[test]
+    #[cfg(unix)]
+    fn test_system_backend_next_failing_child() -> io::Result<()> {
+        use std::os::unix::fs::PermissionsExt;
+
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-sys-fail-child-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+
+        // Mock tabix that succeeds for --version but exits with code 1 for queries
+        let tabix_path = dir.join("tabix");
+        fs::write(
+            &tabix_path,
+            "#!/bin/sh\n\
+            if [ \"$1\" = '--version' ]; then echo 'tabix 1.0'; exit 0; fi\n\
+            exit 1\n",
+        )?;
+        let mut perms = fs::metadata(&tabix_path)?.permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&tabix_path, perms)?;
+
+        let data_path = dir.join("sample.gff3.gz");
+        fs::write(&data_path, [])?;
+
+        let mut reader = TabixReader::open(&data_path, tabix_path.to_str().unwrap())?;
+        reader.backend.seek("chr1:1-100")?; // seek succeeds (spawns child)
+
+        // next() should propagate the non-zero exit as an error
+        let err = reader.backend.next().unwrap_err();
+        assert!(
+            err.to_string().contains("tabix executable failed"),
+            "unexpected error: {err}"
+        );
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // SystemBackend: seek + next
     // -----------------------------------------------------------------------
 
     #[test]
@@ -1171,14 +1908,17 @@ mod tests {
     fn test_query_prefers_system_tabix() -> io::Result<()> {
         use std::os::unix::fs::PermissionsExt;
 
-        let dir = env::temp_dir().join(format!("ensembl-vep-tabix-test-{}", std::process::id()));
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-sys-{}",
+            std::process::id()
+        ));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir)?;
 
         let tabix_path = dir.join("tabix");
         fs::write(
             &tabix_path,
-            "#!/bin/sh\nprintf '%s\\n' 'sq0\ttabix\tgene\t8\t13\t.\t+\t.\tID=1'\n",
+            "#!/bin/sh\nprintf '%s\\n' 'sq0\ttabix\tgene\t8\t13\t.\t+\t.\tID=gene1'\n",
         )?;
 
         let mut permissions = fs::metadata(&tabix_path)?.permissions();
@@ -1192,8 +1932,128 @@ mod tests {
         assert!(reader.seek("sq0:8-13")?);
         assert_eq!(
             reader.next()?.as_deref(),
-            Some("sq0\ttabix\tgene\t8\t13\t.\t+\t.\tID=1")
+            Some("sq0\ttabix\tgene\t8\t13\t.\t+\t.\tID=gene1")
         );
+        assert_eq!(reader.next()?, None);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // SystemBackend::close_query + Drop — kill an active query
+    // -----------------------------------------------------------------------
+
+    #[test]
+    #[cfg(unix)]
+    fn test_system_backend_close_query_kills_child() -> io::Result<()> {
+        use std::os::unix::fs::PermissionsExt;
+
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-sys-close-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+
+        // Mock tabix that sleeps forever so we can verify kill works
+        let tabix_path = dir.join("tabix");
+        fs::write(
+            &tabix_path,
+            "#!/bin/sh\n\
+            if [ \"$1\" = '--version' ]; then echo 'tabix 1.0'; exit 0; fi\n\
+            sleep 6000\n",
+        )?;
+        let mut perms = fs::metadata(&tabix_path)?.permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&tabix_path, perms)?;
+
+        let data_path = dir.join("sample.gff3.gz");
+        fs::write(&data_path, [])?;
+
+        let mut reader = TabixReader::open(&data_path, tabix_path.to_str().unwrap())?;
+        reader.backend.seek("chr1:1-100")?; // spawns a sleeping child
+
+        // seek again — close_query should kill the previous child without hanging
+        reader.backend.seek("chr1:1-100")?;
+
+        // drop also calls close_query implicitly — just verify it completes
+        drop(reader);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // TabixReader::open — missing file / missing index
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_tabix_reader_open_missing_file() {
+        // No system tabix, no index file, and the gz itself doesn't exist —
+        // the TBI builder should return NotFound.
+        match TabixReader::open(
+            Path::new("/nonexistent/path/file.gff3.gz"),
+            "tabix-nonexistent-binary-for-test",
+        ) {
+            Err(err) => assert_eq!(err.kind(), ErrorKind::NotFound),
+            Ok(_) => panic!("expected error, got Ok"),
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // TabixReader::seek — buffered_line cleared on re-seek
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_tabix_reader_buffered_line_cleared_on_reseed() -> io::Result<()> {
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-buf-clear-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+
+        let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
+        let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        // First seek — primes buffered_line with ID=gene1
+        assert!(reader.seek("chr1:1-50")?);
+
+        // Second seek before consuming — buffered_line must be cleared,
+        // so next() returns ID=gene2 not ID=gene1
+        assert!(reader.seek("chr1:100-200")?);
+        let rec = reader.next()?.expect("expected a record");
+        assert!(rec.contains("ID=gene2"), "expected ID=gene2 after re-seek, got: {rec}");
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // TabixReader::next — returns buffered_line first
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_tabix_reader_next_returns_buffered_first() -> io::Result<()> {
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-buf-next-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+
+        let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
+        let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        assert!(reader.seek("chr1:100-200")?);
+
+        // After seek the buffered_line holds the first record.
+        // Calling next() twice should return record 2 then record 3.
+        let first  = reader.next()?.expect("first");
+        let second = reader.next()?.expect("second");
+        assert!(first.contains("ID=gene2"),  "expected ID=gene2, got: {first}");
+        assert!(second.contains("ID=gene3"), "expected ID=gene3, got: {second}");
         assert_eq!(reader.next()?, None);
 
         fs::remove_dir_all(dir)?;
