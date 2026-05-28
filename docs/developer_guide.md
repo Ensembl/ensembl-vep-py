@@ -145,14 +145,14 @@ Derived attributes are read-only properties derived from one or more attributes.
 ```python
 class MyClass(CachedAttributeGuardMixin):
     core_attr1: int
-    __derived_attr3: int = field(init=False, default=0)    # default value for non-cached derived attribute that is set by internal computation
+    _derived_attr3: int = field(init=False, default=0)    # default value for non-cached derived attribute that is set by internal computation
 
     @property
     def derived_attr1(self) -> int:
-        return self.__derived_attr1
+        return self._derived_attr1
 
     @cached_property
-    def __derived_attr1(self) -> int:
+    def _derived_attr1(self) -> int:
         # perform expensive computation here using core_attr1
         return sum(range(self.core_attr1 * 2))
 
@@ -165,10 +165,10 @@ class MyClass(CachedAttributeGuardMixin):
     @property
     def derived_attr3(self) -> int:
         # this attribute is set by some internal computation
-        return self.__derived_attr3
+        return self._derived_attr3
 
     @cached_property
-    def __derived_attr3(self) -> int:
+    def _derived_attr3(self) -> int:
         # alternative to defining default value at attribute definition
         # can be used for some minor compuations for initial value assignment
         return 0
@@ -176,7 +176,7 @@ class MyClass(CachedAttributeGuardMixin):
     def some_internal_computation(self):
         # perform some internal computation here and set derived_attr3
         # cannot do caching
-        self.__derived_attr3 = self.core_attr1 * 2
+        self._derived_attr3 = self.core_attr1 * 2
 ```
 
 ##### Cache invalidation
@@ -185,14 +185,14 @@ It is expected that core attributes are not changed after initialization. In the
 **Invalidating cache dependent on core attributes**: This is handled by using the `invalidates` hook with `on_setattr`. This has speed penalty for object creation and assignment of core attributes. Core attributes are not expected to be updated that much.
 ```python
 class MyClass:
-    core_attr1: int = field(on_setattr=invalidates('__derived_attr1'))
+    core_attr1: int = field(on_setattr=invalidates('_derived_attr1'))
     
     @property
     def derived_attr1(self) -> int:
-        return self.__derived_attr1
+        return self._derived_attr1
 
     @cached_property
-    def __derived_attr1(self) -> int:
+    def _derived_attr1(self) -> int:
         # perform expensive computation here using core_attr1
         return sum(range(self.core_attr1 * 2))
 ```
@@ -205,21 +205,21 @@ class MyClass():
 
     @property
     def derived_attr1(self) -> int:
-        return self.__derived_attr1
+        return self._derived_attr1
 
     @cached_property
-    def __derived_attr1(self) -> int:
-        invalidate(self, '__derived_attr2')  # invalidate dependent derived attribute
+    def _derived_attr1(self) -> int:
+        invalidate(self, '_derived_attr2')  # invalidate dependent derived attribute
 
         # perform expensive computation here using core_attr1
         return sum(range(self.core_attr1 * 2))
 
     @property
     def derived_attr2(self) -> int:
-        return self.__derived_attr2
+        return self._derived_attr2
 
     @cached_property
-    def __derived_attr2(self) -> int:
+    def _derived_attr2(self) -> int:
         # perform expensive computation here using derived_attr1
         return self.derived_attr1 + 1
 ```
@@ -230,14 +230,14 @@ class MyClass():
 > **Note:** In some cases, we may want to allow updating core attributes without invalidating derived attributes. In that case, we can also use the `UnsafeSetterMixin` mixin. It allows using context managers to temporarily disable cache invalidation for faster but unsafe attribute update. Generally this should not be necessary.
  ```python
 class MyClass(UnsafeSetterMixin):
-    core_attr1: int = field(on_setattr=invalidates('__derived_attr1'))
+    core_attr1: int = field(on_setattr=invalidates('_derived_attr1'))
     
     @property
     def derived_attr1(self) -> int:
-        return self.__derived_attr1
+        return self._derived_attr1
 
     @cached_property
-    def __derived_attr1(self) -> int:
+    def _derived_attr1(self) -> int:
         # perform expensive computation here using core_attr1
         return sum(range(self.core_attr1 * 2))
 
