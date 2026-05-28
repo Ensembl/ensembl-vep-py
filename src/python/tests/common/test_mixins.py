@@ -28,7 +28,7 @@ from ensembl.vep.common import UnsafeSetterMixin, CachedAttributeGuardMixin
 class DummyUnsafeSetter(UnsafeSetterMixin):
     """Dummy class for UnsafeSetterMixin tests."""
 
-    x: int = field(on_setattr=invalidates("__y"))
+    x: int = field(on_setattr=invalidates("DummyUnsafeSetter", "__y"))
     __y: int = field(init=False, default=99)
 
     @property

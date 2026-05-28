@@ -27,6 +27,9 @@ from ensembl.vep.common import Strand, invalidates
 logger = logging.getLogger(__name__)
 
 
+def _invalidates(*args):
+    return invalidates('Feature', *args)
+
 @define(kw_only=True, auto_attribs=True)
 class Feature:
     """
@@ -40,11 +43,12 @@ class Feature:
         seq (Any | None): Associated biological sequence.
     """
 
-    start: int = field(on_setattr=invalidates("__length", "__seq_region_start"))
-    end: int = field(on_setattr=invalidates("__length", "__seq_region_end"))
-    strand: Strand = field(on_setattr=invalidates("__seq_region_strand"))
+    start: int = field(on_setattr=_invalidates("__length", "__seq_region_start"))
+    end: int = field(on_setattr=_invalidates("__length", "__seq_region_end"))
+    strand: Strand = field(on_setattr=_invalidates("__seq_region_strand"))
     slice: Slice | None = field(
-        default=None, on_setattr=invalidates("__seq_region_start", "__seq_region_end", "__seq_region_strand")
+        default=None, on_setattr=_invalidates(
+            "__seq_region_start", "__seq_region_end", "__seq_region_strand")
     )
     seq: Any | None = field(default=None)
     _lock: RLock = field(factory=RLock, init=False, repr=False)

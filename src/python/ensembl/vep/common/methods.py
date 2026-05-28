@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 T = TypeVar("T")
 
 
-def invalidate(instance: object, *invalidate_names: str) -> None:
+def invalidate(cls_name: str, instance: object, *invalidate_names: str) -> None:
     """Clears the named cached properties of a class object when the attributes are set.
 
     Args:
@@ -42,14 +42,15 @@ def invalidate(instance: object, *invalidate_names: str) -> None:
                 f"Invalidation only works for private attributes (starting with __), but got '{name}'"
             )
         with suppress(AttributeError):
-            object.__delattr__(instance, f"_{type(instance).__name__}{name}")
+            object.__delattr__(instance, f"_{cls_name}{name}")
 
 
-def invalidates(*cached_names: str) -> Callable:
+def invalidates(obj_cls: str, *cached_names: str) -> Callable:
     """
     Returns an attrs on_setattr hook that clears the named cached property whenever the attribute is set.
 
     Args:
+        obj_cls: The object class name to invalidate attributes of.
         *cached_names: The names of the cached properties to invalidate.
 
     Returns:
@@ -57,7 +58,7 @@ def invalidates(*cached_names: str) -> Callable:
     """
 
     def hook(instance: object, _modified_attr: AttrsAttribute, new_value: T) -> T:
-        invalidate(instance, *cached_names)
+        invalidate(obj_cls, instance, *cached_names)
 
         # attrs requires the hook to return the value
         return new_value

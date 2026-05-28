@@ -13,9 +13,127 @@
 # limitations under the License.
 """Unit tests for common methods."""
 
+from attrs import define, field
+from functools import cached_property
 import pytest
 
-from ensembl.vep.common import trim_sequences, shift_sequence, Strand, ClassSOTerm, infer_variant_so_term
+from ensembl.vep.common import (
+    invalidate,
+    invalidates,
+    trim_sequences,
+    shift_sequence,
+    Strand,
+    ClassSOTerm,
+    infer_variant_so_term,
+)
+
+
+class TestCacheInvalidation:
+    """Tests for the invalidates function."""
+
+    def test_invalidation(self) -> None:
+        """Tests the invalidates function invalidates the named properties."""
+
+        def _invalidates(*args):
+            return invalidates('Foo', *args)
+
+        @define(kw_only=True, auto_attribs=True)
+        class Foo:
+            """Class for testing cached property invalidation."""
+
+            start: int = field(on_setattr=_invalidates("__invalidated_length"))
+            end: int = field(on_setattr=_invalidates("__invalidated_length"))
+
+            @cached_property
+            def __invalidated_length(self) -> int:
+                """
+                Returns the length.
+
+                Returns:
+                    int: The length.
+                """
+                return self.end - self.start + 1
+
+            @cached_property
+            def __permanent_length(self) -> int:
+                """
+                Returns the length.
+
+                Returns:
+                    int: The length.
+                """
+                return self.end - self.start + 1
+
+            @property
+            def invalidated_length(self) -> int:
+                """
+                Public accessor for the __invalidated_length.
+
+                Returns:
+                    int: The length.
+                """
+                return self.__invalidated_length
+
+            @property
+            def permanent_length(self) -> int:
+                """
+                Public accessor for the __permanent_length.
+
+                Returns:
+                    int: The length.
+                """
+                return self.__permanent_length
+
+        # Evaluate cached_property attributes and values on initialization
+        fooObj = Foo(start=1, end=10)
+        assert fooObj.invalidated_length == 10, "Initial invalidated_length should be 10"
+        assert fooObj.permanent_length == 10, "Initial permanent_length should be 10"
+        assert (
+            hasattr(fooObj, "_Foo__invalidated_length") is True
+        ), "Protected invalidated_length attribute not found with expected mangled name"
+        assert (
+            getattr(fooObj, "_Foo__invalidated_length") == 10
+        ), "Protected invalidated_length attribute has unexpected value"
+
+        # Evaluate attributes invalidation through on_setattr
+        fooObj.start = 2
+        assert fooObj.invalidated_length == 9, "Updated invalidated_length should be 9"
+        assert (
+            getattr(fooObj, "_Foo__invalidated_length") == 9
+        ), "Protected invalidated_length attribute was not reloaded new value after invalidation"
+        assert (
+            getattr(fooObj, "_Foo__permanent_length") == 10
+        ), "Protected permanent_length attribute should not change on invalidation of invalidated_length"
+
+        # Evaluate direct attribute invalidation
+        invalidate('Foo', fooObj, "__permanent_length")
+        assert (
+            getattr(fooObj, "_Foo__invalidated_length") == 9
+        ), "Protected invalidated_length attribute should not change on invalidation of permanent_length"
+        assert (
+            getattr(fooObj, "_Foo__permanent_length") == 9
+        ), "Protected permanent_length attribute did not invalidate"
+
+        # Evaluate attribute invalidation on inheritance
+        class Bar(Foo):
+            """Class for testing cached property invalidation on inheritance."""
+
+        barObj = Bar(start=1, end=10)
+        assert barObj.invalidated_length == 10, "Initial Bar invalidated_length should be 10"
+        assert barObj.permanent_length == 10, "Initial Bar permanent_length should be 10"
+        assert (
+            hasattr(barObj, "_Foo__invalidated_length") is True
+        ), "Protected Bar invalidated_length attribute not found with expected parent-class name"
+        assert (
+            getattr(barObj, "_Foo__invalidated_length") == 10
+        ), "Protected Bar invalidated_length attribute has unexpected value"
+        barObj.start = 2
+        assert (
+            getattr(barObj, "_Foo__invalidated_length") == 9
+        ), "Protected Bar invalidated_length attribute was not reloaded new value after invalidation"
+        assert (
+            getattr(barObj, "_Foo__permanent_length") == 10
+        ), "Protected Bar permanent_length attribute should not change on invalidation of invalidated_length"
 
 
 class TestTrimSequences:
