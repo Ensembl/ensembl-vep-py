@@ -71,8 +71,8 @@ def resets_attrs(*attrs: tuple[str, Any]) -> Callable:
 
     Args:
         *attrs: list of tuples (name, default_value) where
-                 * `name` is the attribute name to resent
-                 * `default_value` is the value to reset the attribute to on each call
+            * `name` is the attribute name to reset
+            * `default_value` is the value to reset the attribute to on each call
 
     Returns:
         Callable: An on_setattr hook function.

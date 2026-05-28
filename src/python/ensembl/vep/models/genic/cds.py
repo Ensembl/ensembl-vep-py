@@ -38,22 +38,22 @@ class CDS(Feature):
         translation (Translation | None): The translation associated with this CDS.
     """
 
-    seq: str | None = field(default=None, on_setattr=invalidates("_neucleotide_length", "_protein_length"))
+    seq: str | None = field(default=None, on_setattr=invalidates("_nucleotide_length", "_protein_length"))
     transcript: Transcript | None = field(default=None, init=False)
     translation: Translation | None = field(default=None, init=False)
     _lock: RLock = field(factory=RLock, init=False, repr=False)
 
     @property
-    def neucleotide_length(self) -> int | None:
-        """Public accessor for _neucleotide_length.
+    def nucleotide_length(self) -> int | None:
+        """Public accessor for _nucleotide_length.
 
         Returns:
             int | None: Length in nucleotides, or None if not applicable.
         """
-        return self._neucleotide_length
+        return self._nucleotide_length
 
     @cached_property
-    def _neucleotide_length(self) -> int | None:
+    def _nucleotide_length(self) -> int | None:
         """Returns the length of the CDS in nucleotides.
 
         Returns:
@@ -79,8 +79,8 @@ class CDS(Feature):
             int | None: Length in amino acids, or None if not applicable.
         """
         with self._lock:
-            neucleotide_length = self._neucleotide_length
-            return (neucleotide_length // 3) if neucleotide_length is not None else None
+            nucleotide_length = self._nucleotide_length
+            return (nucleotide_length // 3) if nucleotide_length is not None else None
 
     def __eq__(self, other: object) -> bool:
         """Compare two CDS using various criteria.
