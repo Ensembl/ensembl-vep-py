@@ -119,7 +119,7 @@ with cls.unsafe():
 ##### Externally-set attributes
 These are similarly not derived and externally set like core attributes but they are not essential to be in the `__init__` method. The class is not responsible for calculating these attributes, so it should not enforce immutability or caching. 
 
-They are still be defined in the class body (with type annotations) to be compatible with `slots=True` and to ensure they are tracked properly.
+They should still be defined in the class body (with type annotations) to be compatible with `slots=True` and to ensure they are tracked properly.
 
 ```python
 class MyClass():
