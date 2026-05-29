@@ -134,7 +134,8 @@ cls.externally_set_attr = some_external_method()
 
 Derived attributes are read-only properties derived from one or more attributes. They are lazy-loaded (not part of `__init__`) and can be cached (using `functools.cached_property`).
 
-**Read-only enforcement** is handled by the using a combination protected variable (prefixing name with `_`) and a public variable property with no setter. Because of no setter to public accessible variable, it is not possible to assign to the derived attribute except by directly assigning to the protected variable. It is considered a code smell but ultimately upon the developer to abide by the convention.
+**Read-only enforcement** is handled by the using a combination of a protected variable (prefixing name with `_`) and a public variable property with no setter. The public variable should be used for all access outside of the class definition, the protected variable is for internal use only.
+Because the public accessible variable has no setter, you should never assign directly to it, mypy will throw a `misc` error if you do (property is read-only). Reading or assigning to the protected variable directly outside of the class definition will result in a [W202](https://pylint.readthedocs.io/en/stable/user_guide/messages/warning/protected-access.html) error by pylint. Both will fail the CI checks and should be avoided. Ensure mypy and pylint are enabled in your IDE for linting annotations during development.
 
 **Lazy-loading** is achieved by setting `init=False` for the derived attribute, which means it will not be included in the `__init__` method and will only be computed when accessed.
 
