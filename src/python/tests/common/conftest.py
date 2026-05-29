@@ -16,7 +16,7 @@
 from functools import cached_property
 from attrs import define, field
 
-from ensembl.vep.common import invalidates
+from ensembl.vep.common import invalidates, resets_attrs
 
 
 @define(kw_only=True, auto_attribs=True, slots=False)
@@ -24,7 +24,8 @@ class Foo:
     """Class for testing cached property invalidation."""
 
     start: int = field(on_setattr=invalidates("_length"))
-    end: int = field(on_setattr=invalidates("_length"))
+    end: int = field(on_setattr=resets_attrs(("_minimised", False)))
+    _minimised: bool = field(default=False)
 
     @cached_property
     def _length(self) -> int:
@@ -55,6 +56,19 @@ class Foo:
             int: The length.
         """
         return self._length
+
+    @property
+    def minimised(self) -> bool:
+        """Public accessor for _minimised.
+
+        Returns:
+            bool: True if object has been minimised, False otherwise.
+        """
+        return self._minimised
+
+    def minimise(self) -> None:
+        """Minimises the object by setting _minimised to True."""
+        self._minimised = True
 
     @property
     def range(self) -> str:
