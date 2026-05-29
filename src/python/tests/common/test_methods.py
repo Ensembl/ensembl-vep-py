@@ -15,7 +15,92 @@
 
 import pytest
 
-from ensembl.vep.common import trim_sequences, shift_sequence, Strand, ClassSOTerm, infer_variant_so_term
+from ensembl.vep.common import (
+    invalidate,
+    trim_sequences,
+    shift_sequence,
+    Strand,
+    ClassSOTerm,
+    infer_variant_so_term,
+)
+
+from .conftest import Foo, Bar
+
+
+class TestCacheInvalidation:
+    """Tests for the invalidates function."""
+
+    def test_on_setattr_invalidation(self) -> None:
+        """Tests the invalidates function invalidates the named properties on dependent attributes set."""
+
+        # Evaluate cached_property attributes and values on initialization
+        fooObj = Foo(start=1, end=10)
+        assert (
+            "_length" not in fooObj.__dict__
+        ), "Protected length attribute was initialized before first attribute call"
+        assert (
+            "_range" not in fooObj.__dict__
+        ), "Protected range attribute was initialized before first attribute call"
+        assert fooObj.length == 10, "Unexpected initial length after first attribute call"
+        assert fooObj.range == "1..10", "Unexpected initial range after first attribute call"
+        assert (
+            "_length" in fooObj.__dict__
+        ), "Protected length attribute not cached after first attribute call"
+        assert "_range" in fooObj.__dict__, "Protected range attribute not cached after first attribute call"
+        assert (
+            fooObj._length == 10  # pylint: disable=protected-access
+        ), "Unexpected cached protected length attribute value"
+        assert (
+            fooObj._range == "1..10"  # pylint: disable=protected-access
+        ), "Unexpected cached protected range attribute value"
+
+        # Evaluate attributes invalidation through on_setattr
+        fooObj.start = 2
+        assert "_length" not in fooObj.__dict__, "Protected length attribute was not invalidated."
+        assert fooObj.length == 9, "Updated length should be 9"
+        assert (
+            fooObj._length == 9  # pylint: disable=protected-access
+        ), "Protected length attribute was not reloaded with new value after invalidation"
+        assert (
+            fooObj._range == "1..10"  # pylint: disable=protected-access
+        ), "Unexpected change to protected range attribute through on_setattr"
+
+    def test_direct_invalidation(self) -> None:
+        """Tests the invalidate function invalidates the named properties directly."""
+
+        fooObj = Foo(start=1, end=10)
+        assert fooObj.length == 10, "Unexpected initial length"
+        assert fooObj.range == "1..10", "Unexpected initial range"
+
+        invalidate(fooObj, "_range")
+        assert (
+            "_length" in fooObj.__dict__ and fooObj._length == 10  # pylint: disable=protected-access
+        ), "Protected length attribute should not be affected by range invalidation."
+        assert "_range" not in fooObj.__dict__, "Protected range attribute did not invalidate"
+
+    def test_on_setattr_inheritance(self) -> None:
+        """Tests the invalidates function invalidates the named properties
+        on dependent attributes set of inherited attributes."""
+
+        barObj = Bar(start=1, end=10)
+        assert barObj.length == 10, "Unexpected initial length value"
+        assert barObj.range == "1..10", "Unexpected initial range value"
+        assert (
+            "_length" in barObj.__dict__
+        ), "Protected length attribute not cached after first attribute call"
+        assert (
+            barObj._length == 10  # pylint: disable=protected-access
+        ), "Unexpected (cached) value in protected length attribute"
+        barObj.start = 2
+        assert (
+            "_length" not in barObj.__dict__
+        ), "Protected length attribute did not invalidate on dependent attribute change"
+        assert (
+            barObj._length == 9  # pylint: disable=protected-access
+        ), "Unexpected new value in protected length attribute after invalidation"
+        assert (
+            barObj._range == "1..10"  # pylint: disable=protected-access
+        ), "Protected range attribute should not change on invalidation of length"
 
 
 class TestTrimSequences:
