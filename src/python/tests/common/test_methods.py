@@ -28,7 +28,7 @@ from .conftest import Foo, Bar
 
 
 class TestCacheInvalidation:
-    """Tests for the invalidates function."""
+    """Tests for the cached property invalidation functions."""
 
     def test_on_setattr_invalidation(self) -> None:
         """Tests the invalidates function invalidates the named properties on dependent attributes set."""
@@ -101,6 +101,58 @@ class TestCacheInvalidation:
         assert (
             barObj._range == "1..10"  # pylint: disable=protected-access
         ), "Protected range attribute should not change on invalidation of length"
+
+
+class TestAttributeReset:
+    """Tests for the attribute reset functions."""
+
+    def test_on_setattr_reset(self) -> None:
+        """Tests dependent attribute updates correctly reset the named properties."""
+
+        # Evaluate attributes and values on initialization
+        fooObj = Foo(start=1, end=10)
+        assert "_minimised" in fooObj.__dict__, "Protected minimised attribute was not initialized"
+        assert (
+            fooObj._minimised is False  # pylint: disable=protected-access
+        ), "Unexpected initial minimised value"
+
+        fooObj.minimise()
+        assert (
+            fooObj._minimised is True  # pylint: disable=protected-access
+        ), "Minimised attribute not updated on minimise"
+
+        # trigger reset and evaluate attributes and values
+        fooObj.end = 20
+        assert (
+            "_minimised" in fooObj.__dict__
+        ), "Protected minimised attribute was invalidated rather than reset"
+        assert (
+            fooObj._minimised is False  # pylint: disable=protected-access
+        ), "Minimised attribute did not reset on end update"
+
+    def test_on_setattr_inheritance(self) -> None:
+        """Tests dependent attribute updates correctly reset the named inherited properties"""
+
+        # Evaluate attributes and values on initialization
+        barObj = Bar(start=1, end=10)
+        assert "_minimised" in barObj.__dict__, "Protected minimised attribute was not initialized"
+        assert (
+            barObj._minimised is False  # pylint: disable=protected-access
+        ), "Unexpected initial minimised value"
+
+        barObj.minimise()
+        assert (
+            barObj._minimised is True  # pylint: disable=protected-access
+        ), "Minimised attribute not updated on minimise"
+
+        # trigger reset and evaluate attributes and values
+        barObj.end = 20
+        assert (
+            "_minimised" in barObj.__dict__
+        ), "Protected minimised attribute was invalidated rather than reset"
+        assert (
+            barObj._minimised is False  # pylint: disable=protected-access
+        ), "Minimised attribute did not reset on end update"
 
 
 class TestTrimSequences:
