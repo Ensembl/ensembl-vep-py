@@ -28,13 +28,13 @@ from ensembl.vep.common import UnsafeSetterMixin, CachedAttributeGuardMixin
 class DummyUnsafeSetter(UnsafeSetterMixin):
     """Dummy class for UnsafeSetterMixin tests."""
 
-    x: int = field(on_setattr=invalidates("__y"))
-    __y: int = field(init=False, default=99)
+    x: int = field(on_setattr=invalidates("_y"))
+    _y: int = field(init=False, default=99)
 
     @property
     def y(self) -> int:
         """Return the value of y."""
-        return self.__y
+        return self._y
 
 
 @define

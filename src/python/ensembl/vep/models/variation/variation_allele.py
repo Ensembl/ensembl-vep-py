@@ -60,91 +60,91 @@ class VariationAllele(Feature):
     """
 
     start: int = field(
-        on_setattr=[invalidates("__minimised_locus", "__shifted_locus"), resets_attrs(("__shifted", False))]
+        on_setattr=[invalidates("_minimised_locus", "_shifted_locus"), resets_attrs(("_shifted", False))]
     )
     end: int = field(
-        on_setattr=[invalidates("__minimised_locus", "__shifted_locus"), resets_attrs(("__shifted", False))]
+        on_setattr=[invalidates("_minimised_locus", "_shifted_locus"), resets_attrs(("_shifted", False))]
     )
     reference_allele: str | None = field(
         default=None,
         on_setattr=[
-            invalidates("__minimised_locus", "__shifted_locus"),
-            resets_attrs(("__minimised", False), ("__shifted", False)),
+            invalidates("_minimised_locus", "_shifted_locus"),
+            resets_attrs(("_minimised", False), ("_shifted", False)),
         ],
     )
     alternate_allele: str | None = field(
         default=None,
         on_setattr=[
-            invalidates("__minimised_locus", "__shifted_locus"),
-            resets_attrs(("__minimised", False), ("__shifted", False)),
+            invalidates("_minimised_locus", "_shifted_locus"),
+            resets_attrs(("_minimised", False), ("_shifted", False)),
         ],
     )
     """The original locus of the variation allele before any minimisation or shifting (if any occurred)."""
-    __original_locus: Locus | None = field(default=None, init=False)
+    _original_locus: Locus | None = field(default=None, init=False)
     """Whether the variation allele has been minimised."""
-    __minimised: bool = field(default=False, init=False)
-    __minimised_locus: Locus | None = field(default=None, init=False)
+    _minimised: bool = field(default=False, init=False)
+    _minimised_locus: Locus | None = field(default=None, init=False)
     """Whether the variation allele has been shifted."""
-    __shifted: bool = field(default=False, init=False)
-    __shifted_locus: Locus | None = field(default=None, init=False)
+    _shifted: bool = field(default=False, init=False)
+    _shifted_locus: Locus | None = field(default=None, init=False)
     _lock: RLock = field(factory=RLock, init=False, repr=False)
     transcript_variation_alleles: list[TranscriptVariationAllele] = field(
-        factory=list, init=False, on_setattr=invalidates("__overlap_consequences")
+        factory=list, init=False, on_setattr=invalidates("_overlap_consequences")
     )
     # regulatory_variation_alleles: list[RegulatoryVariationAllele] = field(factory=list, init=False)
     # motif_variation_alleles: list[MotifVariationAllele] = field(factory=list, init=False)
     # intergenic_variation_alleles: list[IntergenicVariationAllele] = field(factory=list, init=False)
 
     @property
-    def __locus(self) -> Locus:
+    def _locus(self) -> Locus:
         return Locus(
             start=self.start, end=self.end, allele_string=f"{self.reference_allele}/{self.alternate_allele}"
         )
 
     @property
     def original_locus(self) -> Locus | None:
-        """Public accessor for __original_locus.
+        """Public accessor for _original_locus.
 
         Returns:
             Locus | None: The original locus if available, None otherwise.
         """
-        return self.__original_locus
+        return self._original_locus
 
     @property
     def minimised_locus(self) -> Locus | None:
-        """Public accessor for __minimised_locus.
+        """Public accessor for _minimised_locus.
 
         Returns:
             Locus | None: The minimised locus if available, None otherwise.
         """
-        return self.__minimised_locus
+        return self._minimised_locus
 
     @property
     def shifted_locus(self) -> Locus | None:
-        """Public accessor for __shifted_locus.
+        """Public accessor for _shifted_locus.
 
         Returns:
             Locus | None: The shifted locus if available, None otherwise.
         """
-        return self.__shifted_locus
+        return self._shifted_locus
 
     @property
     def minimised(self) -> bool:
-        """Public accessor for __minimised.
+        """Public accessor for _minimised.
 
         Returns:
             bool: True if the variation allele has been minimised, False otherwise.
         """
-        return self.__minimised
+        return self._minimised
 
     @property
     def shifted(self) -> bool:
-        """Public accessor for __shifted.
+        """Public accessor for _shifted.
 
         Returns:
             bool: True if the variation allele has been shifted, False otherwise.
         """
-        return self.__shifted
+        return self._shifted
 
     def minimise(self, force: bool = False) -> None:
         """Minimises the variation allele by computing the minimal representation of the variant.
@@ -164,7 +164,7 @@ class VariationAllele(Feature):
         if self.reference_allele is None or self.alternate_allele is None:
             raise ValueError("Missing reference or alternate allele for minimisation")
 
-        original_locus = self.__original_locus or self.__locus
+        original_locus = self._original_locus or self._locus
 
         new_ref, new_alt, new_start, new_end, _changed = trim_sequences(
             ref=self.reference_allele, alt=self.alternate_allele, start=self.start, end=self.end
@@ -176,9 +176,9 @@ class VariationAllele(Feature):
             self.start = new_start
             self.end = new_end
 
-        self.__original_locus = self.__original_locus or original_locus
-        self.__minimised_locus = self.__locus
-        self.__minimised = True
+        self._original_locus = self._original_locus or original_locus
+        self._minimised_locus = self._locus
+        self._minimised = True
 
     def shift(self, force: bool = False) -> None:
         """Shifts the variation allele to the leftmost position in the sequence.
@@ -201,7 +201,7 @@ class VariationAllele(Feature):
         if self.slice is None or self.slice.seq is None:
             raise ValueError("Cannot shift variation allele without attached slice sequence.")
 
-        original_locus = self.__original_locus or self.__locus
+        original_locus = self._original_locus or self._locus
 
         search_start = max(0, self.start - MAX_SEARCH_AREA - 1)
         search_end = min(self.slice.end, self.end + MAX_SEARCH_AREA)
@@ -229,21 +229,21 @@ class VariationAllele(Feature):
             self.start = new_start
             self.end = new_end
 
-        self.__original_locus = self.__original_locus or original_locus
-        self.__shifted_locus = self.__locus
-        self.__shifted = True
+        self._original_locus = self._original_locus or original_locus
+        self._shifted_locus = self._locus
+        self._shifted = True
 
     @property
     def overlap_consequences(self) -> list[OverlapConsequence]:
-        """Public accessor for __overlap_consequences.
+        """Public accessor for _overlap_consequences.
 
         Returns:
             list[OverlapConsequence]: The list of overlap consequences for this variation allele.
         """
-        return self.__overlap_consequences
+        return self._overlap_consequences
 
     @cached_property
-    def __overlap_consequences(self) -> list[OverlapConsequence]:
+    def _overlap_consequences(self) -> list[OverlapConsequence]:
         """Returns the list of overlap consequences for this variation allele.
 
         Returns:

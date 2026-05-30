@@ -45,21 +45,21 @@ class Exon(Feature):
 
     stable_id: str
     version: int | None = field(default=None, init=False)
-    phase: ExonPhase | None = field(default=None, init=False, on_setattr=invalidates("__frame"))
+    phase: ExonPhase | None = field(default=None, init=False, on_setattr=invalidates("_frame"))
     end_phase: ExonPhase | None = field(default=None, init=False)
     _lock: RLock = field(factory=RLock, init=False, repr=False)
 
     @property
     def frame(self) -> int | None:
-        """Public accessor for __frame.
+        """Public accessor for _frame.
 
         Returns:
             int | None: The frame of the exon, or None if not applicable.
         """
-        return self.__frame
+        return self._frame
 
     @cached_property
-    def __frame(self) -> int | None:
+    def _frame(self) -> int | None:
         """
         Returns the frame of the exon.
 

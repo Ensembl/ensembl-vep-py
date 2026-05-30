@@ -37,12 +37,12 @@ def invalidate(instance: object, *invalidate_names: str) -> None:
         *invalidate_names: The names of the cached properties to invalidate.
     """
     for name in invalidate_names:
-        if not name.startswith("__"):
+        if not name.startswith("_"):
             logger.debug(
-                f"Invalidation only works for private attributes (starting with __), but got '{name}'"
+                f"Invalidation only works for protected attributes (starting with _), but got '{name}'"
             )
         with suppress(AttributeError):
-            object.__delattr__(instance, f"_{type(instance).__name__}{name}")
+            object.__delattr__(instance, f"{name}")
 
 
 def invalidates(*cached_names: str) -> Callable:
@@ -71,8 +71,8 @@ def resets_attrs(*attrs: tuple[str, Any]) -> Callable:
 
     Args:
         *attrs: list of tuples (name, default_value) where
-                 * `name` is the attribute name to resent
-                 * `default_value` is the value to reset the attribute to on each call
+            * `name` is the attribute name to reset
+            * `default_value` is the value to reset the attribute to on each call
 
     Returns:
         Callable: An on_setattr hook function.
@@ -85,16 +85,15 @@ def resets_attrs(*attrs: tuple[str, Any]) -> Callable:
 
         # Otherwise, reset the attributes defined in attrs
         for attr_pair in attrs:
-            short_name = attr_pair[0]
-            long_name = f"_{type(instance).__name__}{short_name}"
+            name = attr_pair[0]
             default_value = attr_pair[1]
-            if not short_name.startswith("__"):
+            if not name.startswith("_"):
                 logger.debug(
-                    "reset_attrs should only be used for private attributes (starting with __),"
-                    f" but got '{short_name}'."
+                    "reset_attrs should only be used for protected attributes (starting with _),"
+                    f" but got '{name}'."
                 )
             else:
-                object.__setattr__(instance, long_name, default_value)
+                object.__setattr__(instance, name, default_value)
 
         # attrs requires the hook to return the value on success
         return new_value
