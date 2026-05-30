@@ -13,8 +13,8 @@
 # limitations under the License.
 """Unit tests for common methods."""
 
-import pytest
 from typing import Any
+import pytest
 
 from ensembl.vep.common import (
     invalidate,
@@ -23,6 +23,7 @@ from ensembl.vep.common import (
     Strand,
     ClassSOTerm,
     infer_variant_so_term,
+    format_region_string
 )
 
 from .conftest import Foo, Bar

@@ -15,30 +15,53 @@
 
 from collections.abc import Iterator
 from pathlib import Path
+from functools import cached_property
+from attrs import define, field
 
 from ensembl.vep.common import format_region_string
-from ensembl.vep.ensembl_vep_core import TabixParser as _RustTabixParser
+from ensembl.vep.parsers.parser import Parser
+from ensembl.vep.ensembl_vep_core import TabixParser as _RustTabixParser  # noqa: F401,F403 pylint: disable=E0401,E0611
 
 
-class TabixParser:
+@define(kw_only=True, auto_attribs=True)
+class TabixParser(Parser[str]):
     """Parser facade for tabix-indexed row streams."""
 
-    format = "tabix"
+    format: str = field(init=False, default="tabix")
+    file_path: str | Path | None = field(default=None)
+    tabix_path: str | Path | None = field(default="tabix")
+    _parser: _RustTabixParser = field(init=False, repr=False)
 
-    def __init__(self, file_path: str | Path | None = None, *, tabix_path: str = "tabix") -> None:
-        self.metadata: dict[str, str] = {}
-        self._parser = _RustTabixParser(str(file_path) if file_path is not None else None, tabix_path)
+    def __attrs_post_init__(self) -> None:
+        self._parser = _RustTabixParser(
+            str(self.file_path) if self.file_path is not None else None,
+            str(self.tabix_path) if self.tabix_path is not None else None,
+        )
+
+    @property
+    def metadata(self) -> dict:
+        """Metadata dictionary."""
+
+        return self._metadata
+
+    @cached_property
+    def _metadata(self) -> dict:
+        """Metadata dictionary."""
+
+        return dict(self._parser.metadata)
 
     def open(self, file_path: str | Path) -> "TabixParser":
         """Open a tabix-indexed BGZF file."""
 
         self._parser.open(str(file_path))
+        self._clear_metadata_cache()
         return self
 
     def close(self) -> None:
         """Close the parser."""
 
         self._parser.close()
+        self._clear_metadata_cache()
 
     def seek(
         self,
@@ -78,6 +101,12 @@ class TabixParser:
 
     def __exit__(self, *_exc_info: object) -> None:
         self.close()
+
+    def _clear_metadata_cache(self) -> None:
+        try:
+            del self._metadata
+        except AttributeError:
+            pass
 
 
 __all__ = ["TabixParser"]
