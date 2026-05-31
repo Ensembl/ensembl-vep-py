@@ -14,8 +14,9 @@
 """Unit tests for the tabix parser interface."""
 
 from pathlib import Path
-import shutil
 import subprocess
+from typing import Protocol
+
 import pytest
 
 from ensembl.vep.parsers.tabix import TabixParser
@@ -29,6 +30,13 @@ CHR1_GENE_ROW = "chr1\ttabix\tgene\t10\t20\t.\t+\t.\tID=gene:1"
 CHR1_EXON_ROW = "chr1\ttabix\texon\t12\t14\t.\t+\t.\tID=exon:1"
 CHR1_CDS_ROW = "chr1\ttabix\tCDS\t15\t18\t.\t+\t0\tID=cds:1"
 CHR2_GENE_ROW = "chr2\ttabix\tgene\t100\t120\t.\t-\t.\tID=gene:2"
+
+
+class HtslibToolchain(Protocol):
+    """Protocol for HTSlib toolchain fixtures."""
+
+    bgzip: str
+    tabix: str
 
 
 def _write_placeholder_file(path: Path) -> Path:
@@ -76,19 +84,24 @@ esac
 """,
     )
 
-def _create_tabix_gff3_cli(path: Path) -> Path:
+
+def _create_tabix_gff3_cli(path: Path, htslib_toolchain: HtslibToolchain) -> Path:
+    """Create and tabix-index a GFF3 file with a real HTSlib toolchain."""
+
     unzip_path = path.with_suffix(path.suffix.replace(".gz", ""))
 
-    unzip_path.write_text(f"""{HEADER_LINES[0]}
+    unzip_path.write_text(
+        f"""{HEADER_LINES[0]}
 {HEADER_LINES[1]}
 {CHR1_GENE_ROW}
 {CHR1_EXON_ROW}
 {CHR1_CDS_ROW}
 {CHR2_GENE_ROW}
-""")
+"""
+    )
 
-    subprocess.run(["bgzip", "-f", str(unzip_path)], check=True)
-    subprocess.run(["tabix", "-p", "gff", str(path)], check=True)
+    subprocess.run([htslib_toolchain.bgzip, "-f", str(unzip_path)], check=True)
+    subprocess.run([htslib_toolchain.tabix, "-p", "gff", str(path)], check=True)
 
     return path
 
@@ -386,14 +399,15 @@ class TestTabixParserIteration:
                 next(parser)
 
 
+@pytest.mark.integration
 class TestTabixParserNoodlesBackend:
     """Tests for TabixParser with the noodles backend."""
 
-    def test_noodles_backend_reads_records(self, tmp_path: Path) -> None:
+    def test_noodles_backend_reads_records(self, tmp_path: Path, htslib_toolchain: HtslibToolchain) -> None:
         """Test TabixParser can read records with the noodles backend."""
 
-        path = _create_tabix_gff3_cli(tmp_path / "sample.gff3.gz")
-        parser = TabixParser(file_path=path, tabix_path=None)
+        path = _create_tabix_gff3_cli(tmp_path / "sample.gff3.gz", htslib_toolchain)
+        parser = TabixParser(file_path=path, tabix_path="tabix-nonexistent-binary-for-test")
 
         assert parser.metadata == {"header": HEADER_LINES}
         assert parser.seek(seqid="chr1", start=10, end=20) is True
@@ -402,19 +416,15 @@ class TestTabixParserNoodlesBackend:
         assert parser.next() is None
 
 
+@pytest.mark.integration
 class TestTabixParserIntegration:
     """Integration tests for TabixParser with a real tabix executable."""
 
-    def test_integration_with_real_tabix(self, tmp_path: Path) -> None:
+    def test_integration_with_real_tabix(self, tmp_path: Path, htslib_toolchain: HtslibToolchain) -> None:
         """Test TabixParser can read from a real tabix executable."""
 
-        path = _create_tabix_gff3_cli(tmp_path / "sample.gff3.gz")
-        tabix = shutil.which("tabix")
-
-        if tabix is None:
-            pytest.skip("tabix executable not found in PATH")
-
-        parser = TabixParser(file_path=path, tabix_path=tabix)
+        path = _create_tabix_gff3_cli(tmp_path / "sample.gff3.gz", htslib_toolchain)
+        parser = TabixParser(file_path=path, tabix_path=htslib_toolchain.tabix)
 
         assert parser.metadata == {"header": HEADER_LINES}
         assert parser.seek(seqid="chr1", start=10, end=20) is True

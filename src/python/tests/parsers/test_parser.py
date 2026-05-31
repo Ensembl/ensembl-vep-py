@@ -73,7 +73,7 @@ class TestParserInitialization:
         """Test Parser cannot be instantiated directly."""
 
         with pytest.raises(TypeError, match="abstract class"):
-            _ = Parser(format="tabix")  # type: ignore[abstract], pylint: disable=abstract-class-instantiated
+            _ = Parser(format="tabix")  # type: ignore[abstract]  # pylint: disable=abstract-class-instantiated
 
     def test_concrete_parser_sets_format(self) -> None:
         """Test concrete parser stores the parser format."""

@@ -167,9 +167,13 @@ warn_unused_configs = true
 addopts = [
     "--import-mode=importlib",
     "--tb=native",
+    "-ra",
 ]
 testpaths = ["src/python/tests"]
 norecursedirs = ["docs", "*.egg_info"]
+markers = [
+    "integration: tests that require external tools such as bgzip and tabix",
+]
 
 [tool.coverage.run]
 branch = true
