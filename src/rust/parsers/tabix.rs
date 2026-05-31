@@ -76,6 +76,7 @@ impl TabixReader {
 
     /// Return the next raw line from the current region query, or `None` when
     /// the region is exhausted.
+    #[allow(clippy::should_implement_trait)]
     pub fn next(&mut self) -> io::Result<Option<String>> {
         if let Some(line) = self.buffered_line.take() {
             return Ok(Some(line));
@@ -593,6 +594,7 @@ impl TabixParser {
         self.reader()?.seek(region).map_err(tabix_py_error)
     }
 
+    #[allow(clippy::should_implement_trait)]
     pub fn next(&mut self) -> PyResult<Option<String>> {
         self.reader()?.next().map_err(tabix_py_error)
     }
@@ -1897,7 +1899,7 @@ mod tests {
         let tabix_path = dir.join("tabix");
         fs::write(
             &tabix_path,
-            "#!/bin/sh\nprintf '%s\\n' 'sq0\ttabix\tgene\t8\t13\t.\t+\t.\tID=gene1'\n",
+            "#!/bin/sh\nprintf '%s\\n' 'chr1\ttabix\tgene\t8\t13\t.\t+\t.\tID=gene1'\n",
         )?;
 
         let mut permissions = fs::metadata(&tabix_path)?.permissions();
@@ -1908,10 +1910,10 @@ mod tests {
         fs::write(&data_path, [])?;
 
         let mut reader = TabixReader::open(&data_path, tabix_path.to_str().unwrap())?;
-        assert!(reader.seek("sq0:8-13")?);
+        assert!(reader.seek("chr1:8-13")?);
         assert_eq!(
             reader.next()?.as_deref(),
-            Some("sq0\ttabix\tgene\t8\t13\t.\t+\t.\tID=gene1")
+            Some("chr1\ttabix\tgene\t8\t13\t.\t+\t.\tID=gene1")
         );
         assert_eq!(reader.next()?, None);
 
