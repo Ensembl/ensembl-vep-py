@@ -880,6 +880,44 @@ mod tests {
         Ok((gz_path, tbi_path))
     }
 
+    #[cfg(unix)]
+    fn get_system_query_child_id(reader: &TabixReader) -> u32 {
+        match &reader.backend {
+            Backend::System(backend) => backend
+                .query
+                .as_ref()
+                .expect("expected active system query")
+                .child
+                .id(),
+            _ => panic!("expected system backend"),
+        }
+    }
+
+    #[cfg(unix)]
+    fn process_exists(pid: u32) -> io::Result<bool> {
+        let status = std::process::Command::new("kill")
+            .arg("-0")
+            .arg(pid.to_string())
+            .stdout(std::process::Stdio::null())
+            .stderr(std::process::Stdio::null())
+            .status()?;
+
+        Ok(status.success())
+    }
+
+    #[cfg(unix)]
+    fn assert_process_is_gone(pid: u32) -> io::Result<()> {
+        for _ in 0..10 {
+            if !process_exists(pid)? {
+                return Ok(());
+            }
+
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
+
+        panic!("expected process {pid} to be gone");
+    }
+
     // -----------------------------------------------------------------------
     // tabix_py_error — error kind mapping
     // -----------------------------------------------------------------------
@@ -1934,13 +1972,14 @@ mod tests {
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir)?;
 
-        // Mock tabix that sleeps forever so we can verify kill works
+        // Mock tabix that execs a long-running process so the child PID can be
+        // checked directly after close_query and Drop.
         let tabix_path = dir.join("tabix");
         fs::write(
             &tabix_path,
             "#!/bin/sh\n\
             if [ \"$1\" = '--version' ]; then echo 'tabix 1.0'; exit 0; fi\n\
-            sleep 6000\n",
+            exec sleep 6000\n",
         )?;
         let mut perms = fs::metadata(&tabix_path)?.permissions();
         perms.set_mode(0o755);
@@ -1950,13 +1989,17 @@ mod tests {
         fs::write(&data_path, [])?;
 
         let mut reader = TabixReader::open(&data_path, tabix_path.to_str().unwrap())?;
-        reader.backend.seek("chr1:1-100")?; // spawns a sleeping child
-
-        // seek again — close_query should kill the previous child without hanging
         reader.backend.seek("chr1:1-100")?;
+        let first_child_pid = get_system_query_child_id(&reader);
+        assert!(process_exists(first_child_pid)?, "expected process {first_child_pid} to exist");
 
-        // drop also calls close_query implicitly — just verify it completes
+        reader.backend.seek("chr1:1-100")?;
+        assert_process_is_gone(first_child_pid)?;
+
+        let second_child_pid = get_system_query_child_id(&reader);
+        assert!(process_exists(second_child_pid)?, "expected process {second_child_pid} to exist");
         drop(reader);
+        assert_process_is_gone(second_child_pid)?;
 
         fs::remove_dir_all(dir)?;
         Ok(())
@@ -2025,8 +2068,8 @@ mod tests {
 
         // After seek the buffered_line holds the first record.
         // Calling next() twice should return record 2 then record 3.
-        let first = reader.next()?.expect("first");
-        let second = reader.next()?.expect("second");
+        let first = reader.next()?.expect("first record from buffered_line");
+        let second = reader.next()?.expect("second record from buffered_line");
         assert!(
             first.contains("ID=gene2"),
             "expected ID=gene2, got: {first}"
