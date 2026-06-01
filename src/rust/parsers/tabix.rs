@@ -1556,9 +1556,9 @@ mod tests {
     // -----------------------------------------------------------------------
 
     #[test]
-    fn test_noodles_backend_0_based_positions() -> io::Result<()> {
+    fn test_noodles_backend_zero_based_positions() -> io::Result<()> {
         let dir =
-            env::temp_dir().join(format!("tabix-test-noodles-0-based-{}", std::process::id()));
+            env::temp_dir().join(format!("tabix-test-noodles-zero-based-{}", std::process::id()));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir)?;
 

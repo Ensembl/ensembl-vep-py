@@ -37,8 +37,18 @@ const BED_LINES: [&str; 5] = [
     "chr1\t14\t18\tfeature3",
     "chr2\t99\t120\tfeature4",
 ];
-const BED_0_BASE_LINES: [&str; 1] = ["chr1\t0\t0\tfeature1"];
+const BED_ZERO_BASE_LINES: [&str; 1] = ["chr1\t0\t0\tfeature1"];
 const BED_SAME_POS_LINES: [&str; 1] = ["chr1\t99\t99\tfeature1"];
+const GFF3_ZERO_BASE_LINES: [&str; 3] = [
+    "##gff-version 3",
+    "#seqid\tsource\ttype\tstart\tend\tscore\tstrand\tphase\tattributes",
+    "chr1\ttabix\tgene\t0\t0\t.\t+\t.\tID=gene:0",
+];
+const GFF3_SAME_POS_LINES: [&str; 3] = [
+    "##gff-version 3",
+    "#seqid\tsource\ttype\tstart\tend\tscore\tstrand\tphase\tattributes",
+    "chr1\ttabix\tgene\t100\t100\t.\t+\t.\tID=gene:100",
+];
 
 struct HtslibToolchain {
     bgzip: PathBuf,
@@ -48,8 +58,10 @@ struct HtslibToolchain {
 #[derive(Clone, Copy, Debug)]
 enum Dataset {
     Gff3Default,
+    Gff3ZeroPos,
+    Gff3SamePos,
     BedDefault,
-    Bed0Base,
+    BedZeroPos,
     BedSamePos,
 }
 
@@ -229,20 +241,38 @@ fn test_tabix_parser_query_just_after(#[case] dataset: Dataset, #[case] backend:
 }
 
 #[rstest]
-#[case::bed0base_noodles(Dataset::Bed0Base, Backend::Noodles)]
-#[case::bed0base_system(Dataset::Bed0Base, Backend::System)]
+#[case::gff3_noodles(Dataset::Gff3ZeroPos, Backend::Noodles)]
+#[case::gff3_system(Dataset::Gff3ZeroPos, Backend::System)]
+#[case::bed_noodles(Dataset::BedZeroPos, Backend::Noodles)]
+#[case::bed_system(Dataset::BedZeroPos, Backend::System)]
 #[ignore = "skipped: requires bgzip and tabix"]
-fn test_tabix_parser_bed_0_position(#[case] dataset: Dataset, #[case] backend: Backend) -> io::Result<()> {
+fn test_tabix_parser_zero_position(#[case] dataset: Dataset, #[case] backend: Backend) -> io::Result<()> {
     let toolchain = get_integration_toolchain();
     let dir = create_integration_temp_dir(&format!(
-        "tabix-parser-0-based-{:?}-{:?}",
+        "tabix-parser-zero-based-{:?}-{:?}",
         dataset, backend
     ))?;
 
-    let parser = open_dataset_parser(&dir, &toolchain, dataset, backend)?;
-    match backend {
-        Backend::Noodles => assert_query_records(parser, "chr1:1-1", expected_rows(Dataset::Bed0Base, 0))?,
-        Backend::System => assert_query_records(parser, "chr1:1-1", expected_rows(Dataset::Bed0Base, 1))?,
+    let mut parser = open_dataset_parser(&dir, &toolchain, dataset, backend)?;
+    match (dataset, backend) {
+        (Dataset::Gff3ZeroPos, Backend::Noodles) => {
+            let err = parser.seek("chr1:1-1").map_err(py_err).unwrap_err();
+            assert_eq!(err.kind(), io::ErrorKind::Other);
+            assert!(
+                err.to_string().contains("ValueError"),
+                "unexpected error: {err}"
+            );
+        },
+        (Dataset::Gff3ZeroPos, Backend::System) => {
+            assert_query_records(parser, "chr1:1-1", expected_rows(Dataset::Gff3ZeroPos, 0))?
+        },
+        (Dataset::BedZeroPos, Backend::Noodles) => {
+            assert_query_records(parser, "chr1:1-1", expected_rows(Dataset::BedZeroPos, 0))?
+        }
+        (Dataset::BedZeroPos, Backend::System) => {
+            assert_query_records(parser, "chr1:1-1", expected_rows(Dataset::BedZeroPos, 1))?
+        }
+        _ => todo!()
     }
 
     fs::remove_dir_all(dir)?;
@@ -250,10 +280,12 @@ fn test_tabix_parser_bed_0_position(#[case] dataset: Dataset, #[case] backend: B
 }
 
 #[rstest]
-#[case::bedsamepos_noodles(Dataset::BedSamePos, Backend::Noodles)]
-#[case::bedsamepos_system(Dataset::BedSamePos, Backend::System)]
+#[case::gff3_noodles(Dataset::Gff3SamePos, Backend::Noodles)]
+#[case::gff3_system(Dataset::Gff3SamePos, Backend::System)]
+#[case::bed_noodles(Dataset::BedSamePos, Backend::Noodles)]
+#[case::bed_system(Dataset::BedSamePos, Backend::System)]
 #[ignore = "skipped: requires bgzip and tabix"]
-fn test_tabix_parser_bed_same_position(#[case] dataset: Dataset, #[case] backend: Backend) -> io::Result<()> {
+fn test_tabix_parser_same_position(#[case] dataset: Dataset, #[case] backend: Backend) -> io::Result<()> {
     let toolchain = get_integration_toolchain();
     let dir = create_integration_temp_dir(&format!(
         "tabix-parser-same-position-{:?}-{:?}",
@@ -261,9 +293,34 @@ fn test_tabix_parser_bed_same_position(#[case] dataset: Dataset, #[case] backend
     ))?;
     
     let parser = open_dataset_parser(&dir, &toolchain, dataset, backend)?;
-    assert_query_records(parser, "chr1:99-100", expected_rows(Dataset::BedSamePos, 0))?;
-
+    match (dataset, backend) {
+        (Dataset::Gff3SamePos, _) => {
+            assert_query_records(parser, "chr1:100-100", expected_rows(dataset, 0))?;
+        },
+        (Dataset::BedSamePos, _) => {
+            assert_query_records(parser, "chr1:100-100", &[])?;
+        }
+        _ => todo!()
+    }
     fs::remove_dir_all(dir)?;
+
+    let dir = create_integration_temp_dir(&format!(
+        "tabix-parser-same-position-{:?}-{:?}",
+        dataset, backend
+    ))?;
+
+    let parser = open_dataset_parser(&dir, &toolchain, dataset, backend)?;
+    match (dataset, backend) {
+        (Dataset::Gff3SamePos, _) => {
+            assert_query_records(parser, "chr1:99-100", expected_rows(dataset, 0))?;
+        },
+        (Dataset::BedSamePos, _) => {
+            assert_query_records(parser, "chr1:99-100", expected_rows(dataset, 0))?;
+        }
+        _ => todo!()
+    }
+    fs::remove_dir_all(dir)?;
+
     Ok(())
 }
 
@@ -340,8 +397,10 @@ fn open_dataset_parser(
 ) -> io::Result<TabixParser> {
     let path = match dataset {
         Dataset::Gff3Default => write_gff3_using_system_tools(dir, toolchain, None)?,
+        Dataset::Gff3ZeroPos => write_gff3_using_system_tools(dir, toolchain, Some(&GFF3_ZERO_BASE_LINES))?,
+        Dataset::Gff3SamePos => write_gff3_using_system_tools(dir, toolchain, Some(&GFF3_SAME_POS_LINES))?,
         Dataset::BedDefault => write_bed_using_system_tools(dir, toolchain, None)?,
-        Dataset::Bed0Base => write_bed_using_system_tools(dir, toolchain, Some(&BED_0_BASE_LINES))?,
+        Dataset::BedZeroPos => write_bed_using_system_tools(dir, toolchain, Some(&BED_ZERO_BASE_LINES))?,
         Dataset::BedSamePos => write_bed_using_system_tools(dir, toolchain, Some(&BED_SAME_POS_LINES))?,
     };
 
@@ -358,8 +417,10 @@ fn write_dataset_using_system_tools(
 ) -> io::Result<PathBuf> {
     match dataset {
         Dataset::Gff3Default => write_gff3_using_system_tools(dir, toolchain, None),
+        Dataset::Gff3ZeroPos => write_gff3_using_system_tools(dir, toolchain, Some(&GFF3_ZERO_BASE_LINES)),
+        Dataset::Gff3SamePos => write_gff3_using_system_tools(dir, toolchain, Some(&GFF3_SAME_POS_LINES)),
         Dataset::BedDefault => write_bed_using_system_tools(dir, toolchain, None),
-        Dataset::Bed0Base => write_bed_using_system_tools(dir, toolchain, Some(&BED_0_BASE_LINES)),
+        Dataset::BedZeroPos => write_bed_using_system_tools(dir, toolchain, Some(&BED_ZERO_BASE_LINES)),
         Dataset::BedSamePos => write_bed_using_system_tools(dir, toolchain, Some(&BED_SAME_POS_LINES)),
     }
 }
@@ -372,8 +433,10 @@ fn expected_rows(dataset: Dataset, case_no: usize) -> &'static [&'static str] {
         (Dataset::BedDefault, 1) => &BED_LINES[1..4],
         (Dataset::Gff3Default, 2) => &GFF3_LINES[5..6],
         (Dataset::BedDefault, 2) => &BED_LINES[4..5],
-        (Dataset::Bed0Base, 0) => &BED_0_BASE_LINES,
-        (Dataset::Bed0Base, 1) => &[],
+        (Dataset::Gff3ZeroPos, 0) => &[],
+        (Dataset::Gff3SamePos, 0) => &GFF3_SAME_POS_LINES[2..3],
+        (Dataset::BedZeroPos, 0) => &BED_ZERO_BASE_LINES,
+        (Dataset::BedZeroPos, 1) => &[],
         (Dataset::BedSamePos, 0) => &BED_SAME_POS_LINES,
         _ => &[],
     }
