@@ -29,6 +29,15 @@ CHR1_GENE_ROW = "chr1\ttabix\tgene\t10\t20\t.\t+\t.\tID=gene:1"
 CHR1_EXON_ROW = "chr1\ttabix\texon\t12\t14\t.\t+\t.\tID=exon:1"
 CHR1_CDS_ROW = "chr1\ttabix\tCDS\t15\t18\t.\t+\t0\tID=cds:1"
 CHR2_GENE_ROW = "chr2\ttabix\tgene\t100\t120\t.\t-\t.\tID=gene:2"
+BED_HEADER_ROW = "#chrom\tstart\tend\tname"
+BED_CHR1_FEATURE1_ROW = "chr1\t9\t20\tfeature1"
+BED_CHR1_FEATURE2_ROW = "chr1\t11\t14\tfeature2"
+BED_CHR1_FEATURE3_ROW = "chr1\t14\t18\tfeature3"
+BED_CHR2_FEATURE4_ROW = "chr2\t99\t120\tfeature4"
+BED_ZERO_POS_ROW = "chr1\t0\t0\tfeature1"
+BED_SAME_POS_ROW = "chr1\t99\t99\tfeature1"
+GFF3_ZERO_POS_ROW = "chr1\ttabix\tgene\t0\t0\t.\t+\t.\tID=gene:0"
+GFF3_SAME_POS_ROW = "chr1\ttabix\tgene\t100\t100\t.\t+\t.\tID=gene:100"
 
 
 class HtslibToolchain(Protocol):
@@ -84,24 +93,70 @@ esac
     )
 
 
-def _create_tabix_gff3_cli(path: Path, htslib_toolchain: HtslibToolchain) -> Path:
+def _create_tabix_gff3_cli(
+    path: Path,
+    htslib_toolchain: HtslibToolchain,
+    lines: list[str] | None = None,
+) -> Path:
     """Create and tabix-index a GFF3 file with a real HTSlib toolchain."""
 
     unzip_path = path.with_suffix(path.suffix.replace(".gz", ""))
 
-    unzip_path.write_text(f"""{HEADER_LINES[0]}
-{HEADER_LINES[1]}
-{CHR1_GENE_ROW}
-{CHR1_EXON_ROW}
-{CHR1_CDS_ROW}
-{CHR2_GENE_ROW}
-""")
+    fixture_lines = lines or [
+        HEADER_LINES[0],
+        HEADER_LINES[1],
+        CHR1_GENE_ROW,
+        CHR1_EXON_ROW,
+        CHR1_CDS_ROW,
+        CHR2_GENE_ROW,
+    ]
+    unzip_path.write_text("\n".join(fixture_lines) + "\n")
 
     subprocess.run([htslib_toolchain.bgzip, "-f", str(unzip_path)], check=True)
-    subprocess.run([htslib_toolchain.tabix, "-p", "gff", str(path)], check=True)
+    subprocess.run([htslib_toolchain.tabix, "-f", "-p", "gff", str(path)], check=True)
 
     return path
 
+
+def _create_tabix_bed_cli(
+    path: Path,
+    htslib_toolchain: HtslibToolchain,
+    lines: list[str] | None = None,
+) -> Path:
+    """Create and tabix-index a BED file with a real HTSlib toolchain."""
+
+    unzip_path = path.with_suffix(path.suffix.replace(".gz", ""))
+
+    fixture_lines = lines or [
+        BED_HEADER_ROW,
+        BED_CHR1_FEATURE1_ROW,
+        BED_CHR1_FEATURE2_ROW,
+        BED_CHR1_FEATURE3_ROW,
+        BED_CHR2_FEATURE4_ROW,
+    ]
+    unzip_path.write_text("\n".join(fixture_lines) + "\n")
+
+    subprocess.run([htslib_toolchain.bgzip, "-f", str(unzip_path)], check=True)
+    subprocess.run([htslib_toolchain.tabix, "-f", "-p", "bed", str(path)], check=True)
+
+    return path
+
+
+def _open_integration_parser(
+    path: Path,
+    backend: str,
+    htslib_toolchain: HtslibToolchain,
+) -> TabixParser:
+    """Open a parser for a selected integration backend."""
+
+    tabix_path = (
+        "tabix-nonexistent-binary-for-test"
+        if backend == "noodles"
+        else htslib_toolchain.tabix
+    )
+
+    return TabixParser(file_path=path, tabix_path=tabix_path)
+    
 
 class TestTabixParserInitialization:
     """Test TabixParser initialization."""
@@ -397,34 +452,270 @@ class TestTabixParserIteration:
 
 
 @pytest.mark.integration
-class TestTabixParserNoodlesBackend:
-    """Tests for TabixParser with the noodles backend."""
-
-    def test_noodles_backend_reads_records(self, tmp_path: Path, htslib_toolchain: HtslibToolchain) -> None:
-        """Test TabixParser can read records with the noodles backend."""
-
-        path = _create_tabix_gff3_cli(tmp_path / "sample.gff3.gz", htslib_toolchain)
-        parser = TabixParser(file_path=path, tabix_path="tabix-nonexistent-binary-for-test")
-
-        assert parser.metadata == {"header": HEADER_LINES}
-        assert parser.seek(seqid="chr1", start=10, end=20) is True
-        assert parser.next() == CHR1_GENE_ROW
-        assert parser.records() == [CHR1_EXON_ROW, CHR1_CDS_ROW]
-        assert parser.next() is None
-
-
-@pytest.mark.integration
 class TestTabixParserIntegration:
-    """Integration tests for TabixParser with a real tabix executable."""
+    """Integration tests for TabixParser across backends."""
 
-    def test_integration_with_real_tabix(self, tmp_path: Path, htslib_toolchain: HtslibToolchain) -> None:
-        """Test TabixParser can read from a real tabix executable."""
+    @pytest.mark.parametrize(
+        ("dataset", "expected_header", "expected_first", "expected_rest"),
+        [
+            (
+                "gff3", 
+                HEADER_LINES, 
+                CHR1_GENE_ROW, 
+                [CHR1_EXON_ROW, 
+                CHR1_CDS_ROW]
+            ),
+            (
+                "bed",
+                [BED_HEADER_ROW],
+                BED_CHR1_FEATURE1_ROW,
+                [BED_CHR1_FEATURE2_ROW, BED_CHR1_FEATURE3_ROW],
+            ),
+        ],
+        ids=["gff3", "bed"],
+    )
+    @pytest.mark.parametrize("backend", ["noodles", "system"], ids=["noodles", "system"])
+    def test_integration_seek_next_behavior(
+        self,
+        tmp_path: Path,
+        htslib_toolchain: HtslibToolchain,
+        dataset: str,
+        expected_header: list[str],
+        expected_first: str,
+        expected_rest: list[str],
+        backend: str,
+    ) -> None:
+        """Test both backends can read default GFF3 and BED fixtures."""
 
-        path = _create_tabix_gff3_cli(tmp_path / "sample.gff3.gz", htslib_toolchain)
-        parser = TabixParser(file_path=path, tabix_path=htslib_toolchain.tabix)
+        if dataset == "gff3":
+            path = _create_tabix_gff3_cli(
+                tmp_path / f"sample-{dataset}-{backend}.gff3.gz", htslib_toolchain
+            )
+        else:
+            path = _create_tabix_bed_cli(
+                tmp_path / f"sample-{dataset}-{backend}.bed.gz", htslib_toolchain
+            )
 
-        assert parser.metadata == {"header": HEADER_LINES}
+        parser = _open_integration_parser(path, backend, htslib_toolchain)
+
+        assert parser.metadata == {"header": expected_header}
         assert parser.seek(seqid="chr1", start=10, end=20) is True
-        assert parser.next() == CHR1_GENE_ROW
-        assert parser.records() == [CHR1_EXON_ROW, CHR1_CDS_ROW]
+        assert parser.next() == expected_first
+        assert parser.records() == expected_rest
         assert parser.next() is None
+
+    @pytest.mark.parametrize(("dataset"), ["gff3", "bed"], ids=["gff3", "bed"])
+    @pytest.mark.parametrize("backend", ["noodles", "system"], ids=["noodles", "system"])
+    def test_integration_query_just_before(
+        self,
+        tmp_path: Path,
+        htslib_toolchain: HtslibToolchain,
+        dataset: str,
+        backend: str,
+    ) -> None:
+        """Test query just before the chr2 feature returns no records."""
+
+        if dataset == "gff3":
+            path = _create_tabix_gff3_cli(
+                tmp_path / f"gff3-before-{backend}.gff3.gz", htslib_toolchain
+            )
+        else:
+            path = _create_tabix_bed_cli(
+                tmp_path / f"bed-before-{backend}.bed.gz", htslib_toolchain
+            )
+
+        parser = _open_integration_parser(path, backend, htslib_toolchain)
+
+        assert parser.seek("chr2:99-99") is False
+        assert parser.records() == []
+
+    @pytest.mark.parametrize(
+        ("dataset", "expected_row"),
+        [
+            ("gff3", CHR2_GENE_ROW),
+            ("bed", BED_CHR2_FEATURE4_ROW),
+        ],
+        ids=["gff3", "bed"],
+    )
+    @pytest.mark.parametrize("backend", ["noodles", "system"], ids=["noodles", "system"])
+    def test_integration_query_exactly_on_start(
+        self,
+        tmp_path: Path,
+        htslib_toolchain: HtslibToolchain,
+        dataset: str,
+        expected_row: str,
+        backend: str,
+    ) -> None:
+        """Test query exactly on chr2 feature start returns matching record."""
+
+        if dataset == "gff3":
+            path = _create_tabix_gff3_cli(
+                tmp_path / f"gff3-exact-start-{backend}.gff3.gz", htslib_toolchain
+            )
+        else:
+            path = _create_tabix_bed_cli(
+                tmp_path / f"bed-exact-start-{backend}.bed.gz", htslib_toolchain
+            )
+
+        parser = _open_integration_parser(path, backend, htslib_toolchain)
+
+        assert parser.seek("chr2:100-100") is True
+        assert parser.records() == [expected_row]
+
+    @pytest.mark.parametrize(
+        ("dataset", "expected_row"),
+        [
+            ("gff3", CHR2_GENE_ROW),
+            ("bed", BED_CHR2_FEATURE4_ROW),
+        ],
+        ids=["gff3", "bed"],
+    )
+    @pytest.mark.parametrize("backend", ["noodles", "system"], ids=["noodles", "system"])
+    def test_integration_query_exactly_on_end(
+        self,
+        tmp_path: Path,
+        htslib_toolchain: HtslibToolchain,
+        dataset: str,
+        expected_row: str,
+        backend: str,
+    ) -> None:
+        """Test query exactly on chr2 feature end returns matching record."""
+
+        if dataset == "gff3":
+            path = _create_tabix_gff3_cli(
+                tmp_path / f"gff3-exact-end-{backend}.gff3.gz", htslib_toolchain
+            )
+        else:
+            path = _create_tabix_bed_cli(
+                tmp_path / f"bed-exact-end-{backend}.bed.gz", htslib_toolchain
+            )
+
+        parser = _open_integration_parser(path, backend, htslib_toolchain)
+
+        assert parser.seek("chr2:120-120") is True
+        assert parser.records() == [expected_row]
+
+    @pytest.mark.parametrize("dataset", ["gff3", "bed"], ids=["gff3", "bed"])
+    @pytest.mark.parametrize("backend", ["noodles", "system"], ids=["noodles", "system"])
+    def test_integration_query_just_after(
+        self,
+        tmp_path: Path,
+        htslib_toolchain: HtslibToolchain,
+        dataset: str,
+        backend: str,
+    ) -> None:
+        """Test query just after the chr2 feature returns no records."""
+
+        if dataset == "gff3":
+            path = _create_tabix_gff3_cli(
+                tmp_path / f"gff3-after-{backend}.gff3.gz", htslib_toolchain
+            )
+        else:
+            path = _create_tabix_bed_cli(
+                tmp_path / f"bed-after-{backend}.bed.gz", htslib_toolchain
+            )
+
+        parser = _open_integration_parser(path, backend, htslib_toolchain)
+
+        assert parser.seek("chr2:121-121") is False
+        assert parser.records() == []
+
+    @pytest.mark.parametrize(
+        ("dataset", "lines"),
+        [
+            (
+                "gff3",
+                [HEADER_LINES[0], HEADER_LINES[1], GFF3_ZERO_POS_ROW],
+            ),
+            (
+                "bed",
+                [BED_ZERO_POS_ROW],
+            ),
+        ],
+        ids=["gff3", "bed"],
+    )
+    @pytest.mark.parametrize("backend", ["noodles", "system"], ids=["noodles", "system"])
+    def test_integration_zero_position_queries(
+        self,
+        tmp_path: Path,
+        htslib_toolchain: HtslibToolchain,
+        dataset: str,
+        lines: list[str],
+        backend: str,
+    ) -> None:
+        """Test zero-position query behavior for GFF3 and BED fixtures."""
+
+        if dataset == "gff3":
+            path = _create_tabix_gff3_cli(
+                tmp_path / f"{dataset}-{backend}.gff3.gz",
+                htslib_toolchain,
+                lines,
+            )
+        else:
+            path = _create_tabix_bed_cli(
+                tmp_path / f"{dataset}-{backend}.bed.gz",
+                htslib_toolchain,
+                lines,
+            )
+        parser = _open_integration_parser(path, backend, htslib_toolchain)
+
+        if backend == "noodles" and dataset == "gff3":
+            with pytest.raises(ValueError):
+                parser.seek("chr1:1-1")
+            return
+
+        if dataset == "bed" and backend == "noodles":
+            expected_rows = [BED_ZERO_POS_ROW]
+        else:
+            expected_rows = []
+
+        assert parser.seek("chr1:1-1") is bool(expected_rows)
+        assert parser.records() == expected_rows
+
+    @pytest.mark.parametrize(
+        ("dataset", "lines"),
+        [
+            (
+                "gff3",
+                [HEADER_LINES[0], HEADER_LINES[1], GFF3_SAME_POS_ROW],
+            ),
+            (
+                "bed",
+                [BED_SAME_POS_ROW],
+            ),
+        ],
+        ids=["gff3", "bed"],
+    )
+    @pytest.mark.parametrize("backend", ["noodles", "system"], ids=["noodles", "system"])
+    def test_integration_same_position_queries(
+        self,
+        tmp_path: Path,
+        htslib_toolchain: HtslibToolchain,
+        dataset: str,
+        lines: list[str],
+        backend: str,
+    ) -> None:
+        """Test same-position query behavior for GFF3 and BED fixtures."""
+
+        if dataset == "gff3":
+            path = _create_tabix_gff3_cli(
+                tmp_path / f"{dataset}-{backend}.gff3.gz",
+                htslib_toolchain,
+                lines,
+            )
+        else:
+            path = _create_tabix_bed_cli(
+                tmp_path / f"{dataset}-{backend}.bed.gz",
+                htslib_toolchain,
+                lines,
+            )
+        parser = _open_integration_parser(path, backend, htslib_toolchain)
+
+        expected_row = [GFF3_SAME_POS_ROW] if dataset == "gff3" else []
+        assert parser.seek("chr1:100-100") is bool(expected_row)
+        assert parser.records() == expected_row
+
+        expected_row = [GFF3_SAME_POS_ROW] if dataset == "gff3" else [BED_SAME_POS_ROW]
+        assert parser.seek("chr1:99-100") is bool(expected_row)
+        assert parser.records() == expected_row
+
