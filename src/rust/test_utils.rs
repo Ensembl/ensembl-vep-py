@@ -1,0 +1,64 @@
+// See the NOTICE file distributed with this work for additional information
+// regarding copyright ownership.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#[cfg(unix)]
+pub(crate) fn process_exists(pid: u32) -> std::io::Result<bool> {
+    let status = std::process::Command::new("kill")
+        .arg("-0")
+        .arg(pid.to_string())
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::null())
+        .status()?;
+
+    Ok(status.success())
+}
+
+#[cfg(unix)]
+pub(crate) fn assert_process_is_gone(pid: u32) -> std::io::Result<()> {
+    for _ in 0..10 {
+        if !process_exists(pid)? {
+            return Ok(());
+        }
+
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    }
+
+    panic!("expected process {pid} to be gone");
+}
+
+#[cfg(all(test, unix))]
+mod tests {
+    use std::{io, process::Command};
+
+    use super::*;
+
+    #[test]
+    fn test_process_exists_with_running_child() -> io::Result<()> {
+        let mut child = Command::new("sleep").arg("60").spawn()?;
+        let pid = child.id();
+
+        assert!(process_exists(pid)?);
+
+        let _ = child.kill();
+        let _ = child.wait();
+        assert_process_is_gone(pid)
+    }
+
+    #[test]
+    #[should_panic(expected = "expected process")]
+    fn test_assert_process_is_gone_panics_for_current_process() {
+        assert_process_is_gone(std::process::id()).unwrap();
+    }
+}

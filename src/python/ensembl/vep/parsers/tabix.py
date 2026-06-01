@@ -20,7 +20,9 @@ from attrs import define, field
 
 from ensembl.vep.common import format_region_string
 from ensembl.vep.parsers.parser import Parser
-from ensembl.vep.ensembl_vep_core import TabixParser as _RustTabixParser  # noqa: F401,F403 pylint: disable=E0401,E0611
+from ensembl.vep.ensembl_vep_core import (
+    TabixParser as _RustTabixParser,
+)  # noqa: F401,F403 pylint: disable=E0401,E0611
 
 
 @define(kw_only=True, auto_attribs=True)

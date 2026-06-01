@@ -21,7 +21,6 @@ import pytest
 
 from ensembl.vep.parsers.tabix import TabixParser
 
-
 HEADER_LINES = [
     "##gff-version 3",
     "#seqid\tsource\ttype\tstart\tend\tscore\tstrand\tphase\tattributes",
@@ -90,15 +89,13 @@ def _create_tabix_gff3_cli(path: Path, htslib_toolchain: HtslibToolchain) -> Pat
 
     unzip_path = path.with_suffix(path.suffix.replace(".gz", ""))
 
-    unzip_path.write_text(
-        f"""{HEADER_LINES[0]}
+    unzip_path.write_text(f"""{HEADER_LINES[0]}
 {HEADER_LINES[1]}
 {CHR1_GENE_ROW}
 {CHR1_EXON_ROW}
 {CHR1_CDS_ROW}
 {CHR2_GENE_ROW}
-"""
-    )
+""")
 
     subprocess.run([htslib_toolchain.bgzip, "-f", str(unzip_path)], check=True)
     subprocess.run([htslib_toolchain.tabix, "-p", "gff", str(path)], check=True)

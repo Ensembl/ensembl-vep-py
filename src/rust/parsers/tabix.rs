@@ -20,6 +20,7 @@ use std::{
     process::{Child, ChildStdout, Command, Stdio},
 };
 
+use crate::{parsers::utils::parse_region, utils::trim_newline};
 use log::warn;
 use noodles_bgzf::{self as bgzf, io::Seek as BgzfSeek};
 use noodles_core::{Position, Region, region::Interval};
@@ -634,29 +635,11 @@ impl TabixParser {
 // Helpers
 // ---------------------------------------------------------------------------
 
-fn parse_region(region: &str) -> io::Result<Region> {
-    region.parse().map_err(|e| {
-        io::Error::new(
-            ErrorKind::InvalidInput,
-            format!("invalid tabix region {region:?}: {e}"),
-        )
-    })
-}
-
 fn associated_index_path(src: &Path, extension: &str) -> PathBuf {
     let mut path = src.as_os_str().to_os_string();
     path.push(".");
     path.push(extension);
     PathBuf::from(path)
-}
-
-fn trim_newline(line: &mut String) {
-    if line.ends_with('\n') {
-        line.pop();
-        if line.ends_with('\r') {
-            line.pop();
-        }
-    }
 }
 
 fn tabix_py_error(err: io::Error) -> PyErr {
@@ -674,12 +657,11 @@ fn tabix_py_error(err: io::Error) -> PyErr {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use noodles_bgzf as bgzf;
-    use noodles_csi::binning_index::index::header::{
-        Builder as HeaderBuilder, Format, format::CoordinateSystem,
-    };
-    use noodles_tabix::index::Indexer;
-    use std::{env, fs, io::Write};
+    use crate::parsers::test_utils::{write_bed_with_tbi, write_bgzf_file, write_gff3_with_tbi};
+    #[cfg(unix)]
+    use crate::test_utils::{assert_process_is_gone, process_exists};
+    use noodles_csi::binning_index::index::header::Format;
+    use std::{env, fs};
 
     // -----------------------------------------------------------------------
     // Helpers
@@ -704,182 +686,6 @@ mod tests {
         QueryHeader::from(&header)
     }
 
-    fn write_bgzf_file(
-        dir: &Path,
-        lines: Vec<String>,
-        file_name: Option<&str>,
-    ) -> io::Result<PathBuf> {
-        let file_name = file_name.unwrap_or("test.gff3.gz");
-        let path = dir.join(file_name);
-        let file = File::create(&path)?;
-        let mut writer = bgzf::io::Writer::new(file);
-        for line in lines {
-            writer.write_all(line.as_bytes())?;
-            writer.write_all(b"\n")?;
-        }
-        writer.finish()?;
-        Ok(path)
-    }
-
-    fn write_gff3_with_tbi(
-        dir: &Path,
-        lines: Option<Vec<String>>,
-    ) -> io::Result<(PathBuf, PathBuf)> {
-        let default_lines = vec![
-            "##gff-version 3".to_string(),
-            "chr1\tsource\tgene\t1\t50\t.\t+\t.\tID=gene1".to_string(),
-            "chr1\tsource\tgene\t100\t200\t.\t+\t.\tID=gene2".to_string(),
-            "chr1\tsource\tgene\t200\t300\t.\t+\t.\tID=gene3".to_string(),
-            "chr1\tsource\tgene\t400\t500\t.\t+\t.\tID=gene4".to_string(),
-            "chr2\tsource\tgene\t100\t200\t.\t+\t.\tID=gene5".to_string(),
-        ];
-        let lines = lines.unwrap_or(default_lines);
-
-        let gz_path = dir.join("test.gff3.gz");
-        let tbi_path = dir.join("test.gff3.gz.tbi");
-
-        // --- Write BGZF ---
-        write_bgzf_file(dir, lines, Some("test.gff3.gz"))?;
-
-        // --- Read back and index ---
-        let file = File::open(&gz_path)?;
-        let mut reader = bgzf::io::Reader::new(file);
-
-        let header = Header::builder()
-            .set_format(Format::Generic(CoordinateSystem::Gff))
-            .build();
-
-        let mut indexer = Indexer::default();
-        indexer.set_header(header);
-
-        loop {
-            // Snapshot vpos BEFORE reading — this is the chunk start
-            let chunk_start = reader.virtual_position();
-
-            let mut buf = String::new();
-            if reader.read_line(&mut buf)? == 0 {
-                break;
-            }
-
-            let line = buf.trim_end_matches(['\n', '\r']);
-
-            if line.starts_with('#') || line.is_empty() {
-                continue;
-            }
-
-            let fields: Vec<&str> = line.splitn(9, '\t').collect();
-            if fields.len() < 5 {
-                continue;
-            }
-
-            // Snapshot vpos AFTER reading — this is the chunk end
-            let chunk_end = reader.virtual_position();
-
-            let chrom = fields[0];
-
-            // GFF3 columns 4 and 5 are 1-based inclusive — matches Position directly
-            let start: usize = fields[3].parse().map_err(|e| {
-                io::Error::new(io::ErrorKind::InvalidData, format!("bad start: {e}"))
-            })?;
-            let end: usize = fields[4]
-                .parse()
-                .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, format!("bad end: {e}")))?;
-
-            let start = Position::try_from(start)
-                .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
-            let end = Position::try_from(end)
-                .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
-
-            // Wrap the two VirtualPositions into a Chunk
-            let chunk = Chunk::new(chunk_start, chunk_end);
-
-            indexer.add_record(chrom, start, end, chunk)?;
-        }
-
-        let index = indexer.build();
-        tabix::fs::write(&tbi_path, &index)?;
-
-        Ok((gz_path, tbi_path))
-    }
-
-    fn write_bed_with_tbi(
-        dir: &Path,
-        lines: Option<Vec<String>>,
-    ) -> io::Result<(PathBuf, PathBuf)> {
-        let default_lines = vec![
-            "chr1\t0\t50\tgene1".to_string(),
-            "chr1\t99\t200\tgene2".to_string(),
-            "chr1\t199\t300\tgene3".to_string(),
-            "chr1\t399\t500\tgene4".to_string(),
-            "chr2\t99\t200\tgene5".to_string(),
-        ];
-        let lines = lines.unwrap_or(default_lines);
-
-        let gz_path = dir.join("test.bed.gz");
-        let tbi_path = dir.join("test.bed.gz.tbi");
-
-        // --- Write BGZF ---
-        write_bgzf_file(dir, lines, Some("test.bed.gz"))?;
-
-        // --- Read back and index ---
-        let file = File::open(&gz_path)?;
-        let mut reader = bgzf::io::Reader::new(file);
-
-        let header = HeaderBuilder::bed().build();
-
-        let mut indexer = Indexer::default();
-        indexer.set_header(header);
-
-        loop {
-            // Snapshot vpos BEFORE reading — this is the chunk start
-            let chunk_start = reader.virtual_position();
-
-            let mut buf = String::new();
-            if reader.read_line(&mut buf)? == 0 {
-                break;
-            }
-
-            let line = buf.trim_end_matches(['\n', '\r']);
-
-            if line.starts_with('#') || line.is_empty() {
-                continue;
-            }
-
-            let fields: Vec<&str> = line.splitn(4, '\t').collect();
-            if fields.len() < 3 {
-                continue;
-            }
-
-            // Snapshot vpos AFTER reading — this is the chunk end
-            let chunk_end = reader.virtual_position();
-
-            let chrom = fields[0];
-
-            // BED columns 2 and 3 are 0-based half-open — add 1 to start to convert to Position
-            let start: usize = fields[1].parse().map_err(|e| {
-                io::Error::new(io::ErrorKind::InvalidData, format!("bad start: {e}"))
-            })?;
-            let end: usize = fields[2]
-                .parse()
-                .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, format!("bad end: {e}")))?;
-
-            let start = Position::try_from(start + 1)
-                .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
-            let end = Position::try_from(end.max(1))
-                .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
-
-            // Wrap the two VirtualPositions into a Chunk
-            let chunk = Chunk::new(chunk_start, chunk_end);
-
-            indexer.add_record(chrom, start, end, chunk)?;
-        }
-
-        let index = indexer.build();
-        tabix::fs::write(&tbi_path, &index)?;
-
-        Ok((gz_path, tbi_path))
-    }
-
     #[cfg(unix)]
     fn get_system_query_child_id(reader: &TabixReader) -> u32 {
         match &reader.backend {
@@ -891,31 +697,6 @@ mod tests {
                 .id(),
             _ => panic!("expected system backend"),
         }
-    }
-
-    #[cfg(unix)]
-    fn process_exists(pid: u32) -> io::Result<bool> {
-        let status = std::process::Command::new("kill")
-            .arg("-0")
-            .arg(pid.to_string())
-            .stdout(std::process::Stdio::null())
-            .stderr(std::process::Stdio::null())
-            .status()?;
-
-        Ok(status.success())
-    }
-
-    #[cfg(unix)]
-    fn assert_process_is_gone(pid: u32) -> io::Result<()> {
-        for _ in 0..10 {
-            if !process_exists(pid)? {
-                return Ok(());
-            }
-
-            std::thread::sleep(std::time::Duration::from_millis(10));
-        }
-
-        panic!("expected process {pid} to be gone");
     }
 
     // -----------------------------------------------------------------------
@@ -959,38 +740,6 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
-    // trim_newline
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_trim_newline_lf() {
-        let mut s = "hello\n".to_string();
-        trim_newline(&mut s);
-        assert_eq!(s, "hello");
-    }
-
-    #[test]
-    fn test_trim_newline_crlf() {
-        let mut s = "hello\r\n".to_string();
-        trim_newline(&mut s);
-        assert_eq!(s, "hello");
-    }
-
-    #[test]
-    fn test_trim_newline_no_newline() {
-        let mut s = "hello".to_string();
-        trim_newline(&mut s);
-        assert_eq!(s, "hello");
-    }
-
-    #[test]
-    fn test_trim_newline_empty() {
-        let mut s = String::new();
-        trim_newline(&mut s);
-        assert_eq!(s, "");
-    }
-
-    // -----------------------------------------------------------------------
     // associated_index_path
     // -----------------------------------------------------------------------
 
@@ -1008,27 +757,6 @@ mod tests {
             associated_index_path(Path::new("sample.vcf.gz"), "tbi"),
             PathBuf::from("sample.vcf.gz.tbi")
         );
-    }
-
-    // -----------------------------------------------------------------------
-    // parse_region
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_parse_region_valid() {
-        assert!(parse_region("chr1:1-1000").is_ok());
-    }
-
-    #[test]
-    fn test_parse_region_invalid() {
-        let err = parse_region("not_a_region::??").unwrap_err();
-        assert_eq!(err.kind(), ErrorKind::InvalidInput);
-    }
-
-    #[test]
-    fn test_parse_region_empty() {
-        let err = parse_region("").unwrap_err();
-        assert_eq!(err.kind(), ErrorKind::InvalidInput);
     }
 
     // -----------------------------------------------------------------------
@@ -1053,6 +781,58 @@ mod tests {
                 buffered_line: None
             }
         ));
+        Ok(())
+    }
+
+    #[test]
+    fn test_tabix_parser_methods_without_open_reader() {
+        Python::initialize();
+        Python::attach(|py| {
+            let mut parser = TabixParser::new(None, None).unwrap();
+
+            assert_eq!(parser.format(), "tabix");
+            assert!(parser.metadata(py).unwrap().is_empty());
+            assert!(parser.header_lines().unwrap().is_empty());
+            assert!(
+                parser
+                    .records(None)
+                    .unwrap_err()
+                    .to_string()
+                    .contains("not open")
+            );
+
+            parser.close();
+        });
+    }
+
+    #[test]
+    fn test_tabix_parser_open_seek_records_and_close() -> io::Result<()> {
+        let dir = env::temp_dir().join(format!("tabix-test-parser-methods-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+        let (gz_path, _tbi_path) = write_gff3_with_tbi(&dir, None)?;
+        let file_path = gz_path.to_string_lossy().into_owned();
+
+        let mut parser =
+            TabixParser::new(None, Some("tabix-nonexistent-binary-for-test".to_string())).unwrap();
+        parser.open(&file_path).unwrap();
+
+        Python::initialize();
+        Python::attach(|py| {
+            let metadata = parser.metadata(py).unwrap();
+            assert!(metadata.contains("header").unwrap());
+        });
+
+        assert!(parser.seek("chr1:1-300").unwrap());
+        assert!(parser.next().unwrap().unwrap().contains("ID=gene1"));
+        assert_eq!(parser.records(Some(2)).unwrap().len(), 2);
+        assert_eq!(parser.records(None).unwrap(), Vec::<String>::new());
+        assert_eq!(parser.records(Some(0)).unwrap(), Vec::<String>::new());
+
+        parser.close();
+        assert!(parser.next().unwrap_err().to_string().contains("not open"));
+
+        fs::remove_dir_all(dir)?;
         Ok(())
     }
 
@@ -1393,6 +1173,37 @@ mod tests {
         Ok(())
     }
 
+    #[test]
+    fn test_backend_csi_dispatch_methods() -> io::Result<()> {
+        let dir = env::temp_dir().join(format!("tabix-test-csi-dispatch-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+
+        let path = write_bgzf_file(
+            &dir,
+            vec![
+                "##gff-version 3".to_string(),
+                "chr1\tsrc\tgene\t1\t100\t.\t+\t.\tID=gene1".to_string(),
+            ],
+            Some("test.gff3.gz"),
+        )?;
+
+        let index = csi::Index::default();
+        let file = File::open(&path)?;
+        let mut backend = Backend::Csi(NoodlesBackend::new(csi::io::IndexedReader::new(
+            file, index,
+        )));
+
+        assert_eq!(backend.next()?, None);
+        assert_eq!(backend.header_lines()?, ["##gff-version 3".to_string()]);
+
+        let err = backend.seek("chr1:1-100").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
     // -----------------------------------------------------------------------
     // NoodlesBackend::header_lines — reads from real BGZF data
     // -----------------------------------------------------------------------
@@ -1695,6 +1506,51 @@ mod tests {
         Ok(())
     }
 
+    #[test]
+    fn test_noodles_backend_next_clears_query_on_eof() -> io::Result<()> {
+        let dir = env::temp_dir().join(format!("tabix-test-noodles-eof-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+
+        let path = write_bgzf_file(&dir, vec![], Some("empty.gff3.gz"))?;
+        let file = File::open(&path)?;
+        let mut backend =
+            NoodlesBackend::new(csi::io::IndexedReader::new(file, csi::Index::default()));
+        backend.query = Some(NoodlesQuery {
+            region: parse_region("chr1:1-100")?,
+            header: gff_query_header(),
+            chunks: vec![Chunk::new(
+                bgzf::VirtualPosition::default(),
+                bgzf::VirtualPosition::from(1),
+            )]
+            .into_iter(),
+            current_chunk_end: None,
+            line_buf: String::new(),
+        });
+
+        assert_eq!(backend.next()?, None);
+        assert!(backend.query.is_none());
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn test_noodles_backend_next_without_query_returns_none() -> io::Result<()> {
+        let dir = env::temp_dir().join(format!("tabix-test-noodles-eof-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+
+        let path = write_bgzf_file(&dir, vec![], Some("empty.gff3.gz"))?;
+        let file = File::open(&path)?;
+        let mut backend =
+            NoodlesBackend::new(csi::io::IndexedReader::new(file, csi::Index::default()));
+
+        assert_eq!(backend.next().unwrap(), None);
+        Ok(())
+    }
+
     // -----------------------------------------------------------------------
     // NoodlesBackend::next — edge cases
     // -----------------------------------------------------------------------
@@ -1884,6 +1740,12 @@ mod tests {
     // -----------------------------------------------------------------------
 
     #[test]
+    fn test_system_backend_next_without_query_returns_none() {
+        let mut backend = SystemBackend::new(Path::new("sample.gff3.gz"), "tabix");
+        assert_eq!(backend.next().unwrap(), None);
+    }
+
+    #[test]
     #[cfg(unix)]
     fn test_system_backend_next_failing_child() -> io::Result<()> {
         use std::os::unix::fs::PermissionsExt;
@@ -1991,15 +1853,59 @@ mod tests {
         let mut reader = TabixReader::open(&data_path, tabix_path.to_str().unwrap())?;
         reader.backend.seek("chr1:1-100")?;
         let first_child_pid = get_system_query_child_id(&reader);
-        assert!(process_exists(first_child_pid)?, "expected process {first_child_pid} to exist");
+        assert!(
+            process_exists(first_child_pid)?,
+            "expected process {first_child_pid} to exist"
+        );
 
         reader.backend.seek("chr1:1-100")?;
         assert_process_is_gone(first_child_pid)?;
 
         let second_child_pid = get_system_query_child_id(&reader);
-        assert!(process_exists(second_child_pid)?, "expected process {second_child_pid} to exist");
+        assert!(
+            process_exists(second_child_pid)?,
+            "expected process {second_child_pid} to exist"
+        );
         drop(reader);
         assert_process_is_gone(second_child_pid)?;
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // TabixReader::header_lines — system backend dispatch
+    // -----------------------------------------------------------------------
+
+    #[test]
+    #[cfg(unix)]
+    fn test_tabix_reader_system_header_lines_dispatch() -> io::Result<()> {
+        use std::os::unix::fs::PermissionsExt;
+
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-reader-sys-headers-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir)?;
+
+        let tabix_path = dir.join("tabix");
+        fs::write(
+            &tabix_path,
+            "#!/bin/sh\n\
+            if [ \"$1\" = '--version' ]; then echo 'tabix 1.0'; exit 0; fi\n\
+            if [ \"$1\" = '-H' ]; then printf '%s\\n' '##gff-version 3'; exit 0; fi\n\
+            exit 0\n",
+        )?;
+        let mut perms = fs::metadata(&tabix_path)?.permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&tabix_path, perms)?;
+
+        let data_path = dir.join("sample.gff3.gz");
+        fs::write(&data_path, [])?;
+
+        let mut reader = TabixReader::open(&data_path, tabix_path.to_str().unwrap())?;
+        assert_eq!(reader.header_lines()?, ["##gff-version 3".to_string()]);
 
         fs::remove_dir_all(dir)?;
         Ok(())

@@ -14,3 +14,6 @@
 // limitations under the License.
 
 pub mod tabix;
+#[cfg(test)]
+pub(crate) mod test_utils;
+pub(crate) mod utils;

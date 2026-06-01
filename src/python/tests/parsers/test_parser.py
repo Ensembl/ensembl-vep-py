@@ -18,7 +18,6 @@ import pytest
 
 from ensembl.vep.parsers.parser import Parser
 
-
 _RECORDS: list[str] = []
 
 

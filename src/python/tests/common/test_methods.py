@@ -23,7 +23,7 @@ from ensembl.vep.common import (
     Strand,
     ClassSOTerm,
     infer_variant_so_term,
-    format_region_string
+    format_region_string,
 )
 
 from .conftest import Foo, Bar
