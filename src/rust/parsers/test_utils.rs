@@ -28,6 +28,12 @@ use noodles_csi::binning_index::index::{
 };
 use noodles_tabix::{self as tabix, index::Indexer};
 
+struct IndexedRecord<'a> {
+    chrom: &'a str,
+    start: Position,
+    end: Position,
+}
+
 pub(crate) fn write_bgzf_file(
     dir: &Path,
     lines: Vec<String>,
@@ -57,66 +63,17 @@ pub(crate) fn write_gff3_with_tbi(
         "chr1\tsource\tgene\t400\t500\t.\t+\t.\tID=gene4".to_string(),
         "chr2\tsource\tgene\t100\t200\t.\t+\t.\tID=gene5".to_string(),
     ];
-    let lines = lines.unwrap_or(default_lines);
-
-    let gz_path = dir.join("test.gff3.gz");
-    let tbi_path = dir.join("test.gff3.gz.tbi");
-
-    write_bgzf_file(dir, lines, Some("test.gff3.gz"))?;
-
-    let file = File::open(&gz_path)?;
-    let mut reader = bgzf::io::Reader::new(file);
-
     let header = Header::builder()
         .set_format(Format::Generic(CoordinateSystem::Gff))
         .build();
 
-    let mut indexer = Indexer::default();
-    indexer.set_header(header);
-
-    loop {
-        let chunk_start = reader.virtual_position();
-
-        let mut buf = String::new();
-        if reader.read_line(&mut buf)? == 0 {
-            break;
-        }
-
-        let line = buf.trim_end_matches(['\n', '\r']);
-
-        if line.starts_with('#') || line.is_empty() {
-            continue;
-        }
-
-        let fields: Vec<&str> = line.splitn(9, '\t').collect();
-        if fields.len() < 5 {
-            continue;
-        }
-
-        let chunk_end = reader.virtual_position();
-        let chrom = fields[0];
-
-        let start: usize = fields[3]
-            .parse()
-            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, format!("bad start: {e}")))?;
-        let end: usize = fields[4]
-            .parse()
-            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, format!("bad end: {e}")))?;
-
-        let start =
-            Position::try_from(start).map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
-        let end =
-            Position::try_from(end).map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
-
-        let chunk = Chunk::new(chunk_start, chunk_end);
-
-        indexer.add_record(chrom, start, end, chunk)?;
-    }
-
-    let index = indexer.build();
-    tabix::fs::write(&tbi_path, &index)?;
-
-    Ok((gz_path, tbi_path))
+    write_indexed_tabix_file(
+        dir,
+        lines.unwrap_or(default_lines),
+        "test.gff3.gz",
+        header,
+        parse_gff3_record,
+    )
 }
 
 pub(crate) fn write_bed_with_tbi(
@@ -130,17 +87,34 @@ pub(crate) fn write_bed_with_tbi(
         "chr1\t399\t500\tgene4".to_string(),
         "chr2\t99\t200\tgene5".to_string(),
     ];
-    let lines = lines.unwrap_or(default_lines);
+    let header = HeaderBuilder::bed().build();
 
-    let gz_path = dir.join("test.bed.gz");
-    let tbi_path = dir.join("test.bed.gz.tbi");
+    write_indexed_tabix_file(
+        dir,
+        lines.unwrap_or(default_lines),
+        "test.bed.gz",
+        header,
+        parse_bed_record,
+    )
+}
 
-    write_bgzf_file(dir, lines, Some("test.bed.gz"))?;
+fn write_indexed_tabix_file<F>(
+    dir: &Path,
+    lines: Vec<String>,
+    file_name: &str,
+    header: Header,
+    parse_record: F,
+) -> io::Result<(PathBuf, PathBuf)>
+where
+    F: for<'a> Fn(&'a str) -> io::Result<Option<IndexedRecord<'a>>>,
+{
+    let gz_path = dir.join(file_name);
+    let tbi_path = dir.join(format!("{file_name}.tbi"));
+
+    write_bgzf_file(dir, lines, Some(file_name))?;
 
     let file = File::open(&gz_path)?;
     let mut reader = bgzf::io::Reader::new(file);
-
-    let header = HeaderBuilder::bed().build();
 
     let mut indexer = Indexer::default();
     indexer.set_header(header);
@@ -159,35 +133,67 @@ pub(crate) fn write_bed_with_tbi(
             continue;
         }
 
-        let fields: Vec<&str> = line.splitn(4, '\t').collect();
-        if fields.len() < 3 {
+        if line.starts_with('#') || line.is_empty() {
             continue;
         }
 
+        let Some(record) = parse_record(line)? else {
+            continue;
+        };
+
         let chunk_end = reader.virtual_position();
-        let chrom = fields[0];
-
-        let start: usize = fields[1]
-            .parse()
-            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, format!("bad start: {e}")))?;
-        let end: usize = fields[2]
-            .parse()
-            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, format!("bad end: {e}")))?;
-
-        let start = Position::try_from(start + 1)
-            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
-        let end = Position::try_from(end.max(1))
-            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
-
         let chunk = Chunk::new(chunk_start, chunk_end);
 
-        indexer.add_record(chrom, start, end, chunk)?;
+        indexer.add_record(record.chrom, record.start, record.end, chunk)?;
     }
 
     let index = indexer.build();
     tabix::fs::write(&tbi_path, &index)?;
 
     Ok((gz_path, tbi_path))
+}
+
+fn parse_gff3_record(line: &str) -> io::Result<Option<IndexedRecord<'_>>> {
+    let fields: Vec<&str> = line.splitn(9, '\t').collect();
+    if fields.len() < 5 {
+        return Ok(None);
+    }
+
+    let start = parse_position(fields[3], "bad start")?;
+    let end = parse_position(fields[4], "bad end")?;
+
+    Ok(Some(IndexedRecord {
+        chrom: fields[0],
+        start,
+        end,
+    }))
+}
+
+fn parse_bed_record(line: &str) -> io::Result<Option<IndexedRecord<'_>>> {
+    let fields: Vec<&str> = line.splitn(4, '\t').collect();
+    if fields.len() < 3 {
+        return Ok(None);
+    }
+
+    let raw_start = parse_usize(fields[1], "bad start")?;
+    let raw_end = parse_usize(fields[2], "bad end")?;
+    let start = Position::try_from(raw_start + 1)
+        .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
+    let end = Position::try_from(raw_end.max(1))
+        .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
+
+    Ok(Some(IndexedRecord {
+        chrom: fields[0],
+        start,
+        end,
+    }))
+}
+
+fn parse_position(value: &str, context: &str) -> io::Result<Position> {
+    let value = value
+        .parse::<usize>()
+        .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, format!("{context}: {e}")))?;
+    Position::try_from(value).map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))
 }
 
 #[cfg(test)]
