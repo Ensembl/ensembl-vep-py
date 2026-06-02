@@ -20,6 +20,7 @@ from attrs import define, field
 from ensembl.vep.common import invalidate
 from ensembl.vep.models.variation.variation import Variation
 from ensembl.vep.models.variation.structural_variation_allele import StructuralVariationAllele
+from ensembl.vep.models.variation.variation_allele import VariationAllele
 
 
 @define(kw_only=True, auto_attribs=True)
@@ -48,7 +49,7 @@ class StructuralVariation(Variation):
     outer_end: int | None = field(default=None)
 
     @cached_property
-    def __structural_variation_alleles(self) -> list[StructuralVariationAllele]:
+    def _variation_alleles(self) -> Sequence[VariationAllele]:
         """Returns the list of StructuralVariationAllele objects for the variation.
 
         Returns:
