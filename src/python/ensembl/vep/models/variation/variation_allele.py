@@ -60,24 +60,36 @@ class VariationAllele(Feature):
     """
 
     start: int = field(
-        on_setattr=[invalidates("_minimised_locus", "_shifted_locus"), resets_attrs(("_shifted", False))]
+        on_setattr=[resets_attrs(
+            ("_shifted", False), 
+            ("_minimised_locus", None), 
+            ("_shifted_locus", None)
+        )]
     )
     end: int = field(
-        on_setattr=[invalidates("_minimised_locus", "_shifted_locus"), resets_attrs(("_shifted", False))]
+        on_setattr=[resets_attrs(
+            ("_shifted", False),
+            ("_minimised_locus", None),
+            ("_shifted_locus", None)
+        )]
     )
     reference_allele: str | None = field(
         default=None,
-        on_setattr=[
-            invalidates("_minimised_locus", "_shifted_locus"),
-            resets_attrs(("_minimised", False), ("_shifted", False)),
-        ],
+        on_setattr=[resets_attrs(
+            ("_minimised", False),
+            ("_shifted", False),
+            ("_minimised_locus", None),
+            ("_shifted_locus", None)
+        )]
     )
     alternate_allele: str | None = field(
         default=None,
-        on_setattr=[
-            invalidates("_minimised_locus", "_shifted_locus"),
-            resets_attrs(("_minimised", False), ("_shifted", False)),
-        ],
+        on_setattr=[resets_attrs(
+            ("_minimised", False),
+            ("_shifted", False),
+            ("_minimised_locus", None),
+            ("_shifted_locus", None)
+        )]
     )
     """The original locus of the variation allele before any minimisation or shifting (if any occurred)."""
     _original_locus: Locus | None = field(default=None, init=False)
