@@ -201,9 +201,7 @@ def _trim_common_sequence(
     changed = False
 
     if strand == Strand.UNKNOWN:
-        logger.warning(
-            "Strand is unknown, cannot trim alleles with confidence. Returning untrimmed alleles."
-        )
+        logger.warning("Strand is unknown, cannot trim alleles with confidence. Returning untrimmed alleles.")
         return (ref, alt, start, end, changed)
 
     if trim_at == "left":
