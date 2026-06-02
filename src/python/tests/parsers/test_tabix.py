@@ -149,14 +149,10 @@ def _open_integration_parser(
 ) -> TabixParser:
     """Open a parser for a selected integration backend."""
 
-    tabix_path = (
-        "tabix-nonexistent-binary-for-test"
-        if backend == "noodles"
-        else htslib_toolchain.tabix
-    )
+    tabix_path = "tabix-nonexistent-binary-for-test" if backend == "noodles" else htslib_toolchain.tabix
 
     return TabixParser(file_path=path, tabix_path=tabix_path)
-    
+
 
 class TestTabixParserInitialization:
     """Test TabixParser initialization."""
@@ -458,13 +454,7 @@ class TestTabixParserIntegration:
     @pytest.mark.parametrize(
         ("dataset", "expected_header", "expected_first", "expected_rest"),
         [
-            (
-                "gff3", 
-                HEADER_LINES, 
-                CHR1_GENE_ROW, 
-                [CHR1_EXON_ROW, 
-                CHR1_CDS_ROW]
-            ),
+            ("gff3", HEADER_LINES, CHR1_GENE_ROW, [CHR1_EXON_ROW, CHR1_CDS_ROW]),
             (
                 "bed",
                 [BED_HEADER_ROW],
@@ -488,13 +478,9 @@ class TestTabixParserIntegration:
         """Test both backends can read default GFF3 and BED fixtures."""
 
         if dataset == "gff3":
-            path = _create_tabix_gff3_cli(
-                tmp_path / f"sample-{dataset}-{backend}.gff3.gz", htslib_toolchain
-            )
+            path = _create_tabix_gff3_cli(tmp_path / f"sample-{dataset}-{backend}.gff3.gz", htslib_toolchain)
         else:
-            path = _create_tabix_bed_cli(
-                tmp_path / f"sample-{dataset}-{backend}.bed.gz", htslib_toolchain
-            )
+            path = _create_tabix_bed_cli(tmp_path / f"sample-{dataset}-{backend}.bed.gz", htslib_toolchain)
 
         parser = _open_integration_parser(path, backend, htslib_toolchain)
 
@@ -516,13 +502,9 @@ class TestTabixParserIntegration:
         """Test query just before the chr2 feature returns no records."""
 
         if dataset == "gff3":
-            path = _create_tabix_gff3_cli(
-                tmp_path / f"gff3-before-{backend}.gff3.gz", htslib_toolchain
-            )
+            path = _create_tabix_gff3_cli(tmp_path / f"gff3-before-{backend}.gff3.gz", htslib_toolchain)
         else:
-            path = _create_tabix_bed_cli(
-                tmp_path / f"bed-before-{backend}.bed.gz", htslib_toolchain
-            )
+            path = _create_tabix_bed_cli(tmp_path / f"bed-before-{backend}.bed.gz", htslib_toolchain)
 
         parser = _open_integration_parser(path, backend, htslib_toolchain)
 
@@ -549,13 +531,9 @@ class TestTabixParserIntegration:
         """Test query exactly on chr2 feature start returns matching record."""
 
         if dataset == "gff3":
-            path = _create_tabix_gff3_cli(
-                tmp_path / f"gff3-exact-start-{backend}.gff3.gz", htslib_toolchain
-            )
+            path = _create_tabix_gff3_cli(tmp_path / f"gff3-exact-start-{backend}.gff3.gz", htslib_toolchain)
         else:
-            path = _create_tabix_bed_cli(
-                tmp_path / f"bed-exact-start-{backend}.bed.gz", htslib_toolchain
-            )
+            path = _create_tabix_bed_cli(tmp_path / f"bed-exact-start-{backend}.bed.gz", htslib_toolchain)
 
         parser = _open_integration_parser(path, backend, htslib_toolchain)
 
@@ -582,13 +560,9 @@ class TestTabixParserIntegration:
         """Test query exactly on chr2 feature end returns matching record."""
 
         if dataset == "gff3":
-            path = _create_tabix_gff3_cli(
-                tmp_path / f"gff3-exact-end-{backend}.gff3.gz", htslib_toolchain
-            )
+            path = _create_tabix_gff3_cli(tmp_path / f"gff3-exact-end-{backend}.gff3.gz", htslib_toolchain)
         else:
-            path = _create_tabix_bed_cli(
-                tmp_path / f"bed-exact-end-{backend}.bed.gz", htslib_toolchain
-            )
+            path = _create_tabix_bed_cli(tmp_path / f"bed-exact-end-{backend}.bed.gz", htslib_toolchain)
 
         parser = _open_integration_parser(path, backend, htslib_toolchain)
 
@@ -607,13 +581,9 @@ class TestTabixParserIntegration:
         """Test query just after the chr2 feature returns no records."""
 
         if dataset == "gff3":
-            path = _create_tabix_gff3_cli(
-                tmp_path / f"gff3-after-{backend}.gff3.gz", htslib_toolchain
-            )
+            path = _create_tabix_gff3_cli(tmp_path / f"gff3-after-{backend}.gff3.gz", htslib_toolchain)
         else:
-            path = _create_tabix_bed_cli(
-                tmp_path / f"bed-after-{backend}.bed.gz", htslib_toolchain
-            )
+            path = _create_tabix_bed_cli(tmp_path / f"bed-after-{backend}.bed.gz", htslib_toolchain)
 
         parser = _open_integration_parser(path, backend, htslib_toolchain)
 
@@ -718,4 +688,3 @@ class TestTabixParserIntegration:
         expected_row = [GFF3_SAME_POS_ROW] if dataset == "gff3" else [BED_SAME_POS_ROW]
         assert parser.seek("chr1:99-100") is bool(expected_row)
         assert parser.records() == expected_row
-

@@ -1538,7 +1538,10 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn test_noodles_backend_next_without_query_returns_none() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!("tabix-test-noodles-eof-{}", std::process::id()));
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-noodles-no-query-{}",
+            std::process::id()
+        ));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir)?;
 
@@ -1557,8 +1560,10 @@ mod tests {
 
     #[test]
     fn test_noodles_backend_zero_based_positions() -> io::Result<()> {
-        let dir =
-            env::temp_dir().join(format!("tabix-test-noodles-zero-based-{}", std::process::id()));
+        let dir = env::temp_dir().join(format!(
+            "tabix-test-noodles-zero-based-{}",
+            std::process::id()
+        ));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir)?;
 
@@ -1933,7 +1938,7 @@ mod tests {
     // -----------------------------------------------------------------------
 
     #[test]
-    fn test_tabix_reader_buffered_line_cleared_on_reseed() -> io::Result<()> {
+    fn test_tabix_reader_buffered_line_cleared_on_reseek() -> io::Result<()> {
         let dir = env::temp_dir().join(format!("tabix-test-buf-clear-{}", std::process::id()));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir)?;

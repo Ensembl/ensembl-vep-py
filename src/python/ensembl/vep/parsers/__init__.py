@@ -13,6 +13,6 @@
 # limitations under the License.
 """Parser interfaces."""
 
-from ensembl.vep.parsers.tabix import TabixParser
+from .tabix import TabixParser
 
 __all__ = ["TabixParser"]

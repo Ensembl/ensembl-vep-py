@@ -175,12 +175,20 @@ fn parse_bed_record(line: &str) -> io::Result<Option<IndexedRecord<'_>>> {
         return Ok(None);
     }
 
-    let raw_start = parse_usize(fields[1], "bad start")?;
-    let raw_end = parse_usize(fields[2], "bad end")?;
-    let start = Position::try_from(raw_start + 1)
-        .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
-    let end = Position::try_from(raw_end.max(1))
-        .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
+    let start = Position::try_from(
+        fields[1]
+            .parse::<usize>()
+            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, format!("bad start: {e}")))?
+            + 1,
+    )
+    .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
+    let end = Position::try_from(
+        fields[2]
+            .parse::<usize>()
+            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, format!("bad end: {e}")))?
+            .max(1),
+    )
+    .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
 
     Ok(Some(IndexedRecord {
         chrom: fields[0],
