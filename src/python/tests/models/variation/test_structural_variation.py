@@ -23,6 +23,7 @@ from ensembl.vep.common import ClassSOTerm, Strand
 from ensembl.vep.models.variation import StructuralVariation, OverlapConsequence
 from ensembl.vep.models.sequence import Slice
 
+
 @pytest.fixture
 def genomic_slice() -> Slice:
     """Create a slice object for testing."""
@@ -44,8 +45,9 @@ def structural_variation(genomic_slice: Slice) -> StructuralVariation:
         end=150,
         strand=Strand.FORWARD,
         slice=genomic_slice,
-        allele_string="-/(LARGEDELETION)",
+        allele_string="A/DEL",
     )
+
 
 @pytest.fixture
 def structural_variation_no_alleles(genomic_slice: Slice) -> StructuralVariation:
@@ -56,11 +58,6 @@ def structural_variation_no_alleles(genomic_slice: Slice) -> StructuralVariation
         strand=Strand.FORWARD,
         slice=genomic_slice,
     )
-
-@pytest.fixture
-def deletion_structural_variation(structural_variation: StructuralVariation) -> StructuralVariation:
-    """Returns a deletion StructuralVariation object for testing."""
-    return structural_variation
 
 
 @pytest.fixture
@@ -86,6 +83,7 @@ def tandem_repeat_structural_variation(genomic_slice: Slice) -> StructuralVariat
         allele_string="(CAG)9/(CAG)12",
     )
 
+
 @pytest.fixture
 def multiallelic_structural_variation(genomic_slice: Slice) -> StructuralVariation:
     """Returns a tandem_repeat StructuralVariation object for testing."""
@@ -97,20 +95,24 @@ def multiallelic_structural_variation(genomic_slice: Slice) -> StructuralVariati
         allele_string="(CAG)9/(CAG)12/(CAG)15",
     )
 
+
 @pytest.fixture
 def overlap_consequence() -> OverlapConsequence:
     """Returns an OverlapConsequence object for testing."""
     return OverlapConsequence(term="transcript_ablation", accession="SO:0001893")
+
 
 class TestStructuralVariationProperties:
     """Tests property accessors and default values."""
 
     def test_initialization(self, structural_variation: StructuralVariation) -> None:
         """Test that a StructuralVariation can be initialized with the correct attributes."""
-        assert structural_variation.start == 5
-        assert structural_variation.end == 150
-        assert structural_variation.strand == Strand.FORWARD
-        assert structural_variation.allele_string == "-/(LARGEDELETION)"
+        assert structural_variation.start == 5, "start attribute incorrectly initialized"
+        assert structural_variation.end == 150, "end attribute incorrectly initialized"
+        assert structural_variation.strand == Strand.FORWARD, "strand attribute incorrectly initialized"
+        assert (
+            structural_variation.allele_string == "A/DEL"
+        ), "allele_string attribute incorrectly initialized"
 
     def test_initialization_without_keywords(self) -> None:
         """Test Variation initialization without keyword raises error."""
@@ -120,18 +122,18 @@ class TestStructuralVariationProperties:
                 end=250,
                 strand=Strand.FORWARD,
                 slice=None,
-                allele_string="-/(LARGEDELETION)",  # type: ignore[misc]
+                allele_string="A/DEL",  # type: ignore[misc]
             )
 
     def test_defaults(self, structural_variation: StructuralVariation) -> None:
         """Test default values for optional attributes."""
-        assert structural_variation.stable_id is None
-        assert structural_variation.is_somatic is False
-        assert structural_variation.copy_number is None
-        assert structural_variation.inner_start is None
-        assert structural_variation.outer_start is None
-        assert structural_variation.inner_end is None
-        assert structural_variation.outer_end is None
+        assert structural_variation.stable_id is None, "stable_id attribute incorrect default"
+        assert structural_variation.is_somatic is False, "is_somatic attribute incorrect default"
+        assert structural_variation.copy_number is None, "copy_number attribute incorrect default"
+        assert structural_variation.inner_start is None, "inner_start attribute incorrect default"
+        assert structural_variation.outer_start is None, "outer_start attribute incorrect default"
+        assert structural_variation.inner_end is None, "inner_end attribute incorrect default"
+        assert structural_variation.outer_end is None, "outer_end attribute incorrect default"
 
     def test_most_severe_consequence_immutable(
         self, structural_variation: StructuralVariation, overlap_consequence: OverlapConsequence
@@ -139,7 +141,7 @@ class TestStructuralVariationProperties:
         """Test that most_severe_consequence cannot be directly set."""
         with pytest.raises(
             AttributeError,
-            match="property 'most_severe_consequence' of 'StructuralVariation' object has no setter"
+            match="property 'most_severe_consequence' of 'StructuralVariation' object has no setter",
         ):
             structural_variation.most_severe_consequence = overlap_consequence  # type: ignore[misc]
 
@@ -152,50 +154,60 @@ class TestStructuralVariationProperties:
 
 
 class TestStructuralVariationAlleles:
-    """Tests for the structural_variation_alleles cached property."""
+    """Tests for the variation_alleles cached property."""
 
     def test_single_alt_allele(self, structural_variation: StructuralVariation) -> None:
         """Test that a bi-allelic structural_variation returns the correct StructuralVariationAllele."""
-        alleles = structural_variation.structural_variation_alleles
+        alleles = structural_variation.variation_alleles
 
-        assert len(alleles) == 1
-        assert alleles[0].reference_allele == "-"
-        assert alleles[0].alternate_allele == "(LARGEDELETION)"
+        assert (
+            len(alleles) == 1
+        ), "Length of variation_alleles attribute is incorrect: single alt allele, deletion"
+        assert (
+            alleles[0].reference_allele == "A"
+        ), "reference_allele attribute incorrect: single alt allele, deletion"
+        assert (
+            alleles[0].alternate_allele == "DEL"
+        ), "alternate_allele attribute incorrect: single alt allele, deletion"
 
     def test_multiple_alt_alleles(self, multiallelic_structural_variation: StructuralVariation) -> None:
         """Test that a multi-allelic structural_variation returns the correct StructuralVariationAlleles."""
-        alleles = multiallelic_structural_variation.structural_variation_alleles
+        alleles = multiallelic_structural_variation.variation_alleles
 
-        assert len(alleles) == 2
-        assert alleles[0].alternate_allele == "(CAG)12"
-        assert alleles[1].alternate_allele == "(CAG)15"
+        assert len(alleles) == 2, "Length of variation_alleles attribute is incorrect: multiple alt allele"
+        assert (
+            alleles[0].alternate_allele == "(CAG)12"
+        ), "First alternate_allele attribute incorrect: multiple alt allele"
+        assert (
+            alleles[1].alternate_allele == "(CAG)15"
+        ), "Second alternate_allele attribute incorrect: multiple alt allele"
         # All share the same reference
-        assert all(a.reference_allele == "(CAG)9" for a in alleles)
+        assert all(
+            a.reference_allele == "(CAG)9" for a in alleles
+        ), "reference_allele attribute incorrect: multiple alt allele"
 
     def test_insertion_alleles(self, insertion_structural_variation: StructuralVariation) -> None:
         """Test that an insertion structural_variation returns the correct StructuralVariationAllele."""
-        alleles = insertion_structural_variation.structural_variation_alleles
+        alleles = insertion_structural_variation.variation_alleles
 
-        assert len(alleles) == 1
-        assert alleles[0].reference_allele == "-"
-        assert alleles[0].alternate_allele == "INS"
-
-    def test_deletion_alleles(self, deletion_structural_variation: StructuralVariation) -> None:
-        """Test that a deletion structural_variation returns the correct StructuralVariationAllele."""
-        alleles = deletion_structural_variation.structural_variation_alleles
-
-        assert len(alleles) == 1
-        assert alleles[0].reference_allele == "-"
-        assert alleles[0].alternate_allele == "(LARGEDELETION)"
+        assert (
+            len(alleles) == 1
+        ), "Length of variation_alleles attribute is incorrect: single alt allele, insertion"
+        assert (
+            alleles[0].reference_allele == "-"
+        ), "reference_allele attribute incorrect: single alt allele, insertion"
+        assert (
+            alleles[0].alternate_allele == "INS"
+        ), "alternate_allele attribute incorrect: single alt allele, insertion"
 
     def test_alleles_inherit_coordinates(self, structural_variation: StructuralVariation) -> None:
         """Test that structural_variation alleles inherit coordinates from the structural_variation."""
-        alleles = structural_variation.structural_variation_alleles
+        alleles = structural_variation.variation_alleles
 
-        assert alleles[0].start == 5
-        assert alleles[0].end == 150
-        assert alleles[0].strand == Strand.FORWARD
-        assert alleles[0].slice == structural_variation.slice
+        assert alleles[0].start == 5, "Inherited start attribute incorrect"
+        assert alleles[0].end == 150, "Inherited end attribute incorrect"
+        assert alleles[0].strand == Strand.FORWARD, "Inherited strand attribute incorrect"
+        assert alleles[0].slice == structural_variation.slice, "Inherited slice attribute incorrect"
 
     def test_none_allele_string_returns_empty(self, genomic_slice: Slice) -> None:
         """Test that an undefined allele string (None) returns an empty list of alleles."""
@@ -206,8 +218,8 @@ class TestStructuralVariationAlleles:
             slice=genomic_slice,
             allele_string=None,
         )
-        alleles = var.structural_variation_alleles
-        assert len(alleles) == 0
+        alleles = var.variation_alleles
+        assert len(alleles) == 0, "length of alleles attribute for empty allele string is incorrect"
 
 
 class TestClassSOTerm:
@@ -215,20 +227,30 @@ class TestClassSOTerm:
 
     def test_correct_term_deletion(self, structural_variation: StructuralVariation) -> None:
         """Test StructuralVariation object for deletion produces correct ClassSOTerm"""
-        assert structural_variation.class_so_term == ClassSOTerm.DELETION
+        assert (
+            structural_variation.class_so_term == ClassSOTerm.DELETION
+        ), "class_so_term for deletion is incorrect"
 
     def test_correct_term_insertion(self, insertion_structural_variation: StructuralVariation) -> None:
         """Test StructuralVariation object for deletion produces correct ClassSOTerm"""
-        assert insertion_structural_variation.class_so_term == ClassSOTerm.INSERTION
+        assert (
+            insertion_structural_variation.class_so_term == ClassSOTerm.INSERTION
+        ), "class_so_term for insertion is incorrect"
 
     def test_correct_term_tandem_repeat(
         self, tandem_repeat_structural_variation: StructuralVariation
     ) -> None:
         """Test StructuralVariation object for deletion produces correct ClassSOTerm"""
-        assert tandem_repeat_structural_variation.class_so_term == ClassSOTerm.TANDEM_REPEAT
+        assert (
+            tandem_repeat_structural_variation.class_so_term == ClassSOTerm.TANDEM_REPEAT
+        ), "class_so_term for tandem repeat is incorrect"
 
 
 class TestMostSevereConsequence:
     """Tests for the most_severe_consequence cached property."""
+
     def test_no_csqs(self, structural_variation_no_alleles: StructuralVariation) -> None:
-        assert structural_variation_no_alleles.most_severe_consequence is None
+        """Test that most severe consequence is None with no allele string"""
+        assert (
+            structural_variation_no_alleles.most_severe_consequence is None
+        ), "most_severe_consequence for empty allele string is incorrect"
