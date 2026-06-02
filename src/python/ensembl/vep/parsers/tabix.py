@@ -28,7 +28,7 @@ from ensembl.vep.ensembl_vep_core import (  # noqa: F401,F403 pylint: disable=E0
 @define(kw_only=True, auto_attribs=True)
 class TabixParser(Parser[str]):
     """Parser facade for tabix-indexed row streams.
-    
+
     Attributes:
         format (str): The format of the file being parsed.
         file_path (str | Path | None): The path to the file to be parsed.
@@ -50,7 +50,7 @@ class TabixParser(Parser[str]):
     @property
     def metadata(self) -> dict:
         """Public accessor for the _metadata.
-        
+
         Returns:
             dict: The metadata dictionary.
         """
@@ -60,7 +60,7 @@ class TabixParser(Parser[str]):
     @cached_property
     def _metadata(self) -> dict:
         """Metadata dictionary.
-        
+
         Returns:
             dict: The metadata dictionary.
         """
@@ -111,7 +111,7 @@ class TabixParser(Parser[str]):
 
     def next(self) -> str | None:
         """Return the next raw row from the active region query.
-        
+
         Returns:
             str | None: The next raw row from the active region query, or None if there are no more rows.
         """

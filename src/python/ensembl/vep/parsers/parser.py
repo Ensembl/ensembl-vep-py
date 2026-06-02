@@ -23,7 +23,7 @@ T = TypeVar("T")
 @define(kw_only=True, auto_attribs=True)
 class Parser(ABC, Generic[T]):
     """Parser interface.
-    
+
     Attributes:
         format (str): The format of the file being parsed.
         metadata (dict): A dictionary containing metadata about the file being parsed.
@@ -34,7 +34,7 @@ class Parser(ABC, Generic[T]):
     @property
     def metadata(self) -> dict:
         """Public accessor for the _metadata.
-        
+
         Returns:
             dict: The metadata dictionary.
         """
@@ -44,7 +44,7 @@ class Parser(ABC, Generic[T]):
     @property
     def _metadata(self) -> dict:
         """Metadata dictionary.
-        
+
         Returns:
             dict: The metadata dictionary.
         """
@@ -54,10 +54,10 @@ class Parser(ABC, Generic[T]):
     @abstractmethod
     def open(self, file_path: str) -> "Parser":
         """Open a file for parsing.
-        
+
         Args:
             file_path (str): The path to the file to be parsed.
-            
+
         Returns:
             Parser: The parser instance.
         """
@@ -80,13 +80,13 @@ class Parser(ABC, Generic[T]):
         end: int | None = None,
     ) -> bool:
         """Seek to a region and make next() stream matching raw rows.
-        
+
         Args:
             region (str | None): The region to seek to, in the format "chr:start-end".
             seqid (str | None): The sequence ID of the region to seek to.
             start (int | None): The start position of the region to seek to.
             end (int | None): The end position of the region to seek to.
-            
+
         Returns:
             bool: True if the seek was successful, False otherwise.
         """
@@ -96,7 +96,7 @@ class Parser(ABC, Generic[T]):
     @abstractmethod
     def next(self) -> T | None:
         """Return the next raw row from the active region query.
-        
+
         Returns:
             T | None: The next raw row, or None if there are no more rows.
         """

@@ -320,7 +320,7 @@ def format_region_string(
     end: int | None = None,
 ) -> str:
     """Format a region string into "seqid:start-end" from either an existing region or seqid/start/end values.
-    
+
     Args:
         region: A region string in the format "seqid:start-end".
         seqid: Sequence ID (e.g. chromosome name).
