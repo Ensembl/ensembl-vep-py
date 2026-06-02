@@ -27,7 +27,14 @@ from ensembl.vep.ensembl_vep_core import (  # noqa: F401,F403 pylint: disable=E0
 
 @define(kw_only=True, auto_attribs=True)
 class TabixParser(Parser[str]):
-    """Parser facade for tabix-indexed row streams."""
+    """Parser facade for tabix-indexed row streams.
+    
+    Attributes:
+        format (str): The format of the file being parsed.
+        file_path (str | Path | None): The path to the file to be parsed.
+        tabix_path (str | Path | None): The path to the tabix executable.
+        _parser (_RustTabixParser): The underlying Rust tabix parser.
+    """
 
     format: str = field(init=False, default="tabix")
     file_path: str | Path | None = field(default=None)
@@ -42,18 +49,33 @@ class TabixParser(Parser[str]):
 
     @property
     def metadata(self) -> dict:
-        """Metadata dictionary."""
+        """Public accessor for the _metadata.
+        
+        Returns:
+            dict: The metadata dictionary.
+        """
 
         return self._metadata
 
     @cached_property
     def _metadata(self) -> dict:
-        """Metadata dictionary."""
+        """Metadata dictionary.
+        
+        Returns:
+            dict: The metadata dictionary.
+        """
 
         return dict(self._parser.metadata)
 
     def open(self, file_path: str | Path) -> "TabixParser":
-        """Open a tabix-indexed BGZF file."""
+        """Open a tabix-indexed BGZF file.
+
+        Args:
+            file_path (str | Path): The path to the file to be parsed.
+
+        Returns:
+            TabixParser: The parser instance.
+        """
 
         self._parser.open(str(file_path))
         self._clear_metadata_cache()
@@ -73,17 +95,38 @@ class TabixParser(Parser[str]):
         start: int | None = None,
         end: int | None = None,
     ) -> bool:
-        """Seek to a region and make next() stream matching raw rows."""
+        """Seek to a region and make next() stream matching raw rows.
+
+        Args:
+            region (str | None): The region to seek to, in the format "chr:start-end".
+            seqid (str | None): The sequence ID of the region to seek to.
+            start (int | None): The start position of the region to seek to.
+            end (int | None): The end position of the region to seek to.
+
+        Returns:
+            bool: True if the seek was successful, False otherwise.
+        """
 
         return self._parser.seek(format_region_string(region, seqid=seqid, start=start, end=end))
 
     def next(self) -> str | None:
-        """Return the next raw row from the active region query."""
+        """Return the next raw row from the active region query.
+        
+        Returns:
+            str | None: The next raw row from the active region query, or None if there are no more rows.
+        """
 
         return self._parser.next()
 
     def records(self, limit: int | None = None) -> list[str]:
-        """Return raw rows from the active region query."""
+        """Return raw rows from the active region query.
+
+        Args:
+            limit (int | None): The maximum number of records to return. If None, return all records.
+
+        Returns:
+            list[str]: A list of raw rows from the active region query.
+        """
 
         return self._parser.records(limit)
 

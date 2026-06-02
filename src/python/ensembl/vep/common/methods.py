@@ -319,7 +319,17 @@ def format_region_string(
     start: int | None = None,
     end: int | None = None,
 ) -> str:
-    """Format a region string from either an existing region or seqid/start/end values."""
+    """Format a region string into "seqid:start-end" from either an existing region or seqid/start/end values.
+    
+    Args:
+        region: A region string in the format "seqid:start-end".
+        seqid: Sequence ID (e.g. chromosome name).
+        start: Start coordinate (1-based).
+        end: End coordinate (1-based).
+
+    Returns:
+        A region string in the format "seqid:start-end".
+    """
 
     if region is not None:
         if any(value is not None for value in (seqid, start, end)):
