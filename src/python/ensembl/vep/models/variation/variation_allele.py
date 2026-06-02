@@ -91,13 +91,13 @@ class VariationAllele(Feature):
             ("_shifted_locus", None)
         )]
     )
-    """The original locus of the variation allele before any minimisation or shifting (if any occurred)."""
     _original_locus: Locus | None = field(default=None, init=False)
-    """Whether the variation allele has been minimised."""
+    """The original locus of the variation allele before any minimisation or shifting (if any occurred)."""
     _minimised: bool = field(default=False, init=False)
+    """Whether the variation allele has been minimised."""
     _minimised_locus: Locus | None = field(default=None, init=False)
-    """Whether the variation allele has been shifted."""
     _shifted: bool = field(default=False, init=False)
+    """Whether the variation allele has been shifted."""
     _shifted_locus: Locus | None = field(default=None, init=False)
     _lock: RLock = field(factory=RLock, init=False, repr=False)
     transcript_variation_alleles: list[TranscriptVariationAllele] = field(
