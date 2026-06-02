@@ -17,11 +17,11 @@ from __future__ import annotations
 
 from attr import define, field
 
-from ensembl.vep.models.overlap.feature_overlap import FeatureOverlap
+from ensembl.vep.models.overlap.transcript_variation_allele import TranscriptVariationAllele
 
 
 @define(kw_only=True, auto_attribs=True)
-class TranscriptStructuralVariationAllele(FeatureOverlap):
+class TranscriptStructuralVariationAllele(TranscriptVariationAllele):
     """
     Represents the overlap between a transcript and a structural variation allele.
 
