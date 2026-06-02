@@ -16,13 +16,9 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
-from attrs import define, field
+from attrs import define
 
-from ensembl.vep.models import Feature
-
-if TYPE_CHECKING:
-    from ensembl.vep.models.overlap import TranscriptStructuralVariationAllele
+from ensembl.vep.models.variation import VariationAllele
 
 logger = logging.getLogger(__name__)
 
@@ -31,13 +27,37 @@ logger = logging.getLogger(__name__)
 class StructuralVariationAllele(VariationAllele):
     """Represents a specific allele of a structural variation."""
 
-    start: int
-    end: int
-    reference_allele: str | None
-    alternate_allele: str | None
-    transcript_structural_variation_alleles: list[TranscriptStructuralVariationAllele] = field(
-        factory=list, init=False
-    )
-    # regulatory_variation_alleles: list[RegulatoryVariationAllele] = field(factory=list, init=False)
-    # motif_variation_alleles: list[MotifVariationAllele] = field(factory=list, init=False)
-    # intergenic_variation_alleles: list[IntergenicVariationAllele] = field(factory=list, init=False)
+    def minimise(self, force: bool = False) -> None:
+        """Minimises the variation allele by computing the minimal representation of the variant.
+
+        Structural variants are not minimised, so this method simply returns the current representation
+        of the structural variant.
+        """
+        msg = "Structural Variation alleles are currently not minimised. "
+        if force:
+            msg += "force=True doesn't change this behaviour. "
+        msg += "Returning the original representation"
+        logger.warning(msg)
+
+        original_locus = self._original_locus or self._locus
+
+        setattr(self, "_original_locus", self._original_locus or original_locus)
+        setattr(self, "_minimised_locus", self._locus)
+        setattr(self, "_minimised", True)
+
+    def shift(self, force: bool = False) -> None:
+        """Shifts the variation allele to the leftmost position in the sequence.
+
+        Currently, this method simply returns the current representation of the structural variant.
+        """
+        msg = "Structural Variation alleles are currently not shifted. "
+        if force:
+            msg += "force=True doesn't change this behaviour. "
+        msg += "Returning the original representation"
+        logger.warning(msg)
+
+        original_locus = self._original_locus or self._locus
+
+        setattr(self, "_original_locus", self._original_locus or original_locus)
+        setattr(self, "_shifted_locus", self._locus)
+        setattr(self, "_shifted", True)
