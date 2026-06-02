@@ -536,7 +536,7 @@ impl From<&Header> for QueryHeader {
 // ---------------------------------------------------------------------------
 
 // Note: we use a separate wrapper struct instead of implementing PyO3 traits directly on TabixReader
-// because TabixReader's API is not designed for direct Python use and we want to keep it ergonomic for Rust usage. 
+// because TabixReader's API is not designed for direct Python use and we want to keep it ergonomic for Rust usage.
 // The wrapper delegates to TabixReader and translates errors into Python exceptions.
 #[pyclass(name = "TabixParser")]
 pub struct TabixParser {
