@@ -287,9 +287,9 @@ class TestVariationAlleleMinimiseAndShift:
             alternate_allele="T",
         )
         variation_allele2.minimise()
-        assert variation_allele2.minimised is True, "minimised was set on minimise"
+        assert variation_allele2.minimised is True, "minimised was not set on minimise"
         original_locus = variation_allele2.original_locus
-        assert original_locus is not None, "original_locus was set on minimise"
+        assert original_locus is not None, "original_locus was not set on minimise"
         minimised_locus = variation_allele2.minimised_locus
         assert minimised_locus is not None, "minimised_locus returns None after minimise"
         assert minimised_locus.start == original_locus.start, "start was changed by minimise"
