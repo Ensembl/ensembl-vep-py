@@ -31,27 +31,25 @@ class GFFParser:
         file_path: str | Path | None = None,
         *,
         tabix_path: str = "tabix",
-        reader: str = "auto",
+        mode: str = "query",
     ) -> None:
         self.metadata: dict[str, str] = {}
-        self._parser = _RustGFFParser(str(file_path) if file_path is not None else None, tabix_path, reader)
+        self._parser = _RustGFFParser(
+            str(file_path) if file_path is not None else None,
+            tabix_path,
+            mode,
+        )
 
     @property
-    def reader(self) -> str:
+    def reader_mode(self) -> str:
         """Return the configured reader mode."""
 
-        return self._parser.reader
+        return self._parser.reader_mode
 
     def open(self, file_path: str | Path) -> "GFFParser":
         """Open a GFF file for streaming reads."""
 
         self._parser.open(str(file_path))
-        return self
-
-    def set_reader(self, reader: str) -> "GFFParser":
-        """Set the reader mode."""
-
-        self._parser.set_reader(reader)
         return self
 
     def close(self) -> None:
@@ -64,7 +62,7 @@ class GFFParser:
 
         return self._parser.next()
 
-    def records(self, limit: int | None = None) -> list[GFFRecord]:
+    def records(self, limit: int | None = 10000) -> list[GFFRecord]:
         """Return records from the current stream position."""
 
         return self._parser.records(limit)

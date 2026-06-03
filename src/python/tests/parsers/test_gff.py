@@ -88,9 +88,9 @@ def test_parser_can_force_sequential_reader(tmp_path: Path) -> None:
     path = tmp_path / "sample.gff3"
     path.write_text(SAMPLE)
 
-    parser = GFFParser(path, tabix_path=str(tmp_path / "missing-tabix"), reader="sequential")
+    parser = GFFParser(path, tabix_path=str(tmp_path / "missing-tabix"), mode="sequential")
 
-    assert parser.reader == "sequential"
+    assert parser.reader_mode == "sequential"
     assert [record.feature_type for record in parser] == ["gene", "CDS"]
 
     with pytest.raises(RuntimeError, match="sequential"):
@@ -115,6 +115,7 @@ def test_seek_uses_tabix_and_parses_region_output(tmp_path: Path) -> None:
 
     path = tmp_path / "sample.gff3.gz"
     path.write_text(SAMPLE)
+    path.with_suffix(path.suffix + ".tbi").write_text("")
 
     tabix = tmp_path / "tabix"
     tabix.write_text(
@@ -140,10 +141,11 @@ printf '%s\\n' 'chr1\ttabix\tgene\t10\t20\t.\t+\t.\tID=gene:1;Name=BRCA2'
 
 
 def test_parser_can_force_tabix_reader(tmp_path: Path) -> None:
-    """Tabix reader mode can be selected explicitly."""
+    """Query mode uses sequential reads until seek activates tabix."""
 
     path = tmp_path / "sample.gff3.gz"
     path.write_text(SAMPLE)
+    path.with_suffix(path.suffix + ".tbi").write_text("")
 
     tabix = tmp_path / "tabix"
     tabix.write_text(
@@ -153,33 +155,10 @@ printf '%s\\n' 'chr1\ttabix\tgene\t10\t20\t.\t+\t.\tID=gene:1'
     )
     tabix.chmod(0o755)
 
-    parser = GFFParser(path, tabix_path=str(tabix), reader="tabix")
+    parser = GFFParser(path, tabix_path=str(tabix), mode="query")
 
-    assert parser.reader == "tabix"
-    assert parser.next() is None
-    assert parser.seek(seqid="chr1", start=10, end=20) is True
+    assert parser.reader_mode == "query"
     assert parser.next() is not None
-
-
-def test_parser_set_reader_switches_reader_mode(tmp_path: Path) -> None:
-    """Reader mode can be switched after construction."""
-
-    path = tmp_path / "sample.gff3.gz"
-    path.write_text(SAMPLE)
-
-    tabix = tmp_path / "tabix"
-    tabix.write_text(
-        """#!/bin/sh
-printf '%s\\n' 'chr1\ttabix\tgene\t10\t20\t.\t+\t.\tID=gene:1'
-"""
-    )
-    tabix.chmod(0o755)
-
-    parser = GFFParser(path, tabix_path=str(tabix))
-
-    assert parser.reader == "auto"
-    assert parser.set_reader("tabix") is parser
-    assert parser.reader == "tabix"
     assert parser.seek(seqid="chr1", start=10, end=20) is True
     assert parser.next() is not None
 
@@ -189,6 +168,7 @@ def test_seek_returns_false_for_empty_region(tmp_path: Path) -> None:
 
     path = tmp_path / "sample.gff3.gz"
     path.write_text(SAMPLE)
+    path.with_suffix(path.suffix + ".tbi").write_text("")
 
     tabix = tmp_path / "tabix"
     tabix.write_text("#!/bin/sh\n")
@@ -198,3 +178,27 @@ def test_seek_returns_false_for_empty_region(tmp_path: Path) -> None:
 
     assert parser.seek(seqid="chr1", start=30, end=40) is False
     assert parser.next() is None
+
+
+def test_query_mode_falls_back_to_sequential_without_index(tmp_path: Path) -> None:
+    """Query mode streams sequentially when no tabix index is available."""
+
+    path = tmp_path / "sample.gff3.gz"
+    path.write_text(SAMPLE)
+
+    parser = GFFParser(path, mode="query")
+
+    assert parser.reader_mode == "query"
+    assert [record.feature_type for record in parser] == ["gene", "CDS"]
+
+
+def test_query_mode_seek_without_index_errors(tmp_path: Path) -> None:
+    """Seek fails in query mode when the tabix index is missing."""
+
+    path = tmp_path / "sample.gff3.gz"
+    path.write_text(SAMPLE)
+
+    parser = GFFParser(path, mode="query")
+
+    with pytest.raises(RuntimeError, match="sequential"):
+        parser.seek(seqid="chr1", start=10, end=20)

@@ -13,8 +13,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use noodles_core::Region;
 use std::io::{self, ErrorKind};
+
+use noodles_core::Region;
+use pyo3::{exceptions::PyValueError, PyResult};
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum ReaderMode {
+    Sequential,
+    Query,
+}
+
+impl ReaderMode {
+    pub(crate) fn parse(value: Option<&str>) -> PyResult<Self> {
+        match value.unwrap_or("query") {
+            "sequential" => Ok(Self::Sequential),
+            "query" => Ok(Self::Query),
+            value => Err(PyValueError::new_err(format!(
+                "unsupported reader mode {value:?}: expected 'query' or 'sequential'"
+            ))),
+        }
+    }
+
+    pub(crate) fn as_str(self) -> &'static str {
+        match self {
+            Self::Sequential => "sequential",
+            Self::Query => "query",
+        }
+    }
+}
 
 pub(crate) fn parse_region(region: &str) -> io::Result<Region> {
     region.parse().map_err(|e| {
@@ -46,5 +73,32 @@ mod tests {
         let err = parse_region("").unwrap_err();
         assert_eq!(err.kind(), ErrorKind::InvalidInput);
         assert!(err.to_string().contains("invalid tabix region"));
+    }
+
+    #[test]
+    fn test_reader_mode_parse_defaults_to_query() {
+        assert_eq!(ReaderMode::parse(None).unwrap(), ReaderMode::Query);
+    }
+
+    #[test]
+    fn test_reader_mode_parse_accepts_aliases() {
+        assert_eq!(ReaderMode::parse(Some("query")).unwrap(), ReaderMode::Query);
+        assert_eq!(ReaderMode::parse(Some("sequential")).unwrap(), ReaderMode::Sequential);
+
+    }
+
+    #[test]
+    fn test_reader_mode_parse_rejects_invalid_mode() {
+        let err = ReaderMode::parse(Some("invalid-mode")).unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("unsupported reader mode \"invalid-mode\": expected 'query' or 'sequential'")
+        );
+    }
+
+    #[test]
+    fn test_reader_mode_as_str() {
+        assert_eq!(ReaderMode::Sequential.as_str(), "sequential");
+        assert_eq!(ReaderMode::Query.as_str(), "query");
     }
 }
