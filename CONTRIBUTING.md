@@ -28,7 +28,7 @@ The following packages are pre-requisites to be able to contribute to the Ensemb
    git clone https://github.com/yourusername/ensembl-vep-py.git
    cd ensembl-vep-py
    ```
-3. **Setup uv venv**
+3. **Set up uv venv**:
     ```bash
     uv venv
     source .venv/bin/activate
@@ -57,11 +57,10 @@ The following packages are pre-requisites to be able to contribute to the Ensemb
 
 6. **Run tests**:
    ```bash
-   ## Rust tests with coverage
+   ## Rust tests with coverage (install first via: cargo install cargo-llvm-cov)
    cargo llvm-cov --ignore-filename-regex '(^|/)src/rust/lib\.rs$' --show-missing-lines
-
    ## Python tests with coverage
-   uv run coverage run -m pytest src/python
+   uv run coverage run -m pytest
    uv run coverage report -m
 
    ## Integration test for tabix (requires tabix to be installed and available in PATH)
