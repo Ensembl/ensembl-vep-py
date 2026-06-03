@@ -158,6 +158,11 @@ class TestAttributeReset:
 class TestTrimSequences:
     """Tests for the trim_sequences function."""
 
+    def test_trim_sequences_unknown_strand(self) -> None:
+        """Should return untrimmed alleles if strand is unknown."""
+        ref, alt, start, end, changed = trim_sequences("ACGT", "ACCT", start=10, strand=Strand.UNKNOWN)
+        assert (ref, alt, start, end, changed) == ("ACGT", "ACCT", 10, 13, False)
+
     def test_trim_sequences_basic_left_right(self) -> None:
         """Trims matching bases from both ends."""
         ref, alt, start, end, changed = trim_sequences("ACGT", "ACCT", start=10)

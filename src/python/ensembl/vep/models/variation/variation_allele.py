@@ -60,32 +60,40 @@ class VariationAllele(Feature):
     """
 
     start: int = field(
-        on_setattr=[invalidates("_minimised_locus", "_shifted_locus"), resets_attrs(("_shifted", False))]
+        on_setattr=[resets_attrs(("_shifted", False), ("_minimised_locus", None), ("_shifted_locus", None))]
     )
     end: int = field(
-        on_setattr=[invalidates("_minimised_locus", "_shifted_locus"), resets_attrs(("_shifted", False))]
+        on_setattr=[resets_attrs(("_shifted", False), ("_minimised_locus", None), ("_shifted_locus", None))]
     )
     reference_allele: str | None = field(
         default=None,
         on_setattr=[
-            invalidates("_minimised_locus", "_shifted_locus"),
-            resets_attrs(("_minimised", False), ("_shifted", False)),
+            resets_attrs(
+                ("_minimised", False),
+                ("_shifted", False),
+                ("_minimised_locus", None),
+                ("_shifted_locus", None),
+            )
         ],
     )
     alternate_allele: str | None = field(
         default=None,
         on_setattr=[
-            invalidates("_minimised_locus", "_shifted_locus"),
-            resets_attrs(("_minimised", False), ("_shifted", False)),
+            resets_attrs(
+                ("_minimised", False),
+                ("_shifted", False),
+                ("_minimised_locus", None),
+                ("_shifted_locus", None),
+            )
         ],
     )
-    """The original locus of the variation allele before any minimisation or shifting (if any occurred)."""
     _original_locus: Locus | None = field(default=None, init=False)
-    """Whether the variation allele has been minimised."""
+    """The original locus of the variation allele before any minimisation or shifting (if any occurred)."""
     _minimised: bool = field(default=False, init=False)
+    """Whether the variation allele has been minimised."""
     _minimised_locus: Locus | None = field(default=None, init=False)
-    """Whether the variation allele has been shifted."""
     _shifted: bool = field(default=False, init=False)
+    """Whether the variation allele has been shifted."""
     _shifted_locus: Locus | None = field(default=None, init=False)
     _lock: RLock = field(factory=RLock, init=False, repr=False)
     transcript_variation_alleles: list[TranscriptVariationAllele] = field(
