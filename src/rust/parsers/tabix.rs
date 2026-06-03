@@ -20,7 +20,10 @@ use std::{
     process::{Child, ChildStdout, Command, Stdio},
 };
 
-use crate::{parsers::utils::parse_region, utils::trim_newline};
+use crate::{
+    parsers::utils::parse_region,
+    utils::{py_error, trim_newline},
+};
 use log::warn;
 use noodles_bgzf::{self as bgzf, io::Seek as BgzfSeek};
 use noodles_core::{Position, Region, region::Interval};
@@ -31,11 +34,7 @@ use noodles_csi::{
     },
 };
 use noodles_tabix as tabix;
-use pyo3::{
-    exceptions::{PyIOError, PyRuntimeError, PyValueError},
-    prelude::*,
-    types::PyDict,
-};
+use pyo3::{exceptions::PyRuntimeError, prelude::*, types::PyDict};
 
 // ---------------------------------------------------------------------------
 // TabixReader — public entry point
@@ -585,7 +584,7 @@ impl TabixParser {
 
     pub fn open(&mut self, file_path: &str) -> PyResult<()> {
         let path = PathBuf::from(file_path);
-        self.reader = Some(TabixReader::open(&path, &self.tabix_path).map_err(tabix_py_error)?);
+        self.reader = Some(TabixReader::open(&path, &self.tabix_path).map_err(py_error)?);
         self.file_path = Some(path);
         Ok(())
     }
@@ -595,12 +594,12 @@ impl TabixParser {
     }
 
     pub fn seek(&mut self, region: &str) -> PyResult<bool> {
-        self.reader()?.seek(region).map_err(tabix_py_error)
+        self.reader()?.seek(region).map_err(py_error)
     }
 
     #[allow(clippy::should_implement_trait)]
     pub fn next(&mut self) -> PyResult<Option<String>> {
-        self.reader()?.next().map_err(tabix_py_error)
+        self.reader()?.next().map_err(py_error)
     }
 
     #[pyo3(signature = (limit=None))]
@@ -621,7 +620,7 @@ impl TabixParser {
 impl TabixParser {
     pub fn header_lines(&mut self) -> PyResult<Vec<String>> {
         if let Some(reader) = self.reader.as_mut() {
-            return Ok(reader.header_lines().map_err(tabix_py_error)?.to_vec());
+            return Ok(reader.header_lines().map_err(py_error)?.to_vec());
         }
 
         Ok(Vec::new())
@@ -643,14 +642,6 @@ fn associated_index_path(src: &Path, extension: &str) -> PathBuf {
     path.push(".");
     path.push(extension);
     PathBuf::from(path)
-}
-
-fn tabix_py_error(err: io::Error) -> PyErr {
-    match err.kind() {
-        ErrorKind::InvalidData | ErrorKind::InvalidInput => PyValueError::new_err(err.to_string()),
-        ErrorKind::NotFound => PyIOError::new_err(err.to_string()),
-        _ => PyRuntimeError::new_err(err.to_string()),
-    }
 }
 
 // ---------------------------------------------------------------------------
@@ -699,46 +690,6 @@ mod tests {
                 .child
                 .id(),
             _ => panic!("expected system backend"),
-        }
-    }
-
-    // -----------------------------------------------------------------------
-    // tabix_py_error — error kind mapping
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_tabix_py_error_invalid_data_maps_to_value_error() {
-        let err = io::Error::new(ErrorKind::InvalidData, "bad data");
-        let py_err = tabix_py_error(err);
-
-        Python::initialize();
-        let type_name = Python::attach(|py| py_err.get_type(py).name().unwrap().to_string());
-
-        assert_eq!(type_name, "ValueError");
-    }
-
-    #[test]
-    fn test_tabix_py_error_not_found_maps_to_io_error() {
-        let err = io::Error::new(ErrorKind::NotFound, "not found");
-        let py_err = tabix_py_error(err);
-
-        Python::initialize();
-        let type_name = Python::attach(|py| py_err.get_type(py).name().unwrap().to_string());
-
-        assert_eq!(type_name, "OSError");
-    }
-
-    #[test]
-    fn test_tabix_py_error_kind_routing() {
-        // Verify some expected error kinds are mapped without panicking.
-        for kind in [
-            ErrorKind::InvalidData,
-            ErrorKind::InvalidInput,
-            ErrorKind::NotFound,
-            ErrorKind::Other,
-            ErrorKind::PermissionDenied,
-        ] {
-            let _ = tabix_py_error(io::Error::new(kind, "test"));
         }
     }
 

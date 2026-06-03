@@ -13,6 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use pyo3::{
+    exceptions::{PyIOError, PyRuntimeError, PyValueError},
+    prelude::*,
+};
+use std::io::{self, ErrorKind};
+
 pub(crate) fn trim_newline(line: &mut String) {
     if line.ends_with('\n') {
         line.pop();
@@ -22,9 +28,61 @@ pub(crate) fn trim_newline(line: &mut String) {
     }
 }
 
+pub(crate) fn py_error(err: io::Error) -> PyErr {
+    match err.kind() {
+        ErrorKind::InvalidData | ErrorKind::InvalidInput => PyValueError::new_err(err.to_string()),
+        ErrorKind::NotFound => PyIOError::new_err(err.to_string()),
+        _ => PyRuntimeError::new_err(err.to_string()),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    // -----------------------------------------------------------------------
+    // py_error — error kind mapping
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_py_error_invalid_data_maps_to_value_error() {
+        let err = io::Error::new(ErrorKind::InvalidData, "bad data");
+        let py_err = py_error(err);
+
+        Python::initialize();
+        let type_name = Python::attach(|py| py_err.get_type(py).name().unwrap().to_string());
+
+        assert_eq!(type_name, "ValueError");
+    }
+
+    #[test]
+    fn test_py_error_not_found_maps_to_io_error() {
+        let err = io::Error::new(ErrorKind::NotFound, "not found");
+        let py_err = py_error(err);
+
+        Python::initialize();
+        let type_name = Python::attach(|py| py_err.get_type(py).name().unwrap().to_string());
+
+        assert_eq!(type_name, "OSError");
+    }
+
+    #[test]
+    fn test_py_error_kind_routing() {
+        // Verify some expected error kinds are mapped without panicking.
+        for kind in [
+            ErrorKind::InvalidData,
+            ErrorKind::InvalidInput,
+            ErrorKind::NotFound,
+            ErrorKind::Other,
+            ErrorKind::PermissionDenied,
+        ] {
+            let _ = py_error(io::Error::new(kind, "test"));
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // trim_newline
+    // -----------------------------------------------------------------------
 
     #[test]
     fn test_trim_newline_lf() {
