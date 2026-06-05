@@ -39,9 +39,7 @@ class StructuralVariationAllele(VariationAllele):
         msg += "Returning the original representation"
         logger.warning(msg)
 
-        original_locus = self._original_locus or self._locus
-
-        setattr(self, "_original_locus", self._original_locus or original_locus)
+        setattr(self, "_original_locus", self._locus)
         setattr(self, "_minimised_locus", self._locus)
         setattr(self, "_minimised", True)
 
@@ -56,8 +54,6 @@ class StructuralVariationAllele(VariationAllele):
         msg += "Returning the original representation"
         logger.warning(msg)
 
-        original_locus = self._original_locus or self._locus
-
-        setattr(self, "_original_locus", self._original_locus or original_locus)
+        setattr(self, "_original_locus", self._locus)
         setattr(self, "_shifted_locus", self._locus)
         setattr(self, "_shifted", True)
