@@ -13,14 +13,11 @@
 # limitations under the License.
 """StructuralVariation class."""
 
-from functools import cached_property
 from typing import Sequence
 from attrs import define, field
 
-from ensembl.vep.common import invalidate
 from ensembl.vep.models.variation.variation import Variation
 from ensembl.vep.models.variation.structural_variation_allele import StructuralVariationAllele
-from ensembl.vep.models.variation.variation_allele import VariationAllele
 
 
 @define(kw_only=True, auto_attribs=True)
@@ -40,6 +37,8 @@ class StructuralVariation(Variation):
         outer_end (int | None):
             The outer bound on the end position when the variant is imprecise
             Sequence Ontology term describing the class of the variation.
+        variation_alleles (Sequence[StructuralVariationAllele]):
+            List of VariationAllele objects describing the alleles of the variation.
     """
 
     copy_number: int | None = field(default=None)
@@ -47,33 +46,4 @@ class StructuralVariation(Variation):
     outer_start: int | None = field(default=None)
     inner_end: int | None = field(default=None)
     outer_end: int | None = field(default=None)
-
-    @cached_property
-    def _variation_alleles(self) -> Sequence[VariationAllele]:
-        """Returns the list of StructuralVariationAllele objects for the variation.
-
-        Returns:
-            list[StructuralVariationAllele]: The list of StructuralVariationAllele objects for the variation.
-        """
-        invalidate(self, "_most_severe_consequence")
-
-        with self._lock:
-            structural_variation_alleles = []
-            alleles = (self.allele_string or "").split("/")
-
-            ref = alleles[0]
-            alts = alleles[1:]
-            for alt in alts:
-                # ref is still same for all alleles, so we can use the start and end for all alleles
-                structural_variation_allele = StructuralVariationAllele(
-                    start=self.start,
-                    end=self.end,
-                    strand=self.strand,
-                    slice=self.slice,
-                    reference_allele=ref,
-                    alternate_allele=alt,
-                )
-
-                structural_variation_alleles.append(structural_variation_allele)
-
-            return structural_variation_alleles
+    variation_alleles: Sequence[StructuralVariationAllele] = field(factory=list, init=False)
