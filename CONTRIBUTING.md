@@ -52,7 +52,7 @@ The following packages are pre-requisites to be able to contribute to the Ensemb
 
    and, run -
    ```bash
-   uv build
+   uv pip install -e .
    ```
 
 6. **Run tests**:
