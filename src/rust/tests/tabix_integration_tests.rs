@@ -27,7 +27,7 @@ const GFF3_LINES: [&str; 6] = [
     "#seqid\tsource\ttype\tstart\tend\tscore\tstrand\tphase\tattributes",
     "chr1\ttabix\tgene\t10\t20\t.\t+\t.\tID=gene:1",
     "chr1\ttabix\texon\t12\t14\t.\t+\t.\tID=exon:1",
-    "chr1\ttabix\tCDS\t15\t18\t.\t+\t0\tID=cds:1",
+    "chr1\ttabix\texon\t15\t18\t.\t+\t0\tID=exon:2",
     "chr2\ttabix\tgene\t100\t120\t.\t-\t.\tID=gene:2",
 ];
 const BED_LINES: [&str; 5] = [

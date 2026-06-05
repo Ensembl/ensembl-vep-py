@@ -26,8 +26,8 @@ HEADER_LINES = [
     "#seqid\tsource\ttype\tstart\tend\tscore\tstrand\tphase\tattributes",
 ]
 CHR1_GENE_ROW = "chr1\ttabix\tgene\t10\t20\t.\t+\t.\tID=gene:1"
-CHR1_EXON_ROW = "chr1\ttabix\texon\t12\t14\t.\t+\t.\tID=exon:1"
-CHR1_CDS_ROW = "chr1\ttabix\tCDS\t15\t18\t.\t+\t0\tID=cds:1"
+CHR1_EXON1_ROW = "chr1\ttabix\texon\t12\t14\t.\t+\t.\tID=exon:1"
+CHR1_EXON2_ROW = "chr1\ttabix\texon\t15\t18\t.\t+\t0\tID=exon:2"
 CHR2_GENE_ROW = "chr2\ttabix\tgene\t100\t120\t.\t-\t.\tID=gene:2"
 BED_HEADER_ROW = "#chrom\tstart\tend\tname"
 BED_CHR1_FEATURE1_ROW = "chr1\t9\t20\tfeature1"
@@ -78,12 +78,12 @@ fi
 case "$2" in
     chr1)
         printf '%s\\n' '{CHR1_GENE_ROW}'
-        printf '%s\\n' '{CHR1_EXON_ROW}'
-        printf '%s\\n' '{CHR1_CDS_ROW}'
+        printf '%s\\n' '{CHR1_EXON1_ROW}'
+        printf '%s\\n' '{CHR1_EXON2_ROW}'
         ;;
     chr1:10-20)
         printf '%s\\n' '{CHR1_GENE_ROW}'
-        printf '%s\\n' '{CHR1_EXON_ROW}'
+        printf '%s\\n' '{CHR1_EXON1_ROW}'
         ;;
     chr2:100-120)
         printf '%s\\n' '{CHR2_GENE_ROW}'
@@ -106,8 +106,8 @@ def _create_tabix_gff3_cli(
         HEADER_LINES[0],
         HEADER_LINES[1],
         CHR1_GENE_ROW,
-        CHR1_EXON_ROW,
-        CHR1_CDS_ROW,
+        CHR1_EXON1_ROW,
+        CHR1_EXON2_ROW,
         CHR2_GENE_ROW,
     ]
     unzip_path.write_text("\n".join(fixture_lines) + "\n")
@@ -316,7 +316,7 @@ class TestTabixParserSeek:
 
         assert parser.seek(seqid="chr1", start=10, end=20) is True
         assert parser.next() == CHR1_GENE_ROW
-        assert parser.records() == [CHR1_EXON_ROW]
+        assert parser.records() == [CHR1_EXON1_ROW]
         assert parser.next() is None
 
     def test_tabix_parser_seek_accepts_region_string(self, tmp_path: Path) -> None:
@@ -337,7 +337,7 @@ class TestTabixParserSeek:
         parser = TabixParser(file_path=path, tabix_path=str(tabix))
 
         assert parser.seek(seqid="chr1") is True
-        assert parser.records() == [CHR1_GENE_ROW, CHR1_EXON_ROW, CHR1_CDS_ROW]
+        assert parser.records() == [CHR1_GENE_ROW, CHR1_EXON1_ROW, CHR1_EXON2_ROW]
 
     def test_tabix_parser_seek_empty_region(self, tmp_path: Path) -> None:
         """Test seek returns false when no rows are available."""
@@ -380,7 +380,7 @@ class TestTabixParserRecords:
         parser.seek(seqid="chr1")
 
         assert parser.next() == CHR1_GENE_ROW
-        assert parser.records() == [CHR1_EXON_ROW, CHR1_CDS_ROW]
+        assert parser.records() == [CHR1_EXON1_ROW, CHR1_EXON2_ROW]
 
     def test_records_respects_limit(self, tmp_path: Path) -> None:
         """Test records stops once the limit is reached."""
@@ -391,8 +391,8 @@ class TestTabixParserRecords:
 
         parser.seek(seqid="chr1")
 
-        assert parser.records(limit=2) == [CHR1_GENE_ROW, CHR1_EXON_ROW]
-        assert parser.records() == [CHR1_CDS_ROW]
+        assert parser.records(limit=2) == [CHR1_GENE_ROW, CHR1_EXON1_ROW]
+        assert parser.records() == [CHR1_EXON2_ROW]
 
     def test_records_zero_limit_does_not_consume_buffered_row(self, tmp_path: Path) -> None:
         """Test zero limit leaves the primed row available."""
@@ -426,9 +426,9 @@ class TestTabixParserIteration:
 
         parser.seek(seqid="chr1", start=10, end=20)
 
-        assert list(parser) == [CHR1_GENE_ROW, CHR1_EXON_ROW]
+        assert list(parser) == [CHR1_GENE_ROW, CHR1_EXON1_ROW]
 
-        record_list = [CHR1_GENE_ROW, CHR1_EXON_ROW]
+        record_list = [CHR1_GENE_ROW, CHR1_EXON1_ROW]
         for idx, record in enumerate(parser):
             assert record == record_list[idx]
 
@@ -453,7 +453,7 @@ class TestTabixParserIntegration:
     @pytest.mark.parametrize(
         ("dataset", "expected_header", "expected_first", "expected_rest"),
         [
-            ("gff3", HEADER_LINES, CHR1_GENE_ROW, [CHR1_EXON_ROW, CHR1_CDS_ROW]),
+            ("gff3", HEADER_LINES, CHR1_GENE_ROW, [CHR1_EXON1_ROW, CHR1_EXON2_ROW]),
             (
                 "bed",
                 [BED_HEADER_ROW],
