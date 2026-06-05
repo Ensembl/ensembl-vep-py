@@ -361,7 +361,7 @@ class TestFormatRegionString:
         """Formats a bounded 1-based region."""
 
         assert format_region_string(seqid="chr1", start=10, end=20) == "chr1:10-20"
-    
+
     def test_seqid_start(self) -> None:
         """Formats a region with only start coordinate."""
 

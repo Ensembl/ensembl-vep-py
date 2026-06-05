@@ -340,14 +340,13 @@ def format_region_string(
     if seqid is None:
         raise ValueError("region requires either region or seqid")
 
-    if start is None and end is None:
+    if start is None:
+        if end is not None:
+            raise ValueError("end coordinate provided without start coordinate")
         return seqid
-    
-    if start and end is None:
-        return f"{seqid}:{start}"
 
-    if start is None and end:
-        raise ValueError("end coordinate provided without start coordinate")
+    if end is None:
+        return f"{seqid}:{start}"
 
     if start < 1 or end < 1:
         raise ValueError("regions are 1-based and must be positive")
