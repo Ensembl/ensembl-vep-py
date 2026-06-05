@@ -24,6 +24,8 @@ from ensembl.vep.ensembl_vep_core import (  # noqa: F401,F403 pylint: disable=E0
     TabixParser as _RustTabixParser,
 )
 
+__all__ = ["TabixParser"]
+
 
 @define(kw_only=True, auto_attribs=True)
 class TabixParser(Parser[str]):
@@ -152,6 +154,3 @@ class TabixParser(Parser[str]):
             del self._metadata
         except AttributeError:
             pass
-
-
-__all__ = ["TabixParser"]
