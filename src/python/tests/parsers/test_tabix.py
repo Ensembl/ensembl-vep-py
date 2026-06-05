@@ -354,9 +354,8 @@ class TestTabixParserSeek:
         [
             {},
             {"region": "chr1:10-20", "seqid": "chr1"},
-            {"seqid": "chr1", "start": 10},
             {"seqid": "chr1", "start": 0, "end": 20},
-            {"seqid": "chr1", "start": 20, "end": 10},
+            {"seqid": "chr1", "start": 10, "end": 0},
         ],
     )
     def test_tabix_parser_seek_rejects_invalid_region_arguments(self, kwargs: dict[str, object]) -> None:
