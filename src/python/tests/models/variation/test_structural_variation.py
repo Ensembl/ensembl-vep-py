@@ -20,7 +20,7 @@ from __future__ import annotations
 import pytest
 
 from ensembl.vep.common import ClassSOTerm, Strand
-from ensembl.vep.models.variation import StructuralVariation, OverlapConsequence
+from ensembl.vep.models.variation import StructuralVariation, StructuralVariationAllele, OverlapConsequence
 from ensembl.vep.models.sequence import Slice
 
 
@@ -97,6 +97,19 @@ def multiallelic_structural_variation(genomic_slice: Slice) -> StructuralVariati
 
 
 @pytest.fixture
+def structural_variation_allele(genomic_slice: Slice) -> StructuralVariationAllele:
+    """Returns a StructuralVariationAllele object for testing."""
+    return StructuralVariationAllele(
+        start=5,
+        end=150,
+        strand=Strand.FORWARD,
+        slice=genomic_slice,
+        reference_allele="-",
+        alternate_allele="DEL",
+    )
+
+
+@pytest.fixture
 def overlap_consequence() -> OverlapConsequence:
     """Returns an OverlapConsequence object for testing."""
     return OverlapConsequence(term="transcript_ablation", accession="SO:0001893")
@@ -134,6 +147,18 @@ class TestStructuralVariationProperties:
         assert structural_variation.outer_start is None, "outer_start attribute incorrect default"
         assert structural_variation.inner_end is None, "inner_end attribute incorrect default"
         assert structural_variation.outer_end is None, "outer_end attribute incorrect default"
+        assert structural_variation.variation_alleles == [], "variation_alleles attribute incorrect default"
+
+    def test_sva_assigment(
+        self,
+        structural_variation: StructuralVariation,
+        structural_variation_allele: StructuralVariationAllele,
+    ) -> None:
+        """Test assigning to variation_alleles."""
+        structural_variation.variation_alleles = [structural_variation_allele]
+        assert structural_variation.variation_alleles == [
+            structural_variation_allele
+        ], "variation_alleles attribute incorrectly assigned"
 
     def test_most_severe_consequence_immutable(
         self, structural_variation: StructuralVariation, overlap_consequence: OverlapConsequence
@@ -151,75 +176,6 @@ class TestStructuralVariationProperties:
             AttributeError, match="property 'class_so_term' of 'StructuralVariation' object has no setter"
         ):
             structural_variation.class_so_term = ClassSOTerm.SEQUENCE_ALTERATION  # type: ignore[misc]
-
-
-class TestStructuralVariationAlleles:
-    """Tests for the variation_alleles cached property."""
-
-    def test_single_alt_allele(self, structural_variation: StructuralVariation) -> None:
-        """Test that a bi-allelic structural_variation returns the correct StructuralVariationAllele."""
-        alleles = structural_variation.variation_alleles
-
-        assert (
-            len(alleles) == 1
-        ), "Length of variation_alleles attribute is incorrect: single alt allele, deletion"
-        assert (
-            alleles[0].reference_allele == "A"
-        ), "reference_allele attribute incorrect: single alt allele, deletion"
-        assert (
-            alleles[0].alternate_allele == "DEL"
-        ), "alternate_allele attribute incorrect: single alt allele, deletion"
-
-    def test_multiple_alt_alleles(self, multiallelic_structural_variation: StructuralVariation) -> None:
-        """Test that a multi-allelic structural_variation returns the correct StructuralVariationAlleles."""
-        alleles = multiallelic_structural_variation.variation_alleles
-
-        assert len(alleles) == 2, "Length of variation_alleles attribute is incorrect: multiple alt allele"
-        assert (
-            alleles[0].alternate_allele == "(CAG)12"
-        ), "First alternate_allele attribute incorrect: multiple alt allele"
-        assert (
-            alleles[1].alternate_allele == "(CAG)15"
-        ), "Second alternate_allele attribute incorrect: multiple alt allele"
-        # All share the same reference
-        assert all(
-            a.reference_allele == "(CAG)9" for a in alleles
-        ), "reference_allele attribute incorrect: multiple alt allele"
-
-    def test_insertion_alleles(self, insertion_structural_variation: StructuralVariation) -> None:
-        """Test that an insertion structural_variation returns the correct StructuralVariationAllele."""
-        alleles = insertion_structural_variation.variation_alleles
-
-        assert (
-            len(alleles) == 1
-        ), "Length of variation_alleles attribute is incorrect: single alt allele, insertion"
-        assert (
-            alleles[0].reference_allele == "-"
-        ), "reference_allele attribute incorrect: single alt allele, insertion"
-        assert (
-            alleles[0].alternate_allele == "INS"
-        ), "alternate_allele attribute incorrect: single alt allele, insertion"
-
-    def test_alleles_inherit_coordinates(self, structural_variation: StructuralVariation) -> None:
-        """Test that structural_variation alleles inherit coordinates from the structural_variation."""
-        alleles = structural_variation.variation_alleles
-
-        assert alleles[0].start == 5, "Inherited start attribute incorrect"
-        assert alleles[0].end == 150, "Inherited end attribute incorrect"
-        assert alleles[0].strand == Strand.FORWARD, "Inherited strand attribute incorrect"
-        assert alleles[0].slice == structural_variation.slice, "Inherited slice attribute incorrect"
-
-    def test_none_allele_string_returns_empty(self, genomic_slice: Slice) -> None:
-        """Test that an undefined allele string (None) returns an empty list of alleles."""
-        var = StructuralVariation(
-            start=100,
-            end=100,
-            strand=Strand.FORWARD,
-            slice=genomic_slice,
-            allele_string=None,
-        )
-        alleles = var.variation_alleles
-        assert len(alleles) == 0, "length of alleles attribute for empty allele string is incorrect"
 
 
 class TestClassSOTerm:
