@@ -312,6 +312,7 @@ def shift_sequence(
     return (shift_length, "".join(seq_d), start, end, changed)
 
 
+<<<<<<< HEAD
 def format_region_string(
     region: str | None = None,
     *,
@@ -354,6 +355,8 @@ def format_region_string(
     return f"{seqid}:{start}-{end}"
 
 
+=======
+>>>>>>> d627a27 (remove redundant changes from other commit)
 def infer_variant_so_term(allele_string: str, ref_correct: bool = False) -> ClassSOTerm | None:
     """
     Return the SO term for the class of the variation.
