@@ -22,6 +22,20 @@ pub(crate) enum Strand {
     Unknown = 0,
 }
 
+
+impl<'py> IntoPyObject<'py> for Strand {
+    type Target = PyAny;
+    type Output = Bound<'py, PyAny>;
+    type Error = PyErr;
+
+    fn into_pyobject(self, py: Python<'py>) -> PyResult<Self::Output> {
+        let module = py.import("ensembl_vep_core")?;
+        let strand_cls = module.getattr("Strand")?;
+
+        strand_cls.call1((self as i8,))
+    }
+}
+
 #[repr(i8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum ExonPhase {
@@ -29,6 +43,19 @@ pub(crate) enum ExonPhase {
     One = 1,
     Two = 2,
     Unknown = -1,
+}
+
+impl<'py> IntoPyObject<'py> for ExonPhase {
+    type Target = PyAny;
+    type Output = Bound<'py, PyAny>;
+    type Error = PyErr;
+
+    fn into_pyobject(self, py: Python<'py>) -> PyResult<Self::Output> {
+        let module = py.import("ensembl_vep_core")?;
+        let exon_phase_cls = module.getattr("ExonPhase")?;
+
+        exon_phase_cls.call1((self as i8,))
+    }
 }
 
 pub(crate) fn register_enums(m: &Bound<'_, PyModule>) -> PyResult<()> {
