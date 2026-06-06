@@ -17,15 +17,18 @@ use pyo3::prelude::*;
 // Keep this crate root as PyO3 module registration glue only. Rust logic should
 // live in submodules where it can be tested directly; coverage jobs ignore this
 // file with cargo-llvm-cov --ignore-filename-regex so stable Rust is sufficient.
-mod hello;
+pub mod hello;
+pub mod utils;
 
 #[pymodule]
 mod ensembl_vep_core {
+    use crate::utils;
     use pyo3::prelude::*;
 
     #[pymodule_init]
-    fn init(_m: &Bound<'_, PyModule>) -> PyResult<()> {
+    fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
         pyo3_log::init();
+        utils::register_enums(m)?;
         Ok(())
     }
 

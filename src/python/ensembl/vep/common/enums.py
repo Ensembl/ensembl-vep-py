@@ -14,14 +14,7 @@
 """Common enums."""
 
 from enum import Enum
-
-
-class Strand(Enum):
-    """Genomic strand."""
-
-    FORWARD = 1
-    REVERSE = -1
-    UNKNOWN = 0
+from ensembl.vep.ensembl_vep_core import Strand, ExonPhase # pylint: disable=E0611,W0611
 
 
 class CoordSystemLevel(Enum):
@@ -30,15 +23,6 @@ class CoordSystemLevel(Enum):
     CHROMOSOME = 1
     TOPLEVEL = 2
     CONTIG = 3
-
-
-class ExonPhase(Enum):
-    """Phase of an exon."""
-
-    ZERO = 0
-    ONE = 1
-    TWO = 2
-    UNKNOWN = -1
 
 
 class ClassSOTerm(Enum):
