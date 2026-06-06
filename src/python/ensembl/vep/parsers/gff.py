@@ -13,12 +13,16 @@
 # limitations under the License.
 """GFF parser interface backed by the Rust noodles-gff parser."""
 
+from __future__ import annotations
+
 from collections.abc import Iterator
 from pathlib import Path
 
 from ensembl.vep.common import format_region_string
 from ensembl.vep.ensembl_vep_core import GFFParser as _RustGFFParser
 from ensembl.vep.ensembl_vep_core import GFFRecord
+
+__all__ = ["GFFParser", "GFFRecord"]
 
 
 class GFFParser:
@@ -46,7 +50,7 @@ class GFFParser:
 
         return self._parser.reader_mode
 
-    def open(self, file_path: str | Path) -> "GFFParser":
+    def open(self, file_path: str | Path) -> GFFParser:
         """Open a GFF file for streaming reads."""
 
         self._parser.open(str(file_path))
@@ -90,7 +94,7 @@ class GFFParser:
 
         return record
 
-    def __enter__(self) -> "GFFParser":
+    def __enter__(self) -> GFFParser:
         return self
 
     def __exit__(self, *_exc_info: object) -> None:
@@ -107,5 +111,3 @@ class GFFParser:
         """Parse GFF records from a file."""
 
         return _RustGFFParser.parse_file(str(file_path), limit)
-
-__all__ = ["GFFParser", "GFFRecord"]

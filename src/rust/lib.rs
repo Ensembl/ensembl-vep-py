@@ -36,9 +36,6 @@ mod ensembl_vep_core {
     use crate::hello::sum_as_string;
 
     #[pymodule_export]
-    use crate::hello::sum_as_string;
-
-    #[pymodule_export]
     use crate::parsers::gff::{GffParser, GffRecord};
 
     #[pymodule_export]

@@ -19,7 +19,7 @@ use std::{
 };
 
 use crate::{
-    parsers::tabix::{self, associated_index_path, py_err},
+    parsers::tabix::{self, associated_index_path},
     parsers::utils::ReaderMode,
     utils::py_error,
 };
@@ -35,6 +35,10 @@ use pyo3::{
 };
 
 type AttributePairs = Vec<(String, Vec<String>)>;
+
+// ---------------------------------------------------------------------------
+// GFFRecord - represents a GFF record
+// ---------------------------------------------------------------------------
 
 #[pyclass(name = "GFFRecord")]
 #[derive(Clone, Debug, PartialEq)]
@@ -52,9 +56,9 @@ pub struct GffRecord {
     #[pyo3(get)]
     pub score: Option<f64>,
     #[pyo3(get)]
-    pub strand: String,
+    pub strand_symbol: String,
     #[pyo3(get)]
-    pub phase: Option<u8>,
+    pub phase_value: Option<u8>,
     attributes: AttributePairs,
     #[pyo3(get)]
     pub raw_attributes: String,
@@ -75,31 +79,23 @@ impl GffRecord {
 
     fn __repr__(&self) -> String {
         format!(
-            "GFFRecord(seqid={:?}, feature_type={:?}, start={}, end={})",
-            self.seqid, self.feature_type, self.start, self.end
+            "GFFRecord(seqid={:?}, feature_type={:?}, start={}, end={}, strand_symbol={:?}, phase_value={:?})",
+            self.seqid, self.feature_type, self.start, self.end, self.strand_symbol, self.phase_value
         )
     }
 }
 
+// ---------------------------------------------------------------------------
+// GffReader - public entry point
+// ---------------------------------------------------------------------------
+
+// A reusable GFF reader that supports both sequential and indexed (tabix) reading modes.
+
+// The reader by default uses indexed reading if a tabix index is available, 
+// but can be forced into sequential mode via the `mode` parameter on `GffParser`.
 pub struct GffReader {
     backend: Backend,
     mode: ReaderMode,
-}
-
-enum Backend {
-    Sequential(SequentialBackend),
-    Tabix(Box<TabixBackend>),
-}
-
-struct SequentialBackend {
-    reader: gff::io::Reader<BufReader<File>>,
-}
-
-struct TabixBackend {
-    file_path: PathBuf,
-    tabix_path: String,
-    reader: Option<tabix::TabixReader>,
-    query_active: bool,
 }
 
 impl GffReader {
@@ -117,6 +113,15 @@ impl GffReader {
     fn seek(&mut self, region: &str) -> io::Result<bool> {
         self.backend.seek(region)
     }
+}
+
+// ---------------------------------------------------------------------------
+// Backend
+// ---------------------------------------------------------------------------
+
+enum Backend {
+    Sequential(SequentialBackend),
+    Tabix(Box<TabixBackend>),
 }
 
 impl Backend {
@@ -152,6 +157,14 @@ impl Backend {
     }
 }
 
+// ---------------------------------------------------------------------------
+// SequentialBackend - simple line-by-line reader
+// ---------------------------------------------------------------------------
+
+struct SequentialBackend {
+    reader: gff::io::Reader<BufReader<File>>,
+}
+
 impl SequentialBackend {
     fn new<P>(file_path: P) -> io::Result<Self>
     where
@@ -175,6 +188,17 @@ impl SequentialBackend {
     }
 }
 
+// ---------------------------------------------------------------------------
+// TabixBackend - uses tabix for indexed reading
+// ---------------------------------------------------------------------------
+
+struct TabixBackend {
+    file_path: PathBuf,
+    tabix_path: String,
+    reader: Option<tabix::TabixReader>,
+    query_active: bool,
+}
+    
 impl TabixBackend {
     fn new<P>(file_path: P, tabix_path: &str) -> io::Result<Self>
     where
@@ -223,11 +247,6 @@ impl TabixBackend {
 
         Ok(None)
     }
-}
-
-fn has_tabix_index(file_path: &Path) -> bool {
-    associated_index_path(file_path, "tbi").exists()
-        || associated_index_path(file_path, "csi").exists()
 }
 
 // ---------------------------------------------------------------------------
@@ -285,7 +304,7 @@ impl GffParser {
     fn open(&mut self, file_path: &str) -> PyResult<()> {
         let path = PathBuf::from(file_path);
 
-        self.reader = Some(GffReader::open(&path, &self.tabix_path, self.reader_mode).map_err(py_err)?);
+        self.reader = Some(GffReader::open(&path, &self.tabix_path, self.reader_mode).map_err(py_error)?);
         self.file_path = Some(path);
 
         Ok(())
@@ -296,12 +315,12 @@ impl GffParser {
     }
 
     fn seek(&mut self, region: &str) -> PyResult<bool> {
-        self.reader()?.seek(region).map_err(py_err)
+        self.reader()?.seek(region).map_err(py_error)
     }
 
     #[allow(clippy::should_implement_trait)]
     fn next(&mut self) -> PyResult<Option<GffRecord>> {
-        self.reader()?.next().map_err(py_err)
+        self.reader()?.next().map_err(py_error)
     }
 
     #[pyo3(signature = (limit=10000))]
@@ -321,16 +340,16 @@ impl GffParser {
     #[staticmethod]
     #[pyo3(signature = (data, limit=None))]
     fn parse_text(data: &str, limit: Option<usize>) -> PyResult<Vec<GffRecord>> {
-        parse_gff_bytes(data.as_bytes(), limit).map_err(py_err)
+        parse_gff_bytes(data.as_bytes(), limit).map_err(py_error)
     }
 
     #[staticmethod]
     #[pyo3(signature = (file_path, limit=None))]
     fn parse_file(file_path: &str, limit: Option<usize>) -> PyResult<Vec<GffRecord>> {
-        let file = File::open(file_path).map_err(py_err)?;
+        let file = File::open(file_path).map_err(py_error)?;
         let mut reader = gff::io::Reader::new(BufReader::new(file));
 
-        read_records(&mut reader, limit).map_err(py_err)
+        read_records(&mut reader, limit).map_err(py_error)
     }
 }
 
@@ -346,23 +365,9 @@ impl GffParser {
 // Helpers
 // ---------------------------------------------------------------------------
 
-fn read_records<R>(
-    reader: &mut gff::io::Reader<R>,
-    limit: Option<usize>,
-) -> io::Result<Vec<GffRecord>>
-where
-    R: BufRead,
-{
-    let mut records = Vec::new();
-
-    while limit.is_none_or(|n| records.len() < n) {
-        match read_next_record(reader)? {
-            Some(record) => records.push(record),
-            None => break,
-        }
-    }
-
-    Ok(records)
+fn has_tabix_index(file_path: &Path) -> bool {
+    associated_index_path(file_path, "tbi").exists()
+        || associated_index_path(file_path, "csi").exists()
 }
 
 fn read_next_record<R>(reader: &mut gff::io::Reader<R>) -> io::Result<Option<GffRecord>>
@@ -399,6 +404,25 @@ where
     }
 }
 
+fn read_records<R>(
+    reader: &mut gff::io::Reader<R>,
+    limit: Option<usize>,
+) -> io::Result<Vec<GffRecord>>
+where
+    R: BufRead,
+{
+    let mut records = Vec::new();
+
+    while limit.is_none_or(|n| records.len() < n) {
+        match read_next_record(reader)? {
+            Some(record) => records.push(record),
+            None => break,
+        }
+    }
+
+    Ok(records)
+}
+
 fn parse_gff_bytes(data: &[u8], limit: Option<usize>) -> io::Result<Vec<GffRecord>> {
     let mut reader = gff::io::Reader::new(data);
     read_records(&mut reader, limit)
@@ -420,8 +444,8 @@ fn record_to_py(record: gff::Record<'_>, raw_attributes: String) -> io::Result<G
         start: record.start()?.get(),
         end: record.end()?.get(),
         score: record.score().transpose()?.map(f64::from),
-        strand: strand_to_string(record.strand()?),
-        phase: record.phase().transpose()?.map(phase_to_u8),
+        strand_symbol: strand_to_string(record.strand()?),
+        phase_value: record.phase().transpose()?.map(phase_to_u8),
         attributes: parse_attributes(record.attributes())?,
         raw_attributes,
     })
@@ -476,8 +500,7 @@ fn strand_to_string(strand: Strand) -> String {
         Strand::Forward => "+",
         Strand::Reverse => "-",
         Strand::Unknown => "?",
-    }
-    .to_string()
+    }.to_string()
 }
 
 fn phase_to_u8(phase: Phase) -> u8 {
@@ -514,8 +537,8 @@ ACGT
         assert_eq!(record.start, 10);
         assert_eq!(record.end, 20);
         assert_eq!(record.score, None);
-        assert_eq!(record.strand, "+");
-        assert_eq!(record.phase, None);
+        assert_eq!(record.strand_symbol, "+");
+        assert_eq!(record.phase_value, None);
         assert_eq!(record.raw_attributes, "ID=gene:1;Name=BRCA2;Alias=a,b");
         assert_eq!(
             record.attributes,
@@ -528,8 +551,8 @@ ACGT
 
         let record = &records[1];
         assert_eq!(record.score, Some(4.5));
-        assert_eq!(record.strand, "-");
-        assert_eq!(record.phase, Some(2));
+        assert_eq!(record.strand_symbol, "-");
+        assert_eq!(record.phase_value, Some(2));
 
         Ok(())
     }
@@ -552,10 +575,10 @@ ACGT
     fn test_parser_next_does_not_require_tabix() -> PyResult<()> {
         let dir = std::env::temp_dir().join(format!("ensembl-vep-gff-test-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&dir);
-        std::fs::create_dir_all(&dir).map_err(py_err)?;
+        std::fs::create_dir_all(&dir).map_err(py_error)?;
 
         let path = dir.join("sample.gff3");
-        std::fs::write(&path, SAMPLE).map_err(py_err)?;
+        std::fs::write(&path, SAMPLE).map_err(py_error)?;
 
         let mut parser = GffParser::new(
             Some(path.to_string_lossy().into_owned()),
@@ -572,7 +595,7 @@ ACGT
         assert_eq!(second.feature_type, "CDS");
         assert!(parser.next()?.is_none());
 
-        std::fs::remove_dir_all(dir).map_err(py_err)?;
+        std::fs::remove_dir_all(dir).map_err(py_error)?;
 
         Ok(())
     }
@@ -581,16 +604,16 @@ ACGT
     fn test_query_mode_seek_without_index_errors() -> PyResult<()> {
         let dir = std::env::temp_dir().join(format!("ensembl-vep-gff-no-index-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&dir);
-        std::fs::create_dir_all(&dir).map_err(py_err)?;
+        std::fs::create_dir_all(&dir).map_err(py_error)?;
 
         let path = dir.join("sample.gff3.gz");
-        std::fs::write(&path, SAMPLE).map_err(py_err)?;
+        std::fs::write(&path, SAMPLE).map_err(py_error)?;
 
         let mut parser = GffParser::new(Some(path.to_string_lossy().into_owned()), None, None)?;
         let err = parser.seek("chr1:10-20").unwrap_err();
         assert!(err.to_string().contains("sequential"), "unexpected error: {err}");
 
-        std::fs::remove_dir_all(dir).map_err(py_err)?;
+        std::fs::remove_dir_all(dir).map_err(py_error)?;
         Ok(())
     }
 
@@ -598,10 +621,10 @@ ACGT
     fn test_sequential_mode_rejects_seek() -> PyResult<()> {
         let dir = std::env::temp_dir().join(format!("ensembl-vep-gff-seq-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&dir);
-        std::fs::create_dir_all(&dir).map_err(py_err)?;
+        std::fs::create_dir_all(&dir).map_err(py_error)?;
 
         let path = dir.join("sample.gff3");
-        std::fs::write(&path, SAMPLE).map_err(py_err)?;
+        std::fs::write(&path, SAMPLE).map_err(py_error)?;
 
         let mut parser = GffParser::new(
             Some(path.to_string_lossy().into_owned()),
@@ -612,7 +635,7 @@ ACGT
         assert_eq!(parser.reader_mode(), "sequential");
         assert!(parser.seek("chr1:10-20").unwrap_err().to_string().contains("sequential"));
 
-        std::fs::remove_dir_all(dir).map_err(py_err)?;
+        std::fs::remove_dir_all(dir).map_err(py_error)?;
         Ok(())
     }
 }
