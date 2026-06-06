@@ -14,7 +14,7 @@
 """Common enums."""
 
 from enum import Enum
-from ensembl.vep.ensembl_vep_core import Strand, ExonPhase # pylint: disable=E0611,W0611
+from ensembl.vep.ensembl_vep_core import Strand, ExonPhase  # pylint: disable=E0611,W0611
 
 
 class CoordSystemLevel(Enum):

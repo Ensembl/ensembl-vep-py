@@ -12,26 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use pyo3::{
-    prelude::*,
-    types::PyDict,
-};
+use pyo3::{prelude::*, types::PyDict};
 
 #[repr(i8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum Strand {
-    FORWARD = 1,
-    REVERSE = -1,
-    UNKNOWN = 0,
+    Forward = 1,
+    Reverse = -1,
+    Unknown = 0,
 }
 
 #[repr(i8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum ExonPhase {
-    ZERO = 0,
-    ONE = 1,
-    TWO = 2,
-    UNKNOWN = -1,
+    Zero = 0,
+    One = 1,
+    Two = 2,
+    Unknown = -1,
 }
 
 pub(crate) fn register_enums(m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -40,23 +37,19 @@ pub(crate) fn register_enums(m: &Bound<'_, PyModule>) -> PyResult<()> {
 
     // Register Strand enum.
     let members = PyDict::new(py);
-    members.set_item("FORWARD", Strand::FORWARD as i8)?;
-    members.set_item("REVERSE", Strand::REVERSE as i8)?;
-    members.set_item("UNKNOWN", Strand::UNKNOWN as i8)?;
-    let strand = enum_mod
-        .getattr("IntEnum")?
-        .call1(("Strand", members))?;
+    members.set_item("FORWARD", Strand::Forward as i8)?;
+    members.set_item("REVERSE", Strand::Reverse as i8)?;
+    members.set_item("UNKNOWN", Strand::Unknown as i8)?;
+    let strand = enum_mod.getattr("IntEnum")?.call1(("Strand", members))?;
     m.add("Strand", strand)?;
 
     // Register ExonPhase enum.
     let members = PyDict::new(py);
-    members.set_item("ZERO", 0)?;
-    members.set_item("ONE", 1)?;
-    members.set_item("TWO", 2)?;
-    members.set_item("UNKNOWN", -1)?;
-    let exon_phase = enum_mod
-        .getattr("IntEnum")?
-        .call1(("ExonPhase", members))?;
+    members.set_item("ZERO", ExonPhase::Zero as i8)?;
+    members.set_item("ONE", ExonPhase::One as i8)?;
+    members.set_item("TWO", ExonPhase::Two as i8)?;
+    members.set_item("UNKNOWN", ExonPhase::Unknown as i8)?;
+    let exon_phase = enum_mod.getattr("IntEnum")?.call1(("ExonPhase", members))?;
     m.add("ExonPhase", exon_phase)?;
 
     Ok(())
@@ -68,17 +61,17 @@ mod tests {
 
     #[test]
     fn test_strand_enum() {
-        assert_eq!(Strand::FORWARD as i8, 1);
-        assert_eq!(Strand::REVERSE as i8, -1);
-        assert_eq!(Strand::UNKNOWN as i8, 0);
+        assert_eq!(Strand::Forward as i8, 1);
+        assert_eq!(Strand::Reverse as i8, -1);
+        assert_eq!(Strand::Unknown as i8, 0);
     }
 
     #[test]
     fn test_exon_phase_enum() {
-        assert_eq!(ExonPhase::ZERO as i8, 0);
-        assert_eq!(ExonPhase::ONE as i8, 1);
-        assert_eq!(ExonPhase::TWO as i8, 2);
-        assert_eq!(ExonPhase::UNKNOWN as i8, -1);
+        assert_eq!(ExonPhase::Zero as i8, 0);
+        assert_eq!(ExonPhase::One as i8, 1);
+        assert_eq!(ExonPhase::Two as i8, 2);
+        assert_eq!(ExonPhase::Unknown as i8, -1);
     }
 
     #[test]
@@ -91,16 +84,28 @@ mod tests {
             // Test Strand enum registration.
             let actual_strand = module.getattr("Strand").unwrap();
             assert_eq!(
-                actual_strand.getattr("FORWARD").unwrap().extract::<i8>().unwrap(),
-                Strand::FORWARD as i8
+                actual_strand
+                    .getattr("FORWARD")
+                    .unwrap()
+                    .extract::<i8>()
+                    .unwrap(),
+                Strand::Forward as i8
             );
             assert_eq!(
-                actual_strand.getattr("REVERSE").unwrap().extract::<i8>().unwrap(),
-                Strand::REVERSE as i8
+                actual_strand
+                    .getattr("REVERSE")
+                    .unwrap()
+                    .extract::<i8>()
+                    .unwrap(),
+                Strand::Reverse as i8
             );
             assert_eq!(
-                actual_strand.getattr("UNKNOWN").unwrap().extract::<i8>().unwrap(),
-                Strand::UNKNOWN as i8
+                actual_strand
+                    .getattr("UNKNOWN")
+                    .unwrap()
+                    .extract::<i8>()
+                    .unwrap(),
+                Strand::Unknown as i8
             );
         });
     }
@@ -115,16 +120,28 @@ mod tests {
             // Test ExonPhase enum registration.
             let actual_exon_phase = module.getattr("ExonPhase").unwrap();
             assert_eq!(
-                actual_exon_phase.getattr("ZERO").unwrap().extract::<i8>().unwrap(),
-                ExonPhase::ZERO as i8
+                actual_exon_phase
+                    .getattr("ZERO")
+                    .unwrap()
+                    .extract::<i8>()
+                    .unwrap(),
+                ExonPhase::Zero as i8
             );
             assert_eq!(
-                actual_exon_phase.getattr("ONE").unwrap().extract::<i8>().unwrap(),
-                ExonPhase::ONE as i8
+                actual_exon_phase
+                    .getattr("ONE")
+                    .unwrap()
+                    .extract::<i8>()
+                    .unwrap(),
+                ExonPhase::One as i8
             );
             assert_eq!(
-                actual_exon_phase.getattr("TWO").unwrap().extract::<i8>().unwrap(),
-                ExonPhase::TWO as i8
+                actual_exon_phase
+                    .getattr("TWO")
+                    .unwrap()
+                    .extract::<i8>()
+                    .unwrap(),
+                ExonPhase::Two as i8
             );
             assert_eq!(
                 actual_exon_phase
@@ -132,7 +149,7 @@ mod tests {
                     .unwrap()
                     .extract::<i8>()
                     .unwrap(),
-                ExonPhase::UNKNOWN as i8
+                ExonPhase::Unknown as i8
             );
         });
     }
