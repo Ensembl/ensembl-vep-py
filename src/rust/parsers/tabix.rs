@@ -637,7 +637,7 @@ impl TabixParser {
 // Helpers
 // ---------------------------------------------------------------------------
 
-fn associated_index_path(src: &Path, extension: &str) -> PathBuf {
+pub fn associated_index_path(src: &Path, extension: &str) -> PathBuf {
     let mut path = src.as_os_str().to_os_string();
     path.push(".");
     path.push(extension);
