@@ -19,7 +19,7 @@ use pyo3::{
 };
 use std::io::{self, ErrorKind};
 
-pub(crate) fn trim_newline(line: &mut String) {
+pub fn trim_newline(line: &mut String) {
     if line.ends_with('\n') {
         line.pop();
         if line.ends_with('\r') {
@@ -28,7 +28,7 @@ pub(crate) fn trim_newline(line: &mut String) {
     }
 }
 
-pub(crate) fn py_error(err: io::Error) -> PyErr {
+pub fn to_py_error(err: io::Error) -> PyErr {
     match err.kind() {
         ErrorKind::InvalidData | ErrorKind::InvalidInput => PyValueError::new_err(err.to_string()),
         ErrorKind::NotFound => PyIOError::new_err(err.to_string()),
@@ -36,18 +36,33 @@ pub(crate) fn py_error(err: io::Error) -> PyErr {
     }
 }
 
+pub fn from_py_error(err: PyErr) -> io::Error {
+    io::Error::other(err.to_string())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     // -----------------------------------------------------------------------
-    // py_error — error kind mapping
+    // from_py_error
     // -----------------------------------------------------------------------
 
     #[test]
-    fn test_py_error_invalid_data_maps_to_value_error() {
+    fn test_from_py_error() {
+        let py_err = PyValueError::new_err("value error occurred");
+        let io_err = from_py_error(py_err);
+        assert_eq!(io_err.to_string(), "ValueError: value error occurred");
+    }
+
+    // -----------------------------------------------------------------------
+    // to_py_error — error kind mapping
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_to_py_error_invalid_data_maps_to_value_error() {
         let err = io::Error::new(ErrorKind::InvalidData, "bad data");
-        let py_err = py_error(err);
+        let py_err = to_py_error(err);
 
         Python::initialize();
         let type_name = Python::attach(|py| py_err.get_type(py).name().unwrap().to_string());
@@ -56,9 +71,9 @@ mod tests {
     }
 
     #[test]
-    fn test_py_error_not_found_maps_to_io_error() {
+    fn test_to_py_error_not_found_maps_to_io_error() {
         let err = io::Error::new(ErrorKind::NotFound, "not found");
-        let py_err = py_error(err);
+        let py_err = to_py_error(err);
 
         Python::initialize();
         let type_name = Python::attach(|py| py_err.get_type(py).name().unwrap().to_string());
@@ -67,7 +82,7 @@ mod tests {
     }
 
     #[test]
-    fn test_py_error_kind_routing() {
+    fn test_to_py_error_kind_routing() {
         // Verify some expected error kinds are mapped without panicking.
         for kind in [
             ErrorKind::InvalidData,
@@ -76,7 +91,7 @@ mod tests {
             ErrorKind::Other,
             ErrorKind::PermissionDenied,
         ] {
-            let _ = py_error(io::Error::new(kind, "test"));
+            let _ = to_py_error(io::Error::new(kind, "test"));
         }
     }
 

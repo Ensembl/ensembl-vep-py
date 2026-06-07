@@ -22,7 +22,7 @@ use std::{
 
 use crate::{
     parsers::utils::parse_region,
-    utils::{py_error, trim_newline},
+    utils::{to_py_error, trim_newline},
 };
 use log::warn;
 use noodles_bgzf::{self as bgzf, io::Seek as BgzfSeek};
@@ -584,7 +584,7 @@ impl TabixParser {
 
     pub fn open(&mut self, file_path: &str) -> PyResult<()> {
         let path = PathBuf::from(file_path);
-        self.reader = Some(TabixReader::open(&path, &self.tabix_path).map_err(py_error)?);
+        self.reader = Some(TabixReader::open(&path, &self.tabix_path).map_err(to_py_error)?);
         self.file_path = Some(path);
         Ok(())
     }
@@ -594,12 +594,12 @@ impl TabixParser {
     }
 
     pub fn seek(&mut self, region: &str) -> PyResult<bool> {
-        self.reader()?.seek(region).map_err(py_error)
+        self.reader()?.seek(region).map_err(to_py_error)
     }
 
     #[allow(clippy::should_implement_trait)]
     pub fn next(&mut self) -> PyResult<Option<String>> {
-        self.reader()?.next().map_err(py_error)
+        self.reader()?.next().map_err(to_py_error)
     }
 
     #[pyo3(signature = (limit=None))]
@@ -620,7 +620,7 @@ impl TabixParser {
 impl TabixParser {
     pub fn header_lines(&mut self) -> PyResult<Vec<String>> {
         if let Some(reader) = self.reader.as_mut() {
-            return Ok(reader.header_lines().map_err(py_error)?.to_vec());
+            return Ok(reader.header_lines().map_err(to_py_error)?.to_vec());
         }
 
         Ok(Vec::new())
@@ -651,11 +651,11 @@ pub fn associated_index_path(src: &Path, extension: &str) -> PathBuf {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::fs;
-    use noodles_csi::binning_index::index::header::Format;
     use crate::parsers::test_utils::{write_bed_with_tbi, write_bgzf_file, write_gff3_with_tbi};
     #[cfg(unix)]
     use crate::test_utils::{assert_process_is_gone, create_temp_dir, process_exists};
+    use noodles_csi::binning_index::index::header::Format;
+    use std::fs;
 
     // -----------------------------------------------------------------------
     // Helpers

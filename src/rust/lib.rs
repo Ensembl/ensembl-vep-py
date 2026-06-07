@@ -20,7 +20,7 @@ use pyo3::prelude::*;
 pub mod hello;
 pub mod parsers;
 pub mod test_utils;
-pub(crate) mod utils;
+pub mod utils;
 
 #[pymodule]
 mod ensembl_vep_core {

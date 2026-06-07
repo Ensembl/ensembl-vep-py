@@ -13,8 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use ensembl_vep_core::{parsers::tabix::TabixParser, test_utils::create_temp_dir};
-use pyo3::{PyErr, Python};
+use ensembl_vep_core::{
+    parsers::tabix::TabixParser, test_utils::create_temp_dir, utils::from_py_error,
+};
+use pyo3::Python;
 use rstest::rstest;
 use std::{
     env, fs, io,
@@ -274,7 +276,7 @@ fn test_tabix_parser_zero_position(
     let mut parser = open_dataset_parser(&dir, &toolchain, dataset, backend)?;
     match (dataset, backend) {
         (Dataset::Gff3ZeroPos, Backend::Noodles) => {
-            let err = parser.seek("chr1:1-1").map_err(py_err).unwrap_err();
+            let err = parser.seek("chr1:1-1").map_err(from_py_error).unwrap_err();
             assert_eq!(err.kind(), io::ErrorKind::Other);
             assert!(
                 err.to_string().contains("ValueError"),
@@ -420,7 +422,7 @@ fn test_tabix_parser_invalid_region(
 
 fn assert_header_lines(mut parser: TabixParser, expected_headers: &[&str]) -> io::Result<()> {
     assert_eq!(
-        parser.header_lines().map_err(py_err)?,
+        parser.header_lines().map_err(from_py_error)?,
         expected_headers
             .iter()
             .map(|line| (*line).to_owned())
@@ -435,26 +437,26 @@ fn assert_query_records_multistep(
     region: &str,
     expected_rows: &[&str],
 ) -> io::Result<()> {
-    assert!(parser.seek(region).map_err(py_err)?);
+    assert!(parser.seek(region).map_err(from_py_error)?);
     assert_eq!(
-        parser.records(Some(0)).map_err(py_err)?,
+        parser.records(Some(0)).map_err(from_py_error)?,
         Vec::<String>::new()
     );
     assert_eq!(
-        parser.records(Some(2)).map_err(py_err)?,
+        parser.records(Some(2)).map_err(from_py_error)?,
         expected_rows[..2]
             .iter()
             .map(|row| (*row).to_owned())
             .collect::<Vec<_>>()
     );
     assert_eq!(
-        parser.records(None).map_err(py_err)?,
+        parser.records(None).map_err(from_py_error)?,
         expected_rows[2..]
             .iter()
             .map(|row| (*row).to_owned())
             .collect::<Vec<_>>()
     );
-    assert_eq!(parser.next().map_err(py_err)?, None);
+    assert_eq!(parser.next().map_err(from_py_error)?, None);
 
     Ok(())
 }
@@ -464,7 +466,7 @@ fn assert_query_records(
     region: &str,
     expected_rows: &[&str],
 ) -> io::Result<()> {
-    let found = parser.seek(region).map_err(py_err)?;
+    let found = parser.seek(region).map_err(from_py_error)?;
     assert_eq!(
         found,
         !expected_rows.is_empty(),
@@ -473,7 +475,7 @@ fn assert_query_records(
         if found { "some" } else { "none" }
     );
     assert_eq!(
-        parser.records(None).map_err(py_err)?,
+        parser.records(None).map_err(from_py_error)?,
         expected_rows
             .iter()
             .map(|row| (*row).to_owned())
@@ -490,9 +492,9 @@ fn assert_close_and_reopen(
     expected_chr1_rows: &[&str],
     expected_chr2_rows: &[&str],
 ) -> io::Result<()> {
-    assert!(parser.seek("chr2:100-120").map_err(py_err)?);
+    assert!(parser.seek("chr2:100-120").map_err(from_py_error)?);
     assert_eq!(
-        parser.next().map_err(py_err)?,
+        parser.next().map_err(from_py_error)?,
         expected_chr2_rows.first().map(|row| (*row).to_owned())
     );
 
@@ -505,17 +507,17 @@ fn assert_close_and_reopen(
 
     parser
         .open(path.to_string_lossy().as_ref())
-        .map_err(py_err)?;
+        .map_err(from_py_error)?;
     assert_eq!(
-        parser.header_lines().map_err(py_err)?,
+        parser.header_lines().map_err(from_py_error)?,
         expected_headers
             .iter()
             .map(|row| (*row).to_owned())
             .collect::<Vec<_>>()
     );
-    assert!(parser.seek("chr1:10-20").map_err(py_err)?);
+    assert!(parser.seek("chr1:10-20").map_err(from_py_error)?);
     assert_eq!(
-        parser.records(None).map_err(py_err)?,
+        parser.records(None).map_err(from_py_error)?,
         expected_chr1_rows
             .iter()
             .map(|row| (*row).to_owned())
@@ -535,7 +537,7 @@ fn open_tabix_parser(path: &Path, tabix_path: &Path) -> io::Result<TabixParser> 
         Some(path.to_string_lossy().into_owned()),
         Some(tabix_path.to_string_lossy().into_owned()),
     )
-    .map_err(py_err)
+    .map_err(from_py_error)
 }
 
 fn open_noodles_parser(path: &Path) -> io::Result<TabixParser> {
@@ -720,8 +722,4 @@ fn get_integration_toolchain() -> HtslibToolchain {
         find_htslib_tool("tabix").expect("tabix executable is required for integration tests");
 
     HtslibToolchain { bgzip, tabix }
-}
-
-fn py_err(err: PyErr) -> io::Error {
-    io::Error::other(err.to_string())
 }
