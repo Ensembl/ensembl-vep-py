@@ -651,11 +651,11 @@ pub fn associated_index_path(src: &Path, extension: &str) -> PathBuf {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs;
+    use noodles_csi::binning_index::index::header::Format;
     use crate::parsers::test_utils::{write_bed_with_tbi, write_bgzf_file, write_gff3_with_tbi};
     #[cfg(unix)]
     use crate::test_utils::{assert_process_is_gone, create_temp_dir, process_exists};
-    use noodles_csi::binning_index::index::header::Format;
-    use std::fs;
 
     // -----------------------------------------------------------------------
     // Helpers
