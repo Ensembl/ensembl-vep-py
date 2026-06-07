@@ -19,8 +19,7 @@ use pyo3::prelude::*;
 // file with cargo-llvm-cov --ignore-filename-regex so stable Rust is sufficient.
 pub mod hello;
 pub mod parsers;
-#[cfg(test)]
-pub(crate) mod test_utils;
+pub mod test_utils;
 pub(crate) mod utils;
 
 #[pymodule]

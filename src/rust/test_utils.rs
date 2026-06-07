@@ -13,6 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::{env, fs, io, path::PathBuf};
+
 #[cfg(unix)]
 pub(crate) fn process_exists(pid: u32) -> std::io::Result<bool> {
     let status = std::process::Command::new("kill")
@@ -38,11 +40,29 @@ pub(crate) fn assert_process_is_gone(pid: u32) -> std::io::Result<()> {
     panic!("expected process {pid} to be gone");
 }
 
+#[cfg(unix)]
+pub fn create_temp_dir(prefix: &str) -> io::Result<PathBuf> {
+    let dir = env::temp_dir().join(format!("{prefix}-{}", std::process::id()));
+    let _ = fs::remove_dir_all(&dir);
+    fs::create_dir_all(&dir)?;
+    Ok(dir)
+}
+
 #[cfg(all(test, unix))]
 mod tests {
     use std::{io, process::Command};
 
     use super::*;
+
+    #[test]
+    fn test_create_temp_dir() -> io::Result<()> {
+        let dir = create_temp_dir("test")?;
+        assert!(dir.exists());
+        fs::remove_dir_all(&dir)?;
+        assert!(!dir.exists());
+
+        Ok(())
+    }
 
     #[test]
     fn test_process_exists_with_running_child() -> io::Result<()> {

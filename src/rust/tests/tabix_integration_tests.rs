@@ -21,6 +21,7 @@ use std::{
     path::{Path, PathBuf},
     process::{Command, Stdio},
 };
+use ensembl_vep_core::test_utils::create_temp_dir;
 
 const GFF3_LINES: [&str; 6] = [
     "##gff-version 3",
@@ -82,7 +83,7 @@ fn test_tabix_parser_header_lines(
     #[case] backend: Backend,
 ) -> io::Result<()> {
     let toolchain = get_integration_toolchain();
-    let dir = create_integration_temp_dir(&format!(
+    let dir = create_temp_dir(&format!(
         "tabix-parser-header-lines-{:?}-{:?}",
         dataset, backend
     ))?;
@@ -105,7 +106,7 @@ fn test_tabix_parser_full_chromosome_query(
     #[case] backend: Backend,
 ) -> io::Result<()> {
     let toolchain = get_integration_toolchain();
-    let dir = create_integration_temp_dir(&format!(
+    let dir = create_temp_dir(&format!(
         "tabix-parser-full-chromosome-{:?}-{:?}",
         dataset, backend
     ))?;
@@ -128,7 +129,7 @@ fn test_tabix_parser_sub_region_query(
     #[case] backend: Backend,
 ) -> io::Result<()> {
     let toolchain = get_integration_toolchain();
-    let dir = create_integration_temp_dir(&format!(
+    let dir = create_temp_dir(&format!(
         "tabix-parser-sub-region-{:?}-{:?}",
         dataset, backend
     ))?;
@@ -151,7 +152,7 @@ fn test_tabix_parser_empty_region_query(
     #[case] backend: Backend,
 ) -> io::Result<()> {
     let toolchain = get_integration_toolchain();
-    let dir = create_integration_temp_dir(&format!(
+    let dir = create_temp_dir(&format!(
         "tabix-parser-empty-region-{:?}-{:?}",
         dataset, backend
     ))?;
@@ -174,7 +175,7 @@ fn test_tabix_parser_query_just_before(
     #[case] backend: Backend,
 ) -> io::Result<()> {
     let toolchain = get_integration_toolchain();
-    let dir = create_integration_temp_dir(&format!(
+    let dir = create_temp_dir(&format!(
         "tabix-parser-just-before-{:?}-{:?}",
         dataset, backend
     ))?;
@@ -197,7 +198,7 @@ fn test_tabix_parser_query_exactly_on_start(
     #[case] backend: Backend,
 ) -> io::Result<()> {
     let toolchain = get_integration_toolchain();
-    let dir = create_integration_temp_dir(&format!(
+    let dir = create_temp_dir(&format!(
         "tabix-parser-exact-start-{:?}-{:?}",
         dataset, backend
     ))?;
@@ -220,7 +221,7 @@ fn test_tabix_parser_query_exactly_on_end(
     #[case] backend: Backend,
 ) -> io::Result<()> {
     let toolchain = get_integration_toolchain();
-    let dir = create_integration_temp_dir(&format!(
+    let dir = create_temp_dir(&format!(
         "tabix-parser-exact-end-{:?}-{:?}",
         dataset, backend
     ))?;
@@ -243,7 +244,7 @@ fn test_tabix_parser_query_just_after(
     #[case] backend: Backend,
 ) -> io::Result<()> {
     let toolchain = get_integration_toolchain();
-    let dir = create_integration_temp_dir(&format!(
+    let dir = create_temp_dir(&format!(
         "tabix-parser-just-after-{:?}-{:?}",
         dataset, backend
     ))?;
@@ -266,7 +267,7 @@ fn test_tabix_parser_zero_position(
     #[case] backend: Backend,
 ) -> io::Result<()> {
     let toolchain = get_integration_toolchain();
-    let dir = create_integration_temp_dir(&format!(
+    let dir = create_temp_dir(&format!(
         "tabix-parser-zero-based-{:?}-{:?}",
         dataset, backend
     ))?;
@@ -308,7 +309,7 @@ fn test_tabix_parser_same_position(
     #[case] backend: Backend,
 ) -> io::Result<()> {
     let toolchain = get_integration_toolchain();
-    let dir = create_integration_temp_dir(&format!(
+    let dir = create_temp_dir(&format!(
         "tabix-parser-same-position-{:?}-{:?}",
         dataset, backend
     ))?;
@@ -325,7 +326,7 @@ fn test_tabix_parser_same_position(
     }
     fs::remove_dir_all(dir)?;
 
-    let dir = create_integration_temp_dir(&format!(
+    let dir = create_temp_dir(&format!(
         "tabix-parser-same-position-{:?}-{:?}",
         dataset, backend
     ))?;
@@ -357,7 +358,7 @@ fn test_tabix_parser_close_and_reopen(
 ) -> io::Result<()> {
     let toolchain = get_integration_toolchain();
     let dir =
-        create_integration_temp_dir(&format!("tabix-parser-reopen-{:?}-{:?}", dataset, backend))?;
+        create_temp_dir(&format!("tabix-parser-reopen-{:?}-{:?}", dataset, backend))?;
     let path = write_dataset_using_system_tools(&dir, &toolchain, dataset)?;
 
     let parser = match backend {
@@ -388,7 +389,7 @@ fn test_tabix_parser_invalid_region(
 ) -> io::Result<()> {
     let toolchain = get_integration_toolchain();
     let dir =
-        create_integration_temp_dir(&format!("tabix-parser-invalid-{:?}-{:?}", dataset, backend))?;
+        create_temp_dir(&format!("tabix-parser-invalid-{:?}-{:?}", dataset, backend))?;
     let path = write_dataset_using_system_tools(&dir, &toolchain, dataset)?;
     let mut parser = match backend {
         Backend::Noodles => open_noodles_parser(&path)?,
@@ -633,14 +634,14 @@ fn find_htslib_tool(name: &str) -> Option<PathBuf> {
     })
 }
 
-fn create_integration_temp_dir(prefix: &str) -> io::Result<PathBuf> {
-    let dir = env::temp_dir().join(format!("{prefix}-{}", std::process::id()));
-    if dir.exists() {
-        fs::remove_dir_all(&dir)?;
-    }
-    fs::create_dir_all(&dir)?;
-    Ok(dir)
-}
+// fn create_temp_dir(prefix: &str) -> io::Result<PathBuf> {
+//     let dir = env::temp_dir().join(format!("{prefix}-{}", std::process::id()));
+//     if dir.exists() {
+//         fs::remove_dir_all(&dir)?;
+//     }
+//     fs::create_dir_all(&dir)?;
+//     Ok(dir)
+// }
 
 fn write_gff3_using_system_tools(
     dir: &Path,

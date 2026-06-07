@@ -653,9 +653,9 @@ mod tests {
     use super::*;
     use crate::parsers::test_utils::{write_bed_with_tbi, write_bgzf_file, write_gff3_with_tbi};
     #[cfg(unix)]
-    use crate::test_utils::{assert_process_is_gone, process_exists};
+    use crate::test_utils::{assert_process_is_gone, create_temp_dir, process_exists};
     use noodles_csi::binning_index::index::header::Format;
-    use std::{env, fs};
+    use std::fs;
 
     // -----------------------------------------------------------------------
     // Helpers
@@ -718,8 +718,7 @@ mod tests {
     // -----------------------------------------------------------------------
     #[test]
     fn test_tabix_parser_reader_initialization() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!("tabix-test-reader-init-{}", std::process::id()));
-        fs::create_dir_all(&dir)?;
+        let dir = create_temp_dir("tabix-test-reader-init")?;
         let (gz_path, _tbi_path) = write_gff3_with_tbi(&dir, None)?;
 
         let mut parser = TabixParser::new(
@@ -761,9 +760,7 @@ mod tests {
 
     #[test]
     fn test_tabix_parser_open_seek_records_and_close() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!("tabix-test-parser-methods-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
+        let dir = create_temp_dir("tabix-test-parser-methods")?;
         let (gz_path, _tbi_path) = write_gff3_with_tbi(&dir, None)?;
         let file_path = gz_path.to_string_lossy().into_owned();
 
@@ -1079,10 +1076,7 @@ mod tests {
 
     #[test]
     fn test_reference_sequence_id() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!("tabix-test-ref-seq-id-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
-
+        let dir = create_temp_dir("tabix-test-reference-sequence-id")?;
         let (gz_file, tbi_file) = write_gff3_with_tbi(&dir, None)?;
         let index = tabix::fs::read(&tbi_file)?;
         let backend = NoodlesBackend::new(csi::io::IndexedReader::new(File::open(gz_file)?, index));
@@ -1105,9 +1099,7 @@ mod tests {
 
     #[test]
     fn test_backend_opens_csi_when_present() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!("tabix-test-csi-open-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
+        let dir = create_temp_dir("tabix-test-csi-open")?;
 
         let path = write_bgzf_file(
             &dir,
@@ -1129,9 +1121,7 @@ mod tests {
 
     #[test]
     fn test_backend_csi_dispatch_methods() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!("tabix-test-csi-dispatch-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
+        let dir = create_temp_dir("tabix-test-csi-dispatch")?;
 
         let path = write_bgzf_file(
             &dir,
@@ -1164,10 +1154,7 @@ mod tests {
 
     #[test]
     fn test_noodles_backend_header_lines() -> io::Result<()> {
-        let dir =
-            env::temp_dir().join(format!("tabix-test-noodles-headers-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
+        let dir = create_temp_dir("tabix-test-noodles-headers")?;
 
         let path = write_bgzf_file(
             &dir,
@@ -1204,12 +1191,7 @@ mod tests {
 
     #[test]
     fn test_noodles_backend_header_lines_no_headers() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!(
-            "tabix-test-noodles-no-headers-{}",
-            std::process::id()
-        ));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
+        let dir = create_temp_dir("tabix-test-noodles-no-headers")?;
 
         // File with no comment lines at all
         let path = write_bgzf_file(
@@ -1231,12 +1213,7 @@ mod tests {
 
     #[test]
     fn test_noodles_backend_header_lines_only_headers() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!(
-            "tabix-test-noodles-only-headers-{}",
-            std::process::id()
-        ));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
+        let dir = create_temp_dir("tabix-test-noodles-only-headers")?;
 
         // File that is entirely header/comment lines
         let path = write_bgzf_file(
@@ -1264,12 +1241,7 @@ mod tests {
     /// next call to next() still returns the expected record.
     #[test]
     fn test_noodles_backend_header_lines_preserves_bgzf_position() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!(
-            "tabix-test-noodles-pos-preserve-{}",
-            std::process::id()
-        ));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
+        let dir = create_temp_dir("tabix-test-noodles-pos-preserve")?;
 
         let path = write_bgzf_file(
             &dir,
@@ -1300,13 +1272,7 @@ mod tests {
 
     #[test]
     fn test_noodles_backend_header_lines_with_tbi() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!(
-            "tabix-test-noodles-headers-tbi-{}",
-            std::process::id()
-        ));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
-
+        let dir = create_temp_dir("tabix-test-noodles-headers-tbi")?;
         let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
         let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
 
@@ -1328,13 +1294,7 @@ mod tests {
 
     #[test]
     fn test_noodles_backend_seek_unknown_region() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!(
-            "tabix-test-noodles-unknown-region-{}",
-            std::process::id()
-        ));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
-
+        let dir = create_temp_dir("tabix-test-noodles-unknown-region")?;
         let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
         let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
 
@@ -1353,13 +1313,7 @@ mod tests {
 
     #[test]
     fn test_noodles_backend_seek_invalid_region_string() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!(
-            "tabix-test-noodles-invalid-region-{}",
-            std::process::id()
-        ));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
-
+        let dir = create_temp_dir("tabix-test-noodles-invalid-region")?;
         let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
         let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
 
@@ -1376,10 +1330,7 @@ mod tests {
 
     #[test]
     fn test_noodles_backend_seek_subregion() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!("tabix-test-noodles-tbi-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
-
+        let dir = create_temp_dir("tabix-test-noodles-subregion")?;
         let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
         let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
 
@@ -1413,13 +1364,7 @@ mod tests {
 
     #[test]
     fn test_noodles_backend_seek_full_chromosome() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!(
-            "tabix-test-noodles-full-chrom-{}",
-            std::process::id()
-        ));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
-
+        let dir = create_temp_dir("tabix-test-noodles-full-chrom")?;
         let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
         let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
 
@@ -1443,13 +1388,7 @@ mod tests {
 
     #[test]
     fn test_noodles_backend_seek_empty_region() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!(
-            "tabix-test-noodles-empty-region-{}",
-            std::process::id()
-        ));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
-
+        let dir = create_temp_dir("tabix-test-noodles-empty-region")?;
         let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
         let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
 
@@ -1462,12 +1401,10 @@ mod tests {
 
     #[test]
     fn test_noodles_backend_next_clears_query_on_eof() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!("tabix-test-noodles-eof-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
-
+        let dir = create_temp_dir("tabix-test-noodles-eof")?;
         let path = write_bgzf_file(&dir, vec![], Some("empty.gff3.gz"))?;
         let file = File::open(&path)?;
+
         let mut backend =
             NoodlesBackend::new(csi::io::IndexedReader::new(file, csi::Index::default()));
         backend.query = Some(NoodlesQuery {
@@ -1492,13 +1429,7 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn test_noodles_backend_next_without_query_returns_none() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!(
-            "tabix-test-noodles-no-query-{}",
-            std::process::id()
-        ));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
-
+        let dir = create_temp_dir("tabix-test-noodles-no-query")?;
         let path = write_bgzf_file(&dir, vec![], Some("empty.gff3.gz"))?;
         let file = File::open(&path)?;
         let mut backend =
@@ -1514,13 +1445,7 @@ mod tests {
 
     #[test]
     fn test_noodles_backend_zero_based_positions() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!(
-            "tabix-test-noodles-zero-based-{}",
-            std::process::id()
-        ));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
-
+        let dir = create_temp_dir("tabix-test-noodles-zero-based")?;
         let lines = vec![
             "chr1\t0\t0\tgene1".to_string(),
             "chr1\t99\t99\tgene2".to_string(),
@@ -1563,9 +1488,7 @@ mod tests {
     fn test_system_backend_is_available_permission_error() -> io::Result<()> {
         use std::os::unix::fs::PermissionsExt;
 
-        let dir = env::temp_dir().join(format!("tabix-test-sys-perm-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
+        let dir = create_temp_dir("tabix-test-sys-perm")?;
 
         // Create a non-executable file — spawning it gives PermissionDenied,
         // not NotFound, so is_available should propagate the error rather than
@@ -1594,9 +1517,7 @@ mod tests {
     fn test_system_backend_header_lines() -> io::Result<()> {
         use std::os::unix::fs::PermissionsExt;
 
-        let dir = env::temp_dir().join(format!("tabix-test-sys-headers-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
+        let dir = create_temp_dir("tabix-test-sys-headers")?;
 
         let tabix_path = dir.join("tabix");
         fs::write(
@@ -1632,9 +1553,7 @@ mod tests {
     fn test_system_backend_header_lines_empty() -> io::Result<()> {
         use std::os::unix::fs::PermissionsExt;
 
-        let dir = env::temp_dir().join(format!("tabix-test-sys-no-headers-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
+        let dir = create_temp_dir("tabix-test-sys-empty-headers")?;
 
         let tabix_path = dir.join("tabix");
         fs::write(
@@ -1664,10 +1583,7 @@ mod tests {
     fn test_system_backend_header_lines_command_fails() -> io::Result<()> {
         use std::os::unix::fs::PermissionsExt;
 
-        let dir =
-            env::temp_dir().join(format!("tabix-test-sys-header-fail-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
+        let dir = create_temp_dir("tabix-test-sys-header-fail")?;
 
         let tabix_path = dir.join("tabix");
         fs::write(
@@ -1709,9 +1625,7 @@ mod tests {
     fn test_system_backend_next_failing_child() -> io::Result<()> {
         use std::os::unix::fs::PermissionsExt;
 
-        let dir = env::temp_dir().join(format!("tabix-test-sys-fail-child-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
+        let dir = create_temp_dir("tabix-test-sys-fail-child")?;
 
         // Mock tabix that succeeds for --version but exits with code 1 for queries
         let tabix_path = dir.join("tabix");
@@ -1751,9 +1665,7 @@ mod tests {
     fn test_query_prefers_system_tabix() -> io::Result<()> {
         use std::os::unix::fs::PermissionsExt;
 
-        let dir = env::temp_dir().join(format!("tabix-test-sys-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
+        let dir = create_temp_dir("tabix-test-sys")?;
 
         let tabix_path = dir.join("tabix");
         fs::write(
@@ -1789,9 +1701,7 @@ mod tests {
     fn test_system_backend_close_query_kills_child() -> io::Result<()> {
         use std::os::unix::fs::PermissionsExt;
 
-        let dir = env::temp_dir().join(format!("tabix-test-sys-close-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
+        let dir = create_temp_dir("tabix-test-sys-close")?;
 
         // Mock tabix that execs a long-running process so the child PID can be
         // checked directly after close_query and Drop.
@@ -1841,12 +1751,7 @@ mod tests {
     fn test_tabix_reader_system_header_lines_dispatch() -> io::Result<()> {
         use std::os::unix::fs::PermissionsExt;
 
-        let dir = env::temp_dir().join(format!(
-            "tabix-test-reader-sys-headers-{}",
-            std::process::id()
-        ));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
+        let dir = create_temp_dir("tabix-test-reader-sys-headers")?;
 
         let tabix_path = dir.join("tabix");
         fs::write(
@@ -1893,10 +1798,7 @@ mod tests {
 
     #[test]
     fn test_tabix_reader_buffered_line_cleared_on_reseek() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!("tabix-test-buf-clear-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
-
+        let dir = create_temp_dir("tabix-test-buf-clear")?;
         let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
         let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
 
@@ -1922,10 +1824,7 @@ mod tests {
 
     #[test]
     fn test_tabix_reader_next_returns_buffered_first() -> io::Result<()> {
-        let dir = env::temp_dir().join(format!("tabix-test-buf-next-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&dir);
-        fs::create_dir_all(&dir)?;
-
+        let dir = create_temp_dir("tabix-test-buf-next")?;
         let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
         let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
 
