@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use ensembl_vep_core::parsers::tabix::TabixParser;
+use ensembl_vep_core::{parsers::tabix::TabixParser, test_utils::create_temp_dir};
 use pyo3::{PyErr, Python};
 use rstest::rstest;
 use std::{
@@ -21,7 +21,6 @@ use std::{
     path::{Path, PathBuf},
     process::{Command, Stdio},
 };
-use ensembl_vep_core::test_utils::create_temp_dir;
 
 const GFF3_LINES: [&str; 6] = [
     "##gff-version 3",
@@ -357,8 +356,7 @@ fn test_tabix_parser_close_and_reopen(
     #[case] backend: Backend,
 ) -> io::Result<()> {
     let toolchain = get_integration_toolchain();
-    let dir =
-        create_temp_dir(&format!("tabix-parser-reopen-{:?}-{:?}", dataset, backend))?;
+    let dir = create_temp_dir(&format!("tabix-parser-reopen-{:?}-{:?}", dataset, backend))?;
     let path = write_dataset_using_system_tools(&dir, &toolchain, dataset)?;
 
     let parser = match backend {
@@ -388,8 +386,7 @@ fn test_tabix_parser_invalid_region(
     #[case] backend: Backend,
 ) -> io::Result<()> {
     let toolchain = get_integration_toolchain();
-    let dir =
-        create_temp_dir(&format!("tabix-parser-invalid-{:?}-{:?}", dataset, backend))?;
+    let dir = create_temp_dir(&format!("tabix-parser-invalid-{:?}-{:?}", dataset, backend))?;
     let path = write_dataset_using_system_tools(&dir, &toolchain, dataset)?;
     let mut parser = match backend {
         Backend::Noodles => open_noodles_parser(&path)?,
@@ -417,91 +414,9 @@ fn test_tabix_parser_invalid_region(
     Ok(())
 }
 
-fn open_noodles_parser(path: &Path) -> io::Result<TabixParser> {
-    open_tabix_parser(path, Path::new("tabix-nonexistent-binary-for-test"))
-}
-
-fn open_system_parser(path: &Path, toolchain: &HtslibToolchain) -> io::Result<TabixParser> {
-    open_tabix_parser(path, &toolchain.tabix)
-}
-
-fn open_dataset_parser(
-    dir: &Path,
-    toolchain: &HtslibToolchain,
-    dataset: Dataset,
-    backend: Backend,
-) -> io::Result<TabixParser> {
-    let path = match dataset {
-        Dataset::Gff3Default => write_gff3_using_system_tools(dir, toolchain, None)?,
-        Dataset::Gff3ZeroPos => {
-            write_gff3_using_system_tools(dir, toolchain, Some(&GFF3_ZERO_BASE_LINES))?
-        }
-        Dataset::Gff3SamePos => {
-            write_gff3_using_system_tools(dir, toolchain, Some(&GFF3_SAME_POS_LINES))?
-        }
-        Dataset::BedDefault => write_bed_using_system_tools(dir, toolchain, None)?,
-        Dataset::BedZeroPos => {
-            write_bed_using_system_tools(dir, toolchain, Some(&BED_ZERO_BASE_LINES))?
-        }
-        Dataset::BedSamePos => {
-            write_bed_using_system_tools(dir, toolchain, Some(&BED_SAME_POS_LINES))?
-        }
-    };
-
-    match backend {
-        Backend::Noodles => open_noodles_parser(&path),
-        Backend::System => open_system_parser(&path, toolchain),
-    }
-}
-
-fn write_dataset_using_system_tools(
-    dir: &Path,
-    toolchain: &HtslibToolchain,
-    dataset: Dataset,
-) -> io::Result<PathBuf> {
-    match dataset {
-        Dataset::Gff3Default => write_gff3_using_system_tools(dir, toolchain, None),
-        Dataset::Gff3ZeroPos => {
-            write_gff3_using_system_tools(dir, toolchain, Some(&GFF3_ZERO_BASE_LINES))
-        }
-        Dataset::Gff3SamePos => {
-            write_gff3_using_system_tools(dir, toolchain, Some(&GFF3_SAME_POS_LINES))
-        }
-        Dataset::BedDefault => write_bed_using_system_tools(dir, toolchain, None),
-        Dataset::BedZeroPos => {
-            write_bed_using_system_tools(dir, toolchain, Some(&BED_ZERO_BASE_LINES))
-        }
-        Dataset::BedSamePos => {
-            write_bed_using_system_tools(dir, toolchain, Some(&BED_SAME_POS_LINES))
-        }
-    }
-}
-
-fn expected_rows(dataset: Dataset, case_no: usize) -> &'static [&'static str] {
-    match (dataset, case_no) {
-        (Dataset::Gff3Default, 0) => &GFF3_LINES[0..2],
-        (Dataset::BedDefault, 0) => &BED_LINES[0..1],
-        (Dataset::Gff3Default, 1) => &GFF3_LINES[2..5],
-        (Dataset::BedDefault, 1) => &BED_LINES[1..4],
-        (Dataset::Gff3Default, 2) => &GFF3_LINES[5..6],
-        (Dataset::BedDefault, 2) => &BED_LINES[4..5],
-        (Dataset::Gff3ZeroPos, 0) => &[],
-        (Dataset::Gff3SamePos, 0) => &GFF3_SAME_POS_LINES[2..3],
-        (Dataset::BedZeroPos, 0) => &BED_ZERO_BASE_LINES,
-        (Dataset::BedZeroPos, 1) => &[],
-        (Dataset::BedSamePos, 0) => &BED_SAME_POS_LINES,
-        _ => &[],
-    }
-}
-
-fn open_tabix_parser(path: &Path, tabix_path: &Path) -> io::Result<TabixParser> {
-    Python::initialize();
-    TabixParser::new(
-        Some(path.to_string_lossy().into_owned()),
-        Some(tabix_path.to_string_lossy().into_owned()),
-    )
-    .map_err(py_err)
-}
+// ---------------------------------------------------------------------------
+// Helpers - assertions
+// ---------------------------------------------------------------------------
 
 fn assert_header_lines(mut parser: TabixParser, expected_headers: &[&str]) -> io::Result<()> {
     assert_eq!(
@@ -610,81 +525,54 @@ fn assert_close_and_reopen(
     Ok(())
 }
 
-fn get_integration_toolchain() -> HtslibToolchain {
-    let bgzip =
-        find_htslib_tool("bgzip").expect("bgzip executable is required for integration tests");
-    let tabix =
-        find_htslib_tool("tabix").expect("tabix executable is required for integration tests");
+// ---------------------------------------------------------------------------
+// Helpers - test data setup and utilities
+// ---------------------------------------------------------------------------
 
-    HtslibToolchain { bgzip, tabix }
+fn open_tabix_parser(path: &Path, tabix_path: &Path) -> io::Result<TabixParser> {
+    Python::initialize();
+    TabixParser::new(
+        Some(path.to_string_lossy().into_owned()),
+        Some(tabix_path.to_string_lossy().into_owned()),
+    )
+    .map_err(py_err)
 }
 
-fn find_htslib_tool(name: &str) -> Option<PathBuf> {
-    if let Ok(htslib_bin) = env::var("ENSEMBL_VEP_HTSLIB_BIN") {
-        let candidate = PathBuf::from(htslib_bin).join(name);
-        if candidate.is_file() {
-            return Some(candidate);
+fn open_noodles_parser(path: &Path) -> io::Result<TabixParser> {
+    open_tabix_parser(path, Path::new("tabix-nonexistent-binary-for-test"))
+}
+
+fn open_system_parser(path: &Path, toolchain: &HtslibToolchain) -> io::Result<TabixParser> {
+    open_tabix_parser(path, &toolchain.tabix)
+}
+
+fn open_dataset_parser(
+    dir: &Path,
+    toolchain: &HtslibToolchain,
+    dataset: Dataset,
+    backend: Backend,
+) -> io::Result<TabixParser> {
+    let path = match dataset {
+        Dataset::Gff3Default => write_gff3_using_system_tools(dir, toolchain, None)?,
+        Dataset::Gff3ZeroPos => {
+            write_gff3_using_system_tools(dir, toolchain, Some(&GFF3_ZERO_BASE_LINES))?
         }
+        Dataset::Gff3SamePos => {
+            write_gff3_using_system_tools(dir, toolchain, Some(&GFF3_SAME_POS_LINES))?
+        }
+        Dataset::BedDefault => write_bed_using_system_tools(dir, toolchain, None)?,
+        Dataset::BedZeroPos => {
+            write_bed_using_system_tools(dir, toolchain, Some(&BED_ZERO_BASE_LINES))?
+        }
+        Dataset::BedSamePos => {
+            write_bed_using_system_tools(dir, toolchain, Some(&BED_SAME_POS_LINES))?
+        }
+    };
+
+    match backend {
+        Backend::Noodles => open_noodles_parser(&path),
+        Backend::System => open_system_parser(&path, toolchain),
     }
-
-    env::var_os("PATH").and_then(|paths| {
-        env::split_paths(&paths)
-            .map(|path| path.join(name))
-            .find(|candidate| candidate.is_file())
-    })
-}
-
-// fn create_temp_dir(prefix: &str) -> io::Result<PathBuf> {
-//     let dir = env::temp_dir().join(format!("{prefix}-{}", std::process::id()));
-//     if dir.exists() {
-//         fs::remove_dir_all(&dir)?;
-//     }
-//     fs::create_dir_all(&dir)?;
-//     Ok(dir)
-// }
-
-fn write_gff3_using_system_tools(
-    dir: &Path,
-    toolchain: &HtslibToolchain,
-    lines: Option<&[&str]>,
-) -> io::Result<PathBuf> {
-    write_tabix_fixture_using_system_tools(
-        dir,
-        toolchain,
-        "sample.gff3",
-        "gff",
-        lines.unwrap_or(&GFF3_LINES),
-    )
-}
-
-fn write_bed_using_system_tools(
-    dir: &Path,
-    toolchain: &HtslibToolchain,
-    lines: Option<&[&str]>,
-) -> io::Result<PathBuf> {
-    write_tabix_fixture_using_system_tools(
-        dir,
-        toolchain,
-        "sample.bed",
-        "bed",
-        lines.unwrap_or(&BED_LINES),
-    )
-}
-
-fn write_tabix_fixture_using_system_tools(
-    dir: &Path,
-    toolchain: &HtslibToolchain,
-    file_name: &str,
-    tabix_preset: &str,
-    lines: &[&str],
-) -> io::Result<PathBuf> {
-    let source_path = write_tabix_source_file(dir, file_name, lines)?;
-    let gz_path = dir.join(format!("{file_name}.gz"));
-
-    compress_with_bgzip(&source_path, &gz_path, &toolchain.bgzip)?;
-    index_with_tabix(&gz_path, tabix_preset, &toolchain.tabix)?;
-
-    Ok(gz_path)
 }
 
 fn write_tabix_source_file(dir: &Path, file_name: &str, lines: &[&str]) -> io::Result<PathBuf> {
@@ -724,6 +612,114 @@ fn index_with_tabix(gz_path: &Path, tabix_preset: &str, tabix_path: &Path) -> io
     }
 
     Ok(())
+}
+
+fn write_tabix_fixture_using_system_tools(
+    dir: &Path,
+    toolchain: &HtslibToolchain,
+    file_name: &str,
+    tabix_preset: &str,
+    lines: &[&str],
+) -> io::Result<PathBuf> {
+    let source_path = write_tabix_source_file(dir, file_name, lines)?;
+    let gz_path = dir.join(format!("{file_name}.gz"));
+
+    compress_with_bgzip(&source_path, &gz_path, &toolchain.bgzip)?;
+    index_with_tabix(&gz_path, tabix_preset, &toolchain.tabix)?;
+
+    Ok(gz_path)
+}
+
+fn write_gff3_using_system_tools(
+    dir: &Path,
+    toolchain: &HtslibToolchain,
+    lines: Option<&[&str]>,
+) -> io::Result<PathBuf> {
+    write_tabix_fixture_using_system_tools(
+        dir,
+        toolchain,
+        "sample.gff3",
+        "gff",
+        lines.unwrap_or(&GFF3_LINES),
+    )
+}
+
+fn write_bed_using_system_tools(
+    dir: &Path,
+    toolchain: &HtslibToolchain,
+    lines: Option<&[&str]>,
+) -> io::Result<PathBuf> {
+    write_tabix_fixture_using_system_tools(
+        dir,
+        toolchain,
+        "sample.bed",
+        "bed",
+        lines.unwrap_or(&BED_LINES),
+    )
+}
+
+fn write_dataset_using_system_tools(
+    dir: &Path,
+    toolchain: &HtslibToolchain,
+    dataset: Dataset,
+) -> io::Result<PathBuf> {
+    match dataset {
+        Dataset::Gff3Default => write_gff3_using_system_tools(dir, toolchain, None),
+        Dataset::Gff3ZeroPos => {
+            write_gff3_using_system_tools(dir, toolchain, Some(&GFF3_ZERO_BASE_LINES))
+        }
+        Dataset::Gff3SamePos => {
+            write_gff3_using_system_tools(dir, toolchain, Some(&GFF3_SAME_POS_LINES))
+        }
+        Dataset::BedDefault => write_bed_using_system_tools(dir, toolchain, None),
+        Dataset::BedZeroPos => {
+            write_bed_using_system_tools(dir, toolchain, Some(&BED_ZERO_BASE_LINES))
+        }
+        Dataset::BedSamePos => {
+            write_bed_using_system_tools(dir, toolchain, Some(&BED_SAME_POS_LINES))
+        }
+    }
+}
+
+fn expected_rows(dataset: Dataset, case_no: usize) -> &'static [&'static str] {
+    match (dataset, case_no) {
+        (Dataset::Gff3Default, 0) => &GFF3_LINES[0..2],
+        (Dataset::BedDefault, 0) => &BED_LINES[0..1],
+        (Dataset::Gff3Default, 1) => &GFF3_LINES[2..5],
+        (Dataset::BedDefault, 1) => &BED_LINES[1..4],
+        (Dataset::Gff3Default, 2) => &GFF3_LINES[5..6],
+        (Dataset::BedDefault, 2) => &BED_LINES[4..5],
+        (Dataset::Gff3ZeroPos, 0) => &[],
+        (Dataset::Gff3SamePos, 0) => &GFF3_SAME_POS_LINES[2..3],
+        (Dataset::BedZeroPos, 0) => &BED_ZERO_BASE_LINES,
+        (Dataset::BedZeroPos, 1) => &[],
+        (Dataset::BedSamePos, 0) => &BED_SAME_POS_LINES,
+        _ => &[],
+    }
+}
+
+fn find_htslib_tool(name: &str) -> Option<PathBuf> {
+    if let Ok(htslib_bin) = env::var("ENSEMBL_VEP_HTSLIB_BIN") {
+        let candidate = PathBuf::from(htslib_bin).join(name);
+        if candidate.is_file() {
+            return Some(candidate);
+        }
+    }
+
+    env::var_os("PATH").and_then(|paths| {
+        env::split_paths(&paths)
+            .map(|path| path.join(name))
+            .find(|candidate| candidate.is_file())
+    })
+}
+
+fn get_integration_toolchain() -> HtslibToolchain {
+    let bgzip =
+        find_htslib_tool("bgzip").expect("bgzip executable is required for integration tests");
+    let tabix =
+        find_htslib_tool("tabix").expect("tabix executable is required for integration tests");
+
+    HtslibToolchain { bgzip, tabix }
 }
 
 fn py_err(err: PyErr) -> io::Error {

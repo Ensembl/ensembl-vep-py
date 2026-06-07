@@ -16,7 +16,7 @@
 use std::{env, fs, io, path::PathBuf};
 
 #[cfg(unix)]
-pub(crate) fn process_exists(pid: u32) -> std::io::Result<bool> {
+pub fn process_exists(pid: u32) -> std::io::Result<bool> {
     let status = std::process::Command::new("kill")
         .arg("-0")
         .arg(pid.to_string())
@@ -28,7 +28,7 @@ pub(crate) fn process_exists(pid: u32) -> std::io::Result<bool> {
 }
 
 #[cfg(unix)]
-pub(crate) fn assert_process_is_gone(pid: u32) -> std::io::Result<()> {
+pub fn assert_process_is_gone(pid: u32) -> std::io::Result<()> {
     for _ in 0..10 {
         if !process_exists(pid)? {
             return Ok(());

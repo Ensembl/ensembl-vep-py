@@ -13,9 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::io::{self, ErrorKind};
-
 use noodles_core::Region;
+use std::io::{self, ErrorKind};
 
 pub(crate) fn parse_region(region: &str) -> io::Result<Region> {
     region.parse().map_err(|e| {

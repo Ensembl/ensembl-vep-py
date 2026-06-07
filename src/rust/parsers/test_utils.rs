@@ -13,12 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::{
-    fs::File,
-    io::{self, BufRead, Write},
-    path::{Path, PathBuf},
-};
-
 use noodles_bgzf as bgzf;
 use noodles_core::Position;
 use noodles_csi::binning_index::index::{
@@ -27,6 +21,11 @@ use noodles_csi::binning_index::index::{
     reference_sequence::bin::Chunk,
 };
 use noodles_tabix::{self as tabix, index::Indexer};
+use std::{
+    fs::File,
+    io::{self, BufRead, Write},
+    path::{Path, PathBuf},
+};
 
 struct IndexedRecord<'a> {
     chrom: &'a str,
