@@ -13,7 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::{env, fs, io, path::PathBuf};
+use std::{
+    env, fs, io,
+    path::{Path, PathBuf},
+};
 
 #[cfg(unix)]
 pub fn process_exists(pid: u32) -> std::io::Result<bool> {
@@ -48,15 +51,36 @@ pub fn create_temp_dir(prefix: &str) -> io::Result<PathBuf> {
     Ok(dir)
 }
 
+pub fn write_sample_file(dir: &Path, file_name: &str, lines: &[u8]) -> io::Result<PathBuf> {
+    let path = dir.join(file_name);
+    fs::write(&path, lines)?;
+    Ok(path)
+}
+
 #[cfg(all(test, unix))]
 mod tests {
     use std::{io, process::Command};
 
     use super::*;
 
-    // ---------------------------------------------------------------------------
+    // -----------------------------------------------------------------------
+    // write_sample_file
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_write_sample_file() -> io::Result<()> {
+        let dir = create_temp_dir("test-write-sample-file")?;
+        let path = write_sample_file(&dir, "sample.txt", b"sample lines\n")?;
+
+        assert_eq!(fs::read(&path)?, b"sample lines\n");
+
+        fs::remove_dir_all(&dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
     // create_temp_dir
-    // ---------------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     #[test]
     fn test_create_temp_dir() -> io::Result<()> {
@@ -68,9 +92,9 @@ mod tests {
         Ok(())
     }
 
-    // ---------------------------------------------------------------------------
-    // process_exists
-    // ---------------------------------------------------------------------------
+    // -----------------------------------------------------------------------
+    // process_exists and assert_process_is_gone
+    // -----------------------------------------------------------------------
 
     #[test]
     fn test_process_exists_with_running_child() -> io::Result<()> {
@@ -83,10 +107,6 @@ mod tests {
         let _ = child.wait();
         assert_process_is_gone(pid)
     }
-
-    // ---------------------------------------------------------------------------
-    // assert_process_is_gone
-    // ---------------------------------------------------------------------------
 
     #[test]
     #[should_panic(expected = "expected process")]
