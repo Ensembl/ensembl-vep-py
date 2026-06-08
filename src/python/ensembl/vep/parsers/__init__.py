@@ -13,6 +13,6 @@
 # limitations under the License.
 """Parser interfaces."""
 
-from .gff import GFFParser, GFFRecord
+from .gff3 import GFF3Parser, GFF3Record
 
-__all__ = ["GFFParser", "GFFRecord"]
+__all__ = ["GFF3Parser", "GFF3Record"]

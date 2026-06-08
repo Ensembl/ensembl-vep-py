@@ -133,7 +133,7 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
 
     #[test]
     fn test_is_bgzf_file_detects_bgzf_magic() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff-is-bgzf")?;
+        let dir = create_temp_dir("ensembl-vep-gff3-is-bgzf")?;
         let path = write_bgzf_file(&dir, sample_lines(), Some("sample.gff3.gz"))?;
 
         assert!(is_bgzf_file(&path)?);
@@ -144,7 +144,7 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
 
     #[test]
     fn test_is_bgzf_file_rejects_plain_file_with_gz_extension() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff-is-bgzf-plain")?;
+        let dir = create_temp_dir("ensembl-vep-gff3-is-bgzf-plain")?;
         let path = write_sample_file(&dir, "sample.gff3.gz", SAMPLE)?;
 
         assert!(!is_bgzf_file(&path)?);
@@ -155,7 +155,7 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
 
     #[test]
     fn test_is_bgzf_file_rejects_plain_file() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff-is-bgzf-plain-no-ext")?;
+        let dir = create_temp_dir("ensembl-vep-gff3-is-bgzf-plain-no-ext")?;
         let path = write_sample_file(&dir, "sample.gff3", SAMPLE)?;
 
         assert!(!is_bgzf_file(&path)?);

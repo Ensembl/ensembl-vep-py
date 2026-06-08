@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""GFF parser interface backed by the Rust noodles-gff parser."""
+"""GFF3 parser interface backed by the Rust noodles-gff parser."""
 
 from __future__ import annotations
 
@@ -22,16 +22,16 @@ from attr import define, field
 from ensembl.vep.common import format_region_string
 from ensembl.vep.parsers.parser import Parser
 from ensembl.vep.ensembl_vep_core import (  # noqa: F401,F403 pylint: disable=E0401,E0611
-    GFFParser as _RustGFFParser,
-    GFFRecord,
+    GFF3Parser as _RustGFF3Parser,
+    GFF3Record,
 )
 
-__all__ = ["GFFParser", "GFFRecord"]
+__all__ = ["GFF3Parser", "GFF3Record"]
 
 
 @define(kw_only=True, auto_attribs=True)
-class GFFParser(Parser[GFFRecord]):
-    """Parser facade for GFF files.
+class GFF3Parser(Parser[GFF3Record]):
+    """Parser facade for GFF3 files.
 
     Attributes:
         format (str): The format of the file being parsed.
@@ -42,15 +42,15 @@ class GFFParser(Parser[GFFRecord]):
                 and fall back to "sequential" if the file is not indexed.
     """
 
-    format: str = field(init=False, default="gff")
+    format: str = field(init=False, default="gff3")
     file_path: str | Path | None = field(default=None)
     tabix_path: str | Path | None = field(default="tabix")
     mode: str = field(default="auto")
-    _parser: _RustGFFParser = field(init=False, repr=False)
+    _parser: _RustGFF3Parser = field(init=False, repr=False)
     _metadata_cache: dict | None = field(init=False, default=None, repr=False)
 
     def __attrs_post_init__(self) -> None:
-        self._parser = _RustGFFParser(
+        self._parser = _RustGFF3Parser(
             str(self.file_path) if self.file_path is not None else None,
             str(self.tabix_path) if self.tabix_path is not None else None,
             self.mode,
@@ -68,11 +68,11 @@ class GFFParser(Parser[GFFRecord]):
 
     @property
     def _metadata(self) -> dict:
-        """Metadata dictionary containing GFF directives and header lines.
+        """Metadata dictionary containing GFF3 directives and header lines.
 
         Returns:
             dict: A dictionary with keys "directives" and "header",
-                    where "directives" is a list of GFF directives (lines starting with ##)
+                    where "directives" is a list of GFF3 directives (lines starting with ##)
                     and "header" is a list of header lines (lines starting with # but not ##).
         """
 
@@ -84,14 +84,14 @@ class GFFParser(Parser[GFFRecord]):
 
         return self._parser.reader_mode
 
-    def open(self, file_path: str | Path) -> GFFParser:
-        """Open a GFF file.
+    def open(self, file_path: str | Path) -> GFF3Parser:
+        """Open a GFF3 file.
 
         Args:
-            file_path (str | Path): The path to the GFF file to be parsed.
+            file_path (str | Path): The path to the GFF3 file to be parsed.
 
         Returns:
-            GFFParser: The parser instance.
+            GFF3Parser: The parser instance.
         """
 
         self.file_path = file_path
@@ -127,32 +127,32 @@ class GFFParser(Parser[GFFRecord]):
 
         return self._parser.seek(format_region_string(region, seqid=seqid, start=start, end=end))
 
-    def next(self) -> GFFRecord | None:
-        """Return the next GFF record, or None at EOF/##FASTA.
+    def next(self) -> GFF3Record | None:
+        """Return the next GFF3 record, or None at EOF/##FASTA.
 
         Returns:
-            GFFRecord | None: The next GFF record,
+            GFF3Record | None: The next GFF3 record,
                     or None if the end of the file or a ##FASTA directive is reached.
         """
 
         return self._parser.next()
 
-    def records(self, limit: int | None = 10000) -> list[GFFRecord]:
+    def records(self, limit: int | None = 10000) -> list[GFF3Record]:
         """Return records from the current stream position.
 
         Args:
             limit (int | None): The maximum number of records to return. Default is 10000.
 
         Returns:
-            list[GFFRecord]: A list of GFF records.
+            list[GFF3Record]: A list of GFF3 records.
         """
 
         return self._parser.records(limit)
 
-    def __iter__(self) -> Iterator[GFFRecord]:
+    def __iter__(self) -> Iterator[GFF3Record]:
         return self
 
-    def __next__(self) -> GFFRecord:
+    def __next__(self) -> GFF3Record:
         record = self.next()
 
         if record is None:
@@ -160,7 +160,7 @@ class GFFParser(Parser[GFFRecord]):
 
         return record
 
-    def __enter__(self) -> GFFParser:
+    def __enter__(self) -> GFF3Parser:
         return self
 
     def __exit__(self, *_exc_info: object) -> None:
@@ -173,13 +173,13 @@ class GFFParser(Parser[GFFRecord]):
             pass
 
     @staticmethod
-    def parse_text(data: str, limit: int | None = None) -> list[GFFRecord]:
-        """Parse GFF records from text."""
+    def parse_text(data: str, limit: int | None = None) -> list[GFF3Record]:
+        """Parse GFF3 records from text."""
 
-        return _RustGFFParser.parse_text(data, limit)
+        return _RustGFF3Parser.parse_text(data, limit)
 
     @staticmethod
-    def parse_file(file_path: str | Path, limit: int | None = None) -> list[GFFRecord]:
-        """Parse GFF records from a file."""
+    def parse_file(file_path: str | Path, limit: int | None = None) -> list[GFF3Record]:
+        """Parse GFF3 records from a file."""
 
-        return _RustGFFParser.parse_file(str(file_path), limit)
+        return _RustGFF3Parser.parse_file(str(file_path), limit)

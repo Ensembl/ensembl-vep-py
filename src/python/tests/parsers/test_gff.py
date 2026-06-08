@@ -11,13 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Unit tests for the GFF parser interface."""
+"""Unit tests for the GFF3 parser interface."""
 
 from pathlib import Path
 
 import pytest
 
-from ensembl.vep.parsers.gff import GFFParser, GFFRecord
+from ensembl.vep.parsers.gff3 import GFF3Parser, GFF3Record
 
 HEADER_LINES = ["##gff-version 3", "# comment 1"]
 CHR1_GENE_ROW = "chr1\tensembl\tgene\t10\t20\t.\t+\t.\tID=gene:1;Name=BRCA2;Alias=a,b"
@@ -53,7 +53,7 @@ def _write_mock_tabix(tmp_path: Path, body: str) -> Path:
 
 
 def _write_query_mock_tabix(tmp_path: Path) -> Path:
-    """Write a mock tabix executable that returns deterministic GFF records."""
+    """Write a mock tabix executable that returns deterministic GFF3 records."""
 
     return _write_mock_tabix(
         tmp_path,
@@ -79,7 +79,7 @@ esac
     )
 
 
-def _assert_gene_record(record: GFFRecord) -> None:
+def _assert_gene_record(record: GFF3Record) -> None:
     """Assert a parsed record matches the chr1 gene fixture."""
 
     assert record is not None
@@ -95,21 +95,21 @@ def _assert_gene_record(record: GFFRecord) -> None:
     assert record.attributes == {"ID": ("gene:1",), "Name": ("BRCA2",), "Alias": ("a", "b")}
 
 
-class TestGFFParserInitialization:
-    """Test GFFParser initialization."""
+class TestGFF3ParserInitialization:
+    """Test GFF3Parser initialization."""
 
     def test_initialization_without_keywords(self) -> None:
-        """Test GFFParser initialization without keywords raises error."""
+        """Test GFF3Parser initialization without keywords raises error."""
 
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = GFFParser("annotations.gff3")  # type: ignore[misc]
+            _ = GFF3Parser("annotations.gff3")  # type: ignore[misc]
 
     def test_initialization_sets_core_attributes(self) -> None:
-        """Test GFFParser sets parser attributes."""
+        """Test GFF3Parser sets parser attributes."""
 
-        parser = GFFParser()
+        parser = GFF3Parser()
 
-        assert parser.format == "gff"
+        assert parser.format == "gff3"
         assert parser.file_path is None
         assert parser.tabix_path == "tabix"
         assert parser.mode == "auto"
@@ -119,19 +119,19 @@ class TestGFFParserInitialization:
         """Test file_path initialization opens the parser."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
-        parser = GFFParser(file_path=path)
+        parser = GFF3Parser(file_path=path)
 
         _assert_gene_record(parser.next())
 
 
-class TestGFFParserMetadata:
-    """Tests for GFFParser.metadata."""
+class TestGFF3ParserMetadata:
+    """Tests for GFF3Parser.metadata."""
 
     def test_metadata_returns_header_lines_and_directives(self, tmp_path: Path) -> None:
         """Test metadata returns raw header lines and directive values."""
 
         path = _write_gff3(tmp_path / "sample.gff3", SAMPLE_WITH_COMMENT)
-        parser = GFFParser(file_path=path, mode="sequential")
+        parser = GFF3Parser(file_path=path, mode="sequential")
 
         assert parser.metadata == {"header": HEADER_LINES, "gff-version": "3"}
 
@@ -139,7 +139,7 @@ class TestGFFParserMetadata:
         """Test metadata is cached after first access."""
 
         path = _write_gff3(tmp_path / "sample.gff3", SAMPLE_WITH_COMMENT)
-        parser = GFFParser(file_path=path, mode="sequential")
+        parser = GFF3Parser(file_path=path, mode="sequential")
 
         metadata = parser.metadata
 
@@ -156,7 +156,7 @@ class TestGFFParserMetadata:
             tmp_path / "second.gff3",
             "##gff-version 4\nchr1\tensembl\tgene\t10\t20\t.\t+\t.\tID=gene:1\n",
         )
-        parser = GFFParser(file_path=first_path, mode="sequential")
+        parser = GFF3Parser(file_path=first_path, mode="sequential")
 
         assert parser.metadata == {"header": ["##gff-version 3"], "gff-version": "3"}
         assert parser.open(second_path) is parser
@@ -166,7 +166,7 @@ class TestGFFParserMetadata:
         """Test metadata is empty when the parser is closed."""
 
         path = _write_gff3(tmp_path / "sample.gff3", SAMPLE_WITH_COMMENT)
-        parser = GFFParser(file_path=path, mode="sequential")
+        parser = GFF3Parser(file_path=path, mode="sequential")
 
         assert parser.metadata == {"header": HEADER_LINES, "gff-version": "3"}
 
@@ -178,7 +178,7 @@ class TestGFFParserMetadata:
         """Test metadata reads do not advance the active sequential stream."""
 
         path = _write_gff3(tmp_path / "sample.gff3", SAMPLE_WITH_COMMENT)
-        parser = GFFParser(file_path=path, mode="sequential")
+        parser = GFF3Parser(file_path=path, mode="sequential")
 
         _assert_gene_record(parser.next())
         assert parser.metadata == {"header": HEADER_LINES, "gff-version": "3"}
@@ -187,24 +187,24 @@ class TestGFFParserMetadata:
         assert record.feature_type == "CDS"
 
     def test_metadata_in_query_mode_reads_source_headers(self, tmp_path: Path) -> None:
-        """Test query-mode metadata is read from the GFF source file."""
+        """Test query-mode metadata is read from the GFF3 source file."""
 
         path = _write_query_gff3(tmp_path / "sample.gff3.gz")
         tabix = _write_query_mock_tabix(tmp_path)
-        parser = GFFParser(file_path=path, tabix_path=tabix)
+        parser = GFF3Parser(file_path=path, tabix_path=tabix)
 
         assert parser.reader_mode == "query"
         assert parser.metadata == {"header": HEADER_LINES, "gff-version": "3"}
 
 
-class TestGFFParserOpenClose:
-    """Tests for GFFParser open and close."""
+class TestGFF3ParserOpenClose:
+    """Tests for GFF3Parser open and close."""
 
     def test_open_returns_parser(self, tmp_path: Path) -> None:
         """Test open returns the parser instance."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
-        parser = GFFParser(mode="sequential")
+        parser = GFF3Parser(mode="sequential")
 
         assert parser.open(path) is parser
         _assert_gene_record(parser.next())
@@ -213,7 +213,7 @@ class TestGFFParserOpenClose:
         """Test close prevents subsequent backend reads."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
-        parser = GFFParser(file_path=path, mode="sequential")
+        parser = GFF3Parser(file_path=path, mode="sequential")
 
         parser.close()
 
@@ -225,54 +225,54 @@ class TestGFFParserOpenClose:
 
         path = _write_gff3(tmp_path / "sample.gff3")
 
-        with GFFParser(file_path=path, mode="sequential") as parser:
+        with GFF3Parser(file_path=path, mode="sequential") as parser:
             _assert_gene_record(parser.next())
 
         with pytest.raises(RuntimeError, match="not open"):
             parser.next()
 
 
-class TestGFFParserSeek:
-    """Tests for GFFParser.seek."""
+class TestGFF3ParserSeek:
+    """Tests for GFF3Parser.seek."""
 
-    def test_gff_parser_seek_primes_next(self, tmp_path: Path) -> None:
+    def test_gff3_parser_seek_primes_next(self, tmp_path: Path) -> None:
         """Test seek returns availability and next streams parsed records."""
 
         path = _write_query_gff3(tmp_path / "sample.gff3.gz")
         tabix = _write_query_mock_tabix(tmp_path)
-        parser = GFFParser(file_path=path, tabix_path=tabix)
+        parser = GFF3Parser(file_path=path, tabix_path=tabix)
 
         assert parser.seek(seqid="chr1", start=10, end=20) is True
         _assert_gene_record(parser.next())
         assert [record.feature_type for record in parser.records()] == ["exon"]
         assert parser.next() is None
 
-    def test_gff_parser_seek_accepts_region_string(self, tmp_path: Path) -> None:
+    def test_gff3_parser_seek_accepts_region_string(self, tmp_path: Path) -> None:
         """Test seek accepts an explicit region string."""
 
         path = _write_query_gff3(tmp_path / "sample.gff3.gz")
         tabix = _write_query_mock_tabix(tmp_path)
-        parser = GFFParser(file_path=path, tabix_path=tabix)
+        parser = GFF3Parser(file_path=path, tabix_path=tabix)
 
         assert parser.seek("chr2:100-120") is True
         assert [record.seqid for record in parser.records()] == ["chr2"]
 
-    def test_gff_parser_seek_accepts_whole_sequence(self, tmp_path: Path) -> None:
+    def test_gff3_parser_seek_accepts_whole_sequence(self, tmp_path: Path) -> None:
         """Test seek accepts a seqid-only region."""
 
         path = _write_query_gff3(tmp_path / "sample.gff3.gz")
         tabix = _write_query_mock_tabix(tmp_path)
-        parser = GFFParser(file_path=path, tabix_path=tabix)
+        parser = GFF3Parser(file_path=path, tabix_path=tabix)
 
         assert parser.seek(seqid="chr1") is True
         assert [record.feature_type for record in parser.records()] == ["gene", "exon"]
 
-    def test_gff_parser_seek_empty_region(self, tmp_path: Path) -> None:
+    def test_gff3_parser_seek_empty_region(self, tmp_path: Path) -> None:
         """Test seek returns false when no records are available."""
 
         path = _write_query_gff3(tmp_path / "sample.gff3.gz")
         tabix = _write_query_mock_tabix(tmp_path)
-        parser = GFFParser(file_path=path, tabix_path=tabix)
+        parser = GFF3Parser(file_path=path, tabix_path=tabix)
 
         assert parser.seek("chr1:30-40") is False
         assert parser.next() is None
@@ -286,10 +286,10 @@ class TestGFFParserSeek:
             {"seqid": "chr1", "start": 10, "end": 0},
         ],
     )
-    def test_gff_parser_seek_rejects_invalid_region_arguments(self, kwargs: dict[str, object]) -> None:
+    def test_gff3_parser_seek_rejects_invalid_region_arguments(self, kwargs: dict[str, object]) -> None:
         """Test seek rejects invalid region inputs before querying the backend."""
 
-        parser = GFFParser()
+        parser = GFF3Parser()
 
         with pytest.raises(ValueError):
             parser.seek(**kwargs)  # type: ignore[arg-type]
@@ -298,20 +298,20 @@ class TestGFFParserSeek:
         """Test sequential reader mode keeps seek disabled."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
-        parser = GFFParser(file_path=path, mode="sequential")
+        parser = GFF3Parser(file_path=path, mode="sequential")
 
         with pytest.raises(RuntimeError, match="sequential"):
             parser.seek(seqid="chr1", start=10, end=20)
 
 
-class TestGFFParserRecords:
-    """Tests for GFFParser.records."""
+class TestGFF3ParserRecords:
+    """Tests for GFF3Parser.records."""
 
     def test_records_returns_remaining_records(self, tmp_path: Path) -> None:
         """Test records returns all remaining records from the stream."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
-        parser = GFFParser(file_path=path, mode="sequential")
+        parser = GFF3Parser(file_path=path, mode="sequential")
 
         _assert_gene_record(parser.next())
 
@@ -321,7 +321,7 @@ class TestGFFParserRecords:
         """Test records stops once the limit is reached."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
-        parser = GFFParser(file_path=path, mode="sequential")
+        parser = GFF3Parser(file_path=path, mode="sequential")
 
         assert [record.feature_type for record in parser.records(limit=1)] == ["gene"]
         assert [record.feature_type for record in parser.records()] == ["CDS"]
@@ -330,19 +330,19 @@ class TestGFFParserRecords:
         """Test zero limit leaves the next record available."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
-        parser = GFFParser(file_path=path, mode="sequential")
+        parser = GFF3Parser(file_path=path, mode="sequential")
 
         assert parser.records(limit=0) == []
         _assert_gene_record(parser.next())
 
 
-class TestGFFParserIteration:
-    """Tests for GFFParser iteration."""
+class TestGFF3ParserIteration:
+    """Tests for GFF3Parser iteration."""
 
     def test_parser_is_its_own_iterator(self) -> None:
         """Test iter returns the parser instance."""
 
-        parser = GFFParser()
+        parser = GFF3Parser()
 
         assert iter(parser) is parser
 
@@ -350,7 +350,7 @@ class TestGFFParserIteration:
         """Test iteration streams records from the parser."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
-        parser = GFFParser(file_path=path, mode="sequential")
+        parser = GFF3Parser(file_path=path, mode="sequential")
 
         assert [record.feature_type for record in parser] == ["gene", "CDS"]
 
@@ -358,20 +358,20 @@ class TestGFFParserIteration:
         """Test iteration raises StopIteration when no more records are available."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
-        parser = GFFParser(file_path=path, mode="sequential")
+        parser = GFF3Parser(file_path=path, mode="sequential")
 
         with pytest.raises(StopIteration):
             while True:
                 next(parser)
 
 
-class TestGFFParserParsingTextAndFiles:
-    """Tests for GFFParser parse helpers."""
+class TestGFF3ParserParsingTextAndFiles:
+    """Tests for GFF3Parser parse helpers."""
 
     def test_parse_text_returns_interface_records(self) -> None:
-        """Test parse_text exposes GFF rows as parser-interface records."""
+        """Test parse_text exposes GFF3 rows as parser-interface records."""
 
-        records = GFFParser.parse_text(SAMPLE)
+        records = GFF3Parser.parse_text(SAMPLE)
 
         assert len(records) == 2
         _assert_gene_record(records[0])
@@ -381,16 +381,16 @@ class TestGFFParserParsingTextAndFiles:
     def test_parse_text_respects_limit(self) -> None:
         """Test parse_text stops once the limit is reached."""
 
-        records = GFFParser.parse_text(SAMPLE, limit=1)
+        records = GFF3Parser.parse_text(SAMPLE, limit=1)
 
         assert len(records) == 1
         _assert_gene_record(records[0])
 
     def test_parse_file_returns_interface_records(self, tmp_path: Path) -> None:
-        """Test parse_file exposes GFF rows as parser-interface records."""
+        """Test parse_file exposes GFF3 rows as parser-interface records."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
-        records = GFFParser.parse_file(path)
+        records = GFF3Parser.parse_file(path)
 
         assert len(records) == 2
         _assert_gene_record(records[0])
