@@ -37,12 +37,17 @@ class GFFParser:
         tabix_path: str = "tabix",
         mode: str = "query",
     ) -> None:
-        self.metadata: dict[str, str] = {}
         self._parser = _RustGFFParser(
             str(file_path) if file_path is not None else None,
             tabix_path,
             mode,
         )
+
+    @property
+    def metadata(self) -> dict[str, object]:
+        """Return parser metadata."""
+
+        return self._parser.metadata
 
     @property
     def reader_mode(self) -> str:

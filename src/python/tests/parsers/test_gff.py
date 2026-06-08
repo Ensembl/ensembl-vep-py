@@ -97,6 +97,26 @@ def test_parser_can_force_sequential_reader(tmp_path: Path) -> None:
         parser.seek(seqid="chr1", start=10, end=20)
 
 
+def test_metadata_returns_header_and_directives(tmp_path: Path) -> None:
+    """Parser.metadata exposes raw GFF headers and directive values."""
+
+    path = tmp_path / "sample.gff3"
+    path.write_text(
+        """\
+##gff-version 3
+# comment 1
+chr1\tensembl\tgene\t10\t20\t.\t+\t.\tID=gene:1
+"""
+    )
+
+    parser = GFFParser(path, mode="sequential")
+
+    assert parser.metadata == {
+        "header": ["##gff-version 3", "# comment 1"],
+        "gff-version": "3",
+    }
+
+
 def test_records_honours_limit(tmp_path: Path) -> None:
     """Parser.records returns a bounded number of rows."""
 

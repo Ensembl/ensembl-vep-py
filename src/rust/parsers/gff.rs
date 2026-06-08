@@ -99,14 +99,21 @@ impl GffRecord {
 // The reader by default uses indexed reading if a tabix index is available,
 // but can be forced into sequential mode via the `mode` parameter on `GffParser`.
 pub struct GffReader {
+    file_path: PathBuf,
     backend: Backend,
     mode: ReaderMode,
+    metadata: Option<GffMetadata>,
 }
 
 impl GffReader {
     fn open(file_path: &Path, tabix_path: &str, mode: ReaderMode) -> io::Result<Self> {
         let (backend, mode) = Backend::open(file_path, tabix_path, mode)?;
-        Ok(Self { backend, mode })
+        Ok(Self {
+            file_path: file_path.to_path_buf(),
+            backend,
+            mode,
+            metadata: None,
+        })
     }
 
     fn next(&mut self) -> io::Result<Option<GffRecord>> {
@@ -116,6 +123,24 @@ impl GffReader {
     fn seek(&mut self, region: &str) -> io::Result<bool> {
         self.backend.seek(region)
     }
+
+    fn metadata(&mut self) -> io::Result<&GffMetadata> {
+        if self.metadata.is_none() {
+            self.metadata = Some(read_gff_metadata(&self.file_path)?);
+        }
+
+        Ok(self.metadata.as_ref().expect("metadata should be cached"))
+    }
+}
+
+// ---------------------------------------------------------------------------
+// GffMetadata - holds GFF metadata (directives and header lines)
+// ---------------------------------------------------------------------------
+
+#[derive(Clone, Debug, Default, PartialEq)]
+struct GffMetadata {
+    header: Vec<String>,
+    directives: Vec<(String, String)>,
 }
 
 // ---------------------------------------------------------------------------
@@ -314,8 +339,25 @@ impl GffParser {
     }
 
     #[getter]
-    fn metadata<'py>(&self, py: Python<'py>) -> Bound<'py, PyDict> {
-        PyDict::new(py)
+    fn metadata<'py>(&mut self, py: Python<'py>) -> PyResult<Bound<'py, PyDict>> {
+        let dict = PyDict::new(py);
+
+        let Some(reader) = self.reader.as_mut() else {
+            return Ok(dict);
+        };
+
+        let metadata = reader.metadata().map_err(to_py_error)?;
+
+        if !metadata.header.is_empty() {
+            let header: Vec<_> = metadata.header.iter().map(String::as_str).collect();
+            dict.set_item("header", header)?;
+        }
+
+        for (key, value) in &metadata.directives {
+            dict.set_item(key, value)?;
+        }
+
+        Ok(dict)
     }
 
     #[getter]
@@ -408,6 +450,55 @@ fn open_sequential_gff_reader(
     };
 
     Ok(gff::io::Reader::new(reader))
+}
+
+fn read_gff_metadata(file_path: &Path) -> io::Result<GffMetadata> {
+    let mut reader = open_sequential_gff_reader(file_path)?;
+    read_gff_metadata_from_reader(&mut reader)
+}
+
+fn read_gff_metadata_from_reader<R>(reader: &mut gff::io::Reader<R>) -> io::Result<GffMetadata>
+where
+    R: BufRead,
+{
+    let mut metadata = GffMetadata::default();
+    let mut line = gff::Line::default();
+
+    loop {
+        if reader.read_line(&mut line)? == 0 {
+            break;
+        }
+
+        if line.as_ref().is_empty() {
+            continue;
+        }
+
+        if let Some(directive) = line.as_directive() {
+            metadata
+                .header
+                .push(bytes_to_string(line.as_ref().as_ref()));
+
+            if let Some(value) = directive.value() {
+                metadata.directives.push((
+                    bytes_to_string(directive.key().as_ref()),
+                    bytes_to_string(value.as_ref()),
+                ));
+            }
+
+            continue;
+        }
+
+        if line.as_comment().is_some() {
+            metadata
+                .header
+                .push(bytes_to_string(line.as_ref().as_ref()));
+            continue;
+        }
+
+        break;
+    }
+
+    Ok(metadata)
 }
 
 fn read_next_record<R>(reader: &mut gff::io::Reader<R>) -> io::Result<Option<GffRecord>>
@@ -1004,6 +1095,39 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
     }
 
     // -----------------------------------------------------------------------
+    // read_gff_metadata
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_read_gff_metadata_from_reader_collects_header_and_directives() -> io::Result<()> {
+        let mut reader = gff::io::Reader::new(SKIPPED_LINE_SAMPLE);
+        let metadata = read_gff_metadata_from_reader(&mut reader)?;
+
+        assert_eq!(
+            metadata.header,
+            vec![
+                "##gff-version 3".to_string(),
+                "# a regular comment".to_string()
+            ]
+        );
+        assert_eq!(
+            metadata.directives,
+            vec![("gff-version".to_string(), "3".to_string())]
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_read_gff_metadata_with_no_header() -> io::Result<()> {
+        let mut reader = gff::io::Reader::new(b"chr1\tensembl\tgene\t10\t20\t.\t+\t.\tID=gene:1\n".as_slice());
+        let metadata = read_gff_metadata_from_reader(&mut reader)?;
+
+        assert!(metadata.header.is_empty());
+        assert!(metadata.directives.is_empty());
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
     // open_sequential_gff_reader
     // -----------------------------------------------------------------------
 
@@ -1079,7 +1203,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         assert_eq!(parser.format(), "gff");
         Python::initialize();
         Python::attach(|py| {
-            assert!(parser.metadata(py).is_empty());
+            assert!(parser.metadata(py).unwrap().is_empty());
         });
         assert_eq!(parser.reader_mode(), "auto");
         assert!(parser.next().unwrap_err().to_string().contains("not open"));
@@ -1095,6 +1219,129 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
             .contains("not open"));
 
         parser.close();
+        Ok(())
+    }
+
+    #[test]
+    fn test_gff_parser_metadata_sequential() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-gff-parser-metadata-seq")?;
+        let path = write_sample_file(&dir, "sample.gff3", SKIPPED_LINE_SAMPLE)?;
+        let file_path = path.to_string_lossy().into_owned();
+
+        let mut parser =
+            GffParser::new(None, None, Some("sequential".to_string())).map_err(from_py_error)?;
+        parser.open(&file_path).map_err(from_py_error)?;
+
+        Python::attach(|py| -> PyResult<()> {
+            let metadata = parser.metadata(py)?;
+            let header: Vec<String> = metadata
+                .get_item("header")?
+                .expect("metadata should contain header")
+                .extract()?;
+
+            assert_eq!(
+                header,
+                vec![
+                    "##gff-version 3".to_string(),
+                    "# a regular comment".to_string()
+                ]
+            );
+            assert_eq!(
+                metadata
+                    .get_item("gff-version")?
+                    .unwrap()
+                    .extract::<String>()?,
+                "3"
+            );
+            Ok(())
+        })
+        .map_err(from_py_error)?;
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_gff_parser_metadata_does_not_consume_sequential_reader() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-gff-parser-metadata-preserve-seq")?;
+        let path = write_sample_file(&dir, "sample.gff3", SAMPLE)?;
+        let file_path = path.to_string_lossy().into_owned();
+
+        let mut parser =
+            GffParser::new(None, None, Some("sequential".to_string())).map_err(from_py_error)?;
+        parser.open(&file_path).map_err(from_py_error)?;
+
+        let first = parser
+            .next()
+            .map_err(from_py_error)?
+            .expect("expected first record");
+        assert_first_sample_record(&first);
+
+        Python::attach(|py| -> PyResult<()> {
+            let metadata = parser.metadata(py)?;
+            assert_eq!(
+                metadata
+                    .get_item("gff-version")?
+                    .unwrap()
+                    .extract::<String>()?,
+                "3"
+            );
+            Ok(())
+        })
+        .map_err(from_py_error)?;
+
+        let second = parser
+            .next()
+            .map_err(from_py_error)?
+            .expect("expected second record");
+        assert_second_sample_record(&second);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_gff_parser_metadata_query_bgzf() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-gff-parser-metadata-query")?;
+        let (gz_path, _tbi_path) = write_gff3_with_tbi(
+            &dir,
+            str::from_utf8(SKIPPED_LINE_SAMPLE)
+                .ok()
+                .map(|s| s.lines().map(str::to_owned).collect()),
+        )?;
+        let file_path = gz_path.to_string_lossy().into_owned();
+
+        let mut parser = GffParser::new(None, None, None).map_err(from_py_error)?;
+        parser.open(&file_path).map_err(from_py_error)?;
+
+        assert_eq!(parser.reader_mode(), "query");
+
+        Python::attach(|py| -> PyResult<()> {
+            let metadata = parser.metadata(py)?;
+            let header: Vec<String> = metadata
+                .get_item("header")?
+                .expect("metadata should contain header")
+                .extract()?;
+
+            assert_eq!(
+                header,
+                vec![
+                    "##gff-version 3".to_string(),
+                    "# a regular comment".to_string()
+                ]
+            );
+            assert_eq!(
+                metadata
+                    .get_item("gff-version")?
+                    .unwrap()
+                    .extract::<String>()?,
+                "3"
+            );
+            Ok(())
+        })
+        .map_err(from_py_error)?;
+
+        fs::remove_dir_all(dir)?;
         Ok(())
     }
 
