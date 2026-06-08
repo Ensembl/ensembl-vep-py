@@ -17,208 +17,380 @@ from pathlib import Path
 
 import pytest
 
-from ensembl.vep.parsers.gff import GFFParser
+from ensembl.vep.parsers.gff import GFFParser, GFFRecord
+
+HEADER_LINES = ["##gff-version 3", "# comment 1"]
+CHR1_GENE_ROW = "chr1\tensembl\tgene\t10\t20\t.\t+\t.\tID=gene:1;Name=BRCA2;Alias=a,b"
+CHR1_CDS_ROW = "chr1\tensembl\tCDS\t12\t18\t4.5\t-\t2\tID=cds:1;Parent=gene:1"
+CHR1_EXON_ROW = "chr1\ttabix\texon\t15\t18\t.\t+\t0\tID=exon:1"
+CHR2_GENE_ROW = "chr2\ttabix\tgene\t100\t120\t.\t-\t.\tID=gene:2"
+SAMPLE = "\n".join([HEADER_LINES[0], CHR1_GENE_ROW, CHR1_CDS_ROW, "##FASTA", ">chr1", "ACGT"]) + "\n"
+SAMPLE_WITH_COMMENT = "\n".join([*HEADER_LINES, CHR1_GENE_ROW, CHR1_CDS_ROW]) + "\n"
 
 
-SAMPLE = """\
-##gff-version 3
-chr1\tensembl\tgene\t10\t20\t.\t+\t.\tID=gene:1;Name=BRCA2;Alias=a,b
-chr1\tensembl\tCDS\t12\t18\t4.5\t-\t2\tID=cds:1;Parent=gene:1
-##FASTA
->chr1
-ACGT
-"""
+def _write_gff3(path: Path, data: str = SAMPLE) -> Path:
+    """Write a GFF3 fixture file."""
+
+    path.write_text(data)
+    return path
 
 
-def test_parse_text_returns_interface_records() -> None:
-    """GFF rows are exposed as parser-interface records."""
+def _write_query_gff3(path: Path, data: str = SAMPLE_WITH_COMMENT) -> Path:
+    """Write a query-mode GFF3 fixture with a placeholder tabix index."""
 
-    records = GFFParser.parse_text(SAMPLE)
+    path.write_text(data)
+    path.with_suffix(path.suffix + ".tbi").write_text("")
+    return path
 
-    assert len(records) == 2
 
-    record = records[0]
+def _write_mock_tabix(tmp_path: Path, body: str) -> Path:
+    """Write a mock tabix executable."""
+
+    tabix = tmp_path / "tabix"
+    tabix.write_text(f"#!/bin/sh\n{body}\n")
+    tabix.chmod(0o755)
+    return tabix
+
+
+def _write_query_mock_tabix(tmp_path: Path) -> Path:
+    """Write a mock tabix executable that returns deterministic GFF records."""
+
+    return _write_mock_tabix(
+        tmp_path,
+        f"""
+if [ "$1" = "--version" ]; then
+    exit 0
+fi
+
+case "$2" in
+    chr1)
+        printf '%s\\n' '{CHR1_GENE_ROW}'
+        printf '%s\\n' '{CHR1_EXON_ROW}'
+        ;;
+    chr1:10-20)
+        printf '%s\\n' '{CHR1_GENE_ROW}'
+        printf '%s\\n' '{CHR1_EXON_ROW}'
+        ;;
+    chr2:100-120)
+        printf '%s\\n' '{CHR2_GENE_ROW}'
+        ;;
+esac
+""",
+    )
+
+
+def _assert_gene_record(record: GFFRecord) -> None:
+    """Assert a parsed record matches the chr1 gene fixture."""
+
+    assert record is not None
     assert record.seqid == "chr1"
     assert record.source == "ensembl"
     assert record.feature_type == "gene"
     assert record.start == 10
     assert record.end == 20
     assert record.score is None
-    assert record.strand == "+"
-    assert record.phase is None
+    assert record.strand_symbol == "+"
+    assert record.phase_value is None
     assert record.raw_attributes == "ID=gene:1;Name=BRCA2;Alias=a,b"
     assert record.attributes == {"ID": ("gene:1",), "Name": ("BRCA2",), "Alias": ("a", "b")}
 
-    assert records[1].score == 4.5
-    assert records[1].phase == 2
+
+class TestGFFParserInitialization:
+    """Test GFFParser initialization."""
+
+    def test_initialization_without_keywords(self) -> None:
+        """Test GFFParser initialization without keywords raises error."""
+
+        with pytest.raises(TypeError, match="takes 1 positional argument"):
+            _ = GFFParser("annotations.gff3")  # type: ignore[misc]
+
+    def test_initialization_sets_core_attributes(self) -> None:
+        """Test GFFParser sets parser attributes."""
+
+        parser = GFFParser()
+
+        assert parser.format == "gff"
+        assert parser.file_path is None
+        assert parser.tabix_path == "tabix"
+        assert parser.mode == "auto"
+        assert parser.reader_mode == "auto"
+
+    def test_initialization_with_file_path_opens_parser(self, tmp_path: Path) -> None:
+        """Test file_path initialization opens the parser."""
+
+        path = _write_gff3(tmp_path / "sample.gff3")
+        parser = GFFParser(file_path=path)
+
+        _assert_gene_record(parser.next())
 
 
-def test_parser_streams_file(tmp_path: Path) -> None:
-    """Parser.next streams records until the FASTA directive."""
+class TestGFFParserMetadata:
+    """Tests for GFFParser.metadata."""
 
-    path = tmp_path / "sample.gff3"
-    path.write_text(SAMPLE)
+    def test_metadata_returns_header_lines_and_directives(self, tmp_path: Path) -> None:
+        """Test metadata returns raw header lines and directive values."""
 
-    parser = GFFParser(path)
+        path = _write_gff3(tmp_path / "sample.gff3", SAMPLE_WITH_COMMENT)
+        parser = GFFParser(file_path=path, mode="sequential")
 
-    first = parser.next()
-    second = parser.next()
+        assert parser.metadata == {"header": HEADER_LINES, "gff-version": "3"}
 
-    assert first is not None
-    assert second is not None
-    assert first.feature_type == "gene"
-    assert second.feature_type == "CDS"
-    assert parser.next() is None
+    def test_metadata_is_cached(self, tmp_path: Path) -> None:
+        """Test metadata is cached after first access."""
+
+        path = _write_gff3(tmp_path / "sample.gff3", SAMPLE_WITH_COMMENT)
+        parser = GFFParser(file_path=path, mode="sequential")
+
+        metadata = parser.metadata
+
+        assert parser.metadata == metadata
+
+    def test_open_refreshes_metadata_cache(self, tmp_path: Path) -> None:
+        """Test open clears cached metadata for the previous file."""
+
+        first_path = _write_gff3(
+            tmp_path / "first.gff3",
+            "##gff-version 3\nchr1\tensembl\tgene\t10\t20\t.\t+\t.\tID=gene:1\n",
+        )
+        second_path = _write_gff3(
+            tmp_path / "second.gff3",
+            "##gff-version 4\nchr1\tensembl\tgene\t10\t20\t.\t+\t.\tID=gene:1\n",
+        )
+        parser = GFFParser(file_path=first_path, mode="sequential")
+
+        assert parser.metadata == {"header": ["##gff-version 3"], "gff-version": "3"}
+        assert parser.open(second_path) is parser
+        assert parser.metadata == {"header": ["##gff-version 4"], "gff-version": "4"}
+
+    def test_metadata_returns_empty_dictionary_after_close(self, tmp_path: Path) -> None:
+        """Test metadata is empty when the parser is closed."""
+
+        path = _write_gff3(tmp_path / "sample.gff3", SAMPLE_WITH_COMMENT)
+        parser = GFFParser(file_path=path, mode="sequential")
+
+        assert parser.metadata == {"header": HEADER_LINES, "gff-version": "3"}
+
+        parser.close()
+
+        assert not parser.metadata
+
+    def test_metadata_does_not_consume_sequential_stream(self, tmp_path: Path) -> None:
+        """Test metadata reads do not advance the active sequential stream."""
+
+        path = _write_gff3(tmp_path / "sample.gff3", SAMPLE_WITH_COMMENT)
+        parser = GFFParser(file_path=path, mode="sequential")
+
+        _assert_gene_record(parser.next())
+        assert parser.metadata == {"header": HEADER_LINES, "gff-version": "3"}
+        record = parser.next()
+        assert record is not None
+        assert record.feature_type == "CDS"
+
+    def test_metadata_in_query_mode_reads_source_headers(self, tmp_path: Path) -> None:
+        """Test query-mode metadata is read from the GFF source file."""
+
+        path = _write_query_gff3(tmp_path / "sample.gff3.gz")
+        tabix = _write_query_mock_tabix(tmp_path)
+        parser = GFFParser(file_path=path, tabix_path=tabix)
+
+        assert parser.reader_mode == "query"
+        assert parser.metadata == {"header": HEADER_LINES, "gff-version": "3"}
 
 
-def test_parser_next_does_not_require_tabix(tmp_path: Path) -> None:
-    """Parser.next streams the whole file without opening tabix."""
+class TestGFFParserOpenClose:
+    """Tests for GFFParser open and close."""
 
-    path = tmp_path / "sample.gff3"
-    path.write_text(SAMPLE)
+    def test_open_returns_parser(self, tmp_path: Path) -> None:
+        """Test open returns the parser instance."""
 
-    parser = GFFParser(path, tabix_path=str(tmp_path / "missing-tabix"))
+        path = _write_gff3(tmp_path / "sample.gff3")
+        parser = GFFParser(mode="sequential")
 
-    assert [record.feature_type for record in parser] == ["gene", "CDS"]
+        assert parser.open(path) is parser
+        _assert_gene_record(parser.next())
+
+    def test_close_closes_backend_reader(self, tmp_path: Path) -> None:
+        """Test close prevents subsequent backend reads."""
+
+        path = _write_gff3(tmp_path / "sample.gff3")
+        parser = GFFParser(file_path=path, mode="sequential")
+
+        parser.close()
+
+        with pytest.raises(RuntimeError, match="not open"):
+            parser.next()
+
+    def test_context_manager_closes_parser(self, tmp_path: Path) -> None:
+        """Test context manager returns and closes the parser."""
+
+        path = _write_gff3(tmp_path / "sample.gff3")
+
+        with GFFParser(file_path=path, mode="sequential") as parser:
+            _assert_gene_record(parser.next())
+
+        with pytest.raises(RuntimeError, match="not open"):
+            parser.next()
 
 
-def test_parser_can_force_sequential_reader(tmp_path: Path) -> None:
-    """Sequential reader mode keeps seek disabled."""
+class TestGFFParserSeek:
+    """Tests for GFFParser.seek."""
 
-    path = tmp_path / "sample.gff3"
-    path.write_text(SAMPLE)
+    def test_gff_parser_seek_primes_next(self, tmp_path: Path) -> None:
+        """Test seek returns availability and next streams parsed records."""
 
-    parser = GFFParser(path, tabix_path=str(tmp_path / "missing-tabix"), mode="sequential")
+        path = _write_query_gff3(tmp_path / "sample.gff3.gz")
+        tabix = _write_query_mock_tabix(tmp_path)
+        parser = GFFParser(file_path=path, tabix_path=tabix)
 
-    assert parser.reader_mode == "sequential"
-    assert [record.feature_type for record in parser] == ["gene", "CDS"]
+        assert parser.seek(seqid="chr1", start=10, end=20) is True
+        _assert_gene_record(parser.next())
+        assert [record.feature_type for record in parser.records()] == ["exon"]
+        assert parser.next() is None
 
-    with pytest.raises(RuntimeError, match="sequential"):
-        parser.seek(seqid="chr1", start=10, end=20)
+    def test_gff_parser_seek_accepts_region_string(self, tmp_path: Path) -> None:
+        """Test seek accepts an explicit region string."""
 
+        path = _write_query_gff3(tmp_path / "sample.gff3.gz")
+        tabix = _write_query_mock_tabix(tmp_path)
+        parser = GFFParser(file_path=path, tabix_path=tabix)
 
-def test_metadata_returns_header_and_directives(tmp_path: Path) -> None:
-    """Parser.metadata exposes raw GFF headers and directive values."""
+        assert parser.seek("chr2:100-120") is True
+        assert [record.seqid for record in parser.records()] == ["chr2"]
 
-    path = tmp_path / "sample.gff3"
-    path.write_text(
-        """\
-##gff-version 3
-# comment 1
-chr1\tensembl\tgene\t10\t20\t.\t+\t.\tID=gene:1
-"""
+    def test_gff_parser_seek_accepts_whole_sequence(self, tmp_path: Path) -> None:
+        """Test seek accepts a seqid-only region."""
+
+        path = _write_query_gff3(tmp_path / "sample.gff3.gz")
+        tabix = _write_query_mock_tabix(tmp_path)
+        parser = GFFParser(file_path=path, tabix_path=tabix)
+
+        assert parser.seek(seqid="chr1") is True
+        assert [record.feature_type for record in parser.records()] == ["gene", "exon"]
+
+    def test_gff_parser_seek_empty_region(self, tmp_path: Path) -> None:
+        """Test seek returns false when no records are available."""
+
+        path = _write_query_gff3(tmp_path / "sample.gff3.gz")
+        tabix = _write_query_mock_tabix(tmp_path)
+        parser = GFFParser(file_path=path, tabix_path=tabix)
+
+        assert parser.seek("chr1:30-40") is False
+        assert parser.next() is None
+
+    @pytest.mark.parametrize(
+        "kwargs",
+        [
+            {},
+            {"region": "chr1:10-20", "seqid": "chr1"},
+            {"seqid": "chr1", "start": 0, "end": 20},
+            {"seqid": "chr1", "start": 10, "end": 0},
+        ],
     )
+    def test_gff_parser_seek_rejects_invalid_region_arguments(self, kwargs: dict[str, object]) -> None:
+        """Test seek rejects invalid region inputs before querying the backend."""
 
-    parser = GFFParser(path, mode="sequential")
+        parser = GFFParser()
 
-    assert parser.metadata == {
-        "header": ["##gff-version 3", "# comment 1"],
-        "gff-version": "3",
-    }
+        with pytest.raises(ValueError):
+            parser.seek(**kwargs)  # type: ignore[arg-type]
 
+    def test_sequential_mode_rejects_seek(self, tmp_path: Path) -> None:
+        """Test sequential reader mode keeps seek disabled."""
 
-def test_records_honours_limit(tmp_path: Path) -> None:
-    """Parser.records returns a bounded number of rows."""
+        path = _write_gff3(tmp_path / "sample.gff3")
+        parser = GFFParser(file_path=path, mode="sequential")
 
-    path = tmp_path / "sample.gff3"
-    path.write_text(SAMPLE)
-
-    parser = GFFParser(path)
-    records = parser.records(limit=1)
-
-    assert len(records) == 1
-    assert records[0].feature_type == "gene"
+        with pytest.raises(RuntimeError, match="sequential"):
+            parser.seek(seqid="chr1", start=10, end=20)
 
 
-def test_seek_uses_tabix_and_parses_region_output(tmp_path: Path) -> None:
-    """Parser.seek updates the active stream for next()."""
+class TestGFFParserRecords:
+    """Tests for GFFParser.records."""
 
-    path = tmp_path / "sample.gff3.gz"
-    path.write_text(SAMPLE)
-    path.with_suffix(path.suffix + ".tbi").write_text("")
+    def test_records_returns_remaining_records(self, tmp_path: Path) -> None:
+        """Test records returns all remaining records from the stream."""
 
-    tabix = tmp_path / "tabix"
-    tabix.write_text(
-        """#!/bin/sh
-printf '%s\\n' 'chr1\ttabix\tgene\t10\t20\t.\t+\t.\tID=gene:1;Name=BRCA2'
-"""
-    )
-    tabix.chmod(0o755)
+        path = _write_gff3(tmp_path / "sample.gff3")
+        parser = GFFParser(file_path=path, mode="sequential")
 
-    parser = GFFParser(path, tabix_path=str(tabix))
-    has_records = parser.seek(seqid="chr1", start=10, end=20)
-    record = parser.next()
+        _assert_gene_record(parser.next())
 
-    assert has_records is True
-    assert record is not None
-    assert record.seqid == "chr1"
-    assert record.source == "tabix"
-    assert record.feature_type == "gene"
-    assert record.start == 10
-    assert record.end == 20
-    assert record.attributes == {"ID": ("gene:1",), "Name": ("BRCA2",)}
-    assert parser.next() is None
+        assert [record.feature_type for record in parser.records()] == ["CDS"]
 
+    def test_records_respects_limit(self, tmp_path: Path) -> None:
+        """Test records stops once the limit is reached."""
 
-def test_parser_can_force_tabix_reader(tmp_path: Path) -> None:
-    """Query mode uses sequential reads until seek activates tabix."""
+        path = _write_gff3(tmp_path / "sample.gff3")
+        parser = GFFParser(file_path=path, mode="sequential")
 
-    path = tmp_path / "sample.gff3.gz"
-    path.write_text(SAMPLE)
-    path.with_suffix(path.suffix + ".tbi").write_text("")
+        assert [record.feature_type for record in parser.records(limit=1)] == ["gene"]
+        assert [record.feature_type for record in parser.records()] == ["CDS"]
 
-    tabix = tmp_path / "tabix"
-    tabix.write_text(
-        """#!/bin/sh
-printf '%s\\n' 'chr1\ttabix\tgene\t10\t20\t.\t+\t.\tID=gene:1'
-"""
-    )
-    tabix.chmod(0o755)
+    def test_records_zero_limit_does_not_consume_record(self, tmp_path: Path) -> None:
+        """Test zero limit leaves the next record available."""
 
-    parser = GFFParser(path, tabix_path=str(tabix), mode="query")
+        path = _write_gff3(tmp_path / "sample.gff3")
+        parser = GFFParser(file_path=path, mode="sequential")
 
-    assert parser.reader_mode == "query"
-    assert parser.next() is not None
-    assert parser.seek(seqid="chr1", start=10, end=20) is True
-    assert parser.next() is not None
+        assert parser.records(limit=0) == []
+        _assert_gene_record(parser.next())
 
 
-def test_seek_returns_false_for_empty_region(tmp_path: Path) -> None:
-    """Parser.seek returns false when tabix yields no rows."""
+class TestGFFParserIteration:
+    """Tests for GFFParser iteration."""
 
-    path = tmp_path / "sample.gff3.gz"
-    path.write_text(SAMPLE)
-    path.with_suffix(path.suffix + ".tbi").write_text("")
+    def test_parser_is_its_own_iterator(self) -> None:
+        """Test iter returns the parser instance."""
 
-    tabix = tmp_path / "tabix"
-    tabix.write_text("#!/bin/sh\n")
-    tabix.chmod(0o755)
+        parser = GFFParser()
 
-    parser = GFFParser(path, tabix_path=str(tabix))
+        assert iter(parser) is parser
 
-    assert parser.seek(seqid="chr1", start=30, end=40) is False
-    assert parser.next() is None
+    def test_iteration_streams_records(self, tmp_path: Path) -> None:
+        """Test iteration streams records from the parser."""
+
+        path = _write_gff3(tmp_path / "sample.gff3")
+        parser = GFFParser(file_path=path, mode="sequential")
+
+        assert [record.feature_type for record in parser] == ["gene", "CDS"]
+
+    def test_iteration_raises_stop_iteration(self, tmp_path: Path) -> None:
+        """Test iteration raises StopIteration when no more records are available."""
+
+        path = _write_gff3(tmp_path / "sample.gff3")
+        parser = GFFParser(file_path=path, mode="sequential")
+
+        with pytest.raises(StopIteration):
+            while True:
+                next(parser)
 
 
-def test_query_mode_falls_back_to_sequential_without_index(tmp_path: Path) -> None:
-    """Query mode streams sequentially when no tabix index is available."""
+class TestGFFParserParsingTextAndFiles:
+    """Tests for GFFParser parse helpers."""
 
-    path = tmp_path / "sample.gff3.gz"
-    path.write_text(SAMPLE)
+    def test_parse_text_returns_interface_records(self) -> None:
+        """Test parse_text exposes GFF rows as parser-interface records."""
 
-    parser = GFFParser(path, mode="query")
+        records = GFFParser.parse_text(SAMPLE)
 
-    assert parser.reader_mode == "query"
-    assert [record.feature_type for record in parser] == ["gene", "CDS"]
+        assert len(records) == 2
+        _assert_gene_record(records[0])
+        assert records[1].score == 4.5
+        assert records[1].phase_value == 2
 
+    def test_parse_text_respects_limit(self) -> None:
+        """Test parse_text stops once the limit is reached."""
 
-def test_query_mode_seek_without_index_errors(tmp_path: Path) -> None:
-    """Seek fails in query mode when the tabix index is missing."""
+        records = GFFParser.parse_text(SAMPLE, limit=1)
 
-    path = tmp_path / "sample.gff3.gz"
-    path.write_text(SAMPLE)
+        assert len(records) == 1
+        _assert_gene_record(records[0])
 
-    parser = GFFParser(path, mode="query")
+    def test_parse_file_returns_interface_records(self, tmp_path: Path) -> None:
+        """Test parse_file exposes GFF rows as parser-interface records."""
 
-    with pytest.raises(RuntimeError, match="sequential"):
-        parser.seek(seqid="chr1", start=10, end=20)
+        path = _write_gff3(tmp_path / "sample.gff3")
+        records = GFFParser.parse_file(path)
+
+        assert len(records) == 2
+        _assert_gene_record(records[0])

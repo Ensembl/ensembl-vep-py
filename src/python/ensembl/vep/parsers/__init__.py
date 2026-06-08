@@ -14,5 +14,6 @@
 """Parser interfaces."""
 
 from .tabix import TabixParser
+from .gff import GFFParser, GFFRecord
 
-__all__ = ["TabixParser"]
+__all__ = ["TabixParser", "GFFParser", "GFFRecord"]
