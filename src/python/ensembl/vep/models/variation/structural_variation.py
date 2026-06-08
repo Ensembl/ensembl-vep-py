@@ -13,11 +13,37 @@
 # limitations under the License.
 """StructuralVariation class."""
 
-from attrs import define
+from typing import Sequence
+from attrs import define, field
 
 from ensembl.vep.models.variation.variation import Variation
+from ensembl.vep.models.variation.structural_variation_allele import StructuralVariationAllele
 
 
 @define(kw_only=True, auto_attribs=True)
 class StructuralVariation(Variation):
-    """StructuralVariation class (to be implemented)."""
+    """Represents a structural variation to genomic sequences in a specific locus.
+
+    Attributes:
+        copy_number (float | None):
+            Number of sequence copies of a structural variant classified as "copy number variant" (CNV) when
+            available.
+        inner_start (int | None):
+            The inner bound on the start position when the variant is imprecise
+        outer_start (int | None):
+            The outer bound on the start position when the variant is imprecise
+        inner_end (int | None):
+            The inner bound on the end position when the variant is imprecise
+        outer_end (int | None):
+            The outer bound on the end position when the variant is imprecise
+            Sequence Ontology term describing the class of the variation.
+        variation_alleles (Sequence[StructuralVariationAllele]):
+            List of VariationAllele objects describing the alleles of the variation.
+    """
+
+    copy_number: int | None = field(default=None)
+    inner_start: int | None = field(default=None)
+    outer_start: int | None = field(default=None)
+    inner_end: int | None = field(default=None)
+    outer_end: int | None = field(default=None)
+    variation_alleles: Sequence[StructuralVariationAllele] = field(factory=list, init=False)

@@ -17,6 +17,7 @@ from __future__ import annotations
 
 from functools import cached_property
 from threading import RLock
+from typing import Sequence
 from attrs import define, field
 
 from ensembl.vep.common import ClassSOTerm, invalidate, invalidates, infer_variant_so_term
@@ -53,20 +54,20 @@ class Variation(Feature):
     _lock: RLock = field(factory=RLock, init=False, repr=False)
 
     @property
-    def variation_alleles(self) -> list[VariationAllele]:
+    def variation_alleles(self) -> Sequence[VariationAllele]:
         """Public accessor for the _variation_alleles.
 
         Returns:
-            list[VariationAllele]: The list of VariationAllele objects for the variation.
+            Sequence[VariationAllele]: The list of VariationAllele objects for the variation.
         """
         return self._variation_alleles
 
     @cached_property
-    def _variation_alleles(self) -> list[VariationAllele]:
+    def _variation_alleles(self) -> Sequence[VariationAllele]:
         """Returns the list of VariationAllele objects for the variation.
 
         Returns:
-            list[VariationAllele]: The list of VariationAllele objects for the variation.
+            Sequence[VariationAllele]: The list of VariationAllele objects for the variation.
         """
         invalidate(self, "_most_severe_consequence")
 

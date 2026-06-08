@@ -16,3 +16,4 @@
 from .variation import *
 from .variation_allele import *
 from .structural_variation import *
+from .structural_variation_allele import *
