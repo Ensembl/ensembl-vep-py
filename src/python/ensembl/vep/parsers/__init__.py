@@ -13,7 +13,6 @@
 # limitations under the License.
 """Parser interfaces."""
 
-from .tabix import TabixParser
 from .gff import GFFParser, GFFRecord
 
-__all__ = ["TabixParser", "GFFParser", "GFFRecord"]
+__all__ = ["GFFParser", "GFFRecord"]

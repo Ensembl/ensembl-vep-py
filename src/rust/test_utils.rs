@@ -18,39 +18,6 @@ use std::{
     path::{Path, PathBuf},
 };
 
-#[cfg(unix)]
-pub fn process_exists(pid: u32) -> std::io::Result<bool> {
-    let status = std::process::Command::new("kill")
-        .arg("-0")
-        .arg(pid.to_string())
-        .stdout(std::process::Stdio::null())
-        .stderr(std::process::Stdio::null())
-        .status()?;
-
-    Ok(status.success())
-}
-
-#[cfg(unix)]
-pub fn assert_process_is_gone(pid: u32) -> std::io::Result<()> {
-    for _ in 0..10 {
-        if !process_exists(pid)? {
-            return Ok(());
-        }
-
-        std::thread::sleep(std::time::Duration::from_millis(10));
-    }
-
-    panic!("expected process {pid} to be gone");
-}
-
-#[cfg(unix)]
-pub fn create_temp_dir(prefix: &str) -> io::Result<PathBuf> {
-    let dir = env::temp_dir().join(format!("{prefix}-{}", std::process::id()));
-    let _ = fs::remove_dir_all(&dir);
-    fs::create_dir_all(&dir)?;
-    Ok(dir)
-}
-
 pub fn write_sample_file(dir: &Path, file_name: &str, lines: &[u8]) -> io::Result<PathBuf> {
     let path = dir.join(file_name);
     fs::write(&path, lines)?;
@@ -76,41 +43,5 @@ mod tests {
 
         fs::remove_dir_all(&dir)?;
         Ok(())
-    }
-
-    // -----------------------------------------------------------------------
-    // create_temp_dir
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_create_temp_dir() -> io::Result<()> {
-        let dir = create_temp_dir("test")?;
-        assert!(dir.exists());
-        fs::remove_dir_all(&dir)?;
-        assert!(!dir.exists());
-
-        Ok(())
-    }
-
-    // -----------------------------------------------------------------------
-    // process_exists and assert_process_is_gone
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_process_exists_with_running_child() -> io::Result<()> {
-        let mut child = Command::new("sleep").arg("60").spawn()?;
-        let pid = child.id();
-
-        assert!(process_exists(pid)?);
-
-        let _ = child.kill();
-        let _ = child.wait();
-        assert_process_is_gone(pid)
-    }
-
-    #[test]
-    #[should_panic(expected = "expected process")]
-    fn test_assert_process_is_gone_panics_for_current_process() {
-        assert_process_is_gone(std::process::id()).unwrap();
     }
 }

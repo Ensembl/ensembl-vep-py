@@ -107,15 +107,6 @@ where
     Ok(false)
 }
 
-pub(crate) fn parse_region(region: &str) -> io::Result<Region> {
-    region.parse().map_err(|e| {
-        io::Error::new(
-            ErrorKind::InvalidInput,
-            format!("invalid tabix region {region:?}: {e}"),
-        )
-    })
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -135,29 +126,6 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
             .lines()
             .map(str::to_owned)
             .collect()
-    }
-
-    // -----------------------------------------------------------------------
-    // parse_region
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_parse_region_valid() {
-        assert!(parse_region("chr1:1-1000").is_ok());
-    }
-
-    #[test]
-    fn test_parse_region_invalid() {
-        let err = parse_region("not_a_region::??").unwrap_err();
-        assert_eq!(err.kind(), ErrorKind::InvalidInput);
-        assert!(err.to_string().contains("not_a_region::??"));
-    }
-
-    #[test]
-    fn test_parse_region_empty() {
-        let err = parse_region("").unwrap_err();
-        assert_eq!(err.kind(), ErrorKind::InvalidInput);
-        assert!(err.to_string().contains("invalid tabix region"));
     }
 
     // ------------------------------------------------------------------------
