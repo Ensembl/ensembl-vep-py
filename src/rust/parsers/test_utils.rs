@@ -33,6 +33,57 @@ struct IndexedRecord<'a> {
     end: Position,
 }
 
+fn parse_position(value: &str, context: &str) -> io::Result<Position> {
+    let value = value
+        .parse::<usize>()
+        .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, format!("{context}: {e}")))?;
+    Position::try_from(value).map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))
+}
+
+fn parse_gff3_record(line: &str) -> io::Result<Option<IndexedRecord<'_>>> {
+    let fields: Vec<&str> = line.splitn(9, '\t').collect();
+    if fields.len() < 5 {
+        return Ok(None);
+    }
+
+    let start = parse_position(fields[3], "bad start")?;
+    let end = parse_position(fields[4], "bad end")?;
+
+    Ok(Some(IndexedRecord {
+        chrom: fields[0],
+        start,
+        end,
+    }))
+}
+
+fn parse_bed_record(line: &str) -> io::Result<Option<IndexedRecord<'_>>> {
+    let fields: Vec<&str> = line.splitn(4, '\t').collect();
+    if fields.len() < 3 {
+        return Ok(None);
+    }
+
+    let start = Position::try_from(
+        fields[1]
+            .parse::<usize>()
+            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, format!("bad start: {e}")))?
+            + 1,
+    )
+    .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
+    let end = Position::try_from(
+        fields[2]
+            .parse::<usize>()
+            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, format!("bad end: {e}")))?
+            .max(1),
+    )
+    .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
+
+    Ok(Some(IndexedRecord {
+        chrom: fields[0],
+        start,
+        end,
+    }))
+}
+
 pub(crate) fn write_bgzf_file(
     dir: &Path,
     lines: Vec<String>,
@@ -48,53 +99,6 @@ pub(crate) fn write_bgzf_file(
     }
     writer.finish()?;
     Ok(path)
-}
-
-pub(crate) fn write_gff3_with_tbi(
-    dir: &Path,
-    lines: Option<Vec<String>>,
-) -> io::Result<(PathBuf, PathBuf)> {
-    let default_lines = vec![
-        "##gff-version 3".to_string(),
-        "chr1\tsource\tgene\t1\t50\t.\t+\t.\tID=gene1".to_string(),
-        "chr1\tsource\tgene\t100\t200\t.\t+\t.\tID=gene2".to_string(),
-        "chr1\tsource\tgene\t200\t300\t.\t+\t.\tID=gene3".to_string(),
-        "chr1\tsource\tgene\t400\t500\t.\t+\t.\tID=gene4".to_string(),
-        "chr2\tsource\tgene\t100\t200\t.\t+\t.\tID=gene5".to_string(),
-    ];
-    let header = Header::builder()
-        .set_format(Format::Generic(CoordinateSystem::Gff))
-        .build();
-
-    write_indexed_tabix_file(
-        dir,
-        lines.unwrap_or(default_lines),
-        "test.gff3.gz",
-        header,
-        parse_gff3_record,
-    )
-}
-
-pub(crate) fn write_bed_with_tbi(
-    dir: &Path,
-    lines: Option<Vec<String>>,
-) -> io::Result<(PathBuf, PathBuf)> {
-    let default_lines = vec![
-        "chr1\t0\t50\tgene1".to_string(),
-        "chr1\t99\t200\tgene2".to_string(),
-        "chr1\t199\t300\tgene3".to_string(),
-        "chr1\t399\t500\tgene4".to_string(),
-        "chr2\t99\t200\tgene5".to_string(),
-    ];
-    let header = HeaderBuilder::bed().build();
-
-    write_indexed_tabix_file(
-        dir,
-        lines.unwrap_or(default_lines),
-        "test.bed.gz",
-        header,
-        parse_bed_record,
-    )
 }
 
 fn write_indexed_tabix_file<F>(
@@ -152,55 +156,51 @@ where
     Ok((gz_path, tbi_path))
 }
 
-fn parse_gff3_record(line: &str) -> io::Result<Option<IndexedRecord<'_>>> {
-    let fields: Vec<&str> = line.splitn(9, '\t').collect();
-    if fields.len() < 5 {
-        return Ok(None);
-    }
+pub(crate) fn write_gff3_with_tbi(
+    dir: &Path,
+    lines: Option<Vec<String>>,
+) -> io::Result<(PathBuf, PathBuf)> {
+    let default_lines = vec![
+        "##gff-version 3".to_string(),
+        "chr1\tsource\tgene\t1\t50\t.\t+\t.\tID=gene1".to_string(),
+        "chr1\tsource\tgene\t100\t200\t.\t+\t.\tID=gene2".to_string(),
+        "chr1\tsource\tgene\t200\t300\t.\t+\t.\tID=gene3".to_string(),
+        "chr1\tsource\tgene\t400\t500\t.\t+\t.\tID=gene4".to_string(),
+        "chr2\tsource\tgene\t100\t200\t.\t+\t.\tID=gene5".to_string(),
+    ];
+    let header = Header::builder()
+        .set_format(Format::Generic(CoordinateSystem::Gff))
+        .build();
 
-    let start = parse_position(fields[3], "bad start")?;
-    let end = parse_position(fields[4], "bad end")?;
-
-    Ok(Some(IndexedRecord {
-        chrom: fields[0],
-        start,
-        end,
-    }))
+    write_indexed_tabix_file(
+        dir,
+        lines.unwrap_or(default_lines),
+        "test.gff3.gz",
+        header,
+        parse_gff3_record,
+    )
 }
 
-fn parse_bed_record(line: &str) -> io::Result<Option<IndexedRecord<'_>>> {
-    let fields: Vec<&str> = line.splitn(4, '\t').collect();
-    if fields.len() < 3 {
-        return Ok(None);
-    }
+pub(crate) fn write_bed_with_tbi(
+    dir: &Path,
+    lines: Option<Vec<String>>,
+) -> io::Result<(PathBuf, PathBuf)> {
+    let default_lines = vec![
+        "chr1\t0\t50\tgene1".to_string(),
+        "chr1\t99\t200\tgene2".to_string(),
+        "chr1\t199\t300\tgene3".to_string(),
+        "chr1\t399\t500\tgene4".to_string(),
+        "chr2\t99\t200\tgene5".to_string(),
+    ];
+    let header = HeaderBuilder::bed().build();
 
-    let start = Position::try_from(
-        fields[1]
-            .parse::<usize>()
-            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, format!("bad start: {e}")))?
-            + 1,
+    write_indexed_tabix_file(
+        dir,
+        lines.unwrap_or(default_lines),
+        "test.bed.gz",
+        header,
+        parse_bed_record,
     )
-    .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
-    let end = Position::try_from(
-        fields[2]
-            .parse::<usize>()
-            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, format!("bad end: {e}")))?
-            .max(1),
-    )
-    .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
-
-    Ok(Some(IndexedRecord {
-        chrom: fields[0],
-        start,
-        end,
-    }))
-}
-
-fn parse_position(value: &str, context: &str) -> io::Result<Position> {
-    let value = value
-        .parse::<usize>()
-        .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, format!("{context}: {e}")))?;
-    Position::try_from(value).map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))
 }
 
 #[cfg(test)]
@@ -208,6 +208,10 @@ mod tests {
     use std::{env, fs};
 
     use super::*;
+
+    // ---------------------------------------------------------------------------
+    // write_gff3_with_tbi
+    // ---------------------------------------------------------------------------
 
     #[test]
     fn test_write_gff3_with_tbi_skips_non_record_lines() -> io::Result<()> {
@@ -268,6 +272,10 @@ mod tests {
         fs::remove_dir_all(dir)?;
         Ok(())
     }
+
+    // ---------------------------------------------------------------------------
+    // write_bed_with_tbi
+    // ---------------------------------------------------------------------------
 
     #[test]
     fn test_write_bed_with_tbi_skips_non_record_lines() -> io::Result<()> {
