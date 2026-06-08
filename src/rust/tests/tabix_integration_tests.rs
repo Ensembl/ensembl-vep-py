@@ -171,6 +171,68 @@ fn test_tabix_parser_empty_region_query(
 #[case::bed_noodles(Dataset::BedDefault, Backend::Noodles)]
 #[case::bed_system(Dataset::BedDefault, Backend::System)]
 #[ignore = "skipped: requires bgzip and tabix"]
+fn test_tabix_parser_without_end_query(
+    #[case] dataset: Dataset,
+    #[case] backend: Backend,
+) -> io::Result<()> {
+    let toolchain = get_integration_toolchain();
+    let dir = create_temp_dir(&format!("tabix-parser-no-end-{:?}-{:?}", dataset, backend))?;
+
+    let parser = open_dataset_parser(&dir, &toolchain, dataset, backend)?;
+    assert_query_records(parser, "chr1:10", expected_rows(dataset, 1))?;
+
+    fs::remove_dir_all(dir)?;
+    Ok(())
+}
+
+#[rstest]
+#[case::gff3_noodles(Dataset::Gff3Default, Backend::Noodles)]
+#[case::gff3_system(Dataset::Gff3Default, Backend::System)]
+#[case::bed_noodles(Dataset::BedDefault, Backend::Noodles)]
+#[case::bed_system(Dataset::BedDefault, Backend::System)]
+#[ignore = "skipped: requires bgzip and tabix"]
+fn test_tabix_parser_start_greater_than_end_query(
+    #[case] dataset: Dataset,
+    #[case] backend: Backend,
+) -> io::Result<()> {
+    let toolchain = get_integration_toolchain();
+
+    let dir = create_temp_dir(&format!(
+        "tabix-parser-start-greater-{:?}-{:?}",
+        dataset, backend
+    ))?;
+
+    let parser = open_dataset_parser(&dir, &toolchain, dataset, backend)?;
+    assert_query_records(parser, "chr1:30-10", &[])?;
+    fs::remove_dir_all(dir)?;
+
+    let dir = create_temp_dir(&format!(
+        "tabix-parser-start-greater-{:?}-{:?}",
+        dataset, backend
+    ))?;
+
+    let parser = open_dataset_parser(&dir, &toolchain, dataset, backend)?;
+    assert_query_records(parser, "chr1:20-10", &[])?;
+    fs::remove_dir_all(dir)?;
+
+    let dir = create_temp_dir(&format!(
+        "tabix-parser-start-greater-{:?}-{:?}",
+        dataset, backend
+    ))?;
+
+    let parser = open_dataset_parser(&dir, &toolchain, dataset, backend)?;
+    assert_query_records(parser, "chr1:20-5", &[])?;
+    fs::remove_dir_all(dir)?;
+
+    Ok(())
+}
+
+#[rstest]
+#[case::gff3_noodles(Dataset::Gff3Default, Backend::Noodles)]
+#[case::gff3_system(Dataset::Gff3Default, Backend::System)]
+#[case::bed_noodles(Dataset::BedDefault, Backend::Noodles)]
+#[case::bed_system(Dataset::BedDefault, Backend::System)]
+#[ignore = "skipped: requires bgzip and tabix"]
 fn test_tabix_parser_query_just_before(
     #[case] dataset: Dataset,
     #[case] backend: Backend,

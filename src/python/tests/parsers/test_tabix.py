@@ -25,15 +25,17 @@ HEADER_LINES = [
     "##gff-version 3",
     "#seqid\tsource\ttype\tstart\tend\tscore\tstrand\tphase\tattributes",
 ]
-CHR1_GENE_ROW = "chr1\ttabix\tgene\t10\t20\t.\t+\t.\tID=gene:1"
+CHR1_GENE1_ROW = "chr1\ttabix\tgene\t10\t20\t.\t+\t.\tID=gene:1"
 CHR1_EXON1_ROW = "chr1\ttabix\texon\t12\t14\t.\t+\t.\tID=exon:1"
 CHR1_EXON2_ROW = "chr1\ttabix\texon\t15\t18\t.\t+\t0\tID=exon:2"
+CHR1_GENE2_ROW = "chr1\ttabix\tgene\t50\t60\t.\t+\t.\tID=gene:2"
 CHR2_GENE_ROW = "chr2\ttabix\tgene\t100\t120\t.\t-\t.\tID=gene:2"
 BED_HEADER_ROW = "#chrom\tstart\tend\tname"
 BED_CHR1_FEATURE1_ROW = "chr1\t9\t20\tfeature1"
 BED_CHR1_FEATURE2_ROW = "chr1\t11\t14\tfeature2"
 BED_CHR1_FEATURE3_ROW = "chr1\t14\t18\tfeature3"
-BED_CHR2_FEATURE4_ROW = "chr2\t99\t120\tfeature4"
+BED_CHR1_FEATURE4_ROW = "chr1\t49\t60\tfeature4"
+BED_CHR2_FEATURE1_ROW = "chr2\t99\t120\tfeature1"
 BED_ZERO_POS_ROW = "chr1\t0\t0\tfeature1"
 BED_SAME_POS_ROW = "chr1\t99\t99\tfeature1"
 GFF3_ZERO_POS_ROW = "chr1\ttabix\tgene\t0\t0\t.\t+\t.\tID=gene:0"
@@ -77,12 +79,12 @@ fi
 
 case "$2" in
     chr1)
-        printf '%s\\n' '{CHR1_GENE_ROW}'
+        printf '%s\\n' '{CHR1_GENE1_ROW}'
         printf '%s\\n' '{CHR1_EXON1_ROW}'
         printf '%s\\n' '{CHR1_EXON2_ROW}'
         ;;
     chr1:10-20)
-        printf '%s\\n' '{CHR1_GENE_ROW}'
+        printf '%s\\n' '{CHR1_GENE1_ROW}'
         printf '%s\\n' '{CHR1_EXON1_ROW}'
         ;;
     chr2:100-120)
@@ -105,9 +107,10 @@ def _create_tabix_gff3_cli(
     fixture_lines = lines or [
         HEADER_LINES[0],
         HEADER_LINES[1],
-        CHR1_GENE_ROW,
+        CHR1_GENE1_ROW,
         CHR1_EXON1_ROW,
         CHR1_EXON2_ROW,
+        CHR1_GENE2_ROW,
         CHR2_GENE_ROW,
     ]
     unzip_path.write_text("\n".join(fixture_lines) + "\n")
@@ -132,7 +135,8 @@ def _create_tabix_bed_cli(
         BED_CHR1_FEATURE1_ROW,
         BED_CHR1_FEATURE2_ROW,
         BED_CHR1_FEATURE3_ROW,
-        BED_CHR2_FEATURE4_ROW,
+        BED_CHR1_FEATURE4_ROW,
+        BED_CHR2_FEATURE1_ROW,
     ]
     unzip_path.write_text("\n".join(fixture_lines) + "\n")
 
@@ -315,7 +319,7 @@ class TestTabixParserSeek:
         parser = TabixParser(file_path=path, tabix_path=str(tabix))
 
         assert parser.seek(seqid="chr1", start=10, end=20) is True
-        assert parser.next() == CHR1_GENE_ROW
+        assert parser.next() == CHR1_GENE1_ROW
         assert parser.records() == [CHR1_EXON1_ROW]
         assert parser.next() is None
 
@@ -337,7 +341,7 @@ class TestTabixParserSeek:
         parser = TabixParser(file_path=path, tabix_path=str(tabix))
 
         assert parser.seek(seqid="chr1") is True
-        assert parser.records() == [CHR1_GENE_ROW, CHR1_EXON1_ROW, CHR1_EXON2_ROW]
+        assert parser.records() == [CHR1_GENE1_ROW, CHR1_EXON1_ROW, CHR1_EXON2_ROW]
 
     def test_tabix_parser_seek_empty_region(self, tmp_path: Path) -> None:
         """Test seek returns false when no rows are available."""
@@ -379,7 +383,7 @@ class TestTabixParserRecords:
 
         parser.seek(seqid="chr1")
 
-        assert parser.next() == CHR1_GENE_ROW
+        assert parser.next() == CHR1_GENE1_ROW
         assert parser.records() == [CHR1_EXON1_ROW, CHR1_EXON2_ROW]
 
     def test_records_respects_limit(self, tmp_path: Path) -> None:
@@ -391,7 +395,7 @@ class TestTabixParserRecords:
 
         parser.seek(seqid="chr1")
 
-        assert parser.records(limit=2) == [CHR1_GENE_ROW, CHR1_EXON1_ROW]
+        assert parser.records(limit=2) == [CHR1_GENE1_ROW, CHR1_EXON1_ROW]
         assert parser.records() == [CHR1_EXON2_ROW]
 
     def test_records_zero_limit_does_not_consume_buffered_row(self, tmp_path: Path) -> None:
@@ -404,7 +408,7 @@ class TestTabixParserRecords:
         parser.seek(seqid="chr1", start=10, end=20)
 
         assert parser.records(limit=0) == []
-        assert parser.next() == CHR1_GENE_ROW
+        assert parser.next() == CHR1_GENE1_ROW
 
 
 class TestTabixParserIteration:
@@ -426,9 +430,9 @@ class TestTabixParserIteration:
 
         parser.seek(seqid="chr1", start=10, end=20)
 
-        assert list(parser) == [CHR1_GENE_ROW, CHR1_EXON1_ROW]
+        assert list(parser) == [CHR1_GENE1_ROW, CHR1_EXON1_ROW]
 
-        record_list = [CHR1_GENE_ROW, CHR1_EXON1_ROW]
+        record_list = [CHR1_GENE1_ROW, CHR1_EXON1_ROW]
         for idx, record in enumerate(parser):
             assert record == record_list[idx]
 
@@ -453,7 +457,7 @@ class TestTabixParserIntegration:
     @pytest.mark.parametrize(
         ("dataset", "expected_header", "expected_first", "expected_rest"),
         [
-            ("gff3", HEADER_LINES, CHR1_GENE_ROW, [CHR1_EXON1_ROW, CHR1_EXON2_ROW]),
+            ("gff3", HEADER_LINES, CHR1_GENE1_ROW, [CHR1_EXON1_ROW, CHR1_EXON2_ROW]),
             (
                 "bed",
                 [BED_HEADER_ROW],
@@ -489,6 +493,144 @@ class TestTabixParserIntegration:
         assert parser.records() == expected_rest
         assert parser.next() is None
 
+    @pytest.mark.parametrize(
+        ("dataset", "expected_header", "expected_first", "expected_rest"),
+        [
+            ("gff3", HEADER_LINES, CHR1_GENE1_ROW, [CHR1_EXON1_ROW, CHR1_EXON2_ROW, CHR1_GENE2_ROW]),
+            (
+                "bed",
+                [BED_HEADER_ROW],
+                BED_CHR1_FEATURE1_ROW,
+                [BED_CHR1_FEATURE2_ROW, BED_CHR1_FEATURE3_ROW, BED_CHR1_FEATURE4_ROW],
+            ),
+        ],
+        ids=["gff3", "bed"],
+    )
+    @pytest.mark.parametrize("backend", ["noodles", "system"], ids=["noodles", "system"])
+    def test_integration_query_full_chromosome(
+        self,
+        tmp_path: Path,
+        htslib_toolchain: HtslibToolchain,
+        dataset: str,
+        expected_header: list[str],
+        expected_first: str,
+        expected_rest: list[str],
+        backend: str,
+    ) -> None:
+        """Test both backends can read default GFF3 and BED fixtures."""
+
+        if dataset == "gff3":
+            path = _create_tabix_gff3_cli(tmp_path / f"sample-{dataset}-{backend}.gff3.gz", htslib_toolchain)
+        else:
+            path = _create_tabix_bed_cli(tmp_path / f"sample-{dataset}-{backend}.bed.gz", htslib_toolchain)
+
+        parser = _open_integration_parser(path, backend, htslib_toolchain)
+
+        assert parser.metadata == {"header": expected_header}
+        assert parser.seek(seqid="chr1") is True
+        assert parser.next() == expected_first
+        assert parser.records() == expected_rest
+        assert parser.next() is None
+
+    @pytest.mark.parametrize(
+        ("dataset", "expected_header", "expected_first", "expected_rest"),
+        [
+            ("gff3", HEADER_LINES, CHR1_GENE1_ROW, [CHR1_EXON1_ROW, CHR1_EXON2_ROW]),
+            (
+                "bed",
+                [BED_HEADER_ROW],
+                BED_CHR1_FEATURE1_ROW,
+                [BED_CHR1_FEATURE2_ROW, BED_CHR1_FEATURE3_ROW],
+            ),
+        ],
+        ids=["gff3", "bed"],
+    )
+    @pytest.mark.parametrize("backend", ["noodles", "system"], ids=["noodles", "system"])
+    def test_integration_query_subregion(
+        self,
+        tmp_path: Path,
+        htslib_toolchain: HtslibToolchain,
+        dataset: str,
+        expected_header: list[str],
+        expected_first: str,
+        expected_rest: list[str],
+        backend: str,
+    ) -> None:
+        """Test both backends can read default GFF3 and BED fixtures."""
+
+        if dataset == "gff3":
+            path = _create_tabix_gff3_cli(tmp_path / f"sample-{dataset}-{backend}.gff3.gz", htslib_toolchain)
+        else:
+            path = _create_tabix_bed_cli(tmp_path / f"sample-{dataset}-{backend}.bed.gz", htslib_toolchain)
+
+        parser = _open_integration_parser(path, backend, htslib_toolchain)
+
+        assert parser.metadata == {"header": expected_header}
+        assert parser.seek(seqid="chr1", start=12, end=20) is True
+        assert parser.next() == expected_first
+        assert parser.records() == expected_rest
+        assert parser.next() is None
+
+    @pytest.mark.parametrize(
+        ("dataset", "expected_header", "expected_first", "expected_rest"),
+        [
+            ("gff3", HEADER_LINES, CHR1_GENE1_ROW, [CHR1_EXON1_ROW, CHR1_EXON2_ROW, CHR1_GENE2_ROW]),
+            (
+                "bed",
+                [BED_HEADER_ROW],
+                BED_CHR1_FEATURE1_ROW,
+                [BED_CHR1_FEATURE2_ROW, BED_CHR1_FEATURE3_ROW, BED_CHR1_FEATURE4_ROW],
+            ),
+        ],
+        ids=["gff3", "bed"],
+    )
+    @pytest.mark.parametrize("backend", ["noodles", "system"], ids=["noodles", "system"])
+    def test_integration_query_without_end(
+        self,
+        tmp_path: Path,
+        htslib_toolchain: HtslibToolchain,
+        dataset: str,
+        expected_header: list[str],
+        expected_first: str,
+        expected_rest: list[str],
+        backend: str,
+    ) -> None:
+        """Test both backends can read default GFF3 and BED fixtures."""
+
+        if dataset == "gff3":
+            path = _create_tabix_gff3_cli(tmp_path / f"sample-{dataset}-{backend}.gff3.gz", htslib_toolchain)
+        else:
+            path = _create_tabix_bed_cli(tmp_path / f"sample-{dataset}-{backend}.bed.gz", htslib_toolchain)
+
+        parser = _open_integration_parser(path, backend, htslib_toolchain)
+
+        assert parser.metadata == {"header": expected_header}
+        assert parser.seek(seqid="chr1", start=12) is True
+        assert parser.next() == expected_first
+        assert parser.records() == expected_rest
+        assert parser.next() is None
+
+    @pytest.mark.parametrize(("dataset"), ["gff3", "bed"], ids=["gff3", "bed"])
+    @pytest.mark.parametrize("backend", ["noodles", "system"], ids=["noodles", "system"])
+    def test_integration_query_start_greater_than_end(
+        self,
+        tmp_path: Path,
+        htslib_toolchain: HtslibToolchain,
+        dataset: str,
+        backend: str,
+    ) -> None:
+        """Test query with start greater than end returns no records."""
+
+        if dataset == "gff3":
+            path = _create_tabix_gff3_cli(tmp_path / f"gff3-before-{backend}.gff3.gz", htslib_toolchain)
+        else:
+            path = _create_tabix_bed_cli(tmp_path / f"bed-before-{backend}.bed.gz", htslib_toolchain)
+
+        parser = _open_integration_parser(path, backend, htslib_toolchain)
+
+        assert parser.seek("chr2:200-100") is False
+        assert parser.records() == []
+
     @pytest.mark.parametrize(("dataset"), ["gff3", "bed"], ids=["gff3", "bed"])
     @pytest.mark.parametrize("backend", ["noodles", "system"], ids=["noodles", "system"])
     def test_integration_query_just_before(
@@ -514,7 +656,7 @@ class TestTabixParserIntegration:
         ("dataset", "expected_row"),
         [
             ("gff3", CHR2_GENE_ROW),
-            ("bed", BED_CHR2_FEATURE4_ROW),
+            ("bed", BED_CHR2_FEATURE1_ROW),
         ],
         ids=["gff3", "bed"],
     )
@@ -543,7 +685,7 @@ class TestTabixParserIntegration:
         ("dataset", "expected_row"),
         [
             ("gff3", CHR2_GENE_ROW),
-            ("bed", BED_CHR2_FEATURE4_ROW),
+            ("bed", BED_CHR2_FEATURE1_ROW),
         ],
         ids=["gff3", "bed"],
     )

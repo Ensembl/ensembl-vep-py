@@ -16,6 +16,7 @@
 use std::{
     fs::File,
     io::{self, BufRead, BufReader, ErrorKind},
+    ops::Bound as Bnd,
     path::{Path, PathBuf},
     process::{Child, ChildStdout, Command, Stdio},
 };
@@ -300,6 +301,12 @@ impl<I: BinningIndex> NoodlesBackend<I> {
 
     fn seek(&mut self, region: &str) -> io::Result<()> {
         let region = parse_region(region)?;
+        if let (Bnd::Included(start), Bnd::Included(end)) = (region.start(), region.end())
+            && start > end
+        {
+            return Ok(());
+        }
+
         let index = self.reader.index();
 
         let header = index
@@ -1393,6 +1400,49 @@ mod tests {
         let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
 
         assert!(!reader.seek("chr1:600-700")?);
+        assert_eq!(reader.next()?, None);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_noodles_backend_seek_without_end() -> io::Result<()> {
+        let dir = create_temp_dir("tabix-test-noodles-seek-no-end")?;
+        let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
+        let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        // seek with no end should return all records from start to end of chrom
+        assert!(reader.seek("chr1:150")?);
+        let records: Vec<String> = std::iter::from_fn(|| reader.next().ok()?).collect();
+
+        assert_eq!(
+            records.len(),
+            3,
+            "expected 3 chr1 records, got {}",
+            records.len()
+        );
+        assert!(records[0].contains("ID=gene2"));
+        assert!(records[1].contains("ID=gene3"));
+        assert!(records[2].contains("ID=gene4"));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_noodles_backend_seek_start_greater_than_end() -> io::Result<()> {
+        let dir = create_temp_dir("tabix-test-noodles-seek-start-gt-end")?;
+        let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
+        let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        assert!(!reader.seek("chr1:400-200")?);
+        assert_eq!(reader.next()?, None);
+
+        assert!(!reader.seek("chr1:300-200")?);
+        assert_eq!(reader.next()?, None);
+
+        assert!(!reader.seek("chr1:300-100")?);
         assert_eq!(reader.next()?, None);
 
         fs::remove_dir_all(dir)?;
