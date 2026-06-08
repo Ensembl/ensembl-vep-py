@@ -18,7 +18,6 @@ use std::{
     io::{self, ErrorKind, Read},
     path::Path,
 };
-
 use noodles_core::Region;
 use pyo3::{exceptions::PyValueError, PyResult};
 
