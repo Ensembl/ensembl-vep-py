@@ -1127,8 +1127,8 @@ mod tests {
     }
 
     #[test]
-    fn test_backend_csi_dispatch_methods() -> io::Result<()> {
-        let dir = create_temp_dir("tabix-test-csi-dispatch")?;
+    fn test_backend_csi_index_missing() -> io::Result<()> {
+        let dir = create_temp_dir("tabix-test-csi-index-missing")?;
 
         let path = write_bgzf_file(
             &dir,
