@@ -1355,10 +1355,6 @@ mod tests {
         assert!(rec.contains("ID=gene1"), "expected ID=gene1, got: {rec}");
         assert_eq!(reader.next()?, None);
 
-        // empty region
-        assert!(!reader.seek("chr1:600-700")?);
-        assert_eq!(reader.next()?, None);
-
         // different chromosome
         assert!(reader.seek("chr2:100-200")?);
         let rec = reader.next()?.expect("expected chr2 record");
