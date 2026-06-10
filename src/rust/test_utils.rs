@@ -81,6 +81,7 @@ mod tests {
     // ---------------------------------------------------------------------------
     // create_temp_dir
     // ---------------------------------------------------------------------------
+
     #[test]
     fn test_create_temp_dir() -> io::Result<()> {
         let dir = create_temp_dir("test")?;
@@ -93,11 +94,14 @@ mod tests {
     // ---------------------------------------------------------------------------
     // process_exists
     // ---------------------------------------------------------------------------
+
     #[test]
     fn test_process_exists_with_running_child() -> io::Result<()> {
         let mut child = Command::new("sleep").arg("60").spawn()?;
         let pid = child.id();
+
         assert!(process_exists(pid)?);
+
         let _ = child.kill();
         let _ = child.wait();
         assert_process_is_gone(pid)
@@ -106,6 +110,7 @@ mod tests {
     // ---------------------------------------------------------------------------
     // assert_process_is_gone
     // ---------------------------------------------------------------------------
+
     #[test]
     #[should_panic(expected = "expected process")]
     fn test_assert_process_is_gone_panics_for_current_process() {
