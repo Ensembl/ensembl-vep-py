@@ -1051,7 +1051,6 @@ mod tests {
             .build();
         let qh = QueryHeader::from(&header);
         let region = parse_region("chr1:15-25")?;
-        // only 3 fields — start_position_index (3) is missing
         let err = qh
             .line_intersects_region("chr1\tsrc\tgene\t15\t25\t.\t+\t.\tID=gene1", &region)
             .unwrap_err();

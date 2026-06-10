@@ -136,9 +136,6 @@ where
             continue;
         }
 
-        if line.starts_with('#') || line.is_empty() {
-            continue;
-        }
 
         let Some(record) = parse_record(line)? else {
             continue;
