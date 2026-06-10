@@ -13,6 +13,7 @@
 # limitations under the License.
 """Unit tests for common methods."""
 
+from typing import Any
 import pytest
 
 from ensembl.vep.common import (
@@ -22,6 +23,7 @@ from ensembl.vep.common import (
     Strand,
     ClassSOTerm,
     infer_variant_so_term,
+    format_region_string,
 )
 
 from .conftest import Foo, Bar
@@ -340,6 +342,46 @@ class TestShiftSequence:
             shift_sequence("A", post_seq=None, pre_seq="A", start=1, end=1)  # type: ignore[arg-type]
         with pytest.raises(ValueError):
             shift_sequence("A", post_seq="A", pre_seq=None, start=1, end=1)  # type: ignore[arg-type]
+
+
+class TestFormatRegionString:
+    """Tests for the format_region_string function."""
+
+    def test_existing_region(self) -> None:
+        """Returns an explicit region unchanged."""
+
+        assert format_region_string("chr1:10-20") == "chr1:10-20"
+
+    def test_seqid_only(self) -> None:
+        """Formats a whole-sequence region."""
+
+        assert format_region_string(seqid="chr1") == "chr1"
+
+    def test_seqid_start_end(self) -> None:
+        """Formats a bounded 1-based region."""
+
+        assert format_region_string(seqid="chr1", start=10, end=20) == "chr1:10-20"
+
+    def test_seqid_start(self) -> None:
+        """Formats a region with only start coordinate."""
+
+        assert format_region_string(seqid="chr1", start=10) == "chr1:10"
+
+    @pytest.mark.parametrize(
+        "kwargs",
+        [
+            {"region": "chr1:10-20", "seqid": "chr1", "start": None, "end": None},
+            {"region": None, "seqid": None, "start": None, "end": None},
+            {"region": None, "seqid": "chr1", "start": None, "end": 10},
+            {"region": None, "seqid": "chr1", "start": 0, "end": 20},
+            {"region": None, "seqid": "chr1", "start": 10, "end": 0},
+        ],
+    )
+    def test_rejects_invalid_input(self, kwargs: dict[str, Any]) -> None:
+        """Rejects ambiguous or invalid region inputs."""
+
+        with pytest.raises(ValueError):
+            format_region_string(**kwargs)
 
 
 class TestInferVariantSOTerm:

@@ -22,7 +22,7 @@ import re
 from typing import Any, Callable, Literal, TypeVar
 from attrs import Attribute as AttrsAttribute
 
-from ensembl.vep.common import Strand, ClassSOTerm
+from ensembl.vep.common.enums import Strand, ClassSOTerm
 
 logger = logging.getLogger(__name__)
 
@@ -310,6 +310,48 @@ def shift_sequence(
             changed = True
 
     return (shift_length, "".join(seq_d), start, end, changed)
+
+
+def format_region_string(
+    region: str | None = None,
+    *,
+    seqid: str | None = None,
+    start: int | None = None,
+    end: int | None = None,
+) -> str:
+    """Format a region string into "seqid:start-end" from either an existing region or seqid/start/end values.
+
+    Args:
+        region: A region string in the format "seqid:start-end".
+        seqid: Sequence ID (e.g. chromosome name).
+        start: Start coordinate (1-based).
+        end: End coordinate (1-based).
+
+    Returns:
+        A region string in the format "seqid:start-end".
+    """
+
+    if region is not None:
+        if any(value is not None for value in (seqid, start, end)):
+            raise ValueError("pass either region or seqid/start/end, not both")
+
+        return region
+
+    if seqid is None:
+        raise ValueError("region requires either region or seqid")
+
+    if start is None:
+        if end is not None:
+            raise ValueError("end coordinate provided without start coordinate")
+        return seqid
+
+    if end is None:
+        return f"{seqid}:{start}"
+
+    if start < 1 or end < 1:
+        raise ValueError("regions are 1-based and must be positive")
+
+    return f"{seqid}:{start}-{end}"
 
 
 def infer_variant_so_term(allele_string: str, ref_correct: bool = False) -> ClassSOTerm | None:

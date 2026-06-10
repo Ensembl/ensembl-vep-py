@@ -21,6 +21,13 @@ edition = "2024"
 pyo3 = "0.27.0"
 pyo3-log = "0.13.3"
 log = "0.4"
+noodles-bgzf = "0.46.0"
+noodles-csi = "0.55.0"
+noodles-core = "0.19.0"
+noodles-tabix = "0.61.0"
+
+[dev-dependencies]
+rstest = "0.23.0"
 
 [profile.release-lto]
 inherits = "release"
@@ -29,14 +36,18 @@ lto = true
 [lib]
 name = "ensembl_vep_core"
 path = "src/rust/lib.rs"
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "rlib"]
 
 [[test]]
-name = "ensembl_vep_core"
-path = "src/rust/tests/integration_tests.rs"
+name = "hello_integration"
+path = "src/rust/tests/hello_integration_tests.rs"
 
-# for cargo test you need to first run: 
-## export DYLD_LIBRARY_PATH="/path/to/dir/with/libpython3.10.dylib:$DYLD_LIBRARY_PATH" (or, 3.12)
-## need an alternative to that
+[[test]]
+name = "tabix_integration"
+path = "src/rust/tests/tabix_integration_tests.rs"
+
+# Tabix integration tests are ignored by default because they require bgzip and tabix:
+## ENSEMBL_VEP_HTSLIB_BIN=/path/to/htslib/bin cargo test --test tabix_integration -- --ignored
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 # See also PyO3 docs on writing Cargo.toml files at https://pyo3.rs
