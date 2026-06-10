@@ -14,11 +14,11 @@
 
 use crate::{
     parsers::tabix::{self, associated_index_path},
-    parsers::utils::{is_bgzf_file, ReaderMode},
+    parsers::utils::{ReaderMode, is_bgzf_file},
     utils::to_py_error,
 };
 use noodles_bgzf as bgzf;
-use noodles_gff3::{
+use noodles_gff::{
     self as gff3,
     feature::record::{Phase, Strand},
     record::attributes::field::Value as AttributeValue,
@@ -937,8 +937,8 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
             parse_gff3_line("chr1\tensembl\tgene\t10\t20\tbad_score\t+\t.\tID=gene:1").unwrap_err();
         assert_eq!(err.kind(), io::ErrorKind::InvalidData);
 
-        let err =
-            parse_gff3_line("chr1\tensembl\tgene\t10\t20\t.\tbad_strand\t.\tID=gene:1").unwrap_err();
+        let err = parse_gff3_line("chr1\tensembl\tgene\t10\t20\t.\tbad_strand\t.\tID=gene:1")
+            .unwrap_err();
         assert_eq!(err.kind(), io::ErrorKind::InvalidData);
 
         let err =
@@ -1119,7 +1119,8 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_read_gff3_metadata_with_no_header() -> io::Result<()> {
-        let mut reader = gff3::io::Reader::new(b"chr1\tensembl\tgene\t10\t20\t.\t+\t.\tID=gene:1\n".as_slice());
+        let mut reader =
+            gff3::io::Reader::new(b"chr1\tensembl\tgene\t10\t20\t.\t+\t.\tID=gene:1\n".as_slice());
         let metadata = read_gff3_metadata_from_reader(&mut reader)?;
 
         assert!(metadata.header.is_empty());
@@ -1207,16 +1208,20 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         });
         assert_eq!(parser.reader_mode(), "auto");
         assert!(parser.next().unwrap_err().to_string().contains("not open"));
-        assert!(parser
-            .seek("chr1:10-20")
-            .unwrap_err()
-            .to_string()
-            .contains("not open"));
-        assert!(parser
-            .records(None)
-            .unwrap_err()
-            .to_string()
-            .contains("not open"));
+        assert!(
+            parser
+                .seek("chr1:10-20")
+                .unwrap_err()
+                .to_string()
+                .contains("not open")
+        );
+        assert!(
+            parser
+                .records(None)
+                .unwrap_err()
+                .to_string()
+                .contains("not open")
+        );
 
         parser.close();
         Ok(())
@@ -1551,11 +1556,13 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         .map_err(from_py_error)?;
 
         assert_eq!(parser.reader_mode(), "sequential");
-        assert!(parser
-            .seek("chr1:10-20")
-            .unwrap_err()
-            .to_string()
-            .contains("sequential"));
+        assert!(
+            parser
+                .seek("chr1:10-20")
+                .unwrap_err()
+                .to_string()
+                .contains("sequential")
+        );
 
         fs::remove_dir_all(dir)?;
         Ok(())
@@ -1599,16 +1606,20 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         parser.close();
         assert!(parser.reader.is_none());
         assert!(parser.next().unwrap_err().to_string().contains("not open"));
-        assert!(parser
-            .seek("chr1:10-20")
-            .unwrap_err()
-            .to_string()
-            .contains("not open"));
-        assert!(parser
-            .records(None)
-            .unwrap_err()
-            .to_string()
-            .contains("not open"));
+        assert!(
+            parser
+                .seek("chr1:10-20")
+                .unwrap_err()
+                .to_string()
+                .contains("not open")
+        );
+        assert!(
+            parser
+                .records(None)
+                .unwrap_err()
+                .to_string()
+                .contains("not open")
+        );
 
         fs::remove_dir_all(dir)?;
         Ok(())

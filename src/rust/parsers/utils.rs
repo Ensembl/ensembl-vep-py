@@ -13,13 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use noodles_core::Region;
+use pyo3::{PyResult, exceptions::PyValueError};
 use std::{
     fs::File,
     io::{self, ErrorKind, Read},
     path::Path,
 };
-use noodles_core::Region;
-use pyo3::{exceptions::PyValueError, PyResult};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum ReaderMode {
@@ -106,6 +106,15 @@ where
     Ok(false)
 }
 
+pub(crate) fn parse_region(region: &str) -> io::Result<Region> {
+    region.parse().map_err(|e| {
+        io::Error::new(
+            ErrorKind::InvalidInput,
+            format!("invalid tabix region {region:?}: {e}"),
+        )
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -114,6 +123,10 @@ mod tests {
         test_utils::{create_temp_dir, write_sample_file},
     };
     use std::fs;
+
+    // ---------------------------------------------------------------------------
+    // Helpers
+    // ---------------------------------------------------------------------------
 
     const SAMPLE: &[u8] = b"\
 ##gff-version 3
@@ -127,9 +140,32 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
             .collect()
     }
 
-    // ------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
+    // parse_region
+    // ---------------------------------------------------------------------------
+
+    #[test]
+    fn test_parse_region_valid() {
+        assert!(parse_region("chr1:1-1000").is_ok());
+    }
+
+    #[test]
+    fn test_parse_region_invalid() {
+        let err = parse_region("not_a_region::??").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(err.to_string().contains("not_a_region::??"));
+    }
+
+    #[test]
+    fn test_parse_region_empty() {
+        let err = parse_region("").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(err.to_string().contains("invalid tabix region"));
+    }
+
+    // ---------------------------------------------------------------------------
     // is_bgzf_reader
-    // ------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
 
     #[test]
     fn test_is_bgzf_file_detects_bgzf_magic() -> io::Result<()> {
@@ -166,7 +202,7 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
 
     #[test]
     fn test_is_bgzf_file_rejects_nonexistent_file() {
-        let err = is_bgzf_file(&Path::new("nonexistent_file.gz")).unwrap_err();
+        let err = is_bgzf_file(Path::new("nonexistent_file.gz")).unwrap_err();
         assert_eq!(err.kind(), ErrorKind::NotFound);
     }
 
