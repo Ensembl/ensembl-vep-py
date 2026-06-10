@@ -136,7 +136,6 @@ where
             continue;
         }
 
-
         let Some(record) = parse_record(line)? else {
             continue;
         };
@@ -230,6 +229,26 @@ mod tests {
         assert!(gz_path.exists());
         assert!(tbi_path.exists());
 
+        // check first line from first chunk
+        let mut tbi_reader = tabix::io::Reader::new(File::open(&tbi_path)?);
+        let index = tbi_reader.read_index()?;
+
+        // Get first chunk
+        let reference_sequence = &index.reference_sequences()[0];
+        let (_, bin) = reference_sequence.bins().iter().next().unwrap();
+        let chunk = bin.chunks().first().unwrap();
+
+        // Open BGZF file
+        let mut reader = bgzf::io::Reader::new(File::open(&gz_path)?);
+
+        // Seek to chunk start
+        reader.seek(chunk.start())?;
+
+        // Read first line from that position
+        let mut line = String::new();
+        reader.read_line(&mut line)?;
+        assert!(line.starts_with("chr1"));
+
         fs::remove_dir_all(dir)?;
         Ok(())
     }
@@ -291,6 +310,26 @@ mod tests {
 
         assert!(gz_path.exists());
         assert!(tbi_path.exists());
+
+        // read first line from first chunk
+        let mut tbi_reader = tabix::io::Reader::new(File::open(&tbi_path)?);
+        let index = tbi_reader.read_index()?;
+
+        // Get first chunk
+        let reference_sequence = &index.reference_sequences()[0];
+        let (_, bin) = reference_sequence.bins().iter().next().unwrap();
+        let chunk = bin.chunks().first().unwrap();
+
+        // Open BGZF file
+        let mut reader = bgzf::io::Reader::new(File::open(&gz_path)?);
+
+        // Seek to chunk start
+        reader.seek(chunk.start())?;
+
+        // Read first line from that position
+        let mut line = String::new();
+        reader.read_line(&mut line)?;
+        assert!(line.starts_with("chr1"));
 
         fs::remove_dir_all(dir)?;
         Ok(())
