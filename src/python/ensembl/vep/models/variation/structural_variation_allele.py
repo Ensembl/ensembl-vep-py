@@ -18,7 +18,7 @@ from __future__ import annotations
 import logging
 from attrs import define
 
-from ensembl.vep.models.variation import VariationAllele
+from ensembl.vep.models.variation.variation_allele import VariationAllele
 
 logger = logging.getLogger(__name__)
 
