@@ -14,13 +14,14 @@
 
 use crate::{
     parsers::tabix::{self, associated_index_path},
-    parsers::utils::{ReaderMode, is_bgzf_file},
-    utils::to_py_error,
+    parsers::utils::{
+        ReaderMode, open_sequential_reader, 
+        noodles_strand_to_string, noodles_phase_to_u8
+    },
+    utils::{to_py_error, bytes_to_string},
 };
-use noodles_bgzf as bgzf;
 use noodles_gff::{
     self as gff3,
-    feature::record::{Phase, Strand},
     record::attributes::field::Value as AttributeValue,
 };
 use pyo3::{
@@ -29,8 +30,7 @@ use pyo3::{
     types::{PyDict, PyTuple},
 };
 use std::{
-    fs::File,
-    io::{self, BufRead, BufReader},
+    io::{self, BufRead},
     path::{Path, PathBuf},
 };
 
@@ -240,8 +240,6 @@ impl SequentialBackend {
 // ---------------------------------------------------------------------------
 
 struct TabixBackend {
-    file_path: PathBuf,
-    tabix_path: String,
     reader: Option<tabix::TabixReader>,
     query_active: bool,
 }
@@ -252,18 +250,12 @@ impl TabixBackend {
         P: AsRef<Path>,
     {
         Ok(Self {
-            file_path: file_path.as_ref().to_path_buf(),
-            tabix_path: tabix_path.to_string(),
-            reader: None,
+            reader: Some(tabix::TabixReader::open(&file_path.as_ref(), tabix_path)?),
             query_active: false,
         })
     }
 
     fn seek(&mut self, region: &str) -> io::Result<bool> {
-        if self.reader.is_none() {
-            self.reader = Some(tabix::TabixReader::open(&self.file_path, &self.tabix_path)?);
-        }
-
         let has_records = self
             .reader
             .as_mut()
@@ -442,13 +434,7 @@ fn has_tabix_index(file_path: &Path) -> bool {
 fn open_sequential_gff3_reader(
     file_path: &Path,
 ) -> io::Result<gff3::io::Reader<Box<dyn BufRead + Send + Sync>>> {
-    let file = File::open(file_path)?;
-    let reader: Box<dyn BufRead + Send + Sync> = if is_bgzf_file(file_path)? {
-        Box::new(bgzf::io::Reader::new(file))
-    } else {
-        Box::new(BufReader::new(file))
-    };
-
+    let reader = open_sequential_reader(file_path)?;
     Ok(gff3::io::Reader::new(reader))
 }
 
@@ -575,8 +561,8 @@ fn record_to_py(record: gff3::Record<'_>, raw_attributes: String) -> io::Result<
         start: record.start()?.get(),
         end: record.end()?.get(),
         score: record.score().transpose()?.map(f64::from),
-        strand_symbol: strand_to_string(record.strand()?),
-        phase_value: record.phase().transpose()?.map(phase_to_u8),
+        strand_symbol: noodles_strand_to_string(record.strand()?),
+        phase_value: record.phase().transpose()?.map(noodles_phase_to_u8),
         attributes: parse_attributes(record.attributes())?,
         raw_attributes,
     })
@@ -619,28 +605,6 @@ fn raw_attributes(line: &gff3::Line) -> String {
     }
 
     String::new()
-}
-
-fn bytes_to_string(bytes: &[u8]) -> String {
-    String::from_utf8_lossy(bytes).into_owned()
-}
-
-fn strand_to_string(strand: Strand) -> String {
-    match strand {
-        Strand::None => ".",
-        Strand::Forward => "+",
-        Strand::Reverse => "-",
-        Strand::Unknown => "?",
-    }
-    .to_string()
-}
-
-fn phase_to_u8(phase: Phase) -> u8 {
-    match phase {
-        Phase::Zero => 0,
-        Phase::One => 1,
-        Phase::Two => 2,
-    }
 }
 
 #[cfg(test)]
@@ -722,46 +686,6 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
                 ("ID".to_string(), vec!["cds:1".to_string()]),
                 ("Parent".to_string(), vec!["gene:1".to_string()]),
             ]
-        );
-    }
-
-    // -----------------------------------------------------------------------
-    // phase_to_u8
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_phase_to_u8() {
-        assert_eq!(phase_to_u8(Phase::Zero), 0);
-        assert_eq!(phase_to_u8(Phase::One), 1);
-        assert_eq!(phase_to_u8(Phase::Two), 2);
-    }
-
-    // -----------------------------------------------------------------------
-    // strand_to_string
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_strand_to_string() {
-        assert_eq!(strand_to_string(Strand::None), ".");
-        assert_eq!(strand_to_string(Strand::Forward), "+");
-        assert_eq!(strand_to_string(Strand::Reverse), "-");
-        assert_eq!(strand_to_string(Strand::Unknown), "?");
-    }
-
-    // -----------------------------------------------------------------------
-    // bytes_to_string
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_bytes_to_string_valid_utf8() {
-        assert_eq!(bytes_to_string(b"abc"), "abc");
-    }
-
-    #[test]
-    fn test_bytes_to_string_replaces_invalid_utf8() {
-        assert_eq!(
-            bytes_to_string(b"a\xffb"),
-            format!("a{}b", char::REPLACEMENT_CHARACTER)
         );
     }
 
@@ -1794,25 +1718,6 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         Ok(())
     }
 
-    #[test]
-    fn test_tabix_backend_next_errors_when_query_active_without_reader() -> io::Result<()> {
-        let mut backend = TabixBackend {
-            file_path: PathBuf::from("sample.gff3.gz"),
-            tabix_path: "tabix-nonexistent-binary-for-test".to_string(),
-            reader: None,
-            query_active: true,
-        };
-
-        let err = backend.next().unwrap_err();
-        assert_eq!(err.kind(), io::ErrorKind::Other);
-        assert!(
-            err.to_string().contains("not initialized"),
-            "unexpected error: {err}"
-        );
-
-        Ok(())
-    }
-
     // -----------------------------------------------------------------------
     // Gff3Reader::open / Backend::open
     // -----------------------------------------------------------------------
@@ -1830,7 +1735,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
         match reader.backend {
             Backend::Tabix(backend) => {
-                assert!(backend.reader.is_none());
+                assert!(backend.reader.is_some());
                 assert!(!backend.query_active);
             }
             Backend::Sequential(_) => panic!("expected tabix backend"),

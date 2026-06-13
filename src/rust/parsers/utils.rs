@@ -14,10 +14,14 @@
 // limitations under the License.
 
 use noodles_core::Region;
+use noodles_bgzf as bgzf;
+use noodles_gff::{
+    feature::record::{Phase, Strand},
+};
 use pyo3::{PyResult, exceptions::PyValueError};
 use std::{
     fs::File,
-    io::{self, ErrorKind, Read},
+    io::{self, ErrorKind, Read, BufRead, BufReader},
     path::Path,
 };
 
@@ -106,6 +110,34 @@ where
     Ok(false)
 }
 
+pub fn open_sequential_reader(file_path: &Path) -> io::Result<Box<dyn BufRead + Send + Sync>> {
+    let file = File::open(file_path)?;
+
+    if is_bgzf_file(file_path)? {
+        Ok(Box::new(bgzf::io::Reader::new(file)))
+    } else {
+        Ok(Box::new(BufReader::new(file)))
+    }
+}
+
+pub(crate) fn noodles_strand_to_string(strand: Strand) -> String {
+    match strand {
+        Strand::None => ".",
+        Strand::Forward => "+",
+        Strand::Reverse => "-",
+        Strand::Unknown => "?",
+    }
+    .to_string()
+}
+
+pub(crate) fn noodles_phase_to_u8(phase: Phase) -> u8 {
+    match phase {
+        Phase::Zero => 0,
+        Phase::One => 1,
+        Phase::Two => 2,
+    }
+}
+
 pub(crate) fn parse_region(region: &str) -> io::Result<Region> {
     region.parse().map_err(|e| {
         io::Error::new(
@@ -161,6 +193,30 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
         let err = parse_region("").unwrap_err();
         assert_eq!(err.kind(), ErrorKind::InvalidInput);
         assert!(err.to_string().contains("invalid tabix region"));
+    }
+
+
+    // -----------------------------------------------------------------------
+    // noodles_phase_to_u8
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_noodles_phase_to_u8() {
+        assert_eq!(noodles_phase_to_u8(Phase::Zero), 0);
+        assert_eq!(noodles_phase_to_u8(Phase::One), 1);
+        assert_eq!(noodles_phase_to_u8(Phase::Two), 2);
+    }
+
+    // -----------------------------------------------------------------------
+    // noodles_strand_to_string
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_noodles_strand_to_string() {
+        assert_eq!(noodles_strand_to_string(Strand::None), ".");
+        assert_eq!(noodles_strand_to_string(Strand::Forward), "+");
+        assert_eq!(noodles_strand_to_string(Strand::Reverse), "-");
+        assert_eq!(noodles_strand_to_string(Strand::Unknown), "?");
     }
 
     // ---------------------------------------------------------------------------

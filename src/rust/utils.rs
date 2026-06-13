@@ -40,9 +40,30 @@ pub fn from_py_error(err: PyErr) -> io::Error {
     io::Error::other(err.to_string())
 }
 
+pub fn bytes_to_string(bytes: &[u8]) -> String {
+    String::from_utf8_lossy(bytes).into_owned()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    // -----------------------------------------------------------------------
+    // bytes_to_string
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_bytes_to_string_valid_utf8() {
+        assert_eq!(bytes_to_string(b"abc"), "abc");
+    }
+
+    #[test]
+    fn test_bytes_to_string_replaces_invalid_utf8() {
+        assert_eq!(
+            bytes_to_string(b"a\xffb"),
+            format!("a{}b", char::REPLACEMENT_CHARACTER)
+        );
+    }
 
     // -----------------------------------------------------------------------
     // from_py_error
