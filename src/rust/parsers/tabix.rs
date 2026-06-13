@@ -651,6 +651,11 @@ pub fn associated_index_path(src: &Path, extension: &str) -> PathBuf {
     PathBuf::from(path)
 }
 
+pub fn has_tabix_index(file_path: &Path) -> bool {
+    associated_index_path(file_path, "tbi").exists()
+        || associated_index_path(file_path, "csi").exists()
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -698,6 +703,36 @@ mod tests {
                 .id(),
             _ => panic!("expected system backend"),
         }
+    }
+
+    // -----------------------------------------------------------------------
+    // has_tabix_index
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_has_tabix_index_exists() -> io::Result<()> {
+        let dir = create_temp_dir("tabix-has-tabix")?;
+        let (gz_path, _tbi_path) = write_gff3_with_tbi(&dir, None)?;
+
+        assert!(has_tabix_index(&gz_path));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_has_tabix_index_missing_index() -> io::Result<()> {
+        let dir = create_temp_dir("tabix-has-tabix-missing")?;
+        let path = write_bgzf_file(
+            &dir,
+            vec!["chr1\t.\tgene\t1\t100\t.\t+\t.\tID=gene1\n".to_string()],
+            None,
+        )?;
+
+        assert!(!has_tabix_index(&path));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
     }
 
     // -----------------------------------------------------------------------

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use crate::{
-    parsers::tabix::{self, associated_index_path},
+    parsers::tabix::{self, associated_index_path, has_tabix_index},
     parsers::utils::{
         ReaderMode, noodles_phase_to_u8, noodles_strand_to_string, open_sequential_reader,
     },
@@ -421,11 +421,6 @@ impl Gff3Parser {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-fn has_tabix_index(file_path: &Path) -> bool {
-    associated_index_path(file_path, "tbi").exists()
-        || associated_index_path(file_path, "csi").exists()
-}
 
 fn open_sequential_gff3_reader(
     file_path: &Path,
@@ -1054,7 +1049,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_open_sequential_gff3_reader_reads_plain_file() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-open-sequential-plain")?;
+        let dir = create_temp_dir("gff3-open-sequential-plain")?;
         let path = write_sample_file(&dir, "sample.gff3", SAMPLE)?;
         let mut reader = open_sequential_gff3_reader(&path)?;
         let records = read_records(&mut reader, None)?;
@@ -1069,7 +1064,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_open_sequential_gff3_reader_reads_bgzf_file() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-open-sequential-bgzf")?;
+        let dir = create_temp_dir("gff3-open-sequential-bgzf")?;
         let path = write_bgzf_file(&dir, sample_lines(), Some("sample.gff3.gz"))?;
         let mut reader = open_sequential_gff3_reader(&path)?;
         let records = read_records(&mut reader, None)?;
@@ -1077,37 +1072,6 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         assert_eq!(records.len(), 2);
         assert_first_sample_record(&records[0]);
         assert_second_sample_record(&records[1]);
-
-        fs::remove_dir_all(dir)?;
-        Ok(())
-    }
-
-    // -----------------------------------------------------------------------
-    // has_tabix_index
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_has_tabix_index_exists() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-has-tabix")?;
-        let (gz_path, _tbi_path) = write_gff3_with_tbi(
-            &dir,
-            str::from_utf8(SAMPLE)
-                .ok()
-                .map(|s| s.lines().map(str::to_owned).collect()),
-        )?;
-
-        assert!(has_tabix_index(&gz_path));
-
-        fs::remove_dir_all(dir)?;
-        Ok(())
-    }
-
-    #[test]
-    fn test_has_tabix_index_missing_index() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-has-tabix-missing")?;
-        let path = write_sample_file(&dir, "sample.gff3", SAMPLE)?;
-
-        assert!(!has_tabix_index(&path));
 
         fs::remove_dir_all(dir)?;
         Ok(())
@@ -1149,7 +1113,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_gff3_parser_metadata_sequential() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-parser-metadata-seq")?;
+        let dir = create_temp_dir("gff3-parser-metadata-seq")?;
         let path = write_sample_file(&dir, "sample.gff3", SKIPPED_LINE_SAMPLE)?;
         let file_path = path.to_string_lossy().into_owned();
 
@@ -1188,7 +1152,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_gff3_parser_metadata_does_not_consume_sequential_reader() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-parser-metadata-preserve-seq")?;
+        let dir = create_temp_dir("gff3-parser-metadata-preserve-seq")?;
         let path = write_sample_file(&dir, "sample.gff3", SAMPLE)?;
         let file_path = path.to_string_lossy().into_owned();
 
@@ -1227,7 +1191,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_gff3_parser_metadata_query_bgzf() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-parser-metadata-query")?;
+        let dir = create_temp_dir("gff3-parser-metadata-query")?;
         let (gz_path, _tbi_path) = write_gff3_with_tbi(
             &dir,
             str::from_utf8(SKIPPED_LINE_SAMPLE)
@@ -1289,7 +1253,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_gff3_parser_open_file_auto_mode_sequential() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-parser-open-auto")?;
+        let dir = create_temp_dir("gff3-parser-open-auto")?;
         let path = write_sample_file(&dir, "sample.gff3", SAMPLE)?;
         let file_path = path.to_string_lossy().into_owned();
 
@@ -1309,7 +1273,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_gff3_parser_open_file_auto_mode_query() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-parser-open-auto-query")?;
+        let dir = create_temp_dir("gff3-parser-open-auto-query")?;
         let (gz_path, _tbi_path) = write_gff3_with_tbi(
             &dir,
             str::from_utf8(SAMPLE)
@@ -1339,7 +1303,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_gff3_parser_open_file_query_mode_without_index_errors() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-parser-open-query-no-index")?;
+        let dir = create_temp_dir("gff3-parser-open-query-no-index")?;
         let path = write_sample_file(&dir, "sample.gff3", SAMPLE)?;
         let file_path = path.to_string_lossy().into_owned();
 
@@ -1359,7 +1323,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_gff3_parser_open_file_query_mode_with_index() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-parser-open-query-index")?;
+        let dir = create_temp_dir("gff3-parser-open-query-index")?;
         let (gz_path, _tbi_path) = write_gff3_with_tbi(
             &dir,
             str::from_utf8(SAMPLE)
@@ -1385,7 +1349,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_gff3_parser_open_file_query_mode_invalid_tabix_path() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-parser-open-query-invalid-tabix")?;
+        let dir = create_temp_dir("gff3-parser-open-query-invalid-tabix")?;
         let path = write_sample_file(&dir, "sample.gff3.gz", SAMPLE)?;
         let file_path = path.to_string_lossy().into_owned();
 
@@ -1413,7 +1377,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_gff3_parser_open_file_sequential_mode() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-parser-open-seq")?;
+        let dir = create_temp_dir("gff3-parser-open-seq")?;
         let path = write_sample_file(&dir, "sample.gff3", SAMPLE)?;
         let file_path = path.to_string_lossy().into_owned();
 
@@ -1438,7 +1402,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_gff3_parser_open_file_sequential_mode_with_index() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-parser-open-seq-index")?;
+        let dir = create_temp_dir("gff3-parser-open-seq-index")?;
         let (gz_path, _tbi_path) = write_gff3_with_tbi(
             &dir,
             str::from_utf8(SAMPLE)
@@ -1465,7 +1429,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_sequential_mode_rejects_seek() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-seq")?;
+        let dir = create_temp_dir("gff3-seq")?;
         let path = write_sample_file(&dir, "sample.gff3", SAMPLE)?;
 
         let mut parser = Gff3Parser::new(
@@ -1513,7 +1477,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_gff3_parser_close() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-parser-close")?;
+        let dir = create_temp_dir("gff3-parser-close")?;
         let path = write_sample_file(&dir, "sample.gff3", SAMPLE)?;
 
         Python::initialize();
@@ -1561,7 +1525,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_gff3_parser_parse_file() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-parse-file")?;
+        let dir = create_temp_dir("gff3-parse-file")?;
         let path = write_sample_file(&dir, "sample.gff3", SAMPLE)?;
 
         let records =
@@ -1576,7 +1540,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_gff3_parser_parse_file_bgzf() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-parse-file-bgzf")?;
+        let dir = create_temp_dir("gff3-parse-file-bgzf")?;
         let path = write_bgzf_file(&dir, sample_lines(), Some("sample.gff3.gz"))?;
 
         let records =
@@ -1605,7 +1569,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_sequential_backend_next_reads_until_eof() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-sequential-next")?;
+        let dir = create_temp_dir("gff3-sequential-next")?;
         let path = write_sample_file(&dir, "sample.gff3", SAMPLE)?;
         let mut backend = SequentialBackend::new(&path)?;
 
@@ -1622,7 +1586,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_sequential_backend_next_reads_bgzf_until_eof() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-sequential-bgzf-next")?;
+        let dir = create_temp_dir("gff3-sequential-bgzf-next")?;
         let path = write_bgzf_file(&dir, sample_lines(), Some("sample.gff3.gz"))?;
         let mut backend = SequentialBackend::new(&path)?;
 
@@ -1639,7 +1603,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_sequential_backend_rejects_seek() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-sequential-seek")?;
+        let dir = create_temp_dir("gff3-sequential-seek")?;
         let path = write_sample_file(&dir, "sample.gff3", SAMPLE)?;
         let mut backend = SequentialBackend::new(&path)?;
 
@@ -1657,7 +1621,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_tabix_backend_seek_reads_records() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-tabix-seek")?;
+        let dir = create_temp_dir("gff3-tabix-seek")?;
         let (gz_path, _tbi_path) = write_gff3_with_tbi(&dir, None)?;
         let mut backend = TabixBackend::new(&gz_path, "tabix-nonexistent-binary-for-test")?;
 
@@ -1677,7 +1641,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_tabix_backend_seek_empty_region() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-tabix-empty-region")?;
+        let dir = create_temp_dir("gff3-tabix-empty-region")?;
         let (gz_path, _tbi_path) = write_gff3_with_tbi(&dir, None)?;
         let mut backend = TabixBackend::new(&gz_path, "tabix-nonexistent-binary-for-test")?;
 
@@ -1691,7 +1655,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_tabix_backend_seek_invalid_region_errors() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-tabix-invalid-region")?;
+        let dir = create_temp_dir("gff3-tabix-invalid-region")?;
         let (gz_path, _tbi_path) = write_gff3_with_tbi(&dir, None)?;
         let mut backend = TabixBackend::new(&gz_path, "tabix-nonexistent-binary-for-test")?;
 
@@ -1704,7 +1668,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_tabix_backend_next_without_query_returns_none() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-tabix-no-query")?;
+        let dir = create_temp_dir("gff3-tabix-no-query")?;
         let (gz_path, _tbi_path) = write_gff3_with_tbi(&dir, None)?;
         let mut backend = TabixBackend::new(&gz_path, "tabix-nonexistent-binary-for-test")?;
 
@@ -1720,7 +1684,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_gff3_reader_query_mode_with_index_uses_tabix_backend() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-reader-tabix")?;
+        let dir = create_temp_dir("gff3-reader-tabix")?;
         let (gz_path, _tbi_path) = write_gff3_with_tbi(&dir, None)?;
 
         let reader = Gff3Reader::open(
@@ -1743,7 +1707,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_gff3_reader_query_mode_without_index_errors() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-reader-no-index")?;
+        let dir = create_temp_dir("gff3-reader-no-index")?;
         let path = write_sample_file(&dir, "sample.gff3", SAMPLE)?;
 
         let err = match Gff3Reader::open(
@@ -1763,7 +1727,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
     #[test]
     fn test_gff3_reader_sequential_mode_uses_sequential_backend_with_index() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-gff3-reader-sequential")?;
+        let dir = create_temp_dir("gff3-reader-sequential")?;
         let (gz_path, _tbi_path) = write_gff3_with_tbi(&dir, None)?;
 
         let reader = Gff3Reader::open(
