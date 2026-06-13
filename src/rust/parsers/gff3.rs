@@ -15,15 +15,11 @@
 use crate::{
     parsers::tabix::{self, associated_index_path},
     parsers::utils::{
-        ReaderMode, open_sequential_reader, 
-        noodles_strand_to_string, noodles_phase_to_u8
+        ReaderMode, noodles_phase_to_u8, noodles_strand_to_string, open_sequential_reader,
     },
-    utils::{to_py_error, bytes_to_string},
+    utils::{bytes_to_string, to_py_error},
 };
-use noodles_gff::{
-    self as gff3,
-    record::attributes::field::Value as AttributeValue,
-};
+use noodles_gff::{self as gff3, record::attributes::field::Value as AttributeValue};
 use pyo3::{
     exceptions::PyRuntimeError,
     prelude::*,
@@ -91,6 +87,16 @@ impl Gff3Record {
 }
 
 // ---------------------------------------------------------------------------
+// Gff3Metadata - holds GFF3 metadata (directives and header lines)
+// ---------------------------------------------------------------------------
+
+#[derive(Clone, Debug, Default, PartialEq)]
+struct Gff3Metadata {
+    header: Vec<String>,
+    directives: Vec<(String, String)>,
+}
+
+// ---------------------------------------------------------------------------
 // Gff3Reader - public entry point
 // ---------------------------------------------------------------------------
 
@@ -131,16 +137,6 @@ impl Gff3Reader {
 
         Ok(self.metadata.as_ref().expect("metadata should be cached"))
     }
-}
-
-// ---------------------------------------------------------------------------
-// Gff3Metadata - holds GFF3 metadata (directives and header lines)
-// ---------------------------------------------------------------------------
-
-#[derive(Clone, Debug, Default, PartialEq)]
-struct Gff3Metadata {
-    header: Vec<String>,
-    directives: Vec<(String, String)>,
 }
 
 // ---------------------------------------------------------------------------
@@ -250,7 +246,7 @@ impl TabixBackend {
         P: AsRef<Path>,
     {
         Ok(Self {
-            reader: Some(tabix::TabixReader::open(&file_path.as_ref(), tabix_path)?),
+            reader: Some(tabix::TabixReader::open(file_path.as_ref(), tabix_path)?),
             query_active: false,
         })
     }

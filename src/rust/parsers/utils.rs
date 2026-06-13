@@ -13,15 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use noodles_core::Region;
 use noodles_bgzf as bgzf;
-use noodles_gff::{
-    feature::record::{Phase, Strand},
-};
+use noodles_core::Region;
+use noodles_gff::feature::record::{Phase, Strand};
 use pyo3::{PyResult, exceptions::PyValueError};
 use std::{
     fs::File,
-    io::{self, ErrorKind, Read, BufRead, BufReader},
+    io::{self, BufRead, BufReader, ErrorKind, Read},
     path::Path,
 };
 
@@ -194,7 +192,6 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
         assert_eq!(err.kind(), ErrorKind::InvalidInput);
         assert!(err.to_string().contains("invalid tabix region"));
     }
-
 
     // -----------------------------------------------------------------------
     // noodles_phase_to_u8
