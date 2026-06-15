@@ -75,7 +75,7 @@ class Parser(ABC, Generic[T]):
         self,
         region: str | None = None,
         *,
-        seqid: str | None = None,
+        seq_region_name: str | None = None,
         start: int | None = None,
         end: int | None = None,
     ) -> bool:
@@ -83,7 +83,7 @@ class Parser(ABC, Generic[T]):
 
         Args:
             region (str | None): The region to seek to, in the format "chr:start-end".
-            seqid (str | None): The sequence ID of the region to seek to.
+            seq_region_name (str | None): The sequence ID of the region to seek to.
             start (int | None): The start position of the region to seek to.
             end (int | None): The end position of the region to seek to.
 
