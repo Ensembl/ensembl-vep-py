@@ -122,7 +122,9 @@ class GFF3Parser(Parser[GFF3Record]):
             bool: True if the seek was successful, False otherwise.
         """
 
-        return self._parser.seek(format_region_string(region, seq_region_name=seq_region_name, start=start, end=end))
+        return self._parser.seek(
+            format_region_string(region, seq_region_name=seq_region_name, start=start, end=end)
+        )
 
     def next(self) -> GFF3Record | None:
         """Return the next GFF3 record, or None at EOF/##FASTA.
