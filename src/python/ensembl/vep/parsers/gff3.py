@@ -47,7 +47,6 @@ class GFF3Parser(Parser[GFF3Record]):
     tabix_path: str | Path | None = field(default="tabix")
     mode: str = field(default="auto", on_setattr=setters.frozen)
     _parser: _RustGFF3Parser = field(init=False, repr=False)
-    _metadata_cache: dict | None = field(init=False, default=None, repr=False)
 
     def __attrs_post_init__(self) -> None:
         self._parser = _RustGFF3Parser(
@@ -71,9 +70,7 @@ class GFF3Parser(Parser[GFF3Record]):
         """Metadata dictionary containing GFF3 directives and header lines.
 
         Returns:
-            dict: A dictionary with keys "directives" and "header",
-                    where "directives" is a list of GFF3 directives (lines starting with ##)
-                    and "header" is a list of header lines (lines starting with # but not ##).
+            dict: A dictionary with keys "header" and specific directives (e.g. "gff-version").
         """
 
         return dict(self._parser.metadata)
