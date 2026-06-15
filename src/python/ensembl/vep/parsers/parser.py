@@ -83,7 +83,7 @@ class Parser(ABC, Generic[T]):
 
         Args:
             region (str | None): The region to seek to, in the format "chr:start-end".
-            seq_region_name (str | None): The sequence ID of the region to seek to.
+            seq_region_name (str | None): The name of the region to seek to.
             start (int | None): The start position of the region to seek to.
             end (int | None): The end position of the region to seek to.
 
