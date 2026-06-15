@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 from pathlib import Path
-from attr import define, field
+from attr import define, field, setters
 
 from ensembl.vep.common import format_region_string
 from ensembl.vep.parsers.parser import Parser
@@ -45,7 +45,7 @@ class GFF3Parser(Parser[GFF3Record]):
     format: str = field(init=False, default="gff3")
     file_path: str | Path | None = field(default=None)
     tabix_path: str | Path | None = field(default="tabix")
-    mode: str = field(default="auto")
+    mode: str = field(default="auto", on_setattr=setters.frozen)
     _parser: _RustGFF3Parser = field(init=False, repr=False)
     _metadata_cache: dict | None = field(init=False, default=None, repr=False)
 

@@ -14,6 +14,7 @@
 """Unit tests for the GFF3 parser interface."""
 
 from pathlib import Path
+from attr import exceptions as attr_ex
 
 import pytest
 
@@ -122,6 +123,16 @@ class TestGFF3ParserInitialization:
         parser = GFF3Parser(file_path=path)
 
         _assert_gene_record(parser.next())
+
+    def test_mode_is_frozen(self) -> None:
+        """Test attribute mode is settable on object creation and them immutable"""
+        parser = GFF3Parser(mode="sequential")
+
+        assert parser.mode == "sequential", "mode attribute set incorrectly"
+        assert parser.reader_mode == "sequential", "reader_mode attribute set incorrectly"
+        # check that mode is not settable after object creation
+        with pytest.raises(attr_ex.FrozenAttributeError, match="can't set attribute"):
+            parser.mode = "query"
 
 
 class TestGFF3ParserMetadata:
@@ -393,4 +404,13 @@ class TestGFF3ParserParsingTextAndFiles:
         records = GFF3Parser.parse_file(path)
 
         assert len(records) == 2
+        _assert_gene_record(records[0])
+
+    def test_parse_file_respects_limit(self, tmp_path: Path) -> None:
+        """Test parse_text stops once the limit is reached."""
+
+        path = _write_gff3(tmp_path / "sample.gff3")
+        records = GFF3Parser.parse_file(path, limit=1)
+
+        assert len(records) == 1
         _assert_gene_record(records[0])
