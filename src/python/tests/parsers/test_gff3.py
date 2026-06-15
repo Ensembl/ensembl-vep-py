@@ -28,7 +28,8 @@ CHR2_GENE_ROW = "chr2\ttabix\tgene\t100\t120\t.\t-\t.\tID=gene:2"
 SAMPLE = "\n".join([HEADER_LINES[0], CHR1_GENE_ROW, CHR1_CDS_ROW, "##FASTA", ">chr1", "ACGT"]) + "\n"
 SAMPLE_WITH_COMMENT = "\n".join([*HEADER_LINES, CHR1_GENE_ROW, CHR1_CDS_ROW]) + "\n"
 
-
+# the default SAMPLE string creates a gff file with the chr1 gene row and the chr1 CDS row
+# whereas the mock tabix executable returns the chr1 gene row and the chr1 exon row for queries on chr1
 def _write_gff3(path: Path, data: str = SAMPLE) -> Path:
     """Write a GFF3 fixture file."""
 
