@@ -109,7 +109,7 @@ class GFF3Parser(Parser[GFF3Record]):
         self,
         region: str | None = None,
         *,
-        seqid: str | None = None,
+        seq_region_name: str | None = None,
         start: int | None = None,
         end: int | None = None,
     ) -> bool:
@@ -117,7 +117,7 @@ class GFF3Parser(Parser[GFF3Record]):
 
         Args:
             region (str | None): The region to seek to, in the format "chr:start-end".
-            seqid (str | None): The sequence ID of the region to seek to..
+            seq_region_name (str | None): The sequence ID of the region to seek to..
             start (int | None): The start position of the region to seek to.
             end (int | None): The end position of the region to seek to.
 
@@ -125,7 +125,7 @@ class GFF3Parser(Parser[GFF3Record]):
             bool: True if the seek was successful, False otherwise.
         """
 
-        return self._parser.seek(format_region_string(region, seqid=seqid, start=start, end=end))
+        return self._parser.seek(format_region_string(region, seq_region_name=seq_region_name, start=start, end=end))
 
     def next(self) -> GFF3Record | None:
         """Return the next GFF3 record, or None at EOF/##FASTA.
