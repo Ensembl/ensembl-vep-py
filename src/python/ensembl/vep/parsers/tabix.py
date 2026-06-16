@@ -13,7 +13,6 @@
 # limitations under the License.
 """Tabix parser interface backed by Rust."""
 
-from collections.abc import Iterator
 from pathlib import Path
 from functools import cached_property
 from attrs import define, field
@@ -133,23 +132,6 @@ class TabixParser(Parser[str]):
         """
 
         return self._parser.records(limit)
-
-    def __iter__(self) -> Iterator[str]:
-        return self
-
-    def __next__(self) -> str:
-        record = self.next()
-
-        if record is None:
-            raise StopIteration
-
-        return record
-
-    def __enter__(self) -> "TabixParser":
-        return self
-
-    def __exit__(self, *_exc_info: object) -> None:
-        self.close()
 
     def _clear_metadata_cache(self) -> None:
         try:
