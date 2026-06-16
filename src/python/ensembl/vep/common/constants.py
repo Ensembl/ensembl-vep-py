@@ -13,7 +13,7 @@
 # limitations under the License.
 """Common constants."""
 
-from ensembl.vep.common.enums import ClassSOTerm
+from ensembl.vep.common.enums import ClassSOTerm, ExonPhase, Strand
 
 CLASS_SO_TERM_ABBRV_TO_ENUM: dict[str, ClassSOTerm] = {
     "INS": ClassSOTerm.INSERTION,
@@ -34,4 +34,18 @@ CLASS_SO_TERM_ABBRV_TO_ENUM: dict[str, ClassSOTerm] = {
     "CNV": ClassSOTerm.COPY_NUMBER_VARIATION,
     "INV": ClassSOTerm.INVERSION,
     "BND": ClassSOTerm.CHROMOSOME_BREAKPOINT,
+}
+
+# for . (non-strandedness) we treat it as forward strand
+STRAND_SYMBOL_TO_ENUM = {
+    "+": Strand.FORWARD,
+    "-": Strand.REVERSE,
+    ".": Strand.FORWARD,
+    "?": Strand.UNKNOWN,
+}
+
+PHASE_VALUE_TO_ENUM = {
+    0: ExonPhase.ZERO,
+    1: ExonPhase.ONE,
+    2: ExonPhase.TWO,
 }

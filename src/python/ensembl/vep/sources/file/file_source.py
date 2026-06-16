@@ -1,0 +1,116 @@
+# See the NOTICE file distributed with this work for additional information
+# regarding copyright ownership.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""Abstract base for file-backed feature sources."""
+
+import logging
+from abc import abstractmethod
+from typing import Generic, Iterator, TypeVar
+
+from attrs import define, field
+
+from ensembl.vep.common import SourceType
+from ensembl.vep.common.methods import format_region_string
+from ensembl.vep.models import Feature
+from ensembl.vep.sources.feature_source import FeatureSource
+
+logger = logging.getLogger(__name__)
+
+P = TypeVar("P")
+F = TypeVar("F", bound=Feature)
+
+
+@define(kw_only=True, auto_attribs=True)
+class FileSource(FeatureSource, Generic[P, F]):
+    """Abstract base for file-backed feature sources.
+
+    P: Parser/adaptor type (e.g. GFF3Parser)
+    F: Output Feature type (e.g. Transcript, Variation)
+
+    Concrete subclasses implement `_records_to_features` to handle
+    format-specific record parsing and model construction.
+    """
+
+    file_path: str
+    adaptor: P
+    source_type: SourceType = field(default=SourceType.FILE, init=False)
+
+    def get_all_features(self) -> list[F]:
+        records = self.adaptor.parse_file(self.file_path)
+        return self._records_to_features(records)
+
+    def get_features_by_region(
+        self,
+        region: str | None = None,
+        *,
+        seq_region_name: str | None = None,
+        start: int | None = None,
+        end: int | None = None,
+    ) -> list[F]:
+        try:
+            region = format_region_string(region, seq_region_name=seq_region_name, start=start, end=end)
+        except ValueError:
+            return []
+
+        with self.adaptor.open(self.file_path) as adaptor:
+            if not adaptor.seek(region):
+                return []
+            records = []
+            try:
+                records.append(adaptor.records())
+            except Exception as e:
+                logger.warning(f"Failed to retrieve records for region {region} in file {self.file_path}: {e}")
+
+        return self._records_to_features(records)
+
+    def iter_all_features(self) -> Iterator[F]:
+        try:
+            with self.adaptor.open(self.file_path, mode="sequential") as adaptor:
+                records = []
+                while (rec := adaptor.next()) is not None:
+                    records.append(rec)
+
+                yield from self._records_to_features(records)
+        except Exception as e:
+            logger.warning(f"Failed to iterate features in file {self.file_path} in sequential mode: {e}")
+
+
+    def iter_features_by_region(
+        self,
+        region: str | None = None,
+        *,
+        seq_region_name: str | None = None,
+        start: int | None = None,
+        end: int | None = None,
+    ) -> Iterator[F]:
+        try:
+            region = format_region_string(region, seq_region_name=seq_region_name, start=start, end=end)
+        except ValueError:
+            return
+
+        with self.adaptor.open(self.file_path) as adaptor:
+            if not adaptor.seek(region):
+                return
+            records = []
+            while (rec := adaptor.next()) is not None:
+                records.append(rec)
+
+        yield from self._records_to_features(records)
+
+    def close(self) -> None:
+        pass
+
+    @abstractmethod
+    def _records_to_features(self, records: list) -> list[F]:
+        """Convert format-specific raw records to domain Feature objects."""
+        ...
