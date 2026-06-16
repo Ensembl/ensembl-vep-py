@@ -13,6 +13,8 @@
 # limitations under the License.
 """Tabix parser interface backed by Rust."""
 
+from __future__ import annotations
+
 import logging
 from pathlib import Path
 from functools import cached_property
@@ -70,7 +72,7 @@ class TabixParser(Parser[str]):
 
         return dict(self._parser.metadata)
 
-    def open(self, file_path: str | Path, mode: str | None = None) -> "TabixParser":
+    def open(self, file_path: str | Path, mode: str | None = None) -> TabixParser:
         """Open a tabix-indexed BGZF file.
 
         Args:

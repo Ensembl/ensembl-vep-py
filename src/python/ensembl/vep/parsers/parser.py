@@ -13,6 +13,8 @@
 # limitations under the License.
 """Parser interface."""
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from typing import TypeVar, Generic
 from attrs import define
@@ -52,7 +54,7 @@ class Parser(ABC, Generic[T]):
         return {}
 
     @abstractmethod
-    def open(self, file_path: str, mode: str) -> "Parser":
+    def open(self, file_path: str, mode: str) -> Parser:
         """Open a file for parsing.
 
         Args:
@@ -122,7 +124,7 @@ class Parser(ABC, Generic[T]):
             records.append(record)
         return records
 
-    def __iter__(self) -> "Parser":
+    def __iter__(self) -> Parser:
         return self
 
     def __next__(self) -> T:
@@ -133,7 +135,7 @@ class Parser(ABC, Generic[T]):
 
         return record
 
-    def __enter__(self) -> "Parser":
+    def __enter__(self) -> Parser:
         return self
 
     def __exit__(self, *exc_info: object) -> None:
