@@ -37,4 +37,7 @@ mod ensembl_vep_core {
 
     #[pymodule_export]
     use crate::parsers::tabix::TabixParser;
+
+    #[pymodule_export]
+    use crate::parsers::gff3::{Gff3Parser, Gff3Record};
 }

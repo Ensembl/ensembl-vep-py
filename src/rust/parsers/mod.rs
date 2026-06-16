@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+pub mod gff3;
 pub mod tabix;
 #[cfg(test)]
 pub(crate) mod test_utils;
