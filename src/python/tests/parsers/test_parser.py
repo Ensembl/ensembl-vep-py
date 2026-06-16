@@ -39,13 +39,13 @@ class ConcreteParser(Parser[str]):
         self,
         region: str | None = None,
         *,
-        seqid: str | None = None,
+        seq_region_name: str | None = None,
         start: int | None = None,
         end: int | None = None,
     ) -> bool:
         """Seek to a region."""
 
-        return bool(region or seqid or start or end)
+        return bool(region or seq_region_name or start or end)
 
     def next(self) -> str | None:
         """Return the next row."""

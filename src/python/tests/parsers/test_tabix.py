@@ -184,7 +184,7 @@ class TestTabixParserInitialization:
 
         parser = TabixParser(file_path=path, tabix_path=str(tabix))
 
-        assert parser.seek(seqid="chr1", start=10, end=20) is True
+        assert parser.seek(seq_region_name="chr1", start=10, end=20) is True
 
 
 class TestTabixParserMetadata:
@@ -279,7 +279,7 @@ class TestTabixParserOpenClose:
         parser = TabixParser(tabix_path=str(tabix))
 
         assert parser.open(path) is parser
-        assert parser.seek(seqid="chr2", start=100, end=120) is True
+        assert parser.seek(seq_region_name="chr2", start=100, end=120) is True
         assert parser.next() == CHR2_GENE_ROW
 
     def test_close_closes_backend_reader(self, tmp_path: Path) -> None:
@@ -301,7 +301,7 @@ class TestTabixParserOpenClose:
         tabix = _write_query_mock_tabix(tmp_path)
 
         with TabixParser(file_path=path, tabix_path=str(tabix)) as parser:
-            assert parser.seek(seqid="chr2", start=100, end=120) is True
+            assert parser.seek(seq_region_name="chr2", start=100, end=120) is True
             assert parser.next() == CHR2_GENE_ROW
 
         with pytest.raises(RuntimeError, match="not open"):
@@ -318,7 +318,7 @@ class TestTabixParserSeek:
         tabix = _write_query_mock_tabix(tmp_path)
         parser = TabixParser(file_path=path, tabix_path=str(tabix))
 
-        assert parser.seek(seqid="chr1", start=10, end=20) is True
+        assert parser.seek(seq_region_name="chr1", start=10, end=20) is True
         assert parser.next() == CHR1_GENE1_ROW
         assert parser.records() == [CHR1_EXON1_ROW]
         assert parser.next() is None
@@ -334,13 +334,13 @@ class TestTabixParserSeek:
         assert parser.records() == [CHR2_GENE_ROW]
 
     def test_tabix_parser_seek_accepts_whole_sequence(self, tmp_path: Path) -> None:
-        """Test seek accepts a seqid-only region."""
+        """Test seek accepts a seq_region_name-only region."""
 
         path = _write_placeholder_file(tmp_path / "sample.gff3.gz")
         tabix = _write_query_mock_tabix(tmp_path)
         parser = TabixParser(file_path=path, tabix_path=str(tabix))
 
-        assert parser.seek(seqid="chr1") is True
+        assert parser.seek(seq_region_name="chr1") is True
         assert parser.records() == [CHR1_GENE1_ROW, CHR1_EXON1_ROW, CHR1_EXON2_ROW]
 
     def test_tabix_parser_seek_empty_region(self, tmp_path: Path) -> None:
@@ -357,9 +357,9 @@ class TestTabixParserSeek:
         "kwargs",
         [
             {},
-            {"region": "chr1:10-20", "seqid": "chr1"},
-            {"seqid": "chr1", "start": 0, "end": 20},
-            {"seqid": "chr1", "start": 10, "end": 0},
+            {"region": "chr1:10-20", "seq_region_name": "chr1"},
+            {"seq_region_name": "chr1", "start": 0, "end": 20},
+            {"seq_region_name": "chr1", "start": 10, "end": 0},
         ],
     )
     def test_tabix_parser_seek_rejects_invalid_region_arguments(self, kwargs: dict[str, object]) -> None:
@@ -381,7 +381,7 @@ class TestTabixParserRecords:
         tabix = _write_query_mock_tabix(tmp_path)
         parser = TabixParser(file_path=path, tabix_path=str(tabix))
 
-        parser.seek(seqid="chr1")
+        parser.seek(seq_region_name="chr1")
 
         assert parser.next() == CHR1_GENE1_ROW
         assert parser.records() == [CHR1_EXON1_ROW, CHR1_EXON2_ROW]
@@ -393,7 +393,7 @@ class TestTabixParserRecords:
         tabix = _write_query_mock_tabix(tmp_path)
         parser = TabixParser(file_path=path, tabix_path=str(tabix))
 
-        parser.seek(seqid="chr1")
+        parser.seek(seq_region_name="chr1")
 
         assert parser.records(limit=2) == [CHR1_GENE1_ROW, CHR1_EXON1_ROW]
         assert parser.records() == [CHR1_EXON2_ROW]
@@ -405,7 +405,7 @@ class TestTabixParserRecords:
         tabix = _write_query_mock_tabix(tmp_path)
         parser = TabixParser(file_path=path, tabix_path=str(tabix))
 
-        parser.seek(seqid="chr1", start=10, end=20)
+        parser.seek(seq_region_name="chr1", start=10, end=20)
 
         assert parser.records(limit=0) == []
         assert parser.next() == CHR1_GENE1_ROW
@@ -428,7 +428,7 @@ class TestTabixParserIteration:
         tabix = _write_query_mock_tabix(tmp_path)
         parser = TabixParser(file_path=path, tabix_path=str(tabix))
 
-        parser.seek(seqid="chr1", start=10, end=20)
+        parser.seek(seq_region_name="chr1", start=10, end=20)
 
         assert list(parser) == [CHR1_GENE1_ROW, CHR1_EXON1_ROW]
 
@@ -443,7 +443,7 @@ class TestTabixParserIteration:
         tabix = _write_query_mock_tabix(tmp_path)
         parser = TabixParser(file_path=path, tabix_path=str(tabix))
 
-        parser.seek(seqid="chr1", start=10, end=20)
+        parser.seek(seq_region_name="chr1", start=10, end=20)
 
         with pytest.raises(StopIteration):
             while True:
@@ -488,7 +488,7 @@ class TestTabixParserIntegration:
         parser = _open_integration_parser(path, backend, htslib_toolchain)
 
         assert parser.metadata == {"header": expected_header}
-        assert parser.seek(seqid="chr1", start=10, end=20) is True
+        assert parser.seek(seq_region_name="chr1", start=10, end=20) is True
         assert parser.next() == expected_first
         assert parser.records() == expected_rest
         assert parser.next() is None
@@ -527,7 +527,7 @@ class TestTabixParserIntegration:
         parser = _open_integration_parser(path, backend, htslib_toolchain)
 
         assert parser.metadata == {"header": expected_header}
-        assert parser.seek(seqid="chr1") is True
+        assert parser.seek(seq_region_name="chr1") is True
         assert parser.next() == expected_first
         assert parser.records() == expected_rest
         assert parser.next() is None
@@ -566,7 +566,7 @@ class TestTabixParserIntegration:
         parser = _open_integration_parser(path, backend, htslib_toolchain)
 
         assert parser.metadata == {"header": expected_header}
-        assert parser.seek(seqid="chr1", start=12, end=20) is True
+        assert parser.seek(seq_region_name="chr1", start=12, end=20) is True
         assert parser.next() == expected_first
         assert parser.records() == expected_rest
         assert parser.next() is None
@@ -605,7 +605,7 @@ class TestTabixParserIntegration:
         parser = _open_integration_parser(path, backend, htslib_toolchain)
 
         assert parser.metadata == {"header": expected_header}
-        assert parser.seek(seqid="chr1", start=12) is True
+        assert parser.seek(seq_region_name="chr1", start=12) is True
         assert parser.next() == expected_first
         assert parser.records() == expected_rest
         assert parser.next() is None
