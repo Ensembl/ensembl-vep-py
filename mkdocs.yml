@@ -70,6 +70,13 @@ nav:
   - Home: index.md
   - Install: install.md
   - Usage: usage.md
+  - Developer Guide:
+      - Overview: developer_guide/index.md
+      - Style Conventions: developer_guide/style_conventions.md
+      - Writing Classes: developer_guide/writing_classes.md
+      - Coordinates & Slices: developer_guide/coordinates_and_slices.md
+      - Circular Dependencies: developer_guide/circular_dependencies.md
+      - Parsers & Feature Sources: developer_guide/parsers_and_feature_sources.md
   - Code of Conduct: code_of_conduct.md
   - Code reference: reference/
   - Coverage report: coverage.md
