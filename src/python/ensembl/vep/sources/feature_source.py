@@ -14,6 +14,12 @@
 """Abstract base for all feature sources."""
 
 from __future__ import annotations
+<<<<<<< HEAD
+=======
+
+from abc import ABC, abstractmethod
+from typing import Iterator
+>>>>>>> 253d129 (match return typing)
 
 from abc import ABC, abstractmethod
 from typing import Iterator, Generic, TypeVar
