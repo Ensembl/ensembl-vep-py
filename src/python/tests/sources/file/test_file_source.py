@@ -44,7 +44,7 @@ class _FakeParser:
         """Return all records in one shot, independent of open()/seek()."""
         return list(self.records_source)
 
-    def open(self, file_path: str) -> "_FakeParser":
+    def open(self, file_path: str, mode: str = "auto") -> "_FakeParser":
         """Open the parser and reset the read cursor."""
         self.opened = True
         self._cursor = 0
@@ -198,8 +198,8 @@ class TestFileSourceIterAllFeatures:
 
         assert [f.start for f in features] == [1, 2, 3]
 
-    def test_opens_and_closes_adaptor_before_yielding(self) -> None:
-        """Test the adaptor session is closed before the first feature is yielded."""
+    def test_opens_adaptor_before_first_yield(self) -> None:
+        """Test the adaptor is opened once, lazily, on first consumption."""
         parser = _FakeParser([1, 2, 3])
         source = _DummyFileSource(file_path="dummy.txt", adaptor=parser)
 
@@ -208,6 +208,24 @@ class TestFileSourceIterAllFeatures:
 
         assert first.start == 1
         assert parser.opened is True
+
+    def test_keeps_adaptor_open_across_multiple_next_calls(self) -> None:
+        """Test the adaptor session spans the whole generator, not just one record."""
+        parser = _FakeParser([1, 2, 3])
+        source = _DummyFileSource(file_path="dummy.txt", adaptor=parser)
+
+        iterator = source.iter_all_features()
+        next(iterator)
+
+        assert parser.closed is False
+
+    def test_closes_adaptor_once_generator_is_exhausted(self) -> None:
+        """Test the adaptor is closed once all records have been consumed."""
+        parser = _FakeParser([1, 2, 3])
+        source = _DummyFileSource(file_path="dummy.txt", adaptor=parser)
+
+        list(source.iter_all_features())
+
         assert parser.closed is True
 
 

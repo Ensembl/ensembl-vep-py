@@ -89,14 +89,18 @@ class FileSource(FeatureSource, Generic[P, F]):
         return self._records_to_features(records)
 
     def iter_all_features(self) -> Iterator[F]:
-        """Lazily yield all features from the provided file."""
+        """Lazily yield all features from the provided file.
+
+        Converts and yields each record as soon as it comes off the parser,
+        rather than buffering the whole file. This default is only correct
+        for formats where one record maps to one (or more) complete features
+        (e.g. VCF); formats that need to assemble several records into one
+        feature (e.g. GFF3) must override this.
+        """
 
         with self.adaptor.open(self.file_path, mode="sequential") as adaptor:
-            records = []
-            while (rec := adaptor.next()) is not None:
-                records.append(rec)
-
-        yield from self._records_to_features(records)
+            while (record := adaptor.next()) is not None:
+                yield from self._records_to_features([record])
 
     def iter_features_by_region(
         self,
@@ -107,13 +111,13 @@ class FileSource(FeatureSource, Generic[P, F]):
         end: int | None = None,
     ) -> Iterator[F]:
         """Lazily yield features overlapping the given genomic region.
-        
+
         Args:
             region (str | None): The region (e.g., "chr1:1000-2000") to get features from.
             seq_region_name (str | None): The name of the sequence region (e.g., "chr1").
             start (int | None): The start position of the region.
             end (int | None): The end position of the region.
-        
+
         Returns:
             Iterator[F]: An iterator over features overlapping the specified region.
         """
@@ -126,11 +130,8 @@ class FileSource(FeatureSource, Generic[P, F]):
         with self.adaptor.open(self.file_path) as adaptor:
             if not adaptor.seek(region):
                 return
-            records = []
-            while (rec := adaptor.next()) is not None:
-                records.append(rec)
-
-        yield from self._records_to_features(records)
+            while (record := adaptor.next()) is not None:
+                yield from self._records_to_features([record])
 
     def close(self) -> None:
         pass
