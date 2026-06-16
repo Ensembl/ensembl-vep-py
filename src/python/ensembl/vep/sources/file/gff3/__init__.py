@@ -13,6 +13,6 @@
 # limitations under the License.
 """GFF3 file-backed feature sources."""
 
-from ensembl.vep.sources.file.gff3.transcript_source import GFF3TranscriptSource
+from .transcript_source import GFF3TranscriptSource
 
 __all__ = ["GFF3TranscriptSource"]

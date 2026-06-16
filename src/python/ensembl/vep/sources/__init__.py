@@ -13,9 +13,9 @@
 # limitations under the License.
 """Feature sources — file-backed and database-backed providers of domain Feature objects."""
 
-from ensembl.vep.sources.feature_source import FeatureSource
-from ensembl.vep.sources.file.file_source import FileSource
-from ensembl.vep.sources.db.db_source import DBSource
-from ensembl.vep.sources.file.gff3.transcript_source import GFF3TranscriptSource
+from .feature_source import FeatureSource
+from .file.file_source import FileSource
+from .db.db_source import DBSource
+from .file.gff3.transcript_source import GFF3TranscriptSource
 
 __all__ = ["FeatureSource", "FileSource", "DBSource", "GFF3TranscriptSource"]
