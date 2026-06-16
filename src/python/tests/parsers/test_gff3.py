@@ -271,7 +271,7 @@ class TestGFF3ParserSeek:
         assert [record.seqid for record in parser.records()] == ["chr2"]
 
     def test_gff3_parser_seek_accepts_whole_sequence(self, tmp_path: Path) -> None:
-        """Test seek accepts a seqid-only region."""
+        """Test seek accepts a seq_region_name-only region."""
 
         path = _write_query_gff3(tmp_path / "sample.gff3.gz")
         tabix = _write_query_mock_tabix(tmp_path)
