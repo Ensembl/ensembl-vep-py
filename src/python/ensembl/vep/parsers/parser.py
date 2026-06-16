@@ -52,11 +52,12 @@ class Parser(ABC, Generic[T]):
         return {}
 
     @abstractmethod
-    def open(self, file_path: str) -> "Parser":
+    def open(self, file_path: str, mode: str) -> "Parser":
         """Open a file for parsing.
 
         Args:
             file_path (str): The path to the file to be parsed.
+            mode (str): The mode in which to open the file.
 
         Returns:
             Parser: The parser instance.

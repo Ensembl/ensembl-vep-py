@@ -315,7 +315,7 @@ impl Gff3Parser {
         };
 
         if let Some(path) = file_path {
-            parser.open(&path)?;
+            parser.open(&path, mode)?;
         }
 
         Ok(parser)
@@ -353,11 +353,13 @@ impl Gff3Parser {
         self.reader_mode.as_str()
     }
 
-    fn open(&mut self, file_path: &str) -> PyResult<()> {
+    fn open(&mut self, file_path: &str, mode: Option<String>) -> PyResult<()> {
         let path = PathBuf::from(file_path);
+        let reader_mode =
+            ReaderMode::parse(Some(mode.as_deref().unwrap_or(self.reader_mode.as_str())))?;
 
         self.reader =
-            Some(Gff3Reader::open(&path, &self.tabix_path, self.reader_mode).map_err(to_py_error)?);
+            Some(Gff3Reader::open(&path, &self.tabix_path, reader_mode).map_err(to_py_error)?);
         self.reader_mode = self
             .reader
             .as_ref()
@@ -1078,38 +1080,8 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
     }
 
     // -----------------------------------------------------------------------
-    // Gff3Parser:open
+    // Gff3Parser:metadata
     // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_gff3_parser_without_open_reader() -> io::Result<()> {
-        let mut parser = Gff3Parser::new(None, None, None).map_err(from_py_error)?;
-
-        assert_eq!(parser.format(), "gff3");
-        Python::initialize();
-        Python::attach(|py| {
-            assert!(parser.metadata(py).unwrap().is_empty());
-        });
-        assert_eq!(parser.reader_mode(), "auto");
-        assert!(parser.next().unwrap_err().to_string().contains("not open"));
-        assert!(
-            parser
-                .seek("chr1:10-20")
-                .unwrap_err()
-                .to_string()
-                .contains("not open")
-        );
-        assert!(
-            parser
-                .records(None)
-                .unwrap_err()
-                .to_string()
-                .contains("not open")
-        );
-
-        parser.close();
-        Ok(())
-    }
 
     #[test]
     fn test_gff3_parser_metadata_sequential() -> io::Result<()> {
@@ -1119,7 +1091,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
         let mut parser =
             Gff3Parser::new(None, None, Some("sequential".to_string())).map_err(from_py_error)?;
-        parser.open(&file_path).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
 
         Python::attach(|py| -> PyResult<()> {
             let metadata = parser.metadata(py)?;
@@ -1158,7 +1130,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
         let mut parser =
             Gff3Parser::new(None, None, Some("sequential".to_string())).map_err(from_py_error)?;
-        parser.open(&file_path).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
 
         let first = parser
             .next()
@@ -1201,7 +1173,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         let file_path = gz_path.to_string_lossy().into_owned();
 
         let mut parser = Gff3Parser::new(None, None, None).map_err(from_py_error)?;
-        parser.open(&file_path).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
 
         assert_eq!(parser.reader_mode(), "query");
 
@@ -1238,12 +1210,72 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
     fn test_gff3_parser_open_missing_file_errors() -> io::Result<()> {
         Python::initialize();
         let mut parser = Gff3Parser::new(None, None, None).map_err(from_py_error)?;
-        let err = parser.open("/definitely/missing/sample.gff3").unwrap_err();
+        let err = parser
+            .open("/definitely/missing/sample.gff3", None)
+            .unwrap_err();
 
         assert!(
             err.to_string().contains("No such file") || err.to_string().contains("os error 2"),
             "unexpected error: {err}"
         );
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // Gff3Parser:open
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_gff3_parser_without_open_reader() -> io::Result<()> {
+        let mut parser = Gff3Parser::new(None, None, None).map_err(from_py_error)?;
+
+        assert_eq!(parser.format(), "gff3");
+        Python::initialize();
+        Python::attach(|py| {
+            assert!(parser.metadata(py).unwrap().is_empty());
+        });
+        assert_eq!(parser.reader_mode(), "auto");
+        assert!(parser.next().unwrap_err().to_string().contains("not open"));
+        assert!(
+            parser
+                .seek("chr1:10-20")
+                .unwrap_err()
+                .to_string()
+                .contains("not open")
+        );
+        assert!(
+            parser
+                .records(None)
+                .unwrap_err()
+                .to_string()
+                .contains("not open")
+        );
+
+        parser.close();
+        Ok(())
+    }
+
+    #[test]
+    fn test_gff3_parser_open_override_reader_mode() -> io::Result<()> {
+        let dir = create_temp_dir("gff3-parser-open-override")?;
+        let (gz_path, _tbi_path) = write_gff3_with_tbi(
+            &dir,
+            str::from_utf8(SAMPLE)
+                .ok()
+                .map(|s| s.lines().map(str::to_owned).collect()),
+        )?;
+        let file_path = gz_path.to_string_lossy().into_owned();
+
+        let mut parser =
+            Gff3Parser::new(None, None, Some("sequential".to_string())).map_err(from_py_error)?;
+        assert_eq!(parser.reader_mode(), "sequential");
+
+        parser
+            .open(&file_path, Some("query".to_string()))
+            .map_err(from_py_error)?;
+        assert_eq!(parser.reader_mode(), "query");
+
+        fs::remove_dir_all(dir)?;
         Ok(())
     }
 
@@ -1258,7 +1290,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         let file_path = path.to_string_lossy().into_owned();
 
         let mut parser = Gff3Parser::new(None, None, None).map_err(from_py_error)?;
-        parser.open(&file_path).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
 
         assert_eq!(parser.reader_mode(), "sequential");
 
@@ -1283,7 +1315,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         let file_path = gz_path.to_string_lossy().into_owned();
 
         let mut parser = Gff3Parser::new(None, None, None).map_err(from_py_error)?;
-        parser.open(&file_path).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
 
         assert_eq!(parser.reader_mode(), "query");
         parser.seek("chr1:10-20").map_err(from_py_error)?;
@@ -1311,7 +1343,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         let mut parser =
             Gff3Parser::new(None, None, Some("query".to_string())).map_err(from_py_error)?;
 
-        let err = parser.open(&file_path).unwrap_err();
+        let err = parser.open(&file_path, None).unwrap_err();
         assert!(
             err.to_string().contains("no tabix index found"),
             "unexpected error: {err}"
@@ -1334,7 +1366,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
         let mut parser =
             Gff3Parser::new(None, None, Some("query".to_string())).map_err(from_py_error)?;
-        parser.open(&file_path).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
 
         assert_eq!(parser.reader_mode(), "query");
         parser.seek("chr1:10-20").map_err(from_py_error)?;
@@ -1361,7 +1393,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         )
         .map_err(from_py_error)?;
 
-        let err = parser.open(&file_path).unwrap_err();
+        let err = parser.open(&file_path, None).unwrap_err();
         assert!(
             err.to_string().contains("no tabix index found"),
             "unexpected error: {err}"
@@ -1388,7 +1420,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         )
         .map_err(from_py_error)?;
 
-        parser.open(&file_path).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
         assert_eq!(parser.reader_mode(), "sequential");
 
         let records = parser.records(None).map_err(from_py_error)?;
@@ -1415,7 +1447,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         let mut parser =
             Gff3Parser::new(None, None, Some("sequential".to_string())).map_err(from_py_error)?;
 
-        parser.open(&file_path).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
         assert_eq!(parser.reader_mode(), "sequential");
 
         let records = parser.records(None).map_err(from_py_error)?;
@@ -1483,7 +1515,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         Python::initialize();
         let mut parser = Gff3Parser::new(None, None, None).map_err(from_py_error)?;
         parser
-            .open(&path.to_string_lossy())
+            .open(&path.to_string_lossy(), None)
             .map_err(from_py_error)?;
 
         assert!(parser.reader.is_some());

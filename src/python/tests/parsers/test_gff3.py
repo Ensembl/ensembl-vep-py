@@ -222,6 +222,17 @@ class TestGFF3ParserOpenClose:
         assert parser.open(path) is parser
         _assert_gene_record(parser.next())
 
+    def test_open_overrides_mode(self, tmp_path: Path) -> None:
+        """Test open overrides the parser mode."""
+
+        path = _write_query_gff3(tmp_path / "sample.gff3.gz")
+        tabix = _write_query_mock_tabix(tmp_path)
+        parser = GFF3Parser(file_path=None, tabix_path=tabix)
+        assert parser.reader_mode == "auto"
+
+        assert parser.open(path, mode="sequential") is parser
+        assert parser.reader_mode == "sequential"
+
     def test_close_closes_backend_reader(self, tmp_path: Path) -> None:
         """Test close prevents subsequent backend reads."""
 

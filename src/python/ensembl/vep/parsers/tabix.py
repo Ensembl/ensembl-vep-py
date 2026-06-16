@@ -13,6 +13,7 @@
 # limitations under the License.
 """Tabix parser interface backed by Rust."""
 
+import logging
 from pathlib import Path
 from functools import cached_property
 from attrs import define, field
@@ -24,6 +25,7 @@ from ensembl.vep.ensembl_vep_core import (  # noqa: F401,F403 pylint: disable=E0
 )
 
 __all__ = ["TabixParser"]
+logger = logging.getLogger(__name__)
 
 
 @define(kw_only=True, auto_attribs=True)
@@ -68,15 +70,19 @@ class TabixParser(Parser[str]):
 
         return dict(self._parser.metadata)
 
-    def open(self, file_path: str | Path) -> "TabixParser":
+    def open(self, file_path: str | Path, mode: str | None = None) -> "TabixParser":
         """Open a tabix-indexed BGZF file.
 
         Args:
             file_path (str | Path): The path to the file to be parsed.
+            mode (str | None): The mode in which to open the file.
 
         Returns:
             TabixParser: The parser instance.
         """
+
+        if mode is not None:
+            logger.debug("The 'mode' argument is not used by TabixParser and will be ignored.")
 
         self._parser.open(str(file_path))
         self._clear_metadata_cache()

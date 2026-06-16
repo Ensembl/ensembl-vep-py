@@ -25,7 +25,7 @@ _RECORDS: list[str] = []
 class ConcreteParser(Parser[str]):
     """Concrete parser used to test Parser interface helpers."""
 
-    def open(self, file_path: str) -> "ConcreteParser":
+    def open(self, file_path: str, mode: str | None = None) -> "ConcreteParser":
         """Open a file for parsing."""
 
         return self

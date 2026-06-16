@@ -80,11 +80,12 @@ class GFF3Parser(Parser[GFF3Record]):
 
         return self._parser.reader_mode
 
-    def open(self, file_path: str | Path) -> GFF3Parser:
+    def open(self, file_path: str | Path, mode: str = "auto") -> GFF3Parser:
         """Open a GFF3 file.
 
         Args:
             file_path (str | Path): The path to the GFF3 file to be parsed.
+            mode (str): The mode in which to open the file.
 
         Returns:
             GFF3Parser: The parser instance.
@@ -92,7 +93,7 @@ class GFF3Parser(Parser[GFF3Record]):
 
         self.file_path = file_path
         self._clear_metadata_cache()
-        self._parser.open(str(file_path))
+        self._parser.open(str(file_path), mode)
         return self
 
     def close(self) -> None:
