@@ -315,43 +315,44 @@ def shift_sequence(
 def format_region_string(
     region: str | None = None,
     *,
-    seqid: str | None = None,
+    seq_region_name: str | None = None,
     start: int | None = None,
     end: int | None = None,
 ) -> str:
-    """Format a region string into "seqid:start-end" from either an existing region or seqid/start/end values.
+    """Format a region string into "seq_region_name:start-end"
+        from either an existing region or seq_region_name/start/end values.
 
     Args:
-        region: A region string in the format "seqid:start-end".
-        seqid: Sequence ID (e.g. chromosome name).
+        region: A region string in the format "seq_region_name:start-end".
+        seq_region_name: Sequence ID (e.g. chromosome name).
         start: Start coordinate (1-based).
         end: End coordinate (1-based).
 
     Returns:
-        A region string in the format "seqid:start-end".
+        A region string in the format "seq_region_name:start-end".
     """
 
     if region is not None:
-        if any(value is not None for value in (seqid, start, end)):
-            raise ValueError("pass either region or seqid/start/end, not both")
+        if any(value is not None for value in (seq_region_name, start, end)):
+            raise ValueError("pass either region or seq_region_name/start/end, not both")
 
         return region
 
-    if seqid is None:
-        raise ValueError("region requires either region or seqid")
+    if seq_region_name is None:
+        raise ValueError("region requires either region or seq_region_name")
 
     if start is None:
         if end is not None:
             raise ValueError("end coordinate provided without start coordinate")
-        return seqid
+        return seq_region_name
 
     if end is None:
-        return f"{seqid}:{start}"
+        return f"{seq_region_name}:{start}"
 
     if start < 1 or end < 1:
         raise ValueError("regions are 1-based and must be positive")
 
-    return f"{seqid}:{start}-{end}"
+    return f"{seq_region_name}:{start}-{end}"
 
 
 def infer_variant_so_term(allele_string: str, ref_correct: bool = False) -> ClassSOTerm | None:

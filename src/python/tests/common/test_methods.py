@@ -352,29 +352,29 @@ class TestFormatRegionString:
 
         assert format_region_string("chr1:10-20") == "chr1:10-20"
 
-    def test_seqid_only(self) -> None:
+    def test_seq_region_name_only(self) -> None:
         """Formats a whole-sequence region."""
 
-        assert format_region_string(seqid="chr1") == "chr1"
+        assert format_region_string(seq_region_name="chr1") == "chr1"
 
-    def test_seqid_start_end(self) -> None:
+    def test_seq_region_name_start_end(self) -> None:
         """Formats a bounded 1-based region."""
 
-        assert format_region_string(seqid="chr1", start=10, end=20) == "chr1:10-20"
+        assert format_region_string(seq_region_name="chr1", start=10, end=20) == "chr1:10-20"
 
-    def test_seqid_start(self) -> None:
+    def test_seq_region_name_start(self) -> None:
         """Formats a region with only start coordinate."""
 
-        assert format_region_string(seqid="chr1", start=10) == "chr1:10"
+        assert format_region_string(seq_region_name="chr1", start=10) == "chr1:10"
 
     @pytest.mark.parametrize(
         "kwargs",
         [
-            {"region": "chr1:10-20", "seqid": "chr1", "start": None, "end": None},
-            {"region": None, "seqid": None, "start": None, "end": None},
-            {"region": None, "seqid": "chr1", "start": None, "end": 10},
-            {"region": None, "seqid": "chr1", "start": 0, "end": 20},
-            {"region": None, "seqid": "chr1", "start": 10, "end": 0},
+            {"region": "chr1:10-20", "seq_region_name": "chr1", "start": None, "end": None},
+            {"region": None, "seq_region_name": None, "start": None, "end": None},
+            {"region": None, "seq_region_name": "chr1", "start": None, "end": 10},
+            {"region": None, "seq_region_name": "chr1", "start": 0, "end": 20},
+            {"region": None, "seq_region_name": "chr1", "start": 10, "end": 0},
         ],
     )
     def test_rejects_invalid_input(self, kwargs: dict[str, Any]) -> None:
