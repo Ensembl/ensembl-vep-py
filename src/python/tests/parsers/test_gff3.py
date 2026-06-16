@@ -255,7 +255,7 @@ class TestGFF3ParserSeek:
         tabix = _write_query_mock_tabix(tmp_path)
         parser = GFF3Parser(file_path=path, tabix_path=tabix)
 
-        assert parser.seek(seqid="chr1", start=10, end=20) is True
+        assert parser.seek(seq_region_name="chr1", start=10, end=20) is True
         _assert_gene_record(parser.next())
         assert [record.feature_type for record in parser.records()] == ["exon"]
         assert parser.next() is None
@@ -277,7 +277,7 @@ class TestGFF3ParserSeek:
         tabix = _write_query_mock_tabix(tmp_path)
         parser = GFF3Parser(file_path=path, tabix_path=tabix)
 
-        assert parser.seek(seqid="chr1") is True
+        assert parser.seek(seq_region_name="chr1") is True
         assert [record.feature_type for record in parser.records()] == ["gene", "exon"]
 
     def test_gff3_parser_seek_empty_region(self, tmp_path: Path) -> None:
@@ -294,9 +294,9 @@ class TestGFF3ParserSeek:
         "kwargs",
         [
             {},
-            {"region": "chr1:10-20", "seqid": "chr1"},
-            {"seqid": "chr1", "start": 0, "end": 20},
-            {"seqid": "chr1", "start": 10, "end": 0},
+            {"region": "chr1:10-20", "seq_region_name": "chr1"},
+            {"seq_region_name": "chr1", "start": 0, "end": 20},
+            {"seq_region_name": "chr1", "start": 10, "end": 0},
         ],
     )
     def test_gff3_parser_seek_rejects_invalid_region_arguments(self, kwargs: dict[str, object]) -> None:
@@ -314,7 +314,7 @@ class TestGFF3ParserSeek:
         parser = GFF3Parser(file_path=path, mode="sequential")
 
         with pytest.raises(RuntimeError, match="sequential"):
-            parser.seek(seqid="chr1", start=10, end=20)
+            parser.seek(seq_region_name="chr1", start=10, end=20)
 
 
 class TestGFF3ParserRecords:
