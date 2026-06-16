@@ -19,16 +19,16 @@ from __future__ import annotations
 
 import pytest
 
-from ensembl.vep.common import ClassSOTerm, Strand
+from ensembl.vep.common import ClassSOTerm, CoordSystemLevel, Strand
 from ensembl.vep.models.variation import StructuralVariation, StructuralVariationAllele, OverlapConsequence
-from ensembl.vep.models.sequence import Slice
+from ensembl.vep.models.sequence import CoordSystem, Slice
 
 
 @pytest.fixture
 def genomic_slice() -> Slice:
     """Create a slice object for testing."""
     return Slice(
-        coord_system="chromosome",
+        coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
         seq_region_name="1",
         seq_region_length=1000,
         start=1,
