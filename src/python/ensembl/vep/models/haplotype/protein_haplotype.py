@@ -19,5 +19,9 @@ from ensembl.vep.models.overlap import MultipleFeatureOverlap
 
 
 @define(kw_only=True, auto_attribs=True)
+
+__all__ = ["ProteinHaplotype"]
+
+
 class ProteinHaplotype(MultipleFeatureOverlap):
     """ProteinHaplotype class (to be implemented)."""

@@ -21,6 +21,10 @@ from ensembl.vep.models.variation.structural_variation_allele import StructuralV
 
 
 @define(kw_only=True, auto_attribs=True)
+
+__all__ = ["StructuralVariation"]
+
+
 class StructuralVariation(Variation):
     """Represents a structural variation to genomic sequences in a specific locus.
 

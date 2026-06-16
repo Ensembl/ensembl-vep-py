@@ -28,6 +28,8 @@ logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 
+__all__ = ["invalidate", "invalidates", "resets_attrs", "trim_sequences", "shift_sequence", "format_region_string", "infer_variant_so_term", "setup_logging"]
+
 
 def invalidate(instance: object, *invalidate_names: str) -> None:
     """Clears the named cached properties of a class object when the attributes are set.

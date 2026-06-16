@@ -17,6 +17,10 @@ from attrs import frozen
 
 
 @frozen(kw_only=True, auto_attribs=True)
+
+__all__ = ["Locus", "Attribute", "ExternalDB", "ExternalReference", "PredictionResult"]
+
+
 class Locus:
     """Container for a genomic position and (optionally) alleles.
 

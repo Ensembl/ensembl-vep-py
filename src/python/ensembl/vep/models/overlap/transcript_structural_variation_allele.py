@@ -21,6 +21,10 @@ from ensembl.vep.models.overlap.transcript_variation_allele import TranscriptVar
 
 
 @define(kw_only=True, auto_attribs=True)
+
+__all__ = ["TranscriptStructuralVariationAllele"]
+
+
 class TranscriptStructuralVariationAllele(TranscriptVariationAllele):
     """
     Represents the overlap between a transcript and a structural variation allele.

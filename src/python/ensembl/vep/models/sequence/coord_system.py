@@ -21,6 +21,10 @@ from ensembl.vep.common import CoordSystemLevel
 
 
 @define(kw_only=True, auto_attribs=True)
+
+__all__ = ["CoordSystem"]
+
+
 class CoordSystem:
     """
     Represents a coordinate system in the Ensembl database.

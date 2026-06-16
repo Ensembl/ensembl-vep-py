@@ -28,6 +28,10 @@ if TYPE_CHECKING:
 
 
 @define(kw_only=True, auto_attribs=True)
+
+__all__ = ["FeatureOverlap"]
+
+
 class FeatureOverlap:
     """
     Represents an overlap between a feature and a overlapping feature,

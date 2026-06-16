@@ -19,5 +19,9 @@ from ensembl.vep.models.overlap import MultipleFeatureOverlap
 
 
 @define(kw_only=True, auto_attribs=True)
+
+__all__ = ["TranscriptHaplotype"]
+
+
 class TranscriptHaplotype(MultipleFeatureOverlap):
     """TranscriptHaplotype class (to be implemented)."""
