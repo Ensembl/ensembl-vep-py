@@ -13,6 +13,8 @@
 # limitations under the License.
 """Unit tests for the parser interface."""
 
+from __future__ import annotations
+
 from attrs import define
 import pytest
 
@@ -25,7 +27,7 @@ _RECORDS: list[str] = []
 class ConcreteParser(Parser[str]):
     """Concrete parser used to test Parser interface helpers."""
 
-    def open(self, file_path: str, mode: str | None = None) -> "ConcreteParser":
+    def open(self, file_path: str, mode: str | None = None) -> ConcreteParser:
         """Open a file for parsing."""
 
         return self
