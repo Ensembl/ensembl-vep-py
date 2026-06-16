@@ -16,22 +16,38 @@
 """Unit tests for FeatureSource."""
 
 from typing import Iterator
+<<<<<<< HEAD
 import pytest
 from attrs import define, field
 
 from ensembl.vep.caches import SliceCache, WeakSliceCache
 from ensembl.vep.common import SourceType
 from ensembl.vep.sources.sequence_source import SequenceSource
+=======
+
+import pytest
+from attrs import define, field
+
+from ensembl.vep.common import SourceType
+>>>>>>> 0069c1b (adding docstrings)
 from ensembl.vep.models import Feature
 from ensembl.vep.sources.feature_source import FeatureSource
 
 
 @define(kw_only=True, auto_attribs=True)
+<<<<<<< HEAD
 class ConcreteFeatureSource(FeatureSource):
     """Concrete feature source used to test interface helpers."""
 
     closed: bool = field(default=False)
     sequence_source: SequenceSource | None = field(default=None)  # ignore[assignment]
+=======
+class _MinimalFeatureSource(FeatureSource):
+    """Smallest possible concrete FeatureSource, for exercising the abstract base."""
+
+    source_type: SourceType = SourceType.FILE
+    closed: bool = field(default=False)
+>>>>>>> 0069c1b (adding docstrings)
 
     def get_all_features(self) -> list[Feature]:
         return []
@@ -63,6 +79,7 @@ class ConcreteFeatureSource(FeatureSource):
         self.closed = True
 
 
+<<<<<<< HEAD
 class TestFeatureSourceInitialization:
     """Test FeatureSource initialization."""
 
@@ -121,3 +138,48 @@ class TestFeatureSourceContextManager:
             pass
 
         assert source.closed is True
+=======
+class TestFeatureSourceAbstractness:
+    """Test that FeatureSource cannot be instantiated directly."""
+
+    def test_cannot_instantiate_directly(self) -> None:
+        """Test FeatureSource raises TypeError when instantiated directly."""
+        with pytest.raises(TypeError, match="abstract"):
+            FeatureSource()  # type: ignore[abstract]
+
+    def test_concrete_subclass_can_be_instantiated(self) -> None:
+        """Test a subclass implementing all abstract methods can be instantiated."""
+        source = _MinimalFeatureSource()
+        assert isinstance(source, FeatureSource)
+
+
+class TestFeatureSourceContextManager:
+    """Test the default __enter__/__exit__ implementation."""
+
+    @pytest.fixture
+    def source(self) -> _MinimalFeatureSource:
+        """Create a minimal FeatureSource instance for testing."""
+        return _MinimalFeatureSource()
+
+    def test_enter_returns_self(self, source: _MinimalFeatureSource) -> None:
+        """Test __enter__ returns the source instance itself."""
+        with source as entered:
+            assert entered is source
+
+    def test_exit_calls_close(self, source: _MinimalFeatureSource) -> None:
+        """Test __exit__ calls close on normal exit."""
+        with source:
+            pass
+        assert source.closed is True
+
+    def test_close_called_even_on_exception(self, source: _MinimalFeatureSource) -> None:
+        """Test __exit__ calls close even when the with-block raises."""
+        with pytest.raises(ValueError):
+            with source:
+                raise ValueError("boom")
+        assert source.closed is True
+
+    def test_close_not_called_without_context_manager(self, source: _MinimalFeatureSource) -> None:
+        """Test close is not called just by constructing the source."""
+        assert source.closed is False
+>>>>>>> 0069c1b (adding docstrings)

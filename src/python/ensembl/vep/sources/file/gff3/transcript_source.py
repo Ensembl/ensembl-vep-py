@@ -17,11 +17,10 @@ from __future__ import annotations
 
 from collections import defaultdict
 from typing import Iterable
-
 from attrs import define, field
 
 from ensembl.vep.common import ExonPhase, Strand, STRAND_SYMBOL_TO_ENUM, PHASE_VALUE_TO_ENUM
-from ensembl.vep.ensembl_vep_core import GFF3Parser, GFF3Record
+from ensembl.vep.parsers import GFF3Parser, GFF3Record
 from ensembl.vep.models.genic import Transcript, Exon, Gene, Translation
 from ensembl.vep.models.sequence.slice import Slice
 from ensembl.vep.sources.file.file_source import FileSource
@@ -35,7 +34,14 @@ _TRANSCRIPT_FEATURE_TYPES = frozenset(
 
 @define(kw_only=True, auto_attribs=True)
 class _GFF3TranscriptGroup:
-    """Groups raw GFF3 records that together describe one transcript."""
+    """Groups raw GFF3 records that together describe one transcript.
+    
+    Attributes:
+        transcript_record (GFF3Record): The main transcript record.
+        gene_record (GFF3Record | None): The associated gene record, if any.
+        exon_records (list[GFF3Record]): The exon records for this transcript.
+        cds_records (list[GFF3Record]): The CDS records for this transcript.
+    """
 
     transcript_record: GFF3Record
     gene_record: GFF3Record | None
@@ -52,6 +58,9 @@ class GFF3TranscriptSource(FileSource[GFF3Parser, Transcript]):
     CDS records are also used to build a Translation, and gene records are used
     to build a Gene linked back to each of its transcripts.
 
+    Attributes:
+        adaptor (GFF3Parser): The GFF3 parser adaptor.
+
     Usage::
 
         with GFF3TranscriptSource(file_path="/path/to/annotation.gff3.gz") as source:
@@ -61,8 +70,19 @@ class GFF3TranscriptSource(FileSource[GFF3Parser, Transcript]):
     adaptor: GFF3Parser = field(init=False, factory=GFF3Parser)
 
     def _records_to_features(self, records: list[GFF3Record]) -> list[Transcript]:
+        """Convert a list of GFF3 records into Transcript domain objects.
+
+        Args:
+            records (list[GFF3Record]): The GFF3 records to convert.
+
+        Returns:
+            list[Transcript]: A list of Transcript domain objects.
+        """
+
         groups = _group_gff3_records(records)
-        transcripts = [_build_transcript(g) for g in groups]
+        transcripts = [
+            _build_transcript_from_record_group(group) for group in groups
+        ]
 
         gene_buckets: dict[str, tuple[GFF3Record, list[Transcript]]] = {}
         for group, transcript in zip(groups, transcripts):
@@ -77,70 +97,86 @@ class GFF3TranscriptSource(FileSource[GFF3Parser, Transcript]):
 
 
 def _group_gff3_records(records: Iterable[GFF3Record]) -> list[_GFF3TranscriptGroup]:
-    """Group GFF3 records by parent-child relationship into per-transcript groups."""
+    """Group GFF3 records by parent-child relationship into per-transcript groups.
+
+    Args:
+        records (Iterable[GFF3Record]): The GFF3 records to group.
+
+    Returns:
+        list[_GFF3TranscriptGroup]: A list of grouped transcript records.
+    """
+
     gene_map: dict[str, GFF3Record] = {}
     transcript_map: dict[str, GFF3Record] = {}
     transcript_parent: dict[str, str] = {}
     exon_map: dict[str, list[GFF3Record]] = defaultdict(list)
     cds_map: dict[str, list[GFF3Record]] = defaultdict(list)
 
-    for rec in records:
-        ft = rec.feature_type
-        if ft == "gene":
-            raw_id = _first_attr(rec, "ID")
+    for record in records:
+        feature_type = record.feature_type
+        if feature_type == "gene":
+            raw_id = _first_attr(record, "ID")
             if raw_id:
-                gene_map[raw_id] = rec
-        elif ft in _TRANSCRIPT_FEATURE_TYPES:
-            raw_id = _first_attr(rec, "ID")
+                gene_map[raw_id] = record
+        elif feature_type in _TRANSCRIPT_FEATURE_TYPES:
+            raw_id = _first_attr(record, "ID")
             if raw_id:
-                transcript_map[raw_id] = rec
-                parent = _first_attr(rec, "Parent")
+                transcript_map[raw_id] = record
+                parent = _first_attr(record, "Parent")
                 if parent:
                     transcript_parent[raw_id] = parent
-        elif ft == "exon":
-            parent = _first_attr(rec, "Parent")
+        elif feature_type == "exon":
+            parent = _first_attr(record, "Parent")
             if parent:
-                exon_map[parent].append(rec)
-        elif ft == "CDS":
-            parent = _first_attr(rec, "Parent")
+                exon_map[parent].append(record)
+        elif feature_type == "CDS":
+            parent = _first_attr(record, "Parent")
             if parent:
-                cds_map[parent].append(rec)
+                cds_map[parent].append(record)
 
     return [
         _GFF3TranscriptGroup(
-            transcript_record=t_rec,
-            gene_record=gene_map.get(transcript_parent.get(t_id, ""), None),
-            exon_records=exon_map.get(t_id, []),
-            cds_records=cds_map.get(t_id, []),
+            transcript_record=transcript_record,
+            gene_record=gene_map.get(transcript_parent.get(transcript_id, ""), None),
+            exon_records=exon_map.get(transcript_id, []),
+            cds_records=cds_map.get(transcript_id, []),
         )
-        for t_id, t_rec in transcript_map.items()
+        for transcript_id, transcript_record in transcript_map.items()
     ]
 
 
-def _build_transcript(group: _GFF3TranscriptGroup) -> Transcript:
-    """Construct a Transcript domain object from a grouped set of GFF3 records."""
-    t = group.transcript_record
-    strand = STRAND_SYMBOL_TO_ENUM.get(t.strand_symbol, Strand.UNKNOWN)
+def _build_transcript_from_record_group(group: _GFF3TranscriptGroup) -> Transcript:
+    """Construct a Transcript domain object from a grouped set of GFF3 records.
+
+    Args:
+        group (_GFF3TranscriptGroup): The grouped GFF3 records for a transcript.
+
+    Returns:
+        Transcript: The constructed Transcript domain object.
+    """
+
+    transcript_record = group.transcript_record
+    strand = STRAND_SYMBOL_TO_ENUM.get(transcript_record.strand_symbol, Strand.UNKNOWN)
     genomic_slice = Slice(
         coord_system=_COORD_SYSTEM,
-        seq_region_name=t.seqid,
-        start=t.start,
-        end=t.end,
+        seq_region_name=transcript_record.seqid,
+        start=transcript_record.start,
+        end=transcript_record.end,
         strand=strand,
     )
-    raw_id = _first_attr(t, "ID") or ""
+    raw_id = _first_attr(transcript_record, "ID") or ""
     stable_id = raw_id.split(":")[-1] if ":" in raw_id else raw_id
 
     transcript = Transcript(
         stable_id=stable_id,
-        start=t.start,
-        end=t.end,
+        start=transcript_record.start,
+        end=transcript_record.end,
         strand=strand,
         slice=genomic_slice,
     )
     transcript.spliced_exons = sorted(
-        [_build_exon(e, strand) for e in group.exon_records],
-        key=lambda e: e.start,
+        [_build_exon(exon_record, strand) for exon_record in group.exon_records],
+        key=lambda exon: exon.start,
     )
 
     if group.cds_records:
@@ -152,26 +188,35 @@ def _build_transcript(group: _GFF3TranscriptGroup) -> Transcript:
     return transcript
 
 
-def _build_exon(rec: GFF3Record, strand: Strand) -> Exon:
-    """Construct an Exon domain object from a single GFF3 exon record."""
-    raw_id = _first_attr(rec, "ID") or ""
-    stable_id = raw_id.split(":")[-1] if ":" in raw_id else (raw_id or f"exon_{rec.start}_{rec.end}")
+def _build_exon(exon_record: GFF3Record, strand: Strand) -> Exon:
+    """Construct an Exon domain object from a single GFF3 exon record.
+
+    Args:
+        exon_record (GFF3Record): The GFF3 exon record.
+        strand (Strand): The strand of the exon.
+
+    Returns:
+        Exon: The constructed Exon domain object.
+    """
+
+    raw_id = _first_attr(exon_record, "ID") or ""
+    stable_id = raw_id.split(":")[-1] if ":" in raw_id else (raw_id or f"exon_{exon_record.start}_{exon_record.end}")
     genomic_slice = Slice(
         coord_system=_COORD_SYSTEM,
-        seq_region_name=rec.seqid,
-        start=rec.start,
-        end=rec.end,
+        seq_region_name=exon_record.seqid,
+        start=exon_record.start,
+        end=exon_record.end,
         strand=strand,
     )
     exon = Exon(
         stable_id=stable_id,
-        start=rec.start,
-        end=rec.end,
+        start=exon_record.start,
+        end=exon_record.end,
         strand=strand,
         slice=genomic_slice,
     )
-    if rec.phase_value is not None:
-        exon.phase = PHASE_VALUE_TO_ENUM.get(rec.phase_value, ExonPhase.UNKNOWN)
+    if exon_record.phase_value is not None:
+        exon.phase = PHASE_VALUE_TO_ENUM.get(exon_record.phase_value, ExonPhase.UNKNOWN)
     return exon
 
 
@@ -181,36 +226,52 @@ def _build_translation(cds_records: list[GFF3Record]) -> Translation | None:
     start/end are genomic coordinates (an approximation of the cDNA-relative
     coordinates Translation conceptually expects); proper coordinate conversion
     is a future improvement.
+
+    Args:
+        cds_records (list[GFF3Record]): The CDS records for the transcript.
+
+    Returns:
+        Translation | None: The constructed Translation domain object, or None if no CDS records are provided.
     """
+
     if not cds_records:
         return None
-    cds_start = min(rec.start for rec in cds_records)
-    cds_end = max(rec.end for rec in cds_records)
+    cds_start = min(record.start for record in cds_records)
+    cds_end = max(record.end for record in cds_records)
     stable_id = _first_attr(cds_records[0], "protein_id") or ""
     return Translation(start=cds_start, end=cds_end, stable_id=stable_id)
 
 
-def _build_gene(gene_rec: GFF3Record, transcripts: list[Transcript]) -> Gene:
-    """Construct a Gene domain object from a gene record and link it to its transcripts."""
-    strand = STRAND_SYMBOL_TO_ENUM.get(gene_rec.strand_symbol, Strand.UNKNOWN)
-    raw_id = _first_attr(gene_rec, "ID") or ""
+def _build_gene(gene_record: GFF3Record, transcripts: list[Transcript]) -> Gene:
+    """Construct a Gene domain object from a gene record and link it to its transcripts.
+
+    Args:
+        gene_record (GFF3Record): The GFF3 gene record.
+        transcripts (list[Transcript]): The transcripts associated with the gene.
+
+    Returns:
+        Gene: The constructed Gene domain object.
+    """
+
+    strand = STRAND_SYMBOL_TO_ENUM.get(gene_record.strand_symbol, Strand.UNKNOWN)
+    raw_id = _first_attr(gene_record, "ID") or ""
     stable_id = raw_id.split(":")[-1] if ":" in raw_id else raw_id
 
     gene = Gene(
         stable_id=stable_id,
-        start=gene_rec.start,
-        end=gene_rec.end,
+        start=gene_record.start,
+        end=gene_record.end,
         strand=strand,
         slice=Slice(
             coord_system=_COORD_SYSTEM,
-            seq_region_name=gene_rec.seqid,
-            start=gene_rec.start,
-            end=gene_rec.end,
+            seq_region_name=gene_record.seqid,
+            start=gene_record.start,
+            end=gene_record.end,
             strand=strand,
         ),
     )
-    gene.name = _first_attr(gene_rec, "Name")
-    gene.biotype = _first_attr(gene_rec, "biotype")
+    gene.name = _first_attr(gene_record, "Name")
+    gene.biotype = _first_attr(gene_record, "biotype")
     gene.transcripts = transcripts
 
     for t in transcripts:
@@ -219,9 +280,18 @@ def _build_gene(gene_rec: GFF3Record, transcripts: list[Transcript]) -> Gene:
     return gene
 
 
-def _first_attr(rec: GFF3Record, key: str) -> str | None:
-    """Return the first value of a GFF3 attribute, or None if absent."""
-    values = rec.attributes.get(key)
+def _first_attr(record: GFF3Record, key: str) -> str | None:
+    """Return the first value of a GFF3 attribute, or None if absent.
+
+    Args:
+        record (GFF3Record): The GFF3 record.
+        key (str): The attribute key to retrieve.
+
+    Returns:
+        str | None: The first value of the attribute, or None if absent.
+    """
+
+    values = record.attributes.get(key)
     if values:
         return values[0]
     return None

@@ -15,7 +15,6 @@
 
 from abc import abstractmethod
 from typing import Generic, Iterator, TypeVar
-
 from attrs import define, field
 
 from ensembl.vep.common import SourceType
@@ -73,4 +72,4 @@ class DBSource(FeatureSource, Generic[D, F]):
     @abstractmethod
     def _rows_to_features(self, rows: list) -> list[F]:
         """Convert database result rows to domain Feature objects."""
-        ...
+        raise NotImplementedError

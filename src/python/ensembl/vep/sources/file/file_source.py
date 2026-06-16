@@ -16,7 +16,6 @@
 import logging
 from abc import abstractmethod
 from typing import Generic, Iterator, TypeVar
-
 from attrs import define, field
 
 from ensembl.vep.common import SourceType
@@ -24,10 +23,9 @@ from ensembl.vep.common.methods import format_region_string
 from ensembl.vep.models import Feature
 from ensembl.vep.sources.feature_source import FeatureSource
 
-logger = logging.getLogger(__name__)
-
 P = TypeVar("P")
 F = TypeVar("F", bound=Feature)
+logger = logging.getLogger(__name__)
 
 
 @define(kw_only=True, auto_attribs=True)
@@ -46,7 +44,16 @@ class FileSource(FeatureSource, Generic[P, F]):
     source_type: SourceType = field(default=SourceType.FILE, init=False)
 
     def get_all_features(self) -> list[F]:
-        records = self.adaptor.parse_file(self.file_path)
+        """Return all features from the provided file."""
+
+        try:
+            records = self.adaptor.parse_file(self.file_path)
+        except NotImplementedError:
+            logger.warning("Adaptor %s does not support parse_file, returning empty list", type(self.adaptor).__name__)
+            return []
+        except Exception as e:
+            logger.warning("Error parsing file %s: %s, returning empty list", self.file_path, e)
+            return []
         return self._records_to_features(records)
 
     def get_features_by_region(
@@ -57,6 +64,18 @@ class FileSource(FeatureSource, Generic[P, F]):
         start: int | None = None,
         end: int | None = None,
     ) -> list[F]:
+        """Return features overlapping the given genomic region.
+        
+        Args:
+            region (str | None): The region (e.g., "chr1:1000-2000") to get features from.
+            seq_region_name (str | None): The name of the sequence region (e.g., "chr1").
+            start (int | None): The start position of the region.
+            end (int | None): The end position of the region.
+        
+        Returns:
+            list[F]: A list of features overlapping the specified region.
+        """
+
         try:
             region = format_region_string(region, seq_region_name=seq_region_name, start=start, end=end)
         except ValueError:
@@ -65,25 +84,19 @@ class FileSource(FeatureSource, Generic[P, F]):
         with self.adaptor.open(self.file_path) as adaptor:
             if not adaptor.seek(region):
                 return []
-            records = []
-            try:
-                records.append(adaptor.records())
-            except Exception as e:
-                logger.warning(f"Failed to retrieve records for region {region} in file {self.file_path}: {e}")
+            records = adaptor.records()
 
         return self._records_to_features(records)
 
     def iter_all_features(self) -> Iterator[F]:
-        try:
-            with self.adaptor.open(self.file_path, mode="sequential") as adaptor:
-                records = []
-                while (rec := adaptor.next()) is not None:
-                    records.append(rec)
+        """Lazily yield all features from the provided file."""
 
-                yield from self._records_to_features(records)
-        except Exception as e:
-            logger.warning(f"Failed to iterate features in file {self.file_path} in sequential mode: {e}")
+        with self.adaptor.open(self.file_path, mode="sequential") as adaptor:
+            records = []
+            while (rec := adaptor.next()) is not None:
+                records.append(rec)
 
+        yield from self._records_to_features(records)
 
     def iter_features_by_region(
         self,
@@ -93,6 +106,18 @@ class FileSource(FeatureSource, Generic[P, F]):
         start: int | None = None,
         end: int | None = None,
     ) -> Iterator[F]:
+        """Lazily yield features overlapping the given genomic region.
+        
+        Args:
+            region (str | None): The region (e.g., "chr1:1000-2000") to get features from.
+            seq_region_name (str | None): The name of the sequence region (e.g., "chr1").
+            start (int | None): The start position of the region.
+            end (int | None): The end position of the region.
+        
+        Returns:
+            Iterator[F]: An iterator over features overlapping the specified region.
+        """
+
         try:
             region = format_region_string(region, seq_region_name=seq_region_name, start=start, end=end)
         except ValueError:
@@ -113,4 +138,5 @@ class FileSource(FeatureSource, Generic[P, F]):
     @abstractmethod
     def _records_to_features(self, records: list) -> list[F]:
         """Convert format-specific raw records to domain Feature objects."""
-        ...
+
+        raise NotImplementedError

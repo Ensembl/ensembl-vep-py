@@ -16,12 +16,12 @@
 import pytest
 
 from ensembl.vep.common import Strand
-from ensembl.vep.ensembl_vep_core import GFF3Parser
+from ensembl.vep.parsers import GFF3Parser
 from ensembl.vep.models.genic import Transcript, Exon
 from ensembl.vep.sources.file.gff3.transcript_source import (
     GFF3TranscriptSource,
     _group_gff3_records,
-    _build_transcript,
+    _build_transcript_from_record_group,
     _build_translation,
     _GFF3TranscriptGroup,
 )
@@ -112,63 +112,63 @@ class TestBuildTranscript:
 
     def test_stable_id_stripped_of_prefix(self) -> None:
         group = self._make_group(_GFF3_ONE_TRANSCRIPT)
-        transcript = _build_transcript(group)
+        transcript = _build_transcript_from_record_group(group)
         assert transcript.stable_id == "ENST001"
 
     def test_coordinates(self) -> None:
         group = self._make_group(_GFF3_ONE_TRANSCRIPT)
-        transcript = _build_transcript(group)
+        transcript = _build_transcript_from_record_group(group)
         assert transcript.start == 1000
         assert transcript.end == 5000
 
     def test_forward_strand(self) -> None:
         group = self._make_group(_GFF3_ONE_TRANSCRIPT)
-        transcript = _build_transcript(group)
+        transcript = _build_transcript_from_record_group(group)
         assert transcript.strand == Strand.FORWARD
 
     def test_reverse_strand(self) -> None:
         group = self._make_group(_GFF3_REVERSE_STRAND)
-        transcript = _build_transcript(group)
+        transcript = _build_transcript_from_record_group(group)
         assert transcript.strand == Strand.REVERSE
 
     def test_seq_region_name(self) -> None:
         group = self._make_group(_GFF3_ONE_TRANSCRIPT)
-        transcript = _build_transcript(group)
+        transcript = _build_transcript_from_record_group(group)
         assert transcript.slice is not None
         assert transcript.slice.seq_region_name == "chr1"
 
     def test_spliced_exons_count(self) -> None:
         group = self._make_group(_GFF3_ONE_TRANSCRIPT)
-        transcript = _build_transcript(group)
+        transcript = _build_transcript_from_record_group(group)
         assert len(transcript.spliced_exons) == 2
 
     def test_spliced_exons_sorted_by_start(self) -> None:
         group = self._make_group(_GFF3_ONE_TRANSCRIPT)
-        transcript = _build_transcript(group)
+        transcript = _build_transcript_from_record_group(group)
         starts = [e.start for e in transcript.spliced_exons]
         assert starts == sorted(starts)
 
     def test_exon_stable_ids(self) -> None:
         group = self._make_group(_GFF3_ONE_TRANSCRIPT)
-        transcript = _build_transcript(group)
+        transcript = _build_transcript_from_record_group(group)
         stable_ids = {e.stable_id for e in transcript.spliced_exons}
         assert stable_ids == {"ENSE001", "ENSE002"}
 
     def test_exon_coordinates(self) -> None:
         group = self._make_group(_GFF3_ONE_TRANSCRIPT)
-        transcript = _build_transcript(group)
+        transcript = _build_transcript_from_record_group(group)
         first = transcript.spliced_exons[0]
         assert first.start == 1000
         assert first.end == 2000
 
     def test_transcript_is_transcript_type(self) -> None:
         group = self._make_group(_GFF3_ONE_TRANSCRIPT)
-        result = _build_transcript(group)
+        result = _build_transcript_from_record_group(group)
         assert isinstance(result, Transcript)
 
     def test_exons_are_exon_type(self) -> None:
         group = self._make_group(_GFF3_ONE_TRANSCRIPT)
-        transcript = _build_transcript(group)
+        transcript = _build_transcript_from_record_group(group)
         for exon in transcript.spliced_exons:
             assert isinstance(exon, Exon)
 
@@ -179,7 +179,7 @@ class TestBuildTranslation:
     def test_translation_built_from_cds(self) -> None:
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
         groups = _group_gff3_records(records)
-        transcript = _build_transcript(groups[0])
+        transcript = _build_transcript_from_record_group(groups[0])
         assert transcript.translation is not None
         assert transcript.translation.start == 1100
         assert transcript.translation.end == 4900
@@ -187,13 +187,13 @@ class TestBuildTranslation:
     def test_translation_none_without_cds(self) -> None:
         records = GFF3Parser.parse_text(_GFF3_TWO_TRANSCRIPTS)
         groups = _group_gff3_records(records)
-        transcript = _build_transcript(groups[0])
+        transcript = _build_transcript_from_record_group(groups[0])
         assert transcript.translation is None
 
     def test_translation_back_reference_to_transcript(self) -> None:
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
         groups = _group_gff3_records(records)
-        transcript = _build_transcript(groups[0])
+        transcript = _build_transcript_from_record_group(groups[0])
         assert transcript.translation.transcript is transcript
 
     def test_translation_stable_id_from_protein_id_attribute(self) -> None:
@@ -203,7 +203,7 @@ class TestBuildTranslation:
         )
         records = GFF3Parser.parse_text(gff_text)
         groups = _group_gff3_records(records)
-        transcript = _build_transcript(groups[0])
+        transcript = _build_transcript_from_record_group(groups[0])
         assert transcript.translation.stable_id == "ENSP001"
 
     def test_empty_cds_list_returns_none(self) -> None:
@@ -263,11 +263,10 @@ class TestBuildGene:
 class TestGFF3TranscriptSource:
     """Integration tests for GFF3TranscriptSource.
 
-    Only exercises get_all_features() (backed by adaptor.parse_file(), which exists
-    on the current parser). get_features_by_region()/iter_all_features()/
-    iter_features_by_region() depend on adaptor.open() supporting mode= and the
-    context-manager protocol, which the currently compiled parser extension does
-    not yet implement -- those are covered once that lands.
+    get_features_by_region()/iter_features_by_region() require a tabix-indexed
+    (bgzipped) file -- GFF3Parser's default "auto" mode falls back to "sequential"
+    for a plain, non-indexed file, and seek() only works in "query" mode. Those
+    are covered by the tabix-backed integration tests, not here.
     """
 
     def test_get_all_features_returns_transcripts(self, tmp_path) -> None:
@@ -285,6 +284,17 @@ class TestGFF3TranscriptSource:
         transcripts = source.get_all_features()
         assert len(transcripts) == 1
         assert len(transcripts[0].spliced_exons) == 2
+
+    def test_iter_all_features_yields_same_transcripts_as_get_all_features(self, tmp_path) -> None:
+        gff_file = tmp_path / "test.gff3"
+        gff_file.write_text(_GFF3_TWO_TRANSCRIPTS)
+        source = GFF3TranscriptSource(file_path=str(gff_file))
+
+        iterated = list(source.iter_all_features())
+
+        assert len(iterated) == 2
+        assert all(isinstance(f, Transcript) for f in iterated)
+        assert {t.stable_id for t in iterated} == {"ENST001", "ENST002"}
 
     def test_close_can_be_called(self, tmp_path) -> None:
         gff_file = tmp_path / "test.gff3"

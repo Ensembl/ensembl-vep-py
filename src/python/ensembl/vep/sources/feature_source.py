@@ -38,13 +38,11 @@ class FeatureSource(ABC, Generic[F]):
     @abstractmethod
     def get_all_features(self) -> list[F]:
         """Return all features from this source."""
-
         raise NotImplementedError
 
     @abstractmethod
     def iter_all_features(self) -> Iterator[F]:
         """Lazily yield all features from this source."""
-
         raise NotImplementedError
 
     @abstractmethod
@@ -67,7 +65,6 @@ class FeatureSource(ABC, Generic[F]):
         Returns:
             list[F]: A list of features overlapping the specified region.
         """
-
         raise NotImplementedError
 
     @abstractmethod
