@@ -129,3 +129,27 @@ class TestParserRecords:
 
         assert parser.records(limit=3) == ["one"]
         assert not _RECORDS
+
+
+class TestParserContextManager:
+    """Tests for Parser context manager."""
+
+    def test_parser_context_manager_calls_open(self) -> None:
+        """Test Parser context manager calls open and close."""
+
+        parser = ConcreteParser(format="dummy")
+
+        with parser.open("dummy_file") as p:
+            assert p is parser
+
+
+class TestParserIteration:
+    """Tests for Parser iteration."""
+
+    def test_parser_iteration_yields_records(self) -> None:
+        """Test Parser iteration yields records until exhausted."""
+
+        parser = _parser_with_records(["one", "two", "three"])
+
+        assert list(parser) == ["one", "two", "three"]
+        assert not _RECORDS
