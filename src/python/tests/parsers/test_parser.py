@@ -27,6 +27,8 @@ _RECORDS: list[str] = []
 class ConcreteParser(Parser[str]):
     """Concrete parser used to test Parser interface helpers."""
 
+    closed: bool = False
+
     def open(self, file_path: str, mode: str | None = None) -> ConcreteParser:
         """Open a file for parsing."""
 
@@ -35,7 +37,7 @@ class ConcreteParser(Parser[str]):
     def close(self) -> None:
         """Close the parser."""
 
-        return None
+        self.closed = True
 
     def seek(
         self,
@@ -134,13 +136,23 @@ class TestParserRecords:
 class TestParserContextManager:
     """Tests for Parser context manager."""
 
-    def test_parser_context_manager_calls_open(self) -> None:
-        """Test Parser context manager calls open and close."""
+    def test_enter_returns_self(self) -> None:
+        """Test __enter__ returns the parser instance itself."""
 
         parser = ConcreteParser(format="dummy")
 
         with parser.open("dummy_file") as p:
             assert p is parser
+
+    def test_exit_calls_close(self) -> None:
+        """Test __exit__ calls close on normal exit."""
+
+        parser = ConcreteParser(format="dummy")
+
+        with parser.open("dummy_file"):
+            pass
+
+        assert parser.closed is True
 
 
 class TestParserIteration:
