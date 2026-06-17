@@ -16,7 +16,6 @@
 from pathlib import Path
 import subprocess
 from typing import Protocol
-
 import pytest
 
 from ensembl.vep.parsers.tabix import TabixParser

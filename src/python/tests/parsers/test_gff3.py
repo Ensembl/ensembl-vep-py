@@ -15,7 +15,6 @@
 
 from pathlib import Path
 from attr import exceptions as attr_ex
-
 import pytest
 
 from ensembl.vep.parsers.gff3 import GFF3Parser, GFF3Record
