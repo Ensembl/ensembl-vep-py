@@ -22,8 +22,10 @@ from ensembl.vep.parsers.gtf import GTFParser, GTFRecord
 
 HEADER_LINES = ["#!genome-version GRCh38", "# comment 1"]
 CHR1_GENE_ROW = 'chr1\tensembl\tgene\t10\t20\t.\t+\t.\tgene_id "gene:1"; gene_name "BRCA2";'
-CHR1_TRANSCRIPT_ROW = ('chr1\tensembl\ttranscript\t12\t18\t4.5\t+\t.\t'
-'gene_id "gene:1"; transcript_id "transcript:1"; transcript_name "BRCA2-001";')
+CHR1_TRANSCRIPT_ROW = (
+    "chr1\tensembl\ttranscript\t12\t18\t4.5\t+\t.\t"
+    'gene_id "gene:1"; transcript_id "transcript:1"; transcript_name "BRCA2-001";'
+)
 CHR1_EXON_ROW = (
     'chr1\tensembl\texon\t12\t18\t.\t+\t.\tgene_id "gene:1"; transcript_id "transcript:1"; exon_number "1";'
 )
@@ -171,13 +173,17 @@ class TestGTFParserMetadata:
 
         first_path = _write_gtf(
             tmp_path / "first.gtf",
-            ('#!genome-version GRCh37\nchr1\tensembl\tgene\t10\t20\t.\t+\t.\t'
-                'gene_id "gene:1"; gene_name "BRCA2"\n'),
+            (
+                "#!genome-version GRCh37\nchr1\tensembl\tgene\t10\t20\t.\t+\t.\t"
+                'gene_id "gene:1"; gene_name "BRCA2"\n'
+            ),
         )
         second_path = _write_gtf(
             tmp_path / "second.gtf",
-            ('#!genome-version GRCh38\nchr1\tensembl\tgene\t10\t20\t.\t+\t.\t'
-                'gene_id "gene:1"; gene_name "BRCA2"\n'),
+            (
+                "#!genome-version GRCh38\nchr1\tensembl\tgene\t10\t20\t.\t+\t.\t"
+                'gene_id "gene:1"; gene_name "BRCA2"\n'
+            ),
         )
         parser = GTFParser(file_path=first_path, mode="sequential")
 

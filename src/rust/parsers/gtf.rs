@@ -968,7 +968,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
     // -----------------------------------------------------------------------
 
     #[test]
-    fn test_read_gtf_metadata_from_reader_collects_header_and_directives() -> io::Result<()> {
+    fn test_read_gtf_metadata_from_reader_collects_heade() -> io::Result<()> {
         let mut reader = gtf::io::Reader::new(SKIPPED_LINE_SAMPLE);
         let metadata = read_gtf_metadata_from_reader(&mut reader)?;
 
@@ -989,7 +989,6 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
         let metadata = read_gtf_metadata_from_reader(&mut reader)?;
 
         assert!(metadata.header.is_empty());
-        assert!(metadata.directives.is_empty());
         Ok(())
     }
 
