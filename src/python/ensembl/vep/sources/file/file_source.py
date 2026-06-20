@@ -49,10 +49,16 @@ class FileSource(FeatureSource, Generic[P, F]):
         try:
             records = self.adaptor.parse_file(self.file_path)
         except NotImplementedError:
-            logger.warning("Adaptor %s does not support parse_file, returning empty list", type(self.adaptor).__name__)
+            logger.warning(
+                f"{type(self.adaptor).__name__} does not support parse_file, "
+                "returning empty list"
+            )
             return []
-        except Exception as e:
-            logger.warning("Error parsing file %s: %s, returning empty list", self.file_path, e)
+        except FileNotFoundError:
+            logger.warning(
+                f"Error parsing file {self.file_path}: does not exist, "
+                "returning empty list"
+            )
             return []
         return self._records_to_features(records)
 
@@ -79,6 +85,10 @@ class FileSource(FeatureSource, Generic[P, F]):
         try:
             region = format_region_string(region, seq_region_name=seq_region_name, start=start, end=end)
         except ValueError:
+            logger.debug(
+                f"Cannot parse region: region={region}, "
+                f"seq_region_name={seq_region_name}, start={start}, end={end}"
+            )
             return []
 
         with self.adaptor.open(self.file_path) as adaptor:
@@ -125,6 +135,10 @@ class FileSource(FeatureSource, Generic[P, F]):
         try:
             region = format_region_string(region, seq_region_name=seq_region_name, start=start, end=end)
         except ValueError:
+            logger.debug(
+                f"Cannot parse region: region={region}, "
+                f"seq_region_name={seq_region_name}, start={start}, end={end}"
+            )
             return
 
         with self.adaptor.open(self.file_path) as adaptor:

@@ -17,11 +17,13 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from typing import Iterator
+from attr import define
 
 from ensembl.vep.common import SourceType
 from ensembl.vep.models import Feature
 
 
+@define(kw_only=True, auto_attribs=True)
 class FeatureSource(ABC):
     """Unified interface for all sources that produce Feature objects."""
 
@@ -30,13 +32,13 @@ class FeatureSource(ABC):
     @abstractmethod
     def get_all_features(self) -> list[Feature]:
         """Return all features from this source."""
-        
+
         raise NotImplementedError
 
     @abstractmethod
     def iter_all_features(self) -> Iterator[Feature]:
         """Lazily yield all features from this source."""
-        
+
         raise NotImplementedError
 
     @abstractmethod
@@ -59,7 +61,7 @@ class FeatureSource(ABC):
         Returns:
             list[Feature]: A list of features overlapping the specified region.
         """
-        
+
         raise NotImplementedError
 
     @abstractmethod
@@ -82,13 +84,13 @@ class FeatureSource(ABC):
         Returns:
             Iterator[Feature]: An iterator over features overlapping the specified region.
         """
-        
+
         raise NotImplementedError
 
     @abstractmethod
     def close(self) -> None:
         """Release resources held by this source (e.g., close file handles or DB connections)."""
-        
+
         raise NotImplementedError
 
     def __enter__(self) -> FeatureSource:
