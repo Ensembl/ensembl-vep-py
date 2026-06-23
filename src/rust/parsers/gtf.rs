@@ -700,6 +700,44 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
     }
 
     #[test]
+    fn test_parse_attributes_repeated_item() -> io::Result<()> {
+        let line = to_gtf_line(
+            "chr1\tensembl\tgene\t10\t20\t.\t+\t.\ttag \"CCDS\"; tag \"basic\"; tag \"Ensembl_canonical\";",
+        );
+        let record = line.as_record().unwrap().unwrap();
+        let attributes = record.attributes();
+        let pairs = parse_attributes(attributes?)?;
+
+        assert_eq!(pairs.len(), 1);
+        assert_eq!(pairs[0].0, "tag");
+        assert_eq!(
+            pairs[0].1,
+            vec!["CCDS".to_string(), "basic".to_string(), "Ensembl_canonical".to_string()]
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_parse_attributes_multi_valued() -> io::Result<()> {
+        let line = to_gtf_line(
+            "chr1\tensembl\tgene\t10\t20\t.\t+\t.\tgene_id \"gene:1\"; db_xref \"GO:0006412,GO:0003735\";",
+        );
+        let record = line.as_record().unwrap().unwrap();
+        let attributes = record.attributes();
+        let pairs = parse_attributes(attributes?)?;
+
+        assert_eq!(pairs.len(), 2);
+        assert_eq!(pairs[0].0, "gene_id");
+        assert_eq!(pairs[0].1, vec!["gene:1".to_string()]);
+        assert_eq!(pairs[1].0, "db_xref");
+        assert_eq!(
+            pairs[1].1,
+            vec!["GO:0006412,GO:0003735".to_string()]
+        );
+        Ok(())
+    }
+
+    #[test]
     fn test_parse_attributes_invalid() -> io::Result<()> {
         let line = to_gtf_line("chr1\tensembl\tgene\t10\t20\t.\t+\t.\tgene_id \"gene:1\"; Invalid");
         let record = line.as_record().unwrap().unwrap();
