@@ -127,11 +127,11 @@ class GTFParser(Parser[GTFRecord]):
         )
 
     def next(self) -> GTFRecord | None:
-        """Return the next GTF record, or None at EOF/##FASTA.
+        """Return the next GTF record, or None at EOF.
 
         Returns:
             GTFRecord | None: The next GTF record,
-                    or None if the end of the file or a ##FASTA directive is reached.
+                    or None if the end of the file reached.
         """
 
         return self._parser.next()
