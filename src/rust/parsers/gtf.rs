@@ -712,7 +712,11 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
         assert_eq!(pairs[0].0, "tag");
         assert_eq!(
             pairs[0].1,
-            vec!["CCDS".to_string(), "basic".to_string(), "Ensembl_canonical".to_string()]
+            vec![
+                "CCDS".to_string(),
+                "basic".to_string(),
+                "Ensembl_canonical".to_string()
+            ]
         );
         Ok(())
     }
@@ -730,10 +734,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
         assert_eq!(pairs[0].0, "gene_id");
         assert_eq!(pairs[0].1, vec!["gene:1".to_string()]);
         assert_eq!(pairs[1].0, "db_xref");
-        assert_eq!(
-            pairs[1].1,
-            vec!["GO:0006412,GO:0003735".to_string()]
-        );
+        assert_eq!(pairs[1].1, vec!["GO:0006412,GO:0003735".to_string()]);
         Ok(())
     }
 

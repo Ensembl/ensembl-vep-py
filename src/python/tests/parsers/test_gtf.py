@@ -29,9 +29,7 @@ CHR1_TRANSCRIPT_ROW = (
 CHR1_EXON_ROW = (
     'chr1\tensembl\texon\t12\t18\t.\t+\t.\tgene_id "gene:1"; transcript_id "transcript:1"; exon_number "1";'
 )
-CHR1_CDS_ROW = (
-    'chr1\tensembl\tCDS\t15\t18\t.\t+\t0\tgene_id "gene:1"; transcript_id "transcript:1";'
-)
+CHR1_CDS_ROW = 'chr1\tensembl\tCDS\t15\t18\t.\t+\t0\tgene_id "gene:1"; transcript_id "transcript:1";'
 CHR2_GENE_ROW = 'chr2\tensembl\tgene\t100\t120\t.\t-\t.\tgene_id "gene:2"'
 SAMPLE = "\n".join([HEADER_LINES[0], CHR1_GENE_ROW, CHR1_TRANSCRIPT_ROW, CHR1_CDS_ROW]) + "\n"
 SAMPLE_WITH_COMMENT = "\n".join([*HEADER_LINES, CHR1_GENE_ROW, CHR1_TRANSCRIPT_ROW, CHR1_EXON_ROW]) + "\n"
