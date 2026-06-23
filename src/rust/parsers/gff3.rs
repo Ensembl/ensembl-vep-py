@@ -1093,6 +1093,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
             Gff3Parser::new(None, None, Some("sequential".to_string())).map_err(from_py_error)?;
         parser.open(&file_path, None).map_err(from_py_error)?;
 
+        Python::initialize();
         Python::attach(|py| -> PyResult<()> {
             let metadata = parser.metadata(py)?;
             let header: Vec<String> = metadata
@@ -1335,8 +1336,8 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         let (gz_path, _tbi_path) = write_gff3_with_tbi(
             &dir,
             str::from_utf8(SAMPLE)
-            .ok()
-            .map(|s| s.lines().map(str::to_owned).collect()),
+                .ok()
+                .map(|s| s.lines().map(str::to_owned).collect()),
         )?;
         let first_file_path = gz_path.to_string_lossy().into_owned();
 
@@ -1350,7 +1351,11 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         parser.seek("chr1:10-20").map_err(from_py_error)?;
 
         assert!(
-            parser.open(&second_file_path, None).unwrap_err().to_string().contains("no tabix index found")
+            parser
+                .open(&second_file_path, None)
+                .unwrap_err()
+                .to_string()
+                .contains("no tabix index found")
         );
 
         fs::remove_dir_all(dir)?;
