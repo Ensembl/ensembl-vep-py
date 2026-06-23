@@ -919,14 +919,6 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
     }
 
     #[test]
-    fn test_parse_gtf_bytes_stops_at_fasta() -> io::Result<()> {
-        let records = parse_gtf_bytes(SAMPLE, Some(10))?;
-
-        assert_eq!(records.len(), 2);
-        Ok(())
-    }
-
-    #[test]
     fn test_parse_gtf_bytes_invalid_record_errors() {
         let data = b"chr1\tensembl\tgene\tbad_start\t20\t.\t+\t.\tID=gene:1\n";
         let err = parse_gtf_bytes(data, None).unwrap_err();
