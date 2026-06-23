@@ -998,7 +998,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
     // -----------------------------------------------------------------------
 
     #[test]
-    fn test_read_gtf_metadata_from_reader_collects_heade() -> io::Result<()> {
+    fn test_read_gtf_metadata_from_reader_collects_header() -> io::Result<()> {
         let mut reader = gtf::io::Reader::new(SKIPPED_LINE_SAMPLE);
         let metadata = read_gtf_metadata_from_reader(&mut reader)?;
 
@@ -1057,38 +1057,8 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
     }
 
     // -----------------------------------------------------------------------
-    // GtfParser:open
+    // GtfParser:metadata
     // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_gtf_parser_without_open_reader() -> io::Result<()> {
-        let mut parser = GtfParser::new(None, None, None).map_err(from_py_error)?;
-
-        assert_eq!(parser.format(), "gtf");
-        Python::initialize();
-        Python::attach(|py| {
-            assert!(parser.metadata(py).unwrap().is_empty());
-        });
-        assert_eq!(parser.reader_mode(), "auto");
-        assert!(parser.next().unwrap_err().to_string().contains("not open"));
-        assert!(
-            parser
-                .seek("chr1:10-20")
-                .unwrap_err()
-                .to_string()
-                .contains("not open")
-        );
-        assert!(
-            parser
-                .records(None)
-                .unwrap_err()
-                .to_string()
-                .contains("not open")
-        );
-
-        parser.close();
-        Ok(())
-    }
 
     #[test]
     fn test_gtf_parser_metadata_sequential() -> io::Result<()> {
@@ -1210,6 +1180,40 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
             err.to_string().contains("No such file") || err.to_string().contains("os error 2"),
             "unexpected error: {err}"
         );
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // GtfParser:open
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_gtf_parser_without_open_reader() -> io::Result<()> {
+        let mut parser = GtfParser::new(None, None, None).map_err(from_py_error)?;
+
+        assert_eq!(parser.format(), "gtf");
+        Python::initialize();
+        Python::attach(|py| {
+            assert!(parser.metadata(py).unwrap().is_empty());
+        });
+        assert_eq!(parser.reader_mode(), "auto");
+        assert!(parser.next().unwrap_err().to_string().contains("not open"));
+        assert!(
+            parser
+                .seek("chr1:10-20")
+                .unwrap_err()
+                .to_string()
+                .contains("not open")
+        );
+        assert!(
+            parser
+                .records(None)
+                .unwrap_err()
+                .to_string()
+                .contains("not open")
+        );
+
+        parser.close();
         Ok(())
     }
 
