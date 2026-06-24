@@ -17,9 +17,9 @@
 
 import pytest
 
-from ensembl.vep.common import Strand
+from ensembl.vep.common import CoordSystemLevel, Strand
 from ensembl.vep.models import Feature
-from ensembl.vep.models.sequence import Slice
+from ensembl.vep.models.sequence import CoordSystem, Slice
 
 
 class TestFeatureInitialization:
@@ -43,7 +43,7 @@ class TestFeatureProperties:
     def genomic_slice(self) -> Slice:
         """Create a Slice instance for testing."""
         return Slice(
-            coord_system="chromosome",
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
             seq_region_length=1000,
             start=100,
@@ -186,7 +186,7 @@ class TestFeatureEquality:
     def genomic_slice(self) -> Slice:
         """Create a Slice instance for testing."""
         return Slice(
-            coord_system="chromosome",
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
             seq_region_length=1000,
             start=100,
@@ -221,7 +221,7 @@ class TestFeatureEquality:
     def test_different_slice(self, genomic_slice: Slice) -> None:
         """Test features with different slices are not equal."""
         slice2 = Slice(
-            coord_system="chromosome",
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
             seq_region_length=1000,
             start=200,
@@ -251,7 +251,7 @@ class TestFeatureOverlaps:
     def genomic_slice(self) -> Slice:
         """Create a Slice instance for testing."""
         return Slice(
-            coord_system="chromosome",
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
             seq_region_length=1000,
             start=1,
@@ -275,7 +275,7 @@ class TestFeatureOverlaps:
         """Test features on different sequence regions don't overlap."""
         slice1 = genomic_slice
         slice2 = Slice(
-            coord_system="chromosome",
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="2",
             seq_region_length=1000,
             start=1,
@@ -301,7 +301,7 @@ class TestFeatureFeatureSlice:
     def genomic_slice(self) -> Slice:
         """Create a Slice instance for testing."""
         return Slice(
-            coord_system="chromosome",
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
             seq_region_length=1000,
             start=100,

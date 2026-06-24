@@ -21,11 +21,11 @@ import logging
 import pytest
 from attrs import evolve
 
-from ensembl.vep.common import Strand
+from ensembl.vep.common import CoordSystemLevel, Strand
 from ensembl.vep.models.variation import StructuralVariationAllele
 from ensembl.vep.models.genic import Transcript
 from ensembl.vep.models.overlap import OverlapConsequence, TranscriptStructuralVariationAllele
-from ensembl.vep.models.sequence import Slice
+from ensembl.vep.models.sequence import CoordSystem, Slice
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 def genomic_slice() -> Slice:
     """Create a slice object for testing."""
     return Slice(
-        coord_system="chromosome",
+        coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
         seq_region_name="1",
         seq_region_length=1000,
         start=1,
