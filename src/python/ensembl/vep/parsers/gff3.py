@@ -15,7 +15,6 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterator
 from pathlib import Path
 from attr import define, field, setters
 
@@ -81,11 +80,12 @@ class GFF3Parser(Parser[GFF3Record]):
 
         return self._parser.reader_mode
 
-    def open(self, file_path: str | Path) -> GFF3Parser:
+    def open(self, file_path: str | Path, mode: str = "auto") -> GFF3Parser:
         """Open a GFF3 file.
 
         Args:
             file_path (str | Path): The path to the GFF3 file to be parsed.
+            mode (str): The mode in which to open the file.
 
         Returns:
             GFF3Parser: The parser instance.
@@ -93,7 +93,7 @@ class GFF3Parser(Parser[GFF3Record]):
 
         self.file_path = file_path
         self._clear_metadata_cache()
-        self._parser.open(str(file_path))
+        self._parser.open(str(file_path), mode)
         return self
 
     def close(self) -> None:
@@ -148,23 +148,6 @@ class GFF3Parser(Parser[GFF3Record]):
 
         return self._parser.records(limit)
 
-    def __iter__(self) -> Iterator[GFF3Record]:
-        return self
-
-    def __next__(self) -> GFF3Record:
-        record = self.next()
-
-        if record is None:
-            raise StopIteration
-
-        return record
-
-    def __enter__(self) -> GFF3Parser:
-        return self
-
-    def __exit__(self, *_exc_info: object) -> None:
-        self.close()
-
     def _clear_metadata_cache(self) -> None:
         try:
             del self._metadata
@@ -173,12 +156,28 @@ class GFF3Parser(Parser[GFF3Record]):
 
     @staticmethod
     def parse_text(data: str, limit: int | None = None) -> list[GFF3Record]:
-        """Parse GFF3 records from text."""
+        """Parse GFF3 records from text.
+
+        Args:
+            data (str): The GFF3 text to parse.
+            limit (int | None): The maximum number of records to return. If None, return all records.
+
+        Returns:
+            list[GFF3Record]: A list of GFF3 records.
+        """
 
         return _RustGFF3Parser.parse_text(data, limit)
 
     @staticmethod
     def parse_file(file_path: str | Path, limit: int | None = None) -> list[GFF3Record]:
-        """Parse GFF3 records from a file."""
+        """Parse GFF3 records from a file.
+
+        Args:
+            file_path (str | Path): The path to the GFF3 file to parse.
+            limit (int | None): The maximum number of records to return. If None, return all records.
+
+        Returns:
+            list[GFF3Record]: A list of GFF3 records.
+        """
 
         return _RustGFF3Parser.parse_file(str(file_path), limit)

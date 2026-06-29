@@ -13,6 +13,8 @@
 # limitations under the License.
 """Parser interface."""
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from typing import TypeVar, Generic
 from attrs import define
@@ -52,11 +54,12 @@ class Parser(ABC, Generic[T]):
         return {}
 
     @abstractmethod
-    def open(self, file_path: str) -> "Parser":
+    def open(self, file_path: str, mode: str) -> Parser:
         """Open a file for parsing.
 
         Args:
             file_path (str): The path to the file to be parsed.
+            mode (str): The mode in which to open the file.
 
         Returns:
             Parser: The parser instance.
@@ -120,3 +123,48 @@ class Parser(ABC, Generic[T]):
                 break
             records.append(record)
         return records
+
+    def __iter__(self) -> Parser:
+        return self
+
+    def __next__(self) -> T:
+        record = self.next()
+
+        if record is None:
+            raise StopIteration
+
+        return record
+
+    def __enter__(self) -> Parser:
+        return self
+
+    def __exit__(self, *exc_info: object) -> None:
+        self.close()
+
+    @staticmethod
+    def parse_text(data: str, limit: int | None = None) -> list[T]:
+        """Parse raw text data and return a list of records.
+
+        Args:
+            data (str): The raw text data to parse.
+            limit (int | None): The maximum number of records to return. If None, return all records.
+
+        Returns:
+            list[T]: A list of records parsed from the raw text data.
+        """
+
+        raise NotImplementedError
+
+    @staticmethod
+    def parse_file(file_path: str, limit: int | None = None) -> list[T]:
+        """Parse a file and return a list of records.
+
+        Args:
+            file_path (str): The path to the file to parse.
+            limit (int | None): The maximum number of records to return. If None, return all records.
+
+        Returns:
+            list[T]: A list of records parsed from the file.
+        """
+
+        raise NotImplementedError

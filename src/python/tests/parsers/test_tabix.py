@@ -16,7 +16,6 @@
 from pathlib import Path
 import subprocess
 from typing import Protocol
-
 import pytest
 
 from ensembl.vep.parsers.tabix import TabixParser
@@ -281,6 +280,17 @@ class TestTabixParserOpenClose:
         assert parser.open(path) is parser
         assert parser.seek(seq_region_name="chr2", start=100, end=120) is True
         assert parser.next() == CHR2_GENE_ROW
+
+    def test_open_with_mode_logs_warning(self, tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+        """Test assigning an invalid mode logs a warning."""
+
+        path = _write_placeholder_file(tmp_path / "sample.gff3.gz")
+        tabix = _write_query_mock_tabix(tmp_path)
+        parser = TabixParser(tabix_path=str(tabix))
+
+        with caplog.at_level("DEBUG"):
+            parser.open(path, mode="mode")
+            assert "The 'mode' argument is not used by TabixParser and will be ignored." in caplog.text
 
     def test_close_closes_backend_reader(self, tmp_path: Path) -> None:
         """Test close prevents subsequent backend reads."""
