@@ -355,8 +355,7 @@ impl Gff3Parser {
 
     fn open(&mut self, file_path: &str, mode: Option<String>) -> PyResult<()> {
         let path = PathBuf::from(file_path);
-        let reader_mode =
-            ReaderMode::parse(Some(mode.as_deref().unwrap_or(self.reader_mode.as_str())))?;
+        let reader_mode = ReaderMode::parse(mode.as_deref())?;
 
         self.reader =
             Some(Gff3Reader::open(&path, &self.tabix_path, reader_mode).map_err(to_py_error)?);
@@ -1376,7 +1375,9 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         let mut parser =
             Gff3Parser::new(None, None, Some("query".to_string())).map_err(from_py_error)?;
 
-        let err = parser.open(&file_path, None).unwrap_err();
+        let err = parser
+            .open(&file_path, Some("query".to_string()))
+            .unwrap_err();
         assert!(
             err.to_string().contains("no tabix index found"),
             "unexpected error: {err}"
@@ -1426,7 +1427,9 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         )
         .map_err(from_py_error)?;
 
-        let err = parser.open(&file_path, None).unwrap_err();
+        let err = parser
+            .open(&file_path, Some("query".to_string()))
+            .unwrap_err();
         assert!(
             err.to_string().contains("no tabix index found"),
             "unexpected error: {err}"
@@ -1480,7 +1483,9 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         let mut parser =
             Gff3Parser::new(None, None, Some("sequential".to_string())).map_err(from_py_error)?;
 
-        parser.open(&file_path, None).map_err(from_py_error)?;
+        parser
+            .open(&file_path, Some("sequential".to_string()))
+            .map_err(from_py_error)?;
         assert_eq!(parser.reader_mode(), "sequential");
 
         let records = parser.records(None).map_err(from_py_error)?;
