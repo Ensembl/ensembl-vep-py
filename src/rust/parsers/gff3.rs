@@ -1349,13 +1349,10 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         assert_eq!(parser.reader_mode(), "query");
         parser.seek("chr1:10-20").map_err(from_py_error)?;
 
-        assert!(
-            parser
-                .open(&second_file_path, None)
-                .unwrap_err()
-                .to_string()
-                .contains("no tabix index found")
-        );
+        parser
+            .open(&second_file_path, None)
+            .map_err(from_py_error)?;
+        assert!(parser.reader_mode() == "sequential");
 
         fs::remove_dir_all(dir)?;
         Ok(())
