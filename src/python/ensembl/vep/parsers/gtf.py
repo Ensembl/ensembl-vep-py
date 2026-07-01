@@ -15,7 +15,6 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterator
 from pathlib import Path
 from attr import define, field, setters
 
@@ -147,23 +146,6 @@ class GTFParser(Parser[GTFRecord]):
         """
 
         return self._parser.records(limit)
-
-    def __iter__(self) -> Iterator[GTFRecord]:
-        return self
-
-    def __next__(self) -> GTFRecord:
-        record = self.next()
-
-        if record is None:
-            raise StopIteration
-
-        return record
-
-    def __enter__(self) -> GTFParser:
-        return self
-
-    def __exit__(self, *_exc_info: object) -> None:
-        self.close()
 
     def _clear_metadata_cache(self) -> None:
         try:
