@@ -314,7 +314,7 @@ impl GtfParser {
         };
 
         if let Some(path) = file_path {
-            parser.open(&path)?;
+            parser.open(&path, mode)?;
         }
 
         Ok(parser)
@@ -348,11 +348,12 @@ impl GtfParser {
         self.reader_mode.as_str()
     }
 
-    fn open(&mut self, file_path: &str) -> PyResult<()> {
+    fn open(&mut self, file_path: &str, mode: Option<String>) -> PyResult<()> {
         let path = PathBuf::from(file_path);
+        let reader_mode = ReaderMode::parse(mode.as_deref())?;
 
         self.reader =
-            Some(GtfReader::open(&path, &self.tabix_path, self.reader_mode).map_err(to_py_error)?);
+            Some(GtfReader::open(&path, &self.tabix_path, reader_mode).map_err(to_py_error)?);
         self.reader_mode = self
             .reader
             .as_ref()
@@ -1069,7 +1070,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
 
         let mut parser =
             GtfParser::new(None, None, Some("sequential".to_string())).map_err(from_py_error)?;
-        parser.open(&file_path).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
 
         Python::initialize();
         Python::attach(|py| -> PyResult<()> {
@@ -1102,7 +1103,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
 
         let mut parser =
             GtfParser::new(None, None, Some("sequential".to_string())).map_err(from_py_error)?;
-        parser.open(&file_path).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
 
         let first = parser
             .next()
@@ -1145,7 +1146,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
         let file_path = gz_path.to_string_lossy().into_owned();
 
         let mut parser = GtfParser::new(None, None, None).map_err(from_py_error)?;
-        parser.open(&file_path).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
 
         assert_eq!(parser.reader_mode(), "query");
 
@@ -1176,7 +1177,9 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
     fn test_gtf_parser_open_missing_file_errors() -> io::Result<()> {
         Python::initialize();
         let mut parser = GtfParser::new(None, None, None).map_err(from_py_error)?;
-        let err = parser.open("/definitely/missing/sample.gtf").unwrap_err();
+        let err = parser
+            .open("/definitely/missing/sample.gtf", None)
+            .unwrap_err();
 
         assert!(
             err.to_string().contains("No such file") || err.to_string().contains("os error 2"),
@@ -1219,6 +1222,30 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
         Ok(())
     }
 
+    #[test]
+    fn test_gtf_parser_open_override_reader_mode() -> io::Result<()> {
+        let dir = create_temp_dir("gtf-parser-open-override")?;
+        let (gz_path, _tbi_path) = write_gtf_with_tbi(
+            &dir,
+            str::from_utf8(SAMPLE)
+                .ok()
+                .map(|s| s.lines().map(str::to_owned).collect()),
+        )?;
+        let file_path = gz_path.to_string_lossy().into_owned();
+
+        let mut parser =
+            GtfParser::new(None, None, Some("sequential".to_string())).map_err(from_py_error)?;
+        assert_eq!(parser.reader_mode(), "sequential");
+
+        parser
+            .open(&file_path, Some("query".to_string()))
+            .map_err(from_py_error)?;
+        assert_eq!(parser.reader_mode(), "query");
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
     // -----------------------------------------------------------------------
     // GtfParser:open - auto reader modes
     // -----------------------------------------------------------------------
@@ -1230,7 +1257,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
         let file_path = path.to_string_lossy().into_owned();
 
         let mut parser = GtfParser::new(None, None, None).map_err(from_py_error)?;
-        parser.open(&file_path).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
 
         assert_eq!(parser.reader_mode(), "sequential");
 
@@ -1255,7 +1282,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
         let file_path = gz_path.to_string_lossy().into_owned();
 
         let mut parser = GtfParser::new(None, None, None).map_err(from_py_error)?;
-        parser.open(&file_path).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
 
         assert_eq!(parser.reader_mode(), "query");
         parser.seek("chr1:10-20").map_err(from_py_error)?;
@@ -1264,6 +1291,35 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
         assert_eq!(records.len(), 2);
         assert_first_sample_record(&records[0]);
         assert_second_sample_record(&records[1]);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_gtf_parser_open_file_auto_mode_query_then_sequential() -> io::Result<()> {
+        let dir = create_temp_dir("gtf-parser-open-auto-query-sequential")?;
+        let (gz_path, _tbi_path) = write_gtf_with_tbi(
+            &dir,
+            str::from_utf8(SAMPLE)
+                .ok()
+                .map(|s| s.lines().map(str::to_owned).collect()),
+        )?;
+        let first_file_path = gz_path.to_string_lossy().into_owned();
+
+        let second_path = write_sample_file(&dir, "sample.gtf", SAMPLE)?;
+        let second_file_path = second_path.to_string_lossy().into_owned();
+
+        let mut parser = GtfParser::new(None, None, None).map_err(from_py_error)?;
+        parser.open(&first_file_path, None).map_err(from_py_error)?;
+
+        assert_eq!(parser.reader_mode(), "query");
+        parser.seek("chr1:10-20").map_err(from_py_error)?;
+
+        parser
+            .open(&second_file_path, None)
+            .map_err(from_py_error)?;
+        assert!(parser.reader_mode() == "sequential");
 
         fs::remove_dir_all(dir)?;
         Ok(())
@@ -1283,7 +1339,9 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
         let mut parser =
             GtfParser::new(None, None, Some("query".to_string())).map_err(from_py_error)?;
 
-        let err = parser.open(&file_path).unwrap_err();
+        let err = parser
+            .open(&file_path, Some("query".to_string()))
+            .unwrap_err();
         assert!(
             err.to_string().contains("no tabix index found"),
             "unexpected error: {err}"
@@ -1306,7 +1364,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
 
         let mut parser =
             GtfParser::new(None, None, Some("query".to_string())).map_err(from_py_error)?;
-        parser.open(&file_path).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
 
         assert_eq!(parser.reader_mode(), "query");
         parser.seek("chr1:10-20").map_err(from_py_error)?;
@@ -1333,7 +1391,9 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
         )
         .map_err(from_py_error)?;
 
-        let err = parser.open(&file_path).unwrap_err();
+        let err = parser
+            .open(&file_path, Some("query".to_string()))
+            .unwrap_err();
         assert!(
             err.to_string().contains("no tabix index found"),
             "unexpected error: {err}"
@@ -1360,7 +1420,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
         )
         .map_err(from_py_error)?;
 
-        parser.open(&file_path).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
         assert_eq!(parser.reader_mode(), "sequential");
 
         let records = parser.records(None).map_err(from_py_error)?;
@@ -1387,7 +1447,9 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
         let mut parser =
             GtfParser::new(None, None, Some("sequential".to_string())).map_err(from_py_error)?;
 
-        parser.open(&file_path).map_err(from_py_error)?;
+        parser
+            .open(&file_path, Some("sequential".to_string()))
+            .map_err(from_py_error)?;
         assert_eq!(parser.reader_mode(), "sequential");
 
         let records = parser.records(None).map_err(from_py_error)?;
@@ -1455,7 +1517,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
         Python::initialize();
         let mut parser = GtfParser::new(None, None, None).map_err(from_py_error)?;
         parser
-            .open(&path.to_string_lossy())
+            .open(&path.to_string_lossy(), None)
             .map_err(from_py_error)?;
 
         assert!(parser.reader.is_some());

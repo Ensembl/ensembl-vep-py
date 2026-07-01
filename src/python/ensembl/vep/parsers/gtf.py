@@ -81,7 +81,7 @@ class GTFParser(Parser[GTFRecord]):
 
         return self._parser.reader_mode
 
-    def open(self, file_path: str | Path) -> GTFParser:
+    def open(self, file_path: str | Path, mode: str = "auto") -> GTFParser:
         """Open a GTF file.
 
         Args:
@@ -93,7 +93,7 @@ class GTFParser(Parser[GTFRecord]):
 
         self.file_path = file_path
         self._clear_metadata_cache()
-        self._parser.open(str(file_path))
+        self._parser.open(str(file_path), mode)
         return self
 
     def close(self) -> None:
