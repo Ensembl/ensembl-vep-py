@@ -1149,6 +1149,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
 
         assert_eq!(parser.reader_mode(), "query");
 
+        Python::initialize();
         Python::attach(|py| -> PyResult<()> {
             let metadata = parser.metadata(py)?;
             let header: Vec<String> = metadata
