@@ -19,6 +19,7 @@ from typing import Any
 from attrs import define, field
 
 from ensembl.vep.common import Strand
+from ensembl.vep.models.sequence.coord_system import CoordSystem
 
 
 @define(kw_only=True, auto_attribs=True)
@@ -27,7 +28,7 @@ class Slice:
     Represents a genomic region on a sequence (chromosome, contig, patch, etc.).
 
     Attributes:
-        coord_system (str): Coordinate system name.
+        coord_system (CoordSystem): Coordinate system.
         seq_region_name (str): Sequence region name.
         seq_region_length (str): Sequence region length.
         start (int): Start position relative to sequence region.
@@ -36,7 +37,7 @@ class Slice:
         seq (Any | None): Associated biological sequence.
     """
 
-    coord_system: str
+    coord_system: CoordSystem
     seq_region_name: str
     start: int
     end: int

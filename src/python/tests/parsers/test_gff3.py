@@ -15,7 +15,6 @@
 
 from pathlib import Path
 from attr import exceptions as attr_ex
-
 import pytest
 
 from ensembl.vep.parsers.gff3 import GFF3Parser, GFF3Record
@@ -221,6 +220,32 @@ class TestGFF3ParserOpenClose:
 
         assert parser.open(path) is parser
         _assert_gene_record(parser.next())
+
+    def test_open_overrides_mode(self, tmp_path: Path) -> None:
+        """Test open overrides the parser mode."""
+
+        path = _write_query_gff3(tmp_path / "sample.gff3.gz")
+        tabix = _write_query_mock_tabix(tmp_path)
+        parser = GFF3Parser(file_path=None, tabix_path=tabix)
+        assert parser.reader_mode == "auto"
+
+        assert parser.open(path, mode="sequential") is parser
+        assert parser.reader_mode == "sequential"
+
+    def test_open_auto_query_then_auto_seq_changes_mode(self, tmp_path: Path) -> None:
+        """Test open overrides the parser mode."""
+
+        path = _write_query_gff3(tmp_path / "sample.gff3.gz")
+        tabix = _write_query_mock_tabix(tmp_path)
+        parser = GFF3Parser(file_path=None, tabix_path=tabix)
+        assert parser.reader_mode == "auto"
+
+        assert parser.open(path) is parser
+        assert parser.reader_mode == "query"
+
+        path = _write_gff3(tmp_path / "sample.gff3")
+        assert parser.open(path) is parser
+        assert parser.reader_mode == "sequential"
 
     def test_close_closes_backend_reader(self, tmp_path: Path) -> None:
         """Test close prevents subsequent backend reads."""

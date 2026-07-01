@@ -13,6 +13,8 @@
 # limitations under the License.
 """Unit tests for the parser interface."""
 
+from __future__ import annotations
+
 from attrs import define
 import pytest
 
@@ -25,7 +27,9 @@ _RECORDS: list[str] = []
 class ConcreteParser(Parser[str]):
     """Concrete parser used to test Parser interface helpers."""
 
-    def open(self, file_path: str) -> "ConcreteParser":
+    closed: bool = False
+
+    def open(self, file_path: str, mode: str | None = None) -> ConcreteParser:
         """Open a file for parsing."""
 
         return self
@@ -33,7 +37,7 @@ class ConcreteParser(Parser[str]):
     def close(self) -> None:
         """Close the parser."""
 
-        return None
+        self.closed = True
 
     def seek(
         self,
@@ -126,4 +130,38 @@ class TestParserRecords:
         parser = _parser_with_records(["one"])
 
         assert parser.records(limit=3) == ["one"]
+        assert not _RECORDS
+
+
+class TestParserContextManager:
+    """Tests for Parser context manager."""
+
+    def test_enter_returns_self(self) -> None:
+        """Test __enter__ returns the parser instance itself."""
+
+        parser = ConcreteParser(format="dummy")
+
+        with parser.open("dummy_file") as p:
+            assert p is parser
+
+    def test_exit_calls_close(self) -> None:
+        """Test __exit__ calls close on normal exit."""
+
+        parser = ConcreteParser(format="dummy")
+
+        with parser.open("dummy_file"):
+            pass
+
+        assert parser.closed is True
+
+
+class TestParserIteration:
+    """Tests for Parser iteration."""
+
+    def test_parser_iteration_yields_records(self) -> None:
+        """Test Parser iteration yields records until exhausted."""
+
+        parser = _parser_with_records(["one", "two", "three"])
+
+        assert list(parser) == ["one", "two", "three"]
         assert not _RECORDS

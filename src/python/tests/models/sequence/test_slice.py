@@ -18,8 +18,8 @@
 from copy import deepcopy
 import pytest
 
-from ensembl.vep.common import Strand
-from ensembl.vep.models.sequence import Slice
+from ensembl.vep.common import CoordSystemLevel, Strand
+from ensembl.vep.models.sequence import CoordSystem, Slice
 
 
 class TestSliceInitialization:
@@ -29,7 +29,7 @@ class TestSliceInitialization:
         """Test Slice initialization without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = Slice(
-                "chromosome",  # type: ignore[misc]
+                CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),  # type: ignore[misc]
                 seq_region_name="1",
                 seq_region_length=1000,
                 start=10,
@@ -46,7 +46,7 @@ class TestSliceProperties:
     def genomic_slice(self) -> Slice:
         """Create a Slice instance for testing."""
         return Slice(
-            coord_system="chromosome",
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
             seq_region_length=1000,
             start=10,
@@ -57,7 +57,7 @@ class TestSliceProperties:
 
     def test_core_properties(self, genomic_slice: Slice) -> None:
         """Test core properties are set correctly."""
-        assert genomic_slice.coord_system == "chromosome"
+        assert genomic_slice.coord_system == CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME)
         assert genomic_slice.seq_region_name == "1"
         assert genomic_slice.seq_region_length == 1000
         assert genomic_slice.start == 10
@@ -73,7 +73,7 @@ class TestSliceEquality:
     def genomic_slice(self) -> Slice:
         """Create first Slice instance for testing."""
         return Slice(
-            coord_system="chromosome",
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
             seq_region_length=1000,
             start=10,
@@ -90,7 +90,7 @@ class TestSliceEquality:
     def test_different_coord_system(self, genomic_slice: Slice) -> None:
         """Test two Slices with different coord_system are not equal."""
         slice2 = deepcopy(genomic_slice)
-        slice2.coord_system = "contig"
+        slice2.coord_system = CoordSystem(name="contig", level=CoordSystemLevel.CONTIG)
         assert genomic_slice != slice2
 
     def test_different_seq_region_name(self, genomic_slice: Slice) -> None:
@@ -130,7 +130,7 @@ class TestSliceEquality:
             """Slice subclass for testing."""
 
         slice2 = AnotherSlice(
-            coord_system="chromosome",
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
             seq_region_length=1000,
             start=10,
