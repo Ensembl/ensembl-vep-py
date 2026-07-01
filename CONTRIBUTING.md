@@ -28,7 +28,13 @@ The following packages are pre-requisites to be able to contribute to the Ensemb
    git clone https://github.com/yourusername/ensembl-vep-py.git
    cd ensembl-vep-py
    ```
-3. **Install dependencies**:
+3. **Set up uv venv**:
+    ```bash
+    uv venv
+    source .venv/bin/activate
+    ```
+
+4. **Install dependencies**:
    ```bash
    # Rust components
    cargo install
@@ -37,7 +43,7 @@ The following packages are pre-requisites to be able to contribute to the Ensemb
    uv sync --extra cicd,build
    ```
 
-3. **Building the Project**:
+5. **Building the Project**:
     Create a `MANIFEST.in` file with following content -
    ```bash
    include Cargo.toml
@@ -46,7 +52,20 @@ The following packages are pre-requisites to be able to contribute to the Ensemb
 
    and, run -
    ```bash
-   uv build
+   uv pip install -e .
+   ```
+
+6. **Run tests**:
+   ```bash
+   ## Rust tests with coverage (install first via: cargo install cargo-llvm-cov)
+   cargo llvm-cov --ignore-filename-regex '(^|/)src/rust/lib\.rs$' --show-missing-lines
+   ## Python tests with coverage
+   uv run coverage run -m pytest
+   uv run coverage report -m
+
+   ## Integration test for tabix (requires tabix to be installed and available in PATH)
+   cargo test --test tabix_integration -- --ignored
+   uv run coverage run -m pytest --run-integration src/python
    ```
 
 ## 📋 Development Workflow
