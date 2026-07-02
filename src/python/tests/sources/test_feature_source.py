@@ -67,7 +67,7 @@ class TestFeatureSourceInitialization:
         """Test FeatureSource cannot be instantiated directly."""
 
         with pytest.raises(TypeError, match="abstract class"):
-            FeatureSource()  # type: ignore[abstract]  # pylint: disable=abstract-class-instantiated
+            FeatureSource(source_type=SourceType.FILE)  # type: ignore[abstract]  # pylint: disable=abstract-class-instantiated
 
     def test_concrete_feature_source_sets_source_type(self) -> None:
         """Test concrete feature source sets the source_type correctly."""

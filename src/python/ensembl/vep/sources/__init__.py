@@ -14,6 +14,6 @@
 """Feature sources — file-backed and database-backed providers of domain Feature objects."""
 
 from .feature_source import FeatureSource
-from .file.file_source import FileSource
+from .file.file_feature_source import FileFeatureSource
 
-__all__ = ["FeatureSource", "FileSource"]
+__all__ = ["FeatureSource", "FileFeatureSource"]

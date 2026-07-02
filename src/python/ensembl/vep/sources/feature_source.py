@@ -16,27 +16,29 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Iterator
+from typing import Iterator, Generic, TypeVar
 from attr import define
 
 from ensembl.vep.common import SourceType
 from ensembl.vep.models import Feature
 
+F = TypeVar("F", bound="Feature")
+
 
 @define(kw_only=True, auto_attribs=True)
-class FeatureSource(ABC):
+class FeatureSource(ABC, Generic[F]):
     """Unified interface for all sources that produce Feature objects."""
 
     source_type: SourceType
 
     @abstractmethod
-    def get_all_features(self) -> list[Feature]:
+    def get_all_features(self) -> list[F]:
         """Return all features from this source."""
 
         raise NotImplementedError
 
     @abstractmethod
-    def iter_all_features(self) -> Iterator[Feature]:
+    def iter_all_features(self) -> Iterator[F]:
         """Lazily yield all features from this source."""
 
         raise NotImplementedError
@@ -49,7 +51,7 @@ class FeatureSource(ABC):
         seq_region_name: str | None = None,
         start: int | None = None,
         end: int | None = None,
-    ) -> list[Feature]:
+    ) -> list[F]:
         """Return features overlapping the given genomic region.
 
         Args:
@@ -59,7 +61,7 @@ class FeatureSource(ABC):
             end (int | None): The end position of the region to get features from.
 
         Returns:
-            list[Feature]: A list of features overlapping the specified region.
+            list[F]: A list of features overlapping the specified region.
         """
 
         raise NotImplementedError
@@ -72,9 +74,9 @@ class FeatureSource(ABC):
         seq_region_name: str | None = None,
         start: int | None = None,
         end: int | None = None,
-    ) -> Iterator[Feature]:
+    ) -> Iterator[F]:
         """Lazily yield features overlapping the given genomic region.
-        
+
         Args:
             region (str | None): The region (e.g., "chr1:1000-2000") to get features from.
             seq_region_name (str | None): The name of the region to get features from.
@@ -82,7 +84,7 @@ class FeatureSource(ABC):
             end (int | None): The end position of the region to get features from.
 
         Returns:
-            Iterator[Feature]: An iterator over features overlapping the specified region.
+            Iterator[F]: An iterator over features overlapping the specified region.
         """
 
         raise NotImplementedError
@@ -93,7 +95,7 @@ class FeatureSource(ABC):
 
         raise NotImplementedError
 
-    def __enter__(self) -> FeatureSource:
+    def __enter__(self) -> FeatureSource[F]:
         return self
 
     def __exit__(self, *args: object) -> None:

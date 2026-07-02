@@ -13,6 +13,6 @@
 # limitations under the License.
 """File-backed feature sources."""
 
-from .file_source import FileSource
+from .file_feature_source import FileFeatureSource
 
-__all__ = ["FileSource"]
+__all__ = ["FileFeatureSource"]

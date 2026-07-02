@@ -21,15 +21,16 @@ from attrs import define, field
 from ensembl.vep.common import SourceType
 from ensembl.vep.common.methods import format_region_string
 from ensembl.vep.models import Feature
+from ensembl.vep.parsers import Parser
 from ensembl.vep.sources.feature_source import FeatureSource
 
-P = TypeVar("P")
+P = TypeVar("P", bound=Parser)
 F = TypeVar("F", bound=Feature)
 logger = logging.getLogger(__name__)
 
 
 @define(kw_only=True, auto_attribs=True)
-class FileSource(FeatureSource, Generic[P, F]):
+class FileFeatureSource(FeatureSource, Generic[P, F]):
     """Abstract base for file-backed feature sources.
 
     P: Parser/adaptor type (e.g. GFF3Parser)
@@ -50,15 +51,11 @@ class FileSource(FeatureSource, Generic[P, F]):
             records = self.adaptor.parse_file(self.file_path)
         except NotImplementedError:
             logger.warning(
-                f"{type(self.adaptor).__name__} does not support parse_file, "
-                "returning empty list"
+                f"{type(self.adaptor).__name__} does not support parse_file, " "returning empty list"
             )
             return []
         except FileNotFoundError:
-            logger.warning(
-                f"Error parsing file {self.file_path}: does not exist, "
-                "returning empty list"
-            )
+            logger.warning(f"Error parsing file {self.file_path}: does not exist, " "returning empty list")
             return []
         return self._records_to_features(records)
 
@@ -71,13 +68,13 @@ class FileSource(FeatureSource, Generic[P, F]):
         end: int | None = None,
     ) -> list[F]:
         """Return features overlapping the given genomic region.
-        
+
         Args:
             region (str | None): The region (e.g., "chr1:1000-2000") to get features from.
             seq_region_name (str | None): The name of the sequence region (e.g., "chr1").
             start (int | None): The start position of the region.
             end (int | None): The end position of the region.
-        
+
         Returns:
             list[F]: A list of features overlapping the specified region.
         """
@@ -91,7 +88,7 @@ class FileSource(FeatureSource, Generic[P, F]):
             )
             return []
 
-        with self.adaptor.open(self.file_path) as adaptor:
+        with self.adaptor.open(self.file_path, mode="query") as adaptor:
             if not adaptor.seek(region):
                 return []
             records = adaptor.records()
@@ -141,7 +138,7 @@ class FileSource(FeatureSource, Generic[P, F]):
             )
             return
 
-        with self.adaptor.open(self.file_path) as adaptor:
+        with self.adaptor.open(self.file_path, mode="query") as adaptor:
             if not adaptor.seek(region):
                 return
             while (record := adaptor.next()) is not None:
