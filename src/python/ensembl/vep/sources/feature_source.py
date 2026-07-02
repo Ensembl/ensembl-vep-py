@@ -22,7 +22,7 @@ from attr import define
 from ensembl.vep.common import SourceType
 from ensembl.vep.models import Feature
 
-F = TypeVar("F", bound="Feature")
+F = TypeVar("F", bound=Feature)
 
 
 @define(kw_only=True, auto_attribs=True)
