@@ -15,5 +15,6 @@
 
 from .tabix import TabixParser
 from .gff3 import GFF3Parser, GFF3Record
+from .fasta import FastaParser, FastaRecord
 
-__all__ = ["TabixParser", "GFF3Parser", "GFF3Record"]
+__all__ = ["TabixParser", "GFF3Parser", "GFF3Record", "FastaParser", "FastaRecord"]

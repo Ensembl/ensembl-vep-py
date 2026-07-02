@@ -33,8 +33,11 @@ def invalidate(instance: object, *invalidate_names: str) -> None:
     """Clears the named cached properties of a class object when the attributes are set.
 
     Args:
-        instance: The class object to invalidate attributes of.
-        *invalidate_names: The names of the cached properties to invalidate.
+        instance (object): The object whose cached properties should be cleared.
+        *invalidate_names (str): The names of the cached properties to invalidate.
+
+    Returns:
+        None
     """
     for name in invalidate_names:
         if not name.startswith("_"):
@@ -46,14 +49,13 @@ def invalidate(instance: object, *invalidate_names: str) -> None:
 
 
 def invalidates(*cached_names: str) -> Callable:
-    """
-    Returns an attrs on_setattr hook that clears the named cached property whenever the attribute is set.
+    """Return an attrs on_setattr hook that clears named cached properties.
 
     Args:
-        *cached_names: The names of the cached properties to invalidate.
+        *cached_names (str): The names of the cached properties to invalidate.
 
     Returns:
-        Callable: An on_setattr hook function.
+        Callable: An attrs on_setattr hook function.
     """
 
     def hook(instance: object, _modified_attr: AttrsAttribute, new_value: T) -> T:
@@ -63,6 +65,20 @@ def invalidates(*cached_names: str) -> Callable:
         return new_value
 
     return hook
+
+
+def reverse_complement(sequence: str) -> str:
+    """Return the reverse complement of a nucleotide sequence.
+
+    Args:
+        sequence (str): The sequence to reverse-complement.
+
+    Returns:
+        str: The reverse-complemented sequence.
+    """
+
+    translation_table = str.maketrans("ACGTNacgtn", "TGCANtgcan")
+    return sequence.translate(translation_table)[::-1]
 
 
 def resets_attrs(*attrs: tuple[str, Any]) -> Callable:

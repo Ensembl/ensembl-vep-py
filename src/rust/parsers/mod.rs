@@ -15,6 +15,7 @@
 
 pub mod gff3;
 pub mod gtf;
+pub mod fasta;
 pub mod tabix;
 #[cfg(test)]
 pub(crate) mod test_utils;
