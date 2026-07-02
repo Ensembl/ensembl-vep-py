@@ -87,6 +87,7 @@ dependencies = [
  "noodles-core",
  "noodles-csi",
  "noodles-gff",
+ "noodles-gtf",
  "noodles-tabix",
  "pyo3",
  "pyo3-log",
@@ -380,6 +381,21 @@ dependencies = [
  "noodles-core",
  "noodles-csi",
  "percent-encoding",
+]
+
+[[package]]
+name = "noodles-gtf"
+version = "0.51.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d56b64439917d4955c2e9d65baf4a6cb2d44cb8e2122a1e7ed3122997163b784"
+dependencies = [
+ "bstr",
+ "indexmap",
+ "lexical-core",
+ "noodles-bgzf",
+ "noodles-core",
+ "noodles-csi",
+ "noodles-gff",
 ]
 
 [[package]]
