@@ -20,7 +20,7 @@ use pyo3::{PyResult, exceptions::PyValueError};
 use std::{
     fs::File,
     io::{self, BufRead, BufReader, ErrorKind, Read},
-    path::Path,
+    path::{Path, PathBuf},
 };
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -116,6 +116,10 @@ pub fn open_sequential_reader(file_path: &Path) -> io::Result<Box<dyn BufRead + 
     } else {
         Ok(Box::new(BufReader::new(file)))
     }
+}
+
+pub fn associated_index_path(src: &Path, extension: &str) -> PathBuf {
+    PathBuf::from(format!("{}.{}", src.to_string_lossy(), extension))
 }
 
 pub(crate) fn noodles_strand_to_string(strand: Strand) -> String {
@@ -214,6 +218,26 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
         assert_eq!(noodles_strand_to_string(Strand::Forward), "+");
         assert_eq!(noodles_strand_to_string(Strand::Reverse), "-");
         assert_eq!(noodles_strand_to_string(Strand::Unknown), "?");
+    }
+
+    // -----------------------------------------------------------------------
+    // associated_index_path
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_associated_index_path_csi() {
+        assert_eq!(
+            associated_index_path(Path::new("annotations.gff3.gz"), "csi"),
+            PathBuf::from("annotations.gff3.gz.csi")
+        );
+    }
+
+    #[test]
+    fn test_associated_index_path_tbi() {
+        assert_eq!(
+            associated_index_path(Path::new("sample.vcf.gz"), "tbi"),
+            PathBuf::from("sample.vcf.gz.tbi")
+        );
     }
 
     // ---------------------------------------------------------------------------

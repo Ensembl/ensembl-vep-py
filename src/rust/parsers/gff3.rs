@@ -13,9 +13,12 @@
 // limitations under the License.
 
 use crate::{
-    parsers::tabix::{self, associated_index_path, has_tabix_index},
     parsers::utils::{
         ReaderMode, noodles_phase_to_u8, noodles_strand_to_string, open_sequential_reader,
+    },
+    parsers::{
+        tabix::{self, has_tabix_index},
+        utils::associated_index_path,
     },
     utils::{bytes_to_string, to_py_error},
 };

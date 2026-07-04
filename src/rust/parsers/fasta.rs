@@ -14,14 +14,11 @@
 // limitations under the License.
 
 use crate::{
-    parsers::utils::{open_sequential_reader, ReaderMode},
+    parsers::utils::{ReaderMode, associated_index_path, is_bgzf_file, open_sequential_reader},
     utils::to_py_error,
 };
-use pyo3::{
-    exceptions::PyRuntimeError,
-    prelude::*,
-    types::PyDict,
-};
+use noodles_bgzf as bgzf;
+use pyo3::{exceptions::PyRuntimeError, prelude::*, types::PyDict};
 use std::{
     collections::HashMap,
     fs::File,
@@ -60,6 +57,15 @@ impl FastaRecord {
 }
 
 // ---------------------------------------------------------------------------
+// FASTAMetadata
+// ---------------------------------------------------------------------------
+
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+struct FastaMetadata {
+    sequence_lengths: HashMap<String, usize>,
+}
+
+// ---------------------------------------------------------------------------
 // FASTA index
 // ---------------------------------------------------------------------------
 
@@ -90,12 +96,12 @@ pub struct FastaReader {
     file_path: PathBuf,
     backend: Backend,
     mode: ReaderMode,
-    metadata: Option<HashMap<String, usize>>,
+    metadata: Option<FastaMetadata>,
 }
 
 impl FastaReader {
     fn open(file_path: &Path, mode: ReaderMode) -> io::Result<Self> {
-        let backend = Backend::open(file_path, mode)?;
+        let (backend, mode) = Backend::open(file_path, mode)?;
         Ok(Self {
             file_path: file_path.to_path_buf(),
             backend,
@@ -106,10 +112,14 @@ impl FastaReader {
 
     fn metadata(&mut self) -> io::Result<&HashMap<String, usize>> {
         if self.metadata.is_none() {
-            self.metadata = Some(read_fasta_lengths(&self.file_path)?);
+            self.metadata = Some(read_fasta_metadata(&self.file_path)?);
         }
 
-        Ok(self.metadata.as_ref().expect("metadata should be cached"))
+        Ok(&self
+            .metadata
+            .as_ref()
+            .expect("metadata should be cached")
+            .sequence_lengths)
     }
 
     fn next(&mut self) -> io::Result<Option<FastaRecord>> {
@@ -117,36 +127,70 @@ impl FastaReader {
     }
 
     fn seek(&mut self, region: &str) -> io::Result<bool> {
-        self.backend.seek(&self.file_path, region)
+        self.backend.seek(region)
     }
 }
 
 enum Backend {
     Sequential(SequentialBackend),
-    Query(QueryBackend),
+    Fai(FaiBackend),
+    Bgzf(BgzfBackend),
 }
 
 impl Backend {
-    fn open(file_path: &Path, mode: ReaderMode) -> io::Result<Self> {
+    fn open(file_path: &Path, mode: ReaderMode) -> io::Result<(Self, ReaderMode)> {
         match mode {
             ReaderMode::Auto => {
-                if has_fai_index(file_path) {
-                    Ok(Self::Query(QueryBackend::new(file_path)?))
+                if is_bgzf_file(file_path)? {
+                    if has_bgzf_sequence_index(file_path) {
+                        BgzfBackend::new(file_path)
+                            .map(Self::Bgzf)
+                            .map(|backend| (backend, ReaderMode::Query))
+                    } else {
+                        SequentialBackend::new(file_path)
+                            .map(Self::Sequential)
+                            .map(|backend| (backend, ReaderMode::Sequential))
+                    }
+                } else if has_fai_index(file_path) {
+                    FaiBackend::new(file_path)
+                        .map(Self::Fai)
+                        .map(|backend| (backend, ReaderMode::Query))
                 } else {
-                    Ok(Self::Sequential(SequentialBackend::new(file_path)?))
+                    SequentialBackend::new(file_path)
+                        .map(Self::Sequential)
+                        .map(|backend| (backend, ReaderMode::Sequential))
                 }
             }
-            ReaderMode::Sequential => Ok(Self::Sequential(SequentialBackend::new(file_path)?)),
+            ReaderMode::Sequential => SequentialBackend::new(file_path)
+                .map(Self::Sequential)
+                .map(|backend| (backend, ReaderMode::Sequential)),
             ReaderMode::Query => {
-                if has_fai_index(file_path) {
-                    Ok(Self::Query(QueryBackend::new(file_path)?))
+                if is_bgzf_file(file_path)? {
+                    if has_bgzf_sequence_index(file_path) {
+                        BgzfBackend::new(file_path)
+                            .map(Self::Bgzf)
+                            .map(|backend| (backend, ReaderMode::Query))
+                    } else {
+                        Err(io::Error::new(
+                            io::ErrorKind::NotFound,
+                            format!(
+                                "no FASTA index found for file {:?}; expected {:?}",
+                                file_path,
+                                expected_index_paths(file_path)
+                            ),
+                        ))
+                    }
+                } else if has_fai_index(file_path) {
+                    FaiBackend::new(file_path)
+                        .map(Self::Fai)
+                        .map(|backend| (backend, ReaderMode::Query))
                 } else {
                     Err(io::Error::new(
                         io::ErrorKind::NotFound,
                         format!(
                             "no FASTA index found for file {:?}; expected {:?}",
                             file_path,
-                            associated_fai_path(file_path)
+                            expected_index_paths(file_path)
                         ),
                     ))
                 }
@@ -157,14 +201,16 @@ impl Backend {
     fn next(&mut self) -> io::Result<Option<FastaRecord>> {
         match self {
             Self::Sequential(reader) => reader.next(),
-            Self::Query(reader) => reader.next(),
+            Self::Fai(reader) => reader.next(),
+            Self::Bgzf(reader) => reader.next(),
         }
     }
 
-    fn seek(&mut self, file_path: &Path, region: &str) -> io::Result<bool> {
+    fn seek(&mut self, region: &str) -> io::Result<bool> {
         match self {
-            Self::Sequential(reader) => reader.seek(file_path, region),
-            Self::Query(reader) => reader.seek(file_path, region),
+            Self::Sequential(reader) => reader.seek(region),
+            Self::Fai(reader) => reader.seek(region),
+            Self::Bgzf(reader) => reader.seek(region),
         }
     }
 }
@@ -192,27 +238,24 @@ impl SequentialBackend {
         read_next_record(&mut self.reader, &mut self.pending_header)
     }
 
-    fn seek(&mut self, file_path: &Path, region: &str) -> io::Result<bool> {
-        let parsed = parse_region(region)?;
-        let records = read_fasta_records_from_file(file_path)?;
-        let Some(record) = records.into_iter().find(|record| record.seqid == parsed.seqid) else {
-            return Ok(false);
-        };
-
-        self.query_result = Some(slice_record(record, parsed.start, parsed.end)?);
-        Ok(true)
+    fn seek(&mut self, _region: &str) -> io::Result<bool> {
+        Err(io::Error::other(
+            "FASTA reader is set to 'sequential'; set reader to 'query' before seek",
+        ))
     }
 }
 
-struct QueryBackend {
+struct FaiBackend {
     index: FaiIndex,
+    reader: File,
     query_result: Option<FastaRecord>,
 }
 
-impl QueryBackend {
+impl FaiBackend {
     fn new(file_path: &Path) -> io::Result<Self> {
         Ok(Self {
             index: read_fai_index(file_path)?,
+            reader: File::open(file_path)?,
             query_result: None,
         })
     }
@@ -221,7 +264,7 @@ impl QueryBackend {
         Ok(self.query_result.take())
     }
 
-    fn seek(&mut self, file_path: &Path, region: &str) -> io::Result<bool> {
+    fn seek(&mut self, region: &str) -> io::Result<bool> {
         let parsed = parse_region(region)?;
         let Some(entry) = self.index.get(&parsed.seqid) else {
             return Ok(false);
@@ -236,7 +279,51 @@ impl QueryBackend {
             seqid: parsed.seqid,
             start,
             end,
-            sequence: read_indexed_sequence(file_path, entry, start, end)?,
+            sequence: read_indexed_sequence(&mut self.reader, entry, start, end)?,
+        });
+
+        Ok(true)
+    }
+}
+
+struct BgzfBackend {
+    index: FaiIndex,
+    reader: bgzf::io::IndexedReader<File>,
+    query_result: Option<FastaRecord>,
+}
+
+impl BgzfBackend {
+    fn new(file_path: &Path) -> io::Result<Self> {
+        let file = File::open(file_path)?;
+        let gzi_index = read_gzi_index(file_path)?;
+
+        Ok(Self {
+            index: read_fai_index(file_path)?,
+            reader: bgzf::io::IndexedReader::new(file, gzi_index),
+            query_result: None,
+        })
+    }
+
+    fn next(&mut self) -> io::Result<Option<FastaRecord>> {
+        Ok(self.query_result.take())
+    }
+
+    fn seek(&mut self, region: &str) -> io::Result<bool> {
+        let parsed = parse_region(region)?;
+        let Some(entry) = self.index.get(&parsed.seqid) else {
+            return Ok(false);
+        };
+
+        let (start, end) = match (parsed.start, parsed.end) {
+            (Some(start), Some(end)) => (start, end),
+            _ => (1, entry.length),
+        };
+
+        self.query_result = Some(FastaRecord {
+            seqid: parsed.seqid,
+            start,
+            end,
+            sequence: read_indexed_sequence(&mut self.reader, entry, start, end)?,
         });
 
         Ok(true)
@@ -349,15 +436,14 @@ impl FastaParser {
     #[staticmethod]
     #[pyo3(signature = (data, limit=None))]
     fn parse_text(data: &str, limit: Option<usize>) -> PyResult<Vec<FastaRecord>> {
-        let mut reader = Cursor::new(data.as_bytes());
-        read_fasta_records(&mut reader, limit).map_err(to_py_error)
+        parse_fasta_bytes(data.as_bytes(), limit).map_err(to_py_error)
     }
 
     #[staticmethod]
     #[pyo3(signature = (file_path, limit=None))]
     fn parse_file(file_path: &str, limit: Option<usize>) -> PyResult<Vec<FastaRecord>> {
         let mut reader = open_sequential_reader(Path::new(file_path)).map_err(to_py_error)?;
-        read_fasta_records(&mut reader, limit).map_err(to_py_error)
+        read_records(&mut reader, limit).map_err(to_py_error)
     }
 }
 
@@ -424,16 +510,31 @@ fn parse_region(region: &str) -> io::Result<ParsedRegion> {
     })
 }
 
-fn has_fai_index(file_path: &Path) -> bool {
-    associated_fai_path(file_path).exists()
+fn has_bgzf_sequence_index(file_path: &Path) -> bool {
+    has_fai_index(file_path) && has_gzi_index(file_path)
 }
 
-fn associated_fai_path(file_path: &Path) -> PathBuf {
-    PathBuf::from(format!("{}.fai", file_path.to_string_lossy()))
+fn expected_index_paths(file_path: &Path) -> Vec<PathBuf> {
+    if is_bgzf_file(file_path).unwrap_or(false) {
+        vec![
+            associated_index_path(file_path, "fai"),
+            associated_index_path(file_path, "gzi"),
+        ]
+    } else {
+        vec![associated_index_path(file_path, "fai")]
+    }
+}
+
+fn has_fai_index(file_path: &Path) -> bool {
+    associated_index_path(file_path, "fai").exists()
+}
+
+fn has_gzi_index(file_path: &Path) -> bool {
+    associated_index_path(file_path, "gzi").exists()
 }
 
 fn read_fai_index(file_path: &Path) -> io::Result<FaiIndex> {
-    let fai_path = associated_fai_path(file_path);
+    let fai_path = associated_index_path(file_path, "fai");
     let file = File::open(&fai_path)?;
     let mut reader = BufReader::new(file);
     let mut index = HashMap::new();
@@ -447,27 +548,29 @@ fn read_fai_index(file_path: &Path) -> io::Result<FaiIndex> {
         }
 
         let mut fields = trimmed.split('\t');
-        let seqid = fields.next().ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "missing seqid"))?;
+        let seqid = fields
+            .next()
+            .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "missing seqid"))?;
         let length = fields
             .next()
             .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "missing length"))?
             .parse::<usize>()
-            .map_err(to_io_invalid_data("invalid FASTA index length"))?;
+            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
         let offset = fields
             .next()
             .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "missing offset"))?
             .parse::<u64>()
-            .map_err(to_io_invalid_data("invalid FASTA index offset"))?;
+            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
         let line_bases = fields
             .next()
             .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "missing line_bases"))?
             .parse::<usize>()
-            .map_err(to_io_invalid_data("invalid FASTA index line_bases"))?;
+            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
         let line_width = fields
             .next()
             .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "missing line_width"))?
             .parse::<usize>()
-            .map_err(to_io_invalid_data("invalid FASTA index line_width"))?;
+            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
 
         index.insert(
             seqid.to_string(),
@@ -485,12 +588,19 @@ fn read_fai_index(file_path: &Path) -> io::Result<FaiIndex> {
     Ok(index)
 }
 
-fn read_indexed_sequence(
-    file_path: &Path,
+fn read_gzi_index(file_path: &Path) -> io::Result<bgzf::gzi::Index> {
+    bgzf::gzi::fs::read(associated_index_path(file_path, "gzi"))
+}
+
+fn read_indexed_sequence<R>(
+    reader: &mut R,
     entry: &FaiEntry,
     start: usize,
     end: usize,
-) -> io::Result<String> {
+) -> io::Result<String>
+where
+    R: Read + Seek,
+{
     if start < 1 || end < start {
         return Err(io::Error::new(
             io::ErrorKind::InvalidInput,
@@ -504,13 +614,12 @@ fn read_indexed_sequence(
 
     let actual_end = end.min(entry.length);
     let mut sequence = String::with_capacity(end - start + 1);
-    let mut file = File::open(file_path)?;
 
     for position in start..=actual_end {
         let byte_offset = entry.byte_offset(position);
-        file.seek(SeekFrom::Start(byte_offset))?;
         let mut byte = [0u8; 1];
-        file.read_exact(&mut byte)?;
+        reader.seek(SeekFrom::Start(byte_offset))?;
+        reader.read_exact(&mut byte)?;
         sequence.push(byte[0] as char);
     }
 
@@ -521,67 +630,31 @@ fn read_indexed_sequence(
     Ok(sequence)
 }
 
-fn slice_record(mut record: FastaRecord, start: Option<usize>, end: Option<usize>) -> io::Result<FastaRecord> {
-    let Some(start) = start else {
-        return Ok(record);
-    };
-    let end = end.unwrap_or(start);
-    let sequence_length = record.sequence.len();
-
-    if start < 1 || end < start {
-        return Err(io::Error::new(
-            io::ErrorKind::InvalidInput,
-            "FASTA regions must be 1-based and start must be <= end",
-        ));
-    }
-
-    if start > sequence_length {
-        record.sequence = "N".repeat(end - start + 1);
-    } else {
-        let actual_end = end.min(sequence_length);
-        let mut sequence = record.sequence[(start - 1)..actual_end].to_string();
-        if end > sequence_length {
-            sequence.push_str(&"N".repeat(end - sequence_length));
-        }
-        record.sequence = sequence;
-    }
-
-    record.start = start;
-    record.end = end;
-    Ok(record)
+fn read_fasta_metadata(file_path: &Path) -> io::Result<FastaMetadata> {
+    let mut reader = open_sequential_reader(file_path)?;
+    read_fasta_metadata_from_reader(&mut reader)
 }
 
-fn read_fasta_records<R>(reader: &mut R, limit: Option<usize>) -> io::Result<Vec<FastaRecord>>
+fn read_fasta_metadata_from_reader<R>(reader: &mut R) -> io::Result<FastaMetadata>
 where
     R: BufRead,
 {
-    let mut records = Vec::new();
+    let mut metadata = FastaMetadata::default();
     let mut pending_header = None;
 
-    while limit.is_none_or(|n| records.len() < n) {
-        let Some(record) = read_next_record(reader, &mut pending_header)? else {
-            break;
-        };
-        records.push(record);
+    while let Some(record) = read_next_record(reader, &mut pending_header)? {
+        metadata
+            .sequence_lengths
+            .insert(record.seqid, record.sequence.len());
     }
 
-    Ok(records)
+    Ok(metadata)
 }
 
-fn read_fasta_records_from_file(file_path: &Path) -> io::Result<Vec<FastaRecord>> {
-    let mut reader = open_sequential_reader(file_path)?;
-    read_fasta_records(&mut reader, None)
-}
-
-fn read_fasta_lengths(file_path: &Path) -> io::Result<HashMap<String, usize>> {
-    let mut lengths = HashMap::new();
-    for record in read_fasta_records_from_file(file_path)? {
-        lengths.insert(record.seqid, record.sequence.len());
-    }
-    Ok(lengths)
-}
-
-fn read_next_record<R>(reader: &mut R, pending_header: &mut Option<String>) -> io::Result<Option<FastaRecord>>
+fn read_next_record<R>(
+    reader: &mut R,
+    pending_header: &mut Option<String>,
+) -> io::Result<Option<FastaRecord>>
 where
     R: BufRead,
 {
@@ -639,6 +712,28 @@ where
     }))
 }
 
+fn read_records<R>(reader: &mut R, limit: Option<usize>) -> io::Result<Vec<FastaRecord>>
+where
+    R: BufRead,
+{
+    let mut records = Vec::new();
+    let mut pending_header = None;
+
+    while limit.is_none_or(|n| records.len() < n) {
+        let Some(record) = read_next_record(reader, &mut pending_header)? else {
+            break;
+        };
+        records.push(record);
+    }
+
+    Ok(records)
+}
+
+fn parse_fasta_bytes(data: &[u8], limit: Option<usize>) -> io::Result<Vec<FastaRecord>> {
+    let mut reader = Cursor::new(data);
+    read_records(&mut reader, limit)
+}
+
 fn parse_header(header: &str) -> (String, Option<String>) {
     let mut parts = header.splitn(2, char::is_whitespace);
     let seqid = parts.next().unwrap_or_default().to_string();
@@ -646,15 +741,12 @@ fn parse_header(header: &str) -> (String, Option<String>) {
     (seqid, description)
 }
 
-fn to_io_invalid_data(message: &'static str) -> impl Fn(std::num::ParseIntError) -> io::Error {
-    move |err| io::Error::new(io::ErrorKind::InvalidData, format!("{message}: {err}"))
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::create_temp_dir;
-    use std::{fs, str};
+    use crate::{parsers::test_utils::write_bgzf_file, test_utils::create_temp_dir};
+    use noodles_bgzf::gzi;
+    use std::fs;
 
     const SAMPLE: &[u8] = b"\
 >chr1
@@ -665,8 +757,7 @@ AAAA
 
     #[test]
     fn test_parse_text() -> io::Result<()> {
-        let mut reader = Cursor::new(SAMPLE);
-        let records = read_fasta_records(&mut reader, None)?;
+        let records = parse_fasta_bytes(SAMPLE, None)?;
         assert_eq!(records.len(), 2);
         assert_eq!(records[0].seqid, "chr1");
         assert_eq!(records[0].sequence, "ACGTTGCA");
@@ -674,16 +765,19 @@ AAAA
     }
 
     #[test]
-    fn test_slice_record() -> io::Result<()> {
-        let record = FastaRecord {
-            seqid: "chr1".to_string(),
-            start: 1,
-            end: 8,
-            sequence: "ACGTTGCA".to_string(),
-        };
+    fn test_parse_fasta_bytes_honours_limit() -> io::Result<()> {
+        let records = parse_fasta_bytes(SAMPLE, Some(1))?;
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].seqid, "chr1");
+        Ok(())
+    }
 
-        let sliced = slice_record(record, Some(2), Some(5))?;
-        assert_eq!(sliced.sequence, "CGTT");
+    #[test]
+    fn test_read_fasta_metadata_from_reader_collects_lengths() -> io::Result<()> {
+        let mut reader = Cursor::new(SAMPLE);
+        let metadata = read_fasta_metadata_from_reader(&mut reader)?;
+        assert_eq!(metadata.sequence_lengths["chr1"], 8);
+        assert_eq!(metadata.sequence_lengths["chr2"], 4);
         Ok(())
     }
 
@@ -700,6 +794,27 @@ AAAA
         let index = read_fai_index(&path)?;
         assert_eq!(index["chr1"].length, 8);
         assert_eq!(index["chr2"].length, 4);
+        Ok(())
+    }
+
+    #[test]
+    fn test_bgzf_backend_reads_indexed_sequence_with_gzi() -> io::Result<()> {
+        let dir = create_temp_dir("fasta-bgzf-index-test")?;
+        let path = write_bgzf_file(
+            &dir,
+            vec![">chr1".to_string(), "ACGTTGCA".to_string()],
+            Some("sample.fa.gz"),
+        )?;
+        gzi::fs::write(associated_index_path(&path, "gzi"), &gzi::Index::default())?;
+        fs::write(
+            format!("{}.fai", path.to_string_lossy()),
+            "chr1\t8\t6\t8\t9\n",
+        )?;
+
+        let mut backend = BgzfBackend::new(&path)?;
+        assert!(backend.seek("chr1:2-5")?);
+        let record = backend.next()?.expect("indexed record should be available");
+        assert_eq!(record.sequence, "CGTT");
         Ok(())
     }
 }
