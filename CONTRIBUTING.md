@@ -22,19 +22,18 @@ The following packages are pre-requisites to be able to contribute to the Ensemb
 
 ## 🚀 Getting Started
 
-1. **Fork the repository**
-2. **Clone your fork**:
+1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/ensembl-vep-py.git
+   git clone https://github.com/Ensembl/ensembl-vep-py.git
    cd ensembl-vep-py
    ```
-3. **Set up uv venv**:
+2. **Set up uv venv**:
     ```bash
     uv venv
     source .venv/bin/activate
     ```
 
-4. **Install dependencies**:
+3. **Install dependencies**:
    ```bash
    # Rust components
    cargo install
@@ -43,7 +42,7 @@ The following packages are pre-requisites to be able to contribute to the Ensemb
    uv sync --extra cicd,build
    ```
 
-5. **Building the Project**:
+4. **Building the Project**:
     Create a `MANIFEST.in` file with following content -
    ```bash
    include Cargo.toml
@@ -55,7 +54,7 @@ The following packages are pre-requisites to be able to contribute to the Ensemb
    uv pip install -e .
    ```
 
-6. **Run tests**:
+5. **Run tests**:
    ```bash
    ## Rust tests with coverage (install first via: cargo install cargo-llvm-cov)
    cargo llvm-cov --ignore-filename-regex '(^|/)src/rust/lib\.rs$' --show-missing-lines
@@ -76,87 +75,59 @@ main          # Stable releases
 release/xxx   # Release branches  
 feature/xxx   # New features (e.g., feature/faster-vcf-parsing)
 bugfix/xxx    # Bug fixes
+chore/xxx     # Maintenance tasks (e.g., chore/update-dependencies)
+task/xxx      # Miscellaneous tasks (e.g., task/add-new-tests)
 ```
 
 #### Workflow for Contributors
 
-1. **Fork the repository** to your GitHub account
+1. **Clone the repository** to your local machine
 
-2. **Create your development branch** from the relevant upstream branch:
-```bash
-   # For new features
-   git checkout -b my-feature-name origin/feature/xxx
-   
-   # For bug fixes
-   git checkout -b my-bugfix-name origin/bugfix/xxx
-```
+2. **Create your development branch** from the remote main branch `origin/main`
 
 3. **Make your changes** and commit them with clear messages
 
-4. **Ensure CI passes** locally and in your fork:
-   - Push to your fork and verify all GitHub Actions pass
-   - Fix any failing tests before creating a PR
+4. **Pre commit checks** do pre-commit checks (see [Pre-commit Checks](#3-pre-commit-checks)) locally and fix any failing tests
 
-5. **Create a Pull Request**:
-   - **From:** your fork's branch (`my-feature-name`)
-   - **To:** upstream's `feature/xxx` or `bugfix/xxx` branch
-   - NOT directly to `main`
+5. **Create a Pull Request** from your development branch to `origin/main` and ensure all CI checks pass
 
-6. **After review and approval**, maintainers will merge your PR to the feature/bugfix branch
+6. **After review and approval**, maintainers will merge your PR
 
-7. **Maintainers** will create a separate PR from `feature/xxx` or `bugfix/xxx` to `main` when ready
-
-8. **Releases** are created from `main` by tagging specific commits as `release/xxx`
+7. **Releases** are created from `main` by tagging specific commits as `release/xxx`
 
 #### Branch Flow Diagram
 ```
-Upstream Repo                          Your Fork
-─────────────                          ─────────
+Upstream Repo                         
+───────────── 
 
                 main ◄────┐
                 .         │
                 .         │
                 .         │ 
-   release/1.1 ─┤         │ PR (reviewed by maintainers)
+   release/1.1 ─┤         │ PR (your contribution)
                 │         │           
-                ├─ feature/xxx ◄─────┐
-                │                    │
-                │                    │ PR (your contribution)
-                │                    │
-                │                    └─── my-feature-name (your branch)
+                ├─ feature/xxx 
                 │
-                ├─ bugfix/xxx ◄──────┐
-                │                    │
-                │                    │ PR (your contribution)
-                │                    │
-                │                    └─── my-bugfix-name (your branch)
+                │
+                │  ◄──────┐
+                │         │
+                │         │ PR (your contribution)
+                ├─ bugfix/xxx
+                │
+                │
+                │
+                │
    release/1.0 ─┤
                 │
                 .
                 .
                 .
-
-
-Timeline Flow:
-──────────────
-
-1. Fork repo
-2. Create branch from feature/xxx or bugfix/xxx
-3. Make changes → Run tests → Push to fork
-4. ✓ CI passes in your fork
-5. Create PR to upstream feature/xxx or bugfix/xxx
-6. Code review & approval
-7. Merge to feature/xxx or bugfix/xxx
-8. Maintainers merge to main
-9. Release created from main
 ```
 
 #### Key Points
 
-- ✅ **DO**: Create PR to `feature/xxx` or `bugfix/xxx` branches
 - ✅ **DO**: Ensure all CI checks pass before creating PR
 - ✅ **DO**: Keep your branch up-to-date with upstream
-- ❌ **DON'T**: Create PR directly to `main`
 - ❌ **DON'T**: Create PR with failing tests
 
 #### Keeping Your Branch Updated
@@ -165,42 +136,47 @@ Timeline Flow:
 git remote add upstream https://github.com/original-org/repo.git
 
 # Update your branch with latest changes
-git fetch upstream
-git rebase upstream/feature/xxx
+git fetch origin
+git pull --rebase origin/main
+
+# If you already have a PR open, try doing a merge instead
+git fetch origin/main
+git merge origin/main
 ```
 
-### 2. Commit Messages
-(TBD)
-Follow [Conventional Commits](https://www.conventionalcommits.org/):
-```
-feat: add support for GRCh38.p14
-fix: resolve VCF parsing edge case for multi-allelic variants
-docs: update plugin installation instructions
-perf: optimize transcript lookup by 25%
-refactor: extract variant parser into separate module
-```
+### 2. Commit Messages (TBD)
+
 
 ### 3. Pre-commit Checks
-(TBD)
+
+1. Python checks
 ```bash
-# Format code
-cargo fmt
-ruff format src/python/
+# Unit and integration tests
+uv run coverage run -m pytest
+uv run coverage run -m pytest --run-integration src/python
 
-# Lint
+# Static analysis
+uv run pylint --rcfile pyproject.toml src/python
+uv run mypy --config-file pyproject.toml src/python
+
+# Formatting
+uv run black --config pyproject.toml .
+```
+
+2. Rust checks
+```bash
+# Unit and integration tests
+cargo llvm-cov --ignore-filename-regex '(^|/)src/rust/lib\.rs$' --show-missing-lines
+cargo test --test tabix_integration -- --ignored
+
+# Linting
 cargo clippy
-ruff check src/python/
 
-# Static typing
-uv run mypy src/python/
-
-# Test
-cargo test --all-features
-uv run pytest src/python/ --cov=src/python
+# Formatting
+cargo fmt
 ```
 
 ## 🧪 Testing Requirements
-(TBD)
 All PRs must:
 
 - ✅ Pass all existing tests
@@ -208,9 +184,6 @@ All PRs must:
 - ✅ Not decrease test coverage
 - ✅ Include type annotations (Python)
 - ✅ Handle edge cases (multi-allelic variants, structural variants)
-
-**Rust tests**: `cargo test --lib --tests`
-**Python tests**: `uv run pytest src/python/ -v`
 
 ## 📊 Code Coverage
 
@@ -228,8 +201,7 @@ submodules instead.
 - For Python see `pyproject.toml`
 - For Rust see `Cargo.toml`
 
-## 🐛 Bug Reports
-(TBD)
+## 🐛 Bug Reports (TBD)
 1. Use the [GitHub Issues](https://github.com/ensembl-vep-py/issues) template
 2. Include:
    - VEP version
@@ -238,8 +210,7 @@ submodules instead.
    - Steps to reproduce
    - Environment (OS, Python/Rust versions)
 
-## ✨ Feature Requests
-(TBD)
+## ✨ Feature Requests (TBD)
 1. Open an issue with:
    - Use case (scientific/biological motivation)
    - Proposed API changes
@@ -248,29 +219,14 @@ submodules instead.
 
 2. Discuss before implementing major features
 
-## 🔬 Pull Request Checklist
-
-(TBD)
-```markdown
-- [ ] Passes `cargo test --all-features`
-- [ ] Passes `pytest --cov-fail-under=90`
-- [ ] Passes `cargo fmt` and `ruff format`
-- [ ] Passes `cargo clippy` and `ruff check`
-- [ ] Passes `mypy src/python/`
-- [ ] Updated documentation
-- [ ] Added/changed tests
-- [ ] Maintains 90% Rust / ≥90% Python coverage
-- [ ] Squash merged commits
-```
-
-## 📚 Documentation
+## 📚 Documentation (TBD)
 
 - Update `README.md` for user-facing changes
 - Add examples to `docs/examples/`
 - Update API docs in code (Rust `///` comments, Python docstrings)
 - Plugin documentation in `docs/plugins/`
 
-## 🔌 Plugins
+## 🔌 Plugins (TBD)
 
 New plugins should:
 1. Follow `plugins/template/` structure
@@ -278,19 +234,6 @@ New plugins should:
 3. Document input/output format
 4. Provide example usage
 
-## 🤝 Code Owners
-
-```
-# CODEOWNERS
-# Core VEP logic
-/src/rust/ @ensembl-vep-core
-
-# Python bindings  
-/src/python/ @ensembl-vep-python
-
-# Documentation
-/docs/ @ensembl-vep-docs
-```
 
 ## 🚫 What we don't accept
 
@@ -303,10 +246,9 @@ New plugins should:
 
 - Be respectful and constructive
 - Focus on code, not people
-- Scientific accuracy > cleverness
-- Performance > micro-optimizations
+- Scientific accuracy > performance
 
-## 💬 Support
+## 💬 Support (TBD)
 
 - Bugs: [Issues](https://github.com/ensembl-vep-py/issues)
 - Features: [Discussions → Ideas](https://github.com/ensembl-vep-py/discussions/categories/ideas)
@@ -317,4 +259,4 @@ Your contributions help researchers worldwide analyze genomic variants faster an
 
 ---
 
-*Last updated: January 2026*
+*Last updated: July 2026*
