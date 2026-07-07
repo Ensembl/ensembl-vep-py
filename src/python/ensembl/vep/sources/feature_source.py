@@ -98,5 +98,5 @@ class FeatureSource(ABC, Generic[F]):
     def __enter__(self) -> FeatureSource[F]:
         return self
 
-    def __exit__(self, *args: object) -> None:
+    def __exit__(self, *exc_info: object) -> None:
         self.close()
