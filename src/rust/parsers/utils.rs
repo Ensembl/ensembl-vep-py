@@ -149,6 +149,75 @@ pub(crate) fn parse_region(region: &str) -> io::Result<Region> {
     })
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct SequenceRegion {
+    pub(crate) seq_region_name: String,
+    pub(crate) start: Option<usize>,
+    pub(crate) end: Option<usize>,
+}
+
+pub(crate) fn parse_sequence_region(region: &str) -> io::Result<SequenceRegion> {
+    let invalid_region = |message: String| io::Error::new(ErrorKind::InvalidInput, message);
+
+    if region.is_empty() {
+        return Err(invalid_region(
+            "invalid sequence region: empty region".to_string(),
+        ));
+    }
+
+    let Some((seq_region_name, rest)) = region.split_once(':') else {
+        return Ok(SequenceRegion {
+            seq_region_name: region.to_string(),
+            start: None,
+            end: None,
+        });
+    };
+
+    if seq_region_name.is_empty() || rest.is_empty() {
+        return Err(invalid_region(format!(
+            "invalid sequence region {region:?}: missing sequence name or coordinates"
+        )));
+    }
+
+    let parse_position = |value: &str| -> io::Result<usize> {
+        let position = value
+            .parse::<usize>()
+            .map_err(|err| invalid_region(format!("invalid sequence region {region:?}: {err}")))?;
+
+        if position == 0 {
+            return Err(invalid_region(format!(
+                "invalid sequence region {region:?}: coordinates must be 1-based"
+            )));
+        }
+
+        Ok(position)
+    };
+
+    let Some((start, end)) = rest.split_once('-') else {
+        let position = parse_position(rest)?;
+        return Ok(SequenceRegion {
+            seq_region_name: seq_region_name.to_string(),
+            start: Some(position),
+            end: Some(position),
+        });
+    };
+
+    let start = parse_position(start)?;
+    let end = parse_position(end)?;
+
+    if start > end {
+        return Err(invalid_region(format!(
+            "invalid sequence region {region:?}: start must be <= end"
+        )));
+    }
+
+    Ok(SequenceRegion {
+        seq_region_name: seq_region_name.to_string(),
+        start: Some(start),
+        end: Some(end),
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -156,6 +225,7 @@ mod tests {
         parsers::test_utils::write_bgzf_file,
         test_utils::{create_temp_dir, write_sample_file},
     };
+    use pyo3::Python;
     use std::fs;
 
     // ---------------------------------------------------------------------------
@@ -172,6 +242,77 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
             .lines()
             .map(str::to_owned)
             .collect()
+    }
+
+    // ---------------------------------------------------------------------------
+    // parse_sequence_region
+    // ---------------------------------------------------------------------------
+
+    #[test]
+    fn test_parse_sequence_region_seq_region_name_only() -> io::Result<()> {
+        assert_eq!(
+            parse_sequence_region("chr1")?,
+            SequenceRegion {
+                seq_region_name: "chr1".to_string(),
+                start: None,
+                end: None,
+            }
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_parse_sequence_region_range() -> io::Result<()> {
+        assert_eq!(
+            parse_sequence_region("chr1:10-20")?,
+            SequenceRegion {
+                seq_region_name: "chr1".to_string(),
+                start: Some(10),
+                end: Some(20),
+            }
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_parse_sequence_region_single_position() -> io::Result<()> {
+        assert_eq!(
+            parse_sequence_region("chr1:10")?,
+            SequenceRegion {
+                seq_region_name: "chr1".to_string(),
+                start: Some(10),
+                end: Some(10),
+            }
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_parse_sequence_region_rejects_empty_region() {
+        let err = parse_sequence_region("").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(err.to_string().contains("empty region"));
+    }
+
+    #[test]
+    fn test_parse_sequence_region_rejects_missing_coordinates() {
+        let err = parse_sequence_region("chr1:").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(err.to_string().contains("chr1:"));
+    }
+
+    #[test]
+    fn test_parse_sequence_region_rejects_zero_position() {
+        let err = parse_sequence_region("chr1:0-10").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(err.to_string().contains("1-based"));
+    }
+
+    #[test]
+    fn test_parse_sequence_region_rejects_inverted_range() {
+        let err = parse_sequence_region("chr1:20-10").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(err.to_string().contains("start must be <= end"));
     }
 
     // ---------------------------------------------------------------------------
@@ -304,6 +445,8 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
 
     #[test]
     fn test_reader_mode_parse_rejects_invalid_mode() {
+        Python::initialize();
+
         let err = ReaderMode::parse(Some("invalid-mode")).unwrap_err();
         assert!(err.to_string().contains(
             "unsupported reader mode \"invalid-mode\": expected 'auto', 'query' or 'sequential'"

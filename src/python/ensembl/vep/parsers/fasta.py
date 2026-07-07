@@ -23,6 +23,8 @@ class FastaParser(Parser[FastaRecord]):
         format (str): The format of the file being parsed.
         file_path (str | Path | None): The path to the file being parsed.
         mode (str): The reader mode, either "auto", "query" or "sequential".
+                Default is "auto", which will attempt to use "query" mode
+                and fall back to "sequential" if the file is not indexed.
     """
 
     format: str = field(init=False, default="fasta")
@@ -126,21 +128,6 @@ class FastaParser(Parser[FastaRecord]):
         """
 
         return self._parser.records(limit)
-
-    def __iter__(self):
-        return self
-
-    def __next__(self) -> FastaRecord:
-        record = self.next()
-        if record is None:
-            raise StopIteration
-        return record
-
-    def __enter__(self) -> FastaParser:
-        return self
-
-    def __exit__(self, *_exc_info: object) -> None:
-        self.close()
 
     @staticmethod
     def parse_text(data: str, limit: int | None = None) -> list[FastaRecord]:

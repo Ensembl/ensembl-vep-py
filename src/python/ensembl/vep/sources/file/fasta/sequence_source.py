@@ -105,18 +105,9 @@ class FastaSequenceSource(SequenceSource):
             int | None: The sequence length or None if unavailable.
         """
 
-        if self._parser.reader_mode == "query":
-            if not self._parser.seek(seq_region_name=seq_region_name):
-                return None
-
-            record = self._parser.next()
-            if record is None:
-                return None
-
-            return len(record.sequence)
-
-        sequence = self._load_sequences().get(seq_region_name)
-        return len(sequence) if sequence is not None else None
+        lengths = self._parser.metadata.get("sequence_lengths", {})
+        length = lengths.get(seq_region_name)
+        return int(length) if length is not None else None
 
     def _load_sequences(self) -> dict[str, str]:
         """Load all FASTA records into an in-memory lookup map."""

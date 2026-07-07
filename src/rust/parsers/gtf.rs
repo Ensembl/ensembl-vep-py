@@ -15,7 +15,10 @@
 use crate::{
     parsers::{
         tabix::{self, has_tabix_index},
-        utils::{ReaderMode, associated_index_path, noodles_phase_to_u8, noodles_strand_to_string, open_sequential_reader},
+        utils::{
+            ReaderMode, associated_index_path, noodles_phase_to_u8, noodles_strand_to_string,
+            open_sequential_reader,
+        },
     },
     utils::{bytes_to_string, to_py_error},
 };

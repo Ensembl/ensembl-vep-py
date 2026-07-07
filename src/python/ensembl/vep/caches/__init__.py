@@ -1,5 +1,5 @@
 """Cache helpers."""
 
-from .sequence_cache import SequenceChunkCache
+from .sequence_cache import SequenceBinnedLRUCache, SequenceCache
 
-__all__ = ["SequenceChunkCache"]
+__all__ = ["SequenceCache", "SequenceBinnedLRUCache"]

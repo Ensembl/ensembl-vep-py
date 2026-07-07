@@ -7,7 +7,7 @@ from threading import RLock
 
 from attrs import define, field
 
-from ensembl.vep.caches import SequenceChunkCache
+from ensembl.vep.caches import SequenceCache
 from ensembl.vep.common import Strand, reverse_complement
 
 
@@ -15,32 +15,12 @@ from ensembl.vep.common import Strand, reverse_complement
 class SequenceSource(ABC):
     """Unified interface for sources that provide sequence for slices."""
 
-    cache: SequenceChunkCache | None = field(default=None)
+    cache: SequenceCache | None = field(default=None)
     _seq_region_lengths: dict[str, int] = field(factory=dict, init=False, repr=False)
     _lock: RLock = field(factory=RLock, init=False, repr=False)
 
-    @abstractmethod
-    def close(self) -> None:
-        """Release any resources owned by the source."""
-
-        raise NotImplementedError
-
-    def __enter__(self) -> SequenceSource:
-        """Return the source instance for use as a context manager.
-
-        Returns:
-            SequenceSource: The source instance.
-        """
-
-        return self
-
-    def __exit__(self, *_exc_info: object) -> None:
-        """Close the source when the context exits."""
-
-        self.close()
-
     def get_seq_region_length(self, seq_region_name: str) -> int | None:
-        """Return the length of a sequence region, caching the answer when available.
+        """Return the length of a sequence region, caching when available.
 
         Args:
             seq_region_name (str): The sequence region name.
@@ -91,75 +71,75 @@ class SequenceSource(ABC):
         if self.cache is None:
             sequence = self._load_sequence_span(seq_region_name, start, end)
         else:
-            sequence = self._load_sequence_span_cached(seq_region_name, start, end)
+            sequence = self.cache.get_sequence(
+                seq_region_name,
+                start,
+                end,
+                self._load_sequence_span,
+            )
 
         if sequence is None:
             sequence = "N" * requested_length
+        else:
+            sequence = self._pad_to_requested_length(sequence, start, end)
 
         if strand == Strand.REVERSE:
             return reverse_complement(sequence)
 
         return sequence
 
-    def _load_sequence_span_cached(self, seq_region_name: str, start: int, end: int) -> str | None:
-        """Load a span using the configured chunk cache."""
+    @abstractmethod
+    def close(self) -> None:
+        """Release any resources owned by the source."""
 
-        assert self.cache is not None
-        chunk_size = self.cache.chunk_size
-        chunk_start = self.cache.chunk_start(start)
-        sequence = ""
+        raise NotImplementedError
 
-        for current_start in range(chunk_start, end + 1, chunk_size):
-            current_end = min(end, current_start + chunk_size - 1)
-            chunk = self._get_chunk_cached(seq_region_name, current_start)
-            local_start = max(start, current_start) - current_start
-            local_end = current_end - current_start + 1
-            sequence += chunk[local_start:local_end]
+    def __enter__(self) -> SequenceSource:
+        """Return the source instance for use as a context manager.
 
-        return self._pad_to_requested_length(sequence, start, end)
+        Returns:
+            SequenceSource: The source instance.
+        """
 
-    def _get_chunk_cached(self, seq_region_name: str, chunk_start: int) -> str:
-        """Return a cached chunk or load it from the concrete source."""
+        return self
 
-        assert self.cache is not None
-        cache_key = (seq_region_name, chunk_start)
+    def __exit__(self, *_exc_info: object) -> None:
+        """Close the source when the context exits."""
 
-        def loader() -> str:
-            chunk_end = chunk_start + self.cache.chunk_size - 1
-            return self._fetch_sequence_chunk(seq_region_name, chunk_start, chunk_end)
-
-        return self.cache.get_or_load(cache_key, loader)
+        self.close()
 
     def _load_sequence_span(self, seq_region_name: str, start: int, end: int) -> str | None:
-        """Load a span directly from the concrete source without caching."""
+        """Load a span directly from the concrete source without using cache.
 
-        sequence = ""
-        current = start
-        while current <= end:
-            current_end = min(end, current + self.chunk_size - 1)
-            chunk = self._fetch_sequence_chunk(seq_region_name, current, current_end)
-            sequence += chunk
-            current = current_end + 1
+        Args:
+            seq_region_name (str): The sequence region name.
+            start (int): 1-based inclusive start coordinate.
+            end (int): 1-based inclusive end coordinate.
 
+        Returns:
+            str | None: The requested sequence, or None if unavailable.
+        """
+
+        sequence = self._fetch_sequence_chunk(seq_region_name, start, end)
         return self._pad_to_requested_length(sequence, start, end)
 
     def _pad_to_requested_length(self, sequence: str, start: int, end: int) -> str:
-        """Pad a span with Ns when the source cannot provide the full range."""
+        """Pad a span with Ns when the source cannot provide the full range.
+
+        Args:
+            sequence (str): The sequence to pad.
+            start (int): 1-based inclusive start coordinate.
+            end (int): 1-based inclusive end coordinate.
+
+        Returns:
+            str: The padded sequence.
+        """
 
         requested_length = end - start + 1
         if len(sequence) < requested_length:
             sequence += "N" * (requested_length - len(sequence))
 
         return sequence
-
-    @property
-    def chunk_size(self) -> int:
-        """Return the active chunk size."""
-
-        if self.cache is not None:
-            return self.cache.chunk_size
-
-        return 1 << 12
 
     def clear_cache(self) -> None:
         """Clear derived sequence caches."""
