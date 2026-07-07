@@ -1,4 +1,4 @@
-> **_NOTE:_**  This project is in an initial development phase. We are not accepting any contribution at this moment. The following content is provided as an example for future guideline purposes.
+> **_NOTE:_**  This project is in an initial development phase. Many features are incomplete, APIs may change without notice, and documentation is partial. Use at your own risk and feel free to open issues or contribute; your feedback is welcome.
 
 # Contributing to Ensembl VEP
 
