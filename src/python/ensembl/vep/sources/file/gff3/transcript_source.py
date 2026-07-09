@@ -26,7 +26,7 @@ from ensembl.vep.common.methods import format_region_string
 from ensembl.vep.parsers import GFF3Parser, GFF3Record
 from ensembl.vep.models.genic import Transcript, Exon, Gene, Translation, Intron
 from ensembl.vep.models.sequence import Slice, CoordSystem
-from ensembl.vep.sources.file.file_source import FileSource
+from ensembl.vep.sources.file.file_feature_source import FileFeatureSource
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +62,7 @@ class _GFF3TranscriptGroup:
 
 
 @define(kw_only=True, auto_attribs=True)
-class GFF3TranscriptSource(FileSource[GFF3Parser, Transcript]):
+class GFF3TranscriptSource(FileFeatureSource[GFF3Parser, Transcript]):
     """Reads a GFF3 file and produces Transcript domain objects.
 
     Handles GFF3 parent-child grouping: one mRNA record plus its exon and CDS
@@ -82,26 +82,6 @@ class GFF3TranscriptSource(FileSource[GFF3Parser, Transcript]):
 
     adaptor: GFF3Parser = field(init=False, factory=GFF3Parser)
 
-    def _records_to_features(self, records: list[GFF3Record]) -> list[Transcript]:
-        """Convert a list of GFF3 records into Transcript domain objects.
-
-        Args:
-            records (list[GFF3Record]): The GFF3 records to convert.
-
-        Returns:
-            list[Transcript]: A list of Transcript domain objects.
-        """
-
-        groups = _group_gff3_records(records)
-        gene_objects: dict[str, Gene] = {}
-        slice_cache: dict[str, Slice] = {}
-        transcripts = [_build_transcript_from_record_group(group, slice_cache) for group in groups]
-
-        for group, transcript in zip(groups, transcripts):
-            _resolve_gene(group.gene_record, transcript, gene_objects, slice_cache)
-
-        return transcripts
-
     def iter_all_features(self) -> Iterator[Transcript]:
         """Lazily yield Transcripts, assuming the GFF3 file is sorted.
 
@@ -109,27 +89,9 @@ class GFF3TranscriptSource(FileSource[GFF3Parser, Transcript]):
         """
 
         logger.info(_ORDERED_FILE_ASSUMPTION_MESSAGE)
-        gene_records: dict[str, GFF3Record] = {}
-        gene_objects: dict[str, Gene] = {}
-        slice_cache: dict[str, Slice] = {}
-        buffer: list[GFF3Record] = []
 
         with self.adaptor.open(self.file_path, mode="sequential") as adaptor:
-            while (record := adaptor.next()) is not None:
-                if record.feature_type == "gene":
-                    raw_id = _first_attr(record, "ID")
-                    if raw_id:
-                        gene_records[raw_id] = record
-                    if buffer:
-                        yield from _flush_buffer(buffer, gene_records, gene_objects, slice_cache)
-                        buffer = []
-                    continue
-                if record.feature_type in _TRANSCRIPT_FEATURE_TYPES and buffer:
-                    yield from _flush_buffer(buffer, gene_records, gene_objects, slice_cache)
-                    buffer = []
-                buffer.append(record)
-            if buffer:
-                yield from _flush_buffer(buffer, gene_records, gene_objects, slice_cache)
+            yield from self._iter_features_from_adaptor(adaptor)
 
     def iter_features_by_region(
         self,
@@ -150,51 +112,108 @@ class GFF3TranscriptSource(FileSource[GFF3Parser, Transcript]):
             return
 
         logger.info(_ORDERED_FILE_ASSUMPTION_MESSAGE)
+
+        with self.adaptor.open(self.file_path, mode="query") as adaptor:
+            if not adaptor.seek(region):
+                return
+            yield from self._iter_features_from_adaptor(adaptor)
+
+    def _iter_features_from_adaptor(self, adaptor: GFF3Parser) -> Iterator[Transcript]:
+        """Yield transcripts from an open parser, buffering records into transcript blocks.
+
+        Args:
+            adaptor (GFF3Parser): An open parser positioned at the records to stream.
+
+        Returns:
+            Iterator[Transcript]: Transcripts built from buffered GFF3 records.
+        """
+
         gene_records: dict[str, GFF3Record] = {}
         gene_objects: dict[str, Gene] = {}
         slice_cache: dict[str, Slice] = {}
         buffer: list[GFF3Record] = []
 
-        with self.adaptor.open(self.file_path) as adaptor:
-            if not adaptor.seek(region):
-                return
-            while (record := adaptor.next()) is not None:
-                if record.feature_type == "gene":
-                    raw_id = _first_attr(record, "ID")
-                    if raw_id:
-                        gene_records[raw_id] = record
-                    if buffer:
-                        yield from _flush_buffer(buffer, gene_records, gene_objects, slice_cache)
-                        buffer = []
-                    continue
-                if record.feature_type in _TRANSCRIPT_FEATURE_TYPES and buffer:
-                    yield from _flush_buffer(buffer, gene_records, gene_objects, slice_cache)
+        while (record := adaptor.next()) is not None:
+            if record.feature_type == "gene":
+                raw_id = _first_attr(record, "ID")
+                if raw_id:
+                    gene_records[raw_id] = record
+                if buffer:
+                    yield from self._flush_buffer(buffer, gene_records, gene_objects, slice_cache)
                     buffer = []
-                buffer.append(record)
-            if buffer:
-                yield from _flush_buffer(buffer, gene_records, gene_objects, slice_cache)
+                continue
 
+            if record.feature_type in _TRANSCRIPT_FEATURE_TYPES and buffer:
+                yield from self._flush_buffer(buffer, gene_records, gene_objects, slice_cache)
+                buffer = []
 
-def _flush_buffer(
-    buffer: list[GFF3Record],
-    gene_records: dict[str, GFF3Record],
-    gene_objects: dict[str, Gene],
-    slice_cache: dict[str, Slice],
-) -> list[Transcript]:
-    """Build Transcripts from one buffered block and resolve their genes via persistent caches."""
+            buffer.append(record)
 
-    groups = _group_gff3_records(buffer)
-    transcripts = [_build_transcript_from_record_group(group, slice_cache) for group in groups]
+        if buffer:
+            yield from self._flush_buffer(buffer, gene_records, gene_objects, slice_cache)
 
-    for group, transcript in zip(groups, transcripts):
-        gene_record = group.gene_record
-        if gene_record is None and group.transcript_record is not None:
-            parent = _first_attr(group.transcript_record, "Parent")
-            if parent:
-                gene_record = gene_records.get(parent)
-        _resolve_gene(gene_record, transcript, gene_objects, slice_cache)
+    def _records_to_features(self, records: list[GFF3Record]) -> list[Transcript]:
+        """Convert a list of GFF3 records into Transcript domain objects.
 
-    return transcripts
+        Args:
+            records (list[GFF3Record]): The GFF3 records to convert.
+
+        Returns:
+            list[Transcript]: A list of Transcript domain objects.
+        """
+
+        return self._records_to_features_with_context(records)
+
+    def _records_to_features_with_context(
+        self,
+        records: list[GFF3Record],
+        *,
+        gene_records: dict[str, GFF3Record] | None = None,
+        gene_objects: dict[str, Gene] | None = None,
+        slice_cache: dict[str, Slice] | None = None,
+    ) -> list[Transcript]:
+        """Convert GFF3 records into Transcript domain objects with optional streaming state.
+
+        Args:
+            records (list[GFF3Record]): The GFF3 records to convert.
+            gene_records (dict[str, GFF3Record] | None): Buffered gene records keyed by ID.
+            gene_objects (dict[str, Gene] | None): Persistent gene cache keyed by gene ID.
+            slice_cache (dict[str, Slice] | None): Persistent slice cache keyed by seq_region_name.
+
+        Returns:
+            list[Transcript]: A list of Transcript domain objects.
+        """
+
+        groups = _group_gff3_records(records)
+        gene_objects = {} if gene_objects is None else gene_objects
+        slice_cache = {} if slice_cache is None else slice_cache
+        transcripts = [_build_transcript_from_record_group(group, slice_cache) for group in groups]
+
+        for group, transcript in zip(groups, transcripts):
+            gene_record = group.gene_record
+            if gene_record is None and gene_records is not None and group.transcript_record is not None:
+                parent = _first_attr(group.transcript_record, "Parent")
+                if parent:
+                    gene_record = gene_records.get(parent)
+            _resolve_gene(gene_record, transcript, gene_objects, slice_cache)
+
+        return transcripts
+
+    def _flush_buffer(
+        self,
+        buffer: list[GFF3Record],
+        gene_records: dict[str, GFF3Record],
+        gene_objects: dict[str, Gene],
+        slice_cache: dict[str, Slice],
+    ) -> list[Transcript]:
+        """Build Transcripts from one buffered block and resolve their genes via persistent caches."""
+
+        return self._records_to_features_with_context(
+            buffer,
+            gene_records=gene_records,
+            gene_objects=gene_objects,
+            slice_cache=slice_cache,
+        )
 
 
 def _resolve_gene(

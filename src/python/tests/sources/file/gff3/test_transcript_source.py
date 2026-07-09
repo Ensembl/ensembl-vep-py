@@ -23,7 +23,6 @@ from ensembl.vep.sources.file.gff3.transcript_source import (
     _group_gff3_records,
     _build_transcript_from_record_group,
     _build_translation,
-    _flush_buffer,
     _GFF3TranscriptGroup,
 )
 
@@ -363,7 +362,8 @@ class TestFlushBufferStreaming:
 
     def test_single_flush_builds_transcript(self) -> None:
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
-        transcripts = _flush_buffer(list(records), {}, {}, {})
+        source = GFF3TranscriptSource()
+        transcripts = source._flush_buffer(list(records), {}, {}, {})  # pylint: disable=protected-access
         assert len(transcripts) == 1
         assert transcripts[0].stable_id == "ENST001"
 
@@ -381,20 +381,58 @@ class TestFlushBufferStreaming:
         gene_records: dict = {}
         gene_objects: dict = {}
         slice_cache: dict = {}
+        source = GFF3TranscriptSource()
 
         # First block (gene line + transcript A) is flushed on its own, as the
         # streaming iterator would do when it sees the next top-level record.
         first_records = GFF3Parser.parse_text(gene_line + transcript_a)
-        first_transcripts = _flush_buffer(list(first_records), gene_records, gene_objects, slice_cache)
+        first_transcripts = source._flush_buffer(  # pylint: disable=protected-access
+            list(first_records), gene_records, gene_objects, slice_cache
+        )
 
         # Second block (transcript B alone -- its gene line was already consumed
         # and flushed above) must still resolve to the SAME Gene object.
         second_records = GFF3Parser.parse_text(transcript_b)
         gene_records["gene:ENSG999"] = GFF3Parser.parse_text(gene_line)[0]
-        second_transcripts = _flush_buffer(list(second_records), gene_records, gene_objects, slice_cache)
+        second_transcripts = source._flush_buffer(  # pylint: disable=protected-access
+            list(second_records), gene_records, gene_objects, slice_cache
+        )
 
         assert first_transcripts[0].gene is second_transcripts[0].gene
         assert second_transcripts[0].gene.transcripts == [first_transcripts[0], second_transcripts[0]]
+
+    def test_records_to_features_uses_default_context(self) -> None:
+        records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
+        source = GFF3TranscriptSource()
+
+        transcripts = source._records_to_features(list(records))  # pylint: disable=protected-access
+
+        assert len(transcripts) == 1
+        assert transcripts[0].stable_id == "ENST001"
+
+    def test_records_to_features_with_context_uses_shared_streaming_caches(self) -> None:
+        gene_line = "chr1\tensembl\tgene\t1000\t9000\t.\t+\t.\tID=gene:ENSG999;Name=FOO\n"
+        transcript_block = (
+            "chr1\tensembl\tmRNA\t1000\t5000\t.\t+\t.\tID=transcript:ENSTA;Parent=gene:ENSG999\n"
+            "chr1\tensembl\texon\t1000\t2000\t.\t+\t.\tID=exon:EA;Parent=transcript:ENSTA\n"
+        )
+
+        gene_records = {"gene:ENSG999": GFF3Parser.parse_text(gene_line)[0]}
+        gene_objects: dict = {}
+        slice_cache: dict = {}
+        source = GFF3TranscriptSource()
+
+        transcripts = source._records_to_features_with_context(  # pylint: disable=protected-access
+            list(GFF3Parser.parse_text(transcript_block)),
+            gene_records=gene_records,
+            gene_objects=gene_objects,
+            slice_cache=slice_cache,
+        )
+
+        assert len(transcripts) == 1
+        assert transcripts[0].gene is not None
+        assert transcripts[0].gene.stable_id == "ENSG999"
+        assert gene_objects["gene:ENSG999"].transcripts == [transcripts[0]]
 
 
 class TestGFF3TranscriptSource:
@@ -422,9 +460,6 @@ class TestGFF3TranscriptSource:
         assert len(transcripts) == 1
         assert len(transcripts[0].spliced_exons) == 2
 
-    @pytest.mark.skip(
-        reason="GFF3Parser.open() doesn't accept mode= until task/parser_interface_upgrade is merged"
-    )
     def test_iter_all_features_yields_same_transcripts_as_get_all_features(self, tmp_path) -> None:
         gff_file = tmp_path / "test.gff3"
         gff_file.write_text(_GFF3_TWO_TRANSCRIPTS)
