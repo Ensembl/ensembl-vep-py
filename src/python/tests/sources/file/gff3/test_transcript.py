@@ -13,12 +13,78 @@
 # limitations under the License.
 """Unit tests for GFF3TranscriptSource."""
 
+from __future__ import annotations
+
+import sys
+from types import ModuleType
+from typing import Generic, TypeVar
+
 import pytest
+from attrs import define, field
+
+
+def _install_source_compat_stubs() -> None:
+    """Install lightweight source base-class stubs when branch-only modules are absent.
+
+    The current transcript implementation depends on `FeatureSource` / `FileFeatureSource`
+    modules that live on the in-progress source branches. These tests exercise the current
+    transcript-building logic directly, so we provide a minimal compatible surface here.
+    """
+
+    if "ensembl.vep.sources.feature_source" not in sys.modules:
+        feature_module = ModuleType("ensembl.vep.sources.feature_source")
+        feature_type = TypeVar("feature_type")
+
+        class FeatureSource(Generic[feature_type]):
+            """Minimal feature source base used for local test imports."""
+
+            def get_all_features(self) -> list[feature_type]:
+                return list(self.iter_all_features())
+
+            def iter_all_features(self):  # pragma: no cover - overridden by concrete sources
+                raise NotImplementedError
+
+            def get_features_by_region(self, *args, **kwargs) -> list[feature_type]:
+                return list(self.iter_features_by_region(*args, **kwargs))
+
+            def iter_features_by_region(self, *args, **kwargs):  # pragma: no cover - overridden
+                raise NotImplementedError
+
+            def close(self) -> None:
+                return None
+
+            def __enter__(self) -> FeatureSource[feature_type]:
+                return self
+
+            def __exit__(self, exc_type, exc, tb) -> None:
+                self.close()
+
+        feature_module.FeatureSource = FeatureSource
+        sys.modules[feature_module.__name__] = feature_module
+
+    if "ensembl.vep.sources.file.file_feature_source" not in sys.modules:
+        file_module = ModuleType("ensembl.vep.sources.file.file_feature_source")
+        parser_type = TypeVar("parser_type")
+        feature_type = TypeVar("feature_type")
+
+        from ensembl.vep.sources.feature_source import FeatureSource
+
+        @define(kw_only=True, auto_attribs=True)
+        class FileFeatureSource(FeatureSource[feature_type], Generic[parser_type, feature_type]):
+            """Minimal file-backed source base used for local test imports."""
+
+            file_path: str | None = None
+
+        file_module.FileFeatureSource = FileFeatureSource
+        sys.modules[file_module.__name__] = file_module
+
+
+_install_source_compat_stubs()
 
 from ensembl.vep.common import Strand
 from ensembl.vep.parsers import GFF3Parser
 from ensembl.vep.models.genic import Transcript, Exon, Intron
-from ensembl.vep.sources.file.gff3.transcript_source import (
+from ensembl.vep.sources.file.gff3.transcript import (
     GFF3TranscriptSource,
     _group_gff3_records,
     _build_transcript_from_record_group,
