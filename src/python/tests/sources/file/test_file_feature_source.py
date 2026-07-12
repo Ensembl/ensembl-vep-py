@@ -18,7 +18,7 @@
 from __future__ import annotations
 
 from typing import Iterator
-from attrs import define
+from attrs import define, field
 import pytest
 
 from ensembl.vep.common import SourceType, Strand, format_region_string
@@ -93,6 +93,7 @@ class DummyFileFeatureSource(FileFeatureSource[ConcreteParser, Feature]):
     """Concrete file source used for testing FileFeatureSource interface helpers."""
 
     closed: bool = False
+    sequence_source: None = field(default=None)
 
     def _records_to_features(self, records: list[int]) -> list[Feature]:
         return [Feature(start=value, end=value, strand=Strand.FORWARD, slice=None) for value in records]
@@ -110,7 +111,9 @@ class TestFileFeatureSourceInitialization:
         """Test FileFeatureSource cannot be instantiated directly."""
 
         with pytest.raises(TypeError, match="abstract class"):
-            FileFeatureSource(file_path="dummy.txt", adaptor=ConcreteParser(format="dummy"))  # type: ignore[abstract]  # pylint: disable=abstract-class-instantiated
+            FileFeatureSource(  # type: ignore[abstract]  # pylint: disable=abstract-class-instantiated
+                file_path="dummy.txt", adaptor=ConcreteParser(format="dummy"), sequence_source=None
+            )
 
     def test_concrete_file_feature_source_sets_source_type(self) -> None:
         """Test concrete FileFeatureSource sets the source_type default to SourceType.FILE."""

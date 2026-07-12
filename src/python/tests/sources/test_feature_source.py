@@ -29,6 +29,7 @@ class ConcreteFeatureSource(FeatureSource):
     """Concrete feature source used to test interface helpers."""
 
     closed: bool = field(default=False)
+    sequence_source: None = field(default=None)
 
     def get_all_features(self) -> list[Feature]:
         return []
@@ -67,7 +68,9 @@ class TestFeatureSourceInitialization:
         """Test FeatureSource cannot be instantiated directly."""
 
         with pytest.raises(TypeError, match="abstract class"):
-            FeatureSource(source_type=SourceType.FILE)  # type: ignore[abstract]  # pylint: disable=abstract-class-instantiated
+            FeatureSource(  # type: ignore[abstract]  # pylint: disable=abstract-class-instantiated
+                source_type=SourceType.FILE, sequence_source=None
+            )
 
     def test_concrete_feature_source_sets_source_type(self) -> None:
         """Test concrete feature source sets the source_type correctly."""
