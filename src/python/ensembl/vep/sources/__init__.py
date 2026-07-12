@@ -14,7 +14,7 @@
 """Feature sources — file-backed and database-backed providers of domain Feature objects."""
 
 from .feature_source import FeatureSource
-from .file import FileFeatureSource
-from .file.gff3 import GFF3TranscriptSource
+from .file.file_feature_source import FileFeatureSource
+from .file.gff3.transcript import GFF3TranscriptSource
 
 __all__ = ["FeatureSource", "FileFeatureSource", "GFF3TranscriptSource"]
