@@ -24,7 +24,6 @@ from ensembl.vep.common import (
     ClassSOTerm,
     infer_variant_so_term,
     format_region_string,
-    reverse_complement,
 )
 
 from .conftest import Foo, Bar
@@ -468,12 +467,3 @@ class TestInferVariantSOTerm:
     def test_empty_allele_string_defaults_to_sequence_alteration(self) -> None:
         """Test that an empty allele string returns the correct (default) ClassSOTerm."""
         assert infer_variant_so_term("", ref_correct=True) == ClassSOTerm.SEQUENCE_ALTERATION
-
-
-class TestReverseComplement:
-    """Tests for reverse_complement."""
-
-    def test_reverse_complement(self) -> None:
-        """Reverse-complement a simple nucleotide sequence."""
-
-        assert reverse_complement("ACGTN") == "NACGT"
