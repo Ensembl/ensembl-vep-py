@@ -18,18 +18,16 @@ import pytest
 
 from ensembl.vep.parsers.fasta import FastaParser, FastaRecord
 
-SAMPLE = (
-    ">chr1\n"
-    "ACGTTGCA\n"
-    ">chr2\n"
-    "AAAA\n"
-)
-DESCRIBED_SAMPLE = (
-    ">chr1 dna:chromosome chromosome:GRCh38:1:1:248956422:1 REF\n"
-    "ACGTTGCA\n"
-    ">chr2 alternate sequence\n"
-    "AAAA\n"
-)
+SAMPLE = """>chr1
+ACGTTGCA
+>chr2
+AAAA
+"""
+DESCRIBED_SAMPLE = """>chr1 dna:chromosome chromosome:GRCh38:1:1:248956422:1 REF
+ACGTTGCA
+>chr2 alternate sequence
+AAAA
+"""
 SAMPLE_FAI = "chr1\t8\t6\t8\t9\nchr2\t4\t21\t4\t5\n"
 DESCRIBED_SAMPLE_FAI = "chr1\t8\t66\t8\t9\nchr2\t4\t106\t4\t5\n"
 
