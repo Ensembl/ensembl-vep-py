@@ -38,37 +38,39 @@ class CircularSlice(Slice):
             str | None: The resolved sequence, or None if unavailable.
         """
 
-        if self.sequence_source is None:
-            return None
+        with self._lock:
 
-        seq_region_length = self.seq_region_length
-        if seq_region_length is None:
-            logger.warning(
-                "Cannot resolve circular slice on %s without seq_region_length.",
-                self.seq_region_name,
-            )
-            return None
+            if self.sequence_source is None:
+                return None
 
-        spans = self._sequence_spans(seq_region_length)
-        if not spans:
-            return None
+            seq_region_length = self.seq_region_length
+            if seq_region_length is None:
+                logger.warning(
+                    "Cannot resolve circular slice on %s without seq_region_length.",
+                    self.seq_region_name,
+                )
+                return None
 
-        sequence = ""
-        for start, end in spans:
-            piece = self.sequence_source.get_sequence_by_start_end_strand(
-                self.seq_region_name,
-                start,
-                end,
-                strand=Strand.FORWARD,
-            )
-            if piece is None:
-                piece = "N" * (end - start + 1)
-            sequence += piece
+            spans = self._sequence_spans(seq_region_length)
+            if not spans:
+                return None
 
-        if self.strand == Strand.REVERSE:
-            return reverse_complement(sequence)
+            sequence = ""
+            for start, end in spans:
+                piece = self.sequence_source.get_sequence_by_start_end_strand(
+                    self.seq_region_name,
+                    start,
+                    end,
+                    strand=Strand.FORWARD,
+                )
+                if piece is None:
+                    piece = "N" * (end - start + 1)
+                sequence += piece
 
-        return sequence
+            if self.strand == Strand.REVERSE:
+                return reverse_complement(sequence)
+
+            return sequence
 
     def _sequence_spans(self, seq_region_length: int) -> list[tuple[int, int]]:
         """Return linear spans that cover the circular slice.

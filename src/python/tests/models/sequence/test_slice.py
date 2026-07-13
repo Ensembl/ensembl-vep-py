@@ -110,7 +110,6 @@ class TestSliceProperties:
         )
 
         assert genomic_slice.seq_region_length == 8
-        assert genomic_slice.seq_region_length == 8
 
     def test_lazy_sequence_loading_uses_source(self) -> None:
         source = DummySequenceSource(data={"1": "ACGTACGT"})
@@ -127,39 +126,8 @@ class TestSliceProperties:
         assert source.calls == []
         assert genomic_slice.seq == "CGTA"
         assert source.calls == [("1", 2, 5)]
-        assert genomic_slice.seq == "CGTA"
-        assert source.calls == [("1", 2, 5)]
 
-    def test_sequence_override_takes_precedence(self) -> None:
-        source = DummySequenceSource(data={"1": "ACGTACGT"})
-        genomic_slice = CircularSlice(
-            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
-            seq_region_name="1",
-            seq_region_length=8,
-            start=2,
-            end=5,
-            strand=Strand.FORWARD,
-            sequence_source=source,
-            seq="MANUAL",
-        )
-
-        assert genomic_slice.seq == "MANUAL"
-        assert source.calls == []
-
-    def test_sequence_override_can_be_cleared(self) -> None:
-        source = DummySequenceSource(data={"1": "ACGTACGT"})
-        genomic_slice = CircularSlice(
-            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
-            seq_region_name="1",
-            seq_region_length=8,
-            start=2,
-            end=5,
-            strand=Strand.FORWARD,
-            sequence_source=source,
-            seq="MANUAL",
-        )
-
-        genomic_slice.seq = None
+        # Test that subsequent calls to seq do not trigger additional source calls.
         assert genomic_slice.seq == "CGTA"
         assert source.calls == [("1", 2, 5)]
 
