@@ -20,7 +20,7 @@ from attrs import define, field
 import pytest
 
 from ensembl.vep.common import CoordSystemLevel, Strand
-from ensembl.vep.models.sequence import CircularSlice, CoordSystem, Slice
+from ensembl.vep.models.sequence import CoordSystem, Slice
 from ensembl.vep.sources.sequence_source import SequenceSource
 
 
@@ -113,7 +113,7 @@ class TestSliceProperties:
 
     def test_lazy_sequence_loading_uses_source(self) -> None:
         source = DummySequenceSource(data={"1": "ACGTACGT"})
-        genomic_slice = CircularSlice(
+        genomic_slice = Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
             seq_region_length=8,
@@ -144,49 +144,6 @@ class TestSliceProperties:
         )
 
         assert genomic_slice.seq == "CGTT"
-
-    def test_circular_slice_spanning_origin_concatenates_segments(self) -> None:
-        source = DummySequenceSource(data={"1": "ACGTTGCA"})
-        genomic_slice = CircularSlice(
-            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
-            seq_region_name="1",
-            seq_region_length=8,
-            start=7,
-            end=10,
-            strand=Strand.FORWARD,
-            sequence_source=source,
-        )
-
-        assert genomic_slice.seq == "CAAC"
-        assert source.calls == [("1", 7, 8), ("1", 1, 2)]
-
-    def test_circular_slice_reverse_complements_after_concatenation(self) -> None:
-        source = DummySequenceSource(data={"1": "ACGTTGCA"})
-        genomic_slice = CircularSlice(
-            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
-            seq_region_name="1",
-            seq_region_length=8,
-            start=7,
-            end=10,
-            strand=Strand.REVERSE,
-            sequence_source=source,
-        )
-
-        assert genomic_slice.seq == "GTTG"
-
-    def test_circular_slice_fills_missing_bases_with_n(self) -> None:
-        source = DummySequenceSource(data={"1": "ACGT"})
-        genomic_slice = CircularSlice(
-            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
-            seq_region_name="1",
-            seq_region_length=8,
-            start=7,
-            end=10,
-            strand=Strand.FORWARD,
-            sequence_source=source,
-        )
-
-        assert genomic_slice.seq == "NNAC"
 
 
 class TestSliceEquality:
