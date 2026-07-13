@@ -103,3 +103,10 @@ class CircularSlice(Slice):
             bool: True, indicating the slice is circular.
         """
         return True
+
+    # TODO: We needed to override __eq__ of attrs regeneration which compares internal field like _lock; 
+    # is there a generic way to do this?
+    def __eq__(self, other: object) -> bool:
+        """Compare two CircularSlice objects and define if they are identical."""
+
+        return Slice.__eq__(self, other)

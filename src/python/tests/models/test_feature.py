@@ -15,11 +15,33 @@
 # pylint: disable=redefined-outer-name
 """Unit tests for Feature class."""
 
+from attrs import define, field
 import pytest
 
 from ensembl.vep.common import CoordSystemLevel, Strand
 from ensembl.vep.models import Feature
 from ensembl.vep.models.sequence import CoordSystem, Slice
+from ensembl.vep.sources.sequence_source import SequenceSource
+
+
+@define(kw_only=True, auto_attribs=True)
+class DummySequenceSource(SequenceSource):
+    """Minimal sequence source used for Feature.seq tests."""
+
+    data: dict[str, str] = field(factory=dict)
+
+    def close(self) -> None:
+        pass
+
+    def _fetch_sequence_chunk(self, seq_region_name: str, start: int, end: int) -> str:
+        sequence = self.data.get(seq_region_name)
+        if sequence is None:
+            return "N" * (end - start + 1)
+        return sequence[start - 1 : end]
+
+    def _get_seq_region_length(self, seq_region_name: str) -> int | None:
+        sequence = self.data.get(seq_region_name)
+        return len(sequence) if sequence is not None else None
 
 
 class TestFeatureInitialization:
@@ -177,6 +199,72 @@ class TestFeatureProperties:
 
         feature.strand = Strand.FORWARD
         assert feature.seq_region_strand == Strand.FORWARD  # back to original
+
+    def test_seq_no_slice(self, feature: Feature) -> None:
+        """Test seq returns None when no slice attached."""
+        assert feature.slice is None
+        assert feature.seq is None
+
+    def test_seq_slice_without_sequence_source(self, feature: Feature, genomic_slice: Slice) -> None:
+        """Test seq returns None when the attached slice has no sequence available."""
+        feature.slice = genomic_slice
+        assert feature.slice.seq is None
+        assert feature.seq is None
+
+    def test_seq_extracts_substring_from_slice(self) -> None:
+        """Test seq extracts the correct substring from the slice sequence."""
+        source = DummySequenceSource(data={"1": "ACGTACGTACGTACGTACGT"})
+        genomic_slice = Slice(
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+            seq_region_name="1",
+            seq_region_length=20,
+            start=1,
+            end=20,
+            strand=Strand.FORWARD,
+            sequence_source=source,
+        )
+        feature = Feature(start=5, end=8, strand=Strand.FORWARD, slice=genomic_slice)
+
+        # slice.seq is "ACGTACGTACGTACGTACGT", feature covers positions 5-8 -> "ACGT"
+        assert feature.seq == "ACGT"
+
+    def test_seq_immutable(self, feature: Feature) -> None:
+        """Test seq cannot be directly set."""
+        with pytest.raises(AttributeError, match="property 'seq' of 'Feature' object has no setter"):
+            feature.seq = "ACGT"  # type: ignore[misc]
+
+    def test_seq_update(self) -> None:
+        """Test seq updates when start, end, or slice changes."""
+        source = DummySequenceSource(data={"1": "AAAACCCCGGGGTTTTAAAA"})
+        genomic_slice = Slice(
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+            seq_region_name="1",
+            seq_region_length=20,
+            start=1,
+            end=20,
+            strand=Strand.FORWARD,
+            sequence_source=source,
+        )
+        feature = Feature(start=1, end=4, strand=Strand.FORWARD, slice=genomic_slice)
+
+        assert feature.seq == "AAAA"
+
+        feature.start = 5
+        feature.end = 8
+        assert feature.seq == "CCCC"
+
+        other_source = DummySequenceSource(data={"1": "TTTTGGGGCCCCAAAATTTT"})
+        other_slice = Slice(
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+            seq_region_name="1",
+            seq_region_length=20,
+            start=1,
+            end=20,
+            strand=Strand.FORWARD,
+            sequence_source=other_source,
+        )
+        feature.slice = other_slice
+        assert feature.seq == "GGGG"
 
 
 class TestFeatureEquality:
