@@ -18,7 +18,12 @@ import pytest
 
 from ensembl.vep.parsers.fasta import FastaParser, FastaRecord
 
-SAMPLE = ">chr1\n" "ACGTTGCA\n" ">chr2\n" "AAAA\n"
+SAMPLE = (
+    ">chr1\n"
+    "ACGTTGCA\n"
+    ">chr2\n"
+    "AAAA\n"
+)
 DESCRIBED_SAMPLE = (
     ">chr1 dna:chromosome chromosome:GRCh38:1:1:248956422:1 REF\n"
     "ACGTTGCA\n"
@@ -82,7 +87,7 @@ class TestFastaParserInitialization:
         assert parser.file_path is None
         assert parser.mode == "auto"
         assert parser.reader_mode == "auto"
-        assert parser.metadata == {}
+        assert not parser.metadata
 
     def test_initialization_with_file_path_opens_parser(self, tmp_path: Path) -> None:
         """Test file_path initialization opens the parser."""
