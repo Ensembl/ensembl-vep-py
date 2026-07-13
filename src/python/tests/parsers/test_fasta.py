@@ -18,13 +18,7 @@ import pytest
 
 from ensembl.vep.parsers.fasta import FastaParser, FastaRecord
 
-
-SAMPLE = (
-    ">chr1\n"
-    "ACGTTGCA\n"
-    ">chr2\n"
-    "AAAA\n"
-)
+SAMPLE = ">chr1\n" "ACGTTGCA\n" ">chr2\n" "AAAA\n"
 DESCRIBED_SAMPLE = (
     ">chr1 dna:chromosome chromosome:GRCh38:1:1:248956422:1 REF\n"
     "ACGTTGCA\n"
