@@ -18,7 +18,7 @@ from __future__ import annotations
 from copy import deepcopy
 from functools import cached_property
 from threading import RLock
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -39,107 +39,79 @@ class Slice:
         start (int): Start position relative to sequence region.
         end (int): End position relative to sequence region.
         strand (Strand): Slice orientation relative to sequence region.
+        seq (str | None): Sequence of the slice.
         seq_region_length (int | None): Sequence region length.
         sequence_source (SequenceSource | None): Lazy sequence provider.
-        seq (Any | None): Manually assigned sequence override.
     """
 
     coord_system: CoordSystem
-    seq_region_name: str = field(on_setattr=invalidates("_seq", "_resolved_seq_region_length"))
+    seq_region_name: str = field(on_setattr=invalidates("_seq", "_seq_region_length"))
     start: int = field(on_setattr=invalidates("_seq"))
     end: int = field(on_setattr=invalidates("_seq"))
     strand: Strand = field(on_setattr=invalidates("_seq"))
     _seq_region_length: int | None = field(default=None, repr=False, alias="seq_region_length")
-    _seq_override: Any | None = field(default=None, repr=False, alias="seq")
+    _seq_override: str | None = field(default=None, repr=False, alias="seq")
     sequence_source: SequenceSource | None = field(
-        default=None, repr=False, on_setattr=invalidates("_seq", "_resolved_seq_region_length")
+        default=None, repr=False, on_setattr=invalidates("_seq", "_seq_region_length")
     )
     _lock: RLock = field(factory=RLock, init=False, repr=False)
 
     @property
-    def seq(self) -> Any | None:
-        """Return the resolved sequence or a manually assigned override.
+    def seq(self) -> str | None:
+        """Public accessor for the _seq
 
         Returns:
-            Any | None: The resolved sequence, or None if unavailable.
+            str | None: The resolved sequence, or None if unavailable.
         """
-
-        if self._seq_override is not None:
-            return self._seq_override
-
         return self._seq
 
-    @seq.setter
-    def seq(self, value: Any | None) -> None:
-        """Set or clear the sequence override.
+    @cached_property
+    def _seq(self) -> str | None:
+        """Resolve the sequence lazily from the attached sequence source.
 
-        Args:
-            value (Any | None): Sequence override value.
+        Returns:
+            str | None: The resolved sequence, or None if unavailable.
         """
 
-        self._seq_override = value
-        invalidate(self, "_seq")
+        with self._lock:
+            if self.sequence_source is None:
+                return None
+            
+            return self.sequence_source.get_sequence_by_start_end_strand(
+                self.seq_region_name,
+                self.start,
+                self.end,
+                strand=self.strand,
+            )
 
     @property
     def seq_region_length(self) -> int | None:
-        """Return the resolved sequence region length.
+        """Public accessor for the _seq_region_length.
+
+        Returns:
+            int | None: The sequence region length, or None if unavailable.
+        """
+        return self._seq_region_length
+
+    @cached_property
+    def _seq_region_length(self) -> int | None:
+        """Resolve the sequence region length from the attached sequence source.
 
         Returns:
             int | None: The sequence region length, or None if unavailable.
         """
 
-        if self._seq_region_length is not None:
-            return self._seq_region_length
+        with self._lock:
+            if self.sequence_source is None:
+                return None
 
-        return self._resolved_seq_region_length
+            return self.sequence_source.get_seq_region_length(self.seq_region_name)
 
-    @seq_region_length.setter
-    def seq_region_length(self, value: int | None) -> None:
-        """Set the explicit sequence region length.
-
-        Args:
-            value (int | None): Sequence region length.
-        """
-
-        self._seq_region_length = value
-        invalidate(self, "_resolved_seq_region_length")
-
-    @cached_property
-    def _resolved_seq_region_length(self) -> int | None:
-        """Resolve the sequence region length from the attached source.
-
-        Returns:
-            int | None: The sequence region length, or None if unavailable.
-        """
-
-        if self.sequence_source is None:
-            return None
-
-        return self.sequence_source.get_seq_region_length(self.seq_region_name)
-
-    @cached_property
-    def _seq(self) -> Any | None:
-        """Resolve the sequence lazily from the attached source.
-
-        Returns:
-            Any | None: The resolved sequence, or None if unavailable.
-        """
-
-        if self.sequence_source is None:
-            return None
-
-        return self.sequence_source.get_sequence_by_start_end_strand(
-            self.seq_region_name,
-            self.start,
-            self.end,
-            strand=self.strand,
-        )
-
-    def __deepcopy__(self, memo: dict[int, Any]) -> Slice:
+    def __deepcopy__(self, memo: dict[int, str]) -> Slice:
         """Create a deepcopy without copying the internal lock.
 
         Args:
-            memo (dict[int, Any]): Deepcopy memoization map.
+            memo (dict[int, str]): Deepcopy memoization map.
 
         Returns:
             Slice: The copied slice instance.

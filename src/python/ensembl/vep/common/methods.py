@@ -30,7 +30,7 @@ T = TypeVar("T")
 
 
 def invalidate(instance: object, *invalidate_names: str) -> None:
-    """Clears the named cached properties of a class object when the attributes are set.
+    """Clear the named cached properties of a class object when the attributes are set.
 
     Args:
         instance (object): The object whose cached properties should be cleared.
@@ -71,10 +71,10 @@ def reverse_complement(sequence: str) -> str:
     """Return the reverse complement of a nucleotide sequence.
 
     Args:
-        sequence (str): The sequence to reverse-complement.
+        sequence (str): The sequence to reverse complement.
 
     Returns:
-        str: The reverse-complemented sequence.
+        str: The reverse complement of the sequence.
     """
 
     translation_table = str.maketrans("ACGTNacgtn", "TGCANtgcan")

@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Sequence cache helpers."""
+"""Sequence cache."""
 
 from __future__ import annotations
 
@@ -25,6 +25,7 @@ from attrs import define, field
 SequenceSpanLoader: TypeAlias = Callable[[str, int, int], str | None]
 
 
+# TBD: should this be an ABC instead of a Protocol? It would be more explicit, but less flexible.
 @runtime_checkable
 class SequenceCache(Protocol):
     """Interface for sequence caches."""
@@ -56,7 +57,7 @@ class SequenceCache(Protocol):
 
 @define(kw_only=True, auto_attribs=True)
 class SequenceBinnedLRUCache:
-    """An in-memory LRU cache for fixed-size sequence chunks.
+    """An in-memory LRU cache for fixed-size sequence chunks (or bins).
 
     Attributes:
         enabled (bool): Whether the cache is enabled. Default is True.
@@ -78,18 +79,20 @@ class SequenceBinnedLRUCache:
 
     @property
     def max_span(self) -> int:
-        """Return the largest sequence span that should use the cache."""
+        """Return the largest sequence that can be stored in the cache."""
 
         return self.chunk_size * self.max_chunks
 
     def chunk_start(self, position: int) -> int:
-        """Return the 1-based start coordinate of the chunk containing position.
+        """Return the start coordinate of the chunk containing the given position.
+
+        Position is 1-based inclusive. The returned chunk start is also 1-based inclusive.
 
         Args:
-            position (int): 1-based sequence position.
+            position (int): position of sequence in coordinate space.
 
         Returns:
-            int: 1-based chunk start coordinate.
+            int: chunk start coordinate.
         """
 
         return ((position - 1) >> self.chunk_power << self.chunk_power) + 1
@@ -105,8 +108,8 @@ class SequenceBinnedLRUCache:
 
         Args:
             seq_region_name (str): The sequence region name.
-            start (int): 1-based inclusive start coordinate.
-            end (int): 1-based inclusive end coordinate.
+            start (int): Start position of the sequence span.
+            end (int): End position of the sequence span.
             loader (SequenceSpanLoader): Loader used when sequence is not cached.
 
         Returns:
@@ -142,11 +145,11 @@ class SequenceBinnedLRUCache:
         chunk_start: int,
         loader: SequenceSpanLoader,
     ) -> str:
-        """Load a full cache chunk through the supplied span loader.
+        """Load a full cached sequence chunk through the supplied span loader.
 
         Args:
             seq_region_name (str): The sequence region name.
-            chunk_start (int): The 1-based inclusive chunk start coordinate.
+            chunk_start (int): Start coordinate of the chunk.
             loader (SequenceSpanLoader): Loader used to retrieve uncached sequence.
 
         Returns:

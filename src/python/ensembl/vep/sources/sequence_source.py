@@ -47,11 +47,10 @@ class SequenceSource(ABC):
             if cached is not None:
                 return cached
 
-        length = self._get_seq_region_length(seq_region_name)
-        if length is None:
-            return None
-
-        with self._lock:
+            length = self._get_seq_region_length(seq_region_name)
+            if length is None:
+                return None
+        
             self._seq_region_lengths[seq_region_name] = length
 
         return length
@@ -64,12 +63,12 @@ class SequenceSource(ABC):
         *,
         strand: Strand = Strand.FORWARD,
     ) -> str | None:
-        """Return sequence for a linear span, on the requested strand.
+        """Return sequence from a sequence region for the specified coordinates and strand.
 
         Args:
             seq_region_name (str): The sequence region name.
-            start (int): 1-based inclusive start coordinate.
-            end (int): 1-based inclusive end coordinate.
+            start (int): Start coordinate for the sequence span.
+            end (int): End coordinate for the sequence span.
             strand (Strand): Requested strand orientation.
 
         Returns:
@@ -126,8 +125,8 @@ class SequenceSource(ABC):
 
         Args:
             seq_region_name (str): The sequence region name.
-            start (int): 1-based inclusive start coordinate.
-            end (int): 1-based inclusive end coordinate.
+            start (int): Start coordinate for the sequence span.
+            end (int): End coordinate for the sequence span.
 
         Returns:
             str | None: The requested sequence, or None if unavailable.
@@ -141,8 +140,8 @@ class SequenceSource(ABC):
 
         Args:
             sequence (str): The sequence to pad.
-            start (int): 1-based inclusive start coordinate.
-            end (int): 1-based inclusive end coordinate.
+            start (int): Start coordinate for the sequence span.
+            end (int): End coordinate for the sequence span.
 
         Returns:
             str: The padded sequence.
@@ -169,8 +168,8 @@ class SequenceSource(ABC):
 
         Args:
             seq_region_name (str): The sequence region name.
-            start (int): 1-based inclusive start coordinate.
-            end (int): 1-based inclusive end coordinate.
+            start (int): Start coordinate for the sequence span.
+            end (int): End coordinate for the sequence span.
 
         Returns:
             str: The requested sequence chunk, padded or truncated as needed.

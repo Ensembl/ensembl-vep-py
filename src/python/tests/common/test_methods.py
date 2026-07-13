@@ -477,3 +477,4 @@ class TestReverseComplement:
         """Reverse-complement a simple nucleotide sequence."""
 
         assert reverse_complement("ACGTN") == "NACGT"
+        assert reverse_complement("acgtn") == "nacgt"
