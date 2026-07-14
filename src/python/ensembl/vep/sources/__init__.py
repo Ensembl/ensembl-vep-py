@@ -16,5 +16,6 @@
 from .feature_source import FeatureSource
 from .file.file_feature_source import FileFeatureSource
 from .file.gff3.transcript import GFF3TranscriptSource
+from .file.gtf.transcript import GTFTranscriptSource
 
-__all__ = ["FeatureSource", "FileFeatureSource", "GFF3TranscriptSource"]
+__all__ = ["FeatureSource", "FileFeatureSource", "GFF3TranscriptSource", "GTFTranscriptSource"]
