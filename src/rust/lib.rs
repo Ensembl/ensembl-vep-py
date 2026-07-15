@@ -40,4 +40,7 @@ mod ensembl_vep_core {
 
     #[pymodule_export]
     use crate::parsers::gff3::{Gff3Parser, Gff3Record};
+
+    #[pymodule_export]
+    use crate::parsers::vcf::{VcfMetadata, VcfParser, VcfRecord};
 }
