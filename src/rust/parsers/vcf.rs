@@ -15,24 +15,29 @@
 use crate::{
     parsers::tabix::{self, associated_index_path, has_tabix_index},
     parsers::utils::{ReaderMode, open_sequential_reader},
-    utils::{bytes_to_string, to_py_error, from_py_error},
+    utils::{bytes_to_string, to_py_error},
 };
 use noodles_vcf::{
     self as vcf,
     header::{
-        record::value::{Collection, Map, map::{AlternativeAllele, Contig, Filter, Format, Info}},
         FileFormat,
+        record::value::{
+            Collection, Map,
+            map::{AlternativeAllele, Contig, Filter, Format, Info},
+        },
     },
     variant::{
         self,
-        record_buf::{info::field::Value as InfoFieldValue, samples::sample::value::Value as SampleValue},
-        record::info::field::key as InfoKey,
-        record::samples::keys::key as SampleKey,
+        record_buf::{
+            info::field::Value as InfoFieldValue, info::field::value::Array as ValueArray,
+            samples::sample::value::Value as SampleValue,
+        },
     },
 };
 use pyo3::{
     exceptions::PyRuntimeError,
     prelude::*,
+    types::{PyDict, PyList},
 };
 use std::{
     collections::HashMap,
@@ -48,38 +53,30 @@ use std::{
 #[pyclass(name = "VCFRecord")]
 #[derive(Clone, Debug, PartialEq)]
 pub struct VcfRecord {
-// TODO: Change attribute names to match vcf header column names
     #[pyo3(get)]
-    pub reference_sequence_name: String,
+    pub chrom: String,
     #[pyo3(get)]
-    pub variant_start: Option<usize>,
+    pub pos: Option<usize>,
     #[pyo3(get)]
-    pub ids: Vec<String>,
+    pub id: Vec<String>,
     #[pyo3(get)]
-    pub reference_bases: String,
+    pub reference: String,
     #[pyo3(get)]
-    pub alternate_bases: Vec<String>,
+    pub alt: Vec<String>,
     #[pyo3(get)]
-    pub quality_score: Option<f32>,
+    pub qual: Option<f32>,
     #[pyo3(get)]
-    pub filters: Vec<String>,
-    #[pyo3(get)]
-    pub info: HashMap<String, Option<String>>,
-    #[pyo3(get)]
-    pub samples: Vec<HashMap<String, Option<String>>>,
+    pub filter: Vec<String>,
+    info: variant::record_buf::Info,
+    samples: variant::record_buf::Samples,
 }
 
 #[pymethods]
 impl VcfRecord {
     fn __repr__(&self) -> String {
         format!(
-            "VCFRecord(reference_sequence_name={:?}, variant_start={:?}, ids={:?}, reference_bases={:?}, alternate_bases={:?}, quality_score={:?})",
-            self.reference_sequence_name,
-            self.variant_start,
-            self.ids,
-            self.reference_bases,
-            self.alternate_bases,
-            self.quality_score
+            "VCFRecord(chrom={:?}, pos={:?}, id={:?}, reference={:?}, alt={:?}, qual={:?}, filter={:?})",
+            self.chrom, self.pos, self.id, self.reference, self.alt, self.qual, self.filter
         )
     }
 }
@@ -541,33 +538,21 @@ fn parse_vcf_line(line: &str, header: &vcf::Header) -> io::Result<Option<VcfReco
 }
 
 fn record_to_py(record: variant::RecordBuf) -> io::Result<VcfRecord> {
-    let ids = record.ids().as_ref().iter().cloned().collect();
-    let alternate_bases = record.alternate_bases().as_ref().iter().cloned().collect();
-    let filters = record.filters().as_ref().iter().cloned().collect();
-    let info = parse_info(record.info());
-    let samples = parse_samples(record.samples());
+    let id = record.ids().as_ref().iter().cloned().collect();
+    let alt = record.alternate_bases().as_ref().to_vec();
+    let filter = record.filters().as_ref().iter().cloned().collect();
 
     Ok(VcfRecord {
-        reference_sequence_name: bytes_to_string(record.reference_sequence_name().as_bytes()),
-        variant_start: record.variant_start().map(|position| position.get()),
-        ids,
-        reference_bases: record.reference_bases().to_string(),
-        alternate_bases,
-        quality_score: record.quality_score(),
-        filters,
-        info,
-        samples
+        chrom: bytes_to_string(record.reference_sequence_name().as_bytes()),
+        pos: record.variant_start().map(|position| position.get()),
+        id,
+        reference: record.reference_bases().to_string(),
+        alt,
+        qual: record.quality_score(),
+        filter,
+        info: record.info().clone(),
+        samples: record.samples().clone(),
     })
-}
-
-fn parse_info(info: &variant::record_buf::Info) -> HashMap<String, Option<String>> {
-    let mut result = HashMap::new();
-
-    for (key, value) in info.keys().cloned().zip(info.values()) {
-        result.insert(key, info_value_to_string(value));
-    }
-
-    result
 }
 
 fn info_value_to_string(value: Option<&InfoFieldValue>) -> Option<String> {
@@ -1119,32 +1104,21 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
     #[test]
     fn test_parse_vcf_line() -> io::Result<()> {
         let header = create_test_header()?;
-        let record = parse_vcf_line(TEST_VCF_LINE, &header)?
-            .expect("expected record");
+        let record = parse_vcf_line(TEST_VCF_LINE, &header)?.expect("expected record");
 
-        assert_eq!(record.reference_sequence_name, "chr1");
-        assert_eq!(record.variant_start, Some(10));
-        assert_eq!(record.ids, vec!["rs1".to_string()]);
-        assert_eq!(record.reference_bases, "A");
-        assert_eq!(record.alternate_bases, vec!["C".to_string()]);
-        assert_eq!(record.quality_score, Some(13.0));
-        assert_eq!(record.filters, vec!["PASS".to_string()]);
-        assert_eq!(record.info.get("NS"), Some(&Some("2".to_string())));
+        assert_eq!(record.chrom, "chr1");
+        assert_eq!(record.pos, Some(10));
+        assert_eq!(record.id, vec!["rs1".to_string()]);
+        assert_eq!(record.reference, "A");
+        assert_eq!(record.alt, vec!["C".to_string()]);
+        assert_eq!(record.qual, Some(13.0));
+        assert_eq!(record.filter, vec!["PASS".to_string()]);
         assert_eq!(
-            record.samples,
-            vec![
-                HashMap::from([
-                    ("GT".to_string(), Some("0|0".to_string())),
-                    ("DP".to_string(), Some("4".to_string())),
-                    ("GQ".to_string(), Some("21".to_string())),
-                ]),
-                HashMap::from([
-                    ("GT".to_string(), Some("1|0".to_string())),
-                    ("DP".to_string(), Some("10".to_string())),
-                    ("GQ".to_string(), Some("34".to_string())),
-                ]),
-            ]
+            record.info.get("NS"),
+            Some(Some(&InfoFieldValue::Integer(2)))
         );
+        let samples = make_samples();
+        assert_eq!(record.samples, samples);
 
         Ok(())
     }
@@ -1447,11 +1421,11 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         assert_eq!(reader.metadata()?.file_format, "VCFv4.3");
 
         let first = reader.next()?.expect("expected record");
-        assert_eq!(first.reference_sequence_name, "chr1");
+        assert_eq!(first.chrom, "chr1");
         let second = reader.next()?.expect("expected second record");
-        assert_eq!(second.variant_start, Some(20));
+        assert_eq!(second.pos, Some(20));
         let third = reader.next()?.expect("expected third record");
-        assert_eq!(third.variant_start, Some(100));
+        assert_eq!(third.pos, Some(100));
         assert_eq!(reader.next()?, None);
 
         fs::remove_dir_all(dir)?;
@@ -1510,7 +1484,7 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         let mut backend = SequentialBackend::new(&path)?;
 
         let record = backend.next()?.expect("expected record");
-        assert_eq!(record.reference_sequence_name, "chr1");
+        assert_eq!(record.chrom, "chr1");
         assert_eq!(backend.next()?.is_some(), true);
         assert_eq!(backend.next()?.is_some(), true);
         assert_eq!(backend.next()?, None);
@@ -1555,10 +1529,10 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 
         let first = backend.next()?.expect("expected first record");
         let second = backend.next()?.expect("expected second record");
-        assert_eq!(first.reference_sequence_name, "chr1");
-        assert_eq!(first.variant_start, Some(10));
-        assert_eq!(second.reference_sequence_name, "chr1");
-        assert_eq!(second.variant_start, Some(20));
+        assert_eq!(first.chrom, "chr1");
+        assert_eq!(first.pos, Some(10));
+        assert_eq!(second.chrom, "chr1");
+        assert_eq!(second.pos, Some(20));
         assert_eq!(backend.next()?, None);
 
         fs::remove_dir_all(dir)?;
@@ -1590,9 +1564,9 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         )?;
 
         assert_eq!(records.len(), 3);
-        assert_eq!(records[0].reference_sequence_name, "chr1");
-        assert_eq!(records[1].variant_start, Some(20));
-        assert_eq!(records[2].reference_sequence_name, "chr2");
+        assert_eq!(records[0].chrom, "chr1");
+        assert_eq!(records[1].pos, Some(20));
+        assert_eq!(records[2].chrom, "chr2");
 
         Ok(())
     }
@@ -1605,8 +1579,8 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         )?;
 
         assert_eq!(records.len(), 2);
-        assert_eq!(records[0].variant_start, Some(10));
-        assert_eq!(records[1].variant_start, Some(20));
+        assert_eq!(records[0].pos, Some(10));
+        assert_eq!(records[1].pos, Some(20));
 
         Ok(())
     }
@@ -1619,9 +1593,9 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         let records = VcfParser::parse_file(path.to_str().expect("utf-8 path"), None)?;
 
         assert_eq!(records.len(), 3);
-        assert_eq!(records[0].reference_sequence_name, "chr1");
-        assert_eq!(records[1].variant_start, Some(20));
-        assert_eq!(records[2].reference_sequence_name, "chr2");
+        assert_eq!(records[0].chrom, "chr1");
+        assert_eq!(records[1].pos, Some(20));
+        assert_eq!(records[2].chrom, "chr2");
 
         fs::remove_dir_all(dir)?;
         Ok(())
@@ -1635,7 +1609,7 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         let records = VcfParser::parse_file(path.to_str().expect("utf-8 path"), Some(1))?;
 
         assert_eq!(records.len(), 1);
-        assert_eq!(records[0].variant_start, Some(10));
+        assert_eq!(records[0].pos, Some(10));
 
         fs::remove_dir_all(dir)?;
         Ok(())
@@ -1651,11 +1625,14 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         assert_eq!(parser.format(), "vcf");
         assert_eq!(parser.reader_mode(), "sequential");
 
-        parser.open(path.to_str().expect("utf-8 path"), Some("sequential".to_string()))?;
+        parser.open(
+            path.to_str().expect("utf-8 path"),
+            Some("sequential".to_string()),
+        )?;
         assert_eq!(parser.metadata()?.file_format, "VCFv4.3");
 
         let record = parser.next()?.expect("expected record");
-        assert_eq!(record.reference_sequence_name, "chr1");
+        assert_eq!(record.chrom, "chr1");
         assert_eq!(parser.records(Some(1))?.len(), 1);
         assert_eq!(parser.records(None)?.len(), 1);
 
@@ -1689,7 +1666,7 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 
         assert!(parser.seek("chr1:10-20")?);
         let first = parser.next()?.expect("expected first record");
-        assert_eq!(first.variant_start, Some(10));
+        assert_eq!(first.pos, Some(10));
         assert_eq!(parser.records(Some(1))?.len(), 1);
         assert_eq!(parser.next()?, None);
 
