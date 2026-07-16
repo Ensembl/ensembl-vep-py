@@ -73,6 +73,35 @@ pub struct VcfRecord {
 
 #[pymethods]
 impl VcfRecord {
+    #[getter]
+    fn info<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyDict>> {
+        let dict = PyDict::new(py);
+        let info = &self.info;
+
+        for (key, value) in info.keys().cloned().zip(info.values()) {
+            dict.set_item(key, info_value_to_string(value))?;
+        }
+
+        Ok(dict)
+    }
+
+    #[getter]
+    fn samples<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
+        let list = PyList::empty(py);
+
+        for sample in self.samples.values() {
+            let dict = PyDict::new(py);
+
+            for (key, value) in sample.keys().as_ref().iter().cloned().zip(sample.values()) {
+                dict.set_item(key, sample_value_to_string(value))?;
+            }
+
+            list.append(dict)?;
+        }
+
+        Ok(list)
+    }
+
     fn __repr__(&self) -> String {
         format!(
             "VCFRecord(chrom={:?}, pos={:?}, id={:?}, reference={:?}, alt={:?}, qual={:?}, filter={:?})",
@@ -136,7 +165,12 @@ impl VcfMetadata {
 
     fn __getitem__(&self, py: Python<'_>, key: String) -> PyResult<Py<PyAny>> {
         match key.as_str() {
-            "file_format" => Ok(self.file_format.clone().into_pyobject(py)?.into_any().unbind()),
+            "file_format" => Ok(self
+                .file_format
+                .clone()
+                .into_pyobject(py)?
+                .into_any()
+                .unbind()),
             "info" => Ok(self.info.clone().into_pyobject(py)?.into_any().unbind()),
             "filter" => Ok(self.filter.clone().into_pyobject(py)?.into_any().unbind()),
             "format" => Ok(self.format.clone().into_pyobject(py)?.into_any().unbind()),
@@ -200,7 +234,11 @@ impl VcfReader {
             self.metadata = Some(header_to_metadata(header));
         }
 
-        Ok(self.metadata.as_ref().expect("metadata should be cached").clone())
+        Ok(self
+            .metadata
+            .as_ref()
+            .expect("metadata should be cached")
+            .clone())
     }
 }
 
@@ -319,7 +357,7 @@ impl TabixBackend {
 
         Ok(Self {
             reader: Some(tabix::TabixReader::open(file_path.as_ref(), tabix_path)?),
-            header: header,
+            header,
             query_active: false,
         })
     }
@@ -417,7 +455,8 @@ impl VcfParser {
         let path = PathBuf::from(file_path);
         let reader_mode = ReaderMode::parse(mode.as_deref())?;
 
-        self.reader = Some(VcfReader::open(&path, &self.tabix_path, reader_mode).map_err(to_py_error)?);
+        self.reader =
+            Some(VcfReader::open(&path, &self.tabix_path, reader_mode).map_err(to_py_error)?);
         self.reader_mode = self
             .reader
             .as_ref()
@@ -567,56 +606,28 @@ fn info_value_to_string(value: Option<&InfoFieldValue>) -> Option<String> {
     }
 }
 
-fn info_array_to_string(values: &variant::record_buf::info::field::value::Array) -> String {
+fn info_array_to_string(values: &ValueArray) -> String {
     match values {
-        variant::record_buf::info::field::value::Array::Integer(values) => values
-            .iter()
-            .map(|value| match value {
-                Some(value) => value.to_string(),
-                None => ".".to_string(),
-            })
-            .collect::<Vec<_>>()
-            .join(","),
-        variant::record_buf::info::field::value::Array::Float(values) => values
-            .iter()
-            .map(|value| match value {
-                Some(value) => value.to_string(),
-                None => ".".to_string(),
-            })
-            .collect::<Vec<_>>()
-            .join(","),
-        variant::record_buf::info::field::value::Array::Character(values) => values
-            .iter()
-            .map(|value| match value {
-                Some(value) => value.to_string(),
-                None => ".".to_string(),
-            })
-            .collect::<Vec<_>>()
-            .join(","),
-        variant::record_buf::info::field::value::Array::String(values) => values
-            .iter()
-            .map(|value| match value {
-                Some(value) => value.clone(),
-                None => ".".to_string(),
-            })
-            .collect::<Vec<_>>()
-            .join(","),
+        ValueArray::Integer(values) => join_optional_values(values.iter()),
+        ValueArray::Float(values) => join_optional_values(values.iter()),
+        ValueArray::Character(values) => join_optional_values(values.iter()),
+        ValueArray::String(values) => join_optional_values(values.iter()),
     }
 }
 
-fn parse_samples(samples: &variant::record_buf::Samples) -> Vec<HashMap<String, Option<String>>> {
-    let keys: Vec<_> = samples.keys().as_ref().iter().cloned().collect();
-
-    samples
-        .values()
-        .map(|sample| {
-            keys.iter()
-                .cloned()
-                .zip(sample.values().iter())
-                .map(|(key, value)| (key, sample_value_to_string(value)))
-                .collect()
+fn join_optional_values<'a, T, I>(values: I) -> String
+where
+    I: IntoIterator<Item = &'a Option<T>>,
+    T: ToString + 'a,
+{
+    values
+        .into_iter()
+        .map(|value| match value {
+            Some(value) => value.to_string(),
+            None => ".".to_string(),
         })
-        .collect()
+        .collect::<Vec<_>>()
+        .join(",")
 }
 
 fn sample_value_to_string(value: &Option<SampleValue>) -> Option<String> {
@@ -633,44 +644,22 @@ fn sample_value_to_string(value: &Option<SampleValue>) -> Option<String> {
 
 fn sample_array_to_string(values: &variant::record_buf::samples::sample::value::Array) -> String {
     match values {
-        variant::record_buf::samples::sample::value::Array::Integer(values) => values
-            .iter()
-            .map(|value| match value {
-                Some(value) => value.to_string(),
-                None => ".".to_string(),
-            })
-            .collect::<Vec<_>>()
-            .join(","),
-        variant::record_buf::samples::sample::value::Array::Float(values) => values
-            .iter()
-            .map(|value| match value {
-                Some(value) => value.to_string(),
-                None => ".".to_string(),
-            })
-            .collect::<Vec<_>>()
-            .join(","),
-        variant::record_buf::samples::sample::value::Array::Character(values) => values
-            .iter()
-            .map(|value| match value {
-                Some(value) => value.to_string(),
-                None => ".".to_string(),
-            })
-            .collect::<Vec<_>>()
-            .join(","),
-        variant::record_buf::samples::sample::value::Array::String(values) => values
-            .iter()
-            .map(|value| match value {
-                Some(value) => value.clone(),
-                None => ".".to_string(),
-            })
-            .collect::<Vec<_>>()
-            .join(","),
+        variant::record_buf::samples::sample::value::Array::Integer(values) => {
+            join_optional_values(values.iter())
+        }
+        variant::record_buf::samples::sample::value::Array::Float(values) => {
+            join_optional_values(values.iter())
+        }
+        variant::record_buf::samples::sample::value::Array::Character(values) => {
+            join_optional_values(values.iter())
+        }
+        variant::record_buf::samples::sample::value::Array::String(values) => {
+            join_optional_values(values.iter())
+        }
     }
 }
 
-fn genotype_to_string(
-    genotype: &variant::record_buf::samples::sample::value::Genotype,
-) -> String {
+fn genotype_to_string(genotype: &variant::record_buf::samples::sample::value::Genotype) -> String {
     use variant::record::samples::series::value::genotype::Phasing;
 
     let mut rendered = String::new();
@@ -793,7 +782,9 @@ fn contig_map_to_map(map: &Map<Contig>) -> HashMap<String, String> {
     let mut result = HashMap::new();
     result.insert(
         "length".to_string(),
-        map.length().map(|length| length.to_string()).unwrap_or_default(),
+        map.length()
+            .map(|length| length.to_string())
+            .unwrap_or_default(),
     );
     result.insert("md5".to_string(), map.md5().unwrap_or_default().to_string());
     result.insert("url".to_string(), map.url().unwrap_or_default().to_string());
@@ -810,7 +801,10 @@ fn collection_to_strings(collection: &Collection) -> Vec<String> {
         Collection::Structured(map) => map
             .iter()
             .map(|(id, value)| {
-                format!("{id}:{}", other_fields_to_string(value.other_fields().iter()))
+                format!(
+                    "{id}:{}",
+                    other_fields_to_string(value.other_fields().iter())
+                )
             })
             .collect(),
     }
@@ -868,7 +862,19 @@ fn info_type_to_string(ty: vcf::header::record::value::map::info::Type) -> Strin
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::{create_temp_dir, write_sample_file};
+    use crate::{
+        test_utils::{create_temp_dir, write_sample_file},
+        utils::from_py_error,
+    };
+    use noodles_vcf::variant::{
+        record::info::field::key as InfoKey,
+        record::samples::keys::key as SampleKey,
+        record_buf::{
+            Samples,
+            info::field::value::Array as ValueArray,
+            samples::{Keys, sample::Value},
+        },
+    };
     use std::{fs, path::PathBuf};
 
     const HEADER: &[u8] = b"\
@@ -893,7 +899,8 @@ chr1\t20\trs2\tG\tT\t.\tq10\tNS=2\tGT\t1/0\t0/0
 chr2\t100\trs3\tC\tA\t.\tPASS\tNS=2\tGT\t1/1\t0/1
 ";
 
-    const TEST_VCF_LINE: &str = "chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT:GQ:DP\t0|0:21:4\t1|0:34:10";
+    const TEST_VCF_LINE: &str =
+        "chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT:GQ:DP\t0|0:21:4\t1|0:34:10";
 
     fn create_test_header() -> io::Result<vcf::Header> {
         let ns: &str = InfoKey::SAMPLES_WITH_DATA_COUNT;
@@ -908,6 +915,26 @@ chr2\t100\trs3\tC\tA\t.\tPASS\tNS=2\tGT\t1/1\t0/1
             .add_sample_name("sample1")
             .build();
         Ok(test_header_obj)
+    }
+
+    fn make_samples() -> Samples {
+        let keys: Keys = ["GT", "GQ", "DP"].into_iter().map(String::from).collect();
+
+        Samples::new(
+            keys,
+            vec![
+                vec![
+                    Some(Value::Genotype("0|0".parse().expect("valid genotype"))),
+                    Some(Value::from(21)),
+                    Some(Value::from(4)),
+                ],
+                vec![
+                    Some(Value::Genotype("1|0".parse().expect("valid genotype"))),
+                    Some(Value::from(34)),
+                    Some(Value::from(10)),
+                ],
+            ],
+        )
     }
 
     #[cfg(unix)]
@@ -958,28 +985,16 @@ esac
 
     #[test]
     fn test_info_array_to_string() {
-        let values = variant::record_buf::info::field::value::Array::Integer(vec![
-            Some(1),
-            None,
-            Some(3),
-        ]);
+        let values = ValueArray::Integer(vec![Some(1), None, Some(3)]);
         assert_eq!(info_array_to_string(&values), "1,.,3");
 
-        let values = variant::record_buf::info::field::value::Array::Float(vec![
-            Some(1.5),
-            None,
-            Some(3.2),
-        ]);
+        let values = ValueArray::Float(vec![Some(1.5), None, Some(3.2)]);
         assert_eq!(info_array_to_string(&values), "1.5,.,3.2");
-        
-        let values = variant::record_buf::info::field::value::Array::Character(vec![
-            Some('A'),
-            None,
-            Some('T'),
-        ]);
+
+        let values = ValueArray::Character(vec![Some('A'), None, Some('T')]);
         assert_eq!(info_array_to_string(&values), "A,.,T");
 
-        let values = variant::record_buf::info::field::value::Array::String(vec![
+        let values = ValueArray::String(vec![
             Some("alpha".to_string()),
             None,
             Some("gamma".to_string()),
@@ -993,7 +1008,10 @@ esac
 
         assert_eq!(info_number_to_string(InfoNumber::Count(3)), "3");
         assert_eq!(info_number_to_string(InfoNumber::AlternateBases), "A");
-        assert_eq!(info_number_to_string(InfoNumber::ReferenceAlternateBases), "R");
+        assert_eq!(
+            info_number_to_string(InfoNumber::ReferenceAlternateBases),
+            "R"
+        );
         assert_eq!(info_number_to_string(InfoNumber::Samples), "G");
         assert_eq!(info_number_to_string(InfoNumber::Unknown), ".");
     }
@@ -1002,20 +1020,30 @@ esac
     fn test_info_value_to_string() -> io::Result<()> {
         assert_eq!(info_value_to_string(None), None);
         assert_eq!(info_value_to_string(Some(&InfoFieldValue::Flag)), None);
-        assert_eq!(info_value_to_string(Some(&InfoFieldValue::Integer(1))), Some("1".to_string()));
-        assert_eq!(info_value_to_string(Some(&InfoFieldValue::Float(1.4))), Some("1.4".to_string()));
-        assert_eq!(info_value_to_string(Some(&InfoFieldValue::Character('A'))), Some("A".to_string()));
-        assert_eq!(info_value_to_string(Some(&InfoFieldValue::String("GT".to_string()))), Some("GT".to_string()));
         assert_eq!(
-            info_value_to_string(Some(&InfoFieldValue::Array(
-                variant::record_buf::info::field::value::Array::String(vec![
-                    Some("GT".to_string()),
-                    Some("GQ".to_string()),
-                    Some("DP".to_string()),
-                ])    
-            ))),    
+            info_value_to_string(Some(&InfoFieldValue::Integer(1))),
+            Some("1".to_string())
+        );
+        assert_eq!(
+            info_value_to_string(Some(&InfoFieldValue::Float(1.4))),
+            Some("1.4".to_string())
+        );
+        assert_eq!(
+            info_value_to_string(Some(&InfoFieldValue::Character('A'))),
+            Some("A".to_string())
+        );
+        assert_eq!(
+            info_value_to_string(Some(&InfoFieldValue::String("GT".to_string()))),
+            Some("GT".to_string())
+        );
+        assert_eq!(
+            info_value_to_string(Some(&InfoFieldValue::Array(ValueArray::String(vec![
+                Some("GT".to_string()),
+                Some("GQ".to_string()),
+                Some("DP".to_string()),
+            ])))),
             Some("GT,GQ,DP".to_string())
-        );    
+        );
 
         Ok(())
     }
@@ -1044,29 +1072,34 @@ esac
                 Some("DP".to_string()),
             ]),
         ));
-        assert_eq!(
-            sample_value_to_string(&array),
-            Some("GT,GQ,DP".to_string())
-        );
+        assert_eq!(sample_value_to_string(&array), Some("GT,GQ,DP".to_string()));
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_sample_value_to_string_genotype() -> io::Result<()> {
+        let genotype = Some(SampleValue::Genotype(
+            "0|1".parse().expect("expected valid genotype"),
+        ));
+
+        assert_eq!(sample_value_to_string(&genotype), Some("0|1".to_string()));
 
         Ok(())
     }
 
     #[test]
     fn test_genotype_to_string() -> io::Result<()> {
-        let unphased: variant::record_buf::samples::sample::value::Genotype = "0/1"
-            .parse()
-            .expect("expected unphased genotype");
+        let unphased: variant::record_buf::samples::sample::value::Genotype =
+            "0/1".parse().expect("expected unphased genotype");
         assert_eq!(genotype_to_string(&unphased), "0/1");
 
-        let phased: variant::record_buf::samples::sample::value::Genotype = "0|1"
-            .parse()
-            .expect("expected phased genotype");
+        let phased: variant::record_buf::samples::sample::value::Genotype =
+            "0|1".parse().expect("expected phased genotype");
         assert_eq!(genotype_to_string(&phased), "0|1");
 
-        let missing: variant::record_buf::samples::sample::value::Genotype = "./."
-            .parse()
-            .expect("expected missing genotype");
+        let missing: variant::record_buf::samples::sample::value::Genotype =
+            "./.".parse().expect("expected missing genotype");
         assert_eq!(genotype_to_string(&missing), "./.");
 
         Ok(())
@@ -1086,16 +1119,14 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 ##fileformat=VCFv4.3
 chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 ";
-        let err = parse_vcf_bytes(no_chrom_line_vcf, None)
-            .unwrap_err();
+        let err = parse_vcf_bytes(no_chrom_line_vcf, None).unwrap_err();
         assert_eq!(err.kind(), io::ErrorKind::InvalidData);
 
         let no_version_line_vcf: &[u8] = b"\
 #CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tsample0\tsample1
 chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 ";
-        let err = parse_vcf_bytes(no_version_line_vcf, None)
-            .unwrap_err();
+        let err = parse_vcf_bytes(no_version_line_vcf, None).unwrap_err();
         assert_eq!(err.kind(), io::ErrorKind::InvalidData);
 
         Ok(())
@@ -1126,14 +1157,69 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
     #[test]
     fn test_vcf_record_repr() -> io::Result<()> {
         let header = create_test_header()?;
-        let record = parse_vcf_line(TEST_VCF_LINE, &header)?
-            .expect("expected record");
+        let record = parse_vcf_line(TEST_VCF_LINE, &header)?.expect("expected record");
 
         assert_eq!(
             record.__repr__(),
-            "VCFRecord(reference_sequence_name=\"chr1\", variant_start=Some(10), ids=[\"rs1\"], reference_bases=\"A\", alternate_bases=[\"C\"], quality_score=Some(13.0))"
+            "VCFRecord(chrom=\"chr1\", pos=Some(10), id=[\"rs1\"], reference=\"A\", alt=[\"C\"], qual=Some(13.0), filter=[\"PASS\"])"
         );
 
+        Ok(())
+    }
+
+    #[test]
+    fn test_parse_vcf_line_invalid_line_bad_fields() -> io::Result<()> {
+        let header = create_test_header()?;
+
+        // Space in CHROM
+        // let err =
+        //     parse_vcf_line("chr 1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1", &header).unwrap_err();
+        // assert_eq!(err.kind(), io::ErrorKind::InvalidData);
+        let err = parse_vcf_line(
+            "chr1\tbad_pos\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1",
+            &header,
+        )
+        .unwrap_err();
+        assert_eq!(err.kind(), io::ErrorKind::InvalidData);
+
+        // Int for REF
+        // let err = parse_vcf_line("chr1\t10\trs1\t2\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1", &header)
+        //     .unwrap_err();
+        // assert_eq!(err.kind(), io::ErrorKind::InvalidData);
+
+        // Int for ALT
+        // let err =
+        //     parse_vcf_line("chr1\t10\trs1\tA\t3\t13\tPASS\tNS=2\tGT\t0/1\t1/1", &header).unwrap_err();
+        // assert_eq!(err.kind(), io::ErrorKind::InvalidData);
+
+        // string for QUAL
+        let err = parse_vcf_line(
+            "chr1\t10\trs1\tA\tC\tONE\tPASS\tNS=2\tGT\t0/1\t1/1",
+            &header,
+        )
+        .unwrap_err();
+        assert_eq!(err.kind(), io::ErrorKind::InvalidData);
+
+        // Bad Filter
+        // let err =
+        //     parse_vcf_line("chr1\t10\trs1\tA\tC\t13.5\tPA;SS\tNS=2\tGT\t0/1\t1/1", &header).unwrap_err();
+        // assert_eq!(err.kind(), io::ErrorKind::InvalidData);
+
+        // incorrectly formatted INFO
+        let err = parse_vcf_line(
+            "chr1\t10\trs1\tA\tC\t13.5\tPASS\tNS=\tGT\t0/1\t1/1",
+            &header,
+        )
+        .unwrap_err();
+        assert_eq!(err.kind(), io::ErrorKind::InvalidData);
+
+        // non-existent allele
+        let err = parse_vcf_line(
+            "chr1\t10\trs1\tA\tC\t13.5\tPASS\tNS=\tGT\t0/2\t1/1",
+            &header,
+        )
+        .unwrap_err();
+        assert_eq!(err.kind(), io::ErrorKind::InvalidData);
         Ok(())
     }
 
@@ -1192,7 +1278,10 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
             result.get("md5"),
             Some(&"d7eba311421bbc9d3ada44709dd61534".to_string())
         );
-        assert_eq!(result.get("url"), Some(&"https://example.com/chr1.fa".to_string()));
+        assert_eq!(
+            result.get("url"),
+            Some(&"https://example.com/chr1.fa".to_string())
+        );
         assert_eq!(result.get("idx"), Some(&"7".to_string()));
     }
 
@@ -1208,7 +1297,8 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         other
             .other_fields_mut()
             .insert("NOODLES".parse().expect("valid tag"), "vcf".to_string());
-        let structured = Collection::Structured([("record".to_string(), other)].into_iter().collect());
+        let structured =
+            Collection::Structured([("record".to_string(), other)].into_iter().collect());
 
         assert_eq!(
             collection_to_strings(&structured),
@@ -1253,7 +1343,10 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
                 HashMap::from([
                     ("number".to_string(), "1".to_string()),
                     ("type".to_string(), "Integer".to_string()),
-                    ("description".to_string(), "Number of samples with data".to_string()),
+                    (
+                        "description".to_string(),
+                        "Number of samples with data".to_string(),
+                    ),
                 ]),
             )]),
             filter: HashMap::from([(
@@ -1281,10 +1374,7 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
                 ]),
             )]),
             samples: vec!["sample0".to_string(), "sample1".to_string()],
-            other: HashMap::from([(
-                "fileDate".to_string(),
-                vec!["20260714".to_string()],
-            )]),
+            other: HashMap::from([("fileDate".to_string(), vec!["20260714".to_string()])]),
         };
 
         assert!(!metadata.is_empty());
@@ -1304,7 +1394,10 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         );
         assert_eq!(metadata.file_format, "VCFv4.3");
         assert_eq!(metadata.samples, vec!["sample0", "sample1"]);
-        assert_eq!(metadata.other.get("fileDate"), Some(&vec!["20260714".to_string()]));
+        assert_eq!(
+            metadata.other.get("fileDate"),
+            Some(&vec!["20260714".to_string()])
+        );
     }
 
     #[test]
@@ -1340,35 +1433,44 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
                 HashMap::from([("length".to_string(), "248956422".to_string())]),
             )]),
             samples: vec!["sample0".to_string(), "sample1".to_string()],
-            other: HashMap::from([(
-                "fileDate".to_string(),
-                vec!["20260714".to_string()],
-            )]),
+            other: HashMap::from([("fileDate".to_string(), vec!["20260714".to_string()])]),
         };
 
         Python::attach(|py| -> PyResult<()> {
             assert_eq!(
-                metadata.__getitem__(py, "file_format".to_string())?.bind(py).extract::<String>()?,
+                metadata
+                    .__getitem__(py, "file_format".to_string())?
+                    .bind(py)
+                    .extract::<String>()?,
                 "VCFv4.3"
             );
             assert_eq!(
-                metadata.__getitem__(py, "samples".to_string())?.bind(py).extract::<Vec<String>>()?,
+                metadata
+                    .__getitem__(py, "samples".to_string())?
+                    .bind(py)
+                    .extract::<Vec<String>>()?,
                 vec!["sample0".to_string(), "sample1".to_string()]
             );
             assert_eq!(
-                metadata.__getitem__(py, "other".to_string())?.bind(py).extract::<HashMap<String, Vec<String>>>()?,
-                HashMap::from([(
-                    "fileDate".to_string(),
-                    vec!["20260714".to_string()],
-                )])
+                metadata
+                    .__getitem__(py, "other".to_string())?
+                    .bind(py)
+                    .extract::<HashMap<String, Vec<String>>>()?,
+                HashMap::from([("fileDate".to_string(), vec!["20260714".to_string()],)])
             );
 
             let info = metadata
                 .__getitem__(py, "info".to_string())?
                 .bind(py)
                 .extract::<HashMap<String, HashMap<String, String>>>()?;
-            assert_eq!(info.get("NS").and_then(|v| v.get("number")), Some(&"1".to_string()));
-            assert_eq!(info.get("NS").and_then(|v| v.get("type")), Some(&"Integer".to_string()));
+            assert_eq!(
+                info.get("NS").and_then(|v| v.get("number")),
+                Some(&"1".to_string())
+            );
+            assert_eq!(
+                info.get("NS").and_then(|v| v.get("type")),
+                Some(&"Integer".to_string())
+            );
 
             Ok(())
         })
@@ -1390,12 +1492,65 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
     }
 
     #[test]
+    fn test_vcf_record_info_getter_returns_python_dict() -> io::Result<()> {
+        let header = create_test_header()?;
+        let record = parse_vcf_line(TEST_VCF_LINE, &header)?.expect("expected record");
+
+        Python::initialize();
+        Python::attach(|py| -> PyResult<()> {
+            let info: HashMap<String, Option<String>> = record.info(py)?.extract()?;
+            assert_eq!(
+                info,
+                HashMap::from([("NS".to_string(), Some("2".to_string()))])
+            );
+            Ok(())
+        })
+        .map_err(from_py_error)?;
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_vcf_record_samples_getter_returns_python_list_of_dicts() -> io::Result<()> {
+        let header = create_test_header()?;
+        let record = parse_vcf_line(TEST_VCF_LINE, &header)?.expect("expected record");
+
+        Python::initialize();
+        Python::attach(|py| -> PyResult<()> {
+            let samples: Vec<HashMap<String, Option<String>>> = record.samples(py)?.extract()?;
+
+            assert_eq!(samples.len(), 2);
+            assert_eq!(
+                samples[0],
+                HashMap::from([
+                    ("GT".to_string(), Some("0|0".to_string())),
+                    ("GQ".to_string(), Some("21".to_string())),
+                    ("DP".to_string(), Some("4".to_string())),
+                ])
+            );
+            assert_eq!(
+                samples[1],
+                HashMap::from([
+                    ("GT".to_string(), Some("1|0".to_string())),
+                    ("GQ".to_string(), Some("34".to_string())),
+                    ("DP".to_string(), Some("10".to_string())),
+                ])
+            );
+
+            Ok(())
+        })
+        .map_err(from_py_error)?;
+
+        Ok(())
+    }
+
+    #[test]
     fn test_parse_vcf_bytes() -> io::Result<()> {
         let records = parse_vcf_bytes(SAMPLE, None)?;
 
         assert_eq!(records.len(), 3);
-        assert_eq!(records[0].reference_sequence_name, "chr1");
-        assert_eq!(records[0].variant_start, Some(10));
+        assert_eq!(records[0].chrom, "chr1");
+        assert_eq!(records[0].pos, Some(10));
 
         Ok(())
     }
@@ -1407,7 +1562,10 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         let metadata = header_to_metadata(&header);
 
         assert_eq!(metadata.file_format, "VCFv4.3");
-        assert_eq!(metadata.samples, vec!["sample0".to_string(), "sample1".to_string()]);
+        assert_eq!(
+            metadata.samples,
+            vec!["sample0".to_string(), "sample1".to_string()]
+        );
         Ok(())
     }
 
@@ -1477,6 +1635,28 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         Ok(())
     }
 
+    #[cfg(unix)]
+    #[test]
+    fn test_backend_open_query_uses_tabix_with_index() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-backend-query-with-index")?;
+        let path = write_sample_file(&dir, "sample.vcf.gz", SAMPLE)?;
+        let tbi_path = PathBuf::from(format!("{}.tbi", path.display()));
+        fs::write(&tbi_path, b"")?;
+        let tabix = write_query_tabix(&dir)?;
+
+        let (backend, mode) = Backend::open(
+            &path,
+            tabix.to_str().expect("utf-8 path"),
+            ReaderMode::Query,
+        )?;
+
+        assert_eq!(mode, ReaderMode::Query);
+        assert!(matches!(backend, Backend::Tabix(_)));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
     #[test]
     fn test_sequential_backend_next_reads_and_seek_rejects() -> io::Result<()> {
         let dir = create_temp_dir("ensembl-vep-vcf-sequential-backend")?;
@@ -1497,6 +1677,20 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         Ok(())
     }
 
+    #[test]
+    fn test_backend_seek_wrapper_rejects_on_sequential_backend() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-backend-seek-wrapper")?;
+        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
+        let mut backend = Backend::Sequential(SequentialBackend::new(&path)?);
+
+        let err = backend.seek("chr1:1-10").unwrap_err();
+        assert_eq!(err.kind(), io::ErrorKind::Other);
+        assert!(err.to_string().contains("sequential"));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
     #[cfg(unix)]
     #[test]
     fn test_backend_open_auto_uses_tabix_with_index() -> io::Result<()> {
@@ -1506,7 +1700,8 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         fs::write(&tbi_path, b"")?;
         let tabix = write_query_tabix(&dir)?;
 
-        let (backend, mode) = Backend::open(&path, tabix.to_str().expect("utf-8 path"), ReaderMode::Auto)?;
+        let (backend, mode) =
+            Backend::open(&path, tabix.to_str().expect("utf-8 path"), ReaderMode::Auto)?;
 
         assert_eq!(mode, ReaderMode::Query);
         assert!(matches!(backend, Backend::Tabix(_)));
@@ -1548,10 +1743,7 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         // create new VcfParser without file path
         let mut parser = VcfParser::new(None, None, Some("sequential".to_string()))?;
 
-        assert_eq!(
-            parser.metadata()?,
-            VcfMetadata::default()
-        );
+        assert_eq!(parser.metadata()?, VcfMetadata::default());
 
         Ok(())
     }
