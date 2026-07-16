@@ -69,8 +69,8 @@ class VCFParser(Parser[VCFRecord]):
         """Metadata dictionary containing VCF directives and header lines.
 
         Returns:
-            dict: A dictionary with keys "file_format", "INFO", "FILTER", "FORMAT", "ALT", "contig", 
-                "SAMPLES" and "OTHER" 
+            dict: A dictionary with keys "file_format", "info", "filter", "format", "alt", "contig",
+                "samples" and "other"
         """
 
         return dict(self._parser.metadata)
