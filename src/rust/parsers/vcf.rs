@@ -1150,6 +1150,109 @@ esac
     }
 
     #[test]
+    fn test_sample_array_to_string() {
+        let values = variant::record_buf::samples::sample::value::Array::Integer(vec![
+            Some(1),
+            None,
+            Some(3),
+        ]);
+        assert_eq!(sample_array_to_string(&values), "1,.,3");
+
+        let values = variant::record_buf::samples::sample::value::Array::Float(vec![
+            Some(1.5),
+            None,
+            Some(3.25),
+        ]);
+        assert_eq!(sample_array_to_string(&values), "1.5,.,3.25");
+
+        let values = variant::record_buf::samples::sample::value::Array::Character(vec![
+            Some('A'),
+            None,
+            Some('Z'),
+        ]);
+        assert_eq!(sample_array_to_string(&values), "A,.,Z");
+
+        let values = variant::record_buf::samples::sample::value::Array::String(vec![
+            Some("AB".to_string()),
+            None,
+            Some("XY".to_string()),
+        ]);
+        assert_eq!(sample_array_to_string(&values), "AB,.,XY");
+    }
+
+    #[test]
+    fn test_alt_map_to_map() {
+        let map = Map::<AlternativeAllele>::new("Deletion");
+        let result = alt_map_to_map(&map);
+
+        assert_eq!(result.get("description"), Some(&"Deletion".to_string()));
+        assert_eq!(result.get("other_fields"), Some(&"".to_string()));
+    }
+
+    #[test]
+    fn test_contig_map_to_map() {
+        let mut map = Map::<Contig>::new();
+        *map.length_mut() = Some(248_956_422);
+        *map.md5_mut() = Some("d7eba311421bbc9d3ada44709dd61534".to_string());
+        *map.url_mut() = Some("https://example.com/chr1.fa".to_string());
+        *map.idx_mut() = Some(7);
+
+        let result = contig_map_to_map(&map);
+
+        assert_eq!(result.get("length"), Some(&"248956422".to_string()));
+        assert_eq!(
+            result.get("md5"),
+            Some(&"d7eba311421bbc9d3ada44709dd61534".to_string())
+        );
+        assert_eq!(
+            result.get("url"),
+            Some(&"https://example.com/chr1.fa".to_string())
+        );
+        assert_eq!(result.get("idx"), Some(&"7".to_string()));
+    }
+
+    #[test]
+    fn test_collection_to_strings() {
+        let unstructured = Collection::Unstructured(vec!["one".to_string(), "two".to_string()]);
+        assert_eq!(
+            collection_to_strings(&unstructured),
+            vec!["one".to_string(), "two".to_string()]
+        );
+
+        let mut other = Map::<noodles_vcf::header::record::value::map::Other>::new();
+        other
+            .other_fields_mut()
+            .insert("NOODLES".parse().expect("valid tag"), "vcf".to_string());
+        let structured =
+            Collection::Structured([("record".to_string(), other)].into_iter().collect());
+
+        assert_eq!(
+            collection_to_strings(&structured),
+            vec!["record:NOODLES=vcf".to_string()]
+        );
+    }
+
+    #[test]
+    fn test_format_number_to_string() {
+        use vcf::header::record::value::map::format::Number::*;
+
+        assert_eq!(format_number_to_string(Count(3)), "3");
+        assert_eq!(format_number_to_string(AlternateBases), "A");
+        assert_eq!(format_number_to_string(ReferenceAlternateBases), "R");
+        assert_eq!(format_number_to_string(Samples), "G");
+        assert_eq!(format_number_to_string(LocalAlternateBases), "LA");
+        assert_eq!(format_number_to_string(LocalReferenceAlternateBases), "LR");
+        assert_eq!(format_number_to_string(LocalSamples), "LG");
+        assert_eq!(format_number_to_string(Ploidy), "P");
+        assert_eq!(format_number_to_string(BaseModifications), "M");
+        assert_eq!(format_number_to_string(Unknown), ".");
+    }
+
+    // -----------------------------------------------------------------------
+    // Header
+    // -----------------------------------------------------------------------
+
+    #[test]
     fn test_minimal_vcf_header() -> io::Result<()> {
         let minimal_vcf: &[u8] = b"\
 ##fileformat=VCFv4.3
@@ -1299,104 +1402,9 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         Ok(())
     }
 
-    #[test]
-    fn test_sample_array_to_string() {
-        let values = variant::record_buf::samples::sample::value::Array::Integer(vec![
-            Some(1),
-            None,
-            Some(3),
-        ]);
-        assert_eq!(sample_array_to_string(&values), "1,.,3");
-
-        let values = variant::record_buf::samples::sample::value::Array::Float(vec![
-            Some(1.5),
-            None,
-            Some(3.25),
-        ]);
-        assert_eq!(sample_array_to_string(&values), "1.5,.,3.25");
-
-        let values = variant::record_buf::samples::sample::value::Array::Character(vec![
-            Some('A'),
-            None,
-            Some('Z'),
-        ]);
-        assert_eq!(sample_array_to_string(&values), "A,.,Z");
-
-        let values = variant::record_buf::samples::sample::value::Array::String(vec![
-            Some("AB".to_string()),
-            None,
-            Some("XY".to_string()),
-        ]);
-        assert_eq!(sample_array_to_string(&values), "AB,.,XY");
-    }
-
-    #[test]
-    fn test_alt_map_to_map() {
-        let map = Map::<AlternativeAllele>::new("Deletion");
-        let result = alt_map_to_map(&map);
-
-        assert_eq!(result.get("description"), Some(&"Deletion".to_string()));
-        assert_eq!(result.get("other_fields"), Some(&"".to_string()));
-    }
-
-    #[test]
-    fn test_contig_map_to_map() {
-        let mut map = Map::<Contig>::new();
-        *map.length_mut() = Some(248_956_422);
-        *map.md5_mut() = Some("d7eba311421bbc9d3ada44709dd61534".to_string());
-        *map.url_mut() = Some("https://example.com/chr1.fa".to_string());
-        *map.idx_mut() = Some(7);
-
-        let result = contig_map_to_map(&map);
-
-        assert_eq!(result.get("length"), Some(&"248956422".to_string()));
-        assert_eq!(
-            result.get("md5"),
-            Some(&"d7eba311421bbc9d3ada44709dd61534".to_string())
-        );
-        assert_eq!(
-            result.get("url"),
-            Some(&"https://example.com/chr1.fa".to_string())
-        );
-        assert_eq!(result.get("idx"), Some(&"7".to_string()));
-    }
-
-    #[test]
-    fn test_collection_to_strings() {
-        let unstructured = Collection::Unstructured(vec!["one".to_string(), "two".to_string()]);
-        assert_eq!(
-            collection_to_strings(&unstructured),
-            vec!["one".to_string(), "two".to_string()]
-        );
-
-        let mut other = Map::<noodles_vcf::header::record::value::map::Other>::new();
-        other
-            .other_fields_mut()
-            .insert("NOODLES".parse().expect("valid tag"), "vcf".to_string());
-        let structured =
-            Collection::Structured([("record".to_string(), other)].into_iter().collect());
-
-        assert_eq!(
-            collection_to_strings(&structured),
-            vec!["record:NOODLES=vcf".to_string()]
-        );
-    }
-
-    #[test]
-    fn test_format_number_to_string() {
-        use vcf::header::record::value::map::format::Number::*;
-
-        assert_eq!(format_number_to_string(Count(3)), "3");
-        assert_eq!(format_number_to_string(AlternateBases), "A");
-        assert_eq!(format_number_to_string(ReferenceAlternateBases), "R");
-        assert_eq!(format_number_to_string(Samples), "G");
-        assert_eq!(format_number_to_string(LocalAlternateBases), "LA");
-        assert_eq!(format_number_to_string(LocalReferenceAlternateBases), "LR");
-        assert_eq!(format_number_to_string(LocalSamples), "LG");
-        assert_eq!(format_number_to_string(Ploidy), "P");
-        assert_eq!(format_number_to_string(BaseModifications), "M");
-        assert_eq!(format_number_to_string(Unknown), ".");
-    }
+    // -----------------------------------------------------------------------
+    // VcfMetadata
+    // -----------------------------------------------------------------------
 
     #[test]
     fn test_vcf_metadata_default_is_empty() {
@@ -1566,6 +1574,24 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
     }
 
     #[test]
+    fn test_header_to_metadata() -> io::Result<()> {
+        let mut reader = vcf::io::Reader::new(HEADER);
+        let header = reader.read_header()?;
+        let metadata = header_to_metadata(&header);
+
+        assert_eq!(metadata.file_format, "VCFv4.3");
+        assert_eq!(
+            metadata.samples,
+            vec!["sample0".to_string(), "sample1".to_string()]
+        );
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // VcfRecord
+    // -----------------------------------------------------------------------
+
+    #[test]
     fn test_vcf_record_info_getter_returns_python_dict() -> io::Result<()> {
         let header = create_test_header()?;
         let record = parse_vcf_line(TEST_VCF_LINE, &header)?.expect("expected record");
@@ -1645,6 +1671,10 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 
         Ok(())
     }
+
+    // -----------------------------------------------------------------------
+    // VcfReader
+    // -----------------------------------------------------------------------
 
     #[test]
     fn test_vcf_reader_sequential_reads_records_and_metadata() -> io::Result<()> {
