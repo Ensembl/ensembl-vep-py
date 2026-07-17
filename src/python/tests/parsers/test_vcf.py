@@ -219,7 +219,9 @@ class TestVCFParserMetadata:
         assert parser.open(second_path) is parser
         assert parser.metadata["file_format"] == "VCFv4.5"
 
-    def test_metadata_returns_empty_dictionary_after_close(self, tmp_path: Path, sample_metadata: dict) -> None:
+    def test_metadata_returns_empty_dictionary_after_close(
+        self, tmp_path: Path, sample_metadata: dict
+    ) -> None:
         """Test metadata is empty when the parser is closed."""
 
         path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
