@@ -1115,19 +1115,56 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         let records = parse_vcf_bytes(minimal_vcf, None);
         assert_eq!(records?.len(), 1);
 
+        let no_header_lines_vcf: &[u8] = b"\
+chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
+";
+        let err = parse_vcf_bytes(no_header_lines_vcf, None).unwrap_err();
+        assert_eq!(err.kind(), io::ErrorKind::InvalidData);
+        assert!(
+            err.to_string().contains("empty input"),
+            "unexpected error: {}",
+            err
+        );
+
+        let no_format_line_vcf: &[u8] = b"\
+##FILTER=<ID=q10,Description=\"Quality below 10\">
+chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
+";
+        let err = parse_vcf_bytes(no_format_line_vcf, None).unwrap_err();
+        assert_eq!(err.kind(), io::ErrorKind::InvalidData);
+        // println!("{}", err.to_string());
+        assert!(
+            err.to_string().contains("missing fileformat"),
+            "unexpected error: {}",
+            err
+        );
+
         let no_chrom_line_vcf: &[u8] = b"\
 ##fileformat=VCFv4.3
 chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 ";
         let err = parse_vcf_bytes(no_chrom_line_vcf, None).unwrap_err();
         assert_eq!(err.kind(), io::ErrorKind::InvalidData);
+        assert!(
+            err.to_string().contains("missing header"),
+            "unexpected error: {}",
+            err
+        );
 
         let no_version_line_vcf: &[u8] = b"\
 #CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tsample0\tsample1
 chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 ";
-        let err = parse_vcf_bytes(no_version_line_vcf, None).unwrap_err();
+        // let err = parse_vcf_bytes(no_version_line_vcf, None).unwrap_err();
+        let mut reader = vcf::io::Reader::new(no_version_line_vcf);
+        let err = reader.read_header().unwrap_err();
+        println!("{}", err.to_string());
         assert_eq!(err.kind(), io::ErrorKind::InvalidData);
+        assert!(
+            err.to_string().contains("invalid record"),
+            "unexpected error: {}",
+            err
+        );
 
         Ok(())
     }
@@ -1402,8 +1439,6 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 
     #[test]
     fn test_vcf_metadata_getitem_returns_top_level_values() -> io::Result<()> {
-        Python::initialize();
-
         let metadata = VcfMetadata {
             file_format: "VCFv4.3".to_string(),
             info: HashMap::from([(
@@ -1411,31 +1446,32 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
                 HashMap::from([
                     ("number".to_string(), "1".to_string()),
                     ("type".to_string(), "Integer".to_string()),
-                ]),
-            )]),
-            filter: HashMap::from([(
-                "q10".to_string(),
-                HashMap::from([("description".to_string(), "Quality below 10".to_string())]),
-            )]),
-            format: HashMap::from([(
-                "GT".to_string(),
-                HashMap::from([
-                    ("number".to_string(), "1".to_string()),
-                    ("type".to_string(), "String".to_string()),
-                ]),
-            )]),
-            alt: HashMap::from([(
-                "DEL".to_string(),
-                HashMap::from([("description".to_string(), "Deletion".to_string())]),
-            )]),
-            contig: HashMap::from([(
-                "chr1".to_string(),
-                HashMap::from([("length".to_string(), "248956422".to_string())]),
-            )]),
-            samples: vec!["sample0".to_string(), "sample1".to_string()],
-            other: HashMap::from([("fileDate".to_string(), vec!["20260714".to_string()])]),
-        };
-
+                    ]),
+                )]),
+                filter: HashMap::from([(
+                    "q10".to_string(),
+                    HashMap::from([("description".to_string(), "Quality below 10".to_string())]),
+                )]),
+                format: HashMap::from([(
+                    "GT".to_string(),
+                    HashMap::from([
+                        ("number".to_string(), "1".to_string()),
+                        ("type".to_string(), "String".to_string()),
+                        ]),
+                    )]),
+                    alt: HashMap::from([(
+                        "DEL".to_string(),
+                        HashMap::from([("description".to_string(), "Deletion".to_string())]),
+                    )]),
+                    contig: HashMap::from([(
+                        "chr1".to_string(),
+                        HashMap::from([("length".to_string(), "248956422".to_string())]),
+                    )]),
+                    samples: vec!["sample0".to_string(), "sample1".to_string()],
+                    other: HashMap::from([("fileDate".to_string(), vec!["20260714".to_string()])]),
+                };
+                
+        Python::initialize();
         Python::attach(|py| -> PyResult<()> {
             assert_eq!(
                 metadata
@@ -1481,10 +1517,9 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 
     #[test]
     fn test_vcf_metadata_getitem_unknown_key_errors() {
-        Python::initialize();
-
         let metadata = VcfMetadata::default();
-
+        
+        Python::initialize();
         Python::attach(|py| {
             let err = metadata.__getitem__(py, "missing".to_string()).unwrap_err();
             assert!(err.to_string().contains("unknown VCF metadata key"));
