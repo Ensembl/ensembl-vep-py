@@ -247,7 +247,7 @@ impl VcfReader {
 // ---------------------------------------------------------------------------
 
 enum Backend {
-    Sequential(SequentialBackend),
+    Sequential(Box<SequentialBackend>),
     Tabix(Box<TabixBackend>),
 }
 
@@ -265,10 +265,12 @@ impl Backend {
                         .map(|backend| (Self::Tabix(backend), ReaderMode::Query))
                 } else {
                     SequentialBackend::new(file_path)
+                        .map(Box::new)
                         .map(|backend| (Self::Sequential(backend), ReaderMode::Sequential))
                 }
             }
             ReaderMode::Sequential => SequentialBackend::new(file_path)
+                .map(Box::new)
                 .map(|backend| (Self::Sequential(backend), ReaderMode::Sequential)),
             ReaderMode::Query => {
                 if has_tabix_index(file_path) {
@@ -1788,7 +1790,7 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
     fn test_backend_seek_wrapper_rejects_on_sequential_backend() -> io::Result<()> {
         let dir = create_temp_dir("ensembl-vep-vcf-backend-seek-wrapper")?;
         let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
-        let mut backend = Backend::Sequential(SequentialBackend::new(&path)?);
+        let mut backend = Backend::Sequential(Box::new(SequentialBackend::new(&path)?));
 
         let err = backend.seek("chr1:1-10").unwrap_err();
         assert_eq!(err.kind(), io::ErrorKind::Other);
