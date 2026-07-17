@@ -14,6 +14,7 @@
 // limitations under the License.
 
 pub mod gff3;
+pub mod gtf;
 pub mod tabix;
 #[cfg(test)]
 pub(crate) mod test_utils;

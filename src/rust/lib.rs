@@ -43,4 +43,5 @@ mod ensembl_vep_core {
 
     #[pymodule_export]
     use crate::parsers::vcf::{VcfMetadata, VcfParser, VcfRecord};
+    use crate::parsers::gtf::{GtfParser, GtfRecord};
 }

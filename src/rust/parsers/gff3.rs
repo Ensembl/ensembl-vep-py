@@ -1138,6 +1138,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
             .expect("expected first record");
         assert_first_sample_record(&first);
 
+        Python::initialize();
         Python::attach(|py| -> PyResult<()> {
             let metadata = parser.metadata(py)?;
             assert_eq!(
@@ -1177,6 +1178,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
         assert_eq!(parser.reader_mode(), "query");
 
+        Python::initialize();
         Python::attach(|py| -> PyResult<()> {
             let metadata = parser.metadata(py)?;
             let header: Vec<String> = metadata
