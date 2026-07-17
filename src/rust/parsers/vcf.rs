@@ -497,15 +497,16 @@ impl VcfParser {
     #[staticmethod]
     #[pyo3(signature = (data, limit=None))]
     fn parse_text(data: &str, limit: Option<usize>) -> PyResult<Vec<VcfRecord>> {
-        parse_vcf_bytes(data.as_bytes(), limit).map_err(to_py_error)
+        let header = get_header(data.as_bytes()).map_err(to_py_error)?;
+        parse_vcf_bytes(data.as_bytes(), &header, limit).map_err(to_py_error)
     }
 
     #[staticmethod]
     #[pyo3(signature = (file_path, limit=None))]
     fn parse_file(file_path: &str, limit: Option<usize>) -> PyResult<Vec<VcfRecord>> {
-        let mut reader = open_sequential_vcf_reader(Path::new(file_path)).map_err(to_py_error)?;
-        let header = reader.read_header().map_err(to_py_error)?;
-        read_records(&mut reader, &header, limit).map_err(to_py_error)
+        let data = std::fs::read(file_path).map_err(to_py_error)?;
+        let header = get_header(&data).map_err(to_py_error)?;
+        parse_vcf_bytes(&data, &header, limit).map_err(to_py_error)
     }
 }
 
@@ -526,6 +527,37 @@ fn open_sequential_vcf_reader(
 ) -> io::Result<vcf::io::Reader<Box<dyn BufRead + Send + Sync>>> {
     let reader = open_sequential_reader(file_path)?;
     Ok(vcf::io::Reader::new(reader))
+}
+
+fn get_header(data: &[u8]) -> io::Result<vcf::Header> {
+    if has_header_prefix(data) {
+        let mut reader = vcf::io::Reader::new(data);
+        reader.read_header()
+    } else {
+        Ok(header_from_first_data_line(data))
+    }
+}
+
+fn has_header_prefix(data: &[u8]) -> bool {
+    data.first() == Some(&b'#')
+}
+
+fn header_from_first_data_line(data: &[u8]) -> vcf::Header {
+    let mut header = vcf::Header::default();
+    let first_line = data.split(|byte| *byte == b'\n').next().unwrap_or(&[]);
+    let sample_count = first_line
+        .iter()
+        .filter(|byte| **byte == b'\t')
+        .count()
+        .saturating_sub(8);
+
+    for sample_index in 0..sample_count {
+        header
+            .sample_names_mut()
+            .insert(format!("sample{sample_index}"));
+    }
+
+    header
 }
 
 fn read_next_record<R>(
@@ -563,17 +595,24 @@ where
     Ok(records)
 }
 
-fn parse_vcf_bytes(data: &[u8], limit: Option<usize>) -> io::Result<Vec<VcfRecord>> {
+fn parse_vcf_bytes(
+    data: &[u8],
+    header: &vcf::Header,
+    limit: Option<usize>,
+) -> io::Result<Vec<VcfRecord>> {
     let mut reader = vcf::io::Reader::new(data);
-    let header = reader.read_header()?;
-    read_records(&mut reader, &header, limit)
+    if has_header_prefix(data) {
+        let _ = reader.read_header()?;
+    }
+    return read_records(&mut reader, header, limit);
 }
 
 fn parse_vcf_line(line: &str, header: &vcf::Header) -> io::Result<Option<VcfRecord>> {
-    let record = vcf::Record::try_from(line.as_bytes())?;
-    let record = variant::RecordBuf::try_from_variant_record(header, &record)?;
-    let py_record = record_to_py(record)?;
-    Ok(Some(py_record))
+    let mut data = Vec::with_capacity(line.len() + 1);
+    data.extend_from_slice(line.as_bytes());
+    data.push(b'\n');
+
+    Ok(parse_vcf_bytes(&data, header, Some(1))?.pop())
 }
 
 fn record_to_py(record: variant::RecordBuf) -> io::Result<VcfRecord> {
@@ -898,6 +937,11 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 chr1\t20\trs2\tG\tT\t.\tq10\tNS=2\tGT\t1/0\t0/0
 chr2\t100\trs3\tC\tA\t.\tPASS\tNS=2\tGT\t1/1\t0/1
 ";
+    const NO_HEADER_SAMPLE: &[u8] = b"\
+chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
+chr1\t20\trs2\tG\tT\t.\tq10\tNS=2\tGT\t1/0\t0/0
+chr2\t100\trs3\tC\tA\t.\tPASS\tNS=2\tGT\t1/1\t0/1
+";
 
     const TEST_VCF_LINE: &str =
         "chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT:GQ:DP\t0|0:21:4\t1|0:34:10";
@@ -1112,25 +1156,23 @@ esac
 #CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tsample0\tsample1
 chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 ";
-        let records = parse_vcf_bytes(minimal_vcf, None);
+        let header = get_header(minimal_vcf)?;
+        let records = parse_vcf_bytes(minimal_vcf, &header, None);
         assert_eq!(records?.len(), 1);
 
         let no_header_lines_vcf: &[u8] = b"\
 chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 ";
-        let err = parse_vcf_bytes(no_header_lines_vcf, None).unwrap_err();
-        assert_eq!(err.kind(), io::ErrorKind::InvalidData);
-        assert!(
-            err.to_string().contains("empty input"),
-            "unexpected error: {}",
-            err
-        );
+        let header = get_header(no_header_lines_vcf)?;
+        let records = parse_vcf_bytes(no_header_lines_vcf, &header, None)?;
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].chrom, "chr1");
 
         let no_format_line_vcf: &[u8] = b"\
 ##FILTER=<ID=q10,Description=\"Quality below 10\">
 chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 ";
-        let err = parse_vcf_bytes(no_format_line_vcf, None).unwrap_err();
+        let err = get_header(no_format_line_vcf).unwrap_err();
         assert_eq!(err.kind(), io::ErrorKind::InvalidData);
         // println!("{}", err.to_string());
         assert!(
@@ -1143,7 +1185,7 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 ##fileformat=VCFv4.3
 chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 ";
-        let err = parse_vcf_bytes(no_chrom_line_vcf, None).unwrap_err();
+        let err = get_header(no_chrom_line_vcf).unwrap_err();
         assert_eq!(err.kind(), io::ErrorKind::InvalidData);
         assert!(
             err.to_string().contains("missing header"),
@@ -1155,10 +1197,7 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 #CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tsample0\tsample1
 chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 ";
-        // let err = parse_vcf_bytes(no_version_line_vcf, None).unwrap_err();
-        let mut reader = vcf::io::Reader::new(no_version_line_vcf);
-        let err = reader.read_header().unwrap_err();
-        println!("{}", err.to_string());
+        let err = get_header(no_version_line_vcf).unwrap_err();
         assert_eq!(err.kind(), io::ErrorKind::InvalidData);
         assert!(
             err.to_string().contains("invalid record"),
@@ -1579,9 +1618,14 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         Ok(())
     }
 
+    // -----------------------------------------------------------------------
+    // parse_vcf_bytes
+    // -----------------------------------------------------------------------
+
     #[test]
     fn test_parse_vcf_bytes() -> io::Result<()> {
-        let records = parse_vcf_bytes(SAMPLE, None)?;
+        let header = get_header(SAMPLE)?;
+        let records = parse_vcf_bytes(SAMPLE, &header, None)?;
 
         assert_eq!(records.len(), 3);
         assert_eq!(records[0].chrom, "chr1");
@@ -1591,16 +1635,14 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
     }
 
     #[test]
-    fn test_header_to_metadata() -> io::Result<()> {
-        let mut reader = vcf::io::Reader::new(HEADER);
-        let header = reader.read_header()?;
-        let metadata = header_to_metadata(&header);
+    fn test_parse_vcf_bytes_without_header() -> io::Result<()> {
+        let header = get_header(NO_HEADER_SAMPLE)?;
+        let records = parse_vcf_bytes(NO_HEADER_SAMPLE, &header, None)?;
 
-        assert_eq!(metadata.file_format, "VCFv4.3");
-        assert_eq!(
-            metadata.samples,
-            vec!["sample0".to_string(), "sample1".to_string()]
-        );
+        assert_eq!(records.len(), 3);
+        assert_eq!(records[0].chrom, "chr1");
+        assert_eq!(records[1].pos, Some(20));
+
         Ok(())
     }
 
@@ -1799,6 +1841,21 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
     }
 
     #[test]
+    fn test_vcf_parser_parse_text_without_header_returns_records() -> io::Result<()> {
+        let records = VcfParser::parse_text(
+            std::str::from_utf8(NO_HEADER_SAMPLE).expect("sample should be valid UTF-8"),
+            None,
+        )?;
+
+        assert_eq!(records.len(), 3);
+        assert_eq!(records[0].chrom, "chr1");
+        assert_eq!(records[1].pos, Some(20));
+        assert_eq!(records[2].chrom, "chr2");
+
+        Ok(())
+    }
+
+    #[test]
     fn test_vcf_parser_parse_text_respects_limit() -> io::Result<()> {
         let records = VcfParser::parse_text(
             std::str::from_utf8(SAMPLE).expect("sample should be valid UTF-8"),
@@ -1816,6 +1873,22 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
     fn test_vcf_parser_parse_file_returns_records() -> io::Result<()> {
         let dir = create_temp_dir("ensembl-vep-vcf-parse-file")?;
         let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
+
+        let records = VcfParser::parse_file(path.to_str().expect("utf-8 path"), None)?;
+
+        assert_eq!(records.len(), 3);
+        assert_eq!(records[0].chrom, "chr1");
+        assert_eq!(records[1].pos, Some(20));
+        assert_eq!(records[2].chrom, "chr2");
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_vcf_parser_parse_file_without_header_returns_records() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-parse-file-no-header")?;
+        let path = write_sample_file(&dir, "sample.vcf", NO_HEADER_SAMPLE)?;
 
         let records = VcfParser::parse_file(path.to_str().expect("utf-8 path"), None)?;
 
