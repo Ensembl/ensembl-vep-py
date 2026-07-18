@@ -1774,8 +1774,8 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 
         let record = backend.next()?.expect("expected record");
         assert_eq!(record.chrom, "chr1");
-        assert_eq!(backend.next()?.is_some(), true);
-        assert_eq!(backend.next()?.is_some(), true);
+        assert!(backend.next()?.is_some());
+        assert!(backend.next()?.is_some());
         assert_eq!(backend.next()?, None);
 
         let err = backend.seek("chr1:1-10").unwrap_err();
