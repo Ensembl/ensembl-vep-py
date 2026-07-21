@@ -557,10 +557,7 @@ where
     Ok(records)
 }
 
-fn parse_vcf_bytes(
-    data: &[u8],
-    limit: Option<usize>,
-) -> io::Result<Vec<VcfRecord>> {
+fn parse_vcf_bytes(data: &[u8], limit: Option<usize>) -> io::Result<Vec<VcfRecord>> {
     let (mut reader, header) = get_header_from_bytes(data)?;
     read_records(&mut reader, &header, limit)
 }
