@@ -30,6 +30,8 @@ use noodles_vcf::{
         self,
         record_buf::{
             info::field::Value as InfoFieldValue, info::field::value::Array as ValueArray,
+            samples::sample::value::Array as SampleArray,
+            samples::sample::value::Genotype as SampleGenotype,
             samples::sample::value::Value as SampleValue,
         },
     },
@@ -680,21 +682,6 @@ fn info_array_to_string(values: &ValueArray) -> String {
     }
 }
 
-fn join_optional_values<'a, T, I>(values: I) -> String
-where
-    I: IntoIterator<Item = &'a Option<T>>,
-    T: ToString + 'a,
-{
-    values
-        .into_iter()
-        .map(|value| match value {
-            Some(value) => value.to_string(),
-            None => ".".to_string(),
-        })
-        .collect::<Vec<_>>()
-        .join(",")
-}
-
 fn sample_value_to_string(value: &Option<SampleValue>) -> Option<String> {
     match value {
         None => None,
@@ -707,24 +694,16 @@ fn sample_value_to_string(value: &Option<SampleValue>) -> Option<String> {
     }
 }
 
-fn sample_array_to_string(values: &variant::record_buf::samples::sample::value::Array) -> String {
+fn sample_array_to_string(values: &SampleArray) -> String {
     match values {
-        variant::record_buf::samples::sample::value::Array::Integer(values) => {
-            join_optional_values(values.iter())
-        }
-        variant::record_buf::samples::sample::value::Array::Float(values) => {
-            join_optional_values(values.iter())
-        }
-        variant::record_buf::samples::sample::value::Array::Character(values) => {
-            join_optional_values(values.iter())
-        }
-        variant::record_buf::samples::sample::value::Array::String(values) => {
-            join_optional_values(values.iter())
-        }
+        SampleArray::Integer(values) => join_optional_values(values.iter()),
+        SampleArray::Float(values) => join_optional_values(values.iter()),
+        SampleArray::Character(values) => join_optional_values(values.iter()),
+        SampleArray::String(values) => join_optional_values(values.iter()),
     }
 }
 
-fn genotype_to_string(genotype: &variant::record_buf::samples::sample::value::Genotype) -> String {
+fn genotype_to_string(genotype: &SampleGenotype) -> String {
     use variant::record::samples::series::value::genotype::Phasing;
 
     let mut rendered = String::new();
@@ -745,6 +724,25 @@ fn genotype_to_string(genotype: &variant::record_buf::samples::sample::value::Ge
 
     rendered
 }
+
+fn join_optional_values<'a, T, I>(values: I) -> String
+where
+    I: IntoIterator<Item = &'a Option<T>>,
+    T: ToString + 'a,
+{
+    values
+        .into_iter()
+        .map(|value| match value {
+            Some(value) => value.to_string(),
+            None => ".".to_string(),
+        })
+        .collect::<Vec<_>>()
+        .join(",")
+}
+
+// ---------------------------------------------------------------------------
+// Helpers: VCF metadata conversion
+// ---------------------------------------------------------------------------
 
 fn header_to_metadata(header: &vcf::Header) -> VcfMetadata {
     VcfMetadata {
@@ -790,7 +788,7 @@ fn file_format_to_string(file_format: FileFormat) -> String {
 fn info_map_to_map(map: &Map<Info>) -> HashMap<String, String> {
     let mut result = HashMap::new();
     result.insert("number".to_string(), info_number_to_string(map.number()));
-    result.insert("type".to_string(), info_type_to_string(map.ty()));
+    result.insert("type".to_string(), map.ty().to_string());
     result.insert("description".to_string(), map.description().to_string());
     result.insert(
         "idx".to_string(),
@@ -820,7 +818,7 @@ fn filter_map_to_map(map: &Map<Filter>) -> HashMap<String, String> {
 fn format_map_to_map(map: &Map<Format>) -> HashMap<String, String> {
     let mut result = HashMap::new();
     result.insert("number".to_string(), format_number_to_string(map.number()));
-    result.insert("type".to_string(), format_type_to_string(map.ty()));
+    result.insert("type".to_string(), map.ty().to_string());
     result.insert("description".to_string(), map.description().to_string());
     result.insert(
         "idx".to_string(),
@@ -916,14 +914,6 @@ fn format_number_to_string(number: vcf::header::record::value::map::format::Numb
     }
 }
 
-fn format_type_to_string(ty: vcf::header::record::value::map::format::Type) -> String {
-    ty.to_string()
-}
-
-fn info_type_to_string(ty: vcf::header::record::value::map::info::Type) -> String {
-    ty.to_string()
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -969,7 +959,7 @@ chr1\t20\trs2\tG\tT\t.\tq10\tNS=2\tGT\t1/0\t0/0
 chr2\t100\trs3\tC\tA\t.\tPASS\tNS=2\tGT\t1/1\t0/1
 ";
 
-    const TEST_VCF_LINE: &str =
+    const SAMPLE_VCF_LINE: &str =
         "chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT:GQ:DP\t0|0:21:4\t1|0:34:10";
 
     fn create_test_header() -> io::Result<vcf::Header> {
@@ -1054,22 +1044,19 @@ esac
     // -----------------------------------------------------------------------
 
     #[test]
-    fn test_info_array_to_string() {
-        let values = ValueArray::Integer(vec![Some(1), None, Some(3)]);
-        assert_eq!(info_array_to_string(&values), "1,.,3");
+    fn test_format_number_to_string() {
+        use vcf::header::record::value::map::format::Number::*;
 
-        let values = ValueArray::Float(vec![Some(1.5), None, Some(3.2)]);
-        assert_eq!(info_array_to_string(&values), "1.5,.,3.2");
-
-        let values = ValueArray::Character(vec![Some('A'), None, Some('T')]);
-        assert_eq!(info_array_to_string(&values), "A,.,T");
-
-        let values = ValueArray::String(vec![
-            Some("alpha".to_string()),
-            None,
-            Some("gamma".to_string()),
-        ]);
-        assert_eq!(info_array_to_string(&values), "alpha,.,gamma");
+        assert_eq!(format_number_to_string(Count(3)), "3");
+        assert_eq!(format_number_to_string(AlternateBases), "A");
+        assert_eq!(format_number_to_string(ReferenceAlternateBases), "R");
+        assert_eq!(format_number_to_string(Samples), "G");
+        assert_eq!(format_number_to_string(LocalAlternateBases), "LA");
+        assert_eq!(format_number_to_string(LocalReferenceAlternateBases), "LR");
+        assert_eq!(format_number_to_string(LocalSamples), "LG");
+        assert_eq!(format_number_to_string(Ploidy), "P");
+        assert_eq!(format_number_to_string(BaseModifications), "M");
+        assert_eq!(format_number_to_string(Unknown), ".");
     }
 
     #[test]
@@ -1087,91 +1074,108 @@ esac
     }
 
     #[test]
-    fn test_info_value_to_string() -> io::Result<()> {
-        assert_eq!(info_value_to_string(None), None);
-        assert_eq!(info_value_to_string(Some(&InfoFieldValue::Flag)), None);
+    fn test_collection_to_strings() {
+        let unstructured = Collection::Unstructured(vec!["one".to_string(), "two".to_string()]);
         assert_eq!(
-            info_value_to_string(Some(&InfoFieldValue::Integer(1))),
-            Some("1".to_string())
-        );
-        assert_eq!(
-            info_value_to_string(Some(&InfoFieldValue::Float(1.4))),
-            Some("1.4".to_string())
-        );
-        assert_eq!(
-            info_value_to_string(Some(&InfoFieldValue::Character('A'))),
-            Some("A".to_string())
-        );
-        assert_eq!(
-            info_value_to_string(Some(&InfoFieldValue::String("GT".to_string()))),
-            Some("GT".to_string())
-        );
-        assert_eq!(
-            info_value_to_string(Some(&InfoFieldValue::Array(ValueArray::String(vec![
-                Some("GT".to_string()),
-                Some("GQ".to_string()),
-                Some("DP".to_string()),
-            ])))),
-            Some("GT,GQ,DP".to_string())
+            collection_to_strings(&unstructured),
+            vec!["one".to_string(), "two".to_string()]
         );
 
-        Ok(())
+        let mut other = Map::<noodles_vcf::header::record::value::map::Other>::new();
+        other
+            .other_fields_mut()
+            .insert("NOODLES".parse().expect("valid tag"), "vcf".to_string());
+        let structured =
+            Collection::Structured([("record".to_string(), other)].into_iter().collect());
+
+        assert_eq!(
+            collection_to_strings(&structured),
+            vec!["record:NOODLES=vcf".to_string()]
+        );
     }
 
     #[test]
-    fn test_sample_value_to_string() -> io::Result<()> {
-        let none: Option<SampleValue> = None;
-        assert_eq!(sample_value_to_string(&none), None);
+    fn test_contig_map_to_map() {
+        let mut map = Map::<Contig>::new();
+        *map.length_mut() = Some(248_956_422);
+        *map.md5_mut() = Some("d7eba311421bbc9d3ada44709dd61534".to_string());
+        *map.url_mut() = Some("https://example.com/chr1.fa".to_string());
+        *map.idx_mut() = Some(7);
 
-        let integer = Some(SampleValue::Integer(1));
-        assert_eq!(sample_value_to_string(&integer), Some("1".to_string()));
+        let result = contig_map_to_map(&map);
 
-        let float = Some(SampleValue::Float(1.4));
-        assert_eq!(sample_value_to_string(&float), Some("1.4".to_string()));
-
-        let character = Some(SampleValue::Character('A'));
-        assert_eq!(sample_value_to_string(&character), Some("A".to_string()));
-
-        let string = Some(SampleValue::String("GT".to_string()));
-        assert_eq!(sample_value_to_string(&string), Some("GT".to_string()));
-
-        let array = Some(SampleValue::Array(
-            variant::record_buf::samples::sample::value::Array::String(vec![
-                Some("GT".to_string()),
-                Some("GQ".to_string()),
-                Some("DP".to_string()),
-            ]),
-        ));
-        assert_eq!(sample_value_to_string(&array), Some("GT,GQ,DP".to_string()));
-
-        Ok(())
+        assert_eq!(result.get("length"), Some(&"248956422".to_string()));
+        assert_eq!(
+            result.get("md5"),
+            Some(&"d7eba311421bbc9d3ada44709dd61534".to_string())
+        );
+        assert_eq!(
+            result.get("url"),
+            Some(&"https://example.com/chr1.fa".to_string())
+        );
+        assert_eq!(result.get("idx"), Some(&"7".to_string()));
     }
 
     #[test]
-    fn test_sample_value_to_string_genotype() -> io::Result<()> {
-        let genotype = Some(SampleValue::Genotype(
-            "0|1".parse().expect("expected valid genotype"),
-        ));
+    fn test_alt_map_to_map() {
+        let map = Map::<AlternativeAllele>::new("Deletion");
+        let result = alt_map_to_map(&map);
 
-        assert_eq!(sample_value_to_string(&genotype), Some("0|1".to_string()));
-
-        Ok(())
+        assert_eq!(result.get("description"), Some(&"Deletion".to_string()));
+        assert_eq!(result.get("other_fields"), Some(&"".to_string()));
     }
 
     #[test]
-    fn test_genotype_to_string() -> io::Result<()> {
-        let unphased: variant::record_buf::samples::sample::value::Genotype =
-            "0/1".parse().expect("expected unphased genotype");
-        assert_eq!(genotype_to_string(&unphased), "0/1");
+    fn test_header_to_metadata() -> io::Result<()> {
+        let mut reader = vcf::io::Reader::new(HEADER);
+        let header = reader.read_header()?;
+        let metadata = header_to_metadata(&header);
 
-        let phased: variant::record_buf::samples::sample::value::Genotype =
-            "0|1".parse().expect("expected phased genotype");
-        assert_eq!(genotype_to_string(&phased), "0|1");
-
-        let missing: variant::record_buf::samples::sample::value::Genotype =
-            "./.".parse().expect("expected missing genotype");
-        assert_eq!(genotype_to_string(&missing), "./.");
-
+        assert_eq!(metadata.file_format, "VCFv4.3");
+        assert_eq!(
+            metadata.info,
+            HashMap::from([(
+                "NS".to_string(),
+                HashMap::from([
+                    ("number".to_string(), "1".to_string()),
+                    ("type".to_string(), "Integer".to_string()),
+                    (
+                        "description".to_string(),
+                        "Number of samples with data".to_string()
+                    ),
+                    ("idx".to_string(), "".to_string()),
+                    ("other_fields".to_string(), "".to_string()),
+                ])
+            ),])
+        );
+        assert_eq!(
+            metadata.filter,
+            HashMap::from([(
+                "q10".to_string(),
+                HashMap::from([
+                    ("description".to_string(), "Quality below 10".to_string()),
+                    ("idx".to_string(), "".to_string()),
+                    ("other_fields".to_string(), "".to_string()),
+                ])
+            ),])
+        );
+        assert_eq!(
+            metadata.format,
+            HashMap::from([(
+                "GT".to_string(),
+                HashMap::from([
+                    ("number".to_string(), "1".to_string()),
+                    ("type".to_string(), "String".to_string()),
+                    ("description".to_string(), "Genotype".to_string()),
+                    ("idx".to_string(), "".to_string()),
+                    ("other_fields".to_string(), "".to_string()),
+                ])
+            ),])
+        );
+        assert_eq!(
+            metadata.samples,
+            vec!["sample0".to_string(), "sample1".to_string()]
+        );
         Ok(())
     }
 
@@ -1207,71 +1211,102 @@ esac
     }
 
     #[test]
-    fn test_alt_map_to_map() {
-        let map = Map::<AlternativeAllele>::new("Deletion");
-        let result = alt_map_to_map(&map);
+    fn test_genotype_to_string() -> io::Result<()> {
+        let unphased: variant::record_buf::samples::sample::value::Genotype =
+            "0/1".parse().expect("expected unphased genotype");
+        assert_eq!(genotype_to_string(&unphased), "0/1");
 
-        assert_eq!(result.get("description"), Some(&"Deletion".to_string()));
-        assert_eq!(result.get("other_fields"), Some(&"".to_string()));
+        let phased: variant::record_buf::samples::sample::value::Genotype =
+            "0|1".parse().expect("expected phased genotype");
+        assert_eq!(genotype_to_string(&phased), "0|1");
+
+        let missing: variant::record_buf::samples::sample::value::Genotype =
+            "./.".parse().expect("expected missing genotype");
+        assert_eq!(genotype_to_string(&missing), "./.");
+
+        Ok(())
     }
 
     #[test]
-    fn test_contig_map_to_map() {
-        let mut map = Map::<Contig>::new();
-        *map.length_mut() = Some(248_956_422);
-        *map.md5_mut() = Some("d7eba311421bbc9d3ada44709dd61534".to_string());
-        *map.url_mut() = Some("https://example.com/chr1.fa".to_string());
-        *map.idx_mut() = Some(7);
+    fn test_sample_value_to_string() -> io::Result<()> {
+        let none: Option<SampleValue> = None;
+        assert_eq!(sample_value_to_string(&none), None);
 
-        let result = contig_map_to_map(&map);
+        let integer = Some(SampleValue::Integer(1));
+        assert_eq!(sample_value_to_string(&integer), Some("1".to_string()));
 
-        assert_eq!(result.get("length"), Some(&"248956422".to_string()));
-        assert_eq!(
-            result.get("md5"),
-            Some(&"d7eba311421bbc9d3ada44709dd61534".to_string())
-        );
-        assert_eq!(
-            result.get("url"),
-            Some(&"https://example.com/chr1.fa".to_string())
-        );
-        assert_eq!(result.get("idx"), Some(&"7".to_string()));
+        let float = Some(SampleValue::Float(1.4));
+        assert_eq!(sample_value_to_string(&float), Some("1.4".to_string()));
+
+        let character = Some(SampleValue::Character('A'));
+        assert_eq!(sample_value_to_string(&character), Some("A".to_string()));
+
+        let genotype = Some(SampleValue::Genotype(
+            "0|1".parse().expect("expected valid genotype"),
+        ));
+        assert_eq!(sample_value_to_string(&genotype), Some("0|1".to_string()));
+
+        let array = Some(SampleValue::Array(
+            variant::record_buf::samples::sample::value::Array::String(vec![
+                Some("GT".to_string()),
+                Some("GQ".to_string()),
+                Some("DP".to_string()),
+            ]),
+        ));
+        assert_eq!(sample_value_to_string(&array), Some("GT,GQ,DP".to_string()));
+
+        Ok(())
     }
 
     #[test]
-    fn test_collection_to_strings() {
-        let unstructured = Collection::Unstructured(vec!["one".to_string(), "two".to_string()]);
-        assert_eq!(
-            collection_to_strings(&unstructured),
-            vec!["one".to_string(), "two".to_string()]
-        );
+    fn test_info_array_to_string() {
+        let values = ValueArray::Integer(vec![Some(1), None, Some(3)]);
+        assert_eq!(info_array_to_string(&values), "1,.,3");
 
-        let mut other = Map::<noodles_vcf::header::record::value::map::Other>::new();
-        other
-            .other_fields_mut()
-            .insert("NOODLES".parse().expect("valid tag"), "vcf".to_string());
-        let structured =
-            Collection::Structured([("record".to_string(), other)].into_iter().collect());
+        let values = ValueArray::Float(vec![Some(1.5), None, Some(3.2)]);
+        assert_eq!(info_array_to_string(&values), "1.5,.,3.2");
 
-        assert_eq!(
-            collection_to_strings(&structured),
-            vec!["record:NOODLES=vcf".to_string()]
-        );
+        let values = ValueArray::Character(vec![Some('A'), None, Some('T')]);
+        assert_eq!(info_array_to_string(&values), "A,.,T");
+
+        let values = ValueArray::String(vec![
+            Some("alpha".to_string()),
+            None,
+            Some("gamma".to_string()),
+        ]);
+        assert_eq!(info_array_to_string(&values), "alpha,.,gamma");
     }
 
     #[test]
-    fn test_format_number_to_string() {
-        use vcf::header::record::value::map::format::Number::*;
+    fn test_info_value_to_string() -> io::Result<()> {
+        assert_eq!(info_value_to_string(None), None);
+        assert_eq!(info_value_to_string(Some(&InfoFieldValue::Flag)), None);
+        assert_eq!(
+            info_value_to_string(Some(&InfoFieldValue::Integer(1))),
+            Some("1".to_string())
+        );
+        assert_eq!(
+            info_value_to_string(Some(&InfoFieldValue::Float(1.4))),
+            Some("1.4".to_string())
+        );
+        assert_eq!(
+            info_value_to_string(Some(&InfoFieldValue::Character('A'))),
+            Some("A".to_string())
+        );
+        assert_eq!(
+            info_value_to_string(Some(&InfoFieldValue::String("GT".to_string()))),
+            Some("GT".to_string())
+        );
+        assert_eq!(
+            info_value_to_string(Some(&InfoFieldValue::Array(ValueArray::String(vec![
+                Some("GT".to_string()),
+                Some("GQ".to_string()),
+                Some("DP".to_string()),
+            ])))),
+            Some("GT,GQ,DP".to_string())
+        );
 
-        assert_eq!(format_number_to_string(Count(3)), "3");
-        assert_eq!(format_number_to_string(AlternateBases), "A");
-        assert_eq!(format_number_to_string(ReferenceAlternateBases), "R");
-        assert_eq!(format_number_to_string(Samples), "G");
-        assert_eq!(format_number_to_string(LocalAlternateBases), "LA");
-        assert_eq!(format_number_to_string(LocalReferenceAlternateBases), "LR");
-        assert_eq!(format_number_to_string(LocalSamples), "LG");
-        assert_eq!(format_number_to_string(Ploidy), "P");
-        assert_eq!(format_number_to_string(BaseModifications), "M");
-        assert_eq!(format_number_to_string(Unknown), ".");
+        Ok(())
     }
 
     // -----------------------------------------------------------------------
@@ -1334,10 +1369,14 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         Ok(())
     }
 
+    // -----------------------------------------------------------------------
+    // parse_vcf_line
+    // -----------------------------------------------------------------------
+
     #[test]
     fn test_parse_vcf_line() -> io::Result<()> {
         let header = create_test_header()?;
-        let record = parse_vcf_line(TEST_VCF_LINE, &header)?.expect("expected record");
+        let record = parse_vcf_line(SAMPLE_VCF_LINE, &header)?.expect("expected record");
 
         assert_eq!(record.chrom, "chr1");
         assert_eq!(record.pos, Some(10));
@@ -1357,26 +1396,16 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
     }
 
     #[test]
-    fn test_vcf_record_repr() -> io::Result<()> {
-        let header = create_test_header()?;
-        let record = parse_vcf_line(TEST_VCF_LINE, &header)?.expect("expected record");
-
-        assert_eq!(
-            record.__repr__(),
-            "VCFRecord(chrom=\"chr1\", pos=Some(10), id=[\"rs1\"], reference=\"A\", alt=[\"C\"], qual=Some(13.0), filter=[\"PASS\"])"
-        );
-
-        Ok(())
-    }
-
-    #[test]
     fn test_parse_vcf_line_invalid_line_bad_fields() -> io::Result<()> {
         let header = create_test_header()?;
 
-        // Space in CHROM
-        // let err =
-        //     parse_vcf_line("chr 1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1", &header).unwrap_err();
-        // assert_eq!(err.kind(), io::ErrorKind::InvalidData);
+        // Allowed: Space in CHROM
+        let _ = parse_vcf_line(
+            "chr 1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1",
+            &header,
+        );
+
+        // Non-integer POS
         let err = parse_vcf_line(
             "chr1\tbad_pos\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1",
             &header,
@@ -1384,17 +1413,11 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         .unwrap_err();
         assert_eq!(err.kind(), io::ErrorKind::InvalidData);
 
-        // Int for REF
-        // let err = parse_vcf_line("chr1\t10\trs1\t2\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1", &header)
-        //     .unwrap_err();
-        // assert_eq!(err.kind(), io::ErrorKind::InvalidData);
+        // Allowed: Int for REF and ALT
+        let _ = parse_vcf_line("chr1\t10\trs1\t2\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1", &header);
+        let _ = parse_vcf_line("chr1\t10\trs1\tA\t3\t13\tPASS\tNS=2\tGT\t0/1\t1/1", &header);
 
-        // Int for ALT
-        // let err =
-        //     parse_vcf_line("chr1\t10\trs1\tA\t3\t13\tPASS\tNS=2\tGT\t0/1\t1/1", &header).unwrap_err();
-        // assert_eq!(err.kind(), io::ErrorKind::InvalidData);
-
-        // string for QUAL
+        // String for QUAL
         let err = parse_vcf_line(
             "chr1\t10\trs1\tA\tC\tONE\tPASS\tNS=2\tGT\t0/1\t1/1",
             &header,
@@ -1402,26 +1425,377 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         .unwrap_err();
         assert_eq!(err.kind(), io::ErrorKind::InvalidData);
 
-        // Bad Filter
-        // let err =
-        //     parse_vcf_line("chr1\t10\trs1\tA\tC\t13.5\tPA;SS\tNS=2\tGT\t0/1\t1/1", &header).unwrap_err();
-        // assert_eq!(err.kind(), io::ErrorKind::InvalidData);
-
-        // incorrectly formatted INFO
+        // Incorrectly formatted INFO
         let err = parse_vcf_line(
             "chr1\t10\trs1\tA\tC\t13.5\tPASS\tNS=\tGT\t0/1\t1/1",
             &header,
         )
         .unwrap_err();
         assert_eq!(err.kind(), io::ErrorKind::InvalidData);
+        Ok(())
+    }
 
-        // non-existent allele
-        let err = parse_vcf_line(
-            "chr1\t10\trs1\tA\tC\t13.5\tPASS\tNS=\tGT\t0/2\t1/1",
-            &header,
-        )
-        .unwrap_err();
-        assert_eq!(err.kind(), io::ErrorKind::InvalidData);
+    // -----------------------------------------------------------------------
+    // parse_vcf_bytes
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_parse_vcf_bytes() -> io::Result<()> {
+        let records = parse_vcf_bytes(SAMPLE, None)?;
+
+        assert_eq!(records.len(), 3);
+        assert_eq!(records[0].chrom, "chr1");
+        assert_eq!(records[0].pos, Some(10));
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_parse_vcf_bytes_without_header() -> io::Result<()> {
+        let records = parse_vcf_bytes(NO_HEADER_SAMPLE, None)?;
+
+        assert_eq!(records.len(), 3);
+        assert_eq!(records[0].chrom, "chr1");
+        assert_eq!(records[1].pos, Some(20));
+
+        Ok(())
+    }
+    // -----------------------------------------------------------------------
+    // VcfParser
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_vcf_parser_metadata_empty_before_open() -> io::Result<()> {
+        // create new VcfParser without file path
+        let mut parser = VcfParser::new(None, None, Some("sequential".to_string()))?;
+
+        assert_eq!(parser.metadata()?, VcfMetadata::default());
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_vcf_parser_parse_text_returns_records() -> io::Result<()> {
+        let records = VcfParser::parse_text(
+            std::str::from_utf8(SAMPLE).expect("sample should be valid UTF-8"),
+            None,
+        )?;
+
+        assert_eq!(records.len(), 3);
+        assert_eq!(records[0].chrom, "chr1");
+        assert_eq!(records[1].pos, Some(20));
+        assert_eq!(records[2].chrom, "chr2");
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_vcf_parser_parse_text_without_header_returns_records() -> io::Result<()> {
+        let records = VcfParser::parse_text(
+            std::str::from_utf8(NO_HEADER_SAMPLE).expect("sample should be valid UTF-8"),
+            None,
+        )?;
+
+        assert_eq!(records.len(), 3);
+        assert_eq!(records[0].chrom, "chr1");
+        assert_eq!(records[1].pos, Some(20));
+        assert_eq!(records[2].chrom, "chr2");
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_vcf_parser_parse_text_respects_limit() -> io::Result<()> {
+        let records = VcfParser::parse_text(
+            std::str::from_utf8(SAMPLE).expect("sample should be valid UTF-8"),
+            Some(2),
+        )?;
+
+        assert_eq!(records.len(), 2);
+        assert_eq!(records[0].pos, Some(10));
+        assert_eq!(records[1].pos, Some(20));
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_vcf_parser_parse_file_returns_records() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-parse-file")?;
+        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
+
+        let records = VcfParser::parse_file(path.to_str().expect("utf-8 path"), None)?;
+
+        assert_eq!(records.len(), 3);
+        assert_eq!(records[0].chrom, "chr1");
+        assert_eq!(records[1].pos, Some(20));
+        assert_eq!(records[2].chrom, "chr2");
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_vcf_parser_parse_file_without_header_returns_records() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-parse-file-no-header")?;
+        let path = write_sample_file(&dir, "sample.vcf", NO_HEADER_SAMPLE)?;
+
+        let records = VcfParser::parse_file(path.to_str().expect("utf-8 path"), None)?;
+
+        assert_eq!(records.len(), 3);
+        assert_eq!(records[0].chrom, "chr1");
+        assert_eq!(records[1].pos, Some(20));
+        assert_eq!(records[2].chrom, "chr2");
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_vcf_parser_parse_file_respects_limit() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-parse-file-limit")?;
+        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
+
+        let records = VcfParser::parse_file(path.to_str().expect("utf-8 path"), Some(1))?;
+
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].pos, Some(10));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_vcf_parser_open_close_and_records() -> io::Result<()> {
+        Python::initialize();
+        let dir = create_temp_dir("ensembl-vep-vcf-parser-sequential")?;
+        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
+        let mut parser = VcfParser::new(None, None, Some("sequential".to_string()))?;
+
+        assert_eq!(parser.format(), "vcf");
+        assert_eq!(parser.reader_mode(), "sequential");
+
+        parser.open(
+            path.to_str().expect("utf-8 path"),
+            Some("sequential".to_string()),
+        )?;
+        assert_eq!(parser.metadata()?.file_format, "VCFv4.3");
+
+        let record = parser.next()?.expect("expected record");
+        assert_eq!(record.chrom, "chr1");
+        assert_eq!(parser.records(Some(1))?.len(), 1);
+        assert_eq!(parser.records(None)?.len(), 1);
+
+        parser.close();
+        assert!(parser.reader.is_none());
+
+        let err = parser.next().unwrap_err();
+        assert!(err.to_string().contains("not open"));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn test_vcf_parser_query_mode_seek_and_records() -> io::Result<()> {
+        Python::initialize();
+        let dir = create_temp_dir("ensembl-vep-vcf-parser-query")?;
+        let path = write_sample_file(&dir, "sample.vcf.gz", SAMPLE)?;
+        let tbi_path = PathBuf::from(format!("{}.tbi", path.display()));
+        fs::write(&tbi_path, b"")?;
+        let tabix = write_query_tabix(&dir)?;
+        let mut parser = VcfParser::new(
+            Some(path.to_str().expect("utf-8 path").to_string()),
+            Some(tabix.to_str().expect("utf-8 path").to_string()),
+            Some("auto".to_string()),
+        )?;
+
+        assert_eq!(parser.reader_mode(), "query");
+        assert_eq!(parser.metadata()?.file_format, "VCFv4.3");
+
+        assert!(parser.seek("chr1:10-20")?);
+        let first = parser.next()?.expect("expected first record");
+        assert_eq!(first.pos, Some(10));
+        assert_eq!(parser.records(Some(1))?.len(), 1);
+        assert_eq!(parser.next()?, None);
+
+        assert!(!parser.seek("chr3:1-100")?);
+        assert_eq!(parser.next()?, None);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // Backend
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_backend_open_auto_uses_sequential_without_index() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-backend-auto-seq")?;
+        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
+
+        let (backend, mode) = Backend::open(&path, "tabix", ReaderMode::Auto)?;
+
+        assert_eq!(mode, ReaderMode::Sequential);
+        assert!(matches!(backend, Backend::Sequential(_)));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn test_backend_open_auto_uses_tabix_with_index() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-backend-auto-tabix")?;
+        let path = write_sample_file(&dir, "sample.vcf.gz", SAMPLE)?;
+        let tbi_path = PathBuf::from(format!("{}.tbi", path.display()));
+        fs::write(&tbi_path, b"")?;
+        let tabix = write_query_tabix(&dir)?;
+
+        let (backend, mode) =
+            Backend::open(&path, tabix.to_str().expect("utf-8 path"), ReaderMode::Auto)?;
+
+        assert_eq!(mode, ReaderMode::Query);
+        assert!(matches!(backend, Backend::Tabix(_)));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_backend_open_query_without_index_errors() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-backend-query-no-index")?;
+        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
+
+        let err = match Backend::open(&path, "tabix", ReaderMode::Query) {
+            Ok(_) => panic!("expected missing index error"),
+            Err(err) => err,
+        };
+        assert_eq!(err.kind(), io::ErrorKind::NotFound);
+        assert!(err.to_string().contains("no tabix index found"));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn test_backend_open_query_uses_tabix_with_index() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-backend-query-with-index")?;
+        let path = write_sample_file(&dir, "sample.vcf.gz", SAMPLE)?;
+        let tbi_path = PathBuf::from(format!("{}.tbi", path.display()));
+        fs::write(&tbi_path, b"")?;
+        let tabix = write_query_tabix(&dir)?;
+
+        let (backend, mode) = Backend::open(
+            &path,
+            tabix.to_str().expect("utf-8 path"),
+            ReaderMode::Query,
+        )?;
+
+        assert_eq!(mode, ReaderMode::Query);
+        assert!(matches!(backend, Backend::Tabix(_)));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_sequential_backend_next_reads_and_seek_rejects() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-sequential-backend")?;
+        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
+        let mut backend = SequentialBackend::new(&path)?;
+
+        let record = backend.next()?.expect("expected record");
+        assert_eq!(record.chrom, "chr1");
+        assert!(backend.next()?.is_some());
+        assert!(backend.next()?.is_some());
+        assert_eq!(backend.next()?, None);
+
+        let err = backend.seek("chr1:1-10").unwrap_err();
+        assert_eq!(err.kind(), io::ErrorKind::Other);
+        assert!(err.to_string().contains("sequential"));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_backend_seek_wrapper_rejects_on_sequential_backend() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-backend-seek-wrapper")?;
+        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
+        let mut backend = Backend::Sequential(Box::new(SequentialBackend::new(&path)?));
+
+        let err = backend.seek("chr1:1-10").unwrap_err();
+        assert_eq!(err.kind(), io::ErrorKind::Other);
+        assert!(err.to_string().contains("sequential"));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn test_tabix_backend_seek_and_next_reads_records() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-tabix-backend")?;
+        let path = write_sample_file(&dir, "sample.vcf.gz", SAMPLE)?;
+        let tbi_path = PathBuf::from(format!("{}.tbi", path.display()));
+        fs::write(&tbi_path, b"")?;
+        let tabix = write_query_tabix(&dir)?;
+        let mut backend = TabixBackend::new(&path, tabix.to_str().expect("utf-8 path"))?;
+
+        assert!(backend.seek("chr1:10-20")?);
+
+        let first = backend.next()?.expect("expected first record");
+        let second = backend.next()?.expect("expected second record");
+        assert_eq!(first.chrom, "chr1");
+        assert_eq!(first.pos, Some(10));
+        assert_eq!(second.chrom, "chr1");
+        assert_eq!(second.pos, Some(20));
+        assert_eq!(backend.next()?, None);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // VcfReader
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_vcf_reader_sequential_reads_records_and_metadata() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-reader-sequential")?;
+        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
+        let mut reader = VcfReader::open(&path, "tabix", ReaderMode::Sequential)?;
+
+        assert_eq!(reader.mode, ReaderMode::Sequential);
+        assert_eq!(reader.metadata()?.file_format, "VCFv4.3");
+
+        let first = reader.next()?.expect("expected record");
+        assert_eq!(first.chrom, "chr1");
+        let second = reader.next()?.expect("expected second record");
+        assert_eq!(second.pos, Some(20));
+        let third = reader.next()?.expect("expected third record");
+        assert_eq!(third.pos, Some(100));
+        assert_eq!(reader.next()?, None);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_vcf_reader_metadata_is_cached() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-reader-metadata-cache")?;
+        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
+        let mut reader = VcfReader::open(&path, "tabix", ReaderMode::Sequential)?;
+
+        let first = reader.metadata()?;
+        let second = reader.metadata()?;
+
+        assert_eq!(first, second);
+
+        fs::remove_dir_all(dir)?;
         Ok(())
     }
 
@@ -1596,20 +1970,6 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         });
     }
 
-    #[test]
-    fn test_header_to_metadata() -> io::Result<()> {
-        let mut reader = vcf::io::Reader::new(HEADER);
-        let header = reader.read_header()?;
-        let metadata = header_to_metadata(&header);
-
-        assert_eq!(metadata.file_format, "VCFv4.3");
-        assert_eq!(
-            metadata.samples,
-            vec!["sample0".to_string(), "sample1".to_string()]
-        );
-        Ok(())
-    }
-
     // -----------------------------------------------------------------------
     // VcfRecord
     // -----------------------------------------------------------------------
@@ -1617,7 +1977,7 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
     #[test]
     fn test_vcf_record_info_getter_returns_python_dict() -> io::Result<()> {
         let header = create_test_header()?;
-        let record = parse_vcf_line(TEST_VCF_LINE, &header)?.expect("expected record");
+        let record = parse_vcf_line(SAMPLE_VCF_LINE, &header)?.expect("expected record");
 
         Python::initialize();
         Python::attach(|py| -> PyResult<()> {
@@ -1636,7 +1996,7 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
     #[test]
     fn test_vcf_record_samples_getter_returns_python_list_of_dicts() -> io::Result<()> {
         let header = create_test_header()?;
-        let record = parse_vcf_line(TEST_VCF_LINE, &header)?.expect("expected record");
+        let record = parse_vcf_line(SAMPLE_VCF_LINE, &header)?.expect("expected record");
 
         Python::initialize();
         Python::attach(|py| -> PyResult<()> {
@@ -1667,368 +2027,16 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         Ok(())
     }
 
-    // -----------------------------------------------------------------------
-    // parse_vcf_bytes
-    // -----------------------------------------------------------------------
-
     #[test]
-    fn test_parse_vcf_bytes() -> io::Result<()> {
-        // let header = get_header_from_bytes(SAMPLE)?;
-        // let records = parse_vcf_bytes(SAMPLE, &header, None)?;
-        let records = parse_vcf_bytes(SAMPLE, None)?;
+    fn test_vcf_record_repr() -> io::Result<()> {
+        let header = create_test_header()?;
+        let record = parse_vcf_line(SAMPLE_VCF_LINE, &header)?.expect("expected record");
+
+        assert_eq!(
+            record.__repr__(),
+            "VCFRecord(chrom=\"chr1\", pos=Some(10), id=[\"rs1\"], reference=\"A\", alt=[\"C\"], qual=Some(13.0), filter=[\"PASS\"])"
+        );
 
-        assert_eq!(records.len(), 3);
-        assert_eq!(records[0].chrom, "chr1");
-        assert_eq!(records[0].pos, Some(10));
-
-        Ok(())
-    }
-
-    #[test]
-    fn test_parse_vcf_bytes_without_header() -> io::Result<()> {
-        // let header = get_header_from_bytes(NO_HEADER_SAMPLE)?;
-        // let records = parse_vcf_bytes(NO_HEADER_SAMPLE, &header, None)?;
-        let records = parse_vcf_bytes(NO_HEADER_SAMPLE, None)?;
-
-        assert_eq!(records.len(), 3);
-        assert_eq!(records[0].chrom, "chr1");
-        assert_eq!(records[1].pos, Some(20));
-
-        Ok(())
-    }
-
-    // -----------------------------------------------------------------------
-    // VcfReader
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_vcf_reader_sequential_reads_records_and_metadata() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-vcf-reader-sequential")?;
-        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
-        let mut reader = VcfReader::open(&path, "tabix", ReaderMode::Sequential)?;
-
-        assert_eq!(reader.mode, ReaderMode::Sequential);
-        assert_eq!(reader.metadata()?.file_format, "VCFv4.3");
-
-        let first = reader.next()?.expect("expected record");
-        assert_eq!(first.chrom, "chr1");
-        let second = reader.next()?.expect("expected second record");
-        assert_eq!(second.pos, Some(20));
-        let third = reader.next()?.expect("expected third record");
-        assert_eq!(third.pos, Some(100));
-        assert_eq!(reader.next()?, None);
-
-        fs::remove_dir_all(dir)?;
-        Ok(())
-    }
-
-    #[test]
-    fn test_vcf_reader_metadata_is_cached() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-vcf-reader-metadata-cache")?;
-        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
-        let mut reader = VcfReader::open(&path, "tabix", ReaderMode::Sequential)?;
-
-        let first = reader.metadata()?;
-        let second = reader.metadata()?;
-
-        assert_eq!(first, second);
-
-        fs::remove_dir_all(dir)?;
-        Ok(())
-    }
-
-    #[test]
-    fn test_backend_open_auto_prefers_sequential_without_index() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-vcf-backend-auto-seq")?;
-        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
-
-        let (backend, mode) = Backend::open(&path, "tabix", ReaderMode::Auto)?;
-
-        assert_eq!(mode, ReaderMode::Sequential);
-        assert!(matches!(backend, Backend::Sequential(_)));
-
-        fs::remove_dir_all(dir)?;
-        Ok(())
-    }
-
-    #[test]
-    fn test_backend_open_query_without_index_errors() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-vcf-backend-query-no-index")?;
-        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
-
-        let err = match Backend::open(&path, "tabix", ReaderMode::Query) {
-            Ok(_) => panic!("expected missing index error"),
-            Err(err) => err,
-        };
-        assert_eq!(err.kind(), io::ErrorKind::NotFound);
-        assert!(err.to_string().contains("no tabix index found"));
-
-        fs::remove_dir_all(dir)?;
-        Ok(())
-    }
-
-    #[cfg(unix)]
-    #[test]
-    fn test_backend_open_query_uses_tabix_with_index() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-vcf-backend-query-with-index")?;
-        let path = write_sample_file(&dir, "sample.vcf.gz", SAMPLE)?;
-        let tbi_path = PathBuf::from(format!("{}.tbi", path.display()));
-        fs::write(&tbi_path, b"")?;
-        let tabix = write_query_tabix(&dir)?;
-
-        let (backend, mode) = Backend::open(
-            &path,
-            tabix.to_str().expect("utf-8 path"),
-            ReaderMode::Query,
-        )?;
-
-        assert_eq!(mode, ReaderMode::Query);
-        assert!(matches!(backend, Backend::Tabix(_)));
-
-        fs::remove_dir_all(dir)?;
-        Ok(())
-    }
-
-    #[test]
-    fn test_sequential_backend_next_reads_and_seek_rejects() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-vcf-sequential-backend")?;
-        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
-        let mut backend = SequentialBackend::new(&path)?;
-
-        let record = backend.next()?.expect("expected record");
-        assert_eq!(record.chrom, "chr1");
-        assert!(backend.next()?.is_some());
-        assert!(backend.next()?.is_some());
-        assert_eq!(backend.next()?, None);
-
-        let err = backend.seek("chr1:1-10").unwrap_err();
-        assert_eq!(err.kind(), io::ErrorKind::Other);
-        assert!(err.to_string().contains("sequential"));
-
-        fs::remove_dir_all(dir)?;
-        Ok(())
-    }
-
-    #[test]
-    fn test_backend_seek_wrapper_rejects_on_sequential_backend() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-vcf-backend-seek-wrapper")?;
-        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
-        let mut backend = Backend::Sequential(Box::new(SequentialBackend::new(&path)?));
-
-        let err = backend.seek("chr1:1-10").unwrap_err();
-        assert_eq!(err.kind(), io::ErrorKind::Other);
-        assert!(err.to_string().contains("sequential"));
-
-        fs::remove_dir_all(dir)?;
-        Ok(())
-    }
-
-    #[cfg(unix)]
-    #[test]
-    fn test_backend_open_auto_uses_tabix_with_index() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-vcf-backend-auto-tabix")?;
-        let path = write_sample_file(&dir, "sample.vcf.gz", SAMPLE)?;
-        let tbi_path = PathBuf::from(format!("{}.tbi", path.display()));
-        fs::write(&tbi_path, b"")?;
-        let tabix = write_query_tabix(&dir)?;
-
-        let (backend, mode) =
-            Backend::open(&path, tabix.to_str().expect("utf-8 path"), ReaderMode::Auto)?;
-
-        assert_eq!(mode, ReaderMode::Query);
-        assert!(matches!(backend, Backend::Tabix(_)));
-
-        fs::remove_dir_all(dir)?;
-        Ok(())
-    }
-
-    #[cfg(unix)]
-    #[test]
-    fn test_tabix_backend_seek_and_next_reads_records() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-vcf-tabix-backend")?;
-        let path = write_sample_file(&dir, "sample.vcf.gz", SAMPLE)?;
-        let tbi_path = PathBuf::from(format!("{}.tbi", path.display()));
-        fs::write(&tbi_path, b"")?;
-        let tabix = write_query_tabix(&dir)?;
-        let mut backend = TabixBackend::new(&path, tabix.to_str().expect("utf-8 path"))?;
-
-        assert!(backend.seek("chr1:10-20")?);
-
-        let first = backend.next()?.expect("expected first record");
-        let second = backend.next()?.expect("expected second record");
-        assert_eq!(first.chrom, "chr1");
-        assert_eq!(first.pos, Some(10));
-        assert_eq!(second.chrom, "chr1");
-        assert_eq!(second.pos, Some(20));
-        assert_eq!(backend.next()?, None);
-
-        fs::remove_dir_all(dir)?;
-        Ok(())
-    }
-
-    // -----------------------------------------------------------------------
-    // VcfParser
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_vcf_parser_metadata_empty_before_open() -> io::Result<()> {
-        // create new VcfParser without file path
-        let mut parser = VcfParser::new(None, None, Some("sequential".to_string()))?;
-
-        assert_eq!(parser.metadata()?, VcfMetadata::default());
-
-        Ok(())
-    }
-
-    #[test]
-    fn test_vcf_parser_parse_text_returns_records() -> io::Result<()> {
-        let records = VcfParser::parse_text(
-            std::str::from_utf8(SAMPLE).expect("sample should be valid UTF-8"),
-            None,
-        )?;
-
-        assert_eq!(records.len(), 3);
-        assert_eq!(records[0].chrom, "chr1");
-        assert_eq!(records[1].pos, Some(20));
-        assert_eq!(records[2].chrom, "chr2");
-
-        Ok(())
-    }
-
-    #[test]
-    fn test_vcf_parser_parse_text_without_header_returns_records() -> io::Result<()> {
-        let records = VcfParser::parse_text(
-            std::str::from_utf8(NO_HEADER_SAMPLE).expect("sample should be valid UTF-8"),
-            None,
-        )?;
-
-        assert_eq!(records.len(), 3);
-        assert_eq!(records[0].chrom, "chr1");
-        assert_eq!(records[1].pos, Some(20));
-        assert_eq!(records[2].chrom, "chr2");
-
-        Ok(())
-    }
-
-    #[test]
-    fn test_vcf_parser_parse_text_respects_limit() -> io::Result<()> {
-        let records = VcfParser::parse_text(
-            std::str::from_utf8(SAMPLE).expect("sample should be valid UTF-8"),
-            Some(2),
-        )?;
-
-        assert_eq!(records.len(), 2);
-        assert_eq!(records[0].pos, Some(10));
-        assert_eq!(records[1].pos, Some(20));
-
-        Ok(())
-    }
-
-    #[test]
-    fn test_vcf_parser_parse_file_returns_records() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-vcf-parse-file")?;
-        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
-
-        let records = VcfParser::parse_file(path.to_str().expect("utf-8 path"), None)?;
-
-        assert_eq!(records.len(), 3);
-        assert_eq!(records[0].chrom, "chr1");
-        assert_eq!(records[1].pos, Some(20));
-        assert_eq!(records[2].chrom, "chr2");
-
-        fs::remove_dir_all(dir)?;
-        Ok(())
-    }
-
-    #[test]
-    fn test_vcf_parser_parse_file_without_header_returns_records() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-vcf-parse-file-no-header")?;
-        let path = write_sample_file(&dir, "sample.vcf", NO_HEADER_SAMPLE)?;
-
-        let records = VcfParser::parse_file(path.to_str().expect("utf-8 path"), None)?;
-
-        assert_eq!(records.len(), 3);
-        assert_eq!(records[0].chrom, "chr1");
-        assert_eq!(records[1].pos, Some(20));
-        assert_eq!(records[2].chrom, "chr2");
-
-        fs::remove_dir_all(dir)?;
-        Ok(())
-    }
-
-    #[test]
-    fn test_vcf_parser_parse_file_respects_limit() -> io::Result<()> {
-        let dir = create_temp_dir("ensembl-vep-vcf-parse-file-limit")?;
-        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
-
-        let records = VcfParser::parse_file(path.to_str().expect("utf-8 path"), Some(1))?;
-
-        assert_eq!(records.len(), 1);
-        assert_eq!(records[0].pos, Some(10));
-
-        fs::remove_dir_all(dir)?;
-        Ok(())
-    }
-
-    #[test]
-    fn test_vcf_parser_open_close_and_records() -> io::Result<()> {
-        Python::initialize();
-        let dir = create_temp_dir("ensembl-vep-vcf-parser-sequential")?;
-        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
-        let mut parser = VcfParser::new(None, None, Some("sequential".to_string()))?;
-
-        assert_eq!(parser.format(), "vcf");
-        assert_eq!(parser.reader_mode(), "sequential");
-
-        parser.open(
-            path.to_str().expect("utf-8 path"),
-            Some("sequential".to_string()),
-        )?;
-        assert_eq!(parser.metadata()?.file_format, "VCFv4.3");
-
-        let record = parser.next()?.expect("expected record");
-        assert_eq!(record.chrom, "chr1");
-        assert_eq!(parser.records(Some(1))?.len(), 1);
-        assert_eq!(parser.records(None)?.len(), 1);
-
-        parser.close();
-        assert!(parser.reader.is_none());
-
-        let err = parser.next().unwrap_err();
-        assert!(err.to_string().contains("not open"));
-
-        fs::remove_dir_all(dir)?;
-        Ok(())
-    }
-
-    #[cfg(unix)]
-    #[test]
-    fn test_vcf_parser_query_mode_seek_and_records() -> io::Result<()> {
-        Python::initialize();
-        let dir = create_temp_dir("ensembl-vep-vcf-parser-query")?;
-        let path = write_sample_file(&dir, "sample.vcf.gz", SAMPLE)?;
-        let tbi_path = PathBuf::from(format!("{}.tbi", path.display()));
-        fs::write(&tbi_path, b"")?;
-        let tabix = write_query_tabix(&dir)?;
-        let mut parser = VcfParser::new(
-            Some(path.to_str().expect("utf-8 path").to_string()),
-            Some(tabix.to_str().expect("utf-8 path").to_string()),
-            Some("auto".to_string()),
-        )?;
-
-        assert_eq!(parser.reader_mode(), "query");
-        assert_eq!(parser.metadata()?.file_format, "VCFv4.3");
-
-        assert!(parser.seek("chr1:10-20")?);
-        let first = parser.next()?.expect("expected first record");
-        assert_eq!(first.pos, Some(10));
-        assert_eq!(parser.records(Some(1))?.len(), 1);
-        assert_eq!(parser.next()?, None);
-
-        assert!(!parser.seek("chr3:1-100")?);
-        assert_eq!(parser.next()?, None);
-
-        fs::remove_dir_all(dir)?;
         Ok(())
     }
 }
