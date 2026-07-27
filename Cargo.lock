@@ -89,6 +89,7 @@ dependencies = [
  "noodles-gff",
  "noodles-gtf",
  "noodles-tabix",
+ "noodles-vcf",
  "pyo3",
  "pyo3-log",
  "rstest",
@@ -409,6 +410,21 @@ dependencies = [
  "noodles-bgzf",
  "noodles-core",
  "noodles-csi",
+]
+
+[[package]]
+name = "noodles-vcf"
+version = "0.86.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0131147080a5aeadcd6c2ab43e7ca1f9e8018cdd482eed797d081c40e8f0a3c7"
+dependencies = [
+ "indexmap",
+ "memchr",
+ "noodles-bgzf",
+ "noodles-core",
+ "noodles-csi",
+ "noodles-tabix",
+ "percent-encoding",
 ]
 
 [[package]]
