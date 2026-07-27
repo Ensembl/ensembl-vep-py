@@ -15,24 +15,12 @@
 
 from __future__ import annotations
 
-import logging
-from typing import ClassVar, Iterator
+from typing import ClassVar
 
 from attrs import define, field
 
-from ensembl.vep.common.methods import format_region_string
-from ensembl.vep.models.genic import Gene, Transcript
-from ensembl.vep.models.sequence import Slice
 from ensembl.vep.parsers import GFF3Parser, GFF3Record
 from ensembl.vep.sources.file.gxf.transcript import GXFTranscriptSource
-
-logger = logging.getLogger(__name__)
-
-_ORDERED_FILE_ASSUMPTION_MESSAGE = (
-    "GFF3 streaming iteration assumes a sorted file: a gene record precedes its "
-    "transcripts, and each transcript's exon/CDS children immediately follow it. "
-    "Files violating this ordering may yield incomplete or incorrectly grouped transcripts."
-)
 
 
 @define(kw_only=True, auto_attribs=True)

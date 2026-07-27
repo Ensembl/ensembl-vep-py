@@ -16,18 +16,12 @@
 
 from __future__ import annotations
 
-import logging
-from typing import ClassVar, Iterator
+from typing import ClassVar
 
 from attrs import define, field
 
-from ensembl.vep.common.methods import format_region_string
-from ensembl.vep.models.genic import Gene, Transcript
-from ensembl.vep.models.sequence import Slice
 from ensembl.vep.parsers import GTFParser, GTFRecord
 from ensembl.vep.sources.file.gxf.transcript import GXFTranscriptSource
-
-logger = logging.getLogger(__name__)
 
 
 @define(kw_only=True, auto_attribs=True)
