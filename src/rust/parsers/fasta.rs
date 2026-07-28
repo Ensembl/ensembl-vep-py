@@ -587,7 +587,7 @@ where
         let mut byte = [0u8; 1];
         reader.seek(SeekFrom::Start(byte_offset))?;
         reader.read_exact(&mut byte)?;
-        sequence.push(byte[0] as char);
+        sequence.push((byte[0] as char).to_ascii_uppercase());
     }
 
     if end > entry.length {
@@ -1052,6 +1052,20 @@ AAAA
     #[test]
     fn test_read_indexed_sequence_reads_range() -> io::Result<()> {
         let mut reader = Cursor::new(b"ACGTTGCA".to_vec());
+        let entry = FaiEntry {
+            length: 8,
+            offset: 0,
+            line_bases: 8,
+            line_width: 8,
+        };
+
+        assert_eq!(read_indexed_sequence(&mut reader, &entry, 2, 5)?, "CGTT");
+        Ok(())
+    }
+
+    #[test]
+    fn test_read_indexed_sequence_returns_uppercase() -> io::Result<()> {
+        let mut reader = Cursor::new(b"ACgtTGCA".to_vec());
         let entry = FaiEntry {
             length: 8,
             offset: 0,
