@@ -269,6 +269,7 @@ impl FaiBackend {
     fn seek(&mut self, region: &str) -> io::Result<bool> {
         let parsed = parse_sequence_region(region)?;
         let Some(entry) = self.index.get(&parsed.seq_region_name) else {
+            self.query_result = None;
             return Ok(false);
         };
 
@@ -313,6 +314,7 @@ impl BgzfBackend {
     fn seek(&mut self, region: &str) -> io::Result<bool> {
         let parsed = parse_sequence_region(region)?;
         let Some(entry) = self.index.get(&parsed.seq_region_name) else {
+            self.query_result = None;
             return Ok(false);
         };
 
@@ -1686,6 +1688,17 @@ AAAA
         Ok(())
     }
 
+    #[test]
+    fn test_bgzf_backend_seek_followed_by_failed_seek_returns_none() -> io::Result<()> {
+        let (_dir, path) = write_sample_bgzf_with_indexes("fasta-bgzf-seek-failed-seek-test")?;
+
+        let mut backend = BgzfBackend::new(&path)?;
+        assert!(backend.seek("chr1:2-5")?);
+        assert!(!backend.seek("chr3")?);
+        assert!(backend.next()?.is_none());
+        Ok(())
+    }
+
     // -----------------------------------------------------------------------
     // FaiBackend
     // -----------------------------------------------------------------------
@@ -1740,6 +1753,17 @@ AAAA
         let (_dir, path) = write_sample_fasta_with_fai("fasta-fai-missing-test")?;
 
         let mut backend = FaiBackend::new(&path)?;
+        assert!(!backend.seek("chr3")?);
+        assert!(backend.next()?.is_none());
+        Ok(())
+    }
+
+    #[test]
+    fn test_fai_backend_seek_followed_by_failed_seek_returns_none() -> io::Result<()> {
+        let (_dir, path) = write_sample_fasta_with_fai("fasta-fai-seek-failed-seek-test")?;
+
+        let mut backend = FaiBackend::new(&path)?;
+        assert!(backend.seek("chr1:2-5")?);
         assert!(!backend.seek("chr3")?);
         assert!(backend.next()?.is_none());
         Ok(())
