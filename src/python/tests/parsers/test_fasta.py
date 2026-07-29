@@ -317,6 +317,8 @@ class TestFastaParserSeek:
 
         with pytest.raises(ValueError):
             parser.seek("chr1:5-2")
+        with pytest.raises(ValueError):
+            parser.seek("chr2:1-")
 
     def test_sequential_mode_rejects_seek(self, tmp_path: Path) -> None:
         """Test sequential reader mode keeps seek disabled."""
