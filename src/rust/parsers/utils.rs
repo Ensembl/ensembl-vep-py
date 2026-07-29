@@ -225,8 +225,9 @@ mod tests {
         parsers::test_utils::write_bgzf_file,
         test_utils::{create_temp_dir, write_sample_file},
     };
+    use noodles_core::Position;
     use pyo3::Python;
-    use std::fs;
+    use std::{fs, ops::Bound};
 
     // ---------------------------------------------------------------------------
     // Helpers
@@ -288,6 +289,16 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
     }
 
     #[test]
+    fn test_parse_sequence_region_single_position_trailing_hyphen() {
+        let err = parse_sequence_region("chr1:10-").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(
+            err.to_string()
+                .contains("cannot parse integer from empty string")
+        );
+    }
+
+    #[test]
     fn test_parse_sequence_region_rejects_empty_region() {
         let err = parse_sequence_region("").unwrap_err();
         assert_eq!(err.kind(), ErrorKind::InvalidInput);
@@ -322,6 +333,30 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
     #[test]
     fn test_parse_region_valid() {
         assert!(parse_region("chr1:1-1000").is_ok());
+    }
+
+    #[test]
+    fn test_parse_region_just_start() -> io::Result<()> {
+        let region = parse_region("chr1:10")?;
+        assert_eq!(region.name(), "chr1".to_string());
+        let start = Position::try_from(10).unwrap();
+        assert_eq!(region.start(), Bound::Included(start));
+        assert_eq!(region.end(), Bound::Unbounded);
+        Ok(())
+    }
+
+    #[test]
+    fn test_parse_region_no_end() {
+        let err = parse_region("chr1:10-").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(err.to_string().contains("invalid tabix region"));
+    }
+
+    #[test]
+    fn test_parse_region_just_hyphen() {
+        let err = parse_region("chr1:-").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(err.to_string().contains("invalid tabix region"));
     }
 
     #[test]
