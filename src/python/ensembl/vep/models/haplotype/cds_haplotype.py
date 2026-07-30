@@ -19,5 +19,9 @@ from ensembl.vep.models.overlap import MultipleFeatureOverlap
 
 
 @define(kw_only=True, auto_attribs=True)
+
+__all__ = ["CDSHaplotype"]
+
+
 class CDSHaplotype(MultipleFeatureOverlap):
     """CDSHaplotype class (to be implemented)."""

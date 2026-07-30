@@ -28,6 +28,10 @@ if TYPE_CHECKING:
 
 
 @define(kw_only=True, auto_attribs=True)
+
+__all__ = ["CDS"]
+
+
 class CDS(Feature):
     """
     Represents a CDS.

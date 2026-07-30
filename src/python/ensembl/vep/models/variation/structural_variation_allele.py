@@ -24,6 +24,10 @@ logger = logging.getLogger(__name__)
 
 
 @define(kw_only=True, auto_attribs=True)
+
+__all__ = ["StructuralVariationAllele"]
+
+
 class StructuralVariationAllele(VariationAllele):
     """Represents a specific allele of a structural variation."""
 

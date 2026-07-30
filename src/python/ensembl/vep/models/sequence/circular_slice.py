@@ -19,6 +19,10 @@ from ensembl.vep.models.sequence.slice import Slice
 
 
 @define(kw_only=True, auto_attribs=True)
+
+__all__ = ["CircularSlice"]
+
+
 class CircularSlice(Slice):
     """
     Represents a circular genomic region.

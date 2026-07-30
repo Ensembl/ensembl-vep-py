@@ -27,6 +27,10 @@ from ensembl.vep.models.variation.variation_allele import VariationAllele
 
 
 @define(kw_only=True, auto_attribs=True)
+
+__all__ = ["Variation"]
+
+
 class Variation(Feature):
     """Represents a variation to genomic sequences in a specific locus.
 

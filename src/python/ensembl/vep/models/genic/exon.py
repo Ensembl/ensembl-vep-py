@@ -27,6 +27,10 @@ logger = logging.getLogger(__name__)
 
 
 @define(kw_only=True, auto_attribs=True)
+
+__all__ = ["Exon"]
+
+
 class Exon(Feature):
     """
     Represents an exon.

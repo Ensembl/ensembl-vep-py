@@ -15,6 +15,8 @@
 
 from enum import Enum
 
+__all__ = ["Strand", "CoordSystemLevel", "ExonPhase", "ClassSOTerm", "ConsequenceImpact"]
+
 
 class Strand(Enum):
     """Genomic strand."""

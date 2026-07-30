@@ -30,6 +30,10 @@ if TYPE_CHECKING:
 
 
 @define(kw_only=True, auto_attribs=True)
+
+__all__ = ["TranscriptVariationAllele"]
+
+
 class TranscriptVariationAllele(FeatureOverlap):
     """
     Represents the overlap between a transcript and a variation allele.

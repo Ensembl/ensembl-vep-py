@@ -22,6 +22,10 @@ from ensembl.vep.common import ConsequenceImpact
 
 
 @define(kw_only=True, auto_attribs=True)
+
+__all__ = ["OverlapConsequence"]
+
+
 class OverlapConsequence:
     """
     A predicted consequence of an overlap between a feature and a base feature.

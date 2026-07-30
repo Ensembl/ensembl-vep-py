@@ -33,6 +33,10 @@ MAX_SEARCH_AREA = 1000
 
 
 @define(kw_only=True, auto_attribs=True)
+
+__all__ = ["VariationAllele"]
+
+
 class VariationAllele(Feature):
     """Represents a specific allele of a variation.
 

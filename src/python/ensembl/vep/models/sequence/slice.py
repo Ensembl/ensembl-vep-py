@@ -23,6 +23,10 @@ from ensembl.vep.models.sequence.coord_system import CoordSystem
 
 
 @define(kw_only=True, auto_attribs=True)
+
+__all__ = ["Slice"]
+
+
 class Slice:
     """
     Represents a genomic region on a sequence (chromosome, contig, patch, etc.).

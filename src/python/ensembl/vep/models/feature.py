@@ -26,6 +26,8 @@ from ensembl.vep.common import Strand, invalidates
 
 logger = logging.getLogger(__name__)
 
+__all__ = ["Feature"]
+
 
 @define(kw_only=True, auto_attribs=True)
 class Feature:

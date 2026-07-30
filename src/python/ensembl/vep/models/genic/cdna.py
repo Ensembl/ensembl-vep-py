@@ -25,6 +25,10 @@ if TYPE_CHECKING:
 
 
 @define(kw_only=True, auto_attribs=True)
+
+__all__ = ["CDNA"]
+
+
 class CDNA(Feature):
     """
     Represents a cDNA.

@@ -27,6 +27,10 @@ if TYPE_CHECKING:
 
 
 @define(kw_only=True, auto_attribs=True)
+
+__all__ = ["Translation"]
+
+
 class Translation:
     """
     Represents a translation.
