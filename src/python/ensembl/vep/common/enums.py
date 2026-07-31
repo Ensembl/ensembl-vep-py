@@ -62,3 +62,11 @@ class ConsequenceImpact(Enum):
     MODERATE = "MODERATE"
     LOW = "LOW"
     MODIFIER = "MODIFIER"
+
+
+class SourceType(Enum):
+    """Type of annotation/input source."""
+
+    FILE = "file"
+    DB = "db"
+    CACHE = "cache"

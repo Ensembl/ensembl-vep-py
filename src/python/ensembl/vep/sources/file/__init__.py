@@ -14,5 +14,6 @@
 """Feature sources — file-backed and database-backed providers of domain Feature objects."""
 
 from .fasta.sequence import FastaSequenceSource
+from .file_feature_source import FileFeatureSource
 
-__all__ = ["FastaSequenceSource"]
+__all__ = ["FastaSequenceSource", "FileFeatureSource"]

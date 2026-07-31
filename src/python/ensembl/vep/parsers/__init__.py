@@ -13,6 +13,7 @@
 # limitations under the License.
 """Parser interfaces."""
 
+from .parser import Parser
 from .tabix import TabixParser
 from .gff3 import GFF3Parser, GFF3Record
 from .gtf import GTFParser, GTFRecord
@@ -20,6 +21,7 @@ from .fasta import FastaParser, FastaRecord
 from .vcf import VCFParser, VCFRecord
 
 __all__ = [
+    "Parser",
     "TabixParser",
     "GFF3Parser",
     "GFF3Record",
