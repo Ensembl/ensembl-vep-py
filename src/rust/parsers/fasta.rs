@@ -90,11 +90,18 @@ struct FaiEntry {
 }
 
 impl FaiEntry {
-    fn byte_offset(&self, pos_1_based: usize) -> u64 {
+    fn byte_offset(&self, pos_1_based: usize) -> io::Result<u64> {
+        if self.line_bases == 0 {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidData,
+                "FASTA index line_bases must be greater than 0",
+            ));
+        }
+
         let zero_based = pos_1_based.saturating_sub(1);
         let lines = zero_based / self.line_bases;
         let within_line = zero_based % self.line_bases;
-        self.offset + (lines * self.line_width) as u64 + within_line as u64
+        Ok(self.offset + (lines * self.line_width) as u64 + within_line as u64)
     }
 }
 
@@ -273,10 +280,9 @@ impl FaiBackend {
             return Ok(false);
         };
 
-        let (start, end) = match (parsed.start, parsed.end) {
-            (Some(start), Some(end)) => (start, end),
-            _ => (1, entry.length),
-        };
+        let start = parsed.start.unwrap_or(1);
+        // WARNING: With no end coordinate, this may return a very long sequence.
+        let end = parsed.end.unwrap_or(entry.length);
 
         self.query_result = Some(FastaRecord {
             seqid: parsed.seq_region_name,
@@ -318,10 +324,9 @@ impl BgzfBackend {
             return Ok(false);
         };
 
-        let (start, end) = match (parsed.start, parsed.end) {
-            (Some(start), Some(end)) => (start, end),
-            _ => (1, entry.length),
-        };
+        let start = parsed.start.unwrap_or(1);
+        // WARNING: With no end coordinate, this may return a very long sequence.
+        let end = parsed.end.unwrap_or(entry.length);
 
         self.query_result = Some(FastaRecord {
             seqid: parsed.seq_region_name,
@@ -583,7 +588,7 @@ where
     let mut sequence = String::with_capacity(end - start + 1);
 
     for position in start..=actual_end {
-        let byte_offset = entry.byte_offset(position);
+        let byte_offset = entry.byte_offset(position)?;
         let mut byte = [0u8; 1];
         reader.seek(SeekFrom::Start(byte_offset))?;
         reader.read_exact(&mut byte)?;
@@ -1048,6 +1053,20 @@ AAAA
     // -----------------------------------------------------------------------
     // read_indexed_sequence
     // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_fai_entry_byte_offset_rejects_zero_line_bases() {
+        let entry = FaiEntry {
+            length: 8,
+            offset: 0,
+            line_bases: 0,
+            line_width: 8,
+        };
+
+        let err = entry.byte_offset(1).unwrap_err();
+        assert_eq!(err.kind(), io::ErrorKind::InvalidData);
+        assert!(err.to_string().contains("line_bases"));
+    }
 
     #[test]
     fn test_read_indexed_sequence_reads_range() -> io::Result<()> {
@@ -1682,6 +1701,19 @@ AAAA
     }
 
     #[test]
+    fn test_bgzf_backend_seek_uses_sequence_length_when_end_is_omitted() -> io::Result<()> {
+        let (_dir, path) = write_sample_bgzf_with_indexes("fasta-bgzf-open-ended-test")?;
+
+        let mut backend = BgzfBackend::new(&path)?;
+        assert!(backend.seek("chr1:5")?);
+        let record = backend.next()?.expect("indexed record should be available");
+        assert_eq!(record.start, 5);
+        assert_eq!(record.end, 8);
+        assert_eq!(record.sequence, "TGCA");
+        Ok(())
+    }
+
+    #[test]
     fn test_bgzf_backend_seek_returns_whole_sequence_for_seq_region_only() -> io::Result<()> {
         let (_dir, path) = write_sample_bgzf_with_indexes("fasta-bgzf-whole-test")?;
 
@@ -1737,6 +1769,19 @@ AAAA
         assert_eq!(record.end, 5);
         assert_eq!(record.sequence, "CGTT");
         assert!(backend.next()?.is_none());
+        Ok(())
+    }
+
+    #[test]
+    fn test_fai_backend_seek_uses_sequence_length_when_end_is_omitted() -> io::Result<()> {
+        let (_dir, path) = write_sample_fasta_with_fai("fasta-fai-open-ended-test")?;
+
+        let mut backend = FaiBackend::new(&path)?;
+        assert!(backend.seek("chr1:5")?);
+        let record = backend.next()?.expect("indexed record should be available");
+        assert_eq!(record.start, 5);
+        assert_eq!(record.end, 8);
+        assert_eq!(record.sequence, "TGCA");
         Ok(())
     }
 

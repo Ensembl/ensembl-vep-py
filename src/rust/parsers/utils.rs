@@ -198,7 +198,7 @@ pub(crate) fn parse_sequence_region(region: &str) -> io::Result<SequenceRegion> 
         return Ok(SequenceRegion {
             seq_region_name: seq_region_name.to_string(),
             start: Some(position),
-            end: Some(position),
+            end: None,
         });
     };
 
@@ -276,20 +276,20 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
     }
 
     #[test]
-    fn test_parse_sequence_region_single_position() -> io::Result<()> {
+    fn test_parse_sequence_region_start_only() -> io::Result<()> {
         assert_eq!(
             parse_sequence_region("chr1:10")?,
             SequenceRegion {
                 seq_region_name: "chr1".to_string(),
                 start: Some(10),
-                end: Some(10),
+                end: None,
             }
         );
         Ok(())
     }
 
     #[test]
-    fn test_parse_sequence_region_single_position_trailing_hyphen() {
+    fn test_parse_sequence_region_start_only_with_trailing_hyphen() {
         let err = parse_sequence_region("chr1:10-").unwrap_err();
         assert_eq!(err.kind(), ErrorKind::InvalidInput);
         assert!(
@@ -299,10 +299,10 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
     }
 
     #[test]
-    fn test_parse_sequence_region_rejects_empty_region() {
-        let err = parse_sequence_region("").unwrap_err();
+    fn test_parse_sequence_region_just_hyphen() {
+        let err = parse_sequence_region("chr1:-").unwrap_err();
         assert_eq!(err.kind(), ErrorKind::InvalidInput);
-        assert!(err.to_string().contains("empty region"));
+        assert!(err.to_string().contains("invalid sequence region"));
     }
 
     #[test]
@@ -310,6 +310,13 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
         let err = parse_sequence_region("chr1:").unwrap_err();
         assert_eq!(err.kind(), ErrorKind::InvalidInput);
         assert!(err.to_string().contains("chr1:"));
+    }
+
+    #[test]
+    fn test_parse_sequence_region_rejects_empty_region() {
+        let err = parse_sequence_region("").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(err.to_string().contains("empty region"));
     }
 
     #[test]
@@ -336,7 +343,7 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
     }
 
     #[test]
-    fn test_parse_region_just_start() -> io::Result<()> {
+    fn test_parse_region_start_only() -> io::Result<()> {
         let region = parse_region("chr1:10")?;
         assert_eq!(region.name(), "chr1".to_string());
         let start = Position::try_from(10).unwrap();
@@ -346,7 +353,7 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
     }
 
     #[test]
-    fn test_parse_region_no_end() {
+    fn test_parse_region_start_only_with_trailing_hyphen() {
         let err = parse_region("chr1:10-").unwrap_err();
         assert_eq!(err.kind(), ErrorKind::InvalidInput);
         assert!(err.to_string().contains("invalid tabix region"));
@@ -367,7 +374,7 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
     }
 
     #[test]
-    fn test_parse_region_empty() {
+    fn test_parse_region_rejects_empty_region() {
         let err = parse_region("").unwrap_err();
         assert_eq!(err.kind(), ErrorKind::InvalidInput);
         assert!(err.to_string().contains("invalid tabix region"));
