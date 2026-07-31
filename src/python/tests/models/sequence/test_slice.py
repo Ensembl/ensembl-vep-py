@@ -16,10 +16,41 @@
 """Unit tests for BaseFeature class."""
 
 from copy import deepcopy
+from attrs import define, field
 import pytest
 
 from ensembl.vep.common import CoordSystemLevel, Strand
 from ensembl.vep.models.sequence import CoordSystem, Slice
+from ensembl.vep.sources.sequence_source import SequenceSource
+
+
+@define(kw_only=True, auto_attribs=True)
+class DummySequenceSource(SequenceSource):
+    """Minimal sequence source used for Slice tests."""
+
+    data: dict[str, str] = field(factory=dict)
+    calls: list[tuple[str, int, int]] = field(factory=list)
+    closed: bool = field(default=False)
+
+    def close(self) -> None:
+        self.closed = True
+
+    def _fetch_sequence_chunk(self, seq_region_name: str, start: int, end: int) -> str:
+        self.calls.append((seq_region_name, start, end))
+        sequence = self.data.get(seq_region_name)
+        if sequence is None:
+            return "N" * (end - start + 1)
+
+        raw_start = start - 1
+        raw_end = end
+        chunk = sequence[raw_start:raw_end]
+        if len(chunk) < (end - start + 1):
+            chunk += "N" * ((end - start + 1) - len(chunk))
+        return chunk
+
+    def _get_seq_region_length(self, seq_region_name: str) -> int | None:
+        sequence = self.data.get(seq_region_name)
+        return len(sequence) if sequence is not None else None
 
 
 class TestSliceInitialization:
@@ -64,6 +95,55 @@ class TestSliceProperties:
         assert genomic_slice.end == 200
         assert genomic_slice.strand == Strand.FORWARD
         assert genomic_slice.seq is None
+
+    def test_seq_region_length_is_lazy_when_missing(self) -> None:
+        """Test seq_region_length can be resolved from the source lazily."""
+
+        source = DummySequenceSource(data={"1": "ACGTACGT"})
+        genomic_slice = Slice(
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+            seq_region_name="1",
+            start=2,
+            end=5,
+            strand=Strand.FORWARD,
+            sequence_source=source,
+        )
+
+        assert genomic_slice.seq_region_length == 8
+
+    def test_lazy_sequence_loading_uses_source(self) -> None:
+        source = DummySequenceSource(data={"1": "ACGTACGT"})
+        genomic_slice = Slice(
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+            seq_region_name="1",
+            seq_region_length=8,
+            start=2,
+            end=5,
+            strand=Strand.FORWARD,
+            sequence_source=source,
+        )
+
+        assert source.calls == []
+        assert genomic_slice.seq == "CGTA"
+        assert source.calls == [("1", 2, 5)]
+
+        # Test that subsequent calls to seq do not trigger additional source calls.
+        assert genomic_slice.seq == "CGTA"
+        assert source.calls == [("1", 2, 5)]
+
+    def test_reverse_strand_returns_reverse_complement(self) -> None:
+        source = DummySequenceSource(data={"1": "AACG"})
+        genomic_slice = Slice(
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+            seq_region_name="1",
+            seq_region_length=4,
+            start=1,
+            end=4,
+            strand=Strand.REVERSE,
+            sequence_source=source,
+        )
+
+        assert genomic_slice.seq == "CGTT"
 
 
 class TestSliceEquality:

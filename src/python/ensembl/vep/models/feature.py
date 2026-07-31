@@ -16,7 +16,6 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
 from functools import cached_property
 from threading import RLock
 from attrs import define, field
@@ -37,16 +36,16 @@ class Feature:
         end: End position relative to slice (1-based, inclusive).
         strand (Strand): Feature orientation relative to slice.
         slice (Slice | None): Slice object describing the feature context.
-        seq (Any | None): Associated biological sequence.
+        seq (str | None): Associated biological sequence.
     """
 
-    start: int = field(on_setattr=invalidates("_length", "_seq_region_start"))
-    end: int = field(on_setattr=invalidates("_length", "_seq_region_end"))
+    start: int = field(on_setattr=invalidates("_length", "_seq_region_start", "_seq"))
+    end: int = field(on_setattr=invalidates("_length", "_seq_region_end", "_seq"))
     strand: Strand = field(on_setattr=invalidates("_seq_region_strand"))
     slice: Slice | None = field(
-        default=None, on_setattr=invalidates("_seq_region_start", "_seq_region_end", "_seq_region_strand")
+        default=None,
+        on_setattr=invalidates("_seq_region_start", "_seq_region_end", "_seq_region_strand", "_seq"),
     )
-    seq: Any | None = field(default=None)
     _lock: RLock = field(factory=RLock, init=False, repr=False)
 
     @property
@@ -143,6 +142,33 @@ class Feature:
                 logger.warning("Cannot obtain seq_region_strand for a feature without attached slice.")
                 return None
             return Strand(self.slice.strand.value * self.strand.value)
+    
+    @property
+    def seq(self) -> str | None:
+        """
+        Public accessor for the _seq.
+
+        Returns:
+            str | None: The associated biological sequence, or None if unavailable.
+        """
+        return self._seq
+    
+    @cached_property
+    def _seq(self) -> str | None:
+        """
+        Returns the associated biological sequence.
+
+        Returns:
+            str | None: The associated biological sequence, or None if unavailable.
+        """
+        with self._lock:
+            if self.slice is None:
+                logger.warning("Cannot obtain seq for a feature without attached slice.")
+                return None
+
+            slice_seq = self.slice.seq
+
+            return slice_seq[self.start - 1 : self.end] if slice_seq is not None else None
 
     def __eq__(self, other: object) -> bool:
         """
