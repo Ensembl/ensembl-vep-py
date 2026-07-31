@@ -22,7 +22,7 @@ use std::{
 };
 
 use crate::{
-    parsers::utils::parse_region,
+    parsers::utils::{associated_index_path, parse_region},
     utils::{to_py_error, trim_newline},
 };
 use log::warn;
@@ -641,16 +641,6 @@ impl TabixParser {
 }
 
 // ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-pub fn associated_index_path(src: &Path, extension: &str) -> PathBuf {
-    let mut path = src.as_os_str().to_os_string();
-    path.push(".");
-    path.push(extension);
-    PathBuf::from(path)
-}
-
 pub fn has_tabix_index(file_path: &Path) -> bool {
     associated_index_path(file_path, "tbi").exists()
         || associated_index_path(file_path, "csi").exists()

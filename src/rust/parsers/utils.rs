@@ -20,7 +20,7 @@ use pyo3::{PyResult, exceptions::PyValueError};
 use std::{
     fs::File,
     io::{self, BufRead, BufReader, ErrorKind, Read},
-    path::Path,
+    path::{Path, PathBuf},
 };
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -118,6 +118,10 @@ pub fn open_sequential_reader(file_path: &Path) -> io::Result<Box<dyn BufRead + 
     }
 }
 
+pub fn associated_index_path(src: &Path, extension: &str) -> PathBuf {
+    PathBuf::from(format!("{}.{}", src.to_string_lossy(), extension))
+}
+
 pub(crate) fn noodles_strand_to_string(strand: Strand) -> String {
     match strand {
         Strand::None => ".",
@@ -145,6 +149,75 @@ pub(crate) fn parse_region(region: &str) -> io::Result<Region> {
     })
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct SequenceRegion {
+    pub(crate) seq_region_name: String,
+    pub(crate) start: Option<usize>,
+    pub(crate) end: Option<usize>,
+}
+
+pub(crate) fn parse_sequence_region(region: &str) -> io::Result<SequenceRegion> {
+    let invalid_region = |message: String| io::Error::new(ErrorKind::InvalidInput, message);
+
+    if region.is_empty() {
+        return Err(invalid_region(
+            "invalid sequence region: empty region".to_string(),
+        ));
+    }
+
+    let Some((seq_region_name, rest)) = region.split_once(':') else {
+        return Ok(SequenceRegion {
+            seq_region_name: region.to_string(),
+            start: None,
+            end: None,
+        });
+    };
+
+    if seq_region_name.is_empty() || rest.is_empty() {
+        return Err(invalid_region(format!(
+            "invalid sequence region {region:?}: missing sequence name or coordinates"
+        )));
+    }
+
+    let parse_position = |value: &str| -> io::Result<usize> {
+        let position = value
+            .parse::<usize>()
+            .map_err(|err| invalid_region(format!("invalid sequence region {region:?}: {err}")))?;
+
+        if position == 0 {
+            return Err(invalid_region(format!(
+                "invalid sequence region {region:?}: coordinates must be 1-based"
+            )));
+        }
+
+        Ok(position)
+    };
+
+    let Some((start, end)) = rest.split_once('-') else {
+        let position = parse_position(rest)?;
+        return Ok(SequenceRegion {
+            seq_region_name: seq_region_name.to_string(),
+            start: Some(position),
+            end: None,
+        });
+    };
+
+    let start = parse_position(start)?;
+    let end = parse_position(end)?;
+
+    if start > end {
+        return Err(invalid_region(format!(
+            "invalid sequence region {region:?}: start must be <= end"
+        )));
+    }
+
+    Ok(SequenceRegion {
+        seq_region_name: seq_region_name.to_string(),
+        start: Some(start),
+        end: Some(end),
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -152,7 +225,9 @@ mod tests {
         parsers::test_utils::write_bgzf_file,
         test_utils::{create_temp_dir, write_sample_file},
     };
-    use std::fs;
+    use noodles_core::Position;
+    use pyo3::Python;
+    use std::{fs, ops::Bound};
 
     // ---------------------------------------------------------------------------
     // Helpers
@@ -171,12 +246,124 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
     }
 
     // ---------------------------------------------------------------------------
+    // parse_sequence_region
+    // ---------------------------------------------------------------------------
+
+    #[test]
+    fn test_parse_sequence_region_seq_region_name_only() -> io::Result<()> {
+        assert_eq!(
+            parse_sequence_region("chr1")?,
+            SequenceRegion {
+                seq_region_name: "chr1".to_string(),
+                start: None,
+                end: None,
+            }
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_parse_sequence_region_range() -> io::Result<()> {
+        assert_eq!(
+            parse_sequence_region("chr1:10-20")?,
+            SequenceRegion {
+                seq_region_name: "chr1".to_string(),
+                start: Some(10),
+                end: Some(20),
+            }
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_parse_sequence_region_start_only() -> io::Result<()> {
+        assert_eq!(
+            parse_sequence_region("chr1:10")?,
+            SequenceRegion {
+                seq_region_name: "chr1".to_string(),
+                start: Some(10),
+                end: None,
+            }
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_parse_sequence_region_start_only_with_trailing_hyphen() {
+        let err = parse_sequence_region("chr1:10-").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(
+            err.to_string()
+                .contains("cannot parse integer from empty string")
+        );
+    }
+
+    #[test]
+    fn test_parse_sequence_region_just_hyphen() {
+        let err = parse_sequence_region("chr1:-").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(err.to_string().contains("invalid sequence region"));
+    }
+
+    #[test]
+    fn test_parse_sequence_region_rejects_missing_coordinates() {
+        let err = parse_sequence_region("chr1:").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(err.to_string().contains("chr1:"));
+    }
+
+    #[test]
+    fn test_parse_sequence_region_rejects_empty_region() {
+        let err = parse_sequence_region("").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(err.to_string().contains("empty region"));
+    }
+
+    #[test]
+    fn test_parse_sequence_region_rejects_zero_position() {
+        let err = parse_sequence_region("chr1:0-10").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(err.to_string().contains("1-based"));
+    }
+
+    #[test]
+    fn test_parse_sequence_region_rejects_inverted_range() {
+        let err = parse_sequence_region("chr1:20-10").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(err.to_string().contains("start must be <= end"));
+    }
+
+    // ---------------------------------------------------------------------------
     // parse_region
     // ---------------------------------------------------------------------------
 
     #[test]
     fn test_parse_region_valid() {
         assert!(parse_region("chr1:1-1000").is_ok());
+    }
+
+    #[test]
+    fn test_parse_region_start_only() -> io::Result<()> {
+        let region = parse_region("chr1:10")?;
+        assert_eq!(region.name(), "chr1".to_string());
+        let start = Position::try_from(10).unwrap();
+        assert_eq!(region.start(), Bound::Included(start));
+        assert_eq!(region.end(), Bound::Unbounded);
+        Ok(())
+    }
+
+    #[test]
+    fn test_parse_region_start_only_with_trailing_hyphen() {
+        let err = parse_region("chr1:10-").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(err.to_string().contains("invalid tabix region"));
+    }
+
+    #[test]
+    fn test_parse_region_just_hyphen() {
+        let err = parse_region("chr1:-").unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::InvalidInput);
+        assert!(err.to_string().contains("invalid tabix region"));
     }
 
     #[test]
@@ -187,7 +374,7 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
     }
 
     #[test]
-    fn test_parse_region_empty() {
+    fn test_parse_region_rejects_empty_region() {
         let err = parse_region("").unwrap_err();
         assert_eq!(err.kind(), ErrorKind::InvalidInput);
         assert!(err.to_string().contains("invalid tabix region"));
@@ -214,6 +401,26 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
         assert_eq!(noodles_strand_to_string(Strand::Forward), "+");
         assert_eq!(noodles_strand_to_string(Strand::Reverse), "-");
         assert_eq!(noodles_strand_to_string(Strand::Unknown), "?");
+    }
+
+    // -----------------------------------------------------------------------
+    // associated_index_path
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_associated_index_path_csi() {
+        assert_eq!(
+            associated_index_path(Path::new("annotations.gff3.gz"), "csi"),
+            PathBuf::from("annotations.gff3.gz.csi")
+        );
+    }
+
+    #[test]
+    fn test_associated_index_path_tbi() {
+        assert_eq!(
+            associated_index_path(Path::new("sample.vcf.gz"), "tbi"),
+            PathBuf::from("sample.vcf.gz.tbi")
+        );
     }
 
     // ---------------------------------------------------------------------------
@@ -280,6 +487,8 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
 
     #[test]
     fn test_reader_mode_parse_rejects_invalid_mode() {
+        Python::initialize();
+
         let err = ReaderMode::parse(Some("invalid-mode")).unwrap_err();
         assert!(err.to_string().contains(
             "unsupported reader mode \"invalid-mode\": expected 'auto', 'query' or 'sequential'"
