@@ -17,8 +17,25 @@
 
 import pytest
 
-from ensembl.vep.common import Attribute, Strand
+from ensembl.vep.common import Attribute, CoordSystemLevel, Strand
 from ensembl.vep.models.genic import Transcript, Exon, Intron, Translation, CDS
+from ensembl.vep.models.sequence import CoordSystem, Slice
+
+
+class DummySlice(Slice):
+    """Slice with a sequence supplied through the unsafe test hook."""
+
+    def __init__(self, sequence: str, feature_start: int) -> None:
+        padded_sequence = ("N" * (feature_start - 1)) + sequence
+        super().__init__(
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+            seq_region_name="1",
+            start=1,
+            end=len(padded_sequence),
+            strand=Strand.FORWARD,
+        )
+        with self.unsafe() as unsafe_slice:
+            setattr(unsafe_slice, "_seq", padded_sequence)
 
 
 @pytest.fixture
@@ -43,6 +60,34 @@ def transcript() -> Transcript:
 def translation() -> Translation:
     """Translation fixture for testing."""
     return Translation(start=10, end=90, stable_id="ENSP00000000001")
+
+
+@pytest.fixture
+def spliced_exons() -> list[Exon]:
+    """Create exons backed by dummy slices with known sequences."""
+    return [
+        Exon(
+            start=1,
+            end=10,
+            strand=Strand.FORWARD,
+            stable_id="ENSE00000000001",
+            slice=DummySlice("A" * 10, feature_start=1),
+        ),
+        Exon(
+            start=20,
+            end=30,
+            strand=Strand.FORWARD,
+            stable_id="ENSE00000000002",
+            slice=DummySlice("C" * 11, feature_start=20),
+        ),
+        Exon(
+            start=40,
+            end=50,
+            strand=Strand.FORWARD,
+            stable_id="ENSE00000000003",
+            slice=DummySlice("G" * 11, feature_start=40),
+        ),
+    ]
 
 
 class TestTranscriptInitialization:
@@ -106,24 +151,17 @@ class TestTranscriptProperties:
 
         assert transcript.end_exon_index == 2
 
-    def test_spliced_seq(self, transcript: Transcript) -> None:
+    def test_spliced_seq(self, transcript: Transcript, spliced_exons: list[Exon]) -> None:
         """Test that spliced_seq is calculated correctly."""
         assert transcript.spliced_seq is None
 
-        transcript.spliced_exons = [
-            Exon(start=1, end=10, strand=Strand.FORWARD, stable_id="ENSE00000000001"),
-            Exon(start=20, end=30, strand=Strand.FORWARD, stable_id="ENSE00000000002"),
-            Exon(start=40, end=50, strand=Strand.FORWARD, stable_id="ENSE00000000003"),
-        ]
-
-        # Mock exon sequences for testing
-        transcript.spliced_exons[0].seq = "A" * 10
-        transcript.spliced_exons[1].seq = "C" * 11
-        transcript.spliced_exons[2].seq = "G" * 11
+        transcript.spliced_exons = spliced_exons
 
         assert transcript.spliced_seq == "A" * 10 + "C" * 11 + "G" * 11
 
-    def test_cds(self, transcript: Transcript, translation: Translation) -> None:
+    def test_cds(
+        self, transcript: Transcript, translation: Translation, spliced_exons: list[Exon]
+    ) -> None:
         """Test that cds is calculated correctly."""
         assert transcript.cds is None
 
@@ -131,15 +169,7 @@ class TestTranscriptProperties:
         translation.transcript = transcript
 
         # Mock spliced_seq for testing
-        transcript.spliced_exons = [
-            Exon(start=1, end=10, strand=Strand.FORWARD, stable_id="ENSE00000000001"),
-            Exon(start=20, end=30, strand=Strand.FORWARD, stable_id="ENSE00000000002"),
-            Exon(start=40, end=50, strand=Strand.FORWARD, stable_id="ENSE00000000003"),
-        ]
-
-        transcript.spliced_exons[0].seq = "A" * 10
-        transcript.spliced_exons[1].seq = "C" * 11
-        transcript.spliced_exons[2].seq = "G" * 11
+        transcript.spliced_exons = spliced_exons
 
         cds = CDS(start=1, end=50, strand=Strand.FORWARD)
         cds.seq = "A" * 10 + "C" * 11 + "G" * 11

@@ -22,7 +22,7 @@ from typing import TYPE_CHECKING
 
 from attrs import define, field
 
-from ensembl.vep.common import Strand, invalidate, invalidates
+from ensembl.vep.common import Strand, UnsafeSetterMixin, invalidates
 from ensembl.vep.models.sequence.coord_system import CoordSystem
 
 if TYPE_CHECKING:
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 
 
 @define(kw_only=True, auto_attribs=True)
-class Slice:
+class Slice(UnsafeSetterMixin):
     """Represents a genomic region on a sequence.
 
     Attributes:
@@ -49,8 +49,6 @@ class Slice:
     start: int = field(on_setattr=invalidates("_seq"))
     end: int = field(on_setattr=invalidates("_seq"))
     strand: Strand = field(on_setattr=invalidates("_seq"))
-    _seq_region_length: int | None = field(default=None, repr=False, alias="seq_region_length")
-    _seq_override: str | None = field(default=None, repr=False, alias="seq")
     sequence_source: SequenceSource | None = field(
         default=None, repr=False, on_setattr=invalidates("_seq", "_seq_region_length")
     )
@@ -76,7 +74,7 @@ class Slice:
         with self._lock:
             if self.sequence_source is None:
                 return None
-            
+
             return self.sequence_source.get_sequence_by_start_end_strand(
                 self.seq_region_name,
                 self.start,
@@ -107,11 +105,11 @@ class Slice:
 
             return self.sequence_source.get_seq_region_length(self.seq_region_name)
 
-    def __deepcopy__(self, memo: dict[int, str]) -> Slice:
+    def __deepcopy__(self, memo: dict[int, object]) -> Slice:
         """Create a deepcopy without copying the internal lock.
 
         Args:
-            memo (dict[int, str]): Deepcopy memoization map.
+            memo (dict[int, object]): Deepcopy memoization map.
 
         Returns:
             Slice: The copied slice instance.
@@ -123,9 +121,7 @@ class Slice:
             start=self.start,
             end=self.end,
             strand=self.strand,
-            seq_region_length=deepcopy(self._seq_region_length, memo),
             sequence_source=self.sequence_source,
-            seq=deepcopy(self._seq_override, memo),
         )
 
         memo[id(self)] = copied

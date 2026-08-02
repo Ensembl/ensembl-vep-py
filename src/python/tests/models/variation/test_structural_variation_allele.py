@@ -36,7 +36,6 @@ def genomic_slice() -> Slice:
     return Slice(
         coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
         seq_region_name="1",
-        seq_region_length=1000,
         start=1,
         end=1000,
         strand=Strand.FORWARD,

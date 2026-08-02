@@ -34,15 +34,16 @@ class FastaSequenceSource(SequenceSource):
 
     file_path: str | Path | None = field(default=None)
     mode: str = field(default="auto")
-    adaptor: FastaParser = field(init=False, factory=FastaParser)
+    adaptor: FastaParser = field(factory=FastaParser)
     _sequences: dict[str, str] | None = field(default=None, init=False, repr=False)
 
     def close(self) -> None:
         """Release loaded FASTA sequence data."""
 
         self.adaptor.close()
+        self._sequences = None
         self.clear_cache()
-    
+
     def _fetch_sequence_chunk(self, seq_region_name: str, start: int, end: int) -> str:
         """Return a FASTA sequence chunk.
 
@@ -54,6 +55,9 @@ class FastaSequenceSource(SequenceSource):
         Returns:
             str: The requested chunk or Ns if unavailable.
         """
+
+        if self.file_path is None:
+            return "N" * (end - start + 1)
 
         with self.adaptor.open(self.file_path, mode="auto"):
             if self.adaptor.reader_mode == "query":
@@ -88,15 +92,27 @@ class FastaSequenceSource(SequenceSource):
             int | None: The sequence length or None if unavailable.
         """
 
+        # Check if the length is already cached in the adaptor metadata
         lengths = self.adaptor.metadata.get("sequence_lengths", {})
+
+        # If the length is not cached, attempt to load it from the FASTA file
+        if not lengths and self.file_path is not None:
+            with self.adaptor.open(self.file_path, mode=self.mode):
+                lengths = self.adaptor.metadata.get("sequence_lengths", {})
+
         length = lengths.get(seq_region_name)
         return int(length) if length is not None else None
 
     def _load_sequences(self) -> dict[str, str]:
         """Load all FASTA records into an in-memory lookup map."""
 
+        if self.file_path is None:
+            return {}
+
         if self._sequences is None:
             with self.adaptor.open(self.file_path, mode="sequential"):
-                self._sequences = {record.seqid: record.sequence for record in self.adaptor.records(limit=None)}
+                self._sequences = {
+                    record.seqid: record.sequence for record in self.adaptor.records(limit=None)
+                }
 
         return self._sequences

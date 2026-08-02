@@ -15,33 +15,12 @@
 # pylint: disable=redefined-outer-name
 """Unit tests for Feature class."""
 
-from attrs import define, field
 import pytest
 
 from ensembl.vep.common import CoordSystemLevel, Strand
 from ensembl.vep.models import Feature
 from ensembl.vep.models.sequence import CoordSystem, Slice
-from ensembl.vep.sources.sequence_source import SequenceSource
-
-
-@define(kw_only=True, auto_attribs=True)
-class DummySequenceSource(SequenceSource):
-    """Minimal sequence source used for Feature.seq tests."""
-
-    data: dict[str, str] = field(factory=dict)
-
-    def close(self) -> None:
-        pass
-
-    def _fetch_sequence_chunk(self, seq_region_name: str, start: int, end: int) -> str:
-        sequence = self.data.get(seq_region_name)
-        if sequence is None:
-            return "N" * (end - start + 1)
-        return sequence[start - 1 : end]
-
-    def _get_seq_region_length(self, seq_region_name: str) -> int | None:
-        sequence = self.data.get(seq_region_name)
-        return len(sequence) if sequence is not None else None
+from tests.models.conftest import DummySequenceSource
 
 
 class TestFeatureInitialization:
@@ -50,10 +29,10 @@ class TestFeatureInitialization:
     def test_initialization_without_keywords(self) -> None:
         """Test Feature initialization without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = Feature(10, end=20, strand=Strand.FORWARD, seq=None)  # type: ignore[misc]
+            _ = Feature(10, end=20, strand=Strand.FORWARD)  # type: ignore[misc]
 
 
-class TestFeatureProperties:
+class TestFeatureProperties:    # pylint: disable=too-many-public-methods
     """Test property accessors."""
 
     @pytest.fixture
@@ -67,7 +46,6 @@ class TestFeatureProperties:
         return Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
-            seq_region_length=1000,
             start=100,
             end=200,
             strand=Strand.FORWARD,
@@ -211,13 +189,15 @@ class TestFeatureProperties:
         assert feature.slice.seq is None
         assert feature.seq is None
 
-    def test_seq_extracts_substring_from_slice(self) -> None:
+    def test_seq_extracts_substring_from_slice(
+        self, dummy_sequence_source: DummySequenceSource
+    ) -> None:
         """Test seq extracts the correct substring from the slice sequence."""
-        source = DummySequenceSource(data={"1": "ACGTACGTACGTACGTACGT"})
+        source = dummy_sequence_source
+        source.data = {"1": "ACGTACGTACGTACGTACGT"}
         genomic_slice = Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
-            seq_region_length=20,
             start=1,
             end=20,
             strand=Strand.FORWARD,
@@ -233,13 +213,23 @@ class TestFeatureProperties:
         with pytest.raises(AttributeError, match="property 'seq' of 'Feature' object has no setter"):
             feature.seq = "ACGT"  # type: ignore[misc]
 
-    def test_seq_update(self) -> None:
+    def test_seq_can_be_set_unsafe(self, feature: Feature) -> None:
+        """Test the cached sequence can be supplied through the unsafe context."""
+        with pytest.raises(AttributeError, match="property 'seq' of 'Feature' object has no setter"):
+            feature.seq = "ACGT"  # type: ignore[misc]
+
+        with feature.unsafe() as unsafe_feature:
+            setattr(unsafe_feature, "_seq", "ACGT")
+
+        assert feature.seq == "ACGT"
+
+    def test_seq_update(self, dummy_sequence_source: DummySequenceSource) -> None:
         """Test seq updates when start, end, or slice changes."""
-        source = DummySequenceSource(data={"1": "AAAACCCCGGGGTTTTAAAA"})
+        source = dummy_sequence_source
+        source.data = {"1": "AAAACCCCGGGGTTTTAAAA"}
         genomic_slice = Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
-            seq_region_length=20,
             start=1,
             end=20,
             strand=Strand.FORWARD,
@@ -257,7 +247,6 @@ class TestFeatureProperties:
         other_slice = Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
-            seq_region_length=20,
             start=1,
             end=20,
             strand=Strand.FORWARD,
@@ -276,7 +265,6 @@ class TestFeatureEquality:
         return Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
-            seq_region_length=1000,
             start=100,
             end=200,
             strand=Strand.FORWARD,
@@ -311,7 +299,6 @@ class TestFeatureEquality:
         slice2 = Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
-            seq_region_length=1000,
             start=200,
             end=300,
             strand=Strand.FORWARD,
@@ -341,7 +328,6 @@ class TestFeatureOverlaps:
         return Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
-            seq_region_length=1000,
             start=1,
             end=1000,
             strand=Strand.FORWARD,
@@ -365,7 +351,6 @@ class TestFeatureOverlaps:
         slice2 = Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="2",
-            seq_region_length=1000,
             start=1,
             end=1000,
             strand=Strand.FORWARD,
@@ -391,7 +376,6 @@ class TestFeatureFeatureSlice:
         return Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
-            seq_region_length=1000,
             start=100,
             end=200,
             strand=Strand.FORWARD,

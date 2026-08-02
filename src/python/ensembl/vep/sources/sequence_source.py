@@ -50,7 +50,7 @@ class SequenceSource(ABC):
             length = self._get_seq_region_length(seq_region_name)
             if length is None:
                 return None
-        
+
             self._seq_region_lengths[seq_region_name] = length
 
         return length
