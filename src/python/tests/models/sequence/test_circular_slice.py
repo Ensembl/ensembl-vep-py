@@ -65,9 +65,7 @@ class TestCircularSliceProperties:
         assert circular_slice.strand == Strand.FORWARD
         assert circular_slice.seq is None
 
-    def test_seq_region_length_is_lazy_when_missing(
-        self, dummy_sequence_source: DummySequenceSource
-    ) -> None:
+    def test_seq_region_length_is_lazy_when_missing(self, dummy_sequence_source: DummySequenceSource) -> None:
         """Test seq_region_length can be resolved from the source lazily."""
 
         source = dummy_sequence_source
@@ -83,9 +81,7 @@ class TestCircularSliceProperties:
 
         assert genomic_slice.seq_region_length == 8
 
-    def test_lazy_sequence_loading_uses_source(
-        self, dummy_sequence_source: DummySequenceSource
-    ) -> None:
+    def test_lazy_sequence_loading_uses_source(self, dummy_sequence_source: DummySequenceSource) -> None:
         """Test sequence loading is lazy and cached."""
         source = dummy_sequence_source
         source.data = {"1": "ACGTACGT"}

@@ -159,9 +159,7 @@ class TestTranscriptProperties:
 
         assert transcript.spliced_seq == "A" * 10 + "C" * 11 + "G" * 11
 
-    def test_cds(
-        self, transcript: Transcript, translation: Translation, spliced_exons: list[Exon]
-    ) -> None:
+    def test_cds(self, transcript: Transcript, translation: Translation, spliced_exons: list[Exon]) -> None:
         """Test that cds is calculated correctly."""
         assert transcript.cds is None
 

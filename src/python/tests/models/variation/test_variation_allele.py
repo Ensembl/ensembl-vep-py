@@ -341,9 +341,7 @@ class TestVariationAlleleMinimiseAndShift:
          * Minimise should not change anything
          * Shift should change the position and ref/alt allele sequence
          => Shift should reset the minimised state (as ref/alt sequences was changed)."""
-        dummy_sequence_source.data = {
-            "FAKE_CHROMOSOME": ("N" * (slice_start - 1)) + slice_seq
-        }
+        dummy_sequence_source.data = {"FAKE_CHROMOSOME": ("N" * (slice_start - 1)) + slice_seq}
         repeat_slice = Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="FAKE_CHROMOSOME",

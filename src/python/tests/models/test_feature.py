@@ -32,7 +32,7 @@ class TestFeatureInitialization:
             _ = Feature(10, end=20, strand=Strand.FORWARD)  # type: ignore[misc]
 
 
-class TestFeatureProperties:    # pylint: disable=too-many-public-methods
+class TestFeatureProperties:  # pylint: disable=too-many-public-methods
     """Test property accessors."""
 
     @pytest.fixture
@@ -189,9 +189,7 @@ class TestFeatureProperties:    # pylint: disable=too-many-public-methods
         assert feature.slice.seq is None
         assert feature.seq is None
 
-    def test_seq_extracts_substring_from_slice(
-        self, dummy_sequence_source: DummySequenceSource
-    ) -> None:
+    def test_seq_extracts_substring_from_slice(self, dummy_sequence_source: DummySequenceSource) -> None:
         """Test seq extracts the correct substring from the slice sequence."""
         source = dummy_sequence_source
         source.data = {"1": "ACGTACGTACGTACGTACGT"}

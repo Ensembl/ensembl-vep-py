@@ -21,13 +21,7 @@ from ensembl.vep.common import Strand
 from ensembl.vep.parsers.fasta import FastaParser
 from ensembl.vep.sources.file.fasta.sequence import FastaSequenceSource
 
-
-SAMPLE = (
-    ">chr1\n"
-    "ACGTTGCA\n"
-    ">chr2\n"
-    "AAAA\n"
-)
+SAMPLE = ">chr1\n" "ACGTTGCA\n" ">chr2\n" "AAAA\n"
 SAMPLE_FAI = "chr1\t8\t6\t8\t9\nchr2\t4\t21\t4\t5\n"
 
 
@@ -58,9 +52,7 @@ def _make_fasta_source(path: Path, mode: str) -> FastaSequenceSource:
 class MetadataOnlyParser(FastaParser):
     """Minimal parser stub that only exposes metadata."""
 
-    def __init__(  # pylint: disable=super-init-not-called
-        self, metadata: dict[str, object]
-    ) -> None:
+    def __init__(self, metadata: dict[str, object]) -> None:  # pylint: disable=super-init-not-called
         """Initialize the parser stub."""
 
         self._test_metadata = metadata
