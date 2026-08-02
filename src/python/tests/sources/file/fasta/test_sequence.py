@@ -21,7 +21,11 @@ from ensembl.vep.common import Strand
 from ensembl.vep.parsers.fasta import FastaParser
 from ensembl.vep.sources.file.fasta.sequence import FastaSequenceSource
 
-SAMPLE = ">chr1\n" "ACGTTGCA\n" ">chr2\n" "AAAA\n"
+SAMPLE = """>chr1
+ACGTTGCA
+>chr2
+AAAA
+"""
 SAMPLE_FAI = "chr1\t8\t6\t8\t9\nchr2\t4\t21\t4\t5\n"
 
 
