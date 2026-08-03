@@ -173,7 +173,7 @@ class TestSliceEquality:
         slice2.strand = Strand.REVERSE
         assert genomic_slice != slice2
 
-    def test_diferent_seq_region_length(
+    def test_different_seq_region_length(
         self, genomic_slice: Slice, dummy_sequence_source: DummySequenceSource
     ) -> None:
         """Test two Slices with different seq_region_length are still equal."""
