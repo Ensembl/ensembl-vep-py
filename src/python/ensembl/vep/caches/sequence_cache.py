@@ -131,7 +131,7 @@ class SequenceBinnedLRUCache:
                 (seq_region_name, current_start),
                 lambda: self._load_chunk(
                     seq_region_name,
-                    chunk_start,
+                    current_start,  # pylint: disable=cell-var-from-loop
                     loader,
                 ),
             )

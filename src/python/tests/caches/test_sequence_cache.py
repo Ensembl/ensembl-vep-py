@@ -124,3 +124,16 @@ class TestSequenceBinnedLRUCache:
 
         cache.clear()
         assert len(cache._cache) == 0  # pylint: disable=protected-access
+
+    def test_returns_correct_seq_across_chunk_boundary(self) -> None:
+        """Test the cache returns the correct bases across chunk boundaries."""
+
+        cache = SequenceBinnedLRUCache(chunk_power=2, max_chunks=4)
+        load_calls: list[tuple[str, int, int]] = []
+        data = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+        def loader(seq_region_name: str, start: int, end: int) -> str:
+            load_calls.append((seq_region_name, start, end))
+            return data[start - 1 : end]
+
+        assert cache.get_sequence("chr1", 3, 10, loader) == "CDEFGHIJ"
