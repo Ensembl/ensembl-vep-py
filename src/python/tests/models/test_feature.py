@@ -20,6 +20,7 @@ import pytest
 from ensembl.vep.common import CoordSystemLevel, Strand
 from ensembl.vep.models import Feature
 from ensembl.vep.models.sequence import CoordSystem, Slice
+from tests.models.conftest import DummySequenceSource
 
 
 class TestFeatureInitialization:
@@ -28,10 +29,10 @@ class TestFeatureInitialization:
     def test_initialization_without_keywords(self) -> None:
         """Test Feature initialization without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = Feature(10, end=20, strand=Strand.FORWARD, seq=None)  # type: ignore[misc]
+            _ = Feature(10, end=20, strand=Strand.FORWARD)  # type: ignore[misc]
 
 
-class TestFeatureProperties:
+class TestFeatureProperties:  # pylint: disable=too-many-public-methods
     """Test property accessors."""
 
     @pytest.fixture
@@ -45,7 +46,6 @@ class TestFeatureProperties:
         return Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
-            seq_region_length=1000,
             start=100,
             end=200,
             strand=Strand.FORWARD,
@@ -178,6 +178,81 @@ class TestFeatureProperties:
         feature.strand = Strand.FORWARD
         assert feature.seq_region_strand == Strand.FORWARD  # back to original
 
+    def test_seq_no_slice(self, feature: Feature) -> None:
+        """Test seq returns None when no slice attached."""
+        assert feature.slice is None
+        assert feature.seq is None
+
+    def test_seq_slice_without_sequence_source(self, feature: Feature, genomic_slice: Slice) -> None:
+        """Test seq returns None when the attached slice has no sequence available."""
+        feature.slice = genomic_slice
+        assert feature.slice.seq is None
+        assert feature.seq is None
+
+    def test_seq_extracts_substring_from_slice(self, dummy_sequence_source: DummySequenceSource) -> None:
+        """Test seq extracts the correct substring from the slice sequence."""
+        source = dummy_sequence_source
+        source.data = {"1": "ACGTACGTACGTACGTACGT"}
+        genomic_slice = Slice(
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+            seq_region_name="1",
+            start=1,
+            end=20,
+            strand=Strand.FORWARD,
+            sequence_source=source,
+        )
+        feature = Feature(start=5, end=8, strand=Strand.FORWARD, slice=genomic_slice)
+
+        # slice.seq is "ACGTACGTACGTACGTACGT", feature covers positions 5-8 -> "ACGT"
+        assert feature.seq == "ACGT"
+
+    def test_seq_immutable(self, feature: Feature) -> None:
+        """Test seq cannot be directly set."""
+        with pytest.raises(AttributeError, match="property 'seq' of 'Feature' object has no setter"):
+            feature.seq = "ACGT"  # type: ignore[misc]
+
+    def test_seq_can_be_set_unsafe(self, feature: Feature) -> None:
+        """Test the cached sequence can be supplied through the unsafe context."""
+        with pytest.raises(AttributeError, match="property 'seq' of 'Feature' object has no setter"):
+            feature.seq = "ACGT"  # type: ignore[misc]
+
+        with feature.unsafe() as unsafe_feature:
+            setattr(unsafe_feature, "_seq", "ACGT")
+
+        assert feature.seq == "ACGT"
+
+    def test_seq_update(self, dummy_sequence_source: DummySequenceSource) -> None:
+        """Test seq updates when start, end, or slice changes."""
+        source = dummy_sequence_source
+        source.data = {"1": "AAAACCCCGGGGTTTTAAAA"}
+        genomic_slice = Slice(
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+            seq_region_name="1",
+            start=1,
+            end=20,
+            strand=Strand.FORWARD,
+            sequence_source=source,
+        )
+        feature = Feature(start=1, end=4, strand=Strand.FORWARD, slice=genomic_slice)
+
+        assert feature.seq == "AAAA"
+
+        feature.start = 5
+        feature.end = 8
+        assert feature.seq == "CCCC"
+
+        other_source = DummySequenceSource(data={"1": "TTTTGGGGCCCCAAAATTTT"})
+        other_slice = Slice(
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+            seq_region_name="1",
+            start=1,
+            end=20,
+            strand=Strand.FORWARD,
+            sequence_source=other_source,
+        )
+        feature.slice = other_slice
+        assert feature.seq == "GGGG"
+
 
 class TestFeatureEquality:
     """Test equality comparison."""
@@ -188,7 +263,6 @@ class TestFeatureEquality:
         return Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
-            seq_region_length=1000,
             start=100,
             end=200,
             strand=Strand.FORWARD,
@@ -223,7 +297,6 @@ class TestFeatureEquality:
         slice2 = Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
-            seq_region_length=1000,
             start=200,
             end=300,
             strand=Strand.FORWARD,
@@ -253,7 +326,6 @@ class TestFeatureOverlaps:
         return Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
-            seq_region_length=1000,
             start=1,
             end=1000,
             strand=Strand.FORWARD,
@@ -277,7 +349,6 @@ class TestFeatureOverlaps:
         slice2 = Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="2",
-            seq_region_length=1000,
             start=1,
             end=1000,
             strand=Strand.FORWARD,
@@ -303,7 +374,6 @@ class TestFeatureFeatureSlice:
         return Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
-            seq_region_length=1000,
             start=100,
             end=200,
             strand=Strand.FORWARD,

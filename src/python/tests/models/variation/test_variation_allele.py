@@ -26,21 +26,22 @@ from ensembl.vep.models.variation import VariationAllele
 from ensembl.vep.models.genic import Transcript
 from ensembl.vep.models.overlap import OverlapConsequence, TranscriptVariationAllele
 from ensembl.vep.models.sequence import CoordSystem, Slice
+from tests.models.conftest import DummySequenceSource
 
 logger = logging.getLogger(__name__)
 
 
 @pytest.fixture
-def genomic_slice() -> Slice:
+def genomic_slice(dummy_sequence_source: DummySequenceSource) -> Slice:
     """Create a slice object for testing."""
+    dummy_sequence_source.data = {"1": "ATCGATCGATCGG"}
     return Slice(
         coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
         seq_region_name="1",
-        seq_region_length=13,
         start=1,
         end=13,
         strand=Strand.FORWARD,
-        seq="ATCGATCGATCGG",
+        sequence_source=dummy_sequence_source,
     )
 
 
@@ -333,19 +334,21 @@ class TestVariationAlleleMinimiseAndShift:
         variation_allele_end: int,
         ref_allele: str,
         alt_allele: str,
+        dummy_sequence_source: DummySequenceSource,
     ) -> None:
         """Test that calling shift after minimise retains the original locus and sets flags correctly.
         In this testcase:
          * Minimise should not change anything
          * Shift should change the position and ref/alt allele sequence
          => Shift should reset the minimised state (as ref/alt sequences was changed)."""
+        dummy_sequence_source.data = {"FAKE_CHROMOSOME": ("N" * (slice_start - 1)) + slice_seq}
         repeat_slice = Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="FAKE_CHROMOSOME",
             start=slice_start,
             end=slice_start + len(slice_seq) - 1,
             strand=Strand.FORWARD,
-            seq=slice_seq,
+            sequence_source=dummy_sequence_source,
         )
         variation_allele2 = VariationAllele(
             start=variation_allele_start,
