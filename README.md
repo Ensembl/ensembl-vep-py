@@ -19,15 +19,16 @@ Full documentation is available at: https://ensembl.github.io/ensembl-vep-py/
 ### Requirements
 
 - Python 3.12 or higher
+- Rust 1.95.0 or higher (TBD - not strictly tested)
 - Dependencies listed in `pyproject.toml` and `Cargo.toml`
 
-### Using pip
+### Using pip (TBD - after PyPI release)
 
 ```bash
 pip install ensembl-vep
 ```
 
-### Using uv (recommended)
+### Using uv (recommended)  (TBD - after PyPI release)
 
 ```bash
 uv pip install ensembl-vep
@@ -35,25 +36,20 @@ uv pip install ensembl-vep
 
 ### Development Installation
 
-(Until the repo is private)
-1. fork the repository and clone it
-    ```bash
-    git clone https://github.com/yourusername/ensembl-vep-py.git
-    git remote add upstream https://github.com/Ensembl/ensembl-vep-py.git
-    ```
-
-2. Create a branch with upstream to a feature/** or bugfix/** branch
-    ```bash
-    cd ensembl-vep-py
-    git checkout -b some_developement upstream/feature/some_feature
-    ```
-
-3. Develop
+1. clone the repository
     ```bash
     git clone https://github.com/Ensembl/ensembl-vep-py.git
     cd ensembl-vep-py
-    cargo install
-    uv sync --extra dev,test
+    ```
+
+2. Create a branch against remote main branch
+    ```bash
+    git checkout -b feature/some_feature origin/main
+    ```
+
+3. Install the package in editable mode
+    ```bash
+    uv pip install -e .
     ```
 
 See more details in the [Contributing Guide](CONTRIBUTING.md) guide.
@@ -76,8 +72,7 @@ vep world!
 
 ## Configuration
 
-### Cache Files
-TODO
+### Cache Files (TBD)
 
 ## Testing
 
@@ -99,7 +94,7 @@ the project can use stable Rust without nightly-only coverage attributes.
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
-## Citation
+## Citation (TBD)
 
 If you use this software, please cite:
 
@@ -108,15 +103,13 @@ The Ensembl Variant Effect Predictor.
 *Genome Biology* Jun 6;17(1):122. (2016)  
 doi:[10.1186/s13059-016-0974-4](https://doi.org/10.1186/s13059-016-0974-4)
 
-## Support
+## Support (TBD)
 
 - Bugs: [Issues](https://github.com/ensembl-vep-py/issues)
 - Features: [Discussions → Ideas](https://github.com/ensembl-vep-py/discussions/categories/ideas)
 
-## Changelog
+## Changelog (TBD)
 
 See [CHANGELOG.md](CHANGELOG.md) for version history and updates.
 
-## Acknowledgments
-
-TODO
+## Acknowledgments (TBD)

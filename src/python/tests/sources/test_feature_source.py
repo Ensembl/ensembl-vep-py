@@ -20,6 +20,7 @@ import pytest
 from attrs import define, field
 
 from ensembl.vep.common import SourceType
+from ensembl.vep.sources.sequence_source import SequenceSource
 from ensembl.vep.models import Feature
 from ensembl.vep.sources.feature_source import FeatureSource
 
@@ -29,7 +30,7 @@ class ConcreteFeatureSource(FeatureSource):
     """Concrete feature source used to test interface helpers."""
 
     closed: bool = field(default=False)
-    sequence_source: None = field(default=None)
+    sequence_source: SequenceSource | None = field(default=None)  # ignore[assignment]
 
     def get_all_features(self) -> list[Feature]:
         return []

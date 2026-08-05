@@ -24,6 +24,7 @@ import pytest
 from ensembl.vep.common import SourceType, Strand, format_region_string
 from ensembl.vep.models import Feature
 from ensembl.vep.parsers import Parser
+from ensembl.vep.sources.sequence_source import SequenceSource
 from ensembl.vep.sources.file.file_feature_source import FileFeatureSource
 
 _RECORDS: list[int] = []
@@ -93,7 +94,7 @@ class DummyFileFeatureSource(FileFeatureSource[ConcreteParser, Feature]):
     """Concrete file source used for testing FileFeatureSource interface helpers."""
 
     closed: bool = False
-    sequence_source: None = field(default=None)
+    sequence_source: SequenceSource | None = field(default=None)  # ignore[assignment]
 
     def _records_to_features(self, records: list[int]) -> list[Feature]:
         return [Feature(start=value, end=value, strand=Strand.FORWARD, slice=None) for value in records]

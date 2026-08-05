@@ -36,8 +36,11 @@ mod ensembl_vep_core {
     use crate::hello::sum_as_string;
 
     #[pymodule_export]
-    use crate::parsers::tabix::TabixParser;
-
-    #[pymodule_export]
-    use crate::parsers::gff3::{Gff3Parser, Gff3Record};
+    use crate::parsers::{
+        fasta::{FastaParser, FastaRecord},
+        gff3::{Gff3Parser, Gff3Record},
+        gtf::{GtfParser, GtfRecord},
+        tabix::TabixParser,
+        vcf::{VcfMetadata, VcfParser, VcfRecord},
+    };
 }

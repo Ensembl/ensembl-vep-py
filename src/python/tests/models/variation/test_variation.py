@@ -22,19 +22,20 @@ import pytest
 from ensembl.vep.common import ClassSOTerm, CoordSystemLevel, Locus, Strand
 from ensembl.vep.models.variation import Variation, OverlapConsequence
 from ensembl.vep.models.sequence import CoordSystem, Slice
+from tests.models.conftest import DummySequenceSource
 
 
 @pytest.fixture
-def genomic_slice() -> Slice:
+def genomic_slice(dummy_sequence_source: DummySequenceSource) -> Slice:
     """Create a slice object for testing."""
+    dummy_sequence_source.data = {"1": "ATCGATCGATCG"}
     return Slice(
         coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
         seq_region_name="1",
-        seq_region_length=12,
         start=1,
         end=12,
         strand=Strand.FORWARD,
-        seq="ATCGATCGATCG",
+        sequence_source=dummy_sequence_source,
     )
 
 

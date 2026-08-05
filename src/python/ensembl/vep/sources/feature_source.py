@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from typing import Iterator, Generic, TypeVar
-from attr import define
+from attr import define, field
 
 from ensembl.vep.common import SourceType
 from ensembl.vep.models import Feature
@@ -31,7 +31,7 @@ class FeatureSource(ABC, Generic[F]):
     """Unified interface for all sources that produce Feature objects."""
 
     source_type: SourceType
-    sequence_source: SequenceSource
+    sequence_source: SequenceSource | None = field(default=None)
 
     @abstractmethod
     def get_all_features(self) -> list[F]:

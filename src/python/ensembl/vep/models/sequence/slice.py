@@ -15,45 +15,121 @@
 
 from __future__ import annotations
 
-from typing import Any
+from copy import deepcopy
+from functools import cached_property
+from threading import RLock
+from typing import TYPE_CHECKING
+
 from attrs import define, field
 
-from ensembl.vep.common import Strand
+from ensembl.vep.common import Strand, UnsafeSetterMixin, invalidates
 from ensembl.vep.models.sequence.coord_system import CoordSystem
+
+if TYPE_CHECKING:
+    from ensembl.vep.sources.sequence_source import SequenceSource
 
 
 @define(kw_only=True, auto_attribs=True)
-class Slice:
-    """
-    Represents a genomic region on a sequence (chromosome, contig, patch, etc.).
+class Slice(UnsafeSetterMixin):
+    """Represents a genomic region on a sequence.
 
     Attributes:
         coord_system (CoordSystem): Coordinate system.
         seq_region_name (str): Sequence region name.
-        seq_region_length (str): Sequence region length.
         start (int): Start position relative to sequence region.
         end (int): End position relative to sequence region.
         strand (Strand): Slice orientation relative to sequence region.
-        seq (Any | None): Associated biological sequence.
+        seq (str | None): Sequence of the slice.
+        seq_region_length (int | None): Sequence region length.
+        sequence_source (SequenceSource | None): Lazy sequence provider.
     """
 
     coord_system: CoordSystem
-    seq_region_name: str
-    start: int
-    end: int
-    strand: Strand
-    seq_region_length: int | None = field(default=None)
-    seq: Any | None = field(default=None)
+    seq_region_name: str = field(on_setattr=invalidates("_seq", "_seq_region_length"))
+    start: int = field(on_setattr=invalidates("_seq"))
+    end: int = field(on_setattr=invalidates("_seq"))
+    strand: Strand = field(on_setattr=invalidates("_seq"))
+    sequence_source: SequenceSource | None = field(
+        default=None, repr=False, on_setattr=invalidates("_seq", "_seq_region_length")
+    )
+    _lock: RLock = field(factory=RLock, init=False, repr=False)
 
-    def __eq__(self, other: object) -> bool:
-        """Compare two Slice objects and define if they are identical.
-
-        Args:
-            other: Another Slice to compare against.
+    @property
+    def seq(self) -> str | None:
+        """Public accessor for the _seq
 
         Returns:
-            bool: True if equal, False otherwise.
+            str | None: The resolved sequence, or None if unavailable.
         """
+        return self._seq
+
+    @cached_property
+    def _seq(self) -> str | None:
+        """Resolve the sequence lazily from the attached sequence source.
+
+        Returns:
+            str | None: The resolved sequence, or None if unavailable.
+        """
+
+        with self._lock:
+            if self.sequence_source is None:
+                return None
+
+            return self.sequence_source.get_sequence_by_start_end_strand(
+                self.seq_region_name,
+                self.start,
+                self.end,
+                strand=self.strand,
+            )
+
+    @property
+    def seq_region_length(self) -> int | None:
+        """Public accessor for the _seq_region_length.
+
+        Returns:
+            int | None: The sequence region length, or None if unavailable.
+        """
+        return self._seq_region_length
+
+    @cached_property
+    def _seq_region_length(self) -> int | None:
+        """Resolve the sequence region length from the attached sequence source.
+
+        Returns:
+            int | None: The sequence region length, or None if unavailable.
+        """
+
+        with self._lock:
+            if self.sequence_source is None:
+                return None
+
+            return self.sequence_source.get_seq_region_length(self.seq_region_name)
+
+    def __deepcopy__(self, memo: dict[int, object]) -> Slice:
+        """Create a deepcopy without copying the internal lock.
+
+        Args:
+            memo (dict[int, object]): Deepcopy memoization map.
+
+        Returns:
+            Slice: The copied slice instance.
+        """
+
+        copied = type(self)(
+            coord_system=deepcopy(self.coord_system, memo),
+            seq_region_name=self.seq_region_name,
+            start=self.start,
+            end=self.end,
+            strand=self.strand,
+            sequence_source=self.sequence_source,
+        )
+
+        memo[id(self)] = copied
+        return copied
+
+    def __eq__(self, other: object) -> bool:
+        """Compare two Slice objects and define if they are identical."""
+
         if type(self) is not type(other):
             return False
 
@@ -66,12 +142,10 @@ class Slice:
         )
 
     def is_circular(self) -> bool:
-        """Indicates whether the slice is circular.
-
-        By default, slices are not circular, but this method can be
-        overridden in subclasses to provide specific behavior.
+        """Indicate whether the slice is circular.
 
         Returns:
-            bool: False by default, indicating the slice is not circular.
+            bool: False for regular slices.
         """
+
         return False

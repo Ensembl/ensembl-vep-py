@@ -199,6 +199,31 @@ pub(crate) fn write_bed_with_tbi(
     )
 }
 
+pub(crate) fn write_gtf_with_tbi(
+    dir: &Path,
+    lines: Option<Vec<String>>,
+) -> io::Result<(PathBuf, PathBuf)> {
+    let default_lines = vec![
+        "#!genome-version GRCh38".to_string(),
+        "chr1\tensembl\tgene\t1\t50\t.\t+\t.\tgene_id \"gene:1\";".to_string(),
+        "chr1\tensembl\tgene\t100\t200\t.\t+\t.\tgene_id \"gene:2\";".to_string(),
+        "chr1\tensembl\tgene\t200\t300\t.\t+\t.\tgene_id \"gene:3\";".to_string(),
+        "chr1\tensembl\tgene\t400\t500\t.\t+\t.\tgene_id \"gene:4\";".to_string(),
+        "chr2\tensembl\tgene\t100\t200\t.\t+\t.\tgene_id \"gene:5\";".to_string(),
+    ];
+    let header = Header::builder()
+        .set_format(Format::Generic(CoordinateSystem::Gff))
+        .build();
+
+    write_indexed_tabix_file(
+        dir,
+        lines.unwrap_or(default_lines),
+        "test.gtf.gz",
+        header,
+        parse_gff3_record,
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use std::{env, fs};

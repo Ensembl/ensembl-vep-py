@@ -87,7 +87,9 @@ dependencies = [
  "noodles-core",
  "noodles-csi",
  "noodles-gff",
+ "noodles-gtf",
  "noodles-tabix",
+ "noodles-vcf",
  "pyo3",
  "pyo3-log",
  "rstest",
@@ -383,6 +385,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "noodles-gtf"
+version = "0.51.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d56b64439917d4955c2e9d65baf4a6cb2d44cb8e2122a1e7ed3122997163b784"
+dependencies = [
+ "bstr",
+ "indexmap",
+ "lexical-core",
+ "noodles-bgzf",
+ "noodles-core",
+ "noodles-csi",
+ "noodles-gff",
+]
+
+[[package]]
 name = "noodles-tabix"
 version = "0.61.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -393,6 +410,21 @@ dependencies = [
  "noodles-bgzf",
  "noodles-core",
  "noodles-csi",
+]
+
+[[package]]
+name = "noodles-vcf"
+version = "0.86.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0131147080a5aeadcd6c2ab43e7ca1f9e8018cdd482eed797d081c40e8f0a3c7"
+dependencies = [
+ "indexmap",
+ "memchr",
+ "noodles-bgzf",
+ "noodles-core",
+ "noodles-csi",
+ "noodles-tabix",
+ "percent-encoding",
 ]
 
 [[package]]
