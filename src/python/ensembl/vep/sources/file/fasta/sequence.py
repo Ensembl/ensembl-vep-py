@@ -29,11 +29,9 @@ class FastaSequenceSource(SequenceSource):
 
     Attributes:
         file_path (str | Path | None): FASTA file path.
-        mode (str): Reader mode used by the parser.
     """
 
     file_path: str | Path | None = field(default=None)
-    mode: str = field(default="auto")
     adaptor: FastaParser = field(factory=FastaParser)
     _sequences: dict[str, str] | None = field(default=None, init=False, repr=False)
 
@@ -97,7 +95,7 @@ class FastaSequenceSource(SequenceSource):
 
         # If the length is not cached, attempt to load it from the FASTA file
         if not lengths and self.file_path is not None:
-            with self.adaptor.open(self.file_path, mode=self.mode):
+            with self.adaptor.open(self.file_path, mode="sequential"):
                 lengths = self.adaptor.metadata.get("sequence_lengths", {})
 
         length = lengths.get(seq_region_name)

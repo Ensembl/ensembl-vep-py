@@ -48,7 +48,6 @@ def _make_fasta_source(path: Path, mode: str) -> FastaSequenceSource:
     """Create a sequence source with a parser opened for the test FASTA."""
     return FastaSequenceSource(
         file_path=path,
-        mode=mode,
         adaptor=FastaParser(file_path=path, mode=mode),
     )
 
@@ -114,7 +113,6 @@ class TestFastaSequenceSourceInitialization:
         source = FastaSequenceSource()
 
         assert source.file_path is None
-        assert source.mode == "auto"
         assert source.adaptor.format == "fasta"  # pylint: disable=protected-access
         assert source.adaptor.reader_mode == "auto"  # pylint: disable=protected-access
         assert source._sequences is None  # pylint: disable=protected-access
@@ -262,7 +260,6 @@ class TestFastaSequenceSourceLength:
         path = _write_fasta(tmp_path / "sample.fa")
         source = FastaSequenceSource(
             file_path=path,
-            mode="sequential",
             adaptor=MetadataOnlyParser({"sequence_lengths": {"chr1": 8}}),
         )
 
