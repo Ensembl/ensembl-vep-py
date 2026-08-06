@@ -155,12 +155,28 @@ class GTFParser(Parser[GTFRecord]):
 
     @staticmethod
     def parse_text(data: str, limit: int | None = None) -> list[GTFRecord]:
-        """Parse GTF records from text."""
+        """Parse GTF records from text.
+
+        Args:
+            data (str): The GTF text to parse.
+            limit (int | None): The maximum number of records to return. If None, return all records.
+
+        Returns:
+            list[GTFRecord]: A list of GTF records.
+        """
 
         return _RustGTFParser.parse_text(data, limit)
 
     @staticmethod
     def parse_file(file_path: str | Path, limit: int | None = None) -> list[GTFRecord]:
-        """Parse GTF records from a file."""
+        """Parse GTF records from a file.
+
+        Args:
+            file_path (str | Path): The path to the GTF file to parse.
+            limit (int | None): The maximum number of records to return. If None, return all records.
+
+        Returns:
+            list[GTFRecord]: A list of GTF records.
+        """
 
         return _RustGTFParser.parse_file(str(file_path), limit)

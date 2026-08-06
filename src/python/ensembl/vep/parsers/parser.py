@@ -156,11 +156,11 @@ class Parser(ABC, Generic[T]):
         raise NotImplementedError
 
     @staticmethod
-    def parse_file(file_path: str, limit: int | None = None) -> list[T]:
+    def parse_file(file_path: str | Path, limit: int | None = None) -> list[T]:
         """Parse a file and return a list of records.
 
         Args:
-            file_path (str): The path to the file to parse.
+            file_path (str | Path): The path to the file to parse.
             limit (int | None): The maximum number of records to return. If None, return all records.
 
         Returns:
