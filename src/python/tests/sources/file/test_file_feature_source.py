@@ -278,6 +278,18 @@ class TestFileFeatureSourceIterAllFeatures:
 
         assert parser.closed is True
 
+    def test_adaptor_remains_open_outside_of_context_manager(self) -> None:
+        """Test the adaptor remains open if the iterator is not used within a context-manager."""
+
+        parser = _get_seekable_parser([1, 2, 3], seekable_region=["1:1-100"])
+        source = DummyFileFeatureSource(file_path="dummy.txt", adaptor=parser)
+
+        iterator = source.iter_all_features()
+        first = next(iterator)
+        assert first.start == 1
+        assert parser.opened is True
+        assert parser.closed is False
+
 
 class TestFileFeatureSourceIterFeaturesByRegion:
     """Test iter_features_by_region."""
