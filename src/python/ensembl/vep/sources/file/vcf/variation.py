@@ -81,3 +81,46 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
 
         return ";".join(record.id) or None
 
+    def _end_from_vcf_record(self, record: VCFRecord, is_symbolic: bool = False) -> int:
+        """Return the VCF record end coordinate.
+
+        Args:
+            record (VCFRecord): VCF record containing position, reference allele, and optional END info.
+
+        Returns:
+            int: End coordinate from the SVLEN/END info field, or the reference-derived end coordinate.
+        """
+
+        if is_symbolic:
+            lengths = record.info.get("SVLEN")
+            if lengths is not None:
+                length = abs(max([int(allele_length) for allele_length in lengths.split(",")], key=abs))
+                return record.pos + length - 1
+
+            end = self._int_info_value(record, "END")
+            if end is not None:
+                return end
+            return record.pos
+
+        return record.pos + len(record.reference) - 1
+
+    @staticmethod
+    def _int_info_value(record: VCFRecord, key: str) -> int | None:
+        """Return an INFO value parsed as an integer.
+
+        Args:
+            record (VCFRecord): VCF record containing INFO values.
+            key (str): INFO field key to parse.
+
+        Returns:
+            int | None: Parsed integer value, or None when the key is absent or not an integer.
+        """
+
+        value = record.info.get(key)
+        if value is None:
+            return None
+
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            return None
