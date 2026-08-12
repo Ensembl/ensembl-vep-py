@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Vcf-back Variation feature source"""
+"""VCF-back Variation feature source"""
 
 from typing import Generic, TypeVar
 from pathlib import Path
@@ -26,32 +26,58 @@ from ensembl.vep.ensembl_vep_core import (  # noqa: F401,F403 pylint: disable=E0
     VCFRecord
 )
 
-V = TypeVar("V", bound=Variation)
-
 @define(kw_only=True, auto_attribs=True)
-class VcfVariationSource(FileFeatureSource[VCFParser, V]):
-    """Variation source backed by a Vcf file.
+class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
+    """Variation source backed by a VCF file.
 
     Attributes:
-        adaptor: The parser adaptor used to stream Vcf records.
+        adaptor: The parser adaptor used to stream VCF records.
     """
 
     file_path: str | Path | None = field(default=None)
     adaptor: VCFParser = field(init=False, factory=VCFParser)
 
-    def _records_to_features(self, records: list) -> list[V]:
-        """Convert VcfRecords into Variation objects."""
-        
-        pass
+    def _records_to_features(self, records: list[VCFRecord]) -> list[Variation]:
+        """Convert VCFRecords into Variation or StructuralVariation objects.
+
+        Args:
+            records (list[VCFRecord]): VCF records to convert into variation features.
+
+        Returns:
+            list[Variation]: Variation and StructuralVariation objects created from the VCF records.
+        """
+
+        features: list[Variation] = []
+        for record in records:
+            if self._is_structural_variation_record(record):
+                features.extend(self._records_to_structural_variation([record]))
+            else:
+                features.extend(self._records_to_variation([record]))
+
+        return features
 
     @staticmethod
     def _records_to_variation(records: list) -> list[Variation]:
-        """Convert VcfRecords into Variation objects."""
+        """Convert VCFRecords into Variation objects."""
         
         pass
 
     @staticmethod
     def _records_to_strutural_variation(records: list) -> list[StructuralVariation]:
-        """Convert VcfRecords into StructuralVariation objects."""
+        """Convert VCFRecords into StructuralVariation objects."""
         
         pass
+
+    @staticmethod
+    def _stable_id_from_vcf_record(record: VCFRecord) -> str | None:
+        """Return a stable identifier from the VCF ID column, when present.
+
+        Args:
+            record (VCFRecord): VCF record containing ID values.
+
+        Returns:
+            str | None: Semicolon-delimited stable identifier, or None when the record has no IDs.
+        """
+
+        return ";".join(record.id) or None
+
