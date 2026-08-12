@@ -15,6 +15,7 @@
 
 from typing import Generic, TypeVar
 from pathlib import Path
+import re
 
 from attrs import define, field
 
@@ -25,6 +26,14 @@ from ensembl.vep.sources.file.file_feature_source import FileFeatureSource
 from ensembl.vep.ensembl_vep_core import (  # noqa: F401,F403 pylint: disable=E0401,E0611
     VCFRecord
 )
+
+BREAKEND_REGEX = re.compile(
+    r"""\[[^*]+\[ # one or more non-asterisk characters inside opening square brackets
+    | \][^*]+\]   # OR one or more non-asterisk characters inside closing square brackets
+    | \.[A-Z]+    # OR a dot followed by base characters
+    | [A-Z]+\.    # OR base characters followed by a dot""", re.X)
+SYMBOLIC_ALLELES = ("DEL", "INS", "DUP", "INV", "CNV")
+SVTYPES = ("BND", *SYMBOLIC_ALLELES)
 
 @define(kw_only=True, auto_attribs=True)
 class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
@@ -67,6 +76,80 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
         """Convert VCFRecords into StructuralVariation objects."""
         
         pass
+
+    def _is_structural_variation_record(self, record: VCFRecord) -> bool:
+        """Return whether the VCF record should be represented as a StructuralVariation.
+
+        Args:
+            record (VCFRecord): VCF record to inspect for structural-variation hints.
+
+        Returns:
+            bool: True if the record should be converted to a StructuralVariation, otherwise False.
+        """
+
+        return (
+            not self._is_snv(record)
+            and (
+                self._has_svtype(record)
+                or self._is_symbolic(record)
+                or self._is_breakend(record)
+            )
+        )
+
+    @staticmethod
+    def _is_snv(record: VCFRecord) -> bool:
+        """Is the VCF record a SNV or short INDEL
+
+        Args:
+            record (VCFRecord): VCF record to inspect for structural-variation hints.
+
+        Returns:
+            bool: True if the record only contains nucleotide bases in REF and ALT, otherwise False.
+        """
+
+        return all(re.fullmatch(r'^[ACGT]+$', allele) for allele in [record.reference, *record.alt])
+
+    @staticmethod
+    def _has_svtype(record: VCFRecord) -> bool:
+        """Does the record have the SVTYPE info key
+
+        Args:
+            record (VCFRecord): VCF record to inspect for structural-variation hints.
+
+        Returns:
+            bool: True if the record has a valid value for SVTYPE, otherwise False.
+        """
+
+        svtype = record.info.get("SVTYPE", "").upper()
+        return svtype in SVTYPES
+
+    @staticmethod
+    def _is_symbolic(record: VCFRecord) -> bool:
+        """Do any of the ALT alleles match a symbolic allele
+
+        Args:
+            record (VCFRecord): VCF record to inspect for structural-variation hints.
+
+        Returns:
+            bool: True if the record ALT matches a symbolic allele, otherwise False.
+        """
+
+        # Remove opening angle bracket for comparison
+        alts = [allele.replace("<", "") for allele in record.alt]
+        return any(allele[0:3] in SYMBOLIC_ALLELES for allele in alts)
+
+    @staticmethod
+    def _is_breakend(record: VCFRecord) -> bool:
+        """Do any of the ALT alleles match a breakend allele
+
+        Args:
+            record (VCFRecord): VCF record to inspect for structural-variation hints.
+
+        Returns:
+            bool: True if the record ALT matches breakend notation, otherwise False.
+        """
+
+        return any(re.search(BREAKEND_REGEX, allele) for allele in record.alt)
 
     @staticmethod
     def _stable_id_from_vcf_record(record: VCFRecord) -> str | None:
