@@ -19,6 +19,9 @@ import re
 
 from attrs import define, field
 
+from ensembl.vep.common import Strand
+from ensembl.vep.models.sequence import Slice
+from ensembl.vep.models.sequence.utils import get_or_build_slice
 from ensembl.vep.models.variation.variation import Variation, VariationAllele
 from ensembl.vep.models.variation.structural_variation import StructuralVariation, StructuralVariationAllele
 from ensembl.vep.parsers.vcf import VCFParser
@@ -45,6 +48,7 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
 
     file_path: str | Path | None = field(default=None)
     adaptor: VCFParser = field(init=False, factory=VCFParser)
+    _slice_cache: dict[str, Slice] = field(init=False, factory=dict)
 
     def _records_to_features(self, records: list[VCFRecord]) -> list[Variation]:
         """Convert VCFRecords into Variation or StructuralVariation objects.
@@ -65,11 +69,34 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
 
         return features
 
-    @staticmethod
-    def _records_to_variation(records: list) -> list[Variation]:
-        """Convert VCFRecords into Variation objects."""
-        
-        pass
+    def _records_to_variation(self, records: list[VCFRecord]) -> list[Variation]:
+        """Convert VCFRecords into Variation objects.
+
+        Args:
+            records (list[VCFRecord]): VCF records to convert into Variation objects.
+
+        Returns:
+            list[Variation]: Variation objects created from the VCF records.
+        """
+
+        variations: list[Variation] = []
+        for record in records:
+            allele_string = "/".join([record.reference, *record.alt])
+            variations.append(
+                Variation(
+                    stable_id=self._stable_id_from_vcf_record(record),
+                    start=record.pos,
+                    end=self._end_from_vcf_record(record),
+                    strand=Strand.FORWARD,
+                    slice=get_or_build_slice(
+                        seq_region_name=record.chrom,
+                        slice_cache=self._slice_cache,
+                        sequence_source=self.sequence_source
+                    ),
+                    allele_string=allele_string,
+                )
+            )
+        return variations
 
     @staticmethod
     def _records_to_strutural_variation(records: list) -> list[StructuralVariation]:

@@ -18,6 +18,8 @@ import pytest
 from ensembl.vep.ensembl_vep_core import (  # noqa: F401,F403 pylint: disable=E0401,E0611
     VCFRecord
 )
+from ensembl.vep.common.enums import Strand
+from ensembl.vep.models.variation import StructuralVariation, Variation
 from ensembl.vep.parsers.vcf import VCFParser
 from ensembl.vep.sources.file.fasta.sequence import FastaSequenceSource
 from ensembl.vep.sources.file.vcf.variation import VCFVariationSource
@@ -64,6 +66,36 @@ def sv_vcf_records(text: str = SV_SAMPLE) -> list[VCFRecord]:
     """Create a list VCFRecord objects for a SNP for testing."""
 
     return create_vcf_records_for_testing(text)
+
+class DummySequenceSource:
+    """Minimal sequence source fixture for slice-length assertions."""
+
+    def __init__(self, lengths: dict[str, int], sequences: dict[str, str] | None = None) -> None:
+        self.lengths = lengths
+        self.sequences = sequences or {}
+        self.closed = False
+
+    def get_sequence_by_start_end_strand(  # pragma: no cover - helper
+        self,
+        seq_region_name: str,
+        _start: int,
+        _end: int,
+        _strand: Strand,
+    ) -> str | None:
+        """Return the sequence for a requested region."""
+
+        return self.sequences.get(seq_region_name)
+
+    def get_seq_region_length(self, seq_region_name: str) -> int | None:
+        """Return the length for a requested sequence region."""
+
+        return self.lengths.get(seq_region_name)
+
+    def close(self) -> None:
+        """Close the sequence source."""
+
+        self.closed = True
+
 
 class TestVCFVariationSourceInitialization:
     """Test VCFVariationSource initialization."""
@@ -190,3 +222,25 @@ class TestVCFVariationSourceMethods:
 
         for record in sv_vcf_records:
             assert source._is_structural_variation_record(record)
+
+    def test_records_to_variation(self, vcf_records: list[VCFRecord]) -> None:
+        """Test _records_to_variation method."""
+        vcf_var_source = VCFVariationSource(
+            sequence_source=DummySequenceSource({"chr1": 32}, {"chr1": "ACGTACGTACGTACGTACGTACGTACGTACGT"})
+        )
+
+        var_feats = vcf_var_source._records_to_features(records=vcf_records)
+
+        assert len(var_feats) == 3
+        assert isinstance(var_feats[0], Variation)
+        assert var_feats[0].start == 10
+        assert var_feats[0].end == 10
+        assert var_feats[0].strand == Strand.FORWARD
+        assert var_feats[0].stable_id == "rs1;id4"
+        assert var_feats[0].allele_string == "A/C"
+        assert var_feats[0].slice is not None
+        assert var_feats[0].slice.seq_region_name == "chr1"
+        assert var_feats[0].slice.seq_region_length == 32
+
+        assert var_feats[1].end == 22
+        assert var_feats[1].allele_string == "GAT/G"
