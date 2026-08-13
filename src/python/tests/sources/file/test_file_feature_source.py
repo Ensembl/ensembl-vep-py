@@ -151,6 +151,38 @@ class TestFileFeatureSourceGetAllFeatures:
 
         assert parser.opened is False
 
+    @pytest.mark.parametrize(
+        ("exception", "expected_message"),
+        [
+            (NotImplementedError(), "ConcreteParser does not support parse_file"),
+            (FileNotFoundError(), "Error parsing file dummy.txt: does not exist"),
+        ],
+    )
+    def test_parse_file_errors_are_logged_as_errors(
+        self,
+        exception: Exception,
+        expected_message: str,
+        caplog: pytest.LogCaptureFixture,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """Test parse errors are logged at error level before exiting."""
+
+        def raise_error(_file_path: str, limit: int | None = None) -> list[int]:
+            del limit
+            raise exception
+
+        monkeypatch.setattr(ConcreteParser, "parse_file", staticmethod(raise_error))
+        source = DummyFileFeatureSource(file_path="dummy.txt", adaptor=ConcreteParser(format="dummy"))
+
+        with caplog.at_level("ERROR"):
+            with pytest.raises(SystemExit) as exc_info:
+                source.get_all_features()
+
+        assert exc_info.value.code == 1
+        assert len(caplog.records) == 1
+        assert caplog.records[0].levelname == "ERROR"
+        assert expected_message in caplog.records[0].message
+
 
 class TestFileFeatureSourceGetFeaturesByRegion:
     """Test get_features_by_region."""
