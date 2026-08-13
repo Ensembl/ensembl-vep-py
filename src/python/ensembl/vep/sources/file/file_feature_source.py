@@ -91,7 +91,7 @@ class FileFeatureSource(FeatureSource, Generic[P, F]):
         with self.adaptor.open(self.file_path, mode="query") as adaptor:
             if not adaptor.seek(region):
                 return []
-            records = adaptor.records()
+            records = adaptor.records(limit=None)
 
         return self._records_to_features(records)
 

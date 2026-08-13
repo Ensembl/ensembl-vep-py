@@ -70,6 +70,11 @@ class ConcreteParser(Parser[int]):
 
         return _RECORDS.pop(0)
 
+    def records(self, limit: int | None = 10000) -> list[int]:
+        """Return records, using the default limit of file-backed parsers."""
+
+        return super().records(limit)
+
     @staticmethod
     def parse_file(file_path: str, limit: int | None = None) -> list[int]:
         """Parse the entire file and return all records."""
@@ -188,6 +193,17 @@ class TestFileFeatureSourceGetFeaturesByRegion:
         features = source.get_features_by_region("1:1-100")
 
         assert [f.start for f in features] == [10, 20]
+
+    def test_seek_success_returns_all_features(self) -> None:
+        """Test region queries are not capped by the adaptor's default record limit."""
+
+        records = list(range(10001))
+        parser = _get_seekable_parser(records, seekable_region=["1:1-100"])
+        source = DummyFileFeatureSource(file_path="dummy.txt", adaptor=parser)
+
+        features = source.get_features_by_region("1:1-100")
+
+        assert [feature.start for feature in features] == records
 
     def test_seek_using_seq_region_name_start_end(self) -> None:
         """Test seek using seq_region_name, start, and end."""
