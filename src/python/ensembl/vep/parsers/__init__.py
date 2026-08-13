@@ -13,6 +13,7 @@
 # limitations under the License.
 """Parser interfaces."""
 
+from .parser import Parser
 from .tabix import TabixParser
 from .gff3 import GFF3Parser, GFF3Record
 from .gtf import GTFParser, GTFRecord
