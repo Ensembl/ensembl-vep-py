@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # pylint: disable=redefined-outer-name
-"""Unit tests for FileSource."""
+"""Unit tests for FileFeatureSource."""
 
 from __future__ import annotations
 
