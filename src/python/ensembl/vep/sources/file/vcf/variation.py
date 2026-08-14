@@ -90,23 +90,87 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
                 Variation(
                     stable_id=self._stable_id_from_vcf_record(record),
                     start=record.pos,
-                    end=self._end_from_vcf_record(record),
+                    end=record.pos + len(record.reference) - 1,
                     strand=Strand.FORWARD,
                     slice=get_or_build_slice(
                         seq_region_name=record.chrom,
                         slice_cache=self._slice_cache,
-                        sequence_source=self.sequence_source
+                        sequence_source=self.sequence_source,
                     ),
                     allele_string=allele_string,
                 )
             )
         return variations
 
-    @staticmethod
-    def _records_to_strutural_variation(records: list) -> list[StructuralVariation]:
-        """Convert VCFRecords into StructuralVariation objects."""
-        
-        pass
+    def _records_to_structural_variation(self, records: list[VCFRecord]) -> list[StructuralVariation]:
+        """Convert VCFRecords into StructuralVariation objects.
+
+        Args:
+            records (list[VCFRecord]): VCF records to convert into StructuralVariation objects.
+
+        Returns:
+            list[StructuralVariation]: StructuralVariation objects created from the VCF records.
+        """
+
+        structural_variations: list[StructuralVariation] = []
+        for record in records:
+            seq_region_slice = get_or_build_slice(
+                seq_region_name=record.chrom,
+                slice_cache=self._slice_cache,
+                sequence_source=self.sequence_source,
+            )
+
+            variation_alleles = []
+            for i, alt in enumerate(record.alt):
+                variation_alleles.append(
+                    self._create_sv_allele_from_record(record, allele_index=i, slice=seq_region_slice)
+                )
+            start = record.pos
+            end = max(var.end for var in variation_alleles)
+
+            structural_variation = StructuralVariation(
+                stable_id=self._stable_id_from_vcf_record(record),
+                start=start,
+                end=end,
+                strand=Strand.FORWARD,
+                slice=seq_region_slice,
+                allele_string="/".join([record.reference, *record.alt]),
+                copy_number=self._int_info_value(record, "CN"),
+            )
+
+            structural_variation.variation_alleles = variation_alleles
+
+            structural_variations.append(structural_variation)
+
+        return structural_variations
+
+    def _create_sv_allele_from_record(
+        self, record: VCFRecord, *, allele_index: int, slice: Slice | None
+    ) -> StructuralVariationAllele:
+        """Create a StructuralVariationAllele object from a VCFRecord.
+
+        Args:
+            record (VCFRecord): VCF record to convert into StructuralVariation objects.
+            allele_index (int): index of the alt allele to create object for.
+            slice (Slice | None): Slice object to add to StructuralVariationAllele.
+
+        Returns:
+            StructuralVariationAllele: StructuralVariationAllele object created from the VCF record.
+        """
+        end, svlen = self._end_and_svlen_for_sva_from_vcf_record(record, allele_index)
+        ref, alt, start, end, changed = self._trim_reference_base_symbolic_allele(
+            record.reference, record.alt[allele_index], start=record.pos, end=end
+        )
+
+        return StructuralVariationAllele(
+            start=start,
+            end=end,
+            svlen=svlen,
+            strand=Strand.FORWARD,
+            slice=slice,
+            reference_allele=ref,
+            alternate_allele=alt,
+        )
 
     def _is_structural_variation_record(self, record: VCFRecord) -> bool:
         """Return whether the VCF record should be represented as a StructuralVariation.
@@ -118,13 +182,8 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
             bool: True if the record should be converted to a StructuralVariation, otherwise False.
         """
 
-        return (
-            not self._is_snv(record)
-            and (
-                self._has_svtype(record)
-                or self._is_symbolic(record)
-                or self._is_breakend(record)
-            )
+        return not self._is_snv(record) and (
+            self._has_svtype(record) or self._is_symbolic(record) or self._is_breakend(record)
         )
 
     @staticmethod
@@ -138,7 +197,7 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
             bool: True if the record only contains nucleotide bases in REF and ALT, otherwise False.
         """
 
-        return all(re.fullmatch(r'^[ACGT]+$', allele) for allele in [record.reference, *record.alt])
+        return all(re.fullmatch(r"^[ACGT]+$", allele) for allele in [record.reference, *record.alt])
 
     @staticmethod
     def _has_svtype(record: VCFRecord) -> bool:
@@ -162,7 +221,7 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
             record (VCFRecord): VCF record to inspect for structural-variation hints.
 
         Returns:
-            bool: True if the record ALT matches a symbolic allele, otherwise False.
+            bool: True if ANY of ALT alleles match a symbolic allele, otherwise False.
         """
 
         # Remove opening angle bracket for comparison

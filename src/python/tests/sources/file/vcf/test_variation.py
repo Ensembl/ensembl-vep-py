@@ -36,27 +36,49 @@ HEADER_LINES = [
 ]
 CHR1_VAR_ROW1 = "chr1\t10\trs1;id4\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1"
 CHR1_VAR_ROW2 = "chr1\t20\t.\tGAT\tG\t.\tq10\tNS=2\tGT\t0/1\t0/0"
-CHR2_VAR_ROW1 = "chr2\t100\trs3\tC\tATC\t.\tPASS\tNS=2\tGT\t1/1\t0/1"
+CHR2_VAR_ROW1 = "chr2\t100\trs3\tC\tCAT\t.\tPASS\tNS=2\tGT\t1/1\t0/1"
 SAMPLE = "\n".join([*HEADER_LINES, CHR1_VAR_ROW1, CHR1_VAR_ROW2, CHR2_VAR_ROW1]) + "\n"
 
 CHR1_SV_DEL_SVTYPE = "chr1\t50\tsv1\tA\t<DEL>\t.\tPASS\tEND=80;SVTYPE=DEL;\tGT\t0/1\t0/0"
-CHR1_SV_INS_IMPRECISE = "chr1\t14\t.\tT\t<INS>\t.\t.\tIMPRECISE;SVLEN=20;CILEN=-10,10;CIPOS=-10,10\tGT\t0/1\t1/1"
+CHR1_SV_INS_IMPRECISE = (
+    "chr1\t14\t.\tT\t<INS>\t.\t.\tIMPRECISE;SVLEN=20;CILEN=-10,10;CIPOS=-10,10\tGT\t0/1\t1/1"
+)
 CHR1_SV_DUP_SVLEN = "chr1\t101\tsv3\tT\t<DUP>\t.\tPASS\tSVLEN=20;CIPOS=-5,2;CIEND=-3,4\tGT\t0/1\t0/0"
-CHR1_SV_INV = "chr1\t201\tsv4\tT\t<INV>\t.\tPASS\tSVLEN=30;CIPOS=-5,2;CIEND=-3,4\tGT\t0/1\t0/0"
-CHR1_SV_CNV = "chr1\t301\tsv5\tT\t<CNV>\t.\tPASS\tSVLEN=40;CIPOS=-5,2;CIEND=-3,4\tGT\t0/1\t0/0"
-CHR1_SV_BND1 = "chrA\t2\t.\tT\t<DEL>\t.\t.\tSVLEN=2;SVCLAIM=D;EVENT=DEL_split_bp_cn\tGT\t0/1\t1/1"
-CHR1_SV_BND2 = "chrA\t2\tdelbp1\tT\tT[chrA:5[\t.\t.\tMATEID=delbp2;EVENT=DEL_split_bp_cn\tGT\t0/1\t1/1"
+CHR1_SV_INV = "chr1\t201\tsv4\tT\t<INV>,<INV>\t.\tPASS\tSVLEN=30,.;CIPOS=-5,2;CIEND=-3,4\tGT\t0/1\t0/0"
+CHR1_SV_CNV = (
+    "chr1\t301\tsv5\tT\t<CNV>,<CNV>\t.\tPASS\tSVLEN=40,50;CIPOS=-5,2,.,.;CIEND=-3,4,.,.\tGT\t0/1\t0/2"
+)
+CHR1_SV_BND1 = "chrA\t2\t.\tT\t<DEL>\t.\t.\tSVLEN=.;SVCLAIM=D;EVENT=DEL_split_bp_cn\tGT\t0/1\t1/1"
+CHR1_SV_BND2 = (
+    "chrA\t2\tdelbp1\tT\tT[chrA:5[\t.\t.\tSVLEN=.;MATEID=delbp2;EVENT=DEL_split_bp_cn\tGT\t0/1\t1/1"
+)
 CHR1_SV_BND3 = "chrA\t2\tdelbp2\tA\t]chrA:2]A\t.\t.\tMATEID=delbp1;EVENT=DEL_split_bp_cn\tGT\t0/1\t1/1"
 CHR1_SV_BND4 = "chrA\t14\t.\tG\t.CCCCCCG\t.\t.\tEVENT=single_breakend\tGT\t0/1\t1/1"
 
-SV_SAMPLE = "\n".join([
-    *HEADER_LINES, CHR1_SV_DEL_SVTYPE, CHR1_SV_INS_IMPRECISE, CHR1_SV_DUP_SVLEN, CHR1_SV_INV, CHR1_SV_CNV,
-    CHR1_SV_BND1, CHR1_SV_BND2, CHR1_SV_BND3, CHR1_SV_BND4]) + "\n"
+SV_SAMPLE = (
+    "\n".join(
+        [
+            *HEADER_LINES,
+            CHR1_SV_DEL_SVTYPE,
+            CHR1_SV_INS_IMPRECISE,
+            CHR1_SV_DUP_SVLEN,
+            CHR1_SV_INV,
+            CHR1_SV_CNV,
+            CHR1_SV_BND1,
+            CHR1_SV_BND2,
+            CHR1_SV_BND3,
+            CHR1_SV_BND4,
+        ]
+    )
+    + "\n"
+)
+
 
 def create_vcf_records_for_testing(text: str) -> list[VCFRecord]:
     """Create a list of VCFRecord objects for testing."""
 
     return VCFParser().parse_text(text)
+
 
 @pytest.fixture
 def vcf_records(text: str = SAMPLE) -> list[VCFRecord]:
@@ -64,11 +86,31 @@ def vcf_records(text: str = SAMPLE) -> list[VCFRecord]:
 
     return create_vcf_records_for_testing(text)
 
+
 @pytest.fixture
 def sv_vcf_records(text: str = SV_SAMPLE) -> list[VCFRecord]:
     """Create a list VCFRecord objects for a SNP for testing."""
 
     return create_vcf_records_for_testing(text)
+
+
+def assert_first_variation_object(var: Variation) -> None:
+    """Test the variation object of CHR1_VAR_ROW1"""
+    assert isinstance(var, Variation)
+    assert var.start == 10
+    assert var.end == 10
+    assert var.strand == Strand.FORWARD
+    assert var.stable_id == "rs1;id4"
+    assert var.allele_string == "A/C"
+
+
+def assert_first_structural_variation_object(var: StructuralVariation) -> None:
+    """Test the variation object of CHR1_VAR_ROW1"""
+    assert isinstance(var, StructuralVariation)
+    assert var.start == 50
+    assert var.end == 80
+    assert var.allele_string == "A/<DEL>"
+
 
 class DummySequenceSource:
     """Minimal sequence source fixture for slice-length assertions."""
@@ -175,11 +217,7 @@ class TestVCFVariationSourceMethods:
         for record in sv_vcf_records:
             assert not source._is_snv(record)
 
-    def test_has_svtype(
-        self,
-        vcf_records: list[VCFRecord],
-        sv_vcf_records: list[VCFRecord]
-    ) -> None:
+    def test_has_svtype(self, vcf_records: list[VCFRecord], sv_vcf_records: list[VCFRecord]) -> None:
         """Test _has_svtype method."""
         source = VCFVariationSource(sequence_source=FastaSequenceSource())
 
@@ -189,11 +227,7 @@ class TestVCFVariationSourceMethods:
         assert source._has_svtype(sv_vcf_records[0])
         assert not source._has_svtype(sv_vcf_records[1])
 
-    def test_is_symbolic(
-        self,
-        vcf_records: list[VCFRecord],
-        sv_vcf_records: list[VCFRecord]
-    ) -> None:
+    def test_is_symbolic(self, vcf_records: list[VCFRecord], sv_vcf_records: list[VCFRecord]) -> None:
         """Test _is_symbolic method."""
         source = VCFVariationSource(sequence_source=FastaSequenceSource())
 
@@ -205,12 +239,14 @@ class TestVCFVariationSourceMethods:
         for record in sv_vcf_records[6:]:
             assert not source._is_symbolic(record)
 
-    def test_is_breakend(
-        self,
-        vcf_records: list[VCFRecord]
-    ) -> None:
+    def test_is_breakend(self, vcf_records: list[VCFRecord]) -> None:
         """Test _is_breakend method."""
-        SV_LINES = "\n".join([*HEADER_LINES, CHR1_SV_DEL_SVTYPE, CHR1_SV_BND1, CHR1_SV_BND2, CHR1_SV_BND3, CHR1_SV_BND4]) + "\n"
+        SV_LINES = (
+            "\n".join(
+                [*HEADER_LINES, CHR1_SV_DEL_SVTYPE, CHR1_SV_BND1, CHR1_SV_BND2, CHR1_SV_BND3, CHR1_SV_BND4]
+            )
+            + "\n"
+        )
         sv_vcf_records = create_vcf_records_for_testing(SV_LINES)
 
         source = VCFVariationSource(sequence_source=FastaSequenceSource())
@@ -295,18 +331,47 @@ class TestVCFVariationSourceRecordsToFeatures:
             sequence_source=DummySequenceSource({"chr1": 32}, {"chr1": "ACGTACGTACGTACGTACGTACGTACGTACGT"})
         )
 
-        var_feats = vcf_var_source._records_to_features(records=vcf_records)
+        var_feats = vcf_var_source._records_to_variation(records=vcf_records)
 
         assert len(var_feats) == 3
-        assert isinstance(var_feats[0], Variation)
-        assert var_feats[0].start == 10
-        assert var_feats[0].end == 10
-        assert var_feats[0].strand == Strand.FORWARD
-        assert var_feats[0].stable_id == "rs1;id4"
-        assert var_feats[0].allele_string == "A/C"
+        assert_first_variation_object(var_feats[0])
         assert var_feats[0].slice is not None
         assert var_feats[0].slice.seq_region_name == "chr1"
         assert var_feats[0].slice.seq_region_length == 32
 
         assert var_feats[1].end == 22
         assert var_feats[1].allele_string == "GAT/G"
+
+    def test_create_sv_allele_from_record(self, sv_vcf_records: list[VCFRecord]) -> None:
+        """Test _create_sv_allele_from_record method."""
+        vcf_var_source = VCFVariationSource(
+            sequence_source=DummySequenceSource({"chr1": 32}, {"chr1": "ACGTACGTACGTACGTACGTACGTACGTACGT"})
+        )
+
+        sva = vcf_var_source._create_sv_allele_from_record(sv_vcf_records[0], allele_index=0, slice=None)
+        assert sva.start == 51
+
+    def test_records_to_structural_variation(self, sv_vcf_records: list[VCFRecord]) -> None:
+        """Test _records_to_structural_variation method."""
+        vcf_var_source = VCFVariationSource(
+            sequence_source=DummySequenceSource({"chr1": 32}, {"chr1": "ACGTACGTACGTACGTACGTACGTACGTACGT"})
+        )
+
+        var_feats = vcf_var_source._records_to_structural_variation(records=sv_vcf_records)
+        assert_first_structural_variation_object(var_feats[0])
+
+    def test_records_to_features(
+        self,
+        vcf_records: list[VCFRecord],
+        sv_vcf_records: list[VCFRecord],
+    ) -> None:
+        """Test _records_to_features method."""
+        vcf_var_source = VCFVariationSource(
+            sequence_source=DummySequenceSource({"chr1": 32}, {"chr1": "ACGTACGTACGTACGTACGTACGTACGTACGT"})
+        )
+
+        var_feats = vcf_var_source._records_to_features([*vcf_records, *sv_vcf_records])
+
+        assert len(var_feats) == 12
+        assert_first_variation_object(var_feats[0])
+        assert_first_structural_variation_object(var_feats[3])
