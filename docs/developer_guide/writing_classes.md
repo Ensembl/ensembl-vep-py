@@ -1,91 +1,6 @@
-# Table of Contents
+# Writing Classes
 
-- [Typing Conventions](#typing-conventions)
-- [Logging Implementation](#logging-implementation)
-- [Docstring Style](#docstring-style)
-- [Writing Classes](#writing-classes)
-    - [Class Naming](#class-naming)
-    - [Class attributes](#class-attributes)
-        - [Core Attributes](#core-attributes)
-        - [Derived Attributes](#derived-attributes)
-        - [Externally-set attributes](#externally-set-attributes)
-            - [Cache invalidation](#cache-invalidation)
-    - [Use of attrs](#use-of-attrs)
-    - [Multiple Inheritance](#multiple-inheritance)
-    - [Inheritance and Mixins](#inheritance-and-mixins)
-    - [Lazy Loading and Caching](#lazy-loading-and-caching)
-- [Position in a Sequence Region](#position-in-a-sequence-region)
-    - [Coordinate Systems and Slices](#coordinate-systems-and-slices)
-    - [Coordinate Conventions](#coordinate-conventions)
-- [Getting away with circular dependency](#getting-away-with-circular-dependency)
-
-## Typing Conventions
-
-All code must use explicit type annotations for function signatures, class attributes, and variables where appropriate.
-
-**Rules:**
-- Use standard Python typing (PEP 484, PEP 604).
-- For return types that may be a value or None, use `Type | None` instead of `Optional[Type]`. This is more cleaner. Also type checking does not happen at runtime, so does not affect users using python < 3.10 unless we are using type introspection dynamically at runtime.
-
-  - Example:
-    ```python
-    def get_feature() -> Feature | None:
-        ...
-    ```
-    Instead of:
-    ```python
-    def get_feature() -> Optional[Feature]:
-        ...
-    ```
-- Use built-in types where possible (e.g., `list`, `dict`, `str`).
-- Always annotate arguments and return values in public class, functions etc. Exceptions can be tests and private functions.
-
-We will enforce these conventions through static analysis tools (e.g., mypy) as part of our CI pipeline to ensure consistency and catch type-related issues early in the development process.
-
-## Logging Implementation
-
-All logging in this project should use Python's built-in `logging` module. The recommended setup is as follows:
-
-- `logging.basicConfig` has been used in `ensembl.vep.common.setup_logging` function to setup logging configuration. This function should be called at the entry point of the application to ensure consistent logging behavior across all modules.
-- Log messages is sent to a file named `{output_file}_warnings.txt` consistent with old Ensembl VEP.
-- The log format includes timestamp, log level, logger name, and message.
-- For timestamps (`%Y-%m-%dT%H:%M:%S`) ISO 8601 format is used.
-- Always use named loggers (`logging.getLogger(__name__)`) for module-level logging.
-
-Example setup in a module:
-
-```python
-import logging
-
-logger = logging.getLogger(__name__)
-
-def some_function():
-    logger.info("This is an info message.")
-    logger.warning("This is a warning message.")
-```
-
-**Open question:**
-Should we have a backward compatible option to have same manner of message formatting as old VEP?
-
-## Docstring Style
-
-All docstrings in this project must follow the [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings) for docstrings.
-
-**Rationale:**
-- Google style docstrings provide clear, consistent documentation and improve readability.
-- The docstring will facilitate automated documentation generation using mkdocs. 
-
-> No docstring, no visibility in the public docs!
-
-**Key points:**
-- Use triple double quotes (`"""`) for all docstrings.
-- Include sections for Args, Returns, Raises, and Examples as appropriate.
-- Document types for all parameters and return values.
-- Keep descriptions concise and informative.
-
-## Writing Classes
-
-### Class Naming
+## Class Naming
 Class names must use `CapWords` (e.g., `MyClass`), in line with widely accepted Python conventions and PEP 8 guidelines.
 
 We are deliberately not using the `Base` prefix. Classes are named to reflect the object they model, and extended (if need be) via inheritance using progressively specific names using meaningful prefixes rather than just `Base` — for example, `Variation` as the parent class and `StructuralVariation` as its subclass.
@@ -93,12 +8,12 @@ We are deliberately not using the `Base` prefix. Classes are named to reflect th
 **Rationale:** This is a matter of stylistic preference — both approaches offer the same extensibility.
 
 
-### Class attributes
+## Class attributes
 
-### Non-derived attributes
+## Non-derived attributes
 Attributes that are not derived from other attributes are defined in the class body with type annotations. They are generally not lazy-loaded or cached and further categorised into core attributes and externally-set attributes.
 
-##### Core Attributes
+#### Core Attributes
 Core attributes are those that are set during object initialization and are essential to the object's identity. They are included in the `__init__` method generated by `attrs`. They do not have default values.
 
 ```python
@@ -116,7 +31,7 @@ with cls.unsafe():
     cls.core_attr1 = 2
 ```
 
-##### Externally-set attributes
+#### Externally-set attributes
 These are similarly not derived and externally set like core attributes but they are not essential to be in the `__init__` method. The class is not responsible for calculating these attributes, so it should not enforce immutability or caching. 
 
 They should still be defined in the class body (with type annotations) to be compatible with `slots=True` and to ensure they are tracked properly.
@@ -130,7 +45,7 @@ cls = MyClass(core_attr=1)
 cls.externally_set_attr = some_external_method()
 ```
 
-#### Derived Attributes
+### Derived Attributes
 
 Derived attributes are read-only properties derived from one or more attributes. They are lazy-loaded (not part of `__init__`) and can be cached (using `functools.cached_property`).
 
@@ -180,7 +95,7 @@ class MyClass(CachedAttributeGuardMixin):
         self._derived_attr3 = self.core_attr1 * 2
 ```
 
-##### Cache invalidation
+#### Cache invalidation
 It is expected that core attributes are not changed after initialization. In the unlikely event they do need to be updated, the related derived attributes needs to be invalidated. Some derived attribute may also depend on other derived attributes, we may need to invalidate those as well.
 
 **Invalidating cache dependent on core attributes**: This is handled by using the `invalidates` hook with `on_setattr`. This has speed penalty for object creation and assignment of core attributes. Core attributes are not expected to be updated that much.
@@ -247,7 +162,7 @@ with cls.unsafe():
     cls.core_attr1 = 2  # does not invalidate derived_attr1
 ```
 
-### Use of attrs
+## Use of attrs
 
 We heavily use the `attrs` module for writing classes. All classes use the following `attrs` decorator defaults:
 
@@ -306,9 +221,9 @@ This uses a dictionary lookup (`sa_attrs`) to resolve any validation or conversi
 - **`match_args`** — Should this be explicitly set?
 - **`collect_by_mro`** — Should this be explicitly set?
 
-### Multiple Inheritance
+## Multiple Inheritance
 
-### Inheritance and Mixins
+## Inheritance and Mixins
 
 Since we use `slots=True`, multiple inheritance is not straightforward — `attrs` requires that only one of the parent classes can use `slots=True`. And, if you inherit from class that is not using slots then you lose some of the benefits of slots in the child class **especially slot inheritance**.
 
@@ -330,7 +245,7 @@ class SerialisableMixin:
 ```
 
 
-### Lazy Loading and Caching
+## Lazy Loading and Caching
 
 For attributes that are not core attributes, we lazy_load them by setting `init=False`. Furthermore `functools.cached_property` is used to cache attributes after first access.
 
@@ -354,76 +269,6 @@ class MyClass:
 ```
 
 > **Note:** The use of `RLock` instead of `Lock` to prevent deadlocks when trying to access a cached property from a another cached property.
-
-## Position in a Sequence Region
-
-### Coordinate Systems and Slices
-
-We use coordinate systems and slices to represent biological sequences, following the conventions established by Ensembl.
-
-A **coordinate system** defines the reference frame for a biological sequence — for example, a chromosome, clone, or contig. Ensembl uses **1-based indexing**, meaning the first base of a sequence is position 1. Coordinate systems themselves carry no concept of strandedness.
-
-A **slice** represents a defined region within a coordinate system. Slice coordinates are relative to the start of the underlying sequence region, and by convention the start of a slice is always less than or equal to its end, regardless of strandedness. Strandedness is introduced at the slice level — the strand of a slice represents its orientation relative to the default orientation of the sequence region (which should always be forward).
-
-Features positioned on a slice have coordinates and strand values expressed relative to that slice. To obtain a feature's absolute position on the underlying sequence region, the `seq_region_start`, `seq_region_end`, and `seq_region_strand` methods should be used instead.
-
-> **Note:** The concept of a "sequence region" is referenced in various parts of the codebase but has no dedicated class. A slice spanning the full length of a biological sequence with positive strandedness can be considered a functional equivalent of a sequence region.
-
-### Coordinate Conventions
-
-All positions on a slice or sequence feature use `start` and `end` coordinates, where the condition `start <= end` always holds true.
-
-**Exception:** 
-1. An insertion variants described in Ensembl's default format can have `end = start - 1`.
-2. Circular slice on a bacterial or mitochondrial DNA can have `end < start`.
-
-We use **1-based inclusive (closed)** coordinates for all positions. This means that the first base of a sequence is at position 1, and both `start` and `end` positions are included in the feature span.
-
-### Insertion coordinates
-As convention in Ensembl, for insertion variants, the `start` and `end` coordinates are defined such that `end = start - 1`. This is because in 1-based inclusive coordinates, length is represented as `end - start + 1`. An insertion has a length of 0, furthermore the adjacent start and end coordinates clearly indicate the position of the insertion between two bases.
-
-This convention is also convenient for calculating pre and post sequence for shifting algorithm. Nonetheless, it can be a source of confusion and errors, so it is important to be aware of this special case when working with insertion variants.
-
-## Getting away with circular dependency
-
-The heavy use of subfolders to group similar objects means that, depending on the way we structure our modules, there could be circular dependencies during import. The main source of circular dependencies here comes from using `__init__.py` files to expose a package's public API.
-
-The circular import is avoided using the following approaches:
-
-### When importing from same package
-When importing within the same package, always import directly from the concrete module rather than through a package's public API.
-
-**Prefer:**
-```python
-from ensembl.vep.models.genic.transcript import Transcript
-```
-**Over:**
-```python
-from ensembl.vep.models.genic import Transcript
-```
-
-We also prefer absolute imports over relative imports, even within the same package:
-**Prefer:**
-```python
-from ensembl.vep.models.genic.transcript import Transcript
-```
-**Over:**
-```python
-from .transcript import Transcript
-```
-Absolute imports are more explicit, easier to trace, and consistent with [PEP 8](https://peps.python.org/pep-0008/#imports).
-
-### Importing for type annotations
-When we are importing some module that is solely used for type annotations, `typing.TYPE_CHECKING` should be used -
-```python
-if typing.TYPE_CHECKING:
-    from some_module import some_function
-```
-
-It allows importing the module only when type checking is performed (e.g. by static analysis tools), but not during runtime.
-
-### Prevent direct circular import
-And, of course, we need to prevent direct circular imports (module A importing module B, and module B importing module A) by making sure we keep one-way dependency direction, i.e. the base class cannot inherit from any of the descendant classes.
 
 ## Containers
 We are using containers where we do not want to implement any behavior for an object, but useful to have a named and grouped representation of the data. They are defined using `@frozen` from `attrs` to create immutable data structures and available in `ensembl.vep.common.(containers)`.
