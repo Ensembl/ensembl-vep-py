@@ -269,3 +269,48 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
             return int(value)
         except (TypeError, ValueError):
             return None
+
+    @staticmethod
+    def _trim_reference_base_symbolic_allele(
+        ref: str,
+        alt: str,
+        *,
+        start: int = 0,
+        end: int,
+        strand: Strand = Strand.FORWARD,
+    ) -> tuple[str, str, int, int, bool]:
+        """Trim the reference base for a symbolic allele.
+
+        Converts symbolic allele in the form A/<DEL> to -/<DEL>, adjusting coordinates accordingly.
+
+        Args:
+            ref: Reference allele sequence.
+            alt: Alternate allele sequence.
+            start: Start coordinate (default 0).
+            end: End coordinate (default: start + len(ref) - 1).
+            strand: 1 for forward, -1 for reverse strand.
+
+        Returns:
+            Tuple of (new_ref, new_alt, new_start, new_end, changed).
+        """
+
+        changed = False
+
+        if strand == Strand.UNKNOWN:
+            logger.warning(
+                "Strand is unknown, cannot trim alleles with confidence. Returning untrimmed alleles."
+            )
+            return (ref, alt, start, end, changed)
+
+        if ref == "-":
+            logger.warning("Allele is already trimmed. Returning untrimmed alleles.")
+            return (ref, alt, start, end, changed)
+
+        if strand == Strand.REVERSE:
+            end -= len(ref)
+        else:
+            start += len(ref)
+        ref = "-"
+        changed = True
+
+        return (ref, alt, start, end, changed)

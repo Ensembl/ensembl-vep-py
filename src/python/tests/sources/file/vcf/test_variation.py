@@ -245,6 +245,50 @@ class TestVCFVariationSourceMethods:
         for record in sv_vcf_records:
             assert source._is_structural_variation_record(record)
 
+    def test_trim_reference_base_symbolic_allele(self, caplog: pytest.LogCaptureFixture):
+        """Test _trim_reference_base_symbolic_allele method."""
+        source = VCFVariationSource(sequence_source=FastaSequenceSource())
+
+        # test for unknown strand warning
+        with caplog.at_level(logging.WARNING):
+            results = source._trim_reference_base_symbolic_allele(
+                "A", "<DEL>", start=20, end=50, strand=Strand.UNKNOWN
+            )
+            assert (
+                "Strand is unknown, cannot trim alleles with confidence" in caplog.text
+            ), "Incorrect strand unknown warning in _trim_reference_base_symbolic_allele"
+
+        # test for allele already trimmed warning
+        with caplog.at_level(logging.WARNING):
+            results = source._trim_reference_base_symbolic_allele(
+                "-", "<DEL>", start=20, end=50, strand=Strand.FORWARD
+            )
+            assert (
+                "Allele is already trimmed" in caplog.text
+            ), "Incorrect allele already trimmed warning in _trim_reference_base_symbolic_allele"
+
+        assert source._trim_reference_base_symbolic_allele("A", "<DEL>", start=20, end=50) == (
+            "-",
+            "<DEL>",
+            21,
+            50,
+            True,
+        )
+        assert source._trim_reference_base_symbolic_allele(
+            "A", "<DEL>", start=20, end=50, strand=Strand.REVERSE
+        ) == ("-", "<DEL>", 20, 49, True)
+        assert source._trim_reference_base_symbolic_allele("A", "<INS>", start=14, end=14) == (
+            "-",
+            "<INS>",
+            15,
+            14,
+            True,
+        )
+
+
+class TestVCFVariationSourceRecordsToFeatures:
+    """Tests functions for creating Variation/StructuralVariation objects."""
+
     def test_records_to_variation(self, vcf_records: list[VCFRecord]) -> None:
         """Test _records_to_variation method."""
         vcf_var_source = VCFVariationSource(
