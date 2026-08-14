@@ -13,9 +13,10 @@
 # limitations under the License.
 """VCF-back Variation feature source"""
 
-from typing import Generic, TypeVar
+import logging
 from pathlib import Path
 import re
+from typing import Generic, TypeVar
 
 from attrs import define, field
 
@@ -26,17 +27,20 @@ from ensembl.vep.models.variation.variation import Variation, VariationAllele
 from ensembl.vep.models.variation.structural_variation import StructuralVariation, StructuralVariationAllele
 from ensembl.vep.parsers.vcf import VCFParser
 from ensembl.vep.sources.file.file_feature_source import FileFeatureSource
-from ensembl.vep.ensembl_vep_core import (  # noqa: F401,F403 pylint: disable=E0401,E0611
-    VCFRecord
-)
+from ensembl.vep.ensembl_vep_core import VCFRecord  # noqa: F401,F403 pylint: disable=E0401,E0611
+
+logger = logging.getLogger(__name__)
 
 BREAKEND_REGEX = re.compile(
     r"""\[[^*]+\[ # one or more non-asterisk characters inside opening square brackets
     | \][^*]+\]   # OR one or more non-asterisk characters inside closing square brackets
     | \.[A-Z]+    # OR a dot followed by base characters
-    | [A-Z]+\.    # OR base characters followed by a dot""", re.X)
+    | [A-Z]+\.    # OR base characters followed by a dot""",
+    re.X,
+)
 SYMBOLIC_ALLELES = ("DEL", "INS", "DUP", "INV", "CNV")
 SVTYPES = ("BND", *SYMBOLIC_ALLELES)
+
 
 @define(kw_only=True, auto_attribs=True)
 class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
@@ -173,10 +177,23 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
             record (VCFRecord): VCF record to inspect for structural-variation hints.
 
         Returns:
-            bool: True if the record ALT matches breakend notation, otherwise False.
+            bool: True if any of ALT alleles match breakend notation, otherwise False.
         """
 
         return any(re.search(BREAKEND_REGEX, allele) for allele in record.alt)
+
+    @staticmethod
+    def _is_symbolic_insertion(alt_allele_string: str) -> bool:
+        """Is the symbolic allele an insertion
+
+        Args:
+            alt_allele_string (str): Alternate allele string
+
+        Returns:
+            bool: True if the alt string matches an insertion allele.
+        """
+
+        return alt_allele_string in ("INS", "<INS>")
 
     @staticmethod
     def _stable_id_from_vcf_record(record: VCFRecord) -> str | None:
@@ -191,28 +208,46 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
 
         return ";".join(record.id) or None
 
-    def _end_from_vcf_record(self, record: VCFRecord, is_symbolic: bool = False) -> int:
-        """Return the VCF record end coordinate.
+    def _end_and_svlen_for_sva_from_vcf_record(
+        self, record: VCFRecord, allele_index: int
+    ) -> tuple[int | None, int | None]:
+        """Return the VCF record end coordinate and length for an allele.
 
         Args:
-            record (VCFRecord): VCF record containing position, reference allele, and optional END info.
+            record (VCFRecord): VCF record.
+            allele_index: index for the allele.
 
         Returns:
-            int: End coordinate from the SVLEN/END info field, or the reference-derived end coordinate.
+            tuple: (End coordinate, SV length).
         """
 
-        if is_symbolic:
-            lengths = record.info.get("SVLEN")
-            if lengths is not None:
-                length = abs(max([int(allele_length) for allele_length in lengths.split(",")], key=abs))
-                return record.pos + length - 1
+        if allele_index >= len(record.alt):
+            logger.warning(f"Allele index, {allele_index}, is too large, {';'.join(record.id)}")
+            return (None, None)
 
+        lengths = record.info.get("SVLEN")
+        if lengths is not None:
+            svlen = lengths.split(",")[allele_index]
+            svlen = None if svlen == "." else int(svlen)
+            if svlen is None:
+                end = record.pos + len(record.reference) - 1
+            else:
+                end = record.pos + svlen
+        else:
             end = self._int_info_value(record, "END")
-            if end is not None:
-                return end
-            return record.pos
+            if end is None:
+                svlen = None
+            else:
+                svlen = end - record.pos
 
-        return record.pos + len(record.reference) - 1
+        # For insertions, end is not POS + SVLEN
+        if self._is_symbolic_insertion(record.alt[allele_index]):
+            end = record.pos + len(record.reference) - 1
+
+        if end is None or svlen is None:
+            logger.warning(f"Could not determine END/SVLEN for {record.id}")
+
+        return end, svlen
 
     @staticmethod
     def _int_info_value(record: VCFRecord, key: str) -> int | None:

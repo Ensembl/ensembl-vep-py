@@ -13,16 +13,19 @@
 # limitations under the License.
 """Unit tests for the VCFVariationSource class."""
 
+import logging
 import pytest
 
-from ensembl.vep.ensembl_vep_core import (  # noqa: F401,F403 pylint: disable=E0401,E0611
-    VCFRecord
-)
+from ensembl.vep.ensembl_vep_core import VCFRecord  # noqa: F401,F403 pylint: disable=E0401,E0611
 from ensembl.vep.common.enums import Strand
-from ensembl.vep.models.variation import StructuralVariation, Variation
+from ensembl.vep.models.variation.variation import Variation, VariationAllele
+from ensembl.vep.models.variation.structural_variation import StructuralVariation, StructuralVariationAllele
 from ensembl.vep.parsers.vcf import VCFParser
 from ensembl.vep.sources.file.fasta.sequence import FastaSequenceSource
 from ensembl.vep.sources.file.vcf.variation import VCFVariationSource
+
+logger = logging.getLogger(__name__)
+
 
 HEADER_LINES = [
     "##fileformat=VCFv4.3",
@@ -127,29 +130,42 @@ class TestVCFVariationSourceMethods:
         assert VCFVariationSource._stable_id_from_vcf_record(vcf_records[1]) is None
         assert VCFVariationSource._stable_id_from_vcf_record(vcf_records[2]) == "rs3"
 
-    def test_end_from_vcf_record_snv(self, vcf_records: list[VCFRecord]) -> None:
-        """Test _end_from_vcf_record method."""
-        source = VCFVariationSource(sequence_source=FastaSequenceSource())
-
-        assert source._end_from_vcf_record(vcf_records[0]) == 10
-        assert source._end_from_vcf_record(vcf_records[1]) == 22
-        assert source._end_from_vcf_record(vcf_records[2]) == 100
-
-    def test_end_from_vcf_record_symbolic(self, sv_vcf_records: list[VCFRecord]) -> None:
-        """Test _end_from_vcf_record method."""
-        source = VCFVariationSource(sequence_source=FastaSequenceSource())
-
-        assert source._end_from_vcf_record(sv_vcf_records[0], is_symbolic=True) == 80
-        assert source._end_from_vcf_record(sv_vcf_records[1], is_symbolic=True) == 33
-        assert source._end_from_vcf_record(sv_vcf_records[2], is_symbolic=True) == 120
-        assert source._end_from_vcf_record(sv_vcf_records[3], is_symbolic=True) == 230 
-        assert source._end_from_vcf_record(sv_vcf_records[4], is_symbolic=True) == 340
-
-    def test_is_snv(
-        self,
-        vcf_records: list[VCFRecord],
-        sv_vcf_records: list[VCFRecord]
+    def test_end_and_svlen_for_sva_from_vcf_record(
+        self, sv_vcf_records: list[VCFRecord], caplog: pytest.LogCaptureFixture
     ) -> None:
+        """Test _end_and_svlen_for_sva_from_vcf_record method."""
+        source = VCFVariationSource(sequence_source=FastaSequenceSource())
+
+        # test for incorrect allele_index
+        with caplog.at_level(logging.WARNING):
+            results = source._end_and_svlen_for_sva_from_vcf_record(sv_vcf_records[0], allele_index=1)
+            assert (
+                "Allele index, 1, is too large, sv1" in caplog.text
+            ), "Incorrect warning in _end_and_svlen_for_sva_from_vcf_record"
+        assert results == (None, None)
+
+        assert source._end_and_svlen_for_sva_from_vcf_record(sv_vcf_records[0], allele_index=0) == (80, 30)
+        assert source._end_and_svlen_for_sva_from_vcf_record(sv_vcf_records[1], allele_index=0) == (14, 20)
+        assert source._end_and_svlen_for_sva_from_vcf_record(sv_vcf_records[2], allele_index=0) == (121, 20)
+        assert source._end_and_svlen_for_sva_from_vcf_record(sv_vcf_records[3], allele_index=0) == (231, 30)
+        assert source._end_and_svlen_for_sva_from_vcf_record(sv_vcf_records[3], allele_index=1) == (201, None)
+        assert source._end_and_svlen_for_sva_from_vcf_record(sv_vcf_records[4], allele_index=0) == (341, 40)
+        assert source._end_and_svlen_for_sva_from_vcf_record(sv_vcf_records[4], allele_index=1) == (351, 50)
+        assert source._end_and_svlen_for_sva_from_vcf_record(sv_vcf_records[6], allele_index=0) == (
+            None,
+            None,
+        )
+
+    def test_int_info_value(self, sv_vcf_records: list[VCFRecord]) -> None:
+        """Test _int_info_value method."""
+
+        source = VCFVariationSource(sequence_source=FastaSequenceSource())
+
+        assert source._int_info_value(sv_vcf_records[0], "END") == 80
+        assert source._int_info_value(sv_vcf_records[5], "END") == None
+        assert source._int_info_value(sv_vcf_records[3], "SVLEN") == None
+
+    def test_is_snv(self, vcf_records: list[VCFRecord], sv_vcf_records: list[VCFRecord]) -> None:
         """Test _is_snv method."""
         source = VCFVariationSource(sequence_source=FastaSequenceSource())
 
@@ -209,10 +225,16 @@ class TestVCFVariationSourceMethods:
         assert source._is_breakend(sv_vcf_records[3])
         assert source._is_breakend(sv_vcf_records[4])
 
+    def test_is_symbolic_insertion(self) -> None:
+        """Test _is_symbolic_insertion method."""
+        source = VCFVariationSource(sequence_source=FastaSequenceSource())
+
+        assert source._is_symbolic_insertion("INS")
+        assert source._is_symbolic_insertion("<INS>")
+        assert not source._is_symbolic_insertion("<DEL>")
+
     def test_is_structural_variation_record(
-        self,
-        vcf_records: list[VCFRecord],
-        sv_vcf_records: list[VCFRecord]
+        self, vcf_records: list[VCFRecord], sv_vcf_records: list[VCFRecord]
     ) -> None:
         """Test _is_structural_variation_record method."""
         source = VCFVariationSource(sequence_source=FastaSequenceSource())
