@@ -180,12 +180,12 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
             bool: True if the record should be converted to a StructuralVariation, otherwise False.
         """
 
-        return not self._is_snv(record) and (
+        return not self._is_bases_only(record) and (
             self._has_svtype(record) or self._is_symbolic(record) or self._is_breakend(record)
         )
 
     @staticmethod
-    def _is_snv(record: VCFRecord) -> bool:
+    def _is_bases_only(record: VCFRecord) -> bool:
         """Is the VCF record a SNV or short INDEL
 
         Args:

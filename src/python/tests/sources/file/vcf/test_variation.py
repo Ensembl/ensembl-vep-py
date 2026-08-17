@@ -225,15 +225,15 @@ class TestVCFVariationSourceMethods:
         assert source._int_info_value(sv_vcf_records[5], "END") is None  # pylint: disable=protected-access
         assert source._int_info_value(sv_vcf_records[3], "SVLEN") is None  # pylint: disable=protected-access
 
-    def test_is_snv(self, vcf_records: list[VCFRecord], sv_vcf_records: list[VCFRecord]) -> None:
-        """Test _is_snv method."""
+    def test_is_bases_only(self, vcf_records: list[VCFRecord], sv_vcf_records: list[VCFRecord]) -> None:
+        """Test _is_bases_only method."""
         source = VCFVariationSource(sequence_source=DummySequenceSource(), file_path="sample.vcf")
 
         for record in vcf_records:
-            assert source._is_snv(record)  # pylint: disable=protected-access
+            assert source._is_bases_only(record)  # pylint: disable=protected-access
 
         for record in sv_vcf_records:
-            assert not source._is_snv(record)  # pylint: disable=protected-access
+            assert not source._is_bases_only(record)  # pylint: disable=protected-access
 
     def test_has_svtype(self, vcf_records: list[VCFRecord], sv_vcf_records: list[VCFRecord]) -> None:
         """Test _has_svtype method."""
