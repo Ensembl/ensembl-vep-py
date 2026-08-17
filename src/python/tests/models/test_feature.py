@@ -15,7 +15,6 @@
 # pylint: disable=redefined-outer-name
 """Unit tests for Feature class."""
 
-from attrs import define, field
 import pytest
 
 from ensembl.vep.common import CoordSystemLevel, Strand

@@ -14,16 +14,13 @@
 """VCF-back Variation feature source"""
 
 import logging
-from pathlib import Path
 import re
-from typing import Generic, TypeVar
-
 from attrs import define, field
 
 from ensembl.vep.common import Strand
 from ensembl.vep.models.sequence import Slice
 from ensembl.vep.models.sequence.utils import get_or_build_slice
-from ensembl.vep.models.variation.variation import Variation, VariationAllele
+from ensembl.vep.models.variation.variation import Variation
 from ensembl.vep.models.variation.structural_variation import StructuralVariation, StructuralVariationAllele
 from ensembl.vep.parsers.vcf import VCFParser
 from ensembl.vep.sources.file.file_feature_source import FileFeatureSource
@@ -50,7 +47,6 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
         adaptor: The parser adaptor used to stream VCF records.
     """
 
-    file_path: str | Path | None = field(default=None)
     adaptor: VCFParser = field(init=False, factory=VCFParser)
     _slice_cache: dict[str, Slice] = field(init=False, factory=dict)
 
@@ -121,9 +117,11 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
             )
 
             variation_alleles = []
-            for i, alt in enumerate(record.alt):
+            for i in range(len(record.alt)):
                 variation_alleles.append(
-                    self._create_sv_allele_from_record(record, allele_index=i, slice=seq_region_slice)
+                    self._create_sv_allele_from_record(
+                        record, allele_index=i, seq_region_slice=seq_region_slice
+                    )
                 )
             start = record.pos
             end = max(var.end for var in variation_alleles)
@@ -145,7 +143,7 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
         return structural_variations
 
     def _create_sv_allele_from_record(
-        self, record: VCFRecord, *, allele_index: int, slice: Slice | None
+        self, record: VCFRecord, *, allele_index: int, seq_region_slice: Slice | None
     ) -> StructuralVariationAllele:
         """Create a StructuralVariationAllele object from a VCFRecord.
 
@@ -158,7 +156,7 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
             StructuralVariationAllele: StructuralVariationAllele object created from the VCF record.
         """
         end, svlen = self._end_and_svlen_for_sva_from_vcf_record(record, allele_index)
-        ref, alt, start, end, changed = self._trim_reference_base_symbolic_allele(
+        ref, alt, start, end, _ = self._trim_reference_base_symbolic_allele(
             record.reference, record.alt[allele_index], start=record.pos, end=end
         )
 
@@ -167,7 +165,7 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
             end=end,
             svlen=svlen,
             strand=Strand.FORWARD,
-            slice=slice,
+            slice=seq_region_slice,
             reference_allele=ref,
             alternate_allele=alt,
         )
@@ -335,7 +333,7 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
         alt: str,
         *,
         start: int = 0,
-        end: int,
+        end: int | None,
         strand: Strand = Strand.FORWARD,
     ) -> tuple[str, str, int, int, bool]:
         """Trim the reference base for a symbolic allele.
@@ -352,6 +350,8 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
         Returns:
             Tuple of (new_ref, new_alt, new_start, new_end, changed).
         """
+
+        end = end or (start + (len(ref) - 1))
 
         changed = False
 

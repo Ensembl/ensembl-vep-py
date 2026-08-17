@@ -13,7 +13,7 @@
 # limitations under the License.
 """Sequence utils"""
 
-from ensembl.vep.common.enums import CoordSystemLevel, Strand, ClassSOTerm
+from ensembl.vep.common.enums import CoordSystemLevel, Strand
 from ensembl.vep.models.sequence import CoordSystem, Slice
 from ensembl.vep.sources.sequence_source import SequenceSource
 
@@ -45,7 +45,6 @@ def get_or_build_slice(
             start=1,
             end=seq_region_length if seq_region_length is not None else _PLACEHOLDER_SEQ_REGION_END,
             strand=Strand.FORWARD,
-            seq_region_length=seq_region_length,
             sequence_source=sequence_source,
         )
     return slice_cache[seq_region_name]

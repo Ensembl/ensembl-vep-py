@@ -13,8 +13,6 @@
 # limitations under the License.
 """Feature sources — file-backed and database-backed providers of domain Feature objects."""
 
-from .sequence_source import SequenceSource
-from .file.fasta.sequence import FastaSequenceSource
 from .feature_source import FeatureSource
 from .file.file_feature_source import FileFeatureSource
 from .sequence_source import SequenceSource

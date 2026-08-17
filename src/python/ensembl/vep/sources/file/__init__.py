@@ -15,6 +15,5 @@
 
 from .fasta.sequence import FastaSequenceSource
 from .file_feature_source import FileFeatureSource
-from .fasta.sequence import FastaSequenceSource
 
 __all__ = ["FileFeatureSource", "FastaSequenceSource"]

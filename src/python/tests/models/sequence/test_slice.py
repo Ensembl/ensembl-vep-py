@@ -16,7 +16,6 @@
 """Unit tests for Slice class."""
 
 from copy import deepcopy
-from attrs import define, field
 import pytest
 
 from ensembl.vep.common import CoordSystemLevel, Strand
