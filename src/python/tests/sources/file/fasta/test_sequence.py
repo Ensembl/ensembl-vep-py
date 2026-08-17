@@ -18,9 +18,14 @@ from pathlib import Path
 import pytest
 
 from ensembl.vep.common import Strand
+from ensembl.vep.parsers.fasta import FastaParser
 from ensembl.vep.sources.file.fasta.sequence import FastaSequenceSource
 
-SAMPLE = ">chr1\n" "ACGTTGCA\n" ">chr2\n" "AAAA\n"
+SAMPLE = """>chr1
+ACGTTGCA
+>chr2
+AAAA
+"""
 SAMPLE_FAI = "chr1\t8\t6\t8\t9\nchr2\t4\t21\t4\t5\n"
 
 
@@ -39,26 +44,38 @@ def _write_indexed_fasta(path: Path, data: str = SAMPLE, index: str = SAMPLE_FAI
     return path
 
 
-class MetadataOnlyParser:
+def _make_fasta_source(path: Path, mode: str) -> FastaSequenceSource:
+    """Create a sequence source with a parser opened for the test FASTA."""
+    return FastaSequenceSource(
+        file_path=path,
+        adaptor=FastaParser(file_path=path, mode=mode),
+    )
+
+
+class MetadataOnlyParser(FastaParser):
     """Minimal parser stub that only exposes metadata."""
 
-    def __init__(self, metadata: dict[str, object]) -> None:
+    def __init__(self, metadata: dict[str, object]) -> None:  # pylint: disable=super-init-not-called
         """Initialize the parser stub."""
 
-        self._metadata = metadata
-        self.reader_mode = "sequential"
+        self._test_metadata = metadata
         self.closed = False
 
     @property
     def metadata(self) -> dict[str, object]:
         """Return parser metadata."""
 
-        return self._metadata
+        return self._test_metadata
 
-    def open(self, *_args: object, **_kwargs: object) -> None:
+    @property
+    def reader_mode(self) -> str:
+        """Return the parser mode used by this stub."""
+        return "sequential"
+
+    def open(self, file_path: str | Path, mode: str = "auto") -> FastaParser:
         """Open the parser stub."""
 
-        return None
+        return self
 
     def close(self) -> None:
         """Close the parser stub."""
@@ -88,7 +105,7 @@ class TestFastaSequenceSourceInitialization:
         """Test FastaSequenceSource initialization without keywords raises error."""
 
         with pytest.raises(TypeError, match="takes 1 positional argument"):
-            _ = FastaSequenceSource("sample.fa")  # type: ignore[misc]
+            _ = FastaSequenceSource("sample.fa")  # type: ignore[arg-type,misc]
 
     def test_initialization_sets_core_attributes(self) -> None:
         """Test FastaSequenceSource stores source and parser attributes."""
@@ -96,7 +113,6 @@ class TestFastaSequenceSourceInitialization:
         source = FastaSequenceSource()
 
         assert source.file_path is None
-        assert source.mode == "auto"
         assert source.adaptor.format == "fasta"  # pylint: disable=protected-access
         assert source.adaptor.reader_mode == "auto"  # pylint: disable=protected-access
         assert source._sequences is None  # pylint: disable=protected-access
@@ -108,8 +124,8 @@ class TestFastaSequenceSourceOpenClose:
     def test_close_clears_loaded_sequences_and_lengths(self, tmp_path: Path) -> None:
         """Test close clears FASTA-specific and derived source caches."""
 
-        path = _write_fasta(tmp_path / "sample.fa")
-        source = FastaSequenceSource(file_path=path, mode="sequential")
+        path = _write_fasta(tmp_path / "sample.fa", SAMPLE)
+        source = _make_fasta_source(path, "sequential")
 
         assert source.get_sequence_by_start_end_strand("chr1", 1, 4) == "ACGT"
         assert source.get_seq_region_length("chr1") == 8
@@ -123,7 +139,8 @@ class TestFastaSequenceSourceOpenClose:
 
         path = _write_fasta(tmp_path / "sample.fa")
 
-        with FastaSequenceSource(file_path=path, mode="sequential") as source:
+        source = _make_fasta_source(path, "sequential")
+        with source:
             assert source.get_sequence_by_start_end_strand("chr1", 1, 4) == "ACGT"
 
         assert not source.adaptor.metadata  # pylint: disable=protected-access
@@ -136,7 +153,7 @@ class TestFastaSequenceSourceSequence:
         """Test sequential mode returns the requested sequence span."""
 
         path = _write_fasta(tmp_path / "sample.fa")
-        source = FastaSequenceSource(file_path=path, mode="sequential")
+        source = _make_fasta_source(path, "sequential")
 
         assert source.get_sequence_by_start_end_strand("chr1", 2, 5) == "CGTT"
 
@@ -144,7 +161,7 @@ class TestFastaSequenceSourceSequence:
         """Test sequential mode returns sequence on the requested strand."""
 
         path = _write_fasta(tmp_path / "sample.fa")
-        source = FastaSequenceSource(file_path=path, mode="sequential")
+        source = _make_fasta_source(path, "sequential")
 
         assert source.get_sequence_by_start_end_strand("chr1", 2, 5, strand=Strand.REVERSE) == "AACG"
 
@@ -152,7 +169,7 @@ class TestFastaSequenceSourceSequence:
         """Test sequential mode pads missing trailing bases with Ns."""
 
         path = _write_fasta(tmp_path / "sample.fa")
-        source = FastaSequenceSource(file_path=path, mode="sequential")
+        source = _make_fasta_source(path, "sequential")
 
         assert source.get_sequence_by_start_end_strand("chr1", 7, 10) == "CANN"
 
@@ -160,7 +177,7 @@ class TestFastaSequenceSourceSequence:
         """Test sequential mode returns Ns for an unknown sequence region."""
 
         path = _write_fasta(tmp_path / "sample.fa")
-        source = FastaSequenceSource(file_path=path, mode="sequential")
+        source = _make_fasta_source(path, "sequential")
 
         assert source.get_sequence_by_start_end_strand("chr3", 1, 4) == "NNNN"
 
@@ -168,7 +185,7 @@ class TestFastaSequenceSourceSequence:
         """Test query mode returns the requested sequence span."""
 
         path = _write_indexed_fasta(tmp_path / "sample.fa")
-        source = FastaSequenceSource(file_path=path, mode="query")
+        source = _make_fasta_source(path, "query")
 
         assert source.get_sequence_by_start_end_strand("chr1", 2, 5) == "CGTT"
 
@@ -176,7 +193,7 @@ class TestFastaSequenceSourceSequence:
         """Test query mode returns sequence on the requested strand."""
 
         path = _write_indexed_fasta(tmp_path / "sample.fa")
-        source = FastaSequenceSource(file_path=path, mode="query")
+        source = _make_fasta_source(path, "query")
 
         assert source.get_sequence_by_start_end_strand("chr1", 2, 5, strand=Strand.REVERSE) == "AACG"
 
@@ -184,7 +201,7 @@ class TestFastaSequenceSourceSequence:
         """Test query mode pads missing trailing bases with Ns."""
 
         path = _write_indexed_fasta(tmp_path / "sample.fa")
-        source = FastaSequenceSource(file_path=path, mode="query")
+        source = _make_fasta_source(path, "query")
 
         assert source.get_sequence_by_start_end_strand("chr1", 7, 10) == "CANN"
 
@@ -192,7 +209,7 @@ class TestFastaSequenceSourceSequence:
         """Test query mode returns Ns for an unknown sequence region."""
 
         path = _write_indexed_fasta(tmp_path / "sample.fa")
-        source = FastaSequenceSource(file_path=path, mode="query")
+        source = _make_fasta_source(path, "query")
 
         assert source.get_sequence_by_start_end_strand("chr3", 1, 4) == "NNNN"
 
@@ -200,7 +217,7 @@ class TestFastaSequenceSourceSequence:
         """Test sequential mode keeps loaded FASTA records in memory."""
 
         path = _write_fasta(tmp_path / "sample.fa")
-        source = FastaSequenceSource(file_path=path, mode="sequential")
+        source = _make_fasta_source(path, "sequential")
 
         assert source.get_sequence_by_start_end_strand("chr1", 1, 4) == "ACGT"
         loaded_sequences = source._sequences  # pylint: disable=protected-access
@@ -214,8 +231,8 @@ class TestFastaSequenceSourceLength:
     def test_length_is_resolved_from_fasta_metadata(self, tmp_path: Path) -> None:
         """Test sequence region length is read from parser metadata."""
 
-        path = _write_fasta(tmp_path / "sample.fa")
-        source = FastaSequenceSource(file_path=path, mode="sequential")
+        path = _write_fasta(tmp_path / "sample.fa", SAMPLE)
+        source = _make_fasta_source(path, "sequential")
 
         assert source.get_seq_region_length("chr1") == 8
         assert source.get_seq_region_length("chr2") == 4
@@ -223,8 +240,8 @@ class TestFastaSequenceSourceLength:
     def test_length_is_cached_by_sequence_source(self, tmp_path: Path) -> None:
         """Test sequence region length lookup uses the shared source cache."""
 
-        path = _write_fasta(tmp_path / "sample.fa")
-        source = FastaSequenceSource(file_path=path, mode="sequential")
+        path = _write_fasta(tmp_path / "sample.fa", SAMPLE)
+        source = _make_fasta_source(path, "sequential")
 
         assert source.get_seq_region_length("chr1") == 8
         assert source._seq_region_lengths == {"chr1": 8}  # pylint: disable=protected-access
@@ -233,7 +250,7 @@ class TestFastaSequenceSourceLength:
         """Test missing sequence region length returns None."""
 
         path = _write_fasta(tmp_path / "sample.fa")
-        source = FastaSequenceSource(file_path=path, mode="sequential")
+        source = _make_fasta_source(path, "sequential")
 
         assert source.get_seq_region_length("chr3") is None
 
@@ -241,9 +258,9 @@ class TestFastaSequenceSourceLength:
         """Test length lookup does not load FASTA records."""
 
         path = _write_fasta(tmp_path / "sample.fa")
-        source = FastaSequenceSource(file_path=path, mode="sequential")
-        source._parser = MetadataOnlyParser(  # pylint: disable=protected-access
-            {"sequence_lengths": {"chr1": 8}}
+        source = FastaSequenceSource(
+            file_path=path,
+            adaptor=MetadataOnlyParser({"sequence_lengths": {"chr1": 8}}),
         )
 
         assert source.get_seq_region_length("chr1") == 8

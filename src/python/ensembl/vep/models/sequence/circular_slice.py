@@ -67,6 +67,10 @@ class CircularSlice(Slice):
                     piece = "N" * (end - start + 1)
                 sequence += piece
 
+            requested_length = self.end - self.start + 1
+            if len(sequence) < requested_length:
+                sequence += "N" * (requested_length - len(sequence))
+
             if self.strand == Strand.REVERSE:
                 return reverse_complement(sequence)
 
@@ -82,23 +86,20 @@ class CircularSlice(Slice):
             list[tuple[int, int]]: Linear spans used to assemble the slice sequence.
         """
 
-        if self.start >= 1 and self.end >= self.start and self.end <= seq_region_length:
-            return [(self.start, self.end)]
+        requested_length = self.end - self.start + 1
+        if requested_length <= 0 or seq_region_length <= 0:
+            return []
 
         normalized_start = ((self.start - 1) % seq_region_length) + 1
-        normalized_end = ((self.end - 1) % seq_region_length) + 1
+        available_length = min(requested_length, seq_region_length)
+        first_span_length = min(available_length, seq_region_length - normalized_start + 1)
+        spans = [(normalized_start, normalized_start + first_span_length - 1)]
 
-        if (
-            normalized_start <= normalized_end
-            and self.start <= seq_region_length
-            and self.end <= seq_region_length
-        ):
-            return [(normalized_start, normalized_end)]
+        remaining_length = available_length - first_span_length
+        if remaining_length:
+            spans.append((1, remaining_length))
 
-        if normalized_start <= seq_region_length:
-            return [(normalized_start, seq_region_length), (1, normalized_end)]
-
-        return [(normalized_start, seq_region_length), (1, normalized_end)]
+        return spans
 
     def is_circular(self) -> bool:
         """Indicates whether the slice is circular.
@@ -108,7 +109,7 @@ class CircularSlice(Slice):
         """
         return True
 
-    # TODO: We needed to override __eq__ of attrs regeneration which compares internal field like _lock;
+    # NOTE: we needed to override __eq__ of attrs regeneration which compares internal field like _lock;
     # is there a generic way to do this?
     def __eq__(self, other: object) -> bool:
         """Compare two CircularSlice objects and define if they are identical."""

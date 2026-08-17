@@ -88,7 +88,7 @@ class TestSequenceSourceInitialization:
         """Test SequenceSource cannot be instantiated directly."""
 
         with pytest.raises(TypeError, match="abstract class"):
-            _ = SequenceSource()  # type: ignore[abstract,call-arg]
+            _ = SequenceSource()  # type: ignore[abstract] # pylint: disable=abstract-class-instantiated
 
     def test_concrete_source_starts_with_empty_length_cache(self) -> None:
         """Test concrete source initializes derived caches."""

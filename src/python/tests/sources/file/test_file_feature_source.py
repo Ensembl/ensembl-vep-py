@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # pylint: disable=redefined-outer-name
-"""Unit tests for FileSource."""
+"""Unit tests for FileFeatureSource."""
 
 from __future__ import annotations
 
@@ -24,6 +24,7 @@ import pytest
 from ensembl.vep.common import SourceType, Strand, format_region_string
 from ensembl.vep.models import Feature
 from ensembl.vep.parsers import Parser
+from ensembl.vep.sources.sequence_source import SequenceSource
 from ensembl.vep.sources.file.file_feature_source import FileFeatureSource
 
 _RECORDS: list[int] = []
@@ -69,6 +70,11 @@ class ConcreteParser(Parser[int]):
 
         return _RECORDS.pop(0)
 
+    def records(self, limit: int | None = 10000) -> list[int]:
+        """Return records, using the default limit of file-backed parsers."""
+
+        return super().records(limit)
+
     @staticmethod
     def parse_file(file_path: str, limit: int | None = None) -> list[int]:
         """Parse the entire file and return all records."""
@@ -93,7 +99,7 @@ class DummyFileFeatureSource(FileFeatureSource[ConcreteParser, Feature]):
     """Concrete file source used for testing FileFeatureSource interface helpers."""
 
     closed: bool = False
-    sequence_source: None = field(default=None)
+    sequence_source: SequenceSource | None = field(default=None)  # ignore[assignment]
 
     def _records_to_features(self, records: list[int]) -> list[Feature]:
         return [Feature(start=value, end=value, strand=Strand.FORWARD, slice=None) for value in records]
@@ -145,6 +151,38 @@ class TestFileFeatureSourceGetAllFeatures:
 
         assert parser.opened is False
 
+    @pytest.mark.parametrize(
+        ("exception", "expected_message"),
+        [
+            (NotImplementedError(), "ConcreteParser does not support parse_file"),
+            (FileNotFoundError(), "Error parsing file dummy.txt: does not exist"),
+        ],
+    )
+    def test_parse_file_errors_are_logged_as_errors(
+        self,
+        exception: Exception,
+        expected_message: str,
+        caplog: pytest.LogCaptureFixture,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """Test parse errors are logged at error level before exiting."""
+
+        def raise_error(_file_path: str, limit: int | None = None) -> list[int]:
+            del limit
+            raise exception
+
+        monkeypatch.setattr(ConcreteParser, "parse_file", staticmethod(raise_error))
+        source = DummyFileFeatureSource(file_path="dummy.txt", adaptor=ConcreteParser(format="dummy"))
+
+        with caplog.at_level("ERROR"):
+            with pytest.raises(SystemExit) as exc_info:
+                source.get_all_features()
+
+        assert exc_info.value.code == 1
+        assert len(caplog.records) == 1
+        assert caplog.records[0].levelname == "ERROR"
+        assert expected_message in caplog.records[0].message
+
 
 class TestFileFeatureSourceGetFeaturesByRegion:
     """Test get_features_by_region."""
@@ -187,6 +225,17 @@ class TestFileFeatureSourceGetFeaturesByRegion:
         features = source.get_features_by_region("1:1-100")
 
         assert [f.start for f in features] == [10, 20]
+
+    def test_seek_success_returns_all_features(self) -> None:
+        """Test region queries are not capped by the adaptor's default record limit."""
+
+        records = list(range(10001))
+        parser = _get_seekable_parser(records, seekable_region=["1:1-100"])
+        source = DummyFileFeatureSource(file_path="dummy.txt", adaptor=parser)
+
+        features = source.get_features_by_region("1:1-100")
+
+        assert [feature.start for feature in features] == records
 
     def test_seek_using_seq_region_name_start_end(self) -> None:
         """Test seek using seq_region_name, start, and end."""
@@ -276,6 +325,18 @@ class TestFileFeatureSourceIterAllFeatures:
         list(source.iter_all_features())
 
         assert parser.closed is True
+
+    def test_adaptor_remains_open_outside_of_context_manager(self) -> None:
+        """Test the adaptor remains open if the iterator is not used within a context-manager."""
+
+        parser = _get_seekable_parser([1, 2, 3], seekable_region=["1:1-100"])
+        source = DummyFileFeatureSource(file_path="dummy.txt", adaptor=parser)
+
+        iterator = source.iter_all_features()
+        first = next(iterator)
+        assert first.start == 1
+        assert parser.opened is True
+        assert parser.closed is False
 
 
 class TestFileFeatureSourceIterFeaturesByRegion:

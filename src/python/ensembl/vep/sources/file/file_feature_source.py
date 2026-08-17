@@ -14,6 +14,7 @@
 """Abstract base for file-backed feature sources."""
 
 import logging
+import sys
 from abc import abstractmethod
 from typing import Generic, Iterator, TypeVar
 from attrs import define, field
@@ -50,13 +51,11 @@ class FileFeatureSource(FeatureSource, Generic[P, F]):
         try:
             records = self.adaptor.parse_file(self.file_path)
         except NotImplementedError:
-            logger.warning(
-                f"{type(self.adaptor).__name__} does not support parse_file, " "returning empty list"
-            )
-            return []
+            logger.error(f"{type(self.adaptor).__name__} does not support parse_file, exiting")
+            sys.exit(1)
         except FileNotFoundError:
-            logger.warning(f"Error parsing file {self.file_path}: does not exist, " "returning empty list")
-            return []
+            logger.error(f"Error parsing file {self.file_path}: does not exist, exiting")
+            sys.exit(1)
         return self._records_to_features(records)
 
     def get_features_by_region(
@@ -91,7 +90,7 @@ class FileFeatureSource(FeatureSource, Generic[P, F]):
         with self.adaptor.open(self.file_path, mode="query") as adaptor:
             if not adaptor.seek(region):
                 return []
-            records = adaptor.records()
+            records = adaptor.records(limit=None)
 
         return self._records_to_features(records)
 

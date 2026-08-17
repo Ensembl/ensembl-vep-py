@@ -48,11 +48,13 @@ class SequenceCache(Protocol):
         Returns:
             str | None: The requested sequence, or None if unavailable.
         """
-        ...
+
+        raise NotImplementedError
 
     def clear(self) -> None:
         """Clear cached state."""
-        ...
+
+        raise NotImplementedError
 
 
 @define(kw_only=True, auto_attribs=True)
@@ -127,9 +129,9 @@ class SequenceBinnedLRUCache:
             current_end = min(end, current_start + self.chunk_size - 1)
             chunk = self._get_or_load(
                 (seq_region_name, current_start),
-                lambda chunk_start=current_start: self._load_chunk(
+                lambda: self._load_chunk(
                     seq_region_name,
-                    chunk_start,
+                    current_start,  # pylint: disable=cell-var-from-loop
                     loader,
                 ),
             )

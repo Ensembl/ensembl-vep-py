@@ -21,13 +21,13 @@ from threading import RLock
 from attrs import define, field
 
 from ensembl.vep.models.sequence import Slice, CoordSystem
-from ensembl.vep.common import Strand, invalidates
+from ensembl.vep.common import Strand, UnsafeSetterMixin, invalidates
 
 logger = logging.getLogger(__name__)
 
 
 @define(kw_only=True, auto_attribs=True)
-class Feature:
+class Feature(UnsafeSetterMixin):
     """
     Represents a genomic feature in a specific locus.
 
@@ -280,9 +280,9 @@ class Feature:
 
         return Slice(
             seq_region_name=genomic_slice.seq_region_name,
-            seq_region_length=genomic_slice.seq_region_length,
             coord_system=genomic_slice.coord_system,
             start=self.seq_region_start,
             end=self.seq_region_end,
             strand=self.seq_region_strand,
+            sequence_source=genomic_slice.sequence_source,
         )
