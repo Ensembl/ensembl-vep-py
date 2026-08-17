@@ -106,7 +106,6 @@ def assert_first_variation_object(var: Variation) -> None:
 
 def assert_first_structural_variation_object(var: StructuralVariation) -> None:
     """Test the variation object of CHR1_VAR_ROW1"""
-    assert isinstance(var, StructuralVariation)
     assert var.start == 50
     assert var.end == 80
     assert var.allele_string == "A/<DEL>"
@@ -417,4 +416,6 @@ class TestVCFVariationSourceRecordsToFeatures:
 
         assert len(var_feats) == 12
         assert_first_variation_object(var_feats[0])
+
+        assert isinstance(var_feats[3], StructuralVariation)
         assert_first_structural_variation_object(var_feats[3])
