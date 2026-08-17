@@ -36,7 +36,6 @@ class StructuralVariation(Variation):
             The inner bound on the end position when the variant is imprecise
         outer_end (int | None):
             The outer bound on the end position when the variant is imprecise
-            Sequence Ontology term describing the class of the variation.
         variation_alleles (Sequence[StructuralVariationAllele]):
             List of VariationAllele objects describing the alleles of the variation.
     """

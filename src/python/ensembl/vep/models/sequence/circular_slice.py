@@ -88,7 +88,11 @@ class CircularSlice(Slice):
         normalized_start = ((self.start - 1) % seq_region_length) + 1
         normalized_end = ((self.end - 1) % seq_region_length) + 1
 
-        if normalized_start <= normalized_end and self.start <= seq_region_length and self.end <= seq_region_length:
+        if (
+            normalized_start <= normalized_end
+            and self.start <= seq_region_length
+            and self.end <= seq_region_length
+        ):
             return [(normalized_start, normalized_end)]
 
         if normalized_start <= seq_region_length:
@@ -104,7 +108,7 @@ class CircularSlice(Slice):
         """
         return True
 
-    # TODO: We needed to override __eq__ of attrs regeneration which compares internal field like _lock; 
+    # TODO: We needed to override __eq__ of attrs regeneration which compares internal field like _lock;
     # is there a generic way to do this?
     def __eq__(self, other: object) -> bool:
         """Compare two CircularSlice objects and define if they are identical."""

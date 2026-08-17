@@ -42,7 +42,7 @@ class FastaSequenceSource(SequenceSource):
 
         self.adaptor.close()
         self.clear_cache()
-    
+
     def _fetch_sequence_chunk(self, seq_region_name: str, start: int, end: int) -> str:
         """Return a FASTA sequence chunk.
 
@@ -97,6 +97,8 @@ class FastaSequenceSource(SequenceSource):
 
         if self._sequences is None:
             with self.adaptor.open(self.file_path, mode="sequential"):
-                self._sequences = {record.seqid: record.sequence for record in self.adaptor.records(limit=None)}
+                self._sequences = {
+                    record.seqid: record.sequence for record in self.adaptor.records(limit=None)
+                }
 
         return self._sequences

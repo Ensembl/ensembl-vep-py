@@ -22,7 +22,8 @@ from typing import TYPE_CHECKING
 
 from attrs import define, field
 
-from ensembl.vep.common import Strand, invalidate, invalidates
+from ensembl.vep.common.enums import Strand
+from ensembl.vep.common.methods import invalidate, invalidates
 from ensembl.vep.models.sequence.coord_system import CoordSystem
 
 if TYPE_CHECKING:
@@ -76,7 +77,7 @@ class Slice:
         with self._lock:
             if self.sequence_source is None:
                 return None
-            
+
             return self.sequence_source.get_sequence_by_start_end_strand(
                 self.seq_region_name,
                 self.start,

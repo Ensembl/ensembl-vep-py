@@ -142,7 +142,7 @@ class Feature:
                 logger.warning("Cannot obtain seq_region_strand for a feature without attached slice.")
                 return None
             return Strand(self.slice.strand.value * self.strand.value)
-    
+
     @property
     def seq(self) -> str | None:
         """
@@ -152,7 +152,7 @@ class Feature:
             str | None: The associated biological sequence, or None if unavailable.
         """
         return self._seq
-    
+
     @cached_property
     def _seq(self) -> str | None:
         """
