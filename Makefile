@@ -73,3 +73,15 @@ checks-py: format-py-check lint-py type-check test-py
 checks-rust: format-rust lint-rust test-rust
 
 checks-all: checks-rust format-py-check lint-py type-check test-py-int
+
+.PHONY: apidoc docs docs-clean
+
+apidoc:
+	uv run sphinx-apidoc -o docs/reference/ src/python/ensembl --force --module-first --no-toc --implicit-namespaces
+	rm -f docs/reference/ensembl.rst
+
+docs: apidoc
+	uv run sphinx-build -b html docs/ docs/_build/html
+
+docs-clean:
+	rm -rf docs/_build docs/reference docs/reports
