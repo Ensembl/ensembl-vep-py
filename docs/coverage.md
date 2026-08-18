@@ -1,3 +1,10 @@
+---
+myst:
+  html_meta:
+    "description lang=en": |
+      Coverage reports for Python and Rust code.
+---
+
 # Code Coverage
 
 [![Python-Coverage](https://img.shields.io/endpoint?url=https://ensembl.github.io/ensembl-vep-py/assets/badges/python_coverage.json)](https://ensembl.github.io/ensembl-vep-py/coverage)
