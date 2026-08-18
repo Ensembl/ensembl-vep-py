@@ -72,15 +72,12 @@ cicd = [
     "pytest-dependency",
 ]
 docs = [
-    "mkdocs >= 1.5.3",
-    "mkdocs-autorefs",
-    "mkdocs-gen-files",
-    "mkdocs-literate-nav",
-    "mkdocs-material",
-    "mkdocs-material-extensions",
-    "mkdocs-section-index",
-    "mkdocstrings",
-    "mkdocstrings-python",
+    "ensembl-utils>=1.0.0",
+    "myst-parser>=5.1.0",
+    "pydata-sphinx-theme>=0.20.0",
+    "sphinx>=7",
+    "sphinx-autodoc-typehints>=3.13.2",
+    "sphinx-copybutton>=0.5.2",
 ]
 
 [project.urls]

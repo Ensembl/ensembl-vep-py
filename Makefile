@@ -13,10 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-.PHONY: install-*
+.PHONY: install-* apidoc docs docs-clean
 
 install-uv:
 	curl -LsSf https://astral.sh/uv/install.sh | sh
 
 install-cargo:
 	curl https://sh.rustup.rs -sSf | sh
+
+apidoc:
+	uv run sphinx-apidoc -o docs/reference/ src/python/ensembl --force --module-first --no-toc --implicit-namespaces
+	rm -f docs/reference/ensembl.rst
+
+docs: apidoc
+	uv run sphinx-build -b html docs/ docs/_build/html
+
+docs-clean:
+	rm -rf docs/_build docs/reference docs/reports
