@@ -62,7 +62,6 @@ test-py-cov: test-py
 
 test-py-int: install-package
 	uv run coverage run -m pytest --run-integration src/python
-	uv run coverage report -m
 
 test-rust:
 	cargo test --all-features
