@@ -26,5 +26,3 @@ And then clone the GitHub repository and install it in edit mode:
 git clone https://github.com/Ensembl/ensembl-vep-py.git
 pip3 install -e ensembl-vep-py/.[cicd,doc]
 ```
-
-Documentation generated using _mkdocs_. For full information visit [mkdocs.org](https://www.mkdocs.org).
