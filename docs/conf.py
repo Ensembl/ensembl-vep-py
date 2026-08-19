@@ -33,4 +33,8 @@ configure(
     coverage_root=coverage_root if coverage_root.exists() else None,
     include_entrypoints=True,
     add_pypi_icon=True,
+    napoleon_attr_annotations=True,
+    napoleon_use_rtype=False,
+    autodoc_typehints="none",
+    typehints_use_rtype=False,
 )
