@@ -34,9 +34,9 @@ class Feature(UnsafeSetterMixin):
     Attributes:
         start: Start position relative to slice (1-based, inclusive).
         end: End position relative to slice (1-based, inclusive).
-        strand (Strand): Feature orientation relative to slice.
-        slice (Slice | None): Slice object describing the feature context.
-        seq (str | None): Associated biological sequence.
+        strand: Feature orientation relative to slice.
+        slice: Slice object describing the feature context.
+        seq: Associated biological sequence.
     """
 
     start: int = field(on_setattr=invalidates("_length", "_seq_region_start", "_seq"))
@@ -54,7 +54,7 @@ class Feature(UnsafeSetterMixin):
         Public accessor for the _length.
 
         Returns:
-            int: The length of the feature.
+            The length of the feature.
         """
         return self._length
 
@@ -64,7 +64,7 @@ class Feature(UnsafeSetterMixin):
         Returns the length of the feature.
 
         Returns:
-            int: The length of the feature.
+            The length of the feature.
         """
         with self._lock:
             return self.end - self.start + 1
@@ -101,7 +101,7 @@ class Feature(UnsafeSetterMixin):
         Public accessor for the _seq_region_end.
 
         Returns:
-            int | None: The end position in the sequence region, or None if the feature has no attached slice.
+            The end position in the sequence region, or None if the feature has no attached slice.
         """
         return self._seq_region_end
 
@@ -111,7 +111,7 @@ class Feature(UnsafeSetterMixin):
         Returns the end position in the sequence region.
 
         Returns:
-            int | None: The end position in the sequence region, or None if the feature has no attached slice.
+            The end position in the sequence region, or None if the feature has no attached slice.
         """
         with self._lock:
             if self.slice is None:
@@ -125,7 +125,7 @@ class Feature(UnsafeSetterMixin):
         Public accessor for the _seq_region_strand.
 
         Returns:
-            Strand | None: The strand in the sequence region, or None if the feature has no attached slice.
+            The strand in the sequence region, or None if the feature has no attached slice.
         """
         return self._seq_region_strand
 
@@ -135,7 +135,7 @@ class Feature(UnsafeSetterMixin):
         Returns the strand in the sequence region.
 
         Returns:
-            Strand | None: The strand in the sequence region, or None if the feature has no attached slice.
+            The strand in the sequence region, or None if the feature has no attached slice.
         """
         with self._lock:
             if self.slice is None:
@@ -149,7 +149,7 @@ class Feature(UnsafeSetterMixin):
         Public accessor for the _seq.
 
         Returns:
-            str | None: The associated biological sequence, or None if unavailable.
+            The associated biological sequence, or None if unavailable.
         """
         return self._seq
 
@@ -159,7 +159,7 @@ class Feature(UnsafeSetterMixin):
         Returns the associated biological sequence.
 
         Returns:
-            str | None: The associated biological sequence, or None if unavailable.
+            The associated biological sequence, or None if unavailable.
         """
         with self._lock:
             if self.slice is None:
@@ -175,10 +175,10 @@ class Feature(UnsafeSetterMixin):
         Compares two features using various criteria.
 
         Args:
-            other (object): Another object to compare against.
+            other: Another object to compare against.
 
         Returns:
-            bool: True if equal, False otherwise.
+            True if equal, False otherwise.
         """
         if type(self) is not type(other):
             return False
@@ -195,10 +195,10 @@ class Feature(UnsafeSetterMixin):
         Transforms the feature to a new coordinate system.
 
         Args:
-            coord_system (CoordSystem): The coordinate system to transform to.
+            coord_system: The coordinate system to transform to.
 
         Returns:
-            Feature | None: The transformed feature or None if transformation is not possible.
+            The transformed feature or None if transformation is not possible.
         """
         raise NotImplementedError("Feature transformation is not implemented yet.")
 
@@ -207,10 +207,10 @@ class Feature(UnsafeSetterMixin):
         Transfers the feature to a new slice.
 
         Args:
-            slice (Slice, optional): The slice to transfer to. If None, uses current slice.
+            _genomic_slice: The slice to transfer to. If None, uses current slice.
 
         Returns:
-            Feature | None: The transferred feature or None if transfer is not possible.
+            The transferred feature or None if transfer is not possible.
         """
         raise NotImplementedError("Feature transfer is not implemented yet.")
 
@@ -219,10 +219,10 @@ class Feature(UnsafeSetterMixin):
         Checks if this feature overlaps with another feature.
 
         Args:
-            other (Feature): Another feature to check overlap with.
+            other: Another feature to check overlap with.
 
         Returns:
-            bool | None: True if overlaps, False if not, None if slices are missing.
+            True if overlaps, False if not, None if slices are missing.
         """
         if self.slice is None or other.slice is None:
             logger.warning("Cannot compare two features is any of them is without attached slice.")
