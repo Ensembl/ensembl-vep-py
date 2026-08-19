@@ -31,3 +31,10 @@ apidoc:
 
 docs: docs-clean apidoc
 	uv run sphinx-build -b html docs/ docs/_build/html
+
+coverage:
+	uv run coverage run -m pytest
+	uv run coverage html -d docs/reports/htmlcov
+	uv run coverage xml -o docs/reports/coverage.xml
+	uv run genbadge coverage -i docs/reports/coverage.xml -o docs/reports/htmlcov/coverage-badge.svg -n "Python"
+	rm docs/reports/coverage.xml
