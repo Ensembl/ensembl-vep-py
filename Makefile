@@ -21,8 +21,16 @@ install-uv:
 install-cargo:
 	curl https://sh.rustup.rs -sSf | sh
 
-docs-clean:
-	rm -rf docs/_build docs/reference docs/reports
+coverage:
+	mkdir -p docs/reports/coverage/{python,rust}
+	uv run coverage run -m pytest
+	uv run coverage html -d docs/reports/coverage/python/htmlcov
+	uv run coverage xml -o docs/reports/coverage/python/coverage.xml
+	uv run genbadge coverage -i docs/reports/coverage/python/coverage.xml -o docs/reports/coverage/python/coverage-badge.svg
+	cargo llvm-cov --ignore-filename-regex '(^|/)src/rust/lib\.rs$' --html --output-dir docs/reports/coverage/rust/
+	cargo llvm-cov --ignore-filename-regex '(^|/)src/rust/lib\.rs$' --cobertura --output-path docs/reports/coverage/rust/coverage.xml
+	uv run genbadge coverage -i docs/reports/coverage/rust/coverage.xml -o docs/reports/coverage/rust/coverage-badge.svg -n "Rust"
+	rm docs/reports/coverage/python/coverage.xml docs/reports/coverage/rust/coverage.xml
 
 apidoc:
 	uv run sphinx-apidoc -o docs/reference/ src/python/ensembl --force --module-first \
@@ -32,9 +40,5 @@ apidoc:
 docs: docs-clean apidoc
 	uv run sphinx-build -b html docs/ docs/_build/html
 
-coverage:
-	uv run coverage run -m pytest
-	uv run coverage html -d docs/reports/htmlcov
-	uv run coverage xml -o docs/reports/coverage.xml
-	uv run genbadge coverage -i docs/reports/coverage.xml -o docs/reports/htmlcov/coverage-badge.svg -n "Python"
-	rm docs/reports/coverage.xml
+docs-clean:
+	rm -rf docs/_build docs/reference docs/reports
