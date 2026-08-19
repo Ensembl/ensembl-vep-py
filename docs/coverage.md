@@ -7,15 +7,15 @@ myst:
 
 # Code Coverage
 
-[![Python-Coverage](https://img.shields.io/endpoint?url=https://ensembl.github.io/ensembl-vep-py/assets/badges/python_coverage.json)](https://ensembl.github.io/ensembl-vep-py/coverage)
-[![Rust-Coverage](https://img.shields.io/endpoint?url=https://ensembl.github.io/ensembl-vep-py/assets/badges/rust_coverage.json)](https://ensembl.github.io/ensembl-vep-py/coverage)
+[![Python-Coverage](https://ensembl.github.io/ensembl-vep-py/latest/coverage/python/coverage-badge.svg)](https://ensembl.github.io/ensembl-vep-py/coverage/python/htmlcov/index.html)
+[![Rust-Coverage](https://ensembl.github.io/ensembl-vep-py/latest/coverage/rust/coverage-badge.svg)](https://ensembl.github.io/ensembl-vep-py/coverage/rust/html/index.html)
 
 ## Latest Coverage Report
 
 View Detailed HTML Coverage Report, for
 
- - [Python](coverage/python/index.html)
- - [Rust](coverage/rust/index.html)
+ - [Python](coverage/python/htmlcov/index.html)
+ - [Rust](coverage/rust/html/index.html)
 
 ## Coverage Trends
 
