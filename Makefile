@@ -22,7 +22,8 @@ install-cargo:
 	curl https://sh.rustup.rs -sSf | sh
 
 apidoc:
-	uv run sphinx-apidoc -o docs/reference/ src/python/ensembl --force --module-first --no-toc --implicit-namespaces
+	uv run sphinx-apidoc -o docs/reference/ src/python/ensembl --force --module-first \
+	--no-toc --implicit-namespaces --templatedir docs/_templates/apidoc
 	rm -f docs/reference/ensembl.rst
 
 docs: apidoc
