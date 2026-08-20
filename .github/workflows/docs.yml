@@ -23,9 +23,13 @@ on:
         default: '3.12'
         required: true
         type: string
+      tag:
+        description: Release tag to deploy
+        required: true
+        type: string
 
 jobs:
-  mkdocs:
+  docs:
     name: Deploy documentation to GitHub Pages
     runs-on: ubuntu-latest
     permissions:
@@ -33,6 +37,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - uses: ./.github/actions/python_build
         with:
@@ -44,25 +50,43 @@ jobs:
           tool: cargo-llvm-cov
 
       - name: Generate coverage report
+        run: make coverage
+
+      - name: Build docs
+        run: make docs
+
+      - name: Checkout gh-pages
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Update switcher.json
         run: |
-          uv run coverage run -m pytest
-          uv run coverage lcov -o pytest-coverage.lcov
-          uv run coverage html -d pytest-coverage-html
+          if [ ! -f "gh-pages/switcher.json" ]; then
+            cp "docs/_build/html/_static/switcher.json" "gh-pages/switcher.json"
+          fi
+          uv run update_docs_switcher \
+            --base-url "https://ensembl.github.io/ensembl-vep" \
+            --version "${{ inputs.tag }}" \
+            "gh-pages/switcher.json"
 
-          cargo llvm-cov --ignore-filename-regex '(^|/)src/rust/lib\.rs$' --lcov --output-path rust-coverage.lcov
-          cargo llvm-cov --ignore-filename-regex '(^|/)src/rust/lib\.rs$' --html --output-dir rust-coverage-html
-
-      - name: Generate coverage badge
+      - name: Copy docs and push
         run: |
-          bash .github/scripts/generate_coverage_badge.sh pytest-coverage.lcov .github/badges/python
-          bash .github/scripts/generate_coverage_badge.sh rust-coverage.lcov .github/badges/rust
-
-          mkdir -p docs/assets/badges
-          cp .github/badges/python/coverage.json docs/assets/badges/python_coverage.json
-          cp .github/badges/rust/coverage.json docs/assets/badges/rust_coverage.json
-          cp -r pytest-coverage-html docs/coverage/python
-          cp -r rust-coverage-html/html docs/coverage/rust
-
-      - name: Run mkdocs
-        run: |
-          uv run mkdocs gh-deploy --force
+          cd gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Copy built docs into versioned and latest directories
+          rsync -a --delete ../docs/_build/html/ ./${{ inputs.tag }}/
+          rsync -a --delete ../docs/_build/html/ ./latest/
+          # Ensure Jekyll is disabled
+          touch .nojekyll
+          # Redirect base GitHub Pages URL to latest version
+          echo '<meta http-equiv="refresh" content="0; url=latest/">' > ./index.html
+          git add -f .
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Deploy docs for ${{ inputs.tag }}"
+            git push
+          fi
