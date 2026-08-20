@@ -1,4 +1,4 @@
-# Getting away with circular dependency
+# Avoiding circular dependency
 
 The heavy use of subfolders to group similar objects means that, depending on the way we structure our modules, there could be circular dependencies during import. The main source of circular dependencies here comes from using `__init__.py` files to expose a package's public API.
 
