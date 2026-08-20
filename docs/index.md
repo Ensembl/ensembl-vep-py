@@ -35,7 +35,7 @@ Coverage report of the unit tests for this library.
 ```{toctree}
 :maxdepth: 1
 
-coverage
+coverage_report
 ```
 
 ## Developer Guide
