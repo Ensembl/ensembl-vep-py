@@ -6,26 +6,24 @@ myst:
 html_theme.sidebar_secondary.remove: true
 ---
 
-# Code Coverage
-
 [![Python-Coverage](coverage/python/coverage-badge.svg)](#python)
 [![Rust-Coverage](coverage/rust/coverage-badge.svg)](#rust)
 
-## Python
+# Python
 
 <iframe
     src="coverage/python/htmlcov/index.html"
     width="100%"
-    height="900px"
+    height="600px"
     frameborder="0">
 </iframe>
 
-## Rust
+# Rust
 
 <iframe
     src="coverage/rust/html/index.html"
     width="100%"
-    height="900px"
+    height="500px"
     frameborder="0">
 </iframe>
 
