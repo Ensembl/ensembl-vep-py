@@ -26,9 +26,9 @@ coverage:
 	uv run coverage run -m pytest
 	uv run coverage html -d docs/reports/coverage/python/htmlcov
 	uv run coverage xml -o docs/reports/coverage/python/coverage.xml
-	uv run genbadge coverage -i docs/reports/coverage/python/coverage.xml -o docs/reports/coverage/python/coverage-badge.svg
-	cargo llvm-cov --ignore-filename-regex '(^|/)src/rust/lib\.rs$' --html --output-dir docs/reports/coverage/rust/
-	cargo llvm-cov --ignore-filename-regex '(^|/)src/rust/lib\.rs$' --cobertura --output-path docs/reports/coverage/rust/coverage.xml
+	uv run genbadge coverage -i docs/reports/coverage/python/coverage.xml -o docs/reports/coverage/python/coverage-badge.svg -n "Python"
+	cargo llvm-cov --ignore-filename-regex '(^|/)src/rust/lib\.rs$$' --html --output-dir docs/reports/coverage/rust/
+	cargo llvm-cov report --cobertura --output-path docs/reports/coverage/rust/coverage.xml
 	uv run genbadge coverage -i docs/reports/coverage/rust/coverage.xml -o docs/reports/coverage/rust/coverage-badge.svg -n "Rust"
 	rm docs/reports/coverage/python/coverage.xml docs/reports/coverage/rust/coverage.xml
 
@@ -37,7 +37,7 @@ apidoc:
 	--no-toc --implicit-namespaces --templatedir docs/_templates/apidoc
 	rm -f docs/reference/ensembl.rst
 
-docs: docs-clean apidoc
+docs: apidoc
 	uv run sphinx-build -b html docs/ docs/_build/html
 
 docs-clean:
