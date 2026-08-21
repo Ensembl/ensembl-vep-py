@@ -22,19 +22,21 @@ from pathlib import Path
 
 import ensembl.utils
 from ensembl.utils.docs import configure
+import ensembl.vep
 
 coverage_root = Path(__file__).parent / "reports"
 configure(
     globals(),
     project="ensembl-vep",
     repo_url="https://github.com/Ensembl/ensembl-vep-py",
-    release="0.1",
+    release=ensembl.vep.__version__,
     docs_base_url="https://ensembl.github.io/ensembl-vep-py",
     coverage_root=coverage_root if coverage_root.exists() else None,
     include_entrypoints=True,
     add_pypi_icon=True,
     napoleon_attr_annotations=True,
-    napoleon_use_rtype=False,
-    autodoc_typehints="none",
-    typehints_use_rtype=False,
+    napoleon_use_rtype=True,
+    autodoc_typehints="description",
+    typehints_use_rtype=True,
+    autodoc_default_options={"member-order": "bysource"}
 )
