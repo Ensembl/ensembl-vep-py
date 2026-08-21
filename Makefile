@@ -34,7 +34,7 @@ coverage:
 
 apidoc:
 	uv run sphinx-apidoc -o docs/reference/ src/python/ensembl --force --module-first \
-	--no-toc --implicit-namespaces --templatedir docs/_templates/apidoc
+	--no-toc --implicit-namespaces --templatedir docs/_templates/apidoc src/python/ensembl/vep/ensembl_vep_core.cpython-312-darwin.so
 	rm -f docs/reference/ensembl.rst
 
 docs: apidoc

@@ -54,6 +54,18 @@ use std::{
 // VCFRecord - represents a VCF record
 // ---------------------------------------------------------------------------
 
+///    Represents a record in a VCF file
+///
+///    Parameters:
+///        chrom (str): Name of the seq region
+///        pos (int): Position of the variant
+///        id (str | None): Variant id e.g. from dbSNP
+///        reference (str): Sequence of the reference allele
+///        alt (list[str]): Representation of each alternate allele
+///        qual float | None: Quality score for the variant
+///        filter str | None: Value of the FILTER field
+///        info dict: Information from the INFO field
+///        samples list[dict]: Genotype information for each sample
 #[pyclass(name = "VCFRecord")]
 #[derive(Clone, Debug, PartialEq)]
 pub struct VcfRecord {

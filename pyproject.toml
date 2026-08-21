@@ -85,7 +85,7 @@ Homepage = "https://www.ensembl.org"
 Documentation = "https://ensembl.github.io/ensembl-vep-py"
 Repository = "https://github.com/Ensembl/ensembl-vep-py"
 Issues = "https://github.com/Ensembl/ensembl-vep-py/issues"
-Changelog = "ithub.com/Ensembl/ensembl-vep-py/blob/main/CHANGELOG.md"
+Changelog = "https://github.com/Ensembl/ensembl-vep-py/blob/main/CHANGELOG.md"
 
 [project.scripts]
 vep = "ensembl.vep.cli:main"
