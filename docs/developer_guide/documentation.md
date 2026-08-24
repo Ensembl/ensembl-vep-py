@@ -17,9 +17,32 @@ typehints_use_rtype=True,
 autodoc_default_options={"member-order": "bysource"}
 ```
 
+## Documenting Rust objects
+
+Rust objects that are exposed to Python through PyO3 are documented by adding documentation comments to the object and getter methods.
+
+This:
+```
+///    Represents a record in a VCF file
+#[pyclass(name = "VCFRecord")]
+#[derive(Clone, Debug, PartialEq)]
+pub struct VcfRecord {
+    /// list[str]: Representation of each alternate allele
+    #[pyo3(get)]
+    pub alt: Vec<String>,
+    /// str: Name of the seq region
+    #[pyo3(get)]
+    pub chrom: String,
+```
+produces documentation like this:
+
+![](../img/vcfrecord-docs-example.png)
+
 ## Coverage reports
 
 This project uses both Python and Rust, so there are two separate coverage reports. These are generated, along with the coverage badges, using the `coverage` target in the Makefile of this repository.
+
+## Building the documentation locally
 
 For local testing of the documentation do:
 ```
