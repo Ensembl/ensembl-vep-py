@@ -6,10 +6,12 @@ myst:
 html_theme.sidebar_secondary.remove: true
 ---
 
-[![Python-Coverage](coverage/python/coverage-badge.svg)](#python)
-[![Rust-Coverage](coverage/rust/coverage-badge.svg)](#rust)
+[![Python-Coverage](./img/python-coverage-badge.svg)](#python)
+[![Rust-Coverage](./img/rust-coverage-badge.svg)](#rust)
 
-# Python
+# Coverage
+
+## Python
 
 <iframe
     src="coverage/python/htmlcov/index.html"
@@ -18,7 +20,7 @@ html_theme.sidebar_secondary.remove: true
     frameborder="0">
 </iframe>
 
-# Rust
+## Rust
 
 <iframe
     src="coverage/rust/html/index.html"

@@ -27,9 +27,11 @@ coverage:
 	uv run coverage html -d docs/reports/coverage/python/htmlcov
 	uv run coverage xml -o docs/reports/coverage/python/coverage.xml
 	uv run genbadge coverage -i docs/reports/coverage/python/coverage.xml -o docs/reports/coverage/python/coverage-badge.svg -n "Python"
+	cp docs/reports/coverage/python/coverage-badge.svg docs/img/python-coverage-badge.svg
 	cargo llvm-cov --ignore-filename-regex '(^|/)src/rust/lib\.rs$$' --html --output-dir docs/reports/coverage/rust/
 	cargo llvm-cov report --cobertura --output-path docs/reports/coverage/rust/coverage.xml
 	uv run genbadge coverage -i docs/reports/coverage/rust/coverage.xml -o docs/reports/coverage/rust/coverage-badge.svg -n "Rust"
+	cp docs/reports/coverage/rust/coverage-badge.svg docs/img/rust-coverage-badge.svg
 	rm docs/reports/coverage/python/coverage.xml docs/reports/coverage/rust/coverage.xml
 
 apidoc:
