@@ -17,4 +17,5 @@ writing_classes
 coordinates_and_slices
 circular_dependencies
 parsers_and_feature_sources
+documentation
 ```
