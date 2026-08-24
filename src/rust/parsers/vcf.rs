@@ -55,32 +55,28 @@ use std::{
 // ---------------------------------------------------------------------------
 
 ///    Represents a record in a VCF file
-///
-///    Parameters:
-///        chrom (str): Name of the seq region
-///        pos (int): Position of the variant
-///        id (str | None): Variant id e.g. from dbSNP
-///        reference (str): Sequence of the reference allele
-///        alt (list[str]): Representation of each alternate allele
-///        qual float | None: Quality score for the variant
-///        filter str | None: Value of the FILTER field
-///        info dict: Information from the INFO field
-///        samples list[dict]: Genotype information for each sample
 #[pyclass(name = "VCFRecord")]
 #[derive(Clone, Debug, PartialEq)]
 pub struct VcfRecord {
+    /// str: Name of the seq region
     #[pyo3(get)]
     pub chrom: String,
+    /// int: Position of the variant
     #[pyo3(get)]
     pub pos: Option<usize>,
+    /// str | None: Variant id e.g. from dbSNP
     #[pyo3(get)]
     pub id: Vec<String>,
+    /// str: Sequence of the reference allele
     #[pyo3(get)]
     pub reference: String,
+    /// list[str]: Representation of each alternate allele
     #[pyo3(get)]
     pub alt: Vec<String>,
+    /// float | None: Quality score for the variant
     #[pyo3(get)]
     pub qual: Option<f32>,
+    /// str | None: Value of the FILTER field
     #[pyo3(get)]
     pub filter: Vec<String>,
     info: variant::record_buf::Info,
@@ -89,6 +85,7 @@ pub struct VcfRecord {
 
 #[pymethods]
 impl VcfRecord {
+    /// dict: Information from the INFO field
     #[getter]
     fn info<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyDict>> {
         let dict = PyDict::new(py);
@@ -101,6 +98,7 @@ impl VcfRecord {
         Ok(dict)
     }
 
+    /// list[dict]: Genotype information for each sample
     #[getter]
     fn samples<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
         let list = PyList::empty(py);
