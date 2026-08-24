@@ -30,10 +30,12 @@ Functions reference.
 reference/ensembl.vep
 ```
 
+## Coverage
+
 Coverage report of the unit tests for this library.
 
 ```{toctree}
-:maxdepth: 1
+:maxdepth: 2
 
 coverage_report
 ```
