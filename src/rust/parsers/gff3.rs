@@ -39,23 +39,32 @@ type AttributePairs = Vec<(String, Vec<String>)>;
 // GFF3Record - represents a GFF3 record
 // ---------------------------------------------------------------------------
 
+/// Represents a record from one line of a GFF3 file.
 #[pyclass(name = "GFF3Record")]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Gff3Record {
+    /// str: Name of the seq region
     #[pyo3(get)]
     pub seqid: String,
+    /// str: Source of the annotation
     #[pyo3(get)]
     pub source: String,
+    /// str: Class/type of feature (e.g. gene, transcript, exon)
     #[pyo3(get)]
     pub feature_type: String,
+    /// int: Start coordinate of the feature
     #[pyo3(get)]
     pub start: usize,
+    /// int: End coordinate of the feature
     #[pyo3(get)]
     pub end: usize,
+    /// float | None: Score given to the feature
     #[pyo3(get)]
     pub score: Option<f64>,
+    /// str: Symbol representing the strand the feature is on (+, -, . or ?)
     #[pyo3(get)]
     pub strand_symbol: String,
+    /// int | None: Value for the phase of the feature (0, 1 or 2)
     #[pyo3(get)]
     pub phase_value: Option<u8>,
     attributes: AttributePairs,
@@ -65,6 +74,7 @@ pub struct Gff3Record {
 
 #[pymethods]
 impl Gff3Record {
+    /// dict[list]: The information from the attributes column
     #[getter]
     fn attributes<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyDict>> {
         let dict = PyDict::new(py);
