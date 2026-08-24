@@ -1,6 +1,6 @@
 # Parsers and Feature Sources
 
-This page covers the two packages responsible for turning raw input files (and, eventually, databases) into domain `Feature` objects: `ensembl.vep.parsers` and `ensembl.vep.sources`. Per-method detail is in the docstrings, surfaced via the auto-generated [code reference](../reference/index.md) — this page only covers the shape of the architecture and the reasoning behind it.
+This page covers the two packages responsible for turning raw input files (and, eventually, databases) into domain `Feature` objects: `ensembl.vep.parsers` and `ensembl.vep.sources`. Per-method detail is in the docstrings, surfaced via the auto-generated [code reference](../reference/ensembl.vep.rst) — this page only covers the shape of the architecture and the reasoning behind it.
 
 ## Parser interface
 
