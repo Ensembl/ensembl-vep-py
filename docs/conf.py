@@ -38,5 +38,5 @@ configure(
     napoleon_use_rtype=True,
     autodoc_typehints="description",
     typehints_use_rtype=True,
-    autodoc_default_options={"member-order": "bysource"}
+    autodoc_default_options={"member-order": "bysource"},
 )
