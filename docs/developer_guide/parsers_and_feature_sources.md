@@ -60,3 +60,22 @@ def iter_all_features(self) -> Iterator[F]:
 This default is correct whenever one raw record maps to one (or more) complete features — e.g. one VCF line is one Variation. It is **not** correct for formats where a feature is assembled from several records, which is exactly the GFF3 case: a `Transcript` needs its own record plus all of its child `exon`/`CDS` records, and possibly a parent `gene` record.
 
 `GFF3TranscriptSource` therefore overrides both iterator methods. It reads records one at a time via `next()`, buffers them, and flushes a complete group as soon as the next "gene" record (or a second top-level transcript record) signals the previous group is finished — emitting `Transcript` objects without ever holding the whole file in memory at once. This relies on the GFF3 file being sorted in the conventional way (a gene record precedes its transcripts, and each transcript's exon/CDS children immediately follow it); the source logs this assumption once per call. Files that don't follow this ordering will still produce *some* result via the eager path (`get_all_features`/`get_features_by_region`, which read the whole file/region up front and don't depend on ordering), just not via the streaming path.
+
+## Feature Sources
+
+### VCFVariationSource
+
+The `VCFVariationSource` class is used to make `Variation` and `StructuralVariation` objects from records in a VCF file.
+`StructuralVariation` objects are used for structural variants that are represented symbolically; small INDELS are represented by `Variation` objects.
+
+The `VCFVariationSource` class inherits from `FileFeatureSource` and implements `_records_to_features`. This creates a list of `Variation` and `StructuralVariation` objects from a list of `VcfRecords` provided by the `VCFParser`.
+
+`_records_to_features` decides whether a record is a `StructuralVariation` object in the following way:
+- If the REF and ALT alleles are not simple strings of base characters (ACGT)
+AND 
+- The record contains the SVTYPE info field
+OR
+- Any of the ALT alleles match one of the symbolic alleles (`<DEL>`, `<INS>` etc.)
+OR
+- Any of the ALT alleles match the breakend notation
+Otherwise it creates a `Variation` object
