@@ -144,7 +144,8 @@ class MyClass():
 
 
 > **Note:** In some cases, we may want to allow updating core attributes without invalidating derived attributes. In that case, we can also use the `UnsafeSetterMixin` mixin. It allows using context managers to temporarily disable cache invalidation for faster but unsafe attribute update. Generally this should not be necessary.
- ```python
+
+```python
 class MyClass(UnsafeSetterMixin):
     core_attr1: int = field(on_setattr=invalidates('_derived_attr1'))
     
@@ -214,7 +215,6 @@ This uses a dictionary lookup (`sa_attrs`) to resolve any validation or conversi
 > - Can `__setattr__` be further optimised and eliminate loops and conditionals?
 > - Is there a way to register `@cached_property` attributes in the `attrs` attribute list so that they are handled by `on_setattr`?
 > - Is it better to implement custom caching logic with immutability instead of __setattr__?
-</blockquote>
 
 **More Open Questions**
 
