@@ -6,7 +6,7 @@ myst:
 
 # Developer Guide
 
-Conventions and architectural notes for contributing to `ensembl-vep-py`. Per-method/per-class detail lives in docstrings and the auto-generated [code reference](../reference/ensembl.vep) — these pages cover the conventions and reasoning that aren't obvious from reading a single file in isolation.
+Conventions and architectural notes for contributing to `ensembl-vep-py`. Per-method/per-class detail lives in docstrings and the auto-generated [code reference](../reference/ensembl.vep.rst) — these pages cover the conventions and reasoning that aren't obvious from reading a single file in isolation.
 
 ```{toctree}
 :maxdepth: 3
