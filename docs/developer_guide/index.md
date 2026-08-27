@@ -1,8 +1,7 @@
 ---
 myst:
   html_meta:
-    "description lang=en": |
-      Guidance for developers contributing to the Ensembl VEP project.
+    "description lang=en": "Guidance for developers contributing to the Ensembl VEP project."
 ---
 
 # Developer Guide
