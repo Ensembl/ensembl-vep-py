@@ -22,7 +22,7 @@ autodoc_default_options={"member-order": "bysource"}
 Rust objects that are exposed to Python through PyO3 are documented by adding documentation comments to the object and getter methods.
 
 This:
-```
+```rust
 ///    Represents a record in a VCF file
 #[pyclass(name = "VCFRecord")]
 #[derive(Clone, Debug, PartialEq)]
@@ -36,7 +36,7 @@ pub struct VcfRecord {
 ```
 produces documentation like this:
 
-![](../img/vcfrecord-docs-example.png)
+![](./vcfrecord-docs-example.png)
 
 ## Coverage reports
 
