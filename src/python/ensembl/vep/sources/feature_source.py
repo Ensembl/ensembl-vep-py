@@ -19,6 +19,7 @@ from abc import ABC, abstractmethod
 from typing import Iterator, Generic, TypeVar
 from attr import define, field
 
+from ensembl.vep.caches import SliceCache, WeakSliceCache
 from ensembl.vep.common import SourceType
 from ensembl.vep.models import Feature
 from ensembl.vep.sources.sequence_source import SequenceSource
@@ -32,6 +33,7 @@ class FeatureSource(ABC, Generic[F]):
 
     source_type: SourceType
     sequence_source: SequenceSource | None = field(default=None)
+    slice_cache: SliceCache = field(factory=WeakSliceCache)
 
     @abstractmethod
     def get_all_features(self) -> list[F]:

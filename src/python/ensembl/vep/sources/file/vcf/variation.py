@@ -19,7 +19,6 @@ from attrs import define, field
 
 from ensembl.vep.common import Locus, Strand
 from ensembl.vep.models.sequence import Slice
-from ensembl.vep.models.sequence.utils import get_or_build_slice
 from ensembl.vep.models.variation.variation import Variation
 from ensembl.vep.models.variation.structural_variation import StructuralVariation, StructuralVariationAllele
 from ensembl.vep.parsers.vcf import VCFParser
@@ -48,7 +47,6 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
     """
 
     adaptor: VCFParser = field(init=False, factory=VCFParser)
-    _slice_cache: dict[str, Slice] = field(init=False, factory=dict)
 
     def _records_to_features(self, records: list[VCFRecord]) -> list[Variation]:
         """Convert VCFRecords into Variation or StructuralVariation objects.
@@ -97,10 +95,9 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
                     start=start,
                     end=end,
                     strand=Strand.FORWARD,
-                    slice=get_or_build_slice(
-                        seq_region_name=record.chrom,
-                        slice_cache=self._slice_cache,
-                        sequence_source=self.sequence_source,
+                    slice=self.slice_cache.get_slice(
+                        record.chrom,
+                        self.sequence_source,
                     ),
                     allele_string=allele_string,
                     uploaded_locus=Locus(
@@ -124,10 +121,9 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
 
         structural_variations: list[StructuralVariation] = []
         for record in records:
-            seq_region_slice = get_or_build_slice(
-                seq_region_name=record.chrom,
-                slice_cache=self._slice_cache,
-                sequence_source=self.sequence_source,
+            seq_region_slice = self.slice_cache.get_slice(
+                record.chrom,
+                self.sequence_source,
             )
 
             variation_alleles = []

@@ -82,6 +82,18 @@ def create_vcf_records_for_testing(text: str) -> list[VCFRecord]:
     return VCFParser().parse_text(text)
 
 
+def create_sequence_source_for_testing() -> DummySequenceSource:
+    """Create a sequence source covering every region used in the VCF fixtures."""
+
+    return DummySequenceSource(
+        data={
+            "chr1": "N" * 400,
+            "chr2": "N" * 200,
+            "chrA": "N" * 100,
+        }
+    )
+
+
 @pytest.fixture(name="vcf_records")
 def vcf_records_fixture(text: str = SAMPLE) -> list[VCFRecord]:
     """Create a list of SNV VCFRecord objects for testing."""
@@ -401,8 +413,7 @@ class TestVCFVariationSourceRecordsToFeatures:
     def test_records_to_variation(self, vcf_records: list[VCFRecord]) -> None:
         """Test _records_to_variation method."""
 
-        seq_source = DummySequenceSource()
-        seq_source.data = {"chr1": "ACGTACGTACGTACGTACGTACGTACGTACGT"}
+        seq_source = create_sequence_source_for_testing()
         vcf_var_source = VCFVariationSource(
             sequence_source=seq_source,
             file_path="sample.vcf",
@@ -416,7 +427,7 @@ class TestVCFVariationSourceRecordsToFeatures:
         assert_first_variation_object(var_feats[0])
         assert var_feats[0].slice is not None
         assert var_feats[0].slice.seq_region_name == "chr1"
-        assert var_feats[0].slice.seq_region_length == 32
+        assert var_feats[0].slice.seq_region_length == 400
 
         assert var_feats[1].start == 21
         assert var_feats[1].end == 22
@@ -431,7 +442,7 @@ class TestVCFVariationSourceRecordsToFeatures:
     def test_create_sv_allele_from_record(self, sv_vcf_records: list[VCFRecord]) -> None:
         """Test _create_sv_allele_from_record method."""
         vcf_var_source = VCFVariationSource(
-            sequence_source=DummySequenceSource(),
+            sequence_source=create_sequence_source_for_testing(),
             file_path="sample.vcf",
         )
 
@@ -443,7 +454,7 @@ class TestVCFVariationSourceRecordsToFeatures:
     def test_records_to_structural_variation(self, sv_vcf_records: list[VCFRecord]) -> None:
         """Test _records_to_structural_variation method."""
         vcf_var_source = VCFVariationSource(
-            sequence_source=DummySequenceSource(),
+            sequence_source=create_sequence_source_for_testing(),
             file_path="sample.vcf",
         )
 
@@ -459,7 +470,7 @@ class TestVCFVariationSourceRecordsToFeatures:
     ) -> None:
         """Test _records_to_features method."""
         vcf_var_source = VCFVariationSource(
-            sequence_source=DummySequenceSource(),
+            sequence_source=create_sequence_source_for_testing(),
             file_path="sample.vcf",
         )
 
