@@ -17,6 +17,7 @@ import logging
 import pytest
 
 from ensembl.vep.ensembl_vep_core import VCFRecord  # noqa: F401,F403 pylint: disable=E0401,E0611
+from ensembl.vep.common import Locus
 from ensembl.vep.common.enums import Strand
 from ensembl.vep.models.variation.variation import Variation
 from ensembl.vep.models.variation.structural_variation import StructuralVariation
@@ -298,29 +299,55 @@ class TestVCFVariationSourceMethods:
         for record in sv_vcf_records:
             assert source._is_structural_variation_record(record)  # pylint: disable=protected-access
 
-    def test_trim_reference_base_symbolic_allele(self, caplog: pytest.LogCaptureFixture) -> None:
-        """Test _trim_reference_base_symbolic_allele method."""
+    def test_remove_anchor_bases(self, caplog: pytest.LogCaptureFixture) -> None:
+        """Test _remove_anchor_bases method."""
+        source = VCFVariationSource(sequence_source=DummySequenceSource(), file_path="sample.vcf")
+
+        assert source._remove_anchor_bases(  # pylint: disable=protected-access
+            "CAT", "C", start=10, end=12
+        ) == ("AT", "-", 11, 12, True)
+        assert source._remove_anchor_bases(  # pylint: disable=protected-access
+            "G", "GAT", start=10, end=10
+        ) == ("-", "AT", 11, 10, True)
+        assert source._remove_anchor_bases(  # pylint: disable=protected-access
+            "ACGT", "ACCT", start=10, end=13
+        ) == ("GT", "CT", 12, 13, True)
+        assert source._remove_anchor_bases(  # pylint: disable=protected-access
+            "A", "T", start=10, end=10
+        ) == ("A", "T", 10, 10, False)
+        assert source._remove_anchor_bases(  # pylint: disable=protected-access
+            "AT", ["A", "ATT"], start=10, end=11
+        ) == ("T", ["-", "TT"], 11, 11, True)
+
+        with caplog.at_level(logging.WARNING):
+            assert source._remove_anchor_bases(  # pylint: disable=protected-access
+                "A", "AT", start=10, end=10, strand=Strand.UNKNOWN
+            ) == ("A", "AT", 10, 10, False)
+        assert "Strand is unknown, cannot remove anchor bases with confidence" in caplog.text
+
+    def test_remove_anchor_bases_symbolic_allele(self, caplog: pytest.LogCaptureFixture) -> None:
+        """Test _remove_anchor_bases_symbolic_allele method."""
         source = VCFVariationSource(sequence_source=DummySequenceSource(), file_path="sample.vcf")
 
         # test for unknown strand warning
         with caplog.at_level(logging.WARNING):
-            source._trim_reference_base_symbolic_allele(  # pylint: disable=protected-access
+            source._remove_anchor_bases_symbolic_allele(  # pylint: disable=protected-access
                 "A", "<DEL>", start=20, end=50, strand=Strand.UNKNOWN
             )
             assert (
                 "Strand is unknown, cannot trim alleles with confidence" in caplog.text
-            ), "Incorrect strand unknown warning in _trim_reference_base_symbolic_allele"
+            ), "Incorrect strand unknown warning in _remove_anchor_bases_symbolic_allele"
 
         # test for allele already trimmed warning
         with caplog.at_level(logging.WARNING):
-            source._trim_reference_base_symbolic_allele(  # pylint: disable=protected-access
+            source._remove_anchor_bases_symbolic_allele(  # pylint: disable=protected-access
                 "-", "<DEL>", start=20, end=50, strand=Strand.FORWARD
             )
             assert (
                 "Allele is already trimmed" in caplog.text
-            ), "Incorrect allele already trimmed warning in _trim_reference_base_symbolic_allele"
+            ), "Incorrect allele already trimmed warning in _remove_anchor_bases_symbolic_allele"
 
-        assert source._trim_reference_base_symbolic_allele(  # pylint: disable=protected-access
+        assert source._remove_anchor_bases_symbolic_allele(  # pylint: disable=protected-access
             "A", "<DEL>", start=20, end=50
         ) == (
             "-",
@@ -329,7 +356,7 @@ class TestVCFVariationSourceMethods:
             50,
             True,
         )
-        assert source._trim_reference_base_symbolic_allele(  # pylint: disable=protected-access
+        assert source._remove_anchor_bases_symbolic_allele(  # pylint: disable=protected-access
             "A", "<DEL>", start=20, end=50, strand=Strand.REVERSE
         ) == (
             "-",
@@ -338,7 +365,7 @@ class TestVCFVariationSourceMethods:
             49,
             True,
         )
-        assert source._trim_reference_base_symbolic_allele(  # pylint: disable=protected-access
+        assert source._remove_anchor_bases_symbolic_allele(  # pylint: disable=protected-access
             "A", "<INS>", start=14, end=14
         ) == (
             "-",
@@ -372,8 +399,15 @@ class TestVCFVariationSourceRecordsToFeatures:
         assert var_feats[0].slice.seq_region_name == "chr1"
         assert var_feats[0].slice.seq_region_length == 32
 
+        assert var_feats[1].start == 21
         assert var_feats[1].end == 22
-        assert var_feats[1].allele_string == "GAT/G"
+        assert var_feats[1].allele_string == "AT/-"
+        assert var_feats[1].uploaded_locus == Locus(start=20, end=22, allele_string="GAT/G")
+
+        assert var_feats[2].start == 101
+        assert var_feats[2].end == 100
+        assert var_feats[2].allele_string == "-/AT"
+        assert var_feats[2].uploaded_locus == Locus(start=100, end=100, allele_string="C/CAT")
 
     def test_create_sv_allele_from_record(self, sv_vcf_records: list[VCFRecord]) -> None:
         """Test _create_sv_allele_from_record method."""

@@ -387,7 +387,7 @@ This convention is also convenient for calculating pre and post sequence for shi
 
 ## Removal of Reference Bases
 
-When `Variation` objects are created any reference bases are removed and the coordinates adjusted accordingly. For example, a deletion represented in vcf as `1   10  CAT C` has the reference C base removed and `start=11` and `end=12` (The reference allele becomes "-"). An insertion such as `1   10  G   GAT` has the reference G base removed and `start=11` and `end=10`.  
+When `Variation` objects are created any anchor bases are removed and the coordinates adjusted accordingly. For example, a deletion represented in VCF as `1   10  CAT C` becomes `AT/-` with `start=11` and `end=12`. An insertion such as `1   10  G   GAT` becomes `-/AT` with `start=11` and `end=10`.
 The same is true for symbolic alleles. e.g. This variant `1   100 G <DEL>`, becomes `-/<DEL>` and `start` is updated to 101.
 
 ## Getting away with circular dependency

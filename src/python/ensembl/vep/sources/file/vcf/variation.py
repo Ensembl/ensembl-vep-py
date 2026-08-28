@@ -17,7 +17,7 @@ import logging
 import re
 from attrs import define, field
 
-from ensembl.vep.common import Strand
+from ensembl.vep.common import Locus, Strand
 from ensembl.vep.models.sequence import Slice
 from ensembl.vep.models.sequence.utils import get_or_build_slice
 from ensembl.vep.models.variation.variation import Variation
@@ -81,12 +81,21 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
 
         variations: list[Variation] = []
         for record in records:
-            allele_string = "/".join([record.reference, *record.alt])
+            uploaded_allele_string = "/".join([record.reference, *record.alt])
+            uploaded_end = record.pos + len(record.reference) - 1
+            ref, alts, start, end, _ = self._remove_anchor_bases(
+                record.reference,
+                record.alt,
+                start=record.pos,
+                end=uploaded_end,
+            )
+            assert isinstance(alts, list)
+            allele_string = "/".join([ref, *alts])
             variations.append(
                 Variation(
                     stable_id=self._stable_id_from_vcf_record(record),
-                    start=record.pos,
-                    end=record.pos + len(record.reference) - 1,
+                    start=start,
+                    end=end,
                     strand=Strand.FORWARD,
                     slice=get_or_build_slice(
                         seq_region_name=record.chrom,
@@ -94,6 +103,11 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
                         sequence_source=self.sequence_source,
                     ),
                     allele_string=allele_string,
+                    uploaded_locus=Locus(
+                        start=record.pos,
+                        end=uploaded_end,
+                        allele_string=uploaded_allele_string,
+                    ),
                 )
             )
         return variations
@@ -133,6 +147,11 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
                 strand=Strand.FORWARD,
                 slice=seq_region_slice,
                 allele_string="/".join([record.reference, *record.alt]),
+                uploaded_locus=Locus(
+                    start=record.pos,
+                    end=end,
+                    allele_string="/".join([record.reference, *record.alt]),
+                ),
                 copy_number=self._int_info_value(record, "CN"),
             )
 
@@ -156,7 +175,7 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
             StructuralVariationAllele: StructuralVariationAllele object created from the VCF record.
         """
         end, svlen = self._end_and_svlen_for_sva_from_vcf_record(record, allele_index)
-        ref, alt, start, end, _ = self._trim_reference_base_symbolic_allele(
+        ref, alt, start, end, _ = self._remove_anchor_bases_symbolic_allele(
             record.reference, record.alt[allele_index], start=record.pos, end=end
         )
 
@@ -328,7 +347,68 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
             return None
 
     @staticmethod
-    def _trim_reference_base_symbolic_allele(
+    def _remove_anchor_bases(
+        ref: str,
+        alt: str | list[str],
+        *,
+        start: int = 0,
+        end: int | None = None,
+        strand: Strand = Strand.FORWARD,
+    ) -> tuple[str, str | list[str], int, int, bool]:
+        """Remove common leading anchor bases from non-symbolic alleles.
+
+        For multi-allelic variants, only bases shared by the reference and every alternate allele are
+        removed so that all alleles retain a common locus.
+
+        Args:
+            ref: Reference allele sequence.
+            alt: One alternate allele or a list of alternate alleles.
+            start: Start coordinate.
+            end: End coordinate. Defaults to ``start + len(ref) - 1``.
+            strand: Strand on which the alleles are represented.
+
+        Returns:
+            Tuple of (new_ref, new_alt, new_start, new_end, changed). Empty alleles are represented by
+            ``-`` and the shape of ``new_alt`` matches the input.
+        """
+
+        end = end if end is not None else start + len(ref) - 1
+
+        # Alternate alleles can be a single string or a list of strings. Normalize to a list for processing.
+        if isinstance(alt, str):
+            alt_is_string = True
+            alt_alleles = [alt]
+        else:
+            alt_is_string = False
+            alt_alleles = alt.copy()
+        if not alt_alleles:
+            return (ref, alt, start, end, False)
+
+        if strand == Strand.UNKNOWN:
+            logger.warning(
+                "Strand is unknown, cannot remove anchor bases with confidence. "
+                "Returning unmodified alleles."
+            )
+            return (ref, alt, start, end, False)
+
+        alleles = [ref, *alt_alleles]
+        changed = False
+
+        while all(alleles) and len({allele[0] for allele in alleles}) == 1:
+            alleles = [allele[1:] for allele in alleles]
+            if strand == Strand.REVERSE:
+                end -= 1
+            else:
+                start += 1
+            changed = True
+
+        new_ref = alleles[0] or "-"
+        new_alts = [allele or "-" for allele in alleles[1:]]
+        new_alt: str | list[str] = new_alts[0] if alt_is_string else new_alts
+        return (new_ref, new_alt, start, end, changed)
+
+    @staticmethod
+    def _remove_anchor_bases_symbolic_allele(
         ref: str,
         alt: str,
         *,
@@ -336,7 +416,7 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
         end: int | None,
         strand: Strand = Strand.FORWARD,
     ) -> tuple[str, str, int, int, bool]:
-        """Trim the reference base for a symbolic allele.
+        """Remove the reference anchor bases from a symbolic allele.
 
         Converts symbolic allele in the form A/<DEL> to -/<DEL>, adjusting coordinates accordingly.
 
