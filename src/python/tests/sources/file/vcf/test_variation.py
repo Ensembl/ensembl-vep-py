@@ -17,7 +17,7 @@ import logging
 import pytest
 
 from ensembl.vep.ensembl_vep_core import VCFRecord  # noqa: F401,F403 pylint: disable=E0401,E0611
-from ensembl.vep.common import Locus
+from ensembl.vep.common import ClassSOTerm, Locus
 from ensembl.vep.common.enums import Strand
 from ensembl.vep.models.variation.variation import Variation
 from ensembl.vep.models.variation.structural_variation import StructuralVariation
@@ -123,6 +123,8 @@ def assert_first_structural_variation_object(var: StructuralVariation) -> None:
     assert var.start == 50
     assert var.end == 80
     assert var.allele_string == "A/<DEL>"
+    assert var.sv_type == "DEL"
+    assert var.class_so_term == ClassSOTerm.DELETION
 
 
 class TestVCFVariationSourceInitialization:
@@ -246,7 +248,6 @@ class TestVCFVariationSourceMethods:
         assert allele.start == 101
         assert allele.end == 150
         assert allele.svlen == 50
-        assert allele.svtype == "DEL"
 
     def test_int_info_value(self, sv_vcf_records: list[VCFRecord]) -> None:
         """Test _int_info_value method."""
@@ -451,7 +452,6 @@ class TestVCFVariationSourceRecordsToFeatures:
             sv_vcf_records[0], allele_index=0, seq_region_slice=None
         )
         assert sva.start == 51
-        assert sva.svtype == "DEL"
 
     def test_records_to_structural_variation(self, sv_vcf_records: list[VCFRecord]) -> None:
         """Test _records_to_structural_variation method."""

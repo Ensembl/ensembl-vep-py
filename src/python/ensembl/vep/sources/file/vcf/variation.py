@@ -148,6 +148,7 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
                     end=end,
                     allele_string="/".join([record.reference, *record.alt]),
                 ),
+                sv_type=self._svtype_from_vcf_record(record),
                 copy_number=self._int_info_value(record, "CN"),
             )
 
@@ -179,7 +180,6 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
             start=start,
             end=end,
             svlen=svlen,
-            svtype=self._svtype_from_vcf_record(record),
             strand=Strand.FORWARD,
             slice=seq_region_slice,
             reference_allele=ref,

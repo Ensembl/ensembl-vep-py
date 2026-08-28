@@ -79,7 +79,7 @@ def tandem_repeat_structural_variation(genomic_slice: Slice) -> StructuralVariat
         end=5,
         strand=Strand.FORWARD,
         slice=genomic_slice,
-        allele_string="(CAG)9/(CAG)12",
+        allele_string="N/<CNV:TR>",
     )
 
 
@@ -146,6 +146,7 @@ class TestStructuralVariationProperties:
         assert structural_variation.outer_start is None, "outer_start attribute incorrect default"
         assert structural_variation.inner_end is None, "inner_end attribute incorrect default"
         assert structural_variation.outer_end is None, "outer_end attribute incorrect default"
+        assert structural_variation.sv_type is None, "sv_type attribute incorrect default"
         assert structural_variation.variation_alleles == [], "variation_alleles attribute incorrect default"
 
     def test_sva_assigment(
@@ -199,6 +200,15 @@ class TestClassSOTerm:
         assert (
             tandem_repeat_structural_variation.class_so_term == ClassSOTerm.TANDEM_REPEAT
         ), "class_so_term for tandem repeat is incorrect"
+
+    def test_uses_allele_string_and_sv_type(self, structural_variation: StructuralVariation) -> None:
+        """Use allele_string and sv_type when inferring the class SO term."""
+        assert structural_variation.class_so_term == ClassSOTerm.DELETION
+
+        structural_variation.allele_string = "N/<INS:ME:ALU>"
+        structural_variation.sv_type = "INS"
+
+        assert structural_variation.class_so_term == ClassSOTerm.ALU_INSERTION
 
 
 class TestMostSevereConsequence:
