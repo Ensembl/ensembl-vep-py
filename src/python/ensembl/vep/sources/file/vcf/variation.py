@@ -304,7 +304,7 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
         lengths = record.info.get("SVLEN")
         if lengths is not None:
             svlen = lengths.split(",")[allele_index]
-            svlen = None if svlen == "." else int(svlen)
+            svlen = None if svlen == "." else abs(int(svlen))
             if svlen is None:
                 end = record.pos + len(record.reference) - 1
             else:
@@ -314,7 +314,7 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
             if end is None:
                 svlen = None
             else:
-                svlen = end - record.pos
+                svlen = abs(end - record.pos)
 
         # For insertions, end is not POS + SVLEN
         if self._is_symbolic_insertion(record.alt[allele_index]):

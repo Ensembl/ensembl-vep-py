@@ -41,6 +41,7 @@ CHR2_VAR_ROW1 = "chr2\t100\trs3\tC\tCAT\t.\tPASS\tNS=2\tGT\t1/1\t0/1"
 SAMPLE = "\n".join([*HEADER_LINES, CHR1_VAR_ROW1, CHR1_VAR_ROW2, CHR2_VAR_ROW1]) + "\n"
 
 CHR1_SV_DEL_SVTYPE = "chr1\t50\tsv1\tA\t<DEL>\t.\tPASS\tEND=80;SVTYPE=DEL;\tGT\t0/1\t0/0"
+CHR1_SV_DEL_NEGATIVE_SVLEN = "chr1\t100\tsv2\tA\t<DEL>\t.\tPASS\tSVLEN=-50;SVTYPE=DEL\tGT\t0/1\t0/0"
 CHR1_SV_INS_IMPRECISE = (
     "chr1\t14\t.\tT\t<INS>\t.\t.\tIMPRECISE;SVLEN=20;CILEN=-10,10;CIPOS=-10,10\tGT\t0/1\t1/1"
 )
@@ -215,6 +216,24 @@ class TestVCFVariationSourceMethods:
             None,
             None,
         )
+
+    def test_negative_svlen_is_treated_as_positive(self) -> None:
+        """Test negative SVLEN values produce positive lengths and forward coordinates."""
+        record = create_vcf_records_for_testing(
+            "\n".join([*HEADER_LINES, CHR1_SV_DEL_NEGATIVE_SVLEN]) + "\n"
+        )[0]
+        source = VCFVariationSource(sequence_source=DummySequenceSource(), file_path="sample.vcf")
+
+        assert source._end_and_svlen_for_sva_from_vcf_record(  # pylint: disable=protected-access
+            record, allele_index=0
+        ) == (150, 50)
+
+        allele = source._create_sv_allele_from_record(  # pylint: disable=protected-access
+            record, allele_index=0, seq_region_slice=None
+        )
+        assert allele.start == 101
+        assert allele.end == 150
+        assert allele.svlen == 50
 
     def test_int_info_value(self, sv_vcf_records: list[VCFRecord]) -> None:
         """Test _int_info_value method."""
