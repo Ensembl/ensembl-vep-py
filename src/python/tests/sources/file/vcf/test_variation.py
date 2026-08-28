@@ -246,6 +246,7 @@ class TestVCFVariationSourceMethods:
         assert allele.start == 101
         assert allele.end == 150
         assert allele.svlen == 50
+        assert allele.svtype == "DEL"
 
     def test_int_info_value(self, sv_vcf_records: list[VCFRecord]) -> None:
         """Test _int_info_value method."""
@@ -450,6 +451,7 @@ class TestVCFVariationSourceRecordsToFeatures:
             sv_vcf_records[0], allele_index=0, seq_region_slice=None
         )
         assert sva.start == 51
+        assert sva.svtype == "DEL"
 
     def test_records_to_structural_variation(self, sv_vcf_records: list[VCFRecord]) -> None:
         """Test _records_to_structural_variation method."""

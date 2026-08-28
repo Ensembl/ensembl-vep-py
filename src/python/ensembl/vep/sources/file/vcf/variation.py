@@ -179,6 +179,7 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
             start=start,
             end=end,
             svlen=svlen,
+            svtype=self._svtype_from_vcf_record(record),
             strand=Strand.FORWARD,
             slice=seq_region_slice,
             reference_allele=ref,
@@ -223,8 +224,15 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
             bool: True if the record has a valid value for SVTYPE, otherwise False.
         """
 
-        svtype = record.info.get("SVTYPE", "").upper()
+        svtype = VCFVariationSource._svtype_from_vcf_record(record)
         return svtype in SVTYPES
+
+    @staticmethod
+    def _svtype_from_vcf_record(record: VCFRecord) -> str | None:
+        """Return the normalized structural-variant type from a VCF record."""
+
+        svtype = record.info.get("SVTYPE")
+        return svtype.upper() if svtype else None
 
     @staticmethod
     def _is_symbolic(record: VCFRecord) -> bool:

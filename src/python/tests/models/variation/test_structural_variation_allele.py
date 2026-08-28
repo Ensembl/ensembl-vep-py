@@ -52,6 +52,8 @@ def structural_variation_allele(genomic_slice: Slice) -> StructuralVariationAlle
         slice=genomic_slice,
         reference_allele="-",
         alternate_allele="DEL",
+        svlen=145,
+        svtype="DEL",
     )
 
 
@@ -82,6 +84,8 @@ class TestStructuralVariationAlleleProperties:
         assert (
             structural_variation_allele.alternate_allele == "DEL"
         ), "alternate_allele attribute initialized incorrectly"
+        assert structural_variation_allele.svlen == 145, "svlen attribute initialized incorrectly"
+        assert structural_variation_allele.svtype == "DEL", "svtype attribute initialized incorrectly"
 
     def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""

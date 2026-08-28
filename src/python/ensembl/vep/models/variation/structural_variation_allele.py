@@ -30,9 +30,12 @@ class StructuralVariationAllele(VariationAllele):
     Attributes:
         svlen (int | None):
             The length of the structural variant
+        svtype (str | None):
+            The type of the structural variant
     """
 
     svlen: int | None = field(default=None)
+    svtype: str | None = field(default=None)
 
     def minimise(self, force: bool = False) -> None:
         """Minimises the variation allele by computing the minimal representation of the variant.
