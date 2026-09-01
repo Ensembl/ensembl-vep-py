@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+build:
+	uv build
+
 .PHONY: install-*
 
 install-uv:
@@ -20,3 +23,53 @@ install-uv:
 
 install-cargo:
 	curl https://sh.rustup.rs -sSf | sh
+
+install-package:
+	uv pip install -e .
+
+.PHONY: format* lint* type-check test* checks*
+
+format-py-check:
+	uv run black --config pyproject.toml --target-version py312 --check .
+
+format-py-diff:
+	uv run black --config pyproject.toml --target-version py312 --diff .
+
+format-py:
+	uv run black --config pyproject.toml --target-version py312 .
+
+format-rust:
+	cargo fmt --all -- --check
+
+format: format-py format-rust
+
+lint-py:
+	uv run pylint --rcfile pyproject.toml src/python/ensembl
+	uv run pylint --rcfile pyproject.toml src/python/tests
+
+lint-rust:
+	cargo clippy --all --all-features --tests -- -D warnings
+
+type-check:
+	uv run mypy --config-file pyproject.toml src/python/ensembl
+	uv run mypy --config-file pyproject.toml src/python/tests
+
+test-py: install-package
+	uv run coverage run -m pytest
+
+test-py-cov: test-py
+	uv run coverage report -m
+
+test-py-int: install-package
+	uv run coverage run -m pytest --run-integration src/python
+
+test-rust:
+	cargo test --all-features
+
+test: test-py test-rust
+
+checks-py: format-py-check lint-py type-check test-py
+
+checks-rust: format-rust lint-rust test-rust
+
+checks-all: checks-rust format-py-check lint-py type-check test-py-int
