@@ -17,3 +17,4 @@ from .enums import *
 from .mixins import *
 from .methods import *
 from .containers import *
+from .codons import *

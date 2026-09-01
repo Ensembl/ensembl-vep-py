@@ -29,6 +29,33 @@ logger = logging.getLogger(__name__)
 T = TypeVar("T")
 
 
+def is_resolved(instance: object, name: str) -> bool:
+    """Return whether a slot-backed cached property is already resolved without triggering computation.
+
+    Args:
+        instance (object): Object that owns the cached property.
+        name (str): Protected cached-property name (for example, "_cds").
+
+    Returns:
+        bool: True if the value is already present (seeded or previously computed),
+            False if reading it would still trigger computation.
+
+    Raises:
+        AttributeError: If name is not a descriptor on the instance type hierarchy.
+    """
+    for cls in type(instance).__mro__:
+        descriptor = cls.__dict__.get(name)
+        if descriptor is not None and hasattr(descriptor, "__get__"):
+            try:
+                # Use descriptor.__get__ directly: normal access (including getattr)
+                # would invoke __getattr__ and compute/cache the value on a miss.
+                descriptor.__get__(instance, type(instance))  # pylint: disable=unnecessary-dunder-call
+                return True
+            except AttributeError:
+                return False
+    raise AttributeError(f"{name!r} is not a descriptor on {type(instance).__name__}")
+
+
 def invalidate(instance: object, *invalidate_names: str) -> None:
     """Clear the named cached properties of a class object when the attributes are set.
 
@@ -49,7 +76,7 @@ def invalidate(instance: object, *invalidate_names: str) -> None:
 
 
 def invalidates(*cached_names: str) -> Callable:
-    """Return an attrs on_setattr hook that clears named cached properties.
+    """Returns an attrs on_setattr hook that clears named cached properties.
 
     Args:
         *cached_names (str): The names of the cached properties to invalidate.
@@ -65,20 +92,6 @@ def invalidates(*cached_names: str) -> Callable:
         return new_value
 
     return hook
-
-
-def reverse_complement(sequence: str) -> str:
-    """Return the reverse complement of a nucleotide sequence.
-
-    Args:
-        sequence (str): The sequence to reverse complement.
-
-    Returns:
-        str: The reverse complement of the sequence.
-    """
-
-    translation_table = str.maketrans("ACGTNacgtn", "TGCANtgcan")
-    return sequence.translate(translation_table)[::-1]
 
 
 def resets_attrs(*attrs: tuple[str, Any]) -> Callable:
@@ -433,6 +446,20 @@ def infer_variant_so_term(allele_string: str, ref_correct: bool = False) -> Clas
                 so_term = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
 
     return so_term
+
+
+def reverse_complement(sequence: str) -> str:
+    """Returns the reverse complement of a nucleotide sequence.
+
+    Args:
+        sequence (str): The sequence to reverse complement.
+
+    Returns:
+        str: The reverse complement of the sequence.
+    """
+
+    translation_table = str.maketrans("ACGTNacgtn", "TGCANtgcan")
+    return sequence.translate(translation_table)[::-1]
 
 
 def setup_logging(level: str = "INFO") -> None:
