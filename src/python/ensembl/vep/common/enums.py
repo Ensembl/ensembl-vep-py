@@ -42,7 +42,12 @@ class ExonPhase(Enum):
 
 
 class ClassSOTerm(Enum):
-    """Sequence Ontology term describing the class of a variation."""
+    """Sequence Ontology term describing the class of a variation.
+
+    The first block is what ``infer_variant_so_term`` can derive from an allele string alone --
+    the classes a short variant can have. The second block is structural-variant only which may
+    may need INFO/SVTYPE to be derived.
+    """
 
     SEQUENCE_ALTERATION = "sequence_alteration"
     SNV = "SNV"
@@ -53,6 +58,29 @@ class ClassSOTerm(Enum):
     INVERSION = "inversion"
     COPY_NUMBER_VARIATION = "copy_number_variation"
     TANDEM_REPEAT = "tandem_repeat"
+
+    # Structural-variant classes. Never produced by infer_variant_so_term.
+    DUPLICATION = "duplication"
+    TANDEM_DUPLICATION = "tandem_duplication"
+    COPY_NUMBER_GAIN = "copy_number_gain"
+    COPY_NUMBER_LOSS = "copy_number_loss"
+    MOBILE_ELEMENT_INSERTION = "mobile_element_insertion"
+    ALU_INSERTION = "Alu_insertion"
+    HERV_INSERTION = "HERV_insertion"
+    LINE1_INSERTION = "LINE1_insertion"
+    SVA_INSERTION = "SVA_insertion"
+    MOBILE_ELEMENT_DELETION = "mobile_element_deletion"
+    ALU_DELETION = "Alu_deletion"
+    HERV_DELETION = "HERV_deletion"
+    LINE1_DELETION = "LINE1_deletion"
+    SVA_DELETION = "SVA_deletion"
+    NOVEL_SEQUENCE_INSERTION = "novel_sequence_insertion"
+    TRANSLOCATION = "translocation"
+    INTERCHROMOSOMAL_BREAKPOINT = "interchromosomal_breakpoint"
+    INTRACHROMOSOMAL_BREAKPOINT = "intrachromosomal_breakpoint"
+    CHROMOSOME_BREAKPOINT = "chromosome_breakpoint"
+    LOSS_OF_HETEROZYGOSITY = "loss_of_heterozygosity"
+    PROBE = "probe"
 
 
 class ConsequenceImpact(Enum):

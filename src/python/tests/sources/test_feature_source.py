@@ -19,6 +19,7 @@ from typing import Iterator
 import pytest
 from attrs import define, field
 
+from ensembl.vep.caches import SliceCache, WeakSliceCache
 from ensembl.vep.common import SourceType
 from ensembl.vep.sources.sequence_source import SequenceSource
 from ensembl.vep.models import Feature
@@ -79,6 +80,23 @@ class TestFeatureSourceInitialization:
         feature_source = ConcreteFeatureSource(source_type=SourceType.FILE)
 
         assert feature_source.source_type == SourceType.FILE
+
+    def test_concrete_feature_source_has_default_slice_cache(self) -> None:
+        """Test feature sources receive a slice cache by default."""
+
+        feature_source = ConcreteFeatureSource(source_type=SourceType.FILE)
+
+        assert isinstance(feature_source.slice_cache, SliceCache)
+
+    def test_concrete_feature_source_accepts_shared_slice_cache(self) -> None:
+        """Test a slice cache can be injected and shared between feature sources."""
+
+        slice_cache = WeakSliceCache()
+        first = ConcreteFeatureSource(source_type=SourceType.FILE, slice_cache=slice_cache)
+        second = ConcreteFeatureSource(source_type=SourceType.FILE, slice_cache=slice_cache)
+
+        assert first.slice_cache is slice_cache
+        assert second.slice_cache is slice_cache
 
 
 class TestFeatureSourceContextManager:

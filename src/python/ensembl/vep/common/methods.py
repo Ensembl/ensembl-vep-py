@@ -23,6 +23,7 @@ from typing import Any, Callable, Literal, TypeVar
 from attrs import Attribute as AttrsAttribute
 
 from ensembl.vep.common.enums import Strand, ClassSOTerm
+from ensembl.vep.common.constants import CLASS_SO_TERM_ABBRV_TO_ENUM
 
 logger = logging.getLogger(__name__)
 
@@ -433,6 +434,66 @@ def infer_variant_so_term(allele_string: str, ref_correct: bool = False) -> Clas
                 so_term = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
 
     return so_term
+
+
+def infer_symbolic_variant_so_term(allele_string: str, svtype: str | None = None) -> ClassSOTerm | None:
+    """Infer the SO term for a symbolic structural variant.
+
+    This mirrors the symbolic variant normalization performed by Perl VEP's
+    ``get_SO_term``. A VCF-compliant symbolic allele takes precedence over
+    ``svtype`` so that subtype information in values such as
+    ``<INS:ME:ALU>`` is retained. ``svtype`` is used as a fallback for a
+    missing or non-standard allele.
+
+    Args:
+        allele_string: Symbolic alternate allele or breakend string.
+        svtype: Optional structural variant type from VCF INFO/SVTYPE.
+
+    Returns:
+        The inferred structural variant SO term, or ``None`` if the type is
+        unsupported.
+    """
+    raw_type = allele_string.strip()
+    if svtype and not re.match(r"^<?(?:DEL|INS|DUP|INV|CNV|CN=?[0-9]+)", raw_type, flags=re.IGNORECASE):
+        raw_type = svtype.strip()
+
+    # Normalize repeated variants, e.g. INS/INS or <INS>,<INS>.
+    parts = re.split(r"[/,]", raw_type)
+    normalized_parts = [part.strip().strip("<>").upper() for part in parts]
+    if normalized_parts and all(part == normalized_parts[0] for part in normalized_parts):
+        raw_type = parts[0].strip()
+
+    mobile_element_match = re.search(r"(INS|DEL):(ME):?([A-Z0-9]+)?", raw_type, flags=re.IGNORECASE)
+    if mobile_element_match:
+        variant_class = mobile_element_match.group(1).upper()
+        element = (mobile_element_match.group(3) or "ME").upper()
+        element = "LINE1" if element == "L1" else element
+        subtype = element if element in {"ALU", "HERV", "LINE1", "SVA"} else "ME"
+        abbreviation = f"{variant_class}_{subtype}"
+    elif re.search(r"DEL", raw_type, flags=re.IGNORECASE) and re.search(
+        r"DUP", raw_type, flags=re.IGNORECASE
+    ):
+        abbreviation = "CNV"
+    elif re.search(r"DUP:TANDEM", raw_type, flags=re.IGNORECASE):
+        abbreviation = "TDUP"
+    elif re.search(r"CNV:TR", raw_type, flags=re.IGNORECASE):
+        abbreviation = "TREP"
+    elif re.search(r"CN=?[0-9]", raw_type, flags=re.IGNORECASE):
+        abbreviation = "CNV"
+        if re.fullmatch(r"<?CN=?0>?", raw_type, flags=re.IGNORECASE):
+            abbreviation = "DEL"
+        elif re.fullmatch(r"<?CN=?2>?", raw_type, flags=re.IGNORECASE):
+            abbreviation = "DUP"
+    elif re.search(r"CNV", raw_type, flags=re.IGNORECASE):
+        abbreviation = "CNV"
+    elif re.search(r"[\[\]]|^\.|\.$", raw_type):
+        abbreviation = "BND"
+    elif raw_type.startswith("<") or raw_type.endswith(">"):
+        abbreviation = re.sub(r"[<>]", "", raw_type).split(":", maxsplit=1)[0]
+    else:
+        abbreviation = raw_type
+
+    return CLASS_SO_TERM_ABBRV_TO_ENUM.get(abbreviation.upper())
 
 
 def setup_logging(level: str = "INFO") -> None:

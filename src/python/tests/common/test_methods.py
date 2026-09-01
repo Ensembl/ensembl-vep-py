@@ -23,6 +23,7 @@ from ensembl.vep.common import (
     Strand,
     ClassSOTerm,
     infer_variant_so_term,
+    infer_symbolic_variant_so_term,
     format_region_string,
     reverse_complement,
 )
@@ -468,6 +469,95 @@ class TestInferVariantSOTerm:
     def test_empty_allele_string_defaults_to_sequence_alteration(self) -> None:
         """Test that an empty allele string returns the correct (default) ClassSOTerm."""
         assert infer_variant_so_term("", ref_correct=True) == ClassSOTerm.SEQUENCE_ALTERATION
+
+
+class TestInferSymbolicVariantSOTerm:
+    """Tests for the infer_symbolic_variant_so_term function."""
+
+    @pytest.mark.parametrize(
+        "allele_string, expected",
+        [
+            ("<INS>", ClassSOTerm.INSERTION),
+            ("<DEL>", ClassSOTerm.DELETION),
+            ("<INV>", ClassSOTerm.INVERSION),
+            ("<DUP>", ClassSOTerm.DUPLICATION),
+            ("BND", ClassSOTerm.CHROMOSOME_BREAKPOINT),
+        ],
+    )
+    def test_basic_symbolic_types(self, allele_string: str, expected: ClassSOTerm) -> None:
+        """Map basic symbolic types to their SO terms."""
+        assert infer_symbolic_variant_so_term(allele_string) == expected
+
+    @pytest.mark.parametrize(
+        "allele_string, expected",
+        [
+            ("<INS:ME>", ClassSOTerm.MOBILE_ELEMENT_INSERTION),
+            ("<INS:ME:ALU>", ClassSOTerm.ALU_INSERTION),
+            ("<INS:ME:HERV>", ClassSOTerm.HERV_INSERTION),
+            ("<INS:ME:L1>", ClassSOTerm.LINE1_INSERTION),
+            ("<INS:ME:SVA>", ClassSOTerm.SVA_INSERTION),
+            ("<DEL:ME>", ClassSOTerm.MOBILE_ELEMENT_DELETION),
+            ("<DEL:ME:ALU>", ClassSOTerm.ALU_DELETION),
+            ("<DEL:ME:HERV>", ClassSOTerm.HERV_DELETION),
+            ("<DEL:ME:L1>", ClassSOTerm.LINE1_DELETION),
+            ("<DEL:ME:SVA>", ClassSOTerm.SVA_DELETION),
+            ("<INS:ME:OTHER>", ClassSOTerm.MOBILE_ELEMENT_INSERTION),
+        ],
+    )
+    def test_mobile_element_types(self, allele_string: str, expected: ClassSOTerm) -> None:
+        """Map generic and recognized mobile element types."""
+        assert infer_symbolic_variant_so_term(allele_string) == expected
+
+    @pytest.mark.parametrize(
+        "allele_string, expected",
+        [
+            ("<DEL>/<DUP>", ClassSOTerm.COPY_NUMBER_VARIATION),
+            ("<DUP:TANDEM>", ClassSOTerm.TANDEM_DUPLICATION),
+            ("<CNV:TR>", ClassSOTerm.TANDEM_REPEAT),
+            ("<CN0>", ClassSOTerm.DELETION),
+            ("<CN=0>", ClassSOTerm.DELETION),
+            ("<CN2>", ClassSOTerm.DUPLICATION),
+            ("<CN=2>", ClassSOTerm.DUPLICATION),
+            ("<CN1>", ClassSOTerm.COPY_NUMBER_VARIATION),
+            ("<CN0>,<CN2>", ClassSOTerm.COPY_NUMBER_VARIATION),
+            ("<CNV>", ClassSOTerm.COPY_NUMBER_VARIATION),
+        ],
+    )
+    def test_copy_number_and_tandem_types(self, allele_string: str, expected: ClassSOTerm) -> None:
+        """Map copy-number and tandem symbolic types."""
+        assert infer_symbolic_variant_so_term(allele_string) == expected
+
+    @pytest.mark.parametrize(
+        "allele_string",
+        [
+            "N]2:321682]",
+            "[2:321682[N",
+            ".N",
+            "N.",
+        ],
+    )
+    def test_breakend_types(self, allele_string: str) -> None:
+        """Recognize bracket and single-breakend notation."""
+        assert infer_symbolic_variant_so_term(allele_string) == ClassSOTerm.CHROMOSOME_BREAKPOINT
+
+    @pytest.mark.parametrize("allele_string", ["INS/INS", "<INS>,<INS>"])
+    def test_repeated_types_are_normalized(self, allele_string: str) -> None:
+        """Normalize repeated representations of the same symbolic type."""
+        assert infer_symbolic_variant_so_term(allele_string) == ClassSOTerm.INSERTION
+
+    def test_symbolic_allele_takes_precedence_over_svtype(self) -> None:
+        """Retain the more specific subtype from a VCF-compliant ALT allele."""
+        assert infer_symbolic_variant_so_term("<INS:ME:ALU>", svtype="INS") == ClassSOTerm.ALU_INSERTION
+
+    @pytest.mark.parametrize("allele_string", ["", "<CPX>"])
+    def test_svtype_is_used_for_missing_or_non_standard_allele(self, allele_string: str) -> None:
+        """Use INFO/SVTYPE when ALT does not contain a supported VCF symbolic prefix."""
+        assert infer_symbolic_variant_so_term(allele_string, svtype="DEL") == ClassSOTerm.DELETION
+
+    @pytest.mark.parametrize("allele_string", ["", "<CPX>", "TRA"])
+    def test_unsupported_type_returns_none(self, allele_string: str) -> None:
+        """Return None when no supported structural variant type can be inferred."""
+        assert infer_symbolic_variant_so_term(allele_string) is None
 
 
 class TestReverseComplement:
