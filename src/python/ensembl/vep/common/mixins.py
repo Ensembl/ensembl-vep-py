@@ -76,7 +76,7 @@ class UnsafeSetterMixin:
         Args:
             object: The object to seed.
             **seeds (object): Cached-property name (without the leading underscore) with value to
-                seed, e.g. ``seed_attrs(transcript, cds=my_cds)``.
+                seed, e.g. ``transcript.seed_attrs(cds=my_cds)``.
         """
         for name, value in seeds.items():
             object.__setattr__(self, f"_{name}", value)
@@ -91,8 +91,8 @@ class UnsafeSetterMixin:
 
         Args:
             object: The object to seed.
-            **seeds (object): Cached-property name (without the leading underscore) with value to
-                seed, e.g. ``seed_and_invalidate_attrs(transcript, cds=my_cds)``.
+            **seeds (object): Cached-property name (without the leading underscore) with value to seed, 
+                e.g. ``transcript.seed_and_invalidate_attrs(translation=my_translation, cds=my_cds)``.
         """
         seed_invalidations = getattr(type(self), "SEED_INVALIDATES", {})
         seeded_slots: set[str] = set()
