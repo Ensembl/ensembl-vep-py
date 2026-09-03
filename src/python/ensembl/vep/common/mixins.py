@@ -91,7 +91,7 @@ class UnsafeSetterMixin:
 
         Args:
             object: The object to seed.
-            **seeds (object): Cached-property name (without the leading underscore) with value to seed, 
+            **seeds (object): Cached-property name (without the leading underscore) with value to seed,
                 e.g. ``transcript.seed_and_invalidate_attrs(translation=my_translation, cds=my_cds)``.
         """
         seed_invalidations = getattr(type(self), "SEED_INVALIDATES", {})
