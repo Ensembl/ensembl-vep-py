@@ -120,6 +120,26 @@ class TestUnsafeSetterMixin:
         assert probe.seeded_value == 123
         assert probe.dependent_value == 1123
 
+    def test_seed_and_invalidate_attrs_invalidation(self) -> None:
+        """Test seed_and_invalidate_attrs seed dependent attribute."""
+        probe = _UnsafeSetterProbe(source_value=1)
+        assert probe.seeded_value == 99
+
+        probe.seed_and_invalidate_attrs(dependent_value=10)
+
+        assert probe.seeded_value == 99
+        assert probe.dependent_value == 10
+
+    def test_seed_and_invalidate_attrs_avoid_invalidation(self) -> None:
+        """Test seed_and_invalidate_attrs doesn't invalidate dependent attribute if already seeded."""
+        probe = _UnsafeSetterProbe(source_value=1)
+        assert probe.seeded_value == 99
+
+        probe.seed_and_invalidate_attrs(dependent_value=10, seeded_value=123)
+
+        assert probe.seeded_value == 123
+        assert probe.dependent_value == 10
+
 
 class TestCachedAttributeGuardMixin:
     """Tests for the cached attribute guard mixin."""

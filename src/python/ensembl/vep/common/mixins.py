@@ -83,7 +83,8 @@ class UnsafeSetterMixin:
 
     def seed_and_invalidate_attrs(self, **seeds: object) -> None:
         """(Pre-)populate derived and cached attributes, by name, without triggering their
-        normal derivation and invalidate dependent derived attributes.
+        normal derivation and invalidate dependent derived attributes. Don't invalidate dependent
+        derived attributes if they have also been seeded in the call to ``seed_and_invalidate_attrs``.
 
         This depends on the class having a SEED_INVALIDATES mapping that defines which derived
         attributes should be invalidated when a given attribute is seeded.
@@ -91,14 +92,19 @@ class UnsafeSetterMixin:
         Args:
             object: The object to seed.
             **seeds (object): Cached-property name (without the leading underscore) with value to
-                seed, e.g. ``seed_attrs(transcript, cds=my_cds)``.
+                seed, e.g. ``seed_and_invalidate_attrs(transcript, cds=my_cds)``.
         """
+        seed_invalidations = getattr(type(self), "SEED_INVALIDATES", {})
+        seeded_slots: set[str] = set()
+        invalidation_candidates: set[str] = set()
+
         for name, value in seeds.items():
             object.__setattr__(self, f"_{name}", value)
+            seeded_slots.add(f"_{name}")
+            invalidation_candidates.update(seed_invalidations.get(name, ()))
 
-            seed_invalidations = getattr(type(self), "SEED_INVALIDATES", {})
-            for invalidation_candidate in seed_invalidations.get(name, ()):
-                invalidate(self, invalidation_candidate)
+        for invalidation_candidate in invalidation_candidates - seeded_slots:
+            invalidate(self, invalidation_candidate)
 
 
 class CachedAttributeGuardMixin:
