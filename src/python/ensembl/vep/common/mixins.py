@@ -15,6 +15,8 @@
 
 from contextlib import contextmanager
 
+from ensembl.vep.common.methods import invalidate
+
 
 class UnsafeSetterMixin:
     """
@@ -24,6 +26,9 @@ class UnsafeSetterMixin:
     This can be very expansive in terms of storage as it stores the type(self) for every instance.
     It also create a temporary subclass under the unsafe context although that gets cleaned up
     after the context exits.
+
+    It also allows setting of cached properties directly using seed_attrs and seed_and_invalidate_attrs
+    which can lead to inconsistent state if not used carefully.
     """
 
     __slots__ = ()
@@ -51,6 +56,55 @@ class UnsafeSetterMixin:
         finally:
             # restore the original class
             object.__setattr__(self, "__class__", safe_cls)
+
+    def seed_attrs(self, **seeds: object) -> None:
+        """(Pre-)populate derived and cached attributes, by name, without triggering their normal
+        derivation.
+
+        Writes directly into each named protected slot (``object.__setattr__``, bypassing ``on_setattr``
+        hooks and any setter), exactly as a normal ``cached_property`` computation would populate it on
+        first access.
+
+        Seeded attribute can be cleared by the ``invalidates()`` hooks that clear a computed value.
+        Therefore, Seeding a property derived from such a field must happen after that field is set, or
+        the seed is invalidated before anything ever reads it.
+
+        A derived attribute's computation may depend on other derived attributes. Seeding a derived attribute
+        does not invalidate derived attributes that depend on it. Use seed_and_invalidate_attrs() if you want
+        to seed and invalidate dependent derived attributes.
+
+        Args:
+            object: The object to seed.
+            **seeds (object): Cached-property name (without the leading underscore) with value to
+                seed, e.g. ``transcript.seed_attrs(cds=my_cds)``.
+        """
+        for name, value in seeds.items():
+            object.__setattr__(self, f"_{name}", value)
+
+    def seed_and_invalidate_attrs(self, **seeds: object) -> None:
+        """(Pre-)populate derived and cached attributes, by name, without triggering their
+        normal derivation and invalidate dependent derived attributes. Don't invalidate dependent
+        derived attributes if they have also been seeded in the call to ``seed_and_invalidate_attrs``.
+
+        This depends on the class having a SEED_INVALIDATES mapping that defines which derived
+        attributes should be invalidated when a given attribute is seeded.
+
+        Args:
+            object: The object to seed.
+            **seeds (object): Cached-property name (without the leading underscore) with value to seed,
+                e.g. ``transcript.seed_and_invalidate_attrs(translation=my_translation, cds=my_cds)``.
+        """
+        seed_invalidations = getattr(type(self), "SEED_INVALIDATES", {})
+        seeded_slots: set[str] = set()
+        invalidation_candidates: set[str] = set()
+
+        for name, value in seeds.items():
+            object.__setattr__(self, f"_{name}", value)
+            seeded_slots.add(f"_{name}")
+            invalidation_candidates.update(seed_invalidations.get(name, ()))
+
+        for invalidation_candidate in invalidation_candidates - seeded_slots:
+            invalidate(self, invalidation_candidate)
 
 
 class CachedAttributeGuardMixin:

@@ -12,77 +12,147 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=redefined-outer-name
 """Unit tests for common mixins."""
 
 from functools import cached_property
+from typing import ClassVar
+
 import pytest
 from attrs import define, field
 
-
-from ensembl.vep.common import invalidates
-from ensembl.vep.common import UnsafeSetterMixin, CachedAttributeGuardMixin
+from ensembl.vep.common import CachedAttributeGuardMixin, UnsafeSetterMixin, invalidates
 
 
-@define
-class DummyUnsafeSetter(UnsafeSetterMixin):
-    """Dummy class for UnsafeSetterMixin tests."""
+@define(kw_only=True, auto_attribs=True)
+class _UnsafeSetterProbe(UnsafeSetterMixin):
+    """Probe unsafe assignment and dependent attribute invalidation."""
 
-    x: int = field(on_setattr=invalidates("_y"))
-    _y: int = field(init=False, default=99)
+    source_value: int = field(on_setattr=invalidates("_seeded_value"))
+    _seeded_value: int = field(init=False, default=99)
+
+    SEED_INVALIDATES: ClassVar[dict[str, tuple[str, ...]]] = {"seeded_value": ("_dependent_value",)}
 
     @property
-    def y(self) -> int:
-        """Return the value of y."""
-        return self._y
+    def seeded_value(self) -> int:
+        """Return the seedable value."""
+        return self._seeded_value
 
-
-@define
-class DummyCachedAttributeGuard(CachedAttributeGuardMixin):
-    """Dummy class for CachedAttributeGuardMixin tests."""
-
-    a: int = field()
-    _DERIVED = {"b"}
-    _INVALIDATES = {"a": ("b",)}
+    @property
+    def dependent_value(self) -> int:
+        """Return the value derived from seeded_value."""
+        return self._dependent_value
 
     @cached_property
-    def b(self) -> int:
-        """Return b as a*2."""
-        return self.a * 2
+    def _dependent_value(self) -> int:
+        """Calculate the value derived from seeded_value."""
+        return self._seeded_value + 1000
+
+
+@define(kw_only=True, auto_attribs=True)
+class _CachedAttributeGuardProbe(CachedAttributeGuardMixin):
+    """Probe cached attribute invalidation and assignment guards."""
+
+    source_value: int
+    _DERIVED = {"derived_value"}
+    _INVALIDATES = {"source_value": ("derived_value",)}
+
+    @cached_property
+    def derived_value(self) -> int:
+        """Calculate a value from source_value."""
+        return self.source_value * 2
 
 
 class TestUnsafeSetterMixin:
-    """Tests for UnsafeSetterMixin."""
+    """Tests for the unsafe setter mixin."""
 
     def test_unsafe_setter_invalidation(self) -> None:
-        """Setting x should invalidate y (delete y)."""
-        d = DummyUnsafeSetter(x=1)
-        d.x = 42
-        assert d.x == 42
-        assert not hasattr(d, "y")
+        """Test normal assignment invalidates the dependent value."""
+        probe = _UnsafeSetterProbe(source_value=1)
+
+        probe.source_value = 42
+
+        assert probe.source_value == 42
+        assert not hasattr(probe, "seeded_value")
 
     def test_unsafe_setter_no_invalidation(self) -> None:
-        """In unsafe context, y should NOT be invalidated."""
-        d = DummyUnsafeSetter(x=1)
-        with d.unsafe():
-            d.x = 100
-        assert d.x == 100
-        assert d.y == 99
+        """Test unsafe assignment does not invalidate the dependent value."""
+        probe = _UnsafeSetterProbe(source_value=1)
+
+        with probe.unsafe():
+            probe.source_value = 100
+
+        assert probe.source_value == 100
+        assert probe.seeded_value == 99
+
+    def test_seed_attrs(self) -> None:
+        """Test seed_attrs supplies a derived attribute value."""
+        probe = _UnsafeSetterProbe(source_value=1)
+
+        probe.seed_attrs(seeded_value=123)
+        assert probe.seeded_value == 123
+
+        with probe.unsafe():
+            probe.source_value = 50
+        assert probe.seeded_value == 123
+
+        probe.source_value = 50
+        assert not hasattr(probe, "seeded_value")
+
+    def test_seed_attrs_with_dependencies(self) -> None:
+        """Test seed_attrs preserves already resolved dependent attributes."""
+        probe = _UnsafeSetterProbe(source_value=1)
+        assert probe.seeded_value == 99
+        assert probe.dependent_value == 1099
+
+        probe.seed_attrs(seeded_value=123)
+
+        assert probe.seeded_value == 123
+        assert probe.dependent_value == 1099
+
+    def test_seed_and_invalidate_attrs(self) -> None:
+        """Test seed_and_invalidate_attrs recalculates dependent attributes."""
+        probe = _UnsafeSetterProbe(source_value=1)
+        assert probe.seeded_value == 99
+        assert probe.dependent_value == 1099
+
+        probe.seed_and_invalidate_attrs(seeded_value=123)
+
+        assert probe.seeded_value == 123
+        assert probe.dependent_value == 1123
+
+    def test_seed_and_invalidate_attrs_invalidation(self) -> None:
+        """Test seed_and_invalidate_attrs seed dependent attribute."""
+        probe = _UnsafeSetterProbe(source_value=1)
+        assert probe.seeded_value == 99
+
+        probe.seed_and_invalidate_attrs(dependent_value=10)
+
+        assert probe.seeded_value == 99
+        assert probe.dependent_value == 10
+
+    def test_seed_and_invalidate_attrs_avoid_invalidation(self) -> None:
+        """Test seed_and_invalidate_attrs doesn't invalidate dependent attribute if already seeded."""
+        probe = _UnsafeSetterProbe(source_value=1)
+        assert probe.seeded_value == 99
+
+        probe.seed_and_invalidate_attrs(dependent_value=10, seeded_value=123)
+
+        assert probe.seeded_value == 123
+        assert probe.dependent_value == 10
 
 
 class TestCachedAttributeGuardMixin:
-    """Tests for CachedAttributeGuardMixin."""
+    """Tests for the cached attribute guard mixin."""
 
     def test_invalidate_and_guard(self) -> None:
-        """Test derived property invalidation and guard."""
-        d = DummyCachedAttributeGuard(a=1)
-        assert d.a == 1
-        assert d.b == 2  # b is derived from a
+        """Test derived attributes reject assignment and recalculate after invalidation."""
+        probe = _CachedAttributeGuardProbe(source_value=1)
+        assert probe.source_value == 1
+        assert probe.derived_value == 2
 
-        # Test that setting a derived attribute raises an error
         with pytest.raises(AttributeError):
-            d.b = 10
+            probe.derived_value = 10
 
-        # Test invalidation
-        d.a = 5
-        assert d.b == 10  # b gets invalidated and recalculated
+        probe.source_value = 5
+
+        assert probe.derived_value == 10
