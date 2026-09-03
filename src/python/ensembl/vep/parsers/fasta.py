@@ -144,12 +144,28 @@ class FastaParser(Parser[FastaRecord]):
 
     @staticmethod
     def parse_text(data: str, limit: int | None = None) -> list[FastaRecord]:
-        """Parse FASTA records from text."""
+        """Parse FASTA records from text.
+
+        Args:
+            data (str): The FASTA text to parse.
+            limit (int | None): The maximum number of records to return. If None, return all records.
+
+        Returns:
+            list[FastaRecord]: A list of Fasta records.
+        """
 
         return _RustFastaParser.parse_text(data, limit)
 
     @staticmethod
     def parse_file(file_path: str | Path, limit: int | None = None) -> list[FastaRecord]:
-        """Parse FASTA records from a file."""
+        """Parse FASTA records from a file.
+
+        Args:
+            file_path (str | Path): The path to the FASTA file to parse.
+            limit (int | None): The maximum number of records to return. If None, return all records.
+
+        Returns:
+            list[FastaRecord]: A list of Fasta records.
+        """
 
         return _RustFastaParser.parse_file(str(file_path), limit)

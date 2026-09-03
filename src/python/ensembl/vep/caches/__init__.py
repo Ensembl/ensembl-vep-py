@@ -14,5 +14,6 @@
 """Cache implementations."""
 
 from .sequence_cache import SequenceBinnedLRUCache, SequenceCache
+from .slice_cache import SliceCache, SliceKey, WeakSliceCache
 
-__all__ = ["SequenceCache", "SequenceBinnedLRUCache"]
+__all__ = ["SequenceCache", "SequenceBinnedLRUCache", "SliceCache", "SliceKey", "WeakSliceCache"]
