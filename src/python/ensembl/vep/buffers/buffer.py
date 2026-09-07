@@ -28,6 +28,14 @@ from ensembl.vep.sources import FeatureSource
 F = TypeVar("F", bound=Feature)
 S = TypeVar("S", bound=FeatureSource)
 
+
+@define(kw_only=True, auto_attribs=True)
+class Config:
+    """Stand in object for Config class"""
+
+    buffer_size: int = field(default=5, init=False)
+
+
 @define(kw_only=True, auto_attribs=True)
 class Buffer(ABC, Generic[F, S]):
     """Buffer interface.
@@ -39,7 +47,7 @@ class Buffer(ABC, Generic[F, S]):
         buffer: A queue of ``Feature`` objects obtained from the source
     """
 
-    # config: Config = field(factory=Config)
+    config: Config = field(factory=Config)
     source: S
     pre_buffer: list[F] = field(factory=list, init=False)
     buffer: list[F] = field(factory=list, init=False)

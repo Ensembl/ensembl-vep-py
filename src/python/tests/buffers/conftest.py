@@ -14,31 +14,56 @@
 # limitations under the License.
 """Shared fixtures for buffer unit tests."""
 
+from __future__ import annotations
 from typing import Iterator
 from attrs import define
 import pytest
 
-from ensembl.vep.common import Strand
+from ensembl.vep.common import CoordSystemLevel, Strand
 from ensembl.vep.models import Feature
+from ensembl.vep.models.sequence import CoordSystem, Slice
 from ensembl.vep.models.variation.variation import Variation
 from ensembl.vep.sources.feature_source import FeatureSource
 
 
 def create_feature_objects(length: int) -> list[Feature]:
     """Function to create a set of test features"""
-    return([Feature(start=value, end=value, strand=Strand.FORWARD) for value in range(length)])
+    return [Feature(start=value, end=value, strand=Strand.FORWARD) for value in range(length)]
+
 
 @pytest.fixture
 def features_list():
     return create_feature_objects(11)
 
-def create_variation_objects(length: int) -> list[Feature]:
+
+def genomic_slice(seq_region_name: str = "1") -> Slice:
+    """Create a Slice instance for testing."""
+    return Slice(
+        coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+        seq_region_name=seq_region_name,
+        start=1,
+        end=1000,
+        strand=Strand.FORWARD,
+    )
+
+
+def create_variation_objects(length: int, vf_per_chr: int = 4) -> list[Variation]:
     """Function to create a set of test variation objects"""
-    return([Variation(start=value, end=value, strand=Strand.FORWARD, allele_string="A/T") for value in range(length)])
+    num_slices = length // vf_per_chr + 1
+    slices = [genomic_slice(str(seq_region)) for seq_region in range(1, num_slices + 1)]
+    var_list: list = []
+    for value in range(length):
+        slice_obj = slices[value // vf_per_chr]
+        var_list.append(
+            Variation(start=value, end=value, strand=Strand.FORWARD, slice=slice_obj, allele_string="A/T")
+        )
+    return var_list
+
 
 @pytest.fixture
 def variation_list():
     return create_variation_objects(11)
+
 
 @define(kw_only=True, auto_attribs=True)
 class DummyFeatureSource(FeatureSource):

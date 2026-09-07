@@ -21,10 +21,10 @@ from ensembl.vep.buffers.buffer import Buffer
 from ensembl.vep.common import SourceType
 from tests.buffers.conftest import DummyFeatureSource
 
+
 @define(kw_only=True, auto_attribs=True)
 class ConcreteBuffer(Buffer):
-    """Concrete buffer used to test Buffer interface helpers."""
-    buffer_size: int = 5
+    """Concrete buffer used to test Buffer interface."""
 
     def next(self) -> None:
         """Fill the buffer."""
@@ -32,12 +32,12 @@ class ConcreteBuffer(Buffer):
         self.buffer.extend(self.pre_buffer)
         self.pre_buffer = []
         for feat in self.feature_iterator:
-            if len(self.buffer) == self.buffer_size:
+            if len(self.buffer) == self.config.buffer_size:
                 self.pre_buffer.append(feat)
                 break
             else:
                 self.buffer.append(feat)
-        if len(self.buffer) < self.buffer_size:
+        if len(self.buffer) < self.config.buffer_size:
             self._is_empty = True
 
 
