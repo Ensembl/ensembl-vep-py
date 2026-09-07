@@ -13,63 +13,13 @@
 # limitations under the License.
 """Unit tests for the buffer interface."""
 
-import pytest
 from typing import Iterator
 from attrs import define
+import pytest
 
 from ensembl.vep.buffers.buffer import Buffer
-from ensembl.vep.common import Strand, SourceType
-from ensembl.vep.models import Feature
-from ensembl.vep.sources.feature_source import FeatureSource
-
-def create_feature_objects(length: int) -> list[Feature]:
-    return([Feature(start=value, end=value, strand=Strand.FORWARD) for value in range(length)])
-
-_FEATURES: list[Feature] = create_feature_objects(11)
-
-@define(kw_only=True, auto_attribs=True)
-class DummyFeatureSource(FeatureSource):
-    """Dummy FeatureSource for the Concrete Buffer"""
-
-    def get_all_features(self) -> list[Feature]:
-        """Return all features from this source."""
-
-        return _FEATURES
-
-    def iter_all_features(self) -> Iterator[Feature]:
-        """Lazily yield all features from this source."""
-
-        return iter(_FEATURES)
-
-    def get_features_by_region(
-        self,
-        region: str | None = None,
-        *,
-        seq_region_name: str | None = None,
-        start: int | None = None,
-        end: int | None = None,
-    ) -> list[Feature]:
-        """Return a subset of the features."""
-
-        return _FEATURES[0:3]
-
-    def iter_features_by_region(
-        self,
-        region: str | None = None,
-        *,
-        seq_region_name: str | None = None,
-        start: int | None = None,
-        end: int | None = None,
-    ) -> Iterator[Feature]:
-        """Lazily yield a subset of the features."""
-
-        return iter(_FEATURES[5:8])
-
-    def close(self) -> None:
-        """Empty _FEATURES list."""
-
-        _FEATURES = []
-
+from ensembl.vep.common import SourceType
+from tests.buffers.conftest import DummyFeatureSource
 
 @define(kw_only=True, auto_attribs=True)
 class ConcreteBuffer(Buffer):
@@ -100,10 +50,10 @@ class TestBufferInitialization:
         with pytest.raises(TypeError, match="abstract class"):
             _ = Buffer()  # type: ignore[abstract]  # pylint: disable=abstract-class-instantiated
 
-    def test_concrete_buffer_initial_attributes(self) -> None:
-        """Test concrete buffer stores the buffer format."""
+    def test_concrete_buffer_initial_attributes(self, features_list) -> None:
+        """Test concrete buffer initialises attributes correctly."""
 
-        feat_source = DummyFeatureSource(source_type=SourceType.FILE)
+        feat_source = DummyFeatureSource(source_type=SourceType.FILE, features=features_list)
         buffer = ConcreteBuffer(source=feat_source)
 
         assert buffer.source is feat_source
@@ -113,12 +63,12 @@ class TestBufferInitialization:
 
 
 class TestBufferProperties:
-    """Test Buffer properties method."""
+    """Test Buffer properties."""
 
-    def test_concrete_buffer_properties(self) -> None:
-        """Test concrete buffer stores the buffer format."""
+    def test_concrete_buffer_properties(self, features_list) -> None:
+        """Test concrete buffer ``next`` method and ``is_empty`` property."""
 
-        feat_source = DummyFeatureSource(source_type=SourceType.FILE)
+        feat_source = DummyFeatureSource(source_type=SourceType.FILE, features=features_list)
         buffer = ConcreteBuffer(source=feat_source)
 
         assert isinstance(buffer.feature_iterator, Iterator)
