@@ -80,8 +80,8 @@ class TestBufferProperties:
         buffer.next()
         assert [feat.start for feat in buffer.buffer] == [0, 1, 2, 3, 4]
         buffer.next()
-        assert [feat.start for feat in buffer.buffer] == [5, 6, 7, 8, 9]
+        assert [feat.start for feat in buffer.buffer] == [5, 6, 7, 10, 11]
         assert not buffer.is_empty
         buffer.next()
-        assert [feat.start for feat in buffer.buffer] == [10]
+        assert [feat.start for feat in buffer.buffer] == [12, 13]
         assert buffer.is_empty

@@ -66,23 +66,46 @@ class TestBufferMethods:
 
         assert isinstance(buffer.feature_iterator, Iterator)
         buffer.next()
-        assert len(buffer.buffer) == 4
+        assert len(buffer.buffer) == 5
         assert buffer.buffer[0].start == 0
         assert buffer.buffer[0].slice.seq_region_name == "1"
         assert len(buffer.pre_buffer) == 1
-        assert buffer.pre_buffer[0].start == 4
-        assert buffer.pre_buffer[0].slice.seq_region_name == "2"
-        buffer.next()
-        assert len(buffer.buffer) == 4
-        assert buffer.buffer[0].start == 4
-        assert buffer.buffer[0].slice.seq_region_name == "2"
-        assert len(buffer.pre_buffer) == 1
-        assert buffer.pre_buffer[0].start == 8
-        assert buffer.pre_buffer[0].slice.seq_region_name == "3"
-        assert not buffer.is_empty
+        assert buffer.pre_buffer[0].start == 5
+        assert buffer.pre_buffer[0].slice.seq_region_name == "1"
         buffer.next()
         assert len(buffer.buffer) == 3
-        assert buffer.buffer[0].start == 8
-        assert buffer.buffer[0].slice.seq_region_name == "3"
+        assert buffer.buffer[0].start == 5
+        assert buffer.buffer[0].slice.seq_region_name == "1"
+        assert len(buffer.pre_buffer) == 1
+        assert buffer.pre_buffer[0].start == 10
+        assert buffer.pre_buffer[0].slice.seq_region_name == "2"
+        assert not buffer.is_empty
+        buffer.next()
+        assert len(buffer.buffer) == 4
+        assert buffer.buffer[0].start == 10
+        assert buffer.buffer[0].slice.seq_region_name == "2"
         assert buffer.pre_buffer == deque([])
         assert buffer.is_empty
+
+    def test_fixed_size_input_buffer_large_pre_buffer(self, variation_list: list[Variation]) -> None:
+        """Test fixed_size_input_buffer ``next`` method stops if buffer is filled by pre_buffer."""
+
+        var_source = DummyVariationSource(source_type=SourceType.FILE, features=variation_list)
+        buffer = FixedSizeInputBuffer(source=var_source)
+        buffer.pre_buffer = deque(variation_list)
+
+        buffer.next()
+        assert len(buffer.buffer) == 5
+        assert len(buffer.pre_buffer) == 7
+
+    def test_fixed_size_input_buffer_large_pre_buffer_diff_chr(self, variation_list: list[Variation]) -> None:
+        """Test fixed_size_input_buffer ``next`` method stops if pre_buffer contains variants on different chromosomes."""
+
+        var_source = DummyVariationSource(source_type=SourceType.FILE, features=variation_list)
+        buffer = FixedSizeInputBuffer(source=var_source)
+        buffer.pre_buffer = deque(variation_list[0:3])
+        buffer.pre_buffer.extend(variation_list[8:12])
+
+        buffer.next()
+        assert len(buffer.buffer) == 3
+        assert len(buffer.pre_buffer) == 4

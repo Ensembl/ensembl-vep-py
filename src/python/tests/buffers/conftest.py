@@ -36,23 +36,30 @@ def genomic_slice(seq_region_name: str = "1") -> Slice:
     )
 
 
-def create_variation_objects(length: int, vf_per_chr: int = 4) -> list[Variation]:
-    """Function to create a set of test variation objects"""
-    num_slices = length // vf_per_chr + 1
-    slices = [genomic_slice(str(seq_region)) for seq_region in range(1, num_slices + 1)]
-    var_list: list = []
-    for value in range(length):
-        slice_obj = slices[value // vf_per_chr]
-        var_list.append(
-            Variation(start=value, end=value, strand=Strand.FORWARD, slice=slice_obj, allele_string="A/T")
-        )
-    return var_list
+def create_variation_objects(length: int, start: int = 0, seq_region_name: str = "1") -> list[Variation]:
+    """Function to create a set of test variation objects."""
+    return [
+        Variation(
+            start=value,
+            end=value,
+            strand=Strand.FORWARD,
+            slice=genomic_slice(seq_region_name),
+            allele_string="A/T"
+        ) for value in range(start, start + length)
+    ]
 
 
 @pytest.fixture
 def variation_list() -> list[Variation]:
     """Create a list of Variation objects for testing."""
-    return create_variation_objects(11)
+    var_list = []
+    for var in create_variation_objects(8):
+        var_list.append(var)
+
+    for var in create_variation_objects(4, start=10, seq_region_name="2"):
+        var_list.append(var)
+
+    return var_list
 
 
 @define(kw_only=True, auto_attribs=True)
