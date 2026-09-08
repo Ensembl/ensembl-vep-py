@@ -78,6 +78,23 @@ class TestCDSProperties:
         cds.seq = "ATG" * 10
         assert cds.nucleotide_length == 30
 
+    def test_nucleotide_length_prefers_transcript_cds_mapper(
+        self, cds: CDS, transcript: Transcript
+    ) -> None:
+        """The transcript's CDS mapper length takes priority over the sequence length."""
+
+        class DummyCDSMapper:
+            """Minimal mapper stand-in exposing only the property used by CDS."""
+
+            length = 12
+
+        cds.seq = "ATG" * 10
+        cds.transcript = transcript
+        transcript.seed_attrs(cds_mapper=DummyCDSMapper())
+
+        assert len(cds.seq) == 30
+        assert cds.nucleotide_length == 12
+
     def test_protein_length(self, cds: CDS) -> None:
         """Test that CDS cached properties are accessed correctly."""
         assert cds.protein_length is None
