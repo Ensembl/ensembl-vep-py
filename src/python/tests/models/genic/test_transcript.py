@@ -105,13 +105,7 @@ def coding_transcript() -> Transcript:
         slice=transcript_slice,
     )
     transcript.spliced_exons = [
-        Exon(
-            start=1,
-            end=6,
-            strand=Strand.FORWARD,
-            stable_id="ENSE_CODING_1",
-            slice=transcript_slice
-        ),
+        Exon(start=1, end=6, strand=Strand.FORWARD, stable_id="ENSE_CODING_1", slice=transcript_slice),
         Exon(
             start=10,
             end=15,
@@ -171,7 +165,9 @@ class TestTranscriptProperties:
         transcript.attributes = [Attribute(name="test_attribute", value="test_value")]
         assert transcript.attributes == [Attribute(name="test_attribute", value="test_value")]
 
-    def test_first_coding_exon_index(self, transcript: Transcript, spliced_exons: list[Exon], translation: Translation) -> None:
+    def test_first_coding_exon_index(
+        self, transcript: Transcript, spliced_exons: list[Exon], translation: Translation
+    ) -> None:
         """Assert first_coding_exon_index is calculated correctly."""
 
         # With no seeded UTR/CDS and translation, first_coding_exon_index is None.
@@ -186,7 +182,9 @@ class TestTranscriptProperties:
         transcript.seed_and_invalidate_attrs(translation=translation)
         assert transcript.first_coding_exon_index == 0
 
-    def test_last_coding_exon_index(self, transcript: Transcript, spliced_exons: list[Exon], translation: Translation) -> None:
+    def test_last_coding_exon_index(
+        self, transcript: Transcript, spliced_exons: list[Exon], translation: Translation
+    ) -> None:
         """Assert last_coding_exon_index is calculated correctly."""
 
         # With no seeded UTR/CDS and translation, last_coding_exon_index is None.
@@ -213,7 +211,9 @@ class TestTranscriptProperties:
         assert transcript.first_coding_exon_index == 1
         assert transcript.last_coding_exon_index == 2
 
-    def test_exon_coding_start(self, transcript: Transcript, spliced_exons: list[Exon], translation: Translation) -> None:
+    def test_exon_coding_start(
+        self, transcript: Transcript, spliced_exons: list[Exon], translation: Translation
+    ) -> None:
         """Test that exon_coding_start is calculated correctly."""
         assert transcript.exon_coding_start is None
 
@@ -221,7 +221,9 @@ class TestTranscriptProperties:
         transcript.spliced_exons = spliced_exons
         assert transcript.exon_coding_start == 1
 
-    def test_exon_coding_end(self, transcript: Transcript, spliced_exons: list[Exon], translation: Translation) -> None:
+    def test_exon_coding_end(
+        self, transcript: Transcript, spliced_exons: list[Exon], translation: Translation
+    ) -> None:
         """Test that exon_coding_end is calculated correctly."""
         assert transcript.exon_coding_end is None
 

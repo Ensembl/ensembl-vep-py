@@ -78,9 +78,7 @@ class TestCDSProperties:
         cds.seq = "ATG" * 10
         assert cds.nucleotide_length == 30
 
-    def test_nucleotide_length_prefers_transcript_cds_mapper(
-        self, cds: CDS, transcript: Transcript
-    ) -> None:
+    def test_nucleotide_length_prefers_transcript_cds_mapper(self, cds: CDS, transcript: Transcript) -> None:
         """The transcript's CDS mapper length takes priority over the sequence length."""
 
         class DummyCDSMapper:

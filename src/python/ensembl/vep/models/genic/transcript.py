@@ -170,11 +170,11 @@ class Transcript(Feature):
                 cds = self.cds
                 return cds.start if self.strand == Strand.FORWARD else cds.end
 
-            elif is_resolved(self, "_five_prime_utr") and self.five_prime_utr is not None:
+            if is_resolved(self, "_five_prime_utr") and self.five_prime_utr is not None:
                 five_prime_utr = self.five_prime_utr
                 return five_prime_utr.end + 1 if self.strand == Strand.FORWARD else five_prime_utr.start - 1
 
-            elif is_resolved(self, "_translation") and self.translation is not None:
+            if is_resolved(self, "_translation") and self.translation is not None:
                 translation = self.translation
                 return (
                     self.start + translation.start - 1
@@ -182,7 +182,7 @@ class Transcript(Feature):
                     else self.end - translation.start + 1
                 )
 
-            elif is_resolved(self, "_first_coding_exon_index") and is_resolved(self, "_exon_coding_start"):
+            if is_resolved(self, "_first_coding_exon_index") and is_resolved(self, "_exon_coding_start"):
                 first_coding_exon_index = self.first_coding_exon_index
                 exon_coding_start = self.exon_coding_start
                 if not self.spliced_exons or first_coding_exon_index is None or exon_coding_start is None:
@@ -220,11 +220,11 @@ class Transcript(Feature):
                 cds = self.cds
                 return cds.end if self.strand == Strand.FORWARD else cds.start
 
-            elif is_resolved(self, "_three_prime_utr") and self.three_prime_utr is not None:
+            if is_resolved(self, "_three_prime_utr") and self.three_prime_utr is not None:
                 three_prime_utr = self.three_prime_utr
                 return three_prime_utr.start - 1 if self.strand == Strand.FORWARD else three_prime_utr.end + 1
 
-            elif is_resolved(self, "_translation") and self.translation is not None:
+            if is_resolved(self, "_translation") and self.translation is not None:
                 translation = self.translation
                 return (
                     self.start + translation.end - 1
@@ -232,7 +232,7 @@ class Transcript(Feature):
                     else self.end - translation.end + 1
                 )
 
-            elif is_resolved(self, "_last_coding_exon_index") and is_resolved(self, "_exon_coding_end"):
+            if is_resolved(self, "_last_coding_exon_index") and is_resolved(self, "_exon_coding_end"):
                 last_coding_exon_index = self.last_coding_exon_index
                 exon_coding_end = self.exon_coding_end
                 if not self.spliced_exons or last_coding_exon_index is None or exon_coding_end is None:

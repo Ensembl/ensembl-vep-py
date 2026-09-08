@@ -50,21 +50,21 @@ class DummySlice(Slice):
 @pytest.fixture
 def forward_transcript() -> Transcript:
     """A forward-strand, two-exon transcript with 3 bases of 5' UTR and CDS split across exons."""
-    slice = DummySlice(40)
-    exon_one = Exon(start=1, end=10, strand=Strand.FORWARD, stable_id="E1", slice=slice)
-    exon_two = Exon(start=20, end=30, strand=Strand.FORWARD, stable_id="E2", slice=slice)
+    genomic_slice = DummySlice(40)
+    exon_one = Exon(start=1, end=10, strand=Strand.FORWARD, stable_id="E1", slice=genomic_slice)
+    exon_two = Exon(start=20, end=30, strand=Strand.FORWARD, stable_id="E2", slice=genomic_slice)
     translation = Translation(start=4, end=24, stable_id="P1", exon_coding_start=4, exon_coding_end=5)
-    transcript = Transcript(start=1, end=30, strand=Strand.FORWARD, stable_id="T_FWD", slice=slice)
+    transcript = Transcript(start=1, end=30, strand=Strand.FORWARD, stable_id="T_FWD", slice=genomic_slice)
     transcript.spliced_exons = [exon_one, exon_two]
     translation.transcript = transcript
     transcript.seed_attrs(translation=translation)
 
-    genomic_chars = list(slice.seq or "")
+    genomic_chars = list(genomic_slice.seq or "")
     for cds_offset, base in enumerate(CODING_SEQUENCE):
         genomic_position = transcript.cds_offset_to_genomic(cds_offset)
         assert genomic_position is not None
         genomic_chars[genomic_position - 1] = base  # strand is FORWARD: no complement needed
-    slice.set_sequence("".join(genomic_chars))
+    genomic_slice.set_sequence("".join(genomic_chars))
     invalidate(transcript, "_coding_sequence", "_translated_seq")
     return transcript
 
@@ -72,24 +72,24 @@ def forward_transcript() -> Transcript:
 @pytest.fixture
 def reverse_transcript() -> Transcript:
     """A reverse-strand transcript with the same exon geometry, mirrored, and the same CDS."""
-    slice = DummySlice(40)
-    exon_one = Exon(start=11, end=20, strand=Strand.REVERSE, stable_id="E1", slice=slice)
-    exon_two = Exon(start=30, end=40, strand=Strand.REVERSE, stable_id="E2", slice=slice)
+    genomic_slice = DummySlice(40)
+    exon_one = Exon(start=11, end=20, strand=Strand.REVERSE, stable_id="E1", slice=genomic_slice)
+    exon_two = Exon(start=30, end=40, strand=Strand.REVERSE, stable_id="E2", slice=genomic_slice)
     translation = Translation(start=5, end=25, stable_id="P1", exon_coding_start=5, exon_coding_end=5)
-    transcript = Transcript(start=11, end=40, strand=Strand.REVERSE, stable_id="T_REV", slice=slice)
+    transcript = Transcript(start=11, end=40, strand=Strand.REVERSE, stable_id="T_REV", slice=genomic_slice)
     # Transcript order: the exon at the *higher* genomic coordinate is 5'-most on the reverse strand.
     transcript.spliced_exons = [exon_two, exon_one]
     translation.transcript = transcript
     transcript.seed_attrs(translation=translation)
 
-    genomic_chars = list(slice.seq or "")
+    genomic_chars = list(genomic_slice.seq or "")
     for cds_offset, base in enumerate(CODING_SEQUENCE):
         genomic_position = transcript.cds_offset_to_genomic(cds_offset)
         assert genomic_position is not None
         # The stored genomic base is on the forward strand, so store the complement of the
         # transcript-sense base (single-base reverse_complement is just its complement).
         genomic_chars[genomic_position - 1] = reverse_complement(base)
-    slice.set_sequence("".join(genomic_chars))
+    genomic_slice.set_sequence("".join(genomic_chars))
     invalidate(transcript, "_coding_sequence", "_translated_seq")
     return transcript
 
@@ -222,9 +222,9 @@ class TestNonCodingTranscriptMapping:
 
     def test_non_coding_transcript_mapping_is_all_none(self) -> None:
         """A transcript with no translation has no CDS mapping at all."""
-        slice = DummySlice(20)
-        exon = Exon(start=1, end=20, strand=Strand.FORWARD, stable_id="E1", slice=slice)
-        transcript = Transcript(start=1, end=20, strand=Strand.FORWARD, stable_id="T_NC")
+        genomic_slice = DummySlice(20)
+        exon = Exon(start=1, end=20, strand=Strand.FORWARD, stable_id="E1", slice=genomic_slice)
+        transcript = Transcript(start=1, end=20, strand=Strand.FORWARD, stable_id="T_NC", slice=genomic_slice)
         transcript.spliced_exons = [exon]
 
         assert transcript.cds_genomic_spans is None
@@ -259,6 +259,7 @@ class TestCDNAMapper:
             mapper = transcript.cds_mapper
             cdna_mapper = transcript.cdna_mapper
             assert mapper is not None and cdna_mapper is not None
+            assert transcript.cdna_coding_start is not None
             cdna_coding_start0 = transcript.cdna_coding_start - 1
             for cds_offset in range(mapper.length):
                 genomic_position = mapper.offset_to_genomic(cds_offset)
