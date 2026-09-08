@@ -25,13 +25,13 @@ from ensembl.vep.models.variation.variation import Variation
 from ensembl.vep.sources.feature_source import FeatureSource
 
 
-def genomic_slice(seq_region_name: str = "1") -> Slice:
+def genomic_slice(seq_region_name: str = "1", seq_region_end: int = 250_000_000) -> Slice:
     """Create a Slice instance for testing."""
     return Slice(
         coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
         seq_region_name=seq_region_name,
         start=1,
-        end=1000,
+        end=seq_region_end,
         strand=Strand.FORWARD,
     )
 
@@ -44,8 +44,9 @@ def create_variation_objects(length: int, start: int = 0, seq_region_name: str =
             end=value,
             strand=Strand.FORWARD,
             slice=genomic_slice(seq_region_name),
-            allele_string="A/T"
-        ) for value in range(start, start + length)
+            allele_string="A/T",
+        )
+        for value in range(start, start + length)
     ]
 
 

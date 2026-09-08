@@ -31,22 +31,22 @@ class FixedSizeInputBuffer(Buffer):
             None
         """
 
-        self.buffer = []
+        self._buffer = []
         seq_region_name = None
 
-        while self.pre_buffer and len(self.buffer) < self.config.buffer_size:
-            variant = self.pre_buffer.popleft()
+        while self._pre_buffer and len(self._buffer) < self.config.buffer_size:
+            variant = self._pre_buffer.popleft()
             variant_seq_region_name = variant.slice.seq_region_name
 
             if seq_region_name is None:
                 seq_region_name = variant_seq_region_name
             elif variant_seq_region_name != seq_region_name:
-                self.pre_buffer.append(variant)
+                self._pre_buffer.append(variant)
                 return
 
-            self.buffer.append(variant)
+            self._buffer.append(variant)
 
-        if len(self.buffer) == self.config.buffer_size:
+        if len(self._buffer) == self.config.buffer_size:
             return
 
         for variant in self.feature_iterator:
@@ -55,13 +55,13 @@ class FixedSizeInputBuffer(Buffer):
             if seq_region_name is None:
                 seq_region_name = variant_seq_region_name
             elif variant_seq_region_name != seq_region_name:
-                self.pre_buffer.append(variant)
+                self._pre_buffer.append(variant)
                 return
 
-            if len(self.buffer) == self.config.buffer_size:
-                self.pre_buffer.append(variant)
+            if len(self._buffer) == self.config.buffer_size:
+                self._pre_buffer.append(variant)
                 return
 
-            self.buffer.append(variant)
+            self._buffer.append(variant)
 
         self._is_empty = True

@@ -43,15 +43,23 @@ class Buffer(ABC, Generic[F, S]):
     Attributes:
         source: The source of the ``Features``
         config: A Config object for configuring the buffer
-        pre-buffer: Used as a holding place for ``Features`` that will go into the buffer
         buffer: A queue of ``Feature`` objects obtained from the source
     """
 
     source: S
     config: Config = field(factory=Config)
-    pre_buffer: deque[F] = field(factory=deque, init=False)
-    buffer: list[F] = field(factory=list, init=False)
+    _buffer: list[F] = field(factory=list, init=False)
+    _pre_buffer: deque[F] = field(factory=deque, init=False)
     _is_empty: bool = field(default=False, init=False)
+
+    @property
+    def buffer(self) -> list[F]:
+        """Public accessor for _buffer.
+
+        Returns:
+            A list of Feature objects
+        """
+        return self._buffer
 
     @property
     def is_empty(self) -> bool:

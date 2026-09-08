@@ -32,17 +32,17 @@ class ConcreteBuffer(Buffer):
 
     def next(self) -> None:
         """Fill the buffer."""
-        self.buffer = []
-        self.buffer.extend(self.pre_buffer)
-        self.pre_buffer = deque([])
+        self._buffer = []
+        self._buffer.extend(self._pre_buffer)
+        self._pre_buffer = deque([])
         for feat in self.feature_iterator:
-            if len(self.buffer) == self.config.buffer_size:
-                self.pre_buffer.append(feat)
+            if len(self._buffer) == self.config.buffer_size:
+                self._pre_buffer.append(feat)
                 break
 
-            self.buffer.append(feat)
+            self._buffer.append(feat)
 
-        if len(self.buffer) < self.config.buffer_size:
+        if len(self._buffer) < self.config.buffer_size:
             self._is_empty = True
 
 
@@ -62,7 +62,7 @@ class TestBufferInitialization:
         buffer = ConcreteBuffer(source=feat_source)
 
         assert buffer.source is feat_source
-        assert buffer.pre_buffer == deque([])
+        assert buffer._pre_buffer == deque([])  # pylint: disable=protected-access
         assert buffer.buffer == []
         assert not buffer.is_empty
 
