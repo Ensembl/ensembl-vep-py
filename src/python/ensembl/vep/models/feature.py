@@ -16,12 +16,13 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Mapping
 from functools import cached_property
 from threading import RLock
 from attrs import define, field
 
 from ensembl.vep.models.sequence import Slice, CoordSystem
-from ensembl.vep.common import Strand, UnsafeSetterMixin, invalidates
+from ensembl.vep.common import Strand, UnsafeSetterMixin, invalidates, reverse_complement
 
 logger = logging.getLogger(__name__)
 
@@ -158,8 +159,13 @@ class Feature(UnsafeSetterMixin):
         """
         Returns the associated biological sequence.
 
+        Here, ``start``/``end`` are always ascending order in the attached slice and ``strand`` here
+        is the feature's orientation relative to the slice. Therefore when feature's strand disagrees
+        with the slice's strand, the slice sequence must be reverse-complemented before being returned.
+
         Returns:
-            str | None: The associated biological sequence, or None if unavailable.
+            str | None: The associated biological sequence, in this feature's own 5'->3'
+                orientation, or None if unavailable.
         """
         with self._lock:
             if self.slice is None:
@@ -167,8 +173,13 @@ class Feature(UnsafeSetterMixin):
                 return None
 
             slice_seq = self.slice.seq
+            if slice_seq is None:
+                return None
 
-            return slice_seq[self.start - 1 : self.end] if slice_seq is not None else None
+            feature_seq = slice_seq[self.start - 1 : self.end]
+            if self.strand == Strand.REVERSE:
+                return reverse_complement(feature_seq)
+            return feature_seq
 
     def __eq__(self, other: object) -> bool:
         """
