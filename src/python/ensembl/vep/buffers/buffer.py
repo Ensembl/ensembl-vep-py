@@ -16,9 +16,9 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections import deque
 from functools import cached_property
-from pathlib import Path
-from typing import TypeVar, Generic
+from typing import Generic, Iterator, TypeVar
 from attrs import define, field
 
 # from ensembl.vep.config.base import Config
@@ -41,15 +41,15 @@ class Buffer(ABC, Generic[F, S]):
     """Buffer interface.
 
     Attributes:
-        config: A Config object for configuring the buffer
         source: The source of the ``Features``
+        config: A Config object for configuring the buffer
         pre-buffer: Used as a holding place for ``Features`` that will go into the buffer
         buffer: A queue of ``Feature`` objects obtained from the source
     """
 
-    config: Config = field(factory=Config)
     source: S
-    pre_buffer: list[F] = field(factory=list, init=False)
+    config: Config = field(factory=Config)
+    pre_buffer: deque[F] = field(factory=deque, init=False)
     buffer: list[F] = field(factory=list, init=False)
     _is_empty: bool = field(default=False, init=False)
 

@@ -20,20 +20,9 @@ from attrs import define
 import pytest
 
 from ensembl.vep.common import CoordSystemLevel, Strand
-from ensembl.vep.models import Feature
 from ensembl.vep.models.sequence import CoordSystem, Slice
 from ensembl.vep.models.variation.variation import Variation
 from ensembl.vep.sources.feature_source import FeatureSource
-
-
-def create_feature_objects(length: int) -> list[Feature]:
-    """Function to create a set of test features"""
-    return [Feature(start=value, end=value, strand=Strand.FORWARD) for value in range(length)]
-
-
-@pytest.fixture
-def features_list():
-    return create_feature_objects(11)
 
 
 def genomic_slice(seq_region_name: str = "1") -> Slice:
@@ -61,22 +50,23 @@ def create_variation_objects(length: int, vf_per_chr: int = 4) -> list[Variation
 
 
 @pytest.fixture
-def variation_list():
+def variation_list() -> list[Variation]:
+    """Create a list of Variation objects for testing."""
     return create_variation_objects(11)
 
 
 @define(kw_only=True, auto_attribs=True)
-class DummyFeatureSource(FeatureSource):
-    """Dummy FeatureSource for the Concrete Buffer"""
+class DummyVariationSource(FeatureSource):
+    """Dummy VariationSource for the Concrete Buffer"""
 
-    features: list[Feature]
+    features: list[Variation]
 
-    def get_all_features(self) -> list[Feature]:
+    def get_all_features(self) -> list[Variation]:
         """Return all features from this source."""
 
         return self.features
 
-    def iter_all_features(self) -> Iterator[Feature]:
+    def iter_all_features(self) -> Iterator[Variation]:
         """Lazily yield all features from this source."""
 
         return iter(self.features)
@@ -88,7 +78,7 @@ class DummyFeatureSource(FeatureSource):
         seq_region_name: str | None = None,
         start: int | None = None,
         end: int | None = None,
-    ) -> list[Feature]:
+    ) -> list[Variation]:
         """Return a subset of the features."""
 
         return self.features[0:3]
@@ -100,7 +90,7 @@ class DummyFeatureSource(FeatureSource):
         seq_region_name: str | None = None,
         start: int | None = None,
         end: int | None = None,
-    ) -> Iterator[Feature]:
+    ) -> Iterator[Variation]:
         """Lazily yield a subset of the features."""
 
         return iter(self.features[5:8])
