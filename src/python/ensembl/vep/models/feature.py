@@ -16,7 +16,6 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import Mapping
 from functools import cached_property
 from threading import RLock
 from attrs import define, field
