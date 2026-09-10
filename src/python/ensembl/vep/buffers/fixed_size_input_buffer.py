@@ -18,8 +18,10 @@ from attrs import define
 
 # from ensembl.vep.config.base import Config
 from ensembl.vep.buffers.buffer import Buffer
+from ensembl.vep.buffers.registry import register_buffer
 
 
+@register_buffer("input.fixed-size")
 @define(kw_only=True, auto_attribs=True)
 class FixedSizeInputBuffer(Buffer):
     """Input buffer with a fixed size."""
