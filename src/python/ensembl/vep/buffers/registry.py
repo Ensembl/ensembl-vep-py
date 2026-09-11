@@ -11,41 +11,43 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Buffer registry keyed by ``<domain>.<strategy>`` names."""
+"""Buffer registry keyed by ``<object_type>.<data_provider>.<size>`` names."""
 
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Any, TypeVar, cast
+from typing import Any, TypeVar, cast, overload
 
 from ensembl.vep.buffers.buffer import Buffer
-from ensembl.vep.models import Feature
-from ensembl.vep.sources import FeatureSource
 
 __all__ = ["available_buffers", "get_buffer", "register_buffer"]
 
-BufferFeatureT = TypeVar("BufferFeatureT", bound=Feature)
-"""What feature type a registered buffer stores."""
+BufferItemT = TypeVar("BufferItemT")
+"""What item type a registered buffer stores."""
 
-BufferSourceT = TypeVar("BufferSourceT", bound=FeatureSource[Any])
-"""What source type a registered buffer reads from."""
+BufferFactory = Callable[..., Buffer[BufferItemT]]
+"""Factory for buffers, parameterized by item type."""
 
-BufferFactory = Callable[..., Buffer[BufferFeatureT, BufferSourceT]]
-"""Factory for buffers, parameterized by feature and source type."""
+_BUFFER_REGISTRY: dict[str, BufferFactory[Any]] = {}
 
-_BUFFER_REGISTRY: dict[str, BufferFactory[Any, Any]] = {}
+
+@overload
+def register_buffer(
+    name: str, factory: None = None
+) -> Callable[[BufferFactory[BufferItemT]], BufferFactory[BufferItemT]]: ...
+
+
+@overload
+def register_buffer(name: str, factory: BufferFactory[BufferItemT]) -> BufferFactory[BufferItemT]: ...
 
 
 def register_buffer(
-    name: str, factory: BufferFactory[BufferFeatureT, BufferSourceT] | None = None
-) -> (
-    BufferFactory[BufferFeatureT, BufferSourceT]
-    | Callable[[BufferFactory[BufferFeatureT, BufferSourceT]], BufferFactory[BufferFeatureT, BufferSourceT]]
-):
+    name: str, factory: BufferFactory[BufferItemT] | None = None
+) -> BufferFactory[BufferItemT] | Callable[[BufferFactory[BufferItemT]], BufferFactory[BufferItemT]]:
     """Register a buffer factory under a name.
 
     Args:
-        name: Registry name, e.g. ``"input.fixed-size"``.
+        name: Registry name, e.g. ``"variation.source.fixed"``.
         factory: Factory to register, or ``None`` when used as a decorator.
 
     Returns:
@@ -53,9 +55,9 @@ def register_buffer(
     """
 
     def decorator(
-        registered_factory: BufferFactory[BufferFeatureT, BufferSourceT],
-    ) -> BufferFactory[BufferFeatureT, BufferSourceT]:
-        _BUFFER_REGISTRY[name] = cast(BufferFactory[Any, Any], registered_factory)
+        registered_factory: BufferFactory[BufferItemT],
+    ) -> BufferFactory[BufferItemT]:
+        _BUFFER_REGISTRY[name] = cast(BufferFactory[Any], registered_factory)
         return registered_factory
 
     if factory is not None:
@@ -63,11 +65,11 @@ def register_buffer(
     return decorator
 
 
-def buffer_factory(name: str) -> BufferFactory[BufferFeatureT, BufferSourceT]:
+def buffer_factory(name: str) -> BufferFactory[BufferItemT]:
     """Return the registered factory without calling it.
 
     Args:
-        name: Registry name, e.g. ``"input.fixed-size"``.
+        name: Registry name, e.g. ``"variation.source.fixed"``.
 
     Returns:
         The registered factory, usually a buffer class.
@@ -76,17 +78,17 @@ def buffer_factory(name: str) -> BufferFactory[BufferFeatureT, BufferSourceT]:
         KeyError: If no buffer is registered under ``name``.
     """
     try:
-        return cast(BufferFactory[BufferFeatureT, BufferSourceT], _BUFFER_REGISTRY[name])
+        return cast(BufferFactory[BufferItemT], _BUFFER_REGISTRY[name])
     except KeyError as error:
         available = ", ".join(sorted(_BUFFER_REGISTRY)) or "<none>"
         raise KeyError(f"Unknown buffer '{name}'. Available buffers: {available}") from error
 
 
-def get_buffer(name: str, /, *args: object, **kwargs: object) -> Buffer[BufferFeatureT, BufferSourceT]:
+def get_buffer(name: str, /, *args: object, **kwargs: object) -> Buffer[BufferItemT]:
     """Return a registered buffer instance.
 
     Args:
-        name: Registry name, e.g. ``"input.fixed-size"``.
+        name: Registry name, e.g. ``"variation.source.fixed"``.
         *args: Positional arguments forwarded to the registered factory.
         **kwargs: Keyword arguments forwarded to the registered factory.
 

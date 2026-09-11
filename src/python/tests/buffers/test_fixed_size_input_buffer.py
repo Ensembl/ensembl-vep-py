@@ -30,7 +30,7 @@ class TestBufferInitialization:
         """Test FixedSizeInputBuffer initialization without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             var_source = DummyVariationSource(source_type=SourceType.FILE, features=variation_list)
-            _ = FixedSizeInputBuffer(var_source)  # type: ignore[misc]
+            _ = FixedSizeInputBuffer(var_source)  # type: ignore[call-arg, arg-type, misc]
 
     def test_fixed_size_input_buffer_initial_attributes(self, variation_list: list[Variation]) -> None:
         """Test FixedSizeInputBuffer initialises attributes correctly."""
@@ -53,7 +53,7 @@ class TestBufferMethods:
         var_source = DummyVariationSource(source_type=SourceType.FILE, features=[])
         buffer = FixedSizeInputBuffer(source=var_source)
 
-        assert isinstance(buffer.feature_iterator, Iterator)
+        assert isinstance(buffer.variation_iterator, Iterator)
         buffer.next()
         assert not buffer.buffer
         assert buffer.is_empty
@@ -64,25 +64,30 @@ class TestBufferMethods:
         var_source = DummyVariationSource(source_type=SourceType.FILE, features=variation_list)
         buffer = FixedSizeInputBuffer(source=var_source)
 
-        assert isinstance(buffer.feature_iterator, Iterator)
+        assert isinstance(buffer.variation_iterator, Iterator)
         buffer.next()
         assert len(buffer.buffer) == 5
         assert buffer.buffer[0].start == 0
+        assert buffer.buffer[0].slice is not None
         assert buffer.buffer[0].slice.seq_region_name == "1"
         assert len(buffer._pre_buffer) == 1  # pylint: disable=protected-access
         assert buffer._pre_buffer[0].start == 5  # pylint: disable=protected-access
+        assert buffer._pre_buffer[0].slice is not None  # pylint: disable=protected-access
         assert buffer._pre_buffer[0].slice.seq_region_name == "1"  # pylint: disable=protected-access
         buffer.next()
         assert len(buffer.buffer) == 3
         assert buffer.buffer[0].start == 5
+        assert buffer.buffer[0].slice is not None
         assert buffer.buffer[0].slice.seq_region_name == "1"
         assert len(buffer._pre_buffer) == 1  # pylint: disable=protected-access
         assert buffer._pre_buffer[0].start == 10  # pylint: disable=protected-access
+        assert buffer._pre_buffer[0].slice is not None  # pylint: disable=protected-access
         assert buffer._pre_buffer[0].slice.seq_region_name == "2"  # pylint: disable=protected-access
         assert not buffer.is_empty
         buffer.next()
         assert len(buffer.buffer) == 4
         assert buffer.buffer[0].start == 10
+        assert buffer.buffer[0].slice is not None
         assert buffer.buffer[0].slice.seq_region_name == "2"
         assert buffer._pre_buffer == deque([])  # pylint: disable=protected-access
         assert buffer.is_empty

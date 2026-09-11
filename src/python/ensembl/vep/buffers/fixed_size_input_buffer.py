@@ -14,16 +14,18 @@
 """Fixed Sized Buffer."""
 
 from __future__ import annotations
+
 from attrs import define
 
 # from ensembl.vep.config.base import Config
-from ensembl.vep.buffers.buffer import Buffer
+from ensembl.vep.buffers.buffer import InputBuffer
 from ensembl.vep.buffers.registry import register_buffer
+from ensembl.vep.models.variation.variation import Variation
 
 
-@register_buffer("input.fixed-size")
+@register_buffer("variation.source.fixed")
 @define(kw_only=True, auto_attribs=True)
-class FixedSizeInputBuffer(Buffer):
+class FixedSizeInputBuffer(InputBuffer[Variation]):
     """Input buffer with a fixed size."""
 
     def next(self) -> None:
@@ -38,6 +40,7 @@ class FixedSizeInputBuffer(Buffer):
 
         while self._pre_buffer and len(self._buffer) < self.config.buffer_size:
             variant = self._pre_buffer.popleft()
+            assert variant.slice is not None
             variant_seq_region_name = variant.slice.seq_region_name
 
             if seq_region_name is None:
@@ -51,7 +54,8 @@ class FixedSizeInputBuffer(Buffer):
         if len(self._buffer) == self.config.buffer_size:
             return
 
-        for variant in self.feature_iterator:
+        for variant in self.variation_iterator:
+            assert variant.slice is not None
             variant_seq_region_name = variant.slice.seq_region_name
 
             if seq_region_name is None:
@@ -67,3 +71,7 @@ class FixedSizeInputBuffer(Buffer):
             self._buffer.append(variant)
 
         self._is_empty = True
+
+    def get_overlapping_variation(self, start: int, end: int) -> list[Variation]:
+        """Return the variants in the buffer that overlap the supplied interval."""
+        raise NotImplementedError

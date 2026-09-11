@@ -22,11 +22,11 @@ from typing import Generic, Iterator, TypeVar
 from attrs import define, field
 
 # from ensembl.vep.config.base import Config
-from ensembl.vep.models import Feature
+from ensembl.vep.models.variation.variation import Variation
 from ensembl.vep.sources import FeatureSource
 
-F = TypeVar("F", bound=Feature)
-S = TypeVar("S", bound=FeatureSource)
+T = TypeVar("T")
+V = TypeVar("V", bound=Variation)
 
 
 @define(kw_only=True, auto_attribs=True)
@@ -37,23 +37,21 @@ class Config:
 
 
 @define(kw_only=True, auto_attribs=True)
-class Buffer(ABC, Generic[F, S]):
+class Buffer(ABC, Generic[T]):
     """Buffer interface.
 
     Attributes:
-        source: The source of the ``Features``
         config: A Config object for configuring the buffer
-        buffer: A queue of ``Feature`` objects obtained from the source
+        buffer: A list of objects in the buffer
     """
 
-    source: S
     config: Config = field(factory=Config)
-    _buffer: list[F] = field(factory=list, init=False)
-    _pre_buffer: deque[F] = field(factory=deque, init=False)
+    _buffer: list[T] = field(factory=list, init=False)
+    _pre_buffer: deque[T] = field(factory=deque, init=False)
     _is_empty: bool = field(default=False, init=False)
 
     @property
-    def buffer(self) -> list[F]:
+    def buffer(self) -> list[T]:
         """Public accessor for _buffer.
 
         Returns:
@@ -70,21 +68,46 @@ class Buffer(ABC, Generic[F, S]):
         """
         return self._is_empty
 
-    @property
-    def feature_iterator(self) -> Iterator[F]:
-        """Public accessor for _feature_iterator.
+    @abstractmethod
+    def next(self) -> None:
+        """Reset and re-fill the buffer from the source.
 
         Returns:
-            An iterator over the source features.
+            None
         """
-        return self._feature_iterator
+
+        raise NotImplementedError
+
+
+@define(kw_only=True, auto_attribs=True)
+class InputBuffer(Buffer[V], Generic[V]):
+    """InputBuffer interface.
+
+    Attributes:
+        config: A Config object for configuring the buffer
+        buffer: A queue of ``Variation`` objects obtained from the source
+        source: The source of the ``Variation`` objects.
+    """
+
+    source: FeatureSource[V]
+    _buffer: list[V] = field(factory=list, init=False)
+    _pre_buffer: deque[V] = field(factory=deque, init=False)
+
+    @property
+    def variation_iterator(self) -> Iterator[V]:
+        """Public accessor for _variation_iterator.
+
+        Returns:
+            An iterator over the source variations.
+        """
+        return self._variation_iterator
 
     @cached_property
-    def _feature_iterator(self) -> Iterator[F]:
-        """Returns the iterator over the source features.
+    def _variation_iterator(self) -> Iterator[V]:
+        """Returns the iterator over the source variations.
 
         Returns:
-            An iterator over the source features.
+            An iterator over the source variations.
         """
         return self.source.iter_all_features()
 

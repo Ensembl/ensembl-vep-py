@@ -19,7 +19,7 @@ from attrs import define
 import pytest
 
 from ensembl.vep.buffers import registry as registry_module
-from ensembl.vep.buffers.buffer import Buffer
+from ensembl.vep.buffers.buffer import Buffer, InputBuffer
 from ensembl.vep.buffers.fixed_size_input_buffer import FixedSizeInputBuffer
 from ensembl.vep.buffers.registry import available_buffers, get_buffer, register_buffer
 from ensembl.vep.common import SourceType
@@ -28,7 +28,7 @@ from tests.buffers.conftest import DummyVariationSource
 
 
 @define(kw_only=True, auto_attribs=True)
-class _ConcreteBuffer(Buffer):
+class _ConcreteBuffer(InputBuffer[Variation]):
     """Minimal buffer used to test registration and lookup."""
 
     def next(self) -> None:
@@ -42,7 +42,7 @@ class TestAvailableBuffers:
 
     def test_includes_the_built_ins(self) -> None:
         """Built-ins are registered on import."""
-        assert "input.fixed-size" in available_buffers()
+        assert "variation.source.fixed" in available_buffers()
 
 
 class TestLookup:
@@ -57,7 +57,7 @@ class TestLookup:
         """The registry can build the built-in fixed-size input buffer."""
         source = DummyVariationSource(source_type=SourceType.FILE, features=variation_list)
 
-        buffer: Buffer[Variation, DummyVariationSource] = get_buffer("input.fixed-size", source=source)
+        buffer: Buffer[Variation] = get_buffer("variation.source.fixed", source=source)
 
         assert isinstance(buffer, FixedSizeInputBuffer)
         assert buffer.source is source

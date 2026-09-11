@@ -18,7 +18,7 @@ from typing import Iterator
 from attrs import define
 import pytest
 
-from ensembl.vep.buffers.buffer import Buffer
+from ensembl.vep.buffers.buffer import Buffer, InputBuffer
 from ensembl.vep.common import SourceType
 
 # from ensembl.vep.models import Feature
@@ -27,7 +27,7 @@ from tests.buffers.conftest import DummyVariationSource
 
 
 @define(kw_only=True, auto_attribs=True)
-class ConcreteBuffer(Buffer):
+class ConcreteBuffer(InputBuffer[Variation]):
     """Concrete buffer used to test Buffer interface."""
 
     def next(self) -> None:
@@ -35,7 +35,7 @@ class ConcreteBuffer(Buffer):
         self._buffer = []
         self._buffer.extend(self._pre_buffer)
         self._pre_buffer = deque([])
-        for feat in self.feature_iterator:
+        for feat in self.variation_iterator:
             if len(self._buffer) == self.config.buffer_size:
                 self._pre_buffer.append(feat)
                 break
@@ -53,7 +53,7 @@ class TestBufferInitialization:
         """Test Buffer cannot be instantiated directly."""
 
         with pytest.raises(TypeError, match="abstract class"):
-            _ = Buffer(source=DummyVariationSource(source_type=SourceType.FILE, features=[]))  # type: ignore[abstract]  # pylint: disable=abstract-class-instantiated
+            _ = Buffer()  # type: ignore[abstract]  # pylint: disable=abstract-class-instantiated
 
     def test_concrete_buffer_initial_attributes(self, variation_list: list[Variation]) -> None:
         """Test concrete buffer initialises attributes correctly."""
@@ -76,7 +76,7 @@ class TestBufferProperties:
         feat_source = DummyVariationSource(source_type=SourceType.FILE, features=variation_list)
         buffer = ConcreteBuffer(source=feat_source)
 
-        assert isinstance(buffer.feature_iterator, Iterator)
+        assert isinstance(buffer.variation_iterator, Iterator)
         buffer.next()
         assert [feat.start for feat in buffer.buffer] == [0, 1, 2, 3, 4]
         buffer.next()

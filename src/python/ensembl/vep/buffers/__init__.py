@@ -13,8 +13,15 @@
 # limitations under the License.
 """Buffers."""
 
-from ensembl.vep.buffers.buffer import Buffer
+from ensembl.vep.buffers.buffer import Buffer, InputBuffer
 from ensembl.vep.buffers.registry import available_buffers, get_buffer, register_buffer
 from ensembl.vep.buffers.fixed_size_input_buffer import FixedSizeInputBuffer
 
-__all__ = ["Buffer", "FixedSizeInputBuffer", "available_buffers", "get_buffer", "register_buffer"]
+__all__ = [
+    "Buffer",
+    "InputBuffer",
+    "FixedSizeInputBuffer",
+    "available_buffers",
+    "get_buffer",
+    "register_buffer",
+]
