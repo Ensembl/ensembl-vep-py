@@ -223,6 +223,18 @@ class TestFeatureProperties:  # pylint: disable=too-many-public-methods
 
         assert feature.seq == "TGAC"
 
+        genomic_slice = Slice(
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+            seq_region_name="1",
+            start=1,
+            end=11,
+            strand=Strand.REVERSE,
+            sequence_source=dummy_sequence_source,
+        )
+        feature = Feature(start=5, end=8, strand=Strand.REVERSE, slice=genomic_slice)
+
+        assert feature.seq == "GACT"
+
     def test_seq_immutable(self, feature: Feature) -> None:
         """Test seq cannot be directly set."""
         with pytest.raises(AttributeError, match="property 'seq' of 'Feature' object has no setter"):
