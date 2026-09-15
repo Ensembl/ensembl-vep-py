@@ -28,10 +28,13 @@ byte-budget LRU ``caches/mapper_cache.py`` can limit memory usage for the index.
 from __future__ import annotations
 
 import bisect
+import logging
 
 from attrs import define, field
 
 from ensembl.vep.common import Strand
+
+logger = logging.getLogger(__name__)
 
 __all__ = ["Mapper", "MapperIndex"]
 
@@ -127,6 +130,12 @@ class Mapper:
         Returns:
             int | None: The 0-based offset into the CDS, or None if the position is not coding.
         """
+        if self.strand == Strand.UNKNOWN:
+            logger.warning(
+                "Strand is unknown, cannot map genomic positions with confidence. "
+                "Assuming the strand is forward."
+            )
+
         if accelerator is not None:
             return accelerator.position_to_offset.get(genomic_position)
 
@@ -156,6 +165,12 @@ class Mapper:
         Returns:
             int | None: The genomic position, or None if the offset is out of range.
         """
+        if self.strand == Strand.UNKNOWN:
+            logger.warning(
+                "Strand is unknown, cannot map genomic positions with confidence. "
+                "Assuming the strand is forward."
+            )
+
         if accelerator is not None:
             index = accelerator.offset_to_position
             return index[offset] if 0 <= offset < len(index) else None
@@ -186,6 +201,12 @@ class Mapper:
             tuple[int, int] | None: (low, high) 0-based CDS offsets, or None if the span touches
                 no coding spans at all.
         """
+        if self.strand == Strand.UNKNOWN:
+            logger.warning(
+                "Strand is unknown, cannot map genomic positions with confidence. "
+                "Assuming the strand is forward."
+            )
+
         if max_position < min_position:
             return None
 
