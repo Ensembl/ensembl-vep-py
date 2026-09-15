@@ -47,6 +47,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
+    "ailist>=2.2.2",
     "attrs>=24.1.0",
 ]
 
