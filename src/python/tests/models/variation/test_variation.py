@@ -117,7 +117,22 @@ class TestVariationProperties:
     def test_defaults(self, variation: Variation) -> None:
         """Test default values for optional attributes."""
         assert variation.stable_id is None
+        assert variation.uploaded_locus is None
         assert variation.is_somatic is False
+
+    def test_uploaded_locus(self, genomic_slice: Slice) -> None:
+        """Test a Variation retains the originally uploaded locus."""
+        uploaded_locus = Locus(start=5, end=7, allele_string="ATC/A")
+        variation = Variation(
+            start=6,
+            end=7,
+            strand=Strand.FORWARD,
+            slice=genomic_slice,
+            allele_string="TC/-",
+            uploaded_locus=uploaded_locus,
+        )
+
+        assert variation.uploaded_locus == uploaded_locus
 
     def test_variation_alleles_immutable(self, variation: Variation) -> None:
         """Test that variation_alleles cannot be directly set."""
