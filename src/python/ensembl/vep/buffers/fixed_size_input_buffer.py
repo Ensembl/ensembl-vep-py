@@ -20,7 +20,7 @@ from attrs import define, field
 # from ensembl.vep.config.base import Config
 from ensembl.vep.buffers.buffer import InputBuffer
 from ensembl.vep.buffers.registry import register_buffer
-from ensembl.vep.models.overlap.interval_overlap import IntervalTree
+from ensembl.vep.models.overlap.interval_tree import IntervalTree
 from ensembl.vep.models.variation.variation import Variation
 
 
