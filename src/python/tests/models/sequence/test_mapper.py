@@ -34,31 +34,53 @@ REVERSE_GENOMIC_SPANS = [(200, 209), (100, 109)]
 @pytest.fixture
 def forward_mapper() -> Mapper:
     """Create a forward-strand mapper fixture."""
-    return Mapper(genomic_spans=FORWARD_GENOMIC_SPANS, strand=Strand.FORWARD)
+    return Mapper(
+        genomic_spans=FORWARD_GENOMIC_SPANS,
+        strand=Strand.FORWARD,
+        coding_start_offset=0,
+        coding_end_offset=20,
+    )
 
 
 @pytest.fixture
 def reverse_mapper() -> Mapper:
     """Create a reverse-strand mapper fixture."""
-    return Mapper(genomic_spans=REVERSE_GENOMIC_SPANS, strand=Strand.REVERSE)
+    return Mapper(
+        genomic_spans=REVERSE_GENOMIC_SPANS,
+        strand=Strand.REVERSE,
+        coding_start_offset=0,
+        coding_end_offset=20,
+    )
 
 
 @pytest.fixture
 def junction_spanning_mapper() -> Mapper:
     """Create a mapper whose first codon spans two genomic regions."""
-    return Mapper(genomic_spans=[(98, 99), (200, 217)], strand=Strand.FORWARD)
+    return Mapper(
+        genomic_spans=[(98, 99), (200, 217)],
+        strand=Strand.FORWARD,
+        coding_start_offset=0,
+        coding_end_offset=20,
+    )
 
 
 @pytest.fixture
 def multi_exon_mapper() -> Mapper:
     """Create a mapper over three forward-strand genomic regions."""
-    return Mapper(genomic_spans=[(1, 10), (20, 30), (40, 50)], strand=Strand.FORWARD)
+    return Mapper(
+        genomic_spans=[(1, 10), (20, 30), (40, 50)],
+        strand=Strand.FORWARD,
+        coding_start_offset=0,
+        coding_end_offset=30,
+    )
 
 
 @pytest.fixture
 def partial_codon_mapper() -> Mapper:
     """Create a mapper whose sequence contains only a partial codon."""
-    return Mapper(genomic_spans=[(100, 101)], strand=Strand.FORWARD)
+    return Mapper(
+        genomic_spans=[(100, 101)], strand=Strand.FORWARD, coding_start_offset=0, coding_end_offset=2
+    )
 
 
 class TestCoordinateMapping:

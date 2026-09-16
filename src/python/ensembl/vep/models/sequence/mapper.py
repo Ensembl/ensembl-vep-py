@@ -79,6 +79,8 @@ class Mapper:
 
     genomic_spans: list[tuple[int, int]]
     strand: Strand
+    coding_start_offset: int
+    coding_end_offset: int
     _prefix_lengths: list[int] = field(init=False, repr=False)
     _ordered_genomic_spans: list[tuple[int, int]] = field(init=False, repr=False)
     _ordered_span_starts: list[int] = field(init=False, repr=False)
@@ -258,8 +260,11 @@ class Mapper:
             list[tuple[int, int]] | None: Ascending genomic spans, or None if none of the three bases
                 map to a genomic position.
         """
+        if offset < self.coding_start_offset or offset >= self.coding_end_offset:
+            return None
+
         # Get the offset of the first base of the codon containing offset
-        codon_start = (offset // 3) * 3
+        codon_start = max((offset // 3) * 3, self.coding_start_offset)
 
         # Then determine the genomic positions of all three bases of that codon
         genomic_positions = sorted(
@@ -292,11 +297,11 @@ class Mapper:
             tuple[int, int] | None: The codon-aligned window, or None if ``offsets`` is None or
                 the window is empty (e.g. the offsets range is entirely past ``length``).
         """
-        if offsets is None:
+        if offsets is None or offsets[0] >= self.coding_end_offset or offsets[1] < self.coding_start_offset:
             return None
         low_offset, high_offset = offsets
-        codon_start = (low_offset // 3) * 3
-        codon_end = min((high_offset // 3) * 3 + 3, self.length)
+        codon_start = max((low_offset // 3) * 3, self.coding_start_offset)
+        codon_end = min((high_offset // 3) * 3 + 3, self.coding_end_offset)
         return (codon_start, codon_end) if codon_end > codon_start else None
 
     def offset_to_protein_offset(self, offset: int) -> int | None:
