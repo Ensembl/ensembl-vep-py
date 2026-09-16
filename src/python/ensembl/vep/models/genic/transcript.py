@@ -916,9 +916,14 @@ class Transcript(Feature):
             Mapper | None: The coordinate mapper, or None if the transcript is not coding.
         """
         genomic_spans = self.cds_genomic_spans
-        if genomic_spans is None:
+        if genomic_spans is None or self.cds_length is None:
             return None
-        return Mapper(genomic_spans=genomic_spans, strand=self.strand)
+        return Mapper(
+            genomic_spans=genomic_spans,
+            strand=self.strand,
+            coding_start_offset=0,
+            coding_end_offset=self.cds_length - 1,
+        )
 
     @property
     def cdna_mapper(self) -> Mapper | None:
@@ -944,10 +949,15 @@ class Transcript(Feature):
         Returns:
             Mapper | None: The coordinate mapper, or None if the transcript has no exons.
         """
-        if not self.spliced_exons:
+        if not self.spliced_exons or self.cdna_coding_start is None or self.cdna_coding_end is None:
             return None
         genomic_spans = [(exon.start, exon.end) for exon in self.spliced_exons]
-        return Mapper(genomic_spans=genomic_spans, strand=self.strand)
+        return Mapper(
+            genomic_spans=genomic_spans,
+            strand=self.strand,
+            coding_start_offset=self.cdna_coding_start,
+            coding_end_offset=self.cdna_coding_end,
+        )
 
     @property
     def cds_length(self) -> int | None:
