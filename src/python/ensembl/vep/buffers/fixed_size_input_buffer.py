@@ -15,11 +15,12 @@
 
 from __future__ import annotations
 
-from attrs import define
+from attrs import define, field
 
 # from ensembl.vep.config.base import Config
 from ensembl.vep.buffers.buffer import InputBuffer
 from ensembl.vep.buffers.registry import register_buffer
+from ensembl.vep.models.overlap.interval_overlap import IntervalTree
 from ensembl.vep.models.variation.variation import Variation
 
 
@@ -27,6 +28,8 @@ from ensembl.vep.models.variation.variation import Variation
 @define(kw_only=True, auto_attribs=True)
 class FixedSizeInputBuffer(InputBuffer[Variation]):
     """Input buffer with a fixed size."""
+
+    _interval_tree: IntervalTree | None = field(default=None, init=False)
 
     def next(self) -> None:
         """Reset and re-fill the buffer from the source.
@@ -36,6 +39,7 @@ class FixedSizeInputBuffer(InputBuffer[Variation]):
         """
 
         self._buffer = []
+        self._interval_tree = None
         seq_region_name = None
 
         while self._pre_buffer and len(self._buffer) < self.config.buffer_size:
@@ -72,6 +76,31 @@ class FixedSizeInputBuffer(InputBuffer[Variation]):
 
         self._is_empty = True
 
-    def get_overlapping_variation(self, start: int, end: int) -> list[Variation]:
-        """Return the variants in the buffer that overlap the supplied interval."""
-        raise NotImplementedError
+    def get_overlapping_variation(self, start: int, end: int) -> list[Variation] | None:
+        """Return the variants in the buffer that overlap the supplied interval.
+
+        Args:
+            start: start coordinate of the interval.
+            end: end coordinate of the interval.
+
+        Returns:
+            A list of Variation objects from the current buffer that overlap the interval
+            or None if the buffer is empty.
+
+        Raises:
+        """
+
+        if not self._buffer:
+            return None
+
+        # get/create interval tree
+        if not self._interval_tree:
+            self._interval_tree = IntervalTree()
+            self._interval_tree.add_features(self._buffer)
+
+        # get the overlapping variation objects
+        if start > end:
+            start, end = (end, start)
+        variations = self._interval_tree.get_overlapping_features(start, end)
+
+        return variations

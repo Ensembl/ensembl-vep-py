@@ -36,7 +36,7 @@ def genomic_slice(seq_region_name: str = "1", seq_region_end: int = 250_000_000)
     )
 
 
-def create_variation_objects(length: int, start: int = 0, seq_region_name: str = "1") -> list[Variation]:
+def create_variation_objects(length: int, start: int = 1, seq_region_name: str = "1") -> list[Variation]:
     """Function to create a set of test variation objects."""
     return [
         Variation(

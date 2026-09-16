@@ -44,8 +44,8 @@ class TestBufferInitialization:
         assert not buffer.is_empty
 
 
-class TestBufferMethods:
-    """Test Buffer methods."""
+class TestBufferNext:
+    """Test Buffer ``next`` method."""
 
     def test_fixed_size_input_buffer_empty_source(self) -> None:
         """Test fixed_size_input_buffer ``next`` method."""
@@ -67,16 +67,16 @@ class TestBufferMethods:
         assert isinstance(buffer.variation_iterator, Iterator)
         buffer.next()
         assert len(buffer.buffer) == 5
-        assert buffer.buffer[0].start == 0
+        assert buffer.buffer[0].start == 1
         assert buffer.buffer[0].slice is not None
         assert buffer.buffer[0].slice.seq_region_name == "1"
         assert len(buffer._pre_buffer) == 1  # pylint: disable=protected-access
-        assert buffer._pre_buffer[0].start == 5  # pylint: disable=protected-access
+        assert buffer._pre_buffer[0].start == 6  # pylint: disable=protected-access
         assert buffer._pre_buffer[0].slice is not None  # pylint: disable=protected-access
         assert buffer._pre_buffer[0].slice.seq_region_name == "1"  # pylint: disable=protected-access
         buffer.next()
         assert len(buffer.buffer) == 3
-        assert buffer.buffer[0].start == 5
+        assert buffer.buffer[0].start == 6
         assert buffer.buffer[0].slice is not None
         assert buffer.buffer[0].slice.seq_region_name == "1"
         assert len(buffer._pre_buffer) == 1  # pylint: disable=protected-access
@@ -115,3 +115,36 @@ class TestBufferMethods:
         buffer.next()
         assert len(buffer.buffer) == 3
         assert len(buffer._pre_buffer) == 4  # pylint: disable=protected-access
+
+
+class TestBufferGetOverlappingVariation:
+    """Test Buffer ``get_overlapping_variation`` method."""
+
+    def test_empty_buffer_returns_none(self, variation_list: list[Variation]) -> None:
+        """Test that an empty buffer returns None."""
+
+        var_source = DummyVariationSource(source_type=SourceType.FILE, features=variation_list)
+        buffer = FixedSizeInputBuffer(source=var_source)
+        assert buffer.get_overlapping_variation(start=1, end=10) is None
+
+    def test_overlap_forward_strand(self, variation_list: list[Variation]) -> None:
+        """Test that ``get_overlapping_variation`` returns the correct Variation objects."""
+
+        var_source = DummyVariationSource(source_type=SourceType.FILE, features=variation_list)
+        buffer = FixedSizeInputBuffer(source=var_source)
+        assert buffer.get_overlapping_variation(start=1, end=10) is None
+
+        buffer.next()
+        assert buffer.get_overlapping_variation(start=2, end=3) == variation_list[1:3]
+        assert buffer.get_overlapping_variation(start=6, end=6) == []
+
+    def test_overlap_reverse_strand(self, variation_list: list[Variation]) -> None:
+        """Test that ``get_overlapping_variation`` returns the correct Variation objects."""
+
+        var_source = DummyVariationSource(source_type=SourceType.FILE, features=variation_list)
+        buffer = FixedSizeInputBuffer(source=var_source)
+        assert buffer.get_overlapping_variation(start=1, end=10) is None
+
+        buffer.next()
+        # start > end
+        assert buffer.get_overlapping_variation(start=3, end=2) == variation_list[1:3]
