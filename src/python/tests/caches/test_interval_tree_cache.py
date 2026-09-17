@@ -21,7 +21,7 @@ from typing import Iterator
 import pytest
 from attrs import define, field
 
-from ensembl.vep.caches.interval_cache import FeatureIntervalTreeCache, IntervalTreeCache
+from ensembl.vep.caches.interval_tree_cache import FeatureIntervalTreeCache, IntervalTreeCache
 from ensembl.vep.common import SourceType
 from ensembl.vep.models import Feature
 from ensembl.vep.sources.feature_source import FeatureSource

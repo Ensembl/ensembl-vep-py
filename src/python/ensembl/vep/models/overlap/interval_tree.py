@@ -77,8 +77,8 @@ class IntervalTree(Generic[F]):
         """
         for idx, feature in enumerate(features):
             try:
-                self._check_interval(feature.start, feature.end)
-                self._intervals.add(feature.start, feature.end + 1, start_idx + idx)
+                start, end = self._check_interval(feature.start, feature.end)
+                self._intervals.add(start, end + 1, start_idx + idx)
             except ValueError:
                 logger.warning("Feature has invalid coordinates")
 
@@ -96,7 +96,7 @@ class IntervalTree(Generic[F]):
             ValueError: If the coordinates are invalid.
         """
         with self._lock:
-            self._check_interval(start, end)
+            start, end = self._check_interval(start, end)
             return [self.features[idx] for idx in self._intervals.intersect_ids(start, end + 1)]
 
     def get_overlapping_features_by_feature(self, feature: Feature) -> list[F]:
@@ -112,7 +112,7 @@ class IntervalTree(Generic[F]):
             ValueError: If the coordinates are invalid.
         """
 
-        return self.get_overlapping_features(start=feature.start, end=feature.end) # DO WE NEED TO MAKE SURE THIS IS SEQ_REGION_START/END
+        return self.get_overlapping_features(start=feature.start, end=feature.end)
 
     def get_nearest_features(self, start: int, end: int, k: int = 10) -> list[F]:
         """Query the IntervalTree object with an interval and return the ``k`` nearest Features.
@@ -128,7 +128,7 @@ class IntervalTree(Generic[F]):
             ValueError: If the coordinates are invalid.
         """
         with self._lock:
-            self._check_interval(start, end)
+            start, end = self._check_interval(start, end)
             closest = self._intervals.closest(start, end + 1, k=k)
             print(f"Closest ids: {closest.ids}")
             return [self.features[idx] for idx in closest.ids]
@@ -148,7 +148,7 @@ class IntervalTree(Generic[F]):
 
         return self.get_nearest_features(start=feature.start, end=feature.end, k=k)
 
-    def _check_interval(self, start: int, end: int) -> None:
+    def _check_interval(self, start: int, end: int) -> tuple[int, int]:
         """Helper method to check start and end values of an interval.
 
         Args:
@@ -164,5 +164,6 @@ class IntervalTree(Generic[F]):
 
         if start < 1:
             raise ValueError("start must be 1-based: cannot be less than 1")
-        if end < start:
-            raise ValueError("start must be less than or equal to end")
+        if start > end:
+            start, end = end, start
+        return start, end
