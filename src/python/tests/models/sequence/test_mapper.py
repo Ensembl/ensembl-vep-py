@@ -16,6 +16,7 @@
 """Unit tests for the Mapper class."""
 
 from __future__ import annotations
+import logging
 
 import pytest
 
@@ -48,6 +49,17 @@ def reverse_mapper() -> Mapper:
     return Mapper(
         genomic_spans=REVERSE_GENOMIC_SPANS,
         strand=Strand.REVERSE,
+        coding_start_offset=0,
+        coding_end_offset=20,
+    )
+
+
+@pytest.fixture
+def unknown_mapper() -> Mapper:
+    """Create an unknow-strand mapper fixture."""
+    return Mapper(
+        genomic_spans=FORWARD_GENOMIC_SPANS,
+        strand=Strand.UNKNOWN,
         coding_start_offset=0,
         coding_end_offset=20,
     )
@@ -100,6 +112,27 @@ class TestCoordinateMapping:
         assert genomic_position is not None
         assert reverse_mapper.genomic_to_offset(genomic_position) == cds_offset
 
+    @pytest.mark.parametrize("cds_offset", range(20))
+    def test_unknown_mapper_round_trips_each_offset(
+        self,
+        unknown_mapper: Mapper,
+        forward_mapper: Mapper,
+        cds_offset: int,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        """Test that unknown-strand is treated as forward strand with warning."""
+        with caplog.at_level(logging.WARNING):
+            genomic_position = unknown_mapper.offset_to_genomic(cds_offset)
+            assert "Strand is unknown" in caplog.text, "Incorrect warning in offset_to_genomic"
+            assert genomic_position == forward_mapper.offset_to_genomic(cds_offset)
+
+        genomic_position = forward_mapper.offset_to_genomic(cds_offset)
+        assert genomic_position is not None
+        with caplog.at_level(logging.WARNING):
+            offset = unknown_mapper.genomic_to_offset(genomic_position)
+            assert "Strand is unknown" in caplog.text, "Incorrect warning in genomic_to_offset"
+            assert offset == cds_offset
+
     def test_reverse_offset_0_is_the_high_genomic_block(self, reverse_mapper: Mapper) -> None:
         """Test that reverse-strand offset zero maps to the higher genomic region."""
         assert reverse_mapper.offset_to_genomic(0) == 209
@@ -111,6 +144,37 @@ class TestCoordinateMapping:
             assert reverse_mapper.genomic_to_offset(position) is None
         for offset in (-1, 20, 1000):
             assert forward_mapper.offset_to_genomic(offset) is None
+
+
+class TestGenomicSpanToOffsets:
+    """Test mapping codon offsets to genomic spans."""
+
+    def test_forward_mapper_genomic_span_to_offsets(self, forward_mapper: Mapper) -> None:
+        """Test forward_mapper.genomic_span_to_offsets gives the correct offsets"""
+        assert forward_mapper.genomic_span_to_offsets(105, 109) == (5, 9)
+        assert forward_mapper.genomic_span_to_offsets(105, 205) == (5, 15)
+        assert forward_mapper.genomic_span_to_offsets(205, 105) is None
+        assert forward_mapper.genomic_span_to_offsets(1, 10) is None
+        # test span that starts before first mapped region is clamped
+        assert forward_mapper.genomic_span_to_offsets(50, 100) == (0, 0)
+        # test span start in intron advances to next mapped region
+        assert forward_mapper.genomic_span_to_offsets(150, 200) == (10, 10)
+        # test span entirely between mapped regions returns none
+        assert forward_mapper.genomic_span_to_offsets(150, 199) is None
+
+    def test_reverse_mapper_genomic_span_to_offsets(self, reverse_mapper: Mapper) -> None:
+        """Test reverse_mapper.genomic_span_to_offsets gives the correct offsets"""
+        assert reverse_mapper.genomic_span_to_offsets(105, 109) == (10, 14)
+        assert reverse_mapper.genomic_span_to_offsets(105, 205) == (4, 14)
+
+    def test_unknown_mapper_gives_warning(
+        self, unknown_mapper: Mapper, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """Test unkown_mapper gives a warning"""
+        with caplog.at_level(logging.WARNING):
+            offsets = unknown_mapper.genomic_span_to_offsets(105, 109)
+            assert "Strand is unknown" in caplog.text, "Incorrect warning in genomic_to_offset"
+            assert offsets == (5, 9)
 
 
 class TestCodonGenomicSpans:
@@ -145,6 +209,23 @@ class TestCodonGenomicSpans:
         # -1's codon-aligned start is -3 (floor division): offsets -3/-2/-1 are all out of range.
         assert partial_codon_mapper.codon_genomic_spans(-1) is None
         assert partial_codon_mapper.codon_genomic_spans(5) is None
+
+
+class TestCodonWindow:
+    """Test mapping codon offsets to codon windows."""
+
+    def test_codon_window_one_span(self, forward_mapper: Mapper) -> None:
+        """Test offsets within a codon maps to one codon"""
+        assert forward_mapper.codon_window((4, 5)) == (3, 6)
+        assert forward_mapper.codon_window((18, 20)) == (18, 20)
+        assert forward_mapper.codon_window((18, 21)) == (18, 20)
+        assert forward_mapper.codon_window((21, 22)) is None
+        assert forward_mapper.codon_window((-1, 2)) == (0, 3)
+        assert forward_mapper.codon_window((-5, -4)) is None
+
+    def test_codon_window_two_spans(self, forward_mapper: Mapper) -> None:
+        """Test offsets over two codons maps to two codons"""
+        assert forward_mapper.codon_window((4, 7)) == (3, 9)
 
 
 class TestProteinMapping:

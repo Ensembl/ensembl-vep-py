@@ -122,15 +122,15 @@ class Mapper:
     def genomic_to_offset(
         self, genomic_position: int, *, accelerator: MapperIndex | None = None
     ) -> int | None:
-        """Map a genomic position to its 0-based CDS offset.
+        """Map a genomic position to its 0-based CDS/cDNA offset.
 
         Args:
             genomic_position (int): A genomic position, 1-based.
-            accelerator (MapperIndex | None): If given and it covers this CDS, answers in O(1)
+            accelerator (MapperIndex | None): If given and it covers this CDS/cDNA, answers in O(1)
                 via dict lookup; otherwise falls back to an O(log exon count) bisect search.
 
         Returns:
-            int | None: The 0-based offset into the CDS, or None if the position is not coding.
+            int | None: The 0-based offset into the CDS/cDNA, or None if the position is not in the CDS/cDNA.
         """
         if self.strand == Strand.UNKNOWN:
             logger.warning(
@@ -157,10 +157,10 @@ class Mapper:
         return self._ordered_prefix_lengths[span_index] + offset_in_span
 
     def offset_to_genomic(self, offset: int, *, accelerator: MapperIndex | None = None) -> int | None:
-        """Map a 0-based CDS offset to its genomic position.
+        """Map a 0-based CDS/cDNA offset to its genomic position.
 
         Args:
-            offset (int): 0-based offset into the CDS.
+            offset (int): 0-based offset into the CDS/cDNA.
             accelerator (MapperIndex | None): If given, answers in O(1) via list index; otherwise
                 falls back to an O(log exon count) bisect search.
 
@@ -186,10 +186,10 @@ class Mapper:
         return (span_end - offset_in_span) if self.strand == Strand.REVERSE else (span_start + offset_in_span)
 
     def genomic_span_to_offsets(self, min_position: int, max_position: int) -> tuple[int, int] | None:
-        """Map a genomic span ``[min_position, max_position]`` to CDS offsets ``[low, high]``.
+        """Map a genomic span ``[min_position, max_position]`` to CDS/cDNA offsets ``[low, high]``.
 
         Equivalent to calling ``genomic_to_offset`` on every genomic position in the span and
-        taking the min/max of whatever is overlapping the CDS. But instead of calling for every genomic
+        taking the min/max of whatever is overlapping the CDS/cDNA. But instead of calling for every genomic
         position in the span, this uses a bisect search to find the overlapping coding spans and then
         calculates the offsets from the span's prefix sums and the portion overlapping with the span.
 
@@ -200,8 +200,8 @@ class Mapper:
             max_position (int): Upper bound (inclusive) of the genomic span, 1-based.
 
         Returns:
-            tuple[int, int] | None: (low, high) 0-based CDS offsets, or None if the span touches
-                no coding spans at all.
+            tuple[int, int] | None: (low, high) 0-based CDS/cDNA offsets, or None if the span touches
+                no CDS/cDNA spans at all.
         """
         if self.strand == Strand.UNKNOWN:
             logger.warning(
@@ -225,7 +225,7 @@ class Mapper:
         if first_index > last_index:
             return None
 
-        # Get the offsets from the first and last overlapping CDS spans
+        # Get the offsets from the first and last overlapping CDS/cDNA spans
         offsets: list[int] = []
         # dict.fromkeys, not a set: it dedupes the same way when first_index == last_index but
         # iterates in a defined order rather than hash order.
