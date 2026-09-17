@@ -41,6 +41,7 @@ class FixedSizeInputBuffer(InputBuffer[Variation]):
         self._buffer = []
         self._interval_tree = None
         seq_region_name = None
+        prev_start = None
 
         while self._pre_buffer and len(self._buffer) < self.config.buffer_size:
             variant = self._pre_buffer.popleft()
@@ -73,6 +74,9 @@ class FixedSizeInputBuffer(InputBuffer[Variation]):
                 return
 
             self._buffer.append(variant)
+            if prev_start is not None:
+                self._check_for_unsorted_variants(variant, prev_start)
+            prev_start = variant.start
 
         self._is_empty = True
 
@@ -103,3 +107,28 @@ class FixedSizeInputBuffer(InputBuffer[Variation]):
         variations = self._interval_tree.get_overlapping_features(start, end)
 
         return variations
+
+    def _check_for_unsorted_variants(self, var: Variation, prev_start: int) -> None:
+        """Function to check if this variant appears before the previous one.
+
+        There is some leeway to account for deletions or variants that have been minimised.
+
+        Args:
+            var: The current variant to test
+            prev_start: The position of the previous variant
+
+        Returns:
+            None
+
+        Raises:
+            RuntimeError: If the threshold for an unsorted file is reached.
+        """
+
+        if var.start - prev_start < 0:
+            if abs(var.start - prev_start) > self.config.max_not_ordered_variants_distance:
+                self._count_not_ordered_variants += 1
+                if self._count_not_ordered_variants > self.config.max_not_ordered_variants:
+                    raise RuntimeError(
+                        "Exiting the program. The input file appears to be unsorted. "
+                        "Please sort by chromosome and by location and re-submit."
+                    )

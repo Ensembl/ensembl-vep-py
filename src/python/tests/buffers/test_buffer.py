@@ -18,10 +18,9 @@ from typing import Iterator
 from attrs import define
 import pytest
 
-from ensembl.vep.buffers.buffer import Buffer, InputBuffer
+from ensembl.vep.buffers.buffer import Config, Buffer, InputBuffer
 from ensembl.vep.common import SourceType
 
-# from ensembl.vep.models import Feature
 from ensembl.vep.models.variation.variation import Variation
 from tests.buffers.conftest import DummyVariationSource
 
@@ -70,11 +69,11 @@ class TestBufferInitialization:
 class TestBufferProperties:
     """Test Buffer properties."""
 
-    def test_concrete_buffer_properties(self, variation_list: list[Variation]) -> None:
+    def test_concrete_buffer_properties(self, config: Config, variation_list: list[Variation]) -> None:
         """Test concrete buffer ``next`` method and ``is_empty`` property."""
 
         feat_source = DummyVariationSource(source_type=SourceType.FILE, features=variation_list)
-        buffer = ConcreteBuffer(source=feat_source)
+        buffer = ConcreteBuffer(source=feat_source, config=config)
 
         assert isinstance(buffer.variation_iterator, Iterator)
         buffer.next()

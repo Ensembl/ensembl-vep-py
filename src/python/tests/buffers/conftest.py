@@ -19,6 +19,7 @@ from typing import Iterator
 from attrs import define
 import pytest
 
+from ensembl.vep.buffers.buffer import Config
 from ensembl.vep.common import CoordSystemLevel, Strand
 from ensembl.vep.models.sequence import CoordSystem, Slice
 from ensembl.vep.models.variation.variation import Variation
@@ -50,6 +51,12 @@ def create_variation_objects(length: int, start: int = 1, seq_region_name: str =
     ]
 
 
+@pytest.fixture(name="config")
+def config_fixture() -> Config:
+    """Create a config object for testing."""
+    return Config(buffer_size=5, max_not_ordered_variants=2)
+
+
 @pytest.fixture
 def variation_list() -> list[Variation]:
     """Create a list of Variation objects for testing."""
@@ -61,6 +68,21 @@ def variation_list() -> list[Variation]:
         var_list.append(var)
 
     return var_list
+
+
+@pytest.fixture
+def variation_list_out_of_order() -> list[Variation]:
+    """Create a list of unsorted Variation objects for testing."""
+    return [
+        Variation(
+            start=value,
+            end=value,
+            strand=Strand.FORWARD,
+            slice=genomic_slice("1"),
+            allele_string="A/T",
+        )
+        for value in (100, 20, 120, 60, 5)
+    ]
 
 
 @define(kw_only=True, auto_attribs=True)

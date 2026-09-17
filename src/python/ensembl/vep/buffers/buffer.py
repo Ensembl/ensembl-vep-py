@@ -33,7 +33,9 @@ V = TypeVar("V", bound=Variation)
 class Config:
     """Stand in object for Config class"""
 
-    buffer_size: int = field(default=5, init=False)
+    buffer_size: int = field(default=5000)
+    max_not_ordered_variants: int = field(default=5)
+    max_not_ordered_variants_distance: int = field(default=50)
 
 
 @define(kw_only=True, auto_attribs=True)
@@ -92,6 +94,7 @@ class InputBuffer(Buffer[V], Generic[V]):
     source: FeatureSource[V]
     _buffer: list[V] = field(factory=list, init=False)
     _pre_buffer: deque[V] = field(factory=deque, init=False)
+    _count_not_ordered_variants: int = field(default=0, init=False)
 
     @property
     def variation_iterator(self) -> Iterator[V]:
