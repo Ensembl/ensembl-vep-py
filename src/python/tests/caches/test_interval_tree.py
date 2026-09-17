@@ -20,7 +20,7 @@ import pytest
 
 from ensembl.vep.common import Strand
 from ensembl.vep.models import Feature
-from ensembl.vep.models.overlap.interval_tree import IntervalTree
+from ensembl.vep.caches.interval_tree import IntervalTree
 from ensembl.vep.models.variation.variation import Variation
 
 # logger = logging.getLogger(__name__)

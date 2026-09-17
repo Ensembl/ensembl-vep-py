@@ -21,7 +21,7 @@ from typing import Protocol, runtime_checkable
 
 from attrs import define, field, frozen
 
-from ensembl.vep.models.overlap.interval_tree import IntervalTree
+from ensembl.vep.caches.interval_tree import IntervalTree
 from ensembl.vep.sources.feature_source import FeatureSource
 
 
