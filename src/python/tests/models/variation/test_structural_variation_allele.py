@@ -22,7 +22,7 @@ import pytest
 from attrs import evolve
 
 from ensembl.vep.common import CoordSystemLevel, Strand
-from ensembl.vep.models.variation import StructuralVariationAllele
+from ensembl.vep.models.variation import StructuralVariation, StructuralVariationAllele
 from ensembl.vep.models.genic import Transcript
 from ensembl.vep.models.overlap import OverlapConsequence, TranscriptStructuralVariationAllele
 from ensembl.vep.models.sequence import CoordSystem, Slice
@@ -39,6 +39,18 @@ def genomic_slice() -> Slice:
         start=1,
         end=1000,
         strand=Strand.FORWARD,
+    )
+
+
+@pytest.fixture
+def structural_variation(genomic_slice: Slice) -> StructuralVariation:
+    """Returns a StructuralVariation object for testing."""
+    return StructuralVariation(
+        start=5,
+        end=150,
+        strand=Strand.FORWARD,
+        slice=genomic_slice,
+        allele_string="-/DEL",
     )
 
 
@@ -83,6 +95,7 @@ class TestStructuralVariationAlleleProperties:
         assert (
             structural_variation_allele.alternate_allele == "DEL"
         ), "alternate_allele attribute initialized incorrectly"
+        assert structural_variation_allele.variation is None
         assert structural_variation_allele.svlen == 145, "svlen attribute initialized incorrectly"
 
     def test_initialization_without_keywords(self) -> None:
@@ -96,6 +109,16 @@ class TestStructuralVariationAlleleProperties:
                 reference_allele="-",
                 alternate_allele="DEL",
             )
+
+    def test_structural_variation_can_be_assigned(
+        self,
+        structural_variation_allele: StructuralVariationAllele,
+        structural_variation: StructuralVariation,
+    ) -> None:
+        """Test that an allele can reference its owning structural variation."""
+        structural_variation_allele.variation = structural_variation
+
+        assert structural_variation_allele.variation is structural_variation
 
     def test_minimise_warning(
         self, structural_variation_allele: StructuralVariationAllele, caplog: pytest.LogCaptureFixture

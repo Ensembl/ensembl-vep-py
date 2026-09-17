@@ -107,7 +107,11 @@ class TestVariationProperties:
         """Test Variation initialization without keyword raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = Variation(
-                100, end=100, strand=Strand.FORWARD, slice=None, allele_string="A/T"  # type: ignore[misc]
+                100,
+                end=100,
+                strand=Strand.FORWARD,
+                slice=None,
+                allele_string="A/T",  # type: ignore[misc]
             )
 
     def test_defaults(self, variation: Variation) -> None:
@@ -162,6 +166,7 @@ class TestVariationAlleles:
         alleles = variation.variation_alleles
 
         assert len(alleles) == 1
+        assert alleles[0].variation is variation
         assert alleles[0].reference_allele == "A"
         assert alleles[0].alternate_allele == "T"
 
@@ -173,7 +178,7 @@ class TestVariationAlleles:
         assert alleles[0].alternate_allele == "T"
         assert alleles[1].alternate_allele == "G"
         assert alleles[2].alternate_allele == "C"
-        # All share the same reference
+        # All share the same reference allele
         assert all(a.reference_allele == "A" for a in alleles)
 
     def test_insertion_alleles(self, insertion_variation: Variation) -> None:

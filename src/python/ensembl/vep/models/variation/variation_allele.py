@@ -22,11 +22,18 @@ from threading import RLock
 from collections.abc import Sequence
 from attrs import define, field
 
-from ensembl.vep.common import Locus, trim_sequences, shift_sequence, invalidates, resets_attrs
+from ensembl.vep.common import (
+    Locus,
+    trim_sequences,
+    shift_sequence,
+    invalidates,
+    resets_attrs,
+)
 from ensembl.vep.models import Feature
 
 if TYPE_CHECKING:
     from ensembl.vep.models.overlap import OverlapConsequence, FeatureOverlap, TranscriptVariationAllele
+    from ensembl.vep.models.variation.variation import Variation
 
 logger = logging.getLogger(__name__)
 MAX_SEARCH_AREA = 1000
@@ -45,6 +52,8 @@ class VariationAllele(Feature):
             The reference allele.
         alternate_allele (str | None):
             The alternate allele.
+        variation (Variation | None):
+            Variation that owns this allele.
         transcript_variation_alleles (list[TranscriptVariationAllele]):
             List of overlaps between this variation allele and transcripts.
         original_locus (Locus | None):
@@ -87,6 +96,8 @@ class VariationAllele(Feature):
             )
         ],
     )
+    variation: Variation | None = field(default=None, repr=False, eq=False)
+    """The variation that owns this allele, if available."""
     _original_locus: Locus | None = field(default=None, init=False)
     """The original locus of the variation allele before any minimisation or shifting (if any occurred)."""
     _minimised: bool = field(default=False, init=False)

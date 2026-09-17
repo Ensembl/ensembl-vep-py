@@ -89,6 +89,7 @@ class Variation(Feature):
                     slice=self.slice,
                     reference_allele=ref,
                     alternate_allele=alt,
+                    variation=self,
                 )
 
                 variation_alleles.append(variation_allele)
