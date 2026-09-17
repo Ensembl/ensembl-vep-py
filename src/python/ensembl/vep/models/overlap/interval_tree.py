@@ -112,7 +112,7 @@ class IntervalTree(Generic[F]):
             ValueError: If the coordinates are invalid.
         """
 
-        return self.get_overlapping_features(start=feature.start, end=feature.end)
+        return self.get_overlapping_features(start=feature.start, end=feature.end) # DO WE NEED TO MAKE SURE THIS IS SEQ_REGION_START/END
 
     def get_nearest_features(self, start: int, end: int, k: int = 10) -> list[F]:
         """Query the IntervalTree object with an interval and return the ``k`` nearest Features.

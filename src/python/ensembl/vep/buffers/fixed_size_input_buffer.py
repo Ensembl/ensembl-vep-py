@@ -95,8 +95,7 @@ class FixedSizeInputBuffer(InputBuffer[Variation]):
 
         # get/create interval tree
         if not self._interval_tree:
-            self._interval_tree = IntervalTree()
-            self._interval_tree.add_features(self._buffer)
+            self._interval_tree = IntervalTree(features=self._buffer)
 
         # get the overlapping variation objects
         if start > end:
