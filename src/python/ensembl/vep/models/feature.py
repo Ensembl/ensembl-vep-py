@@ -85,6 +85,9 @@ class Feature(UnsafeSetterMixin):
         """
         Returns the start position in the sequence region.
 
+        If the attached slice is on the reverse strand,
+        seq_region_start corresponds to the feature.end position
+
         Returns:
             The start position in the sequence region,
             or None if the feature has no attached slice.
@@ -93,6 +96,8 @@ class Feature(UnsafeSetterMixin):
             if self.slice is None:
                 logger.warning("Cannot obtain seq_region_start for a feature without attached slice.")
                 return None
+            if self.slice.strand == Strand.REVERSE:
+                return self.slice.end - self.end + 1
             return self.slice.start + self.start - 1
 
     @property
@@ -110,6 +115,9 @@ class Feature(UnsafeSetterMixin):
         """
         Returns the end position in the sequence region.
 
+        If the attached slice is on the reverse strand,
+        seq_region_end corresponds to the feature.start position
+
         Returns:
             int | None: The end position in the sequence region, or None if the feature has no attached slice.
         """
@@ -117,6 +125,8 @@ class Feature(UnsafeSetterMixin):
             if self.slice is None:
                 logger.warning("Cannot obtain seq_region_end for a feature without attached slice.")
                 return None
+            if self.slice.strand == Strand.REVERSE:
+                return self.slice.end - self.start + 1
             return self.slice.start + self.end - 1
 
     @property

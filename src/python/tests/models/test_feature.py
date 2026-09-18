@@ -192,7 +192,7 @@ class TestFeatureProperties:  # pylint: disable=too-many-public-methods
     def test_seq_extracts_substring_from_slice(self, dummy_sequence_source: DummySequenceSource) -> None:
         """Test seq extracts the correct substring from the slice sequence."""
         source = dummy_sequence_source
-        source.data = {"1": "ACGTACGTACGTACGTACGT"}
+        source.data = {"1": "TTTTACGTAAAAAAAAAAAA"}
         genomic_slice = Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
@@ -210,7 +210,7 @@ class TestFeatureProperties:  # pylint: disable=too-many-public-methods
         self, dummy_sequence_source: DummySequenceSource
     ) -> None:
         """Test seq is reverse-complemented when feature and slice strands disagree."""
-        dummy_sequence_source.data = {"1": "AAAAGTCACGCTTTT"}
+        dummy_sequence_source.data = {"1": "AAAAGTCGAACTTTT"}
         genomic_slice = Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
@@ -219,17 +219,17 @@ class TestFeatureProperties:  # pylint: disable=too-many-public-methods
             strand=Strand.FORWARD,
             sequence_source=dummy_sequence_source,
         )
-        assert genomic_slice.seq == "GTCACGC"
+        assert genomic_slice.seq == "GTCGAAC"
         feature = Feature(start=2, end=4, strand=Strand.FORWARD, slice=genomic_slice)
         assert feature.seq_region_start == 6
         assert feature.seq_region_end == 8
-        assert feature.seq == "TCA"
+        assert feature.seq == "TCG"
         feature = Feature(start=2, end=4, strand=Strand.REVERSE, slice=genomic_slice)
         assert feature.seq_region_start == 6
         assert feature.seq_region_end == 8
-        assert feature.seq == "TGA"
+        assert feature.seq == "CGA"
 
-        dummy_sequence_source.data = {"1": "AAAAGTCACGCTTTT"}
+        dummy_sequence_source.data = {"1": "AAAAGTCGAACTTTT"}
         genomic_slice = Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
@@ -238,16 +238,16 @@ class TestFeatureProperties:  # pylint: disable=too-many-public-methods
             strand=Strand.REVERSE,
             sequence_source=dummy_sequence_source,
         )
-        assert genomic_slice.seq == "GCGTGAC"
+        assert genomic_slice.seq == "GTTCGAC"
         feature = Feature(start=2, end=4, strand=Strand.FORWARD, slice=genomic_slice)
-        assert feature.seq_region_start == 6
-        assert feature.seq_region_end == 8
-        # assert feature.seq == "TCA"
+        assert feature.seq_region_start == 8
+        assert feature.seq_region_end == 10
+        assert feature.seq == "TTC"
 
         feature = Feature(start=2, end=4, strand=Strand.REVERSE, slice=genomic_slice)
-        assert feature.seq_region_start == 6
-        assert feature.seq_region_end == 8
-        # assert feature.seq == "TGA"
+        assert feature.seq_region_start == 8
+        assert feature.seq_region_end == 10
+        assert feature.seq == "GAA"
 
     def test_seq_immutable(self, feature: Feature) -> None:
         """Test seq cannot be directly set."""
