@@ -269,7 +269,10 @@ class TestCDNAMapper:
     def test_resolves_utr_positions_the_cds_mapper_cannot(self, forward_transcript: Transcript) -> None:
         """A 5' UTR genomic position maps to None on the CDS-only mapper but resolves on the
         transcript-wide one -- the whole reason _full_cds_alleles needs a second mapper."""
+        assert forward_transcript.cds_mapper is not None
         assert forward_transcript.cds_mapper.genomic_to_offset(1) is None
+
+        assert forward_transcript.cdna_mapper is not None
         assert forward_transcript.cdna_mapper.genomic_to_offset(1) == 0
 
     def test_none_with_no_exons(self) -> None:
