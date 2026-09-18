@@ -443,30 +443,27 @@ class Transcript(Feature):
             CDS | None: The CDS associated with this transcript, or None if not applicable.
         """
         with self._lock:
+            genomic_spans = self.cds_genomic_spans
             first_coding_exon_index = self.first_coding_exon_index
             last_coding_exon_index = self.last_coding_exon_index
-            exon_coding_start = self.exon_coding_start
-            exon_coding_end = self.exon_coding_end
-            if (
-                first_coding_exon_index is None
-                or last_coding_exon_index is None
-                or exon_coding_start is None
-                or exon_coding_end is None
-            ):
+            if genomic_spans is None or first_coding_exon_index is None or last_coding_exon_index is None:
                 logger.warning(
                     f"Cannot compute CDS for transcript {self.stable_id} because no coding"
                     " boundary information is available."
                 )
                 return None
 
-            seq = ""
-            cds_start: int | None = None
-            cds_end: int | None = None
+            coding_exons = self.spliced_exons[first_coding_exon_index : last_coding_exon_index + 1]
+            if len(coding_exons) != len(genomic_spans):
+                # An exon clipped to nothing means the coding offsets are inconsistent with the exons.
+                logger.warning(
+                    f"Cannot compute CDS for transcript {self.stable_id} because its coding boundaries"
+                    " do not fit its exons."
+                )
+                return None
 
-            for exon_index, exon in enumerate(self.spliced_exons):
-                if exon_index < first_coding_exon_index or exon_index > last_coding_exon_index:
-                    continue
-
+            blocks: list[str] = []
+            for exon, (block_start, block_end) in zip(coding_exons, genomic_spans):
                 if exon.seq is None:
                     logger.warning(
                         f"Exon {exon.stable_id} has no sequence information,"
@@ -474,30 +471,21 @@ class Transcript(Feature):
                         f" when constructing CDS sequence for transcript {self.stable_id}."
                         f" Transcript sequence may not be accurate."
                     )
-                    exon_coding_seq = "N" * exon.length
+                    exon_seq = "N" * exon.length
                 else:
-                    exon_coding_seq = exon.seq
+                    exon_seq = exon.seq
 
-                forward = self.strand == Strand.FORWARD
-                if exon_index == first_coding_exon_index:
-                    exon_coding_seq = exon_coding_seq[exon_coding_start - 1 :]
-                    cds_start = (
-                        exon.start + exon_coding_start - 1 if forward else exon.end - exon_coding_start + 1
-                    )
-                if exon_index == last_coding_exon_index:
-                    exon_coding_seq = exon_coding_seq[:exon_coding_end]
-                    if exon_coding_end is not None:
-                        cds_end = (
-                            exon.start + exon_coding_end - 1 if forward else exon.end - exon_coding_end + 1
-                        )
-                    else:
-                        cds_end = exon.end if forward else exon.start
+                blocks.append(exon_seq[block_start - exon.start : block_end - exon.start + 1])
 
-                seq += exon_coding_seq
+            if self.strand == Strand.REVERSE:
+                # Blocks are in transcript order, i.e. genomic-descending here: restore genomic order
+                # before reverse-complementing the whole CDS into transcript sense.
+                seq = reverse_complement("".join(reversed(blocks)))
+            else:
+                seq = "".join(blocks)
 
-            if seq == "" or cds_start is None or cds_end is None:
-                return None
-
+            cds_start = min(block_start for block_start, _ in genomic_spans)
+            cds_end = max(block_end for _, block_end in genomic_spans)
             cds = CDS(start=cds_start, end=cds_end, strand=self.strand, slice=self.slice)
             cds.seq = seq
             cds.transcript = self

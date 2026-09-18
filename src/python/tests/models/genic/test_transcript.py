@@ -19,7 +19,7 @@ import pytest
 
 from ensembl.vep.common.enums import CoordSystemLevel, Strand
 from ensembl.vep.common.containers import Attribute
-from ensembl.vep.common.methods import invalidate
+from ensembl.vep.common.methods import invalidate, reverse_complement
 from ensembl.vep.models.genic import Transcript, Exon, Intron, Translation, CDS
 from ensembl.vep.models.sequence import CoordSystem, Slice
 
@@ -340,8 +340,8 @@ class TestTranscriptProperties:
             assert (cds.start, cds.end) == (22, 45)
         else:
             # transcript order is [E2, E1, E0]; first coding exon E1 (20-31) counted from its own
-            # 5' end (31) -> 29; last coding exon E0 (1-10) counted from 10 -> 5.
-            assert (cds.start, cds.end) == (29, 5)
+            # 5' end (31) -> 29; last coding exon E0 (1-10) counted from 10 -> 5. Ascending: 5-29.
+            assert (cds.start, cds.end) == (5, 29)
 
     @pytest.mark.parametrize("strand", [Strand.FORWARD, Strand.REVERSE])
     def test_cds_when_coding_ends_in_an_earlier_exon(self, strand: Strand) -> None:
@@ -371,10 +371,68 @@ class TestTranscriptProperties:
         else:
             # transcript order is [E2, E1, E0]; first coding exon E2 (40-49) counted from its own
             # 5' end (49) -> 47; last coding exon E1 (20-31) counted from 31 -> 26. E0 is unused.
-            assert (cds.start, cds.end) == (47, 26)
+            # Ascending: 26-47.
+            assert (cds.start, cds.end) == (26, 47)
         # 8 bases from the first coding exon (offset 3 to its end) + 6 from the last.
         assert cds.seq is not None
         assert len(cds.seq) == 14
+
+    def test_reverse_strand_cds_read_first_keeps_coding_boundaries(self) -> None:
+        """Reading the derived CDS before coding_start/end does not flip them on the reverse strand."""
+        dummy_slice = DummySlice("ACGT" * 25, feature_start=1)
+        transcript = Transcript(start=1, end=100, strand=Strand.REVERSE, stable_id="T", slice=dummy_slice)
+        transcript.spliced_exons = [
+            Exon(start=60, end=100, strand=Strand.REVERSE, stable_id="E0", slice=dummy_slice),
+            Exon(start=1, end=40, strand=Strand.REVERSE, stable_id="E1", slice=dummy_slice),
+        ]
+        transcript.seed_attrs(
+            first_coding_exon_index=0, last_coding_exon_index=1, exon_coding_start=11, exon_coding_end=31
+        )
+
+        cds = transcript.cds
+
+        assert cds is not None
+        assert (cds.start, cds.end) == (10, 90)
+        assert (transcript.coding_start, transcript.coding_end) == (90, 10)
+        assert transcript.five_prime_utr is not None
+        assert (transcript.five_prime_utr.start, transcript.five_prime_utr.end) == (91, 100)
+        assert transcript.three_prime_utr is not None
+        assert (transcript.three_prime_utr.start, transcript.three_prime_utr.end) == (1, 9)
+
+    @pytest.mark.parametrize(
+        ("strand", "expected_seq"),
+        [(Strand.FORWARD, "ATGAAATAA"), (Strand.REVERSE, "ATGAAATAA")],
+    )
+    def test_single_exon_cds_seq_excludes_both_utrs(self, strand: Strand, expected_seq: str) -> None:
+        """A CDS inside one exon with UTR on both sides yields exactly the coding bases."""
+        transcript_sense = "CC" + expected_seq + "GGG"
+        genomic = transcript_sense if strand == Strand.FORWARD else reverse_complement(transcript_sense)
+        dummy_slice = DummySlice(genomic, feature_start=1)
+        transcript = Transcript(start=1, end=14, strand=strand, stable_id="T", slice=dummy_slice)
+        transcript.spliced_exons = [Exon(start=1, end=14, strand=strand, stable_id="E0", slice=dummy_slice)]
+        transcript.seed_attrs(
+            first_coding_exon_index=0, last_coding_exon_index=0, exon_coding_start=3, exon_coding_end=11
+        )
+
+        cds = transcript.cds
+
+        assert cds is not None
+        assert cds.seq == expected_seq
+        assert (cds.start, cds.end) == ((3, 11) if strand == Strand.FORWARD else (4, 12))
+
+    def test_cds_is_none_when_coding_offsets_do_not_fit_exons(self) -> None:
+        """An exon_coding_start past the first coding exon's end yields no CDS."""
+        dummy_slice = DummySlice("A" * 40, feature_start=1)
+        transcript = Transcript(start=1, end=40, strand=Strand.FORWARD, stable_id="T", slice=dummy_slice)
+        transcript.spliced_exons = [
+            Exon(start=1, end=10, strand=Strand.FORWARD, stable_id="E0", slice=dummy_slice),
+            Exon(start=20, end=40, strand=Strand.FORWARD, stable_id="E1", slice=dummy_slice),
+        ]
+        transcript.seed_attrs(
+            first_coding_exon_index=0, last_coding_exon_index=1, exon_coding_start=12, exon_coding_end=5
+        )
+
+        assert transcript.cds is None
 
     @staticmethod
     def _transcript_with_utrs(
