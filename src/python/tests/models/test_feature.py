@@ -192,7 +192,7 @@ class TestFeatureProperties:  # pylint: disable=too-many-public-methods
     def test_seq_extracts_substring_from_slice(self, dummy_sequence_source: DummySequenceSource) -> None:
         """Test seq extracts the correct substring from the slice sequence."""
         source = dummy_sequence_source
-        source.data = {"1": "TTTTACGTAAAAAAAAAAAA"}
+        source.data = {"1": "ACGTACGTACGTACGTACGT"}
         genomic_slice = Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
             seq_region_name="1",
