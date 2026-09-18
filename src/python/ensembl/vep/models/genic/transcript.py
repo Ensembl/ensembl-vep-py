@@ -966,8 +966,10 @@ class Transcript(Feature):
         Returns:
             int | None: Number of nucleotides in the CDS, or None if the transcript is not coding.
         """
-        mapper = self.cds_mapper
-        return None if mapper is None else mapper.length
+        genomic_spans = self.cds_genomic_spans
+        if genomic_spans is None:
+            return None
+        return sum(end - start + 1 for start, end in genomic_spans)
 
     def genomic_to_cds_offset(
         self, genomic_position: int, *, accelerator: MapperIndex | None = None
