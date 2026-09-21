@@ -206,6 +206,49 @@ class TestFeatureProperties:  # pylint: disable=too-many-public-methods
         # slice.seq is "ACGTACGTACGTACGTACGT", feature covers positions 5-8 -> "ACGT"
         assert feature.seq == "ACGT"
 
+    def test_seq_reverse_complements_when_feature_and_slice_strands_disagree(
+        self, dummy_sequence_source: DummySequenceSource
+    ) -> None:
+        """Test seq is reverse-complemented when feature and slice strands disagree."""
+        dummy_sequence_source.data = {"1": "AAAAGTCGAACTTTT"}
+        genomic_slice = Slice(
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+            seq_region_name="1",
+            start=5,
+            end=11,
+            strand=Strand.FORWARD,
+            sequence_source=dummy_sequence_source,
+        )
+        assert genomic_slice.seq == "GTCGAAC"
+        feature = Feature(start=2, end=4, strand=Strand.FORWARD, slice=genomic_slice)
+        assert feature.seq_region_start == 6
+        assert feature.seq_region_end == 8
+        assert feature.seq == "TCG"
+        feature = Feature(start=2, end=4, strand=Strand.REVERSE, slice=genomic_slice)
+        assert feature.seq_region_start == 6
+        assert feature.seq_region_end == 8
+        assert feature.seq == "CGA"
+
+        dummy_sequence_source.data = {"1": "AAAAGTCGAACTTTT"}
+        genomic_slice = Slice(
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+            seq_region_name="1",
+            start=5,
+            end=11,
+            strand=Strand.REVERSE,
+            sequence_source=dummy_sequence_source,
+        )
+        assert genomic_slice.seq == "GTTCGAC"
+        feature = Feature(start=2, end=4, strand=Strand.FORWARD, slice=genomic_slice)
+        assert feature.seq_region_start == 8
+        assert feature.seq_region_end == 10
+        assert feature.seq == "TTC"
+
+        feature = Feature(start=2, end=4, strand=Strand.REVERSE, slice=genomic_slice)
+        assert feature.seq_region_start == 8
+        assert feature.seq_region_end == 10
+        assert feature.seq == "GAA"
+
     def test_seq_immutable(self, feature: Feature) -> None:
         """Test seq cannot be directly set."""
         with pytest.raises(AttributeError, match="property 'seq' of 'Feature' object has no setter"):
