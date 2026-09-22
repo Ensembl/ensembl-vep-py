@@ -475,14 +475,15 @@ class Transcript(Feature):
                 else:
                     exon_seq = exon.seq
 
-                blocks.append(exon_seq[block_start - exon.start : block_end - exon.start + 1])
+                # exon sequence is already reverse complemented
+                if self.strand == Strand.REVERSE:
+                    blocks.append(exon_seq[exon.end - block_end : exon.end - block_start + 1])
+                else:
+                    blocks.append(exon_seq[block_start - exon.start : block_end - exon.start + 1])
 
-            if self.strand == Strand.REVERSE:
-                # Blocks are in transcript order, i.e. genomic-descending here: restore genomic order
-                # before reverse-complementing the whole CDS into transcript sense.
-                seq = reverse_complement("".join(reversed(blocks)))
-            else:
-                seq = "".join(blocks)
+            # Blocks are in transcript order and the sequence has already been reverse complemented
+            # so we can just join the sequences together
+            seq = "".join(blocks)
 
             cds_start = min(block_start for block_start, _ in genomic_spans)
             cds_end = max(block_end for _, block_end in genomic_spans)
