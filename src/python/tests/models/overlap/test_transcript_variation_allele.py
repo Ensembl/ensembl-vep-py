@@ -70,12 +70,12 @@ def _build_forward_transcript(
     _write_sequence_at_position(chars, 30, exon_two_rest)
     _write_sequence_at_position(chars, 55, three_prime_utr)
     _write_sequence_at_position(chars, 75, downstream_extra)
-    slice = DummySlice("".join(chars))
+    genomic_slice = DummySlice("".join(chars))
 
-    transcript = Transcript(start=1, end=74, strand=Strand.FORWARD, stable_id="ENST_FWD", slice=slice)
+    transcript = Transcript(start=1, end=74, strand=Strand.FORWARD, stable_id="ENST_FWD", slice=genomic_slice)
     transcript.spliced_exons = [
-        Exon(start=1, end=20, strand=Strand.FORWARD, stable_id="ENST_FWD_e0", slice=slice),
-        Exon(start=30, end=74, strand=Strand.FORWARD, stable_id="ENST_FWD_e1", slice=slice),
+        Exon(start=1, end=20, strand=Strand.FORWARD, stable_id="ENST_FWD_e0", slice=genomic_slice),
+        Exon(start=30, end=74, strand=Strand.FORWARD, stable_id="ENST_FWD_e1", slice=genomic_slice),
     ]
     transcript.seed_attrs(
         first_coding_exon_index=0, last_coding_exon_index=1, exon_coding_start=10, exon_coding_end=25
@@ -116,14 +116,14 @@ def _build_reverse_transcript(
         exon_two_end - len(exon_two_sequence) + 1,
         reverse_complement(exon_two_sequence),
     )
-    slice = DummySlice("".join(chars))
+    genomic_slice = DummySlice("".join(chars))
 
     transcript = Transcript(
         start=transcript_start,
         end=transcript_end,
         strand=Strand.REVERSE,
         stable_id="ENST_REV",
-        slice=slice,
+        slice=genomic_slice,
     )
     transcript.spliced_exons = [
         Exon(
@@ -131,14 +131,14 @@ def _build_reverse_transcript(
             end=exon_one_end,
             strand=Strand.REVERSE,
             stable_id="ENST_REV_e0",
-            slice=slice,
+            slice=genomic_slice,
         ),
         Exon(
             start=exon_two_start,
             end=exon_two_end,
             strand=Strand.REVERSE,
             stable_id="ENST_REV_e1",
-            slice=slice,
+            slice=genomic_slice,
         ),
     ]
     transcript.seed_attrs(
@@ -291,18 +291,21 @@ class TestFullCdsAlleles:
         """Test that deleting UTR and start-codon bases removes the start methionine."""
         variation_allele = _create_variation_allele(transcript, 8, 11, "NNAT", "-")
         tva = _create_transcript_variation_allele(transcript, variation_allele)
+        assert tva.alternate_cds_peptide is not None
         assert not tva.alternate_cds_peptide.startswith("M")
 
     def test_forward_whole_start_codon_deletion(self, transcript: Transcript) -> None:
         """Test that deleting the complete start codon removes the start methionine."""
         variation_allele = _create_variation_allele(transcript, 10, 12, "ATG", "-")
         tva = _create_transcript_variation_allele(transcript, variation_allele)
+        assert tva.alternate_cds_peptide is not None
         assert not tva.alternate_cds_peptide.startswith("M")
 
     def test_forward_start_codon_snv_retained(self, transcript: Transcript) -> None:
         """Test that an insertion preserving the start codon retains the start methionine."""
         variation_allele = _create_variation_allele(transcript, 11, 10, "A", "AT")
         tva = _create_transcript_variation_allele(transcript, variation_allele)
+        assert tva.alternate_cds_peptide is not None
         assert tva.alternate_cds_peptide.startswith("M")
 
     def test_forward_start_codon_delins_anchor_reads_through_the_replacement(
@@ -310,9 +313,11 @@ class TestFullCdsAlleles:
     ) -> None:
         """Test that a start-spanning delins anchors the alternate CDS at the edit start."""
         # Replace 2bp of 5' UTR + the ATG's own first base with a 10bp run of G's.
+        assert transcript.spliced_seq is not None
         expected_tail = "G" * 10 + transcript.spliced_seq[10:45]  # replacement, then untouched CDS remainder
         variation_allele = _create_variation_allele(transcript, 8, 10, "NNA", "G" * 10)
         tva = _create_transcript_variation_allele(transcript, variation_allele)
+        assert tva.alternate_cds_peptide is not None
         assert not tva.alternate_cds_peptide.startswith("M")
         assert tva.alternate_cds == expected_tail
 
@@ -337,6 +342,7 @@ class TestFullCdsAlleles:
     ) -> None:
         """Test that deleting the stop codon and 3' UTR truncates the alternate CDS."""
         transcript = forward_transcript_with_utr
+        assert transcript.spliced_seq is not None
         expected_head = transcript.spliced_seq[9:42]  # ATG + the poly-G run, unedited
         variation_allele = _create_variation_allele(transcript, 52, 74, "N" * 23, "-")
         tva = _create_transcript_variation_allele(transcript, variation_allele)
@@ -349,6 +355,7 @@ class TestFullCdsAlleles:
     ) -> None:
         """Test that a stop-spanning delins excludes sequence beyond the disrupted CDS end."""
         transcript = forward_transcript_with_utr
+        assert transcript.spliced_seq is not None
         expected_head = transcript.spliced_seq[9:42]  # ATG + the poly-G run, unedited
         variation_allele = _create_variation_allele(transcript, 52, 55, "TAAN", "A" * 10)
         tva = _create_transcript_variation_allele(transcript, variation_allele)
@@ -360,6 +367,7 @@ class TestFullCdsAlleles:
         variation_allele = _create_variation_allele(transcript, 10, 54, CODING_SEQUENCE, "-")
         tva = _create_transcript_variation_allele(transcript, variation_allele)
         assert tva.alternate_cds == ""
+        assert tva.alternate_cds_peptide is not None
         assert not tva.alternate_cds_peptide.startswith("M")
 
     def test_insertion_inside_cds(self, forward_transcript_with_utr: Transcript) -> None:
@@ -367,7 +375,10 @@ class TestFullCdsAlleles:
         transcript = forward_transcript_with_utr
         variation_allele = _create_variation_allele(transcript, 15, 14, "-", "GGG")
         tva = _create_transcript_variation_allele(transcript, variation_allele)
+
+        assert tva.alternate_cds_peptide is not None
         assert tva.alternate_cds_peptide == "M" + "G" * 11 + "*"
+        assert tva.reference_cds_peptide is not None
         assert len(tva.alternate_cds_peptide) > len(tva.reference_cds_peptide)
 
     def test_purely_intronic_snv_is_a_no_op(self, transcript: Transcript) -> None:
@@ -400,6 +411,7 @@ class TestFullCdsAlleles:
             transcript, coding_start - 1, coding_start + 2, "NNNN", "-"
         )
         tva = _create_transcript_variation_allele(transcript, variation_allele)
+        assert tva.alternate_cds_peptide is not None
         assert not tva.alternate_cds_peptide.startswith("M")
 
     def test_no_spliced_exons(self) -> None:
@@ -454,7 +466,10 @@ class TestFullCdsAllelesReadthrough:
         readthrough = _create_transcript_variation_allele(
             transcript, variation_allele, readthrough=Readthrough.UTR
         )
+        assert readthrough.alternate_cds_peptide is not None
         assert readthrough.alternate_cds_peptide == "M" + "G" * 10 + "K*"
+        assert readthrough.alternate_cds is not None
+        assert default.alternate_cds is not None
         assert readthrough.alternate_cds == default.alternate_cds + "TAA"
 
     def test_utr_readthrough_does_not_read_past_the_transcript(self) -> None:
@@ -467,7 +482,9 @@ class TestFullCdsAllelesReadthrough:
             transcript, variation_allele, readthrough=Readthrough.UTR
         )
 
+        assert readthrough.alternate_cds is not None
         assert len(readthrough.alternate_cds) == 56  # anchor 9 to the end of the 65-base cDNA
+        assert readthrough.alternate_cds_peptide is not None
         assert "*" not in readthrough.alternate_cds_peptide
 
     def test_beyond_transcript_reads_flanking_sequence(self) -> None:
@@ -480,7 +497,9 @@ class TestFullCdsAllelesReadthrough:
             transcript, variation_allele, readthrough=Readthrough.BEYOND_TRANSCRIPT
         )
 
+        assert beyond.alternate_cds_peptide is not None
         assert beyond.alternate_cds_peptide.endswith("*")
+        assert beyond.alternate_cds is not None
         assert len(beyond.alternate_cds) == 60  # 56 in-transcript + "N" completing the codon + TAA
 
     def test_beyond_transcript_is_bounded(self, forward_long_readthrough_transcript: Transcript) -> None:
@@ -491,7 +510,9 @@ class TestFullCdsAllelesReadthrough:
             transcript, variation_allele, readthrough=Readthrough.BEYOND_TRANSCRIPT
         )
 
+        assert beyond.alternate_cds_peptide is not None
         assert "*" not in beyond.alternate_cds_peptide
+        assert beyond.alternate_cds is not None
         assert len(beyond.alternate_cds) <= 56 + MAX_READTHROUGH_BASES
 
     def test_reference_cds_is_level_invariant(self, forward_readthrough_transcript: Transcript) -> None:
@@ -512,7 +533,9 @@ class TestFullCdsAllelesReadthrough:
         variation_allele = _create_variation_allele(transcript, 52, 52, "T", "A")
         tva = _create_transcript_variation_allele(transcript, variation_allele, readthrough=Readthrough.UTR)
 
+        assert tva.alternate_cds is not None
         assert tva.alternate_cds_peptide == translate_dna(tva.alternate_cds)
+        assert tva.reference_cds is not None
         assert tva.reference_cds_peptide == translate_dna(tva.reference_cds)
 
     def test_reassigning_readthrough_invalidates_cached_alleles(
@@ -529,16 +552,17 @@ class TestFullCdsAllelesReadthrough:
 
     def test_downstream_flanking_sequence_reverse_strand(self) -> None:
         """Test that reverse-strand downstream sequence is reverse-complemented."""
-        slice = DummySlice("ACGTACGTACGTACGTACG" + "N" * 30)
-        transcript = Transcript(start=20, end=30, strand=Strand.REVERSE, stable_id="RT", slice=slice)
+        genomic_slice = DummySlice("ACGTACGTACGTACGTACG" + "N" * 30)
+        transcript = Transcript(start=20, end=30, strand=Strand.REVERSE, stable_id="RT", slice=genomic_slice)
         transcript.spliced_exons = [
-            Exon(start=20, end=30, strand=Strand.REVERSE, stable_id="RT_e0", slice=slice)
+            Exon(start=20, end=30, strand=Strand.REVERSE, stable_id="RT_e0", slice=genomic_slice)
         ]
         variation_allele = _create_variation_allele(transcript, 20, 20, "T", "A")
         tva = _create_transcript_variation_allele(transcript, variation_allele)
 
+        assert genomic_slice.seq is not None
         flank = tva._downstream_flanking_sequence(10)  # pylint: disable=protected-access
-        assert flank == reverse_complement(slice.seq[9:19])
+        assert flank == reverse_complement(genomic_slice.seq[9:19])
 
     def test_downstream_flanking_sequence_is_empty_past_the_slice(
         self, forward_transcript_with_utr: Transcript
@@ -574,7 +598,10 @@ class TestSequenceEditGeometry:
         variation_allele = _create_variation_allele(transcript, 8, 12, "NNATG", "-")
         tva = _create_transcript_variation_allele(transcript, variation_allele)
 
+        assert tva._cds_edit is not None  # pylint: disable=protected-access
         assert tva._cds_edit.footprint == (0, 2)  # pylint: disable=protected-access
+
+        assert tva._cdna_edit is not None  # pylint: disable=protected-access
         assert tva._cdna_edit.footprint == (7, 11)  # pylint: disable=protected-access
         assert tva._cds_edit.footprint != tva._cdna_edit.footprint  # pylint: disable=protected-access
 
@@ -587,6 +614,7 @@ class TestSequenceEditGeometry:
         tva = _create_transcript_variation_allele(transcript, variation_allele)
 
         assert tva.cds_length_change == -3
+        assert tva._cdna_edit is not None  # pylint: disable=protected-access
         assert tva._cdna_edit.length_change == -5  # pylint: disable=protected-access
         assert tva.cds_length_change % 3 == 0  # in frame, no abs() required
 
@@ -735,12 +763,14 @@ class TestFullCdsAllelesParityWithOracle:
     def test_parity_n_filled_exon(self) -> None:
         """An N-filled exon (no attached sequence) still agrees with the oracle."""
         exon_one_seq, exon_three_seq = "ATGGGA", "CCCTAA"
-        slice_ = DummySlice(exon_one_seq + "N" * 9 + exon_three_seq)
-        transcript = Transcript(start=1, end=21, strand=Strand.FORWARD, stable_id="ENST_NFILL", slice=slice_)
+        genomic_slice = DummySlice(exon_one_seq + "N" * 9 + exon_three_seq)
+        transcript = Transcript(
+            start=1, end=21, strand=Strand.FORWARD, stable_id="ENST_NFILL", slice=genomic_slice
+        )
         transcript.spliced_exons = [
-            Exon(start=1, end=6, strand=Strand.FORWARD, stable_id="ENST_NFILL_e0", slice=slice_),
+            Exon(start=1, end=6, strand=Strand.FORWARD, stable_id="ENST_NFILL_e0", slice=genomic_slice),
             Exon(start=10, end=12, strand=Strand.FORWARD, stable_id="ENST_NFILL_e1"),  # no slice -> N-filled
-            Exon(start=16, end=21, strand=Strand.FORWARD, stable_id="ENST_NFILL_e2", slice=slice_),
+            Exon(start=16, end=21, strand=Strand.FORWARD, stable_id="ENST_NFILL_e2", slice=genomic_slice),
         ]
         transcript.seed_attrs(
             first_coding_exon_index=0, last_coding_exon_index=2, exon_coding_start=1, exon_coding_end=6
@@ -753,12 +783,16 @@ class TestFullCdsAllelesParityWithOracle:
     def test_parity_partial_last_codon(self) -> None:
         """A CDS whose length is not a multiple of three still agrees with the oracle."""
         genomic_sequence = "ATGGGANNNCCCT"  # 13 bases: 4 whole codons plus a dangling base
-        slice_ = DummySlice(genomic_sequence)
+        genomic_slice = DummySlice(genomic_sequence)
         transcript = Transcript(
-            start=1, end=len(genomic_sequence), strand=Strand.FORWARD, stable_id="ENST_PARTIAL", slice=slice_
+            start=1,
+            end=len(genomic_sequence),
+            strand=Strand.FORWARD,
+            stable_id="ENST_PARTIAL",
+            slice=genomic_slice,
         )
         transcript.spliced_exons = [
-            Exon(start=1, end=13, strand=Strand.FORWARD, stable_id="ENST_PARTIAL_e0", slice=slice_),
+            Exon(start=1, end=13, strand=Strand.FORWARD, stable_id="ENST_PARTIAL_e0", slice=genomic_slice),
         ]
         transcript.seed_attrs(
             first_coding_exon_index=0, last_coding_exon_index=0, exon_coding_start=1, exon_coding_end=13
@@ -925,10 +959,10 @@ def _reassign_forward_coding_exons(transcript: Transcript, coding_sequence: str)
     genomic_chars = list("N" * 74)
     _write_sequence_at_position(genomic_chars, 10, coding_sequence[:11])
     _write_sequence_at_position(genomic_chars, 30, coding_sequence[11:])
-    new_slice = DummySlice("".join(genomic_chars))
+    new_genomic_slice = DummySlice("".join(genomic_chars))
     transcript.spliced_exons = [
-        Exon(start=1, end=20, strand=Strand.FORWARD, stable_id="ENST_FWD_e0", slice=new_slice),
-        Exon(start=30, end=74, strand=Strand.FORWARD, stable_id="ENST_FWD_e1", slice=new_slice),
+        Exon(start=1, end=20, strand=Strand.FORWARD, stable_id="ENST_FWD_e0", slice=new_genomic_slice),
+        Exon(start=30, end=74, strand=Strand.FORWARD, stable_id="ENST_FWD_e1", slice=new_genomic_slice),
     ]
     # Reassigning spliced_exons invalidates every seeded coding-boundary slot too (they are all in
     # _CODING_DERIVATIONS), so they must be re-seeded exactly as _build_forward_transcript does.

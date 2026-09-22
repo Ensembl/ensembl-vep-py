@@ -99,6 +99,7 @@ class SourceType(Enum):
     DB = "db"
     CACHE = "cache"
 
+
 class Readthrough(IntEnum):
     """How far translation may run when a variant destroys the stop codon.
 
