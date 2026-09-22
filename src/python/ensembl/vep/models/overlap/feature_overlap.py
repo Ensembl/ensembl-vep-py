@@ -67,13 +67,20 @@ class FeatureOverlap:
         Returns:
             OverlapConsequence | None: The most severe consequence, or None if there are no consequences.
         """
+        # Rank 1 is the most severe (see OverlapConsequence.rank), so the lowest rank wins; the
+        # tie-break on term keeps the answer stable across insertion order, as on Variation.
         with self._lock:
             most_severe_consequence = None
-            current_rank = -1
             for consequence in self.overlap_consequences:
-                if consequence.rank > current_rank:
+                if (
+                    most_severe_consequence is None
+                    or consequence.rank < most_severe_consequence.rank
+                    or (
+                        consequence.rank == most_severe_consequence.rank
+                        and consequence.term < most_severe_consequence.term
+                    )
+                ):
                     most_severe_consequence = consequence
-                    current_rank = consequence.rank
             return most_severe_consequence
 
     @property
