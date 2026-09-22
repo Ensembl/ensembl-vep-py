@@ -67,9 +67,10 @@ class TestFeatureOverlapProperties:
         assert feature_overlap.most_severe_consequence == feature_overlap.overlap_consequences[0]
 
         feature_overlap.overlap_consequences += [
-            OverlapConsequence(term="stop_gained", accession="SO:0001587", rank=1)
+            OverlapConsequence(term="synonymous_variant", accession="SO:0001819", rank=3),
+            OverlapConsequence(term="stop_gained", accession="SO:0001587", rank=1),
         ]
-        assert feature_overlap.most_severe_consequence == feature_overlap.overlap_consequences[1]
+        assert feature_overlap.most_severe_consequence == feature_overlap.overlap_consequences[2]
 
         # We cannot do feature_overlap.overlap_consequences.append()
         # as it would not trigger on_setattr, workaround?
