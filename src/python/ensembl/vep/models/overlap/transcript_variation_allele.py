@@ -20,13 +20,63 @@ from functools import cached_property
 from threading import RLock
 from attr import define, field
 
-from ensembl.vep.common import invalidates
+from ensembl.vep.common import Readthrough, SequenceEdit, Strand, invalidates, reverse_complement
+from ensembl.vep.common.codons import translate_dna
 from ensembl.vep.models.overlap.feature_overlap import FeatureOverlap
 
 if TYPE_CHECKING:
     from ensembl.vep.models.genic import Transcript
+    from ensembl.vep.models.sequence import Mapper
     from ensembl.vep.models.variation import VariationAllele
     from ensembl.vep.common import Locus
+
+MAX_READTHROUGH_BASES = 1000
+"""Cap on how far ``Readthrough.BEYOND_TRANSCRIPT`` reads past a transcript's own boundary."""
+
+
+def _nucleotide_sequence_up_to_stop(nucleotide_sequence: str) -> tuple[str, str]:
+    """Truncate ``nucleotide_sequence`` to end at (and include) its first stop codon, if any.
+
+    Args:
+        nucleotide_sequence (str): Nucleotide sequence, transcript-sense.
+
+    Returns:
+        tuple[str, str]: The input truncated at (and including) its first stop codon, or
+            unchanged if no stop codon is found within it, paired with its translation
+            (truncated the same way). ``translate_dna`` translates strictly in fixed 3-base
+            chunks from position 0 with no state carried between codons, so slicing its result
+            at the stop residue is exactly ``translate_dna`` of the truncated nucleotides --
+            re-translating the truncated sequence would repeat work for the same answer.
+    """
+    peptide = translate_dna(nucleotide_sequence)
+    stop_index = peptide.find("*")
+    if stop_index == -1:
+        return nucleotide_sequence, peptide
+    return nucleotide_sequence[: (stop_index + 1) * 3], peptide[: stop_index + 1]
+
+
+def _edited_boundary(original_boundary: int, edit_start: int, edit_end: int, length_change: int) -> int:
+    """Returns the offset of a boundary after an edit.
+
+    The new offset can be used to clip the edited sequence to only have the coding sequence. If the edit
+        1. starts after the boundary, the boundary is unaffected.
+        2. ends before the boundary, the boundary is shifted by the length change of the edit.
+        3. overlaps the boundary, the boundary is anchored to the start of the edit.
+
+    Args:
+        original_boundary (int): The boundary's own offset before the edit (0-based, into spliced_seq).
+        edit_start (int): Start of the edited half-open range (0-based, into spliced_seq).
+        edit_end (int): End of the edited half-open range (exclusive).
+        length_change (int): Net length change of the edit (negative for deletion).
+
+    Returns:
+        int: The boundary's offset in the edited sequence.
+    """
+    if original_boundary < edit_start:
+        return original_boundary
+    if original_boundary >= edit_end:
+        return original_boundary + length_change
+    return edit_start
 
 
 @define(kw_only=True, auto_attribs=True)
@@ -56,11 +106,36 @@ class TranscriptVariationAllele(FeatureOverlap):
         intron_number (int | None):
             The intron number of the transcript that is overlapped by the variation allele,
             or None if the variation allele does not overlap any intron.
+        reference_codon (str | None):
+            The reference allele's whole-codon window in the CDS (transcript-sense), covering
+            every codon touched by the variant, or None if the variant does not overlap the CDS.
+        alternate_codon (str | None):
+            The alternate allele's whole-codon window in the CDS (transcript-sense), i.e.
+            reference_codon with the variant allele spliced in, or None if not applicable.
+        reference_peptide (str | None):
+            The amino acid translation of reference_codon, or None if not applicable.
+        alternate_peptide (str | None):
+            The amino acid translation of alternate_codon, or None if not applicable.
+        reference_cds (str | None):
+            The whole reference CDS (transcript-sense, includes the start and stop codon), or
+            None if the transcript has no CDS at all.
+        alternate_cds (str | None):
+            The whole reference CDS (transcript-sense) with the variant allele spliced in, or None
+            if not applicable.
+        reference_cds_peptide (str | None):
+            The amino acid translation of reference_cds, or None if reference_cds is None.
+        alternate_cds_peptide (str | None):
+            The amino acid translation of alternate_cds, or None if alternate_cds is None.
+        readthrough (Readthrough):
+            How far translation of alternate_cds may run when the variant destroys the stop codon.
     """
 
     feature: Transcript
     overlapping_feature: VariationAllele
     is_reference: bool = field(default=False)
+    readthrough: Readthrough = field(
+        default=Readthrough.NONE, on_setattr=invalidates("_full_cds_alleles", "_full_peptide_alleles")
+    )
     cdna_locus: Locus = field(init=False, on_setattr=invalidates("_hgvs_transcript"))
     cds_locus: Locus | None = field(
         default=None, init=False, on_setattr=invalidates("_hgvs_transcript", "_hgvs_protein")
@@ -70,6 +145,386 @@ class TranscriptVariationAllele(FeatureOverlap):
     exon_number: int | None = field(default=None, init=False)
     intron_number: int | None = field(default=None, init=False)
     _lock: RLock = field(factory=RLock, init=False, repr=False)
+
+    def _edit_on(self, mapper: Mapper | None) -> SequenceEdit | None:
+        """Express the edit caused by this variant in ``mapper``'s offset space.
+
+        The geometry shared by every downstream reconstruction, parameterised by which mapper does
+        the genomic->offset conversion. Uses pure coordinate and allele-string arithmetic with no
+        sequence involved (which makes ``cds_length_change`` cheap).
+
+        Args:
+            mapper (Mapper | None): The mapper whose offset space the edit is expressed in.
+
+        Returns:
+            SequenceEdit | None: The edit, or None when the variant covers none of ``mapper``'s
+                spans (so there is nothing to replace).
+        """
+        with self._lock:
+            if mapper is None:
+                return None
+
+            variant = self.overlapping_feature
+            variant_min, variant_max = min(variant.start, variant.end), max(variant.start, variant.end)
+            footprint = mapper.genomic_span_to_offsets(variant_min, variant_max)
+            if footprint is None:
+                return None
+            low_offset, high_offset = footprint
+
+            alternate_allele = (variant.alternate_allele or "").replace("-", "")
+            reference_allele_length = len((variant.reference_allele or "").replace("-", ""))
+            transcript_sense_alternate = (
+                alternate_allele
+                if self.feature.strand == Strand.FORWARD
+                else reverse_complement(alternate_allele)
+            )
+
+            if reference_allele_length == 0:
+                # Pure insertion: splice in immediately after the anchor offset.
+                edit_start = edit_end = low_offset + 1
+            else:
+                edit_start, edit_end = low_offset, high_offset + 1
+
+            return SequenceEdit(
+                footprint=footprint,
+                start=edit_start,
+                end=edit_end,
+                replacement=transcript_sense_alternate,
+            )
+
+    @cached_property
+    def _cds_edit(self) -> SequenceEdit | None:
+        """This variant as an edit in CDS offset space (clipped to the coding sequence).
+
+        Returns:
+            SequenceEdit | None: The edit, or None if the variant does not overlap the CDS.
+        """
+        return self._edit_on(self.feature.cds_mapper)
+
+    @cached_property
+    def _cdna_edit(self) -> SequenceEdit | None:
+        """This variant as an edit in cDNA offset space (clipped to the exons).
+
+        Returns:
+            SequenceEdit | None: The edit, or None if the variant touches no exon at all.
+        """
+        return self._edit_on(self.feature.cdna_mapper)
+
+    @property
+    def reference_codon(self) -> str | None:
+        """Returns the codons variant touches in the reference sequence.
+
+        Returns:
+            str | None: The reference allele's whole-codon window (transcript-sense), or None if
+                the variant does not overlap the CDS.
+        """
+        codons = self._codon_window_alleles
+        return None if codons is None else codons[0]
+
+    @property
+    def alternate_codon(self) -> str | None:
+        """Returns the codons variant touches with the variant allele spliced in.
+
+        Returns:
+            str | None: reference_codon with the variant allele spliced in, or None if not
+                applicable.
+        """
+        codons = self._codon_window_alleles
+        return None if codons is None else codons[1]
+
+    @cached_property
+    def _codon_window_alleles(self) -> tuple[str, str] | None:
+        """Returns (reference_codon, alternate_codon), the whole-codon window around the variant,
+        in transcript-sense, with the variant allele spliced in for the alternate half.
+
+        Returns:
+            tuple[str, str] | None: (reference_codon, alternate_codon), or None if the variant
+                does not overlap the CDS.
+        """
+        with self._lock:
+            transcript = self.feature
+            mapper = transcript.cds_mapper
+            edit = self._cds_edit
+            if mapper is None or edit is None:
+                return None
+
+            window = mapper.codon_window(edit.footprint)
+            if window is None:
+                return None
+
+            coding_sequence = transcript.coding_sequence
+            if coding_sequence is None:
+                return None
+
+            codon_start, codon_end = window
+            reference_codon = coding_sequence[codon_start:codon_end]
+            alternate_codon = (
+                coding_sequence[codon_start : edit.start]
+                + edit.replacement
+                + coding_sequence[edit.end : codon_end]
+            )
+            return reference_codon, alternate_codon
+
+    @property
+    def reference_peptide(self) -> str | None:
+        """Returns the amino acid translation of the reference_codon.
+
+        Returns:
+            str | None: The amino acid translation of reference_codon, or None if not applicable.
+        """
+        peptides = self._peptide_window_alleles
+        return None if peptides is None else peptides[0]
+
+    @property
+    def alternate_peptide(self) -> str | None:
+        """Returns the amino acid translation of the alternate_codon.
+
+        Returns:
+            str | None: The amino acid translation of alternate_codon, or None if not applicable.
+        """
+        peptides = self._peptide_window_alleles
+        return None if peptides is None else peptides[1]
+
+    @cached_property
+    def _peptide_window_alleles(self) -> tuple[str, str] | None:
+        """Returns (reference_peptide, alternate_peptide), translated from _codon_window_alleles.
+
+        Returns:
+            tuple[str, str] | None: (reference_peptide, alternate_peptide), or None if the
+                variant does not overlap the CDS.
+        """
+        codons = self._codon_window_alleles
+        if codons is None:
+            return None
+        reference_codon, alternate_codon = codons
+        return translate_dna(reference_codon), translate_dna(alternate_codon)
+
+    @property
+    def cds_length_change(self) -> int | None:
+        """Net change in **coding** length the variant makes, in bases.
+
+        Positive for an insertion, negative for a deletion, zero for a substitution. Derived from the CDS
+        edit geometry rather than the cDNA. Any intronic portion of the variant's genomic span is already
+        discounted, since the offsets come from the mapper's block-overlap clipping.
+
+        Returns:
+            int | None: The net coding length change, or None when the variant does not overlap
+                the CDS and so changes no coding length at all.
+        """
+        edit = self._cds_edit
+        return None if edit is None else edit.length_change
+
+    @property
+    def reference_cds(self) -> str | None:
+        """Returns the whole reference CDS.
+
+        Returns:
+            str | None: The whole reference CDS (transcript-sense), or None if the transcript has
+                no CDS at all.
+        """
+        alleles = self._full_cds_alleles
+        return None if alleles is None else alleles[0]
+
+    @property
+    def alternate_cds(self) -> str | None:
+        """Returns the whole CDS with the variant applied.
+
+        Returns:
+            str | None: The whole CDS with the variant applied, or None if the transcript has no CDS
+                at all.
+        """
+        alleles = self._full_cds_alleles
+        return None if alleles is None else alleles[1]
+
+    @cached_property
+    def _full_cds_alleles(self) -> tuple[str, str, str | None] | None:
+        """Returns (reference_cds, alternate_cds, alternate_peptide), the whole CDS, in
+        transcript-sense, with the variant applied for the alternate half.
+
+        For alternate CDS edit, replaces the half-open transcript-wide cDNA offset that the variant overlapped
+        with the strand-corrected alternate allele in the transcript.spliced_seq (5' UTR + CDS + 3' UTR). By
+        default, we assume there is no intron retention, exon skipping or readthrough. Only the
+        coding sequence
+        is considered.
+
+        Rather than just the CDS it uses cDNA sequence to optionally allow readthrough into the UTR. If not
+        opted-for, the CDS is truncated to include only the coding sequence.
+
+        ``reference_cds`` reuses ``transcript.cds.seq`` in place of re-slicing ``spliced_seq`` when the
+        transcript's CDS is built and its length matches -- both are assembled from the same coding
+        exons, so the content agrees (proved corpus-wide by tests, not re-checked per overlap).
+        ``alternate_peptide`` is the translation ``_nucleotide_sequence_up_to_stop`` already produced
+        while truncating ``alternate_cds`` at its first stop codon, so ``_full_peptide_alleles`` can
+        reuse it instead of re-translating. It is None only when the variant touches no exon at all,
+        the one path that leaves ``alternate_cds`` untranslated here.
+
+        Returns:
+            tuple[str, str, str | None] | None: (reference_cds, alternate_cds, alternate_peptide),
+                or None if the transcript has no CDS at all (non-coding, or missing sequence
+                data). A variant that changes nothing about the CDS (entirely within a UTR,
+                entirely intronic, or entirely outside the transcript) yields two identical
+                sequences and no alternate peptide.
+        """
+        with self._lock:
+            transcript = self.feature
+            cdna_mapper = transcript.cdna_mapper
+            spliced_seq = transcript.spliced_seq
+            cds_length = transcript.cds_length
+            cdna_coding_start = transcript.cdna_coding_start
+            if cdna_mapper is None or spliced_seq is None or not cds_length or cdna_coding_start is None:
+                return None
+
+            # 0-based start/end position for slicing
+            cdna_coding_start0 = cdna_coding_start - 1
+            cdna_coding_end0 = cdna_coding_start0 + cds_length
+            cds = transcript.cds
+            if cds is not None and cds.seq is not None and len(cds.seq) == cds_length:
+                reference_cds = cds.seq
+            else:
+                reference_cds = spliced_seq[cdna_coding_start0:cdna_coding_end0]
+
+            edit = self._cdna_edit
+            if edit is None:
+                # The variant touches no exon at all (purely intronic, or entirely outside the
+                # transcript). Splicing is assumed to proceed normally, so the CDS is unchanged.
+                return reference_cds, reference_cds, None
+            edit_start, edit_end, transcript_sense_alternate = edit.start, edit.end, edit.replacement
+
+            alternate_spliced_seq = (
+                spliced_seq[:edit_start] + transcript_sense_alternate + spliced_seq[edit_end:]
+            )
+
+            length_change = edit.length_change
+
+            # Clip the edited sequence boundary to contain only the coding sequence.
+            anchor = _edited_boundary(cdna_coding_start0, edit_start, edit_end, length_change)
+            if self.readthrough >= Readthrough.UTR:
+                # Translate on through whatever follows the coding sequence in the edited cDNA.
+                end_bound = len(alternate_spliced_seq)
+            else:
+                end_bound = _edited_boundary(cdna_coding_end0, edit_start, edit_end, length_change)
+
+            alternate_tail = alternate_spliced_seq[anchor:end_bound]
+            alternate_cds, alternate_peptide = _nucleotide_sequence_up_to_stop(alternate_tail)
+
+            if self.readthrough >= Readthrough.BEYOND_TRANSCRIPT and "*" not in alternate_peptide:
+                # No in-frame stop anywhere in the edited cDNA, so carry on into raw genomic
+                # sequence past the transcript's own boundary.
+                flank = self._downstream_flanking_sequence(MAX_READTHROUGH_BASES)
+                if flank:
+                    alternate_cds, alternate_peptide = _nucleotide_sequence_up_to_stop(alternate_tail + flank)
+
+            return reference_cds, alternate_cds, alternate_peptide
+
+    def _downstream_flanking_sequence(self, length: int) -> str:
+        """Up to ``length`` bases of raw genomic sequence past this transcript's own 3' boundary
+        (transcript sense), read directly from the attached Slice.
+
+        Only reached at ``Readthrough.BEYOND_TRANSCRIPT``. It trusts the attached slice already covers
+        what is needed rather than issuing a fresh sequence-source fetch.
+
+        Args:
+            length (int): How many bases to try to read.
+
+        Returns:
+            str: Up to ``length`` bases of transcript-sense sequence past the transcript's own
+                boundary, or ``""`` if none is available.
+        """
+        transcript = self.feature
+        slice_ = transcript.slice
+        if length <= 0 or slice_ is None or slice_.seq is None:
+            return ""
+        if transcript.strand == Strand.FORWARD:
+            search_end = min(slice_.end, transcript.end + length)
+            if search_end <= transcript.end:
+                return ""
+            return slice_.seq[transcript.end : search_end]
+        search_start = max(slice_.start, transcript.start - length)
+        if search_start >= transcript.start:
+            return ""
+        return reverse_complement(slice_.seq[search_start - 1 : transcript.start - 1])
+
+    @property
+    def reference_cds_peptide(self) -> str | None:
+        """Returns the amino acid translation of the reference CDS.
+
+        Returns:
+            str | None: The amino acid translation of reference_cds, or None if not applicable.
+        """
+        peptides = self._full_peptide_alleles
+        return None if peptides is None else peptides[0]
+
+    @property
+    def alternate_cds_peptide(self) -> str | None:
+        """Returns the amino acid translation of the alternate CDS.
+
+        Returns:
+            str | None: The amino acid translation of alternate_cds, or None if not applicable.
+        """
+        peptides = self._full_peptide_alleles
+        return None if peptides is None else peptides[1]
+
+    @cached_property
+    def _full_peptide_alleles(self) -> tuple[str, str] | None:
+        """Returns (reference_cds_peptide, alternate_cds_peptide), translated from
+        _full_cds_alleles.
+
+        ``alternate_cds_peptide`` reuses the peptide ``_full_cds_alleles`` already produced while
+        truncating ``alternate_cds`` at its first stop codon, translating it here only for the one
+        path that leaves it untranslated (the variant touches no exon at all). See
+        ``_reference_cds_peptide`` for how the reference half is sourced.
+
+        Returns:
+            tuple[str, str] | None: (reference_cds_peptide, alternate_cds_peptide), or None if
+                the variant does not overlap the CDS.
+        """
+        alleles = self._full_cds_alleles
+        if alleles is None:
+            return None
+        reference_cds, alternate_cds, alternate_peptide = alleles
+        if alternate_peptide is None:
+            alternate_peptide = translate_dna(alternate_cds)
+        return self._reference_cds_peptide(reference_cds), alternate_peptide
+
+    def _reference_cds_peptide(self, reference_cds: str) -> str:
+        """Returns the translation of the reference CDS, reusing ``transcript.translated_seq``
+        when it is provably ``translate_dna(reference_cds)``.
+
+        ``translated_seq`` returns ``translation.seq`` when set. For every source in this codebase
+        today that is itself ``translate_dna(cds.seq)`` (GFF/GTF-built translations seed
+        ``seq=None`` and fall back the same way), and ``Transcript._translation`` marks exactly
+        that case via ``Translation.derived_from_coding_sequence``. A hypothetical future source
+        could instead seed a curated peptide (for example, one edited for selenocysteine or without
+        a trailing stop), which the stop facts compare positionally against this CDS -- so reuse is
+        guarded to the cases where that cannot have happened: the transcript's CDS is built and
+        matches ``reference_cds`` in length, and its translation is either unset, has no seq of its
+        own, or is marked as derived from this same coding sequence.
+
+        Checking the marker rather than *when* ``_translation`` resolved (the previous guard) means
+        reuse no longer depends on evaluation order: a transcript with several overlapping variants
+        benefits from the very first one resolving ``_translation`` the plain way, instead of only
+        the first overlap getting to reuse it and every later one paying to retranslate.
+
+        Args:
+            reference_cds (str): The reference CDS this TVA computed (possibly itself already
+                reused from ``transcript.cds.seq``).
+
+        Returns:
+            str: The reference CDS peptide.
+        """
+        transcript = self.feature
+        cds = transcript.cds
+        cds_length = transcript.cds_length
+        if cds is None or cds.seq is None or cds_length is None or len(cds.seq) != cds_length:
+            return translate_dna(reference_cds)
+
+        translation = transcript.translation
+        if translation is None or translation.seq is None or translation.derived_from_coding_sequence:
+            translated_seq = transcript.translated_seq
+            if translated_seq is not None:
+                return translated_seq
+
+        return translate_dna(reference_cds)
 
     @property
     def shifted(self) -> bool:
@@ -155,7 +610,7 @@ class TranscriptVariationAllele(FeatureOverlap):
             Locus | None: The protein locus of the variation allele after shifting,
                 or None if not applicable.
         """
-        return self._shifted_protein_locus
+        return None
 
     @property
     def original_cdna_locus(self) -> Locus | None:
