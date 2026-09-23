@@ -313,8 +313,6 @@ class TestTranscriptProperties:
         """Test that coding_start is calculated correctly from a CDS."""
         assert transcript.coding_start is None
 
-        # Seeding invalidates the cached None above; the UTR alone fixes coding_start,
-        # before any exon is known.
         transcript.seed_and_invalidate_attrs(cds=CDS(start=6, end=50, strand=Strand.FORWARD))
         assert transcript.coding_start == 6
 
@@ -322,8 +320,6 @@ class TestTranscriptProperties:
         """Test that coding_start is calculated correctly from a 5' UTR."""
         assert transcript.coding_start is None
 
-        # Seeding invalidates the cached None above; the UTR alone fixes coding_start,
-        # before any exon is known.
         transcript.seed_and_invalidate_attrs(five_prime_utr=UTR(start=1, end=5, strand=Strand.FORWARD))
         assert transcript.coding_start == 6
 
@@ -331,8 +327,6 @@ class TestTranscriptProperties:
         """Test that coding_start is calculated correctly from a translation."""
         assert transcript.coding_start is None
 
-        # Seeding invalidates the cached None above; the translation alone fixes coding_start,
-        # before any exon is known.
         transcript.seed_and_invalidate_attrs(translation=translation)
         assert transcript.coding_start == 1
 
@@ -350,8 +344,6 @@ class TestTranscriptProperties:
         and exon_coding_start."""
         assert transcript.coding_start is None
 
-        # Seeding invalidates the cached None above;
-        # first_coding_exon_index and exon_coding_start fixes coding_start once spliced exons is set
         transcript.seed_and_invalidate_attrs(first_coding_exon_index=0, exon_coding_start=6)
         assert transcript.coding_start is None
 
@@ -374,8 +366,6 @@ class TestTranscriptProperties:
         """Test that coding_end is calculated correctly using the CDS."""
         assert transcript.coding_end is None
 
-        # Seeding invalidates the cached None above; the CDS alone fixes coding_start,
-        # before any exon is known.
         transcript.seed_and_invalidate_attrs(cds=CDS(start=6, end=50, strand=Strand.FORWARD))
         assert transcript.coding_end == 50
 
@@ -383,8 +373,6 @@ class TestTranscriptProperties:
         """Test that coding_end is calculated correctly from a 3' UTR."""
         assert transcript.coding_end is None
 
-        # Seeding invalidates the cached None above; the UTR alone fixes coding_start,
-        # before any exon is known.
         transcript.seed_and_invalidate_attrs(three_prime_utr=UTR(start=51, end=100, strand=Strand.FORWARD))
         assert transcript.coding_end == 50
 
@@ -392,7 +380,6 @@ class TestTranscriptProperties:
         """Test that coding_end is calculated correctly."""
         assert transcript.coding_end is None
 
-        # Seeding invalidates the cached None above; the translation alone fixes coding_end.
         transcript.seed_and_invalidate_attrs(translation=translation)
         assert transcript.coding_end == 50
 
@@ -410,8 +397,6 @@ class TestTranscriptProperties:
         and exon_coding_end."""
         assert transcript.coding_end is None
 
-        # Seeding invalidates the cached None above;
-        # last_coding_exon_index and exon_coding_end fixes coding_end,
         transcript.seed_and_invalidate_attrs(last_coding_exon_index=0, exon_coding_end=45)
         assert transcript.coding_end is None
 
@@ -773,10 +758,20 @@ class TestTranscriptProperties:
         """Test that coding_seq is calculated correctly."""
         assert coding_transcript.coding_sequence == "ATGGGACCCTAA"
 
-    def test_coding_seq_no_cds_seq(self, transcript: Transcript) -> None:
+    @pytest.mark.parametrize("strand", [Strand.FORWARD, Strand.REVERSE])
+    def test_coding_seq_no_cds_seq(self, strand: Strand) -> None:
         """Test that coding_seq is calculated without a CDS."""
-        transcript.seed_and_invalidate_attrs(cds=CDS(start=25, end=50, strand=Strand.FORWARD))
-        assert transcript.coding_sequence is None
+        expected_seq = "ATGAAATAA"
+        transcript_sense = "CC" + expected_seq + "GGG"
+        genomic = transcript_sense if strand == Strand.FORWARD else reverse_complement(transcript_sense)
+        dummy_slice = DummySlice(genomic, feature_start=1)
+        transcript = Transcript(start=1, end=14, strand=strand, stable_id="T", slice=dummy_slice)
+        transcript.spliced_exons = [Exon(start=1, end=14, strand=strand, stable_id="E0", slice=dummy_slice)]
+        transcript.seed_attrs(
+            first_coding_exon_index=0, last_coding_exon_index=0, exon_coding_start=3, exon_coding_end=11
+        )
+
+        assert transcript.coding_sequence == expected_seq
 
     @pytest.mark.parametrize("strand", [Strand.FORWARD, Strand.REVERSE])
     def test_coding_seq_uses_slice_sequence_when_seeded_cds_has_no_sequence(self, strand: Strand) -> None:
