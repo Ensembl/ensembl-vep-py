@@ -52,6 +52,12 @@ class Translation:
         exon_coding_end (int | None):
             The position of the last coding base in the end exon, relative to the start of the
             exon (1-based).
+        derived_from_coding_sequence (bool):
+            Whether ``seq`` was computed by ``Transcript._translation`` from this transcript's own
+            ``coding_sequence``, as opposed to seeded from an external source that may curate it
+            differently (for example without a trailing stop, or with selenocysteine edits).
+            ``False`` by default and for every externally seeded translation; set True only at the
+            one place that derives ``seq`` this way (``Transcript._translation``).
     """
 
     start: int = field(on_setattr=invalidates("_length"))
@@ -62,6 +68,7 @@ class Translation:
     transcript: Transcript | None = field(default=None, init=False)
     exon_coding_start: int | None = field(default=None)
     exon_coding_end: int | None = field(default=None)
+    derived_from_coding_sequence: bool = field(default=False, init=False)
     _lock: RLock = field(factory=RLock, init=False, repr=False)
 
     @property
