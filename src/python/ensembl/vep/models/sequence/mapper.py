@@ -301,7 +301,7 @@ class Mapper:
             return None
         low_offset, high_offset = offsets
         codon_start = max((low_offset // 3) * 3, self.coding_start_offset)
-        codon_end = min((high_offset // 3) * 3 + 3, self.coding_end_offset)
+        codon_end = min((high_offset // 3) * 3 + 3, self.coding_end_offset + 1)
         return (codon_start, codon_end) if codon_end > codon_start else None
 
     def offset_to_protein_offset(self, offset: int) -> int | None:
