@@ -622,6 +622,7 @@ class Transcript(Feature):
             exon_coding_start=exon_coding_start,
             exon_coding_end=exon_coding_end,
         )
+        translation.transcript = self
         coding_sequence = self.coding_sequence
         if coding_sequence:
             translation.seq = translate_dna(coding_sequence)
