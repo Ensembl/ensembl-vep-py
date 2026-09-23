@@ -125,8 +125,12 @@ line-length = 110
 [tool.pylint]
 max-branches = 15
 
+[tool.pylint.design]
+max-public-methods = 50
+
 [tool.pylint.format]
 max-line-length = 110
+max-module-lines = 5000
 
 [tool.pylint.messages_control]
 disable = [

@@ -260,7 +260,7 @@ class Mapper:
             list[tuple[int, int]] | None: Ascending genomic spans, or None if none of the three bases
                 map to a genomic position.
         """
-        if offset < self.coding_start_offset or offset >= self.coding_end_offset:
+        if offset < self.coding_start_offset or offset > self.coding_end_offset:
             return None
 
         # Get the offset of the first base of the codon containing offset
@@ -297,7 +297,7 @@ class Mapper:
             tuple[int, int] | None: The codon-aligned window, or None if ``offsets`` is None or
                 the window is empty (e.g. the offsets range is entirely past ``length``).
         """
-        if offsets is None or offsets[0] >= self.coding_end_offset or offsets[1] < self.coding_start_offset:
+        if offsets is None or offsets[0] > self.coding_end_offset or offsets[1] < self.coding_start_offset:
             return None
         low_offset, high_offset = offsets
         codon_start = max((low_offset // 3) * 3, self.coding_start_offset)
