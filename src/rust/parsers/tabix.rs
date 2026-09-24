@@ -367,7 +367,7 @@ impl<I: BinningIndex> NoodlesBackend<I> {
             .map(QueryHeader::from)
             .ok_or_else(|| io::Error::new(ErrorKind::InvalidInput, "missing index header"))?;
 
-        // A reference sequence absent from the index has no rows; treating that as "no data" 
+        // A reference sequence absent from the index has no rows; treating that as "no data"
         // lets callers fall back cleanly instead of catching a broad exception.
         let Some(reference_sequence_id) = self.reference_sequence_id(&region) else {
             return Ok(());
