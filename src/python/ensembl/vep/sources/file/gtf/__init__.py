@@ -16,4 +16,3 @@
 from .transcript import GTFTranscriptSource
 
 __all__ = ["GTFTranscriptSource"]
-

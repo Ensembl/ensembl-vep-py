@@ -16,4 +16,3 @@
 from .transcript import GXFTranscriptSource
 
 __all__ = ["GXFTranscriptSource"]
-

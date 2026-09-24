@@ -49,7 +49,9 @@ class DummySequenceSource:
         self.sequences = sequences or {}
         self.closed = False
 
-    def get_sequence_by_start_end_strand(self, seq_region_name, start, end, strand):  # pragma: no cover - helper
+    def get_sequence_by_start_end_strand(
+        self, seq_region_name, start, end, strand
+    ):  # pragma: no cover - helper
         return self.sequences.get(seq_region_name)
 
     def get_seq_region_length(self, seq_region_name: str) -> int | None:
@@ -63,7 +65,9 @@ class DummySequenceSource:
 class DummyGXFTranscriptSource(GXFTranscriptSource[object]):
     """Concrete source used to exercise the shared GXF assembly helpers."""
 
-    transcript_feature_types = frozenset({"mrna", "transcript", "lnc_rna", "pseudogenic_transcript", "processed_transcript"})
+    transcript_feature_types = frozenset(
+        {"mrna", "transcript", "lnc_rna", "pseudogenic_transcript", "processed_transcript"}
+    )
     adaptor: object = field(init=False, default=None)
 
     def get_record_id(self, record):
@@ -75,7 +79,9 @@ class DummyGXFTranscriptSource(GXFTranscriptSource[object]):
     def iter_all_features(self):  # pragma: no cover - fixture helper
         return iter(())
 
-    def iter_features_by_region(self, region=None, *, seq_region_name=None, start=None, end=None):  # pragma: no cover
+    def iter_features_by_region(
+        self, region=None, *, seq_region_name=None, start=None, end=None
+    ):  # pragma: no cover
         return iter(())
 
 
@@ -181,10 +187,18 @@ class TestResolveGene:
         slice_cache: dict[str, object] = {}
         gene_cache: dict[str, object] = {}
 
-        transcript_1 = source._build_transcript_from_record_group(group, slice_cache)  # pylint: disable=protected-access
-        transcript_2 = source._build_transcript_from_record_group(group, slice_cache)  # pylint: disable=protected-access
-        source._resolve_gene(group.gene_record, transcript_1, gene_cache, slice_cache)  # pylint: disable=protected-access
-        source._resolve_gene(group.gene_record, transcript_2, gene_cache, slice_cache)  # pylint: disable=protected-access
+        transcript_1 = source._build_transcript_from_record_group(
+            group, slice_cache
+        )  # pylint: disable=protected-access
+        transcript_2 = source._build_transcript_from_record_group(
+            group, slice_cache
+        )  # pylint: disable=protected-access
+        source._resolve_gene(
+            group.gene_record, transcript_1, gene_cache, slice_cache
+        )  # pylint: disable=protected-access
+        source._resolve_gene(
+            group.gene_record, transcript_2, gene_cache, slice_cache
+        )  # pylint: disable=protected-access
 
         assert transcript_1.gene is transcript_2.gene
         assert transcript_1.gene.transcripts == [transcript_1, transcript_2]
@@ -269,9 +283,7 @@ class TestGetOrBuildSlice:
     def test_get_or_build_slice_uses_sequence_source_length(self) -> None:
         """Test the built slice uses the sequence source's region length."""
 
-        source = DummyGXFTranscriptSource(
-            sequence_source=DummySequenceSource({"chr1": 42}, {"chr1": "ACGT"})
-        )
+        source = DummyGXFTranscriptSource(sequence_source=DummySequenceSource({"chr1": 42}, {"chr1": "ACGT"}))
 
         slice_cache: dict[str, object] = {}
         seq_slice = source._get_or_build_slice("chr1", slice_cache)  # pylint: disable=protected-access
@@ -324,11 +336,15 @@ class TestFirstAttr:
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
 
-        assert DummyGXFTranscriptSource._first_attr(records[0], "Name") == "BRCA1"  # pylint: disable=protected-access
+        assert (
+            DummyGXFTranscriptSource._first_attr(records[0], "Name") == "BRCA1"
+        )  # pylint: disable=protected-access
 
     def test_returns_none_for_missing_key(self) -> None:
         """Test None is returned when the attribute key is absent."""
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
 
-        assert DummyGXFTranscriptSource._first_attr(records[0], "missing") is None  # pylint: disable=protected-access
+        assert (
+            DummyGXFTranscriptSource._first_attr(records[0], "missing") is None
+        )  # pylint: disable=protected-access

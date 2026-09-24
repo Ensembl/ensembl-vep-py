@@ -13,7 +13,8 @@
 # limitations under the License.
 """Common constants."""
 
-from ensembl.vep.common.enums import ClassSOTerm, ExonPhase, Strand
+from ensembl.vep.common.enums import ExonPhase, Strand, ClassSOTerm
+
 
 CLASS_SO_TERM_ABBRV_TO_ENUM: dict[str, ClassSOTerm] = {
     "INS": ClassSOTerm.INSERTION,

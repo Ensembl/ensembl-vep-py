@@ -34,7 +34,14 @@ from typing import ClassVar, Generic, Iterable, Protocol, TypeVar, Iterator
 
 from attrs import define
 
-from ensembl.vep.common import CoordSystemLevel, ExonPhase, PHASE_VALUE_TO_ENUM, STRAND_SYMBOL_TO_ENUM, Strand, format_region_string
+from ensembl.vep.common import (
+    CoordSystemLevel,
+    ExonPhase,
+    PHASE_VALUE_TO_ENUM,
+    STRAND_SYMBOL_TO_ENUM,
+    Strand,
+    format_region_string,
+)
 from ensembl.vep.models.genic import Exon, Gene, Intron, Transcript, Translation
 from ensembl.vep.models.sequence import CoordSystem, Slice
 from ensembl.vep.parsers import Parser
@@ -306,10 +313,10 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
     def _resolve_gene_record(
         self,
         group: _GXFTranscriptGroup,
-        gene_records: dict[str, _GXFRecord]  = {},
+        gene_records: dict[str, _GXFRecord] = {},
     ) -> _GXFRecord | None:
         """Return the gene record for a grouped transcript, if one exists.
-        
+
         Args:
             group (_GXFTranscriptGroup): The grouped transcript records.
             gene_records (dict[str, _GXFRecord]): Previously seen gene records keyed by gene id.
@@ -335,7 +342,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         slice_cache: dict[str, Slice] = {},
     ) -> None:
         """Attach a Gene to a Transcript, reusing cached Gene objects when possible.
-        
+
         Args:
             gene_record (_GXFRecord | None): The gene record to convert, if present.
             transcript (Transcript): The transcript to attach the gene to.
@@ -496,7 +503,9 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
             slice=self._get_or_build_slice(gene_record.seqid, slice_cache),
         )
         gene.name = self._first_attr(gene_record, "Name") or self._first_attr(gene_record, "gene_name")
-        gene.biotype = self._first_attr(gene_record, "biotype") or self._first_attr(gene_record, "gene_biotype")
+        gene.biotype = self._first_attr(gene_record, "biotype") or self._first_attr(
+            gene_record, "gene_biotype"
+        )
         gene.transcripts = []
         return gene
 
@@ -530,7 +539,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
     @staticmethod
     def _first_attr(record: _GXFRecord, key: str) -> str | None:
         """Return the first attribute value for a key, if present.
-        
+
         Args:
             record: The record to inspect.
             key: The attribute key to look up.

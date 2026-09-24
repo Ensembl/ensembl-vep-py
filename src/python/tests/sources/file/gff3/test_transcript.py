@@ -30,7 +30,9 @@ class DummySequenceSource:
         self.sequences = sequences or {}
         self.closed = False
 
-    def get_sequence_by_start_end_strand(self, seq_region_name, start, end, strand):  # pragma: no cover - helper
+    def get_sequence_by_start_end_strand(
+        self, seq_region_name, start, end, strand
+    ):  # pragma: no cover - helper
         return self.sequences.get(seq_region_name)
 
     def get_seq_region_length(self, seq_region_name: str) -> int | None:
@@ -103,8 +105,7 @@ def _write_query_mock_tabix(tmp_path: Path, monkeypatch) -> Path:
     """
 
     tabix = tmp_path / "tabix"
-    tabix.write_text(
-        f"""#!/bin/sh
+    tabix.write_text(f"""#!/bin/sh
 if [ "$1" = "--version" ]; then
     exit 0
 fi
@@ -122,8 +123,7 @@ case "$2" in
         printf '%s\\n' '{CHR2_TRANSCRIPT_ROW}'
         ;;
 esac
-"""
-    )
+""")
     tabix.chmod(0o755)
     monkeypatch.setenv("PATH", f"{tmp_path}{os.pathsep}{os.environ['PATH']}")
     return tabix

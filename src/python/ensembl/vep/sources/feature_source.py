@@ -14,12 +14,9 @@
 """Abstract base for all feature sources."""
 
 from __future__ import annotations
-<<<<<<< HEAD
-=======
 
 from abc import ABC, abstractmethod
 from typing import Iterator
->>>>>>> 253d129 (match return typing)
 
 from abc import ABC, abstractmethod
 from typing import Iterator, Generic, TypeVar
@@ -43,7 +40,8 @@ class FeatureSource(ABC, Generic[F]):
 
     @abstractmethod
     def get_all_features(self) -> list[F]:
-        """Return all features from this source."""
+        """Returns all features from this source."""
+
         raise NotImplementedError
 
     @abstractmethod
@@ -60,7 +58,7 @@ class FeatureSource(ABC, Generic[F]):
         start: int | None = None,
         end: int | None = None,
     ) -> list[F]:
-        """Return features overlapping the given genomic region.
+        """Returns features overlapping the given genomic region.
 
         Args:
             region (str | None): The region (e.g., "chr1:1000-2000") to get features from.

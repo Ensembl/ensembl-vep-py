@@ -33,7 +33,7 @@ class SequenceSource(ABC):
     _lock: RLock = field(factory=RLock, init=False, repr=False)
 
     def get_seq_region_length(self, seq_region_name: str) -> int | None:
-        """Return the length of a sequence region, caching when available.
+        """Returns the length of a sequence region, caching when available.
 
         Args:
             seq_region_name (str): The sequence region name.
@@ -63,7 +63,7 @@ class SequenceSource(ABC):
         *,
         strand: Strand = Strand.FORWARD,
     ) -> str | None:
-        """Return sequence from a sequence region for the specified coordinates and strand.
+        """Returns sequence from a sequence region for the specified coordinates and strand.
 
         Args:
             seq_region_name (str): The sequence region name.
@@ -107,7 +107,7 @@ class SequenceSource(ABC):
         raise NotImplementedError
 
     def __enter__(self) -> SequenceSource:
-        """Return the source instance for use as a context manager.
+        """Returns the source instance for use as a context manager.
 
         Returns:
             SequenceSource: The source instance.
@@ -164,7 +164,7 @@ class SequenceSource(ABC):
 
     @abstractmethod
     def _fetch_sequence_chunk(self, seq_region_name: str, start: int, end: int) -> str:
-        """Return a forward-oriented chunk of sequence.
+        """Returns a forward-oriented chunk of sequence.
 
         Args:
             seq_region_name (str): The sequence region name.
@@ -179,7 +179,7 @@ class SequenceSource(ABC):
 
     @abstractmethod
     def _get_seq_region_length(self, seq_region_name: str) -> int | None:
-        """Return the sequence region length if available.
+        """Returns the sequence region length if available.
 
         Args:
             seq_region_name (str): The sequence region name.
