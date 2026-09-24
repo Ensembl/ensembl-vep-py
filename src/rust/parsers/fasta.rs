@@ -112,7 +112,6 @@ type FaiIndex = HashMap<String, FaiEntry>;
 // ---------------------------------------------------------------------------
 
 pub struct FastaReader {
-    file_path: PathBuf,
     backend: Backend,
     mode: ReaderMode,
     metadata: Option<FastaMetadata>,
@@ -122,7 +121,6 @@ impl FastaReader {
     fn open(file_path: &Path, mode: ReaderMode) -> io::Result<Self> {
         let (backend, mode) = Backend::open(file_path, mode)?;
         Ok(Self {
-            file_path: file_path.to_path_buf(),
             backend,
             mode,
             metadata: None,
@@ -131,7 +129,7 @@ impl FastaReader {
 
     fn metadata(&mut self) -> io::Result<&FastaMetadata> {
         if self.metadata.is_none() {
-            self.metadata = Some(read_fasta_metadata(&self.file_path)?);
+            self.metadata = Some(self.backend.metadata());
         }
 
         Ok(self.metadata.as_ref().expect("metadata should be cached"))
@@ -218,6 +216,22 @@ impl Backend {
             Self::Sequential(reader) => reader.next(),
             Self::Fai(reader) => reader.next(),
             Self::Bgzf(reader) => reader.next(),
+        }
+    }
+
+    fn metadata(&self) -> FastaMetadata {
+        let index = match self {
+            Self::Sequential(_) => return FastaMetadata::default(),
+            Self::Fai(reader) => &reader.index,
+            Self::Bgzf(reader) => &reader.index,
+        };
+
+        FastaMetadata {
+            sequence_lengths: index
+                .iter()
+                .map(|(seqid, entry)| (seqid.clone(), entry.length))
+                .collect(),
+            ..FastaMetadata::default()
         }
     }
 
@@ -585,28 +599,54 @@ where
     }
 
     let actual_end = end.min(entry.length);
-    let mut sequence = String::with_capacity(end - start + 1);
+    let expected_bases = actual_end - start + 1;
+    let start_offset = entry.byte_offset(start)?;
+    let end_offset = entry.byte_offset(actual_end)?;
+    let raw_length = end_offset
+        .checked_sub(start_offset)
+        .and_then(|length| length.checked_add(1))
+        .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "invalid FASTA index offsets"))?;
+    let mut remaining = usize::try_from(raw_length)
+        .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))?;
+    let mut sequence = Vec::with_capacity(end - start + 1);
+    let mut buffer = [0u8; 64 * 1024];
 
-    for position in start..=actual_end {
-        let byte_offset = entry.byte_offset(position)?;
-        let mut byte = [0u8; 1];
-        reader.seek(SeekFrom::Start(byte_offset))?;
-        reader.read_exact(&mut byte)?;
-        sequence.push((byte[0] as char).to_ascii_uppercase());
+    reader.seek(SeekFrom::Start(start_offset))?;
+    while remaining > 0 {
+        let chunk_length = remaining.min(buffer.len());
+        reader.read_exact(&mut buffer[..chunk_length])?;
+        for byte in &buffer[..chunk_length] {
+            if !byte.is_ascii_whitespace() {
+                sequence.push(byte.to_ascii_uppercase());
+            }
+        }
+        remaining -= chunk_length;
+    }
+
+    if sequence.len() != expected_bases {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidData,
+            format!(
+                "FASTA index described {expected_bases} bases but the indexed range contained {}",
+                sequence.len()
+            ),
+        ));
     }
 
     if end > entry.length {
-        sequence.push_str(&"N".repeat(end - entry.length));
+        sequence.extend(std::iter::repeat_n(b'N', end - entry.length));
     }
 
-    Ok(sequence)
+    String::from_utf8(sequence).map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))
 }
 
+#[cfg(test)]
 fn read_fasta_metadata(file_path: &Path) -> io::Result<FastaMetadata> {
     let mut reader = open_sequential_reader(file_path)?;
     read_fasta_metadata_from_reader(&mut reader)
 }
 
+#[cfg(test)]
 fn read_fasta_metadata_from_reader<R>(reader: &mut R) -> io::Result<FastaMetadata>
 where
     R: BufRead,
@@ -646,6 +686,7 @@ where
     Ok(metadata)
 }
 
+#[cfg(test)]
 fn flush_metadata_record(
     metadata: &mut FastaMetadata,
     header: Option<FastaHeader>,
@@ -800,6 +841,36 @@ AAAA
         fs::write(&path, SAMPLE)?;
         fs::write(associated_index_path(&path, "fai"), SAMPLE_FAI)?;
         Ok((dir, path))
+    }
+
+    struct CountingReader {
+        inner: Cursor<Vec<u8>>,
+        reads: usize,
+        seeks: usize,
+    }
+
+    impl CountingReader {
+        fn new(data: &[u8]) -> Self {
+            Self {
+                inner: Cursor::new(data.to_vec()),
+                reads: 0,
+                seeks: 0,
+            }
+        }
+    }
+
+    impl Read for CountingReader {
+        fn read(&mut self, buffer: &mut [u8]) -> io::Result<usize> {
+            self.reads += 1;
+            self.inner.read(buffer)
+        }
+    }
+
+    impl Seek for CountingReader {
+        fn seek(&mut self, position: SeekFrom) -> io::Result<u64> {
+            self.seeks += 1;
+            self.inner.seek(position)
+        }
     }
 
     fn write_sample_bgzf_with_indexes(prefix: &str) -> io::Result<(PathBuf, PathBuf)> {
@@ -1083,6 +1154,36 @@ AAAA
     }
 
     #[test]
+    fn test_read_indexed_sequence_buffers_across_line_breaks() -> io::Result<()> {
+        let mut reader = CountingReader::new(b"ACGT\nTGCA\n");
+        let entry = FaiEntry {
+            length: 8,
+            offset: 0,
+            line_bases: 4,
+            line_width: 5,
+        };
+
+        assert_eq!(read_indexed_sequence(&mut reader, &entry, 3, 7)?, "GTTGC");
+        assert_eq!(reader.seeks, 1);
+        assert_eq!(reader.reads, 1);
+        Ok(())
+    }
+
+    #[test]
+    fn test_read_indexed_sequence_handles_crlf_line_breaks() -> io::Result<()> {
+        let mut reader = Cursor::new(b"ACGT\r\nTGCA\r\n".to_vec());
+        let entry = FaiEntry {
+            length: 8,
+            offset: 0,
+            line_bases: 4,
+            line_width: 6,
+        };
+
+        assert_eq!(read_indexed_sequence(&mut reader, &entry, 3, 7)?, "GTTGC");
+        Ok(())
+    }
+
+    #[test]
     fn test_read_indexed_sequence_returns_uppercase() -> io::Result<()> {
         let mut reader = Cursor::new(b"ACgtTGCA".to_vec());
         let entry = FaiEntry {
@@ -1322,7 +1423,7 @@ AAAA
     }
 
     #[test]
-    fn test_fasta_parser_metadata_sequential() -> io::Result<()> {
+    fn test_fasta_parser_metadata_sequential_is_empty() -> io::Result<()> {
         let dir = create_temp_dir("fasta-parser-metadata-seq")?;
         let path = dir.join("sample.fa");
         fs::write(&path, DESCRIBED_SAMPLE)?;
@@ -1334,36 +1435,9 @@ AAAA
             .map_err(from_py_error)?;
 
         Python::initialize();
-        Python::attach(|py| -> PyResult<()> {
-            let metadata = parser.metadata(py)?;
-            let header: Vec<String> = metadata
-                .get_item("header")?
-                .expect("metadata should contain header")
-                .extract()?;
-            let lengths: HashMap<String, usize> = metadata
-                .get_item("sequence_lengths")?
-                .expect("metadata should contain sequence lengths")
-                .extract()?;
-            let descriptions: HashMap<String, String> = metadata
-                .get_item("sequence_descriptions")?
-                .expect("metadata should contain sequence descriptions")
-                .extract()?;
-
-            assert_eq!(
-                header,
-                vec![
-                    ">chr1 dna:chromosome chromosome:GRCh38:1:1:248956422:1 REF".to_string(),
-                    ">chr2 alternate sequence".to_string(),
-                ]
-            );
-            assert_eq!(lengths["chr1"], 8);
-            assert_eq!(
-                descriptions["chr1"],
-                "dna:chromosome chromosome:GRCh38:1:1:248956422:1 REF"
-            );
-            Ok(())
-        })
-        .map_err(from_py_error)?;
+        Python::attach(|py| {
+            assert!(parser.metadata(py).unwrap().is_empty());
+        });
 
         Ok(())
     }
@@ -1387,16 +1461,9 @@ AAAA
         assert_first_record(&first);
 
         Python::initialize();
-        Python::attach(|py| -> PyResult<()> {
-            let metadata = parser.metadata(py)?;
-            let lengths: HashMap<String, usize> = metadata
-                .get_item("sequence_lengths")?
-                .expect("metadata should contain sequence lengths")
-                .extract()?;
-            assert_eq!(lengths["chr1"], 8);
-            Ok(())
-        })
-        .map_err(from_py_error)?;
+        Python::attach(|py| {
+            assert!(parser.metadata(py).unwrap().is_empty());
+        });
 
         let second = parser
             .next()
@@ -2029,18 +2096,14 @@ AAAA
     // -----------------------------------------------------------------------
 
     #[test]
-    fn test_fasta_reader_metadata_is_cached() -> io::Result<()> {
-        let dir = create_temp_dir("fasta-reader-metadata-test")?;
-        let path = dir.join("sample.fa");
-        fs::write(&path, DESCRIBED_SAMPLE)?;
-
-        let mut reader = FastaReader::open(&path, ReaderMode::Sequential)?;
+    fn test_fasta_reader_query_metadata_is_cached_from_fai() -> io::Result<()> {
+        let (_dir, path) = write_sample_fasta_with_fai("fasta-reader-metadata-test")?;
+        let mut reader = FastaReader::open(&path, ReaderMode::Query)?;
         let metadata = reader.metadata()?;
         assert_eq!(metadata.sequence_lengths["chr1"], 8);
-        assert_eq!(
-            metadata.sequence_descriptions["chr1"],
-            "dna:chromosome chromosome:GRCh38:1:1:248956422:1 REF"
-        );
+        assert_eq!(metadata.sequence_lengths["chr2"], 4);
+        assert!(metadata.header.is_empty());
+        assert!(metadata.sequence_descriptions.is_empty());
         assert!(reader.metadata.is_some());
         Ok(())
     }
