@@ -50,7 +50,7 @@ def _write_sequence_at_position(chars: list[str], position: int, sequence: str) 
         chars[position - 1 + offset] = base
 
 
-def _forward_exons(genomic_slice: Slice) -> list[Exon]:
+def _forward_exons(genomic_slice: Slice | None) -> list[Exon]:
     """Create the two forward-strand exons shared by every forward transcript in this module."""
     return [
         Exon(start=1, end=20, strand=Strand.FORWARD, stable_id="ENST_FWD_e0", slice=genomic_slice),
@@ -787,7 +787,9 @@ class TestFullCdsAllelesReadthrough:
         assert genomic_slice.seq is not None
         assert flank == reverse_complement(genomic_slice.seq[9:19])
 
-    def test_downstream_flanking_sequence_is_empty_when_length_is_zero(self, transcript_with_utr: Transcript) -> None:
+    def test_downstream_flanking_sequence_is_empty_when_length_is_zero(
+        self, transcript_with_utr: Transcript
+    ) -> None:
         """Test that missing downstream slice sequence returns an empty string."""
         variation_allele = _variation_allele(transcript_with_utr, 52, 52, "T", "A")
         transcript_variation_allele = _transcript_variation_allele(transcript_with_utr, variation_allele)
@@ -795,17 +797,20 @@ class TestFullCdsAllelesReadthrough:
         flank = transcript_variation_allele._downstream_flanking_sequence(0)
         assert flank == ""
 
-    def test_downstream_flanking_sequence_is_empty_when_slice_is_none(self, transcript_with_utr: Transcript) -> None:
+    def test_downstream_flanking_sequence_is_empty_when_slice_is_none(self) -> None:
+        """Test that a transcript with no slice returns empty string"""
         # create a transcript with no slice
         transcript = Transcript(start=1, end=74, strand=Strand.FORWARD, stable_id="ENST_FWD")
         transcript.spliced_exons = _forward_exons(None)
         _seed_coding_boundaries(transcript)
+        variation_allele = _variation_allele(transcript, 52, 52, "T", "A")
         transcript_variation_allele = _transcript_variation_allele(transcript, variation_allele)
         # pylint: disable-next=protected-access
         flank = transcript_variation_allele._downstream_flanking_sequence(50)
         assert flank == ""
 
-    def test_downstream_flanking_sequence_is_empty_when_slice_seq_is_none(self, transcript_with_utr: Transcript) -> None:
+    def test_downstream_flanking_sequence_is_empty_when_slice_seq_is_none(self) -> None:
+        """Test that a transcript with no slice sequence returns empty string"""
         # create a slice with no sequence source
         slice_no_seq = Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
@@ -813,11 +818,14 @@ class TestFullCdsAllelesReadthrough:
             start=1,
             end=74,
             strand=Strand.FORWARD,
-            sequence_source=None
+            sequence_source=None,
         )
-        transcript = Transcript(start=1, end=74, strand=Strand.FORWARD, stable_id="ENST_FWD", slice=slice_no_seq)
+        transcript = Transcript(
+            start=1, end=74, strand=Strand.FORWARD, stable_id="ENST_FWD", slice=slice_no_seq
+        )
         transcript.spliced_exons = _forward_exons(slice_no_seq)
         _seed_coding_boundaries(transcript)
+        variation_allele = _variation_allele(transcript, 52, 52, "T", "A")
         transcript_variation_allele = _transcript_variation_allele(transcript, variation_allele)
         # pylint: disable-next=protected-access
         flank = transcript_variation_allele._downstream_flanking_sequence(50)
@@ -832,7 +840,11 @@ class TestFullCdsAllelesReadthrough:
 
         assert flank == ""
 
-    def test_downstream_flanking_sequence_reverse_transcript_is_empty_past_slice(self, reverse_transcript: Transcript) -> None:
+    def test_downstream_flanking_sequence_reverse_transcript_is_empty_past_slice(
+        self, reverse_transcript: Transcript
+    ) -> None:
+        """Test that missing downstream slice sequence returns an empty string with
+        a transcript on the reverse strand."""
         variation_allele = _variation_allele(reverse_transcript, 52, 52, "T", "A")
         transcript_variation_allele = _transcript_variation_allele(reverse_transcript, variation_allele)
         # pylint: disable-next=protected-access
