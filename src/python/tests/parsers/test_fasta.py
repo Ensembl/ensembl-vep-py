@@ -99,23 +99,13 @@ class TestFastaParserInitialization:
 class TestFastaParserMetadata:
     """Tests for FastaParser.metadata."""
 
-    def test_metadata_returns_headers_lengths_and_descriptions(self, tmp_path: Path) -> None:
-        """Test metadata exposes FASTA headers, lengths and descriptions."""
+    def test_unindexed_metadata_is_empty(self, tmp_path: Path) -> None:
+        """Test metadata does not scan an unindexed FASTA."""
 
         path = _write_fasta(tmp_path / "sample.fa", DESCRIBED_SAMPLE)
         parser = FastaParser(file_path=path, mode="sequential")
 
-        assert parser.metadata == {
-            "header": [
-                ">chr1 dna:chromosome chromosome:GRCh38:1:1:248956422:1 REF",
-                ">chr2 alternate sequence",
-            ],
-            "sequence_lengths": {"chr1": 8, "chr2": 4},
-            "sequence_descriptions": {
-                "chr1": "dna:chromosome chromosome:GRCh38:1:1:248956422:1 REF",
-                "chr2": "alternate sequence",
-            },
-        }
+        assert not parser.metadata
 
     def test_metadata_is_cached(self, tmp_path: Path) -> None:
         """Test metadata is stable after first access."""
@@ -130,19 +120,23 @@ class TestFastaParserMetadata:
     def test_open_refreshes_metadata_cache(self, tmp_path: Path) -> None:
         """Test open exposes metadata for the newly opened file."""
 
-        first_path = _write_fasta(tmp_path / "first.fa", ">chr1 first description\nACGT\n")
-        second_path = _write_fasta(tmp_path / "second.fa", ">chr2 second description\nAAAA\n")
-        parser = FastaParser(file_path=first_path, mode="sequential")
+        first_path = _write_indexed_fasta(
+            tmp_path / "first.fa", ">chr1 first description\nACGT\n", "chr1\t4\t24\t4\t5\n"
+        )
+        second_path = _write_indexed_fasta(
+            tmp_path / "second.fa", ">chr2 second description\nAAAA\n", "chr2\t4\t25\t4\t5\n"
+        )
+        parser = FastaParser(file_path=first_path, mode="query")
 
-        assert parser.metadata["sequence_descriptions"] == {"chr1": "first description"}
-        assert parser.open(second_path, mode="sequential") is parser
-        assert parser.metadata["sequence_descriptions"] == {"chr2": "second description"}
+        assert parser.metadata["sequence_lengths"] == {"chr1": 4}
+        assert parser.open(second_path, mode="query") is parser
+        assert parser.metadata["sequence_lengths"] == {"chr2": 4}
 
     def test_metadata_returns_empty_dictionary_after_close(self, tmp_path: Path) -> None:
         """Test metadata is empty when the parser is closed."""
 
-        path = _write_fasta(tmp_path / "sample.fa", DESCRIBED_SAMPLE)
-        parser = FastaParser(file_path=path, mode="sequential")
+        path = _write_indexed_fasta(tmp_path / "sample.fa", DESCRIBED_SAMPLE, DESCRIBED_SAMPLE_FAI)
+        parser = FastaParser(file_path=path, mode="query")
 
         assert parser.metadata["sequence_lengths"] == {"chr1": 8, "chr2": 4}
 
@@ -157,21 +151,17 @@ class TestFastaParserMetadata:
         parser = FastaParser(file_path=path, mode="sequential")
 
         _assert_chr1_record(parser.next())
-        assert parser.metadata["sequence_lengths"] == {"chr1": 8, "chr2": 4}
+        assert not parser.metadata
         _assert_chr2_record(parser.next())
 
-    def test_metadata_in_query_mode_reads_source_headers(self, tmp_path: Path) -> None:
-        """Test query-mode metadata is read from the FASTA source file."""
+    def test_metadata_in_query_mode_reads_index_lengths(self, tmp_path: Path) -> None:
+        """Test query-mode metadata is read from the FAI without scanning the FASTA."""
 
         path = _write_indexed_fasta(tmp_path / "sample.fa", DESCRIBED_SAMPLE, DESCRIBED_SAMPLE_FAI)
         parser = FastaParser(file_path=path, mode="query")
 
         assert parser.reader_mode == "query"
-        assert parser.metadata["header"] == [
-            ">chr1 dna:chromosome chromosome:GRCh38:1:1:248956422:1 REF",
-            ">chr2 alternate sequence",
-        ]
-        assert parser.metadata["sequence_lengths"] == {"chr1": 8, "chr2": 4}
+        assert parser.metadata == {"sequence_lengths": {"chr1": 8, "chr2": 4}}
 
 
 class TestFastaParserOpenClose:

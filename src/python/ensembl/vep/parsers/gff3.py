@@ -15,6 +15,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from pathlib import Path
 from attr import define, field, setters
 
@@ -76,9 +77,22 @@ class GFF3Parser(Parser[GFF3Record]):
 
     @property
     def reader_mode(self) -> str:
-        """Return the configured reader mode."""
+        """Returns the configured reader mode."""
 
         return self._parser.reader_mode
+
+    @property
+    def index_sequence_names(self) -> list[str]:
+        """Reference sequence names declared by the tabix index, in index order.
+
+        Empty when the file is unopened, read sequentially, or falls back to the system
+        ``tabix`` executable.
+
+        Returns:
+            list[str]: The reference sequence names the index declares.
+        """
+
+        return self._parser.index_sequence_names
 
     def open(self, file_path: str | Path, mode: str = "auto") -> GFF3Parser:
         """Open a GFF3 file.
@@ -127,7 +141,7 @@ class GFF3Parser(Parser[GFF3Record]):
         )
 
     def next(self) -> GFF3Record | None:
-        """Return the next GFF3 record, or None at EOF/##FASTA.
+        """Returns the next GFF3 record, or None at EOF/##FASTA.
 
         Returns:
             GFF3Record | None: The next GFF3 record,
@@ -136,17 +150,23 @@ class GFF3Parser(Parser[GFF3Record]):
 
         return self._parser.next()
 
-    def records(self, limit: int | None = 10000) -> list[GFF3Record]:
-        """Return records from the current stream position.
+    def records(
+        self, limit: int | None = 10000, feature_types: Iterable[str] | None = None
+    ) -> list[GFF3Record]:
+        """Returns records from the current stream position.
 
         Args:
             limit (int | None): The maximum number of records to return. Default is 10000.
+            feature_types (Iterable[str] | None): When given, only rows whose column 3 matches one
+                of these values (case-insensitively) are returned. The Rust side applies this
+                before a non-matching line is parsed into a record or converted into a Python
+                object.
 
         Returns:
             list[GFF3Record]: A list of GFF3 records.
         """
 
-        return self._parser.records(limit)
+        return self._parser.records(limit, None if feature_types is None else list(feature_types))
 
     def _clear_metadata_cache(self) -> None:
         try:

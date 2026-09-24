@@ -15,12 +15,20 @@
 
 from __future__ import annotations
 
+import gzip
+import logging
+import os
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
+from typing import TextIO
 
 from attrs import define, field
 
 from ensembl.vep.parsers.fasta import FastaParser
 from ensembl.vep.sources.sequence_source import SequenceSource
+
+logger = logging.getLogger(__name__)
 
 
 @define(kw_only=True, auto_attribs=True)
@@ -33,17 +41,25 @@ class FastaSequenceSource(SequenceSource):
 
     file_path: str | Path | None = field(default=None)
     adaptor: FastaParser = field(factory=FastaParser)
-    _sequences: dict[str, str] | None = field(default=None, init=False, repr=False)
+    _metadata_lengths: dict[str, int] | None = field(default=None, init=False, repr=False)
+    _warned_sequential: bool = field(default=False, init=False, repr=False)
+    _adaptor_pid: int | None = field(default=None, init=False, repr=False)
 
     def close(self) -> None:
-        """Release loaded FASTA sequence data."""
+        """Release FASTA metadata and derived sequence caches."""
 
-        self.adaptor.close()
-        self._sequences = None
+        self._close_adaptor()
+        self._metadata_lengths = None
         self.clear_cache()
 
+    def _close_adaptor(self) -> None:
+        """Close the parser and forget that it is open for span fetches."""
+
+        self.adaptor.close()
+        self._adaptor_pid = None
+
     def _fetch_sequence_chunk(self, seq_region_name: str, start: int, end: int) -> str:
-        """Return a FASTA sequence chunk.
+        """Returns a FASTA sequence chunk.
 
         Args:
             seq_region_name (str): The sequence region name.
@@ -57,60 +73,149 @@ class FastaSequenceSource(SequenceSource):
         if self.file_path is None:
             return "N" * (end - start + 1)
 
-        with self.adaptor.open(self.file_path, mode="auto"):
-            if self.adaptor.reader_mode == "query":
-                if not self.adaptor.seek(seq_region_name=seq_region_name, start=start, end=end):
-                    return "N" * (end - start + 1)
+        # Features fetch many short spans, so the reader stays open between them rather than
+        # re-reading the index for every exon. A handle inherited through fork shares its file
+        # offset with the parent, so a forked worker opens its own.
+        if self._adaptor_pid != os.getpid():
+            self.adaptor.open(self.file_path, mode="auto")
+            self._adaptor_pid = os.getpid()
 
-                record = self.adaptor.next()
-                if record is None:
-                    return "N" * (end - start + 1)
+        if self.adaptor.reader_mode == "query":
+            if not self.adaptor.seek(seq_region_name=seq_region_name, start=start, end=end):
+                return "N" * (end - start + 1)
 
-                return record.sequence
+            record = self.adaptor.next()
+            if record is None:
+                return "N" * (end - start + 1)
 
-        sequence = self._load_sequences().get(seq_region_name)
-        if sequence is None:
-            return "N" * (end - start + 1)
+            return record.sequence
 
-        raw_start = start - 1
-        raw_end = end
-        chunk = sequence[raw_start:raw_end]
-        if len(chunk) < (end - start + 1):
-            chunk += "N" * ((end - start + 1) - len(chunk))
-
-        return chunk
+        self._close_adaptor()
+        self._warn_about_sequential_access()
+        return self._scan_sequence_chunk(seq_region_name, start, end)
 
     def _get_seq_region_length(self, seq_region_name: str) -> int | None:
-        """Return the FASTA sequence length for a region.
+        """Returns the FASTA sequence length for a region.
 
         Args:
             seq_region_name (str): The sequence region name.
+
+        Query-mode metadata comes from the Rust reader's ``.fai`` index. When auto mode falls back
+        to sequential reading, a bounded scan derives the same authoritative lengths without
+        retaining reference sequences.
 
         Returns:
             int | None: The sequence length or None if unavailable.
         """
 
-        # Check if the length is already cached in the adaptor metadata
-        lengths = self.adaptor.metadata.get("sequence_lengths", {})
+        self._load_metadata_lengths()
 
-        # If the length is not cached, attempt to load it from the FASTA file
-        if not lengths and self.file_path is not None:
-            with self.adaptor.open(self.file_path, mode="sequential"):
-                lengths = self.adaptor.metadata.get("sequence_lengths", {})
-
-        length = lengths.get(seq_region_name)
+        assert self._metadata_lengths is not None
+        length = self._metadata_lengths.get(seq_region_name)
         return int(length) if length is not None else None
 
-    def _load_sequences(self) -> dict[str, str]:
-        """Load all FASTA records into an in-memory lookup map."""
+    @property
+    def sequence_region_names(self) -> frozenset[str]:
+        """Return names advertised by the FASTA metadata index."""
 
+        self._load_metadata_lengths()
+        assert self._metadata_lengths is not None
+        return frozenset(self._metadata_lengths)
+
+    def _load_metadata_lengths(self) -> None:
+        """Load FASTA metadata lengths once."""
+
+        if self._metadata_lengths is not None:
+            return
         if self.file_path is None:
-            return {}
+            metadata = self.adaptor.metadata
+        else:
+            with self.adaptor.open(self.file_path, mode="auto"):
+                metadata = self.adaptor.metadata
+            self._adaptor_pid = None
+        self._metadata_lengths = {
+            str(name): int(length) for name, length in metadata.get("sequence_lengths", {}).items()
+        }
+        if not self._metadata_lengths and self.file_path is not None:
+            self._warn_about_sequential_access()
+            self._metadata_lengths = self._scan_sequence_lengths()
 
-        if self._sequences is None:
-            with self.adaptor.open(self.file_path, mode="sequential"):
-                self._sequences = {
-                    record.seqid: record.sequence for record in self.adaptor.records(limit=None)
-                }
+    def _scan_sequence_lengths(self) -> dict[str, int]:
+        """Return sequence lengths from a bounded sequential FASTA scan."""
 
-        return self._sequences
+        lengths: dict[str, int] = {}
+        sequence_region_name: str | None = None
+        with self._open_sequential_text() as handle:
+            for line in handle:
+                if line.startswith(">"):
+                    sequence_region_name = self._header_name(line)
+                    lengths.setdefault(sequence_region_name, 0)
+                    continue
+                if sequence_region_name is not None:
+                    lengths[sequence_region_name] += len("".join(line.split()))
+        return lengths
+
+    def _scan_sequence_chunk(self, seq_region_name: str, start: int, end: int) -> str:
+        """Return one span without retaining its complete unindexed reference contig."""
+
+        chunk: list[str] = []
+        position = 0
+        in_requested_region = False
+        with self._open_sequential_text() as handle:
+            for line in handle:
+                if line.startswith(">"):
+                    if in_requested_region:
+                        break
+                    in_requested_region = self._header_name(line) == seq_region_name
+                    position = 0
+                    continue
+                if not in_requested_region:
+                    continue
+
+                sequence_line = "".join(line.split()).upper()
+                line_start = position + 1
+                line_end = position + len(sequence_line)
+                overlap_start = max(start, line_start)
+                overlap_end = min(end, line_end)
+                if overlap_start <= overlap_end:
+                    local_start = overlap_start - line_start
+                    local_end = overlap_end - line_start + 1
+                    chunk.append(sequence_line[local_start:local_end])
+                position = line_end
+                if position >= end:
+                    break
+
+        sequence = "".join(chunk)
+        return sequence + "N" * (end - start + 1 - len(sequence))
+
+    @contextmanager
+    def _open_sequential_text(self) -> Iterator[TextIO]:
+        """Open plain or gzip-compatible FASTA text for a sequential fallback."""
+
+        assert self.file_path is not None
+        path = Path(self.file_path)
+        with path.open("rb") as probe:
+            compressed = probe.read(2) == b"\x1f\x8b"
+        if compressed:
+            with gzip.open(path, mode="rt", encoding="utf-8") as handle:
+                yield handle
+            return
+        with path.open("r", encoding="utf-8") as handle:
+            yield handle
+
+    @staticmethod
+    def _header_name(line: str) -> str:
+        """Return the sequence-region token from a FASTA header."""
+
+        return line[1:].strip().split(maxsplit=1)[0]
+
+    def _warn_about_sequential_access(self) -> None:
+        """Warn once that an index is required for scalable random access."""
+
+        if self._warned_sequential:
+            return
+        logger.warning(
+            "%s has no usable FASTA index; sequential fallback is bounded but may be slow",
+            self.file_path,
+        )
+        self._warned_sequential = True

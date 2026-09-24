@@ -14,6 +14,9 @@
 """Unit tests for the GFF3 parser interface."""
 
 from pathlib import Path
+import subprocess
+from typing import Protocol
+
 from attr import exceptions as attr_ex
 import pytest
 
@@ -441,3 +444,107 @@ class TestGFF3ParserParsingTextAndFiles:
 
         assert len(records) == 1
         _assert_gene_record(records[0])
+
+
+class TestGFF3RecordFirstAttribute:
+    """Tests for GFF3Record.first_attribute."""
+
+    def test_returns_first_value_for_known_key(self) -> None:
+        """Test the first attribute value is returned for a single-valued key."""
+
+        record = GFF3Parser.parse_text(SAMPLE, limit=1)[0]
+
+        assert record.first_attribute("ID") == "gene:1"
+
+    def test_returns_first_value_for_multi_valued_key(self) -> None:
+        """Test only the first value is returned for a multi-valued key."""
+
+        record = GFF3Parser.parse_text(SAMPLE, limit=1)[0]
+
+        assert record.first_attribute("Alias") == "a"
+
+    def test_returns_none_for_missing_key(self) -> None:
+        """Test None is returned when the attribute key is absent."""
+
+        record = GFF3Parser.parse_text(SAMPLE, limit=1)[0]
+
+        assert record.first_attribute("Parent") is None
+
+
+class TestGFF3ParserIndexSequenceNames:
+    """Tests for GFF3Parser.index_sequence_names."""
+
+    def test_unopened_parser_has_no_index_sequence_names(self) -> None:
+        """Test an unopened parser reports no index sequence names."""
+
+        assert GFF3Parser().index_sequence_names == []
+
+    def test_sequential_reader_has_no_index_sequence_names(self, tmp_path: Path) -> None:
+        """Test a sequentially-read file reports no index sequence names."""
+
+        path = _write_gff3(tmp_path / "sample.gff3")
+        parser = GFF3Parser(file_path=path, mode="sequential")
+
+        assert parser.index_sequence_names == []
+
+    def test_system_backend_has_no_index_sequence_names(self, tmp_path: Path) -> None:
+        """Test the system tabix executable fallback reports no index sequence names.
+
+        Only the in-process index reader parses the index header; querying it through the
+        `tabix` executable would cost as much as a region query.
+        """
+
+        path = _write_query_gff3(tmp_path / "sample.gff3.gz")
+        tabix = _write_query_mock_tabix(tmp_path)
+        parser = GFF3Parser(file_path=path, tabix_path=tabix)
+
+        assert parser.index_sequence_names == []
+
+
+class HtslibToolchain(Protocol):
+    """Protocol for HTSlib toolchain fixtures."""
+
+    bgzip: str
+    tabix: str
+
+
+def _create_tabix_gff3_cli(path: Path, htslib_toolchain: HtslibToolchain) -> Path:
+    """Create and tabix-index a GFF3 file with a real HTSlib toolchain."""
+
+    unzip_path = path.with_suffix(path.suffix.replace(".gz", ""))
+    unzip_path.write_text("\n".join([HEADER_LINES[0], CHR1_GENE_ROW, CHR1_CDS_ROW, CHR2_GENE_ROW]) + "\n")
+
+    subprocess.run([htslib_toolchain.bgzip, "-f", str(unzip_path)], check=True)
+    subprocess.run([htslib_toolchain.tabix, "-f", "-p", "gff", str(path)], check=True)
+
+    return path
+
+
+@pytest.mark.integration
+class TestGFF3ParserIndexIntegration:
+    """Integration tests against a real, in-process (noodles) tabix index."""
+
+    def test_index_sequence_names_matches_real_index(
+        self, tmp_path: Path, htslib_toolchain: HtslibToolchain
+    ) -> None:
+        """Test index_sequence_names reports the real index's declared contigs, in order."""
+
+        path = _create_tabix_gff3_cli(tmp_path / "sample.gff3.gz", htslib_toolchain)
+        parser = GFF3Parser(file_path=str(path), tabix_path="tabix-nonexistent-binary-for-test")
+
+        assert parser.index_sequence_names == ["chr1", "chr2"]
+
+    def test_seek_unknown_contig_returns_false_not_raises(
+        self, tmp_path: Path, htslib_toolchain: HtslibToolchain
+    ) -> None:
+        """Test seeking a contig absent from a real index returns False instead of raising."""
+
+        path = _create_tabix_gff3_cli(tmp_path / "sample.gff3.gz", htslib_toolchain)
+        parser = GFF3Parser(file_path=str(path), tabix_path="tabix-nonexistent-binary-for-test")
+
+        assert parser.seek(seq_region_name="chrZ", start=1, end=100) is False
+        assert parser.next() is None
+
+        # The parser stays usable for a subsequent, known contig.
+        assert parser.seek(seq_region_name="chr1", start=1, end=100) is True
+        assert parser.next() is not None
