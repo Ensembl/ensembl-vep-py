@@ -140,6 +140,10 @@ class FastaSequenceSource(SequenceSource):
             self._warn_about_sequential_access()
             self._metadata_lengths = self._scan_sequence_lengths()
 
+    # TBD: instead of falling back to _RustFastaAdaptor sequental mode which does not have
+    # seek method and reading sequence chunk efficiently (it reads the whole sequence) we are
+    # using this Python fallback. This is not an important branch at this moment because we
+    # expect a indexed fasta but we should implement a more efficient sequential mode in Rust.
     def _scan_sequence_lengths(self) -> dict[str, int]:
         """Return sequence lengths from a bounded sequential FASTA scan."""
 

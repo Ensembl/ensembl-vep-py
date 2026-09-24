@@ -640,14 +640,15 @@ where
     String::from_utf8(sequence).map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))
 }
 
-// NOT USED CURRENTLY
+// TBD: Backend.metadata() do not call this function anymore and it is not used currently
+// we should implement the loading metadata from fai into this function and efficient way of loading
+// sequence descriptions. [sequence length reading needs to be as fast as possible]
 #[cfg(test)]
 fn read_fasta_metadata(file_path: &Path) -> io::Result<FastaMetadata> {
     let mut reader = open_sequential_reader(file_path)?;
     read_fasta_metadata_from_reader(&mut reader)
 }
 
-// NOT USED CURRENTLY
 #[cfg(test)]
 fn read_fasta_metadata_from_reader<R>(reader: &mut R) -> io::Result<FastaMetadata>
 where
