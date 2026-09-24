@@ -13,7 +13,7 @@
 # limitations under the License.
 """Common enums."""
 
-from enum import Enum
+from enum import Enum, IntEnum
 
 
 class Strand(Enum):
@@ -98,3 +98,27 @@ class SourceType(Enum):
     FILE = "file"
     DB = "db"
     CACHE = "cache"
+
+
+class Readthrough(IntEnum):
+    """How far translation may run when a variant destroys the stop codon.
+
+    Opt-in, and ``NONE`` by default. An ``IntEnum`` because the levels are ordered rather
+    than independent, each one extends the previous.
+
+    Note that raising the level can only ever change the answer for a variant that leaves no
+    in-frame stop inside the coding sequence: when the stop codon survives intact and in frame,
+    translation terminates there whatever the bound is.
+    """
+
+    NONE = 0
+    """Stop at the (possibly shifted) CDS end. Translation never enters the UTR."""
+
+    UTR = 1
+    """Continue into the 3' UTR, looking for the next in-frame stop. Stays entirely within the
+    transcript's own spliced sequence."""
+
+    BEYOND_TRANSCRIPT = 2
+    """As ``UTR``, and if that still yields no stop, continue into raw genomic sequence past the
+    transcript's own boundary, read directly from the attached slice (bounded by 
+    ``MAX_READTHROUGH_BASES``). Trusts that the attached slice already covers the flank."""

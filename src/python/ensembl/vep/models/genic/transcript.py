@@ -626,6 +626,7 @@ class Transcript(Feature):
         coding_sequence = self.coding_sequence
         if coding_sequence:
             translation.seq = translate_dna(coding_sequence)
+            translation.derived_from_coding_sequence = True
         return translation
 
     @property

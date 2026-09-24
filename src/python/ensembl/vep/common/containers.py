@@ -11,7 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Common containers. Containers are for collection data without behavior."""
+"""Common containers.
+
+Containers are for collection data (generally without any behavior).
+"""
 
 from attrs import frozen
 
@@ -77,7 +80,7 @@ class ExternalReference:
         accession_id (str): Accession ID of the external reference.
         name (str): Name of the external reference.
         description (str | None): Description of the external reference.
-        assignment_method (str | None): Method used to assign this reference, e.g. - DIRECT.
+        assignment_method (str | None): Method used to assign this reference, e.g., DIRECT.
         url (str | None): URL where this external reference can be accessed.
         source (ExternalDB): Source database for this reference.
     """
@@ -113,3 +116,37 @@ class PredictionResult:
     version: str | None = None
     modes: tuple[str] | tuple[()] = ()
     reference_data: tuple[ExternalDB] | tuple[()] = ()
+
+
+@frozen(kw_only=True, auto_attribs=True)
+class SequenceEdit:
+    """Container for edit caused by a variant on a spliced sequence.
+
+    Offsets are relative to whatever ``Mapper`` produced them, for example, same variant yields a
+    different ``SequenceEdit`` against a CDS mapper than against a cDNA mapper.
+
+    Args:
+        footprint (tuple[int, int]): ``(low, high)`` inclusive offsets the variant covers.
+        start (int): Start of the half-open range to replace.
+        end (int): End of that range, exclusive. Equal to ``start`` for a pure insertion.
+        replacement (str): The allele string to replace with. Generally the alternate allele, strand-corrected
+            to transcript sense and empty for a pure deletion.
+    """
+
+    footprint: tuple[int, int]
+    start: int
+    end: int
+    replacement: str
+
+    @property
+    def length_change(self) -> int:
+        """Net change in sequence length this edit makes.
+
+        The change in sequence length is calculated as (replaced allele length - edited allele
+        length). Derived
+        here rather than at each call site so the arithmetic lives next to the geometry it comes from.
+
+        Returns:
+            int: The net length change.
+        """
+        return len(self.replacement) - (self.end - self.start)

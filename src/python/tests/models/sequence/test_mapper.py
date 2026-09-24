@@ -39,7 +39,7 @@ def forward_mapper() -> Mapper:
         genomic_spans=FORWARD_GENOMIC_SPANS,
         strand=Strand.FORWARD,
         coding_start_offset=0,
-        coding_end_offset=20,
+        coding_end_offset=19,
     )
 
 
@@ -50,7 +50,7 @@ def reverse_mapper() -> Mapper:
         genomic_spans=REVERSE_GENOMIC_SPANS,
         strand=Strand.REVERSE,
         coding_start_offset=0,
-        coding_end_offset=20,
+        coding_end_offset=19,
     )
 
 
@@ -61,7 +61,7 @@ def unknown_mapper() -> Mapper:
         genomic_spans=FORWARD_GENOMIC_SPANS,
         strand=Strand.UNKNOWN,
         coding_start_offset=0,
-        coding_end_offset=20,
+        coding_end_offset=19,
     )
 
 
@@ -72,7 +72,7 @@ def junction_spanning_mapper() -> Mapper:
         genomic_spans=[(98, 99), (200, 217)],
         strand=Strand.FORWARD,
         coding_start_offset=0,
-        coding_end_offset=20,
+        coding_end_offset=19,
     )
 
 
