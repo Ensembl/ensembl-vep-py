@@ -23,7 +23,7 @@ use std::{
 
 use crate::{
     parsers::utils::{associated_index_path, parse_region},
-    utils::{to_py_error, trim_newline},
+    utils::{bytes_to_string, to_py_error, trim_newline},
 };
 use log::warn;
 use noodles_bgzf::{self as bgzf, io::Seek as BgzfSeek};
@@ -43,9 +43,9 @@ use pyo3::{exceptions::PyRuntimeError, prelude::*, types::PyDict};
 
 /// A reusable tabix reader with parser-like `seek` and `next` operations.
 ///
-/// Prefers the system `tabix` executable for parity with htslib. Falls back
-/// to noodles when the executable is unavailable, keeping the BGZF file and
-/// index open for repeated region queries.
+/// Uses noodles when a CSI or TBI index is present, keeping the BGZF file and
+/// index open for repeated region queries. Falls back to the system `tabix`
+/// executable only when no index is found.
 pub struct TabixReader {
     backend: Backend,
     buffered_line: Option<String>,
@@ -89,6 +89,15 @@ impl TabixReader {
     pub fn header_lines(&mut self) -> io::Result<&[String]> {
         self.backend.header_lines()
     }
+
+    /// Return the reference sequence names declared by the in-process index, if one is open.
+    ///
+    /// Empty when the reader fell back to the system `tabix` executable: that path never parses
+    /// the index in-process, and querying it for the sole purpose of listing names would cost as
+    /// much as a region query.
+    pub fn reference_names(&self) -> Vec<String> {
+        self.backend.reference_names()
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -102,11 +111,25 @@ enum Backend {
 }
 
 impl Backend {
+    /// Open the in-process noodles reader rather than the system `tabix` executable.
+    ///
+    /// Each system query spawns a `tabix` child that reloads the index, which costs
+    /// milliseconds per region; annotation issues thousands of them. The executable is used
+    /// only when no index is present or noodles cannot read it.
     fn open(src: &Path, tabix_path: &str) -> io::Result<Self> {
+        let noodles = Self::open_noodles(src);
+        if noodles.is_ok() {
+            return noodles;
+        }
+
         if SystemBackend::is_available(tabix_path)? {
             return Ok(Self::System(SystemBackend::new(src, tabix_path)));
         }
 
+        noodles
+    }
+
+    fn open_noodles(src: &Path) -> io::Result<Self> {
         if associated_index_path(src, "csi").exists() {
             let index = csi::fs::read(associated_index_path(src, "csi"))?;
             let file = File::open(src)?;
@@ -140,6 +163,14 @@ impl Backend {
             Self::System(b) => b.header_lines(),
             Self::Csi(b) => b.header_lines(),
             Self::Tbi(b) => b.header_lines(),
+        }
+    }
+
+    fn reference_names(&self) -> Vec<String> {
+        match self {
+            Self::System(_) => Vec::new(),
+            Self::Csi(b) => b.reference_names(),
+            Self::Tbi(b) => b.reference_names(),
         }
     }
 }
@@ -280,6 +311,16 @@ struct NoodlesBackend<I: BinningIndex> {
     query: Option<NoodlesQuery>,
     /// Lazily loaded header lines (`None` = not yet loaded).
     cached_headers: Option<Vec<String>>,
+    /// Lines read from BGZF for the active or most recently spent query, matched or not. Reset
+    /// on each `seek`. Test-only: it exists so a test can prove the early-stop behaviour in
+    /// `next` actually reduces the number of lines scanned, rather than merely returning the
+    /// right rows -- a claim that happens to hold even without early stop whenever the past-end
+    /// row is also the chunk's last line, as it is in the small fixtures most other tests share.
+    /// It lives here rather than on `NoodlesQuery` because early stop now clears `query` (moving
+    /// `PastEnd` handling from "abandon this chunk" to "end the whole query"), and a test needs
+    /// the count to survive that.
+    #[cfg(test)]
+    scanned_lines: usize,
 }
 
 struct NoodlesQuery {
@@ -296,10 +337,22 @@ impl<I: BinningIndex> NoodlesBackend<I> {
             reader,
             query: None,
             cached_headers: None,
+            #[cfg(test)]
+            scanned_lines: 0,
         }
     }
 
     fn seek(&mut self, region: &str) -> io::Result<()> {
+        // Clear any previous query up front. Every early return below (an inverted range, a
+        // missing header, a reference sequence the index does not declare, or `index.query`
+        // failing) must leave no active query rather than the previous seek's stale rows -- a
+        // seek that produces no results must behave like `next` was never primed.
+        self.query = None;
+        #[cfg(test)]
+        {
+            self.scanned_lines = 0;
+        }
+
         let region = parse_region(region)?;
         if let (Bnd::Included(start), Bnd::Included(end)) = (region.start(), region.end())
             && start > end
@@ -314,7 +367,11 @@ impl<I: BinningIndex> NoodlesBackend<I> {
             .map(QueryHeader::from)
             .ok_or_else(|| io::Error::new(ErrorKind::InvalidInput, "missing index header"))?;
 
-        let reference_sequence_id = self.reference_sequence_id(&region)?;
+        // A reference sequence absent from the index has no rows; treating that as "no data" 
+        // lets callers fall back cleanly instead of catching a broad exception.
+        let Some(reference_sequence_id) = self.reference_sequence_id(&region) else {
+            return Ok(());
+        };
 
         let chunks = index.query(reference_sequence_id, region.interval())?;
 
@@ -351,6 +408,12 @@ impl<I: BinningIndex> NoodlesBackend<I> {
 
             query.line_buf.clear();
             let len = bgzf_reader.read_line(&mut query.line_buf)?;
+            #[cfg(test)]
+            {
+                if len > 0 {
+                    self.scanned_lines += 1;
+                }
+            }
 
             if len == 0 {
                 self.query = None;
@@ -359,11 +422,33 @@ impl<I: BinningIndex> NoodlesBackend<I> {
 
             trim_newline(&mut query.line_buf);
 
-            if query
-                .header
-                .line_intersects_region(&query.line_buf, &query.region)?
-            {
-                return Ok(Some(query.line_buf.clone()));
+            match query.header.classify_line(&query.line_buf, &query.region)? {
+                LineRegionMatch::Intersects => {
+                    // Move the buffer out instead of cloning it. A clone's real cost is copying
+                    // the line's bytes; moving avoids that copy, at the price of one fresh
+                    // (empty) allocation to replace the buffer -- sized to this line's length, so
+                    // reading a next line no longer than this one does not need to grow it again.
+                    let capacity_hint = query.line_buf.len();
+                    let line = std::mem::replace(
+                        &mut query.line_buf,
+                        String::with_capacity(capacity_hint),
+                    );
+                    return Ok(Some(line));
+                }
+                LineRegionMatch::PastEnd => {
+                    // Safe to end the whole query here, not just this chunk. `Index::query`
+                    // (noodles-csi 0.55, `binning_index/index.rs`) scopes every returned chunk to
+                    // the one queried `reference_sequence_id` and runs them through
+                    // `optimize_chunks`, which sorts by ascending virtual position and merges
+                    // overlaps -- so `query.chunks` is already a non-overlapping, file-ordered
+                    // sequence for this contig alone. The file is coordinate-sorted per contig,
+                    // so virtual-position order here is genomic order: once a same-contig row
+                    // starts past the region end, every row still to come -- in this chunk or a
+                    // later one -- is further along the file and so past the end too.
+                    self.query = None;
+                    return Ok(None);
+                }
+                LineRegionMatch::NoMatch => {}
             }
         }
     }
@@ -426,20 +511,29 @@ impl<I: BinningIndex> NoodlesBackend<I> {
         Ok(self.cached_headers.as_deref().unwrap())
     }
 
-    fn reference_sequence_id(&self, region: &Region) -> io::Result<usize> {
+    /// Return the index of `region`'s reference sequence, or `None` when the index does not
+    /// declare it. A missing name is a normal "no data for this contig" outcome, not an error.
+    fn reference_sequence_id(&self, region: &Region) -> Option<usize> {
+        self.reader
+            .index()
+            .header()?
+            .reference_sequence_names()
+            .get_index_of(region.name())
+    }
+
+    /// Return every reference sequence name declared by the index header, in index order.
+    fn reference_names(&self) -> Vec<String> {
         self.reader
             .index()
             .header()
-            .and_then(|h| h.reference_sequence_names().get_index_of(region.name()))
-            .ok_or_else(|| {
-                io::Error::new(
-                    ErrorKind::InvalidInput,
-                    format!(
-                        "missing reference sequence name: {}",
-                        String::from_utf8_lossy(region.name())
-                    ),
-                )
+            .map(|header| {
+                header
+                    .reference_sequence_names()
+                    .iter()
+                    .map(|name| bytes_to_string(name.as_ref()))
+                    .collect()
             })
+            .unwrap_or_default()
     }
 }
 
@@ -456,42 +550,109 @@ struct QueryHeader {
     coordinate_system: CoordinateSystem,
 }
 
+/// The relationship between one tabix data line and the region being queried.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum LineRegionMatch {
+    /// The line's interval intersects the queried region.
+    Intersects,
+    /// The line is on a different reference sequence, or falls before or after the region
+    /// without ruling out further matches later in the file (for example an unbounded region).
+    NoMatch,
+    /// The line is on the queried reference sequence and starts after the region end. Since the
+    /// file is coordinate-sorted per contig, nothing later in this chunk can match either.
+    PastEnd,
+}
+
 impl QueryHeader {
-    fn line_intersects_region(&self, line: &str, region: &Region) -> io::Result<bool> {
+    /// Classify one line against `region` in a single left-to-right pass over its tab-separated
+    /// fields, without collecting them into a `Vec` first.
+    fn classify_line(&self, line: &str, region: &Region) -> io::Result<LineRegionMatch> {
         if line
             .as_bytes()
             .first()
             .is_some_and(|b| *b == self.line_comment_prefix)
         {
-            return Ok(false);
+            return Ok(LineRegionMatch::NoMatch);
         }
 
-        let fields: Vec<_> = line.split('\t').collect();
+        // The three needed columns (reference sequence name, start, end) can appear in any
+        // order: GFF/BED/VCF all place the name first, but a generic tabix index (`tabix -s -b
+        // -e`) can point the name column anywhere, including after start/end. A single forward
+        // pass still avoids collecting a `Vec`, but it can only stop once *all three* configured
+        // indices have actually been seen -- stopping as soon as start/end are read, regardless
+        // of whether the name column has been reached yet, would wrongly report the name as
+        // missing whenever it comes later in the line.
+        let mut seq_name_found = false;
+        let mut seq_matches = false;
+        let mut start_field = None;
+        let mut end_field = None;
 
-        let seq_name = fields
-            .get(self.reference_sequence_name_index)
-            .ok_or_else(|| {
-                io::Error::new(ErrorKind::InvalidData, "missing reference sequence name")
-            })?;
+        for (index, field) in line.split('\t').enumerate() {
+            if index == self.reference_sequence_name_index {
+                seq_name_found = true;
+                seq_matches = field.as_bytes() == region.name();
+                if !seq_matches {
+                    break;
+                }
+            }
+            if index == self.start_position_index {
+                start_field = Some(field);
+            }
+            if self.end_position_index == Some(index) {
+                end_field = Some(field);
+            }
 
-        if seq_name.as_bytes() != region.name() {
-            return Ok(false);
+            let scanned_every_needed_field = seq_name_found
+                && index >= self.start_position_index
+                && self
+                    .end_position_index
+                    .is_none_or(|end_index| index >= end_index);
+            if scanned_every_needed_field {
+                break;
+            }
         }
 
-        let start = fields
-            .get(self.start_position_index)
+        if !seq_name_found {
+            return Err(io::Error::new(
+                ErrorKind::InvalidData,
+                "missing reference sequence name",
+            ));
+        }
+        if !seq_matches {
+            return Ok(LineRegionMatch::NoMatch);
+        }
+
+        let start = start_field
             .ok_or_else(|| io::Error::new(ErrorKind::InvalidData, "missing start position"))
             .and_then(|s| self.parse_start_position(s))?;
-
         let end = match self.end_position_index {
-            Some(i) => fields
-                .get(i)
+            Some(_) => end_field
                 .ok_or_else(|| io::Error::new(ErrorKind::InvalidData, "missing end position"))
                 .and_then(|s| self.parse_end_position(s))?,
             None => start,
         };
 
-        Ok(Interval::from(start..=end).intersects(region.interval()))
+        if Interval::from(start..=end).intersects(region.interval()) {
+            return Ok(LineRegionMatch::Intersects);
+        }
+
+        let past_end = matches!(region.end(), Bnd::Included(region_end) if start > region_end);
+        Ok(if past_end {
+            LineRegionMatch::PastEnd
+        } else {
+            LineRegionMatch::NoMatch
+        })
+    }
+
+    /// Test-only convenience over [`Self::classify_line`]: production code (`NoodlesBackend::next`)
+    /// needs the richer `LineRegionMatch` to drive the early-stop decision, so only tests need the
+    /// plain intersects/doesn't-intersect question.
+    #[cfg(test)]
+    fn line_intersects_region(&self, line: &str, region: &Region) -> io::Result<bool> {
+        Ok(matches!(
+            self.classify_line(line, region)?,
+            LineRegionMatch::Intersects
+        ))
     }
 
     fn parse_start_position(&self, start: &str) -> io::Result<Position> {
@@ -678,6 +839,17 @@ mod tests {
             .set_reference_sequence_name_index(0)
             .set_start_position_index(1)
             .set_end_position_index(Some(2))
+            .build();
+        QueryHeader::from(&header)
+    }
+
+    /// A generic tabix index whose reference-name column comes *after* start/end, as produced by
+    /// `tabix -s 3 -b 1 -e 2` (1-based CLI columns => 0-based indices seq=2, start=0, end=1).
+    fn generic_late_contig_header() -> QueryHeader {
+        let header = Header::builder()
+            .set_reference_sequence_name_index(2)
+            .set_start_position_index(0)
+            .set_end_position_index(Some(1))
             .build();
         QueryHeader::from(&header)
     }
@@ -1102,6 +1274,298 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
+    // QueryHeader::classify_line — early-stop signal
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_classify_line_past_end_on_matching_contig() -> io::Result<()> {
+        let qh = gff_query_header();
+        let region = parse_region("chr1:15-25")?;
+        assert_eq!(
+            qh.classify_line("chr1\tsrc\tgene\t30\t40\t.\t+\t.\tID=gene1", &region)?,
+            LineRegionMatch::PastEnd
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_classify_line_not_past_end_when_region_unbounded() -> io::Result<()> {
+        let qh = gff_query_header();
+        // No end means "15 to end of contig" -- a line here can be excluded only for starting
+        // *before* the region, never for starting "past" a nonexistent end.
+        let region = parse_region("chr1:9000")?;
+        assert_eq!(
+            qh.classify_line("chr1\tsrc\tgene\t10\t20\t.\t+\t.\tID=gene1", &region)?,
+            LineRegionMatch::NoMatch
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_classify_line_different_contig_is_no_match_not_past_end() -> io::Result<()> {
+        let qh = gff_query_header();
+        let region = parse_region("chr1:15-25")?;
+        assert_eq!(
+            qh.classify_line("chr2\tsrc\tgene\t9000\t9100\t.\t+\t.\tID=gene1", &region)?,
+            LineRegionMatch::NoMatch
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_classify_line_before_start_is_no_match() -> io::Result<()> {
+        let qh = gff_query_header();
+        let region = parse_region("chr1:15-25")?;
+        assert_eq!(
+            qh.classify_line("chr1\tsrc\tgene\t1\t5\t.\t+\t.\tID=gene1", &region)?,
+            LineRegionMatch::NoMatch
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_classify_line_intersects() -> io::Result<()> {
+        let qh = gff_query_header();
+        let region = parse_region("chr1:15-25")?;
+        assert_eq!(
+            qh.classify_line("chr1\tsrc\tgene\t10\t20\t.\t+\t.\tID=gene1", &region)?,
+            LineRegionMatch::Intersects
+        );
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // QueryHeader::classify_line — reference sequence column after start/end
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_classify_line_finds_late_contig_column() -> io::Result<()> {
+        // Regression: the single-pass scan used to stop as soon as it had read start and end,
+        // even when the configured reference-name column (here, index 2) had not been reached
+        // yet -- wrongly reporting the name as missing instead of reading three more columns.
+        let qh = generic_late_contig_header();
+        let region = parse_region("chr1:15-35")?;
+
+        assert_eq!(
+            qh.classify_line("10\t20\tchr1\tx", &region)?,
+            LineRegionMatch::Intersects
+        );
+        assert_eq!(
+            qh.classify_line("30\t40\tchr1\ty", &region)?,
+            LineRegionMatch::Intersects
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_classify_line_late_contig_column_wrong_chrom_is_no_match() -> io::Result<()> {
+        let qh = generic_late_contig_header();
+        let region = parse_region("chr1:15-35")?;
+
+        assert_eq!(
+            qh.classify_line("10\t20\tchr2\tx", &region)?,
+            LineRegionMatch::NoMatch
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_classify_line_late_contig_column_past_end() -> io::Result<()> {
+        let qh = generic_late_contig_header();
+        let region = parse_region("chr1:1-5")?;
+
+        assert_eq!(
+            qh.classify_line("10\t20\tchr1\tx", &region)?,
+            LineRegionMatch::PastEnd
+        );
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // NoodlesBackend::next — early stop on a past-end row
+    // -----------------------------------------------------------------------
+
+    /// Number of lines `NoodlesBackend::next` has physically read for the reader's active query.
+    ///
+    /// The record fixtures every other test shares happen to place their past-end row at (or
+    /// very near) the end of the only chunk that query touches, so asserting on the *returned
+    /// records* alone cannot tell early stop apart from a full scan that would have produced the
+    /// same output anyway -- both read the same handful of lines regardless. This reads the
+    /// test-only counter instead, to prove early stop actually reads fewer lines than a full
+    /// scan of the query's rows would.
+    fn scanned_lines(reader: &TabixReader) -> usize {
+        match &reader.backend {
+            Backend::Tbi(backend) => backend.scanned_lines,
+            Backend::Csi(backend) => backend.scanned_lines,
+            Backend::System(_) => 0,
+        }
+    }
+
+    /// Six genes on chr1: two intersect "chr1:90-135", the third starts past its end, and three
+    /// more sit further along the same contig -- read by a full scan but not by early stop.
+    fn six_gene_single_contig_lines() -> Vec<String> {
+        vec![
+            "##gff-version 3".to_string(),
+            "chr1\tsource\tgene\t100\t110\t.\t+\t.\tID=gene_a".to_string(),
+            "chr1\tsource\tgene\t120\t130\t.\t+\t.\tID=gene_b".to_string(),
+            "chr1\tsource\tgene\t140\t150\t.\t+\t.\tID=gene_c".to_string(),
+            "chr1\tsource\tgene\t200\t210\t.\t+\t.\tID=gene_d".to_string(),
+            "chr1\tsource\tgene\t300\t310\t.\t+\t.\tID=gene_e".to_string(),
+            "chr1\tsource\tgene\t400\t410\t.\t+\t.\tID=gene_f".to_string(),
+        ]
+    }
+
+    #[test]
+    fn test_noodles_backend_next_early_stop_reads_fewer_lines_than_a_full_scan() -> io::Result<()> {
+        let dir = create_temp_dir("tabix-test-noodles-early-stop-count")?;
+        let (gz_path, _) = write_gff3_with_tbi(&dir, Some(six_gene_single_contig_lines()))?;
+        let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        assert!(reader.seek("chr1:90-135")?);
+        let records: Vec<String> = std::iter::from_fn(|| reader.next().ok()?).collect();
+
+        assert_eq!(records.len(), 2, "expected 2 records, got {records:?}");
+        assert!(records[0].contains("ID=gene_a"));
+        assert!(records[1].contains("ID=gene_b"));
+
+        // Early stop reads exactly the two matches plus the one past-end row that triggers it --
+        // never gene_d, gene_e or gene_f, which a full scan of the query's chunk(s) would still
+        // have to read and discard one by one.
+        assert_eq!(
+            scanned_lines(&reader),
+            3,
+            "expected early stop to read only gene_a, gene_b and the triggering gene_c"
+        );
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_noodles_backend_next_early_stop_ends_whole_query_not_just_chunk() -> io::Result<()> {
+        // Same fixture and region as above, phrased as a query-level assertion: once the
+        // past-end row is read, the query is fully spent -- a second `next()` call must not
+        // resume into a later chunk and yield gene_d.
+        let dir = create_temp_dir("tabix-test-noodles-early-stop-ends-query")?;
+        let (gz_path, _) = write_gff3_with_tbi(&dir, Some(six_gene_single_contig_lines()))?;
+        let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        assert!(reader.seek("chr1:90-135")?);
+        let _ = reader.next()?; // gene_a
+        let _ = reader.next()?; // gene_b
+        assert_eq!(reader.next()?, None);
+        assert_eq!(reader.next()?, None, "a spent query must stay spent");
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_noodles_backend_next_stops_early_on_past_end_row_multi_contig_fixture() -> io::Result<()>
+    {
+        // The shared default fixture (chr1 genes 1-4, chr2 gene5) as a sanity check that the
+        // early-stop behaviour above also holds against the fixture most other tests use, and
+        // that it does not disturb the separate chr2 contig.
+        let dir = create_temp_dir("tabix-test-noodles-early-stop-multi-contig")?;
+        let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
+        let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        assert!(reader.seek("chr1:150-250")?);
+        let records: Vec<String> = std::iter::from_fn(|| reader.next().ok()?).collect();
+
+        assert_eq!(records.len(), 2, "expected 2 records, got {records:?}");
+        assert!(records[0].contains("ID=gene2"));
+        assert!(records[1].contains("ID=gene3"));
+
+        assert!(reader.seek("chr2:100-200")?);
+        let chr2_records: Vec<String> = std::iter::from_fn(|| reader.next().ok()?).collect();
+        assert_eq!(chr2_records.len(), 1);
+        assert!(chr2_records[0].contains("ID=gene5"));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_noodles_backend_next_long_feature_spanning_region_end_intersects() -> io::Result<()> {
+        // A feature that starts inside the query and extends past its end is `Intersects`, not
+        // `PastEnd`: only a feature that *starts* after the region end is past it.
+        let dir = create_temp_dir("tabix-test-noodles-long-feature")?;
+        let lines = vec![
+            "##gff-version 3".to_string(),
+            "chr1\tsource\tgene\t50\t1000\t.\t+\t.\tID=long_gene".to_string(),
+        ];
+        let (gz_path, _) = write_gff3_with_tbi(&dir, Some(lines))?;
+        let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        assert!(reader.seek("chr1:100-200")?);
+        let records: Vec<String> = std::iter::from_fn(|| reader.next().ok()?).collect();
+
+        assert_eq!(records.len(), 1);
+        assert!(records[0].contains("ID=long_gene"));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_noodles_backend_next_open_ended_region_reads_every_downstream_match() -> io::Result<()>
+    {
+        // An unbounded region (no end) never classifies a row as `PastEnd` (there is no "end" to
+        // be past), so every matching row downstream, however far along the contig, must still
+        // be returned.
+        let dir = create_temp_dir("tabix-test-noodles-open-ended")?;
+        let (gz_path, _) = write_gff3_with_tbi(&dir, Some(six_gene_single_contig_lines()))?;
+        let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        assert!(reader.seek("chr1:90")?);
+        let records: Vec<String> = std::iter::from_fn(|| reader.next().ok()?).collect();
+
+        let ids: Vec<&str> = records
+            .iter()
+            .map(|r| r.rsplit("ID=").next().unwrap_or(""))
+            .collect();
+        assert_eq!(
+            ids,
+            vec!["gene_a", "gene_b", "gene_c", "gene_d", "gene_e", "gene_f"]
+        );
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // NoodlesBackend::next — returned lines are independently owned
+    // -----------------------------------------------------------------------
+
+    /// A matched row is moved out of `query.line_buf` (not cloned): pin that each returned
+    /// `String` is a fully independent value, and unaffected by whatever the reused buffer holds
+    /// afterwards.
+    #[test]
+    fn test_noodles_backend_next_returned_lines_are_independently_owned() -> io::Result<()> {
+        let dir = create_temp_dir("tabix-test-noodles-owned-lines")?;
+        let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
+        let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        assert!(reader.seek("chr1")?);
+        let first = reader.next()?.expect("expected first record");
+        let second = reader.next()?.expect("expected second record");
+
+        assert!(
+            first.contains("ID=gene1"),
+            "expected ID=gene1, got: {first}"
+        );
+        assert!(
+            second.contains("ID=gene2"),
+            "expected ID=gene2, got: {second}"
+        );
+        assert_ne!(first, second);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
     // NoodlesBackend::reference_sequence_id
     // -----------------------------------------------------------------------
 
@@ -1112,13 +1576,97 @@ mod tests {
         let index = tabix::fs::read(&tbi_file)?;
         let backend = NoodlesBackend::new(csi::io::IndexedReader::new(File::open(gz_file)?, index));
 
-        assert_eq!(backend.reference_sequence_id(&parse_region("chr1")?)?, 0);
-        assert_eq!(backend.reference_sequence_id(&parse_region("chr2")?)?, 1);
-        let err = backend
-            .reference_sequence_id(&parse_region("chr3")?)
-            .unwrap_err();
-        assert_eq!(err.kind(), ErrorKind::InvalidInput);
-        assert!(err.to_string().contains("chr3"), "unexpected error: {err}");
+        assert_eq!(
+            backend.reference_sequence_id(&parse_region("chr1")?),
+            Some(0)
+        );
+        assert_eq!(
+            backend.reference_sequence_id(&parse_region("chr2")?),
+            Some(1)
+        );
+        assert_eq!(backend.reference_sequence_id(&parse_region("chr3")?), None);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // NoodlesBackend::reference_names
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_noodles_backend_reference_names() -> io::Result<()> {
+        let dir = create_temp_dir("tabix-test-reference-names")?;
+        let (gz_file, tbi_file) = write_gff3_with_tbi(&dir, None)?;
+        let index = tabix::fs::read(&tbi_file)?;
+        let backend = NoodlesBackend::new(csi::io::IndexedReader::new(File::open(gz_file)?, index));
+
+        assert_eq!(
+            backend.reference_names(),
+            vec!["chr1".to_string(), "chr2".to_string()]
+        );
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_noodles_backend_reference_names_no_header() -> io::Result<()> {
+        let dir = create_temp_dir("tabix-test-reference-names-no-header")?;
+        let path = write_bgzf_file(
+            &dir,
+            vec!["##gff-version 3".to_string()],
+            Some("test.gff3.gz"),
+        )?;
+        let index = csi::Index::default();
+        let backend = NoodlesBackend::new(csi::io::IndexedReader::new(File::open(path)?, index));
+
+        assert!(backend.reference_names().is_empty());
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // TabixReader::reference_names
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_tabix_reader_reference_names_with_index() -> io::Result<()> {
+        let dir = create_temp_dir("tabix-test-reader-reference-names")?;
+        let (gz_path, _tbi_path) = write_gff3_with_tbi(&dir, None)?;
+        let reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        assert_eq!(
+            reader.reference_names(),
+            vec!["chr1".to_string(), "chr2".to_string()]
+        );
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn test_tabix_reader_reference_names_system_backend_is_empty() -> io::Result<()> {
+        use std::os::unix::fs::PermissionsExt;
+
+        let dir = create_temp_dir("tabix-test-reader-reference-names-system")?;
+
+        let tabix_path = dir.join("tabix");
+        fs::write(
+            &tabix_path,
+            "#!/bin/sh\nif [ \"$1\" = '--version' ]; then echo 'tabix 1.0'; exit 0; fi\nexit 0\n",
+        )?;
+        let mut perms = fs::metadata(&tabix_path)?.permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&tabix_path, perms)?;
+
+        let data_path = dir.join("sample.gff3.gz");
+        fs::write(&data_path, [])?;
+
+        let reader = TabixReader::open(&data_path, tabix_path.to_str().unwrap())?;
+        assert!(reader.reference_names().is_empty());
 
         fs::remove_dir_all(dir)?;
         Ok(())
@@ -1144,6 +1692,25 @@ mod tests {
 
         // Should open via CSI backend, not TBI
         let reader = TabixReader::open(&path, "tabix-nonexistent-binary-for-test")?;
+        assert!(matches!(reader.backend, Backend::Csi(_)));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_backend_prefers_index_over_available_executable() -> io::Result<()> {
+        let dir = create_temp_dir("tabix-test-index-over-executable")?;
+
+        let path = write_bgzf_file(
+            &dir,
+            vec!["##gff-version 3".to_string()],
+            Some("test.gff3.gz"),
+        )?;
+        csi::fs::write(associated_index_path(&path, "csi"), &csi::Index::default())?;
+
+        // `sh` exists everywhere tests run, so the system backend would be available.
+        let reader = TabixReader::open(&path, "sh")?;
         assert!(matches!(reader.backend, Backend::Csi(_)));
 
         fs::remove_dir_all(dir)?;
@@ -1320,19 +1887,23 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
-    // NoodlesBackend::seek — missing reference sequence name
+    // NoodlesBackend::seek — reference sequence absent from the index
     // -----------------------------------------------------------------------
 
     #[test]
-    fn test_noodles_backend_seek_unknown_region() -> io::Result<()> {
+    fn test_noodles_backend_seek_unknown_region_returns_no_rows() -> io::Result<()> {
         let dir = create_temp_dir("tabix-test-noodles-unknown-region")?;
         let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
         let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
 
-        // "chrZ" is not in the index — should return InvalidInput
-        let err = reader.seek("chrZ:1-100").unwrap_err();
-        assert_eq!(err.kind(), ErrorKind::InvalidInput);
-        assert!(err.to_string().contains("chrZ"), "unexpected error: {err}");
+        // "chrZ" is not in the index — no rows, not an error.
+        assert!(!reader.seek("chrZ:1-100")?);
+        assert_eq!(reader.next()?, None);
+
+        // The reader stays usable for a subsequent, known contig.
+        assert!(reader.seek("chr1:1-50")?);
+        let rec = reader.next()?.expect("expected a record");
+        assert!(rec.contains("ID=gene1"), "expected ID=gene1, got: {rec}");
 
         fs::remove_dir_all(dir)?;
         Ok(())
@@ -1348,7 +1919,10 @@ mod tests {
         let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
         let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
 
-        let err = reader.seek(":::invalid:::").unwrap_err();
+        // "chr1:10-" fails region *syntax* parsing (trailing hyphen, no numeric end) -- distinct
+        // from a syntactically valid but unindexed name, which now returns `false` instead (see
+        // `test_noodles_backend_seek_unknown_region_returns_no_rows`).
+        let err = reader.seek("chr1:10-").unwrap_err();
         assert_eq!(err.kind(), ErrorKind::InvalidInput);
 
         fs::remove_dir_all(dir)?;
@@ -1464,6 +2038,32 @@ mod tests {
 
         assert!(!reader.seek("chr1:300-100")?);
         assert_eq!(reader.next()?, None);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    /// Regression: an inverted-range seek used to return early without clearing a previous
+    /// query, so leftover rows from a prior seek leaked through the next `next()` call.
+    ///
+    /// The first seek matches four rows; priming consumes only the first (`gene1`), leaving
+    /// `gene2`..`gene4` in the query. Without the fix, the second (inverted-range) seek would
+    /// leave that leftover query active, and the following `next()` would wrongly return
+    /// `gene2` instead of `None`.
+    #[test]
+    fn test_noodles_backend_seek_start_greater_than_end_clears_previous_query() -> io::Result<()> {
+        let dir = create_temp_dir("tabix-test-noodles-seek-clears-stale")?;
+        let (gz_path, _) = write_gff3_with_tbi(&dir, None)?;
+        let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        assert!(reader.seek("chr1")?);
+        // Re-seek with an inverted range before consuming the other three primed-query rows.
+        assert!(!reader.seek("chr1:200-100")?);
+        assert_eq!(
+            reader.next()?,
+            None,
+            "stale rows from the earlier seek must not leak through"
+        );
 
         fs::remove_dir_all(dir)?;
         Ok(())
@@ -1732,7 +2332,7 @@ mod tests {
 
     #[test]
     #[cfg(unix)]
-    fn test_query_prefers_system_tabix() -> io::Result<()> {
+    fn test_query_uses_system_tabix_without_readable_index() -> io::Result<()> {
         use std::os::unix::fs::PermissionsExt;
 
         let dir = create_temp_dir("tabix-test-sys")?;
