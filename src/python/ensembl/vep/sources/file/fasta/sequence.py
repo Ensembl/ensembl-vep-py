@@ -18,6 +18,7 @@ from __future__ import annotations
 import logging
 import os
 from pathlib import Path
+from typing import TextIO
 
 from attrs import define, field
 from attrs.setters import frozen
