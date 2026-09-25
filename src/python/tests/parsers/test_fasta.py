@@ -99,13 +99,13 @@ class TestFastaParserInitialization:
 class TestFastaParserMetadata:
     """Tests for FastaParser.metadata."""
 
-    def test_unindexed_metadata_is_empty(self, tmp_path: Path) -> None:
-        """Test metadata does not scan an unindexed FASTA."""
+    def test_unindexed_metadata_scans_lengths(self, tmp_path: Path) -> None:
+        """Test metadata for an unindexed FASTA holds the scanned sequence lengths only."""
 
         path = _write_fasta(tmp_path / "sample.fa", DESCRIBED_SAMPLE)
         parser = FastaParser(file_path=path, mode="sequential")
 
-        assert not parser.metadata
+        assert parser.metadata == {"sequence_lengths": {"chr1": 8, "chr2": 4}}
 
     def test_metadata_is_cached(self, tmp_path: Path) -> None:
         """Test metadata is stable after first access."""
@@ -151,7 +151,7 @@ class TestFastaParserMetadata:
         parser = FastaParser(file_path=path, mode="sequential")
 
         _assert_chr1_record(parser.next())
-        assert not parser.metadata
+        assert parser.metadata
         _assert_chr2_record(parser.next())
 
     def test_metadata_in_query_mode_reads_index_lengths(self, tmp_path: Path) -> None:
@@ -310,14 +310,26 @@ class TestFastaParserSeek:
         with pytest.raises(ValueError):
             parser.seek("chr2:1-")
 
-    def test_sequential_mode_rejects_seek(self, tmp_path: Path) -> None:
-        """Test sequential reader mode keeps seek disabled."""
+    def test_sequential_mode_seeks_requested_span(self, tmp_path: Path) -> None:
+        """Test sequential reader mode seeks without a FASTA index."""
 
         path = _write_fasta(tmp_path / "sample.fa")
         parser = FastaParser(file_path=path, mode="sequential")
 
-        with pytest.raises(RuntimeError, match="sequential"):
-            parser.seek(seq_region_name="chr1", start=1, end=4)
+        assert parser.seek(seq_region_name="chr1", start=3, end=6)
+        record = parser.next()
+
+        assert record is not None
+        assert record.sequence == "GTTG"
+        assert parser.next() is None
+
+    def test_sequential_mode_seek_returns_false_for_missing_region(self, tmp_path: Path) -> None:
+        """Test sequential reader mode reports an unknown sequence region."""
+
+        path = _write_fasta(tmp_path / "sample.fa")
+        parser = FastaParser(file_path=path, mode="sequential")
+
+        assert not parser.seek(seq_region_name="chr3", start=1, end=4)
 
 
 class TestFastaParserRecords:

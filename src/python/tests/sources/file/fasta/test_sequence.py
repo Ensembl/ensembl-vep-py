@@ -170,6 +170,42 @@ class TestFastaSequenceSourceSequence:
         assert source.get_sequence_by_start_end_strand("chr1", 3, 4) == "GT"
         assert opened == ["auto"]
 
+    def test_sequential_mode_reuses_open_reader_across_spans(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Test consecutive span fetches open the unindexed FASTA once."""
+
+        path = _write_fasta(tmp_path / "sample.fa")
+        source = _make_fasta_source(path, "sequential")
+        opened: list[str] = []
+        original_open = FastaParser.open
+
+        def counting_open(parser: FastaParser, file_path: str, mode: str = "auto") -> FastaParser:
+            opened.append(mode)
+            return original_open(parser, file_path, mode)
+
+        monkeypatch.setattr(FastaParser, "open", counting_open)
+
+        assert source.get_sequence_by_start_end_strand("chr1", 1, 2) == "AC"
+        assert source.get_sequence_by_start_end_strand("chr2", 3, 4) == "AA"
+        assert opened == ["auto"]
+        assert source.adaptor.reader_mode == "sequential"
+
+    def test_sequential_mode_warns_once(self, tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+        """Test an unindexed FASTA logs one warning across spans and length lookups."""
+
+        path = _write_fasta(tmp_path / "sample.fa")
+        source = _make_fasta_source(path, "sequential")
+
+        with caplog.at_level("WARNING"):
+            assert source.get_sequence_by_start_end_strand("chr1", 1, 2) == "AC"
+            assert source.get_seq_region_length("chr2") == 4
+            assert source.get_sequence_by_start_end_strand("chr1", 3, 4) == "GT"
+
+        assert [record.message for record in caplog.records if "no usable FASTA index" in record.message] == [
+            f"{path} has no usable FASTA index; sequential fallback is bounded but may be slow"
+        ]
+
     def test_query_mode_reopens_reader_in_another_process(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:

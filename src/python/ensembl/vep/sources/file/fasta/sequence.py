@@ -15,13 +15,9 @@
 
 from __future__ import annotations
 
-import gzip
 import logging
 import os
-from collections.abc import Iterator
-from contextlib import contextmanager
 from pathlib import Path
-from typing import TextIO
 
 from attrs import define, field
 
@@ -80,19 +76,17 @@ class FastaSequenceSource(SequenceSource):
             self.adaptor.open(self.file_path, mode="auto")
             self._adaptor_pid = os.getpid()
 
-        if self.adaptor.reader_mode == "query":
-            if not self.adaptor.seek(seq_region_name=seq_region_name, start=start, end=end):
-                return "N" * (end - start + 1)
+        if self.adaptor.reader_mode == "sequential":
+            self._warn_about_sequential_access()
 
-            record = self.adaptor.next()
-            if record is None:
-                return "N" * (end - start + 1)
+        if not self.adaptor.seek(seq_region_name=seq_region_name, start=start, end=end):
+            return "N" * (end - start + 1)
 
-            return record.sequence
+        record = self.adaptor.next()
+        if record is None:
+            return "N" * (end - start + 1)
 
-        self._close_adaptor()
-        self._warn_about_sequential_access()
-        return self._scan_sequence_chunk(seq_region_name, start, end)
+        return record.sequence
 
     def _get_seq_region_length(self, seq_region_name: str) -> int | None:
         """Returns the FASTA sequence length for a region.
@@ -100,9 +94,8 @@ class FastaSequenceSource(SequenceSource):
         Args:
             seq_region_name (str): The sequence region name.
 
-        Query-mode metadata comes from the Rust reader's ``.fai`` index. When auto mode falls back
-        to sequential reading, a bounded scan derives the same authoritative lengths without
-        retaining reference sequences.
+        Query-mode metadata comes from the Rust reader's ``.fai`` index. Without an index, the
+        Rust reader derives the same lengths from one scan that retains no sequence.
 
         Returns:
             int | None: The sequence length or None if unavailable.
@@ -132,86 +125,12 @@ class FastaSequenceSource(SequenceSource):
         else:
             with self.adaptor.open(self.file_path, mode="auto"):
                 metadata = self.adaptor.metadata
+                if self.adaptor.reader_mode == "sequential":
+                    self._warn_about_sequential_access()
             self._adaptor_pid = None
         self._metadata_lengths = {
             str(name): int(length) for name, length in metadata.get("sequence_lengths", {}).items()
         }
-        if not self._metadata_lengths and self.file_path is not None:
-            self._warn_about_sequential_access()
-            self._metadata_lengths = self._scan_sequence_lengths()
-
-    # TBD: instead of falling back to _RustFastaAdaptor sequental mode which does not have
-    # seek method and reading sequence chunk efficiently (it reads the whole sequence) we are
-    # using this Python fallback. This is not an important branch at this moment because we
-    # expect a indexed fasta but we should implement a more efficient sequential mode in Rust.
-    def _scan_sequence_lengths(self) -> dict[str, int]:
-        """Return sequence lengths from a bounded sequential FASTA scan."""
-
-        lengths: dict[str, int] = {}
-        sequence_region_name: str | None = None
-        with self._open_sequential_text() as handle:
-            for line in handle:
-                if line.startswith(">"):
-                    sequence_region_name = self._header_name(line)
-                    lengths.setdefault(sequence_region_name, 0)
-                    continue
-                if sequence_region_name is not None:
-                    lengths[sequence_region_name] += len("".join(line.split()))
-        return lengths
-
-    def _scan_sequence_chunk(self, seq_region_name: str, start: int, end: int) -> str:
-        """Return one span without retaining its complete unindexed reference contig."""
-
-        chunk: list[str] = []
-        position = 0
-        in_requested_region = False
-        with self._open_sequential_text() as handle:
-            for line in handle:
-                if line.startswith(">"):
-                    if in_requested_region:
-                        break
-                    in_requested_region = self._header_name(line) == seq_region_name
-                    position = 0
-                    continue
-                if not in_requested_region:
-                    continue
-
-                sequence_line = "".join(line.split()).upper()
-                line_start = position + 1
-                line_end = position + len(sequence_line)
-                overlap_start = max(start, line_start)
-                overlap_end = min(end, line_end)
-                if overlap_start <= overlap_end:
-                    local_start = overlap_start - line_start
-                    local_end = overlap_end - line_start + 1
-                    chunk.append(sequence_line[local_start:local_end])
-                position = line_end
-                if position >= end:
-                    break
-
-        sequence = "".join(chunk)
-        return sequence + "N" * (end - start + 1 - len(sequence))
-
-    @contextmanager
-    def _open_sequential_text(self) -> Iterator[TextIO]:
-        """Open plain or gzip-compatible FASTA text for a sequential fallback."""
-
-        assert self.file_path is not None
-        path = Path(self.file_path)
-        with path.open("rb") as probe:
-            compressed = probe.read(2) == b"\x1f\x8b"
-        if compressed:
-            with gzip.open(path, mode="rt", encoding="utf-8") as handle:
-                yield handle
-            return
-        with path.open("r", encoding="utf-8") as handle:
-            yield handle
-
-    @staticmethod
-    def _header_name(line: str) -> str:
-        """Return the sequence-region token from a FASTA header."""
-
-        return line[1:].strip().split(maxsplit=1)[0]
 
     def _warn_about_sequential_access(self) -> None:
         """Warn once that an index is required for scalable random access."""
