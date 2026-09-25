@@ -150,7 +150,7 @@ impl GtfReader {
         self.backend.seek(region)
     }
 
-    fn index_sequence_names(&self) -> Vec<String> {
+    fn index_sequence_names(&mut self) -> io::Result<Vec<String>> {
         self.backend.index_sequence_names()
     }
 
@@ -232,9 +232,9 @@ impl Backend {
         }
     }
 
-    fn index_sequence_names(&self) -> Vec<String> {
+    fn index_sequence_names(&mut self) -> io::Result<Vec<String>> {
         match self {
-            Self::Sequential(_) => Vec::new(),
+            Self::Sequential(_) => Ok(Vec::new()),
             Self::Tabix(reader) => reader.index_sequence_names(),
         }
     }
@@ -352,13 +352,12 @@ impl TabixBackend {
         Ok(None)
     }
 
-    /// Reference sequence names declared by the tabix index, or empty when unopened or when the
-    /// system `tabix` executable is in use rather than the in-process index.
-    fn index_sequence_names(&self) -> Vec<String> {
-        self.reader
-            .as_ref()
-            .map(tabix::TabixReader::reference_names)
-            .unwrap_or_default()
+    /// Reference sequence names declared by the tabix index, or empty when unopened.
+    fn index_sequence_names(&mut self) -> io::Result<Vec<String>> {
+        match self.reader.as_mut() {
+            Some(reader) => reader.reference_names(),
+            None => Ok(Vec::new()),
+        }
     }
 }
 
@@ -429,15 +428,15 @@ impl GtfParser {
 
     /// Reference sequence names declared by the tabix index, in index order.
     ///
-    /// Empty when the file is unopened, read sequentially, or falls back to the system `tabix`
-    /// executable. Callers can use these names to resolve a query contig to the exact spelling
-    /// the index declares before seeking, instead of retrying alternate spellings on a miss.
+    /// Empty when the file is unopened or read sequentially. Callers can use these names to
+    /// resolve a query contig to the exact spelling the index declares before seeking, instead of
+    /// retrying alternate spellings on a miss.
     #[getter]
-    fn index_sequence_names(&self) -> Vec<String> {
-        self.reader
-            .as_ref()
-            .map(GtfReader::index_sequence_names)
-            .unwrap_or_default()
+    fn index_sequence_names(&mut self) -> PyResult<Vec<String>> {
+        match self.reader.as_mut() {
+            Some(reader) => reader.index_sequence_names().map_err(to_py_error),
+            None => Ok(Vec::new()),
+        }
     }
 
     fn open(&mut self, file_path: &str, mode: Option<String>) -> PyResult<()> {
@@ -2243,10 +2242,10 @@ chr1\tensembl\tCDS\t1\t50\t.\t+\t0\tgene_id \"gene:1\";
     fn test_tabix_backend_index_sequence_names() -> io::Result<()> {
         let dir = create_temp_dir("gtf-tabix-index-names")?;
         let (gz_path, _tbi_path) = write_gtf_with_tbi(&dir, None)?;
-        let backend = TabixBackend::new(&gz_path, "tabix-nonexistent-binary-for-test")?;
+        let mut backend = TabixBackend::new(&gz_path, "tabix-nonexistent-binary-for-test")?;
 
         assert_eq!(
-            backend.index_sequence_names(),
+            backend.index_sequence_names()?,
             vec!["chr1".to_string(), "chr2".to_string()]
         );
 
@@ -2259,12 +2258,12 @@ chr1\tensembl\tCDS\t1\t50\t.\t+\t0\tgene_id \"gene:1\";
         let dir = create_temp_dir("gtf-sequential-index-names")?;
         let path = write_sample_file(&dir, "sample.gtf", SAMPLE)?;
 
-        let reader = GtfReader::open(
+        let mut reader = GtfReader::open(
             &path,
             "tabix-nonexistent-binary-for-test",
             ReaderMode::Sequential,
         )?;
-        assert!(reader.index_sequence_names().is_empty());
+        assert!(reader.index_sequence_names()?.is_empty());
 
         fs::remove_dir_all(dir)?;
         Ok(())
@@ -2277,11 +2276,16 @@ chr1\tensembl\tCDS\t1\t50\t.\t+\t0\tgene_id \"gene:1\";
         let file_path = gz_path.to_string_lossy().into_owned();
 
         let mut parser = GtfParser::new(None, None, None).map_err(from_py_error)?;
-        assert!(parser.index_sequence_names().is_empty());
+        assert!(
+            parser
+                .index_sequence_names()
+                .map_err(from_py_error)?
+                .is_empty()
+        );
 
         parser.open(&file_path, None).map_err(from_py_error)?;
         assert_eq!(
-            parser.index_sequence_names(),
+            parser.index_sequence_names().map_err(from_py_error)?,
             vec!["chr1".to_string(), "chr2".to_string()]
         );
 

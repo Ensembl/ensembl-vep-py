@@ -74,6 +74,11 @@ if [ "$1" = "--version" ]; then
     exit 0
 fi
 
+if [ "$1" = "-l" ]; then
+    printf '%s\\n' chr1 chr2
+    exit 0
+fi
+
 case "$2" in
     chr1)
         printf '%s\\n' '{CHR1_GENE_ROW}'
@@ -497,14 +502,24 @@ class TestGTFParserIndexSequenceNames:
 
         assert parser.index_sequence_names == []
 
-    def test_system_backend_has_no_index_sequence_names(self, tmp_path: Path) -> None:
-        """Test the system tabix executable fallback reports no index sequence names."""
+    def test_system_backend_lists_index_sequence_names(self, tmp_path: Path) -> None:
+        """Test the system tabix executable fallback lists the index sequence names."""
 
         path = _write_query_gtf(tmp_path / "sample.gtf.gz")
         tabix = _write_query_mock_tabix(tmp_path)
         parser = GTFParser(file_path=path, tabix_path=tabix)
 
-        assert parser.index_sequence_names == []
+        assert parser.index_sequence_names == ["chr1", "chr2"]
+
+    def test_system_backend_listing_failure_raises(self, tmp_path: Path) -> None:
+        """Test a failing ``tabix -l`` raises rather than reporting no names."""
+
+        path = _write_query_gtf(tmp_path / "sample.gtf.gz")
+        tabix = _write_mock_tabix(tmp_path, 'if [ "$1" = "-l" ]; then exit 2; fi\nexit 0')
+        parser = GTFParser(file_path=path, tabix_path=tabix)
+
+        with pytest.raises(RuntimeError, match="tabix -l failed"):
+            _ = parser.index_sequence_names
 
 
 class HtslibToolchain(Protocol):

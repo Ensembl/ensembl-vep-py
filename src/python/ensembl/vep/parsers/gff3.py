@@ -85,11 +85,13 @@ class GFF3Parser(Parser[GFF3Record]):
     def index_sequence_names(self) -> list[str]:
         """Reference sequence names declared by the tabix index, in index order.
 
-        Empty when the file is unopened, read sequentially, or falls back to the system
-        ``tabix`` executable.
+        Empty when the file is unopened or read sequentially.
 
         Returns:
             list[str]: The reference sequence names the index declares.
+
+        Raises:
+            RuntimeError: If the system ``tabix`` executable fails to list the names.
         """
 
         return self._parser.index_sequence_names

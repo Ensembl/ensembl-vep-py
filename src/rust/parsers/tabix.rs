@@ -90,12 +90,10 @@ impl TabixReader {
         self.backend.header_lines()
     }
 
-    /// Return the reference sequence names declared by the in-process index, if one is open.
+    /// Return the reference sequence names declared by the index, in index order.
     ///
-    /// Empty when the reader fell back to the system `tabix` executable: that path never parses
-    /// the index in-process, and querying it for the sole purpose of listing names would cost as
-    /// much as a region query.
-    pub fn reference_names(&self) -> Vec<String> {
+    /// The system `tabix` fallback lists them once via `tabix -l` and caches the result.
+    pub fn reference_names(&mut self) -> io::Result<Vec<String>> {
         self.backend.reference_names()
     }
 }
@@ -166,11 +164,11 @@ impl Backend {
         }
     }
 
-    fn reference_names(&self) -> Vec<String> {
+    fn reference_names(&mut self) -> io::Result<Vec<String>> {
         match self {
-            Self::System(_) => Vec::new(),
-            Self::Csi(b) => b.reference_names(),
-            Self::Tbi(b) => b.reference_names(),
+            Self::System(b) => b.reference_names().map(<[String]>::to_vec),
+            Self::Csi(b) => Ok(b.reference_names()),
+            Self::Tbi(b) => Ok(b.reference_names()),
         }
     }
 }
@@ -185,6 +183,8 @@ struct SystemBackend {
     query: Option<SystemQuery>,
     /// Lazily loaded header lines (`None` = not yet loaded).
     cached_headers: Option<Vec<String>>,
+    /// Lazily loaded reference sequence names (`None` = not yet loaded).
+    cached_reference_names: Option<Vec<String>>,
 }
 
 struct SystemQuery {
@@ -199,6 +199,7 @@ impl SystemBackend {
             tabix_path: tabix_path.to_string(),
             query: None,
             cached_headers: None,
+            cached_reference_names: None,
         }
     }
 
@@ -286,6 +287,32 @@ impl SystemBackend {
         }
 
         Ok(self.cached_headers.as_deref().unwrap())
+    }
+
+    /// Load reference sequence names via `tabix -l <src>`, which reads only the index.
+    fn reference_names(&mut self) -> io::Result<&[String]> {
+        if self.cached_reference_names.is_none() {
+            let output = Command::new(&self.tabix_path)
+                .arg("-l")
+                .arg(&self.src)
+                .output()?;
+
+            if !output.status.success() {
+                return Err(io::Error::other(format!(
+                    "tabix -l failed with status {}",
+                    output.status
+                )));
+            }
+
+            let names = bytes_to_string(&output.stdout)
+                .lines()
+                .map(str::to_owned)
+                .collect();
+
+            self.cached_reference_names = Some(names);
+        }
+
+        Ok(self.cached_reference_names.as_deref().unwrap())
     }
 
     fn close_query(&mut self) {
@@ -1635,10 +1662,10 @@ mod tests {
     fn test_tabix_reader_reference_names_with_index() -> io::Result<()> {
         let dir = create_temp_dir("tabix-test-reader-reference-names")?;
         let (gz_path, _tbi_path) = write_gff3_with_tbi(&dir, None)?;
-        let reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
+        let mut reader = TabixReader::open(&gz_path, "tabix-nonexistent-binary-for-test")?;
 
         assert_eq!(
-            reader.reference_names(),
+            reader.reference_names()?,
             vec!["chr1".to_string(), "chr2".to_string()]
         );
 
@@ -1648,7 +1675,7 @@ mod tests {
 
     #[test]
     #[cfg(unix)]
-    fn test_tabix_reader_reference_names_system_backend_is_empty() -> io::Result<()> {
+    fn test_tabix_reader_reference_names_system_backend() -> io::Result<()> {
         use std::os::unix::fs::PermissionsExt;
 
         let dir = create_temp_dir("tabix-test-reader-reference-names-system")?;
@@ -1656,7 +1683,10 @@ mod tests {
         let tabix_path = dir.join("tabix");
         fs::write(
             &tabix_path,
-            "#!/bin/sh\nif [ \"$1\" = '--version' ]; then echo 'tabix 1.0'; exit 0; fi\nexit 0\n",
+            "#!/bin/sh\n\
+            if [ \"$1\" = '--version' ]; then echo 'tabix 1.0'; exit 0; fi\n\
+            if [ \"$1\" = '-l' ]; then printf '%s\\n' chr1 chr2; exit 0; fi\n\
+            exit 0\n",
         )?;
         let mut perms = fs::metadata(&tabix_path)?.permissions();
         perms.set_mode(0o755);
@@ -1665,8 +1695,12 @@ mod tests {
         let data_path = dir.join("sample.gff3.gz");
         fs::write(&data_path, [])?;
 
-        let reader = TabixReader::open(&data_path, tabix_path.to_str().unwrap())?;
-        assert!(reader.reference_names().is_empty());
+        let mut reader = TabixReader::open(&data_path, tabix_path.to_str().unwrap())?;
+        assert!(matches!(reader.backend, Backend::System(_)));
+        assert_eq!(
+            reader.reference_names()?,
+            vec!["chr1".to_string(), "chr2".to_string()]
+        );
 
         fs::remove_dir_all(dir)?;
         Ok(())
@@ -2274,6 +2308,123 @@ mod tests {
         assert!(
             err.to_string().contains("tabix -H failed"),
             "unexpected error: {err}"
+        );
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // SystemBackend::reference_names
+    // -----------------------------------------------------------------------
+
+    #[test]
+    #[cfg(unix)]
+    fn test_system_backend_reference_names_are_cached() -> io::Result<()> {
+        use std::os::unix::fs::PermissionsExt;
+
+        let dir = create_temp_dir("tabix-test-sys-reference-names")?;
+
+        // Each `-l` call appends to a log, so a second listing would show up as a second line.
+        let calls_path = dir.join("calls");
+        let tabix_path = dir.join("tabix");
+        fs::write(
+            &tabix_path,
+            format!(
+                "#!/bin/sh\n\
+                if [ \"$1\" = '-l' ]; then echo l >> '{}'; printf '%s\\n' chr1 chrX; exit 0; fi\n\
+                exit 0\n",
+                calls_path.display()
+            ),
+        )?;
+        let mut perms = fs::metadata(&tabix_path)?.permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&tabix_path, perms)?;
+
+        let data_path = dir.join("sample.gff3.gz");
+        fs::write(&data_path, [])?;
+
+        let mut backend = SystemBackend::new(&data_path, tabix_path.to_str().unwrap());
+        assert_eq!(backend.reference_names()?, ["chr1", "chrX"]);
+        assert_eq!(backend.reference_names()?, ["chr1", "chrX"]);
+        assert_eq!(fs::read_to_string(&calls_path)?.lines().count(), 1);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn test_system_backend_reference_names_empty() -> io::Result<()> {
+        use std::os::unix::fs::PermissionsExt;
+
+        let dir = create_temp_dir("tabix-test-sys-reference-names-empty")?;
+
+        let tabix_path = dir.join("tabix");
+        fs::write(&tabix_path, "#!/bin/sh\nexit 0\n")?;
+        let mut perms = fs::metadata(&tabix_path)?.permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&tabix_path, perms)?;
+
+        let data_path = dir.join("sample.gff3.gz");
+        fs::write(&data_path, [])?;
+
+        let mut backend = SystemBackend::new(&data_path, tabix_path.to_str().unwrap());
+        assert!(backend.reference_names()?.is_empty());
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn test_system_backend_reference_names_command_fails() -> io::Result<()> {
+        use std::os::unix::fs::PermissionsExt;
+
+        let dir = create_temp_dir("tabix-test-sys-reference-names-fail")?;
+
+        let tabix_path = dir.join("tabix");
+        fs::write(
+            &tabix_path,
+            "#!/bin/sh\n\
+            if [ \"$1\" = '-l' ]; then exit 2; fi\n\
+            exit 0\n",
+        )?;
+        let mut perms = fs::metadata(&tabix_path)?.permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&tabix_path, perms)?;
+
+        let data_path = dir.join("sample.gff3.gz");
+        fs::write(&data_path, [])?;
+
+        let mut backend = SystemBackend::new(&data_path, tabix_path.to_str().unwrap());
+        let err = backend.reference_names().unwrap_err();
+        assert!(
+            err.to_string().contains("tabix -l failed"),
+            "unexpected error: {err}"
+        );
+        assert!(backend.cached_reference_names.is_none());
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    #[ignore = "skipped: requires tabix"]
+    fn test_system_backend_reference_names_match_noodles_backend() -> io::Result<()> {
+        let tabix_path = std::env::var("ENSEMBL_VEP_HTSLIB_BIN")
+            .map(|bin| Path::new(&bin).join("tabix").to_string_lossy().into_owned())
+            .unwrap_or_else(|_| "tabix".to_string());
+        let dir = create_temp_dir("tabix-test-sys-reference-names-parity")?;
+        let (gz_path, tbi_path) = write_gff3_with_tbi(&dir, None)?;
+        let index = tabix::fs::read(&tbi_path)?;
+        let noodles_backend =
+            NoodlesBackend::new(csi::io::IndexedReader::new(File::open(&gz_path)?, index));
+        let mut system_backend = SystemBackend::new(&gz_path, &tabix_path);
+
+        assert_eq!(
+            system_backend.reference_names()?,
+            noodles_backend.reference_names()
         );
 
         fs::remove_dir_all(dir)?;
