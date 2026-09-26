@@ -16,6 +16,7 @@
 """Unit tests for Transcript class."""
 
 import logging
+
 import pytest
 
 from ensembl.vep.common.enums import CoordSystemLevel, Strand
@@ -148,6 +149,99 @@ class TestTranscriptInitialization:
             )
 
 
+class TestIntrons:
+    """Tests for the lazily derived ``introns`` property.
+
+    One Intron per consecutive exon pair, in transcript order, including a pair with no genomic
+    gap between them. Parity with the builder path is asserted separately, in
+    ``tests/sources/file/gxf/test_transcript.py``.
+    """
+
+    def test_no_exons_has_no_introns(self) -> None:
+        """A transcript with no exons has no introns."""
+        transcript = Transcript(start=1, end=100, strand=Strand.FORWARD, stable_id="ENST_NO_EXONS")
+
+        assert transcript.introns == []
+
+    def test_single_exon_has_no_introns(self) -> None:
+        """A single-exon transcript has no introns."""
+        transcript = Transcript(start=1, end=100, strand=Strand.FORWARD, stable_id="ENST_ONE_EXON")
+        transcript.spliced_exons = [Exon(start=1, end=10, strand=Strand.FORWARD, stable_id="ENSE1")]
+
+        assert transcript.introns == []
+
+    def test_forward_strand_introns_span_the_gaps(self) -> None:
+        """Forward strand: introns fill the gaps between consecutive exons, in order."""
+        exon_1 = Exon(start=1, end=10, strand=Strand.FORWARD, stable_id="ENSE1")
+        exon_2 = Exon(start=20, end=30, strand=Strand.FORWARD, stable_id="ENSE2")
+        exon_3 = Exon(start=40, end=50, strand=Strand.FORWARD, stable_id="ENSE3")
+        transcript = Transcript(start=1, end=50, strand=Strand.FORWARD, stable_id="ENST_FWD")
+        transcript.spliced_exons = [exon_1, exon_2, exon_3]
+
+        introns = transcript.introns
+
+        assert [(intron.start, intron.end) for intron in introns] == [(11, 19), (31, 39)]
+        assert (introns[0].prev_exon, introns[0].next_exon) == (exon_1, exon_2)
+        assert (introns[1].prev_exon, introns[1].next_exon) == (exon_2, exon_3)
+        assert all(intron.strand == Strand.FORWARD for intron in introns)
+
+    def test_reverse_strand_introns_span_the_gaps(self) -> None:
+        """Reverse strand: exons are given in transcript (descending genomic) order, and the
+        intron's genomic span is still computed low-to-high."""
+        exon_1 = Exon(start=40, end=50, strand=Strand.REVERSE, stable_id="ENSE1")
+        exon_2 = Exon(start=20, end=30, strand=Strand.REVERSE, stable_id="ENSE2")
+        exon_3 = Exon(start=1, end=10, strand=Strand.REVERSE, stable_id="ENSE3")
+        transcript = Transcript(start=1, end=50, strand=Strand.REVERSE, stable_id="ENST_REV")
+        transcript.spliced_exons = [exon_1, exon_2, exon_3]
+
+        introns = transcript.introns
+
+        assert [(intron.start, intron.end) for intron in introns] == [(31, 39), (11, 19)]
+        # prev_exon/next_exon always follow transcript order, regardless of strand.
+        assert (introns[0].prev_exon, introns[0].next_exon) == (exon_1, exon_2)
+        assert (introns[1].prev_exon, introns[1].next_exon) == (exon_2, exon_3)
+
+    def test_adjacent_exons_produce_a_zero_length_intron(self) -> None:
+        """Exons with no genomic gap between them still get an intron, with start > end."""
+        exon_1 = Exon(start=1, end=10, strand=Strand.FORWARD, stable_id="ENSE1")
+        exon_2 = Exon(start=11, end=20, strand=Strand.FORWARD, stable_id="ENSE2")
+        transcript = Transcript(start=1, end=20, strand=Strand.FORWARD, stable_id="ENST_ADJACENT")
+        transcript.spliced_exons = [exon_1, exon_2]
+
+        (intron,) = transcript.introns
+
+        assert (intron.start, intron.end) == (11, 10)
+
+    def test_introns_invalidated_when_spliced_exons_reassigned(self) -> None:
+        """Reassigning spliced_exons clears the cached introns."""
+        transcript = Transcript(start=1, end=100, strand=Strand.FORWARD, stable_id="ENST_INVALIDATE")
+        transcript.spliced_exons = [
+            Exon(start=1, end=10, strand=Strand.FORWARD, stable_id="ENSE1"),
+            Exon(start=20, end=30, strand=Strand.FORWARD, stable_id="ENSE2"),
+        ]
+        assert len(transcript.introns) == 1
+
+        transcript.spliced_exons = [Exon(start=1, end=10, strand=Strand.FORWARD, stable_id="ENSE1")]
+
+        assert transcript.introns == []
+
+    def test_seeding_overrides_the_derived_value(self) -> None:
+        """Seeding introns bypasses derivation entirely, for callers such as the synthetic corpus
+        that build their own (e.g. skipping zero-gap introns). Seeding after spliced_exons is set
+        matters: spliced_exons' own on_setattr hook invalidates _introns, so seeding first would
+        be discarded."""
+        transcript = Transcript(start=1, end=100, strand=Strand.FORWARD, stable_id="ENST_OVERRIDE")
+        transcript.spliced_exons = [
+            Exon(start=1, end=10, strand=Strand.FORWARD, stable_id="ENSE1"),
+            Exon(start=11, end=20, strand=Strand.FORWARD, stable_id="ENSE2"),
+        ]
+        custom_intron = Intron(start=100, end=200, strand=Strand.FORWARD)
+
+        transcript.seed_attrs(introns=[custom_intron])
+
+        assert transcript.introns == [custom_intron]
+
+
 class TestTranscriptProperties:
     """Test Transcript properties."""
 
@@ -167,7 +261,7 @@ class TestTranscriptProperties:
         assert transcript.spliced_exons == [exon]
 
         assert transcript.introns == []
-        transcript.introns = [intron]
+        transcript.seed_attrs(introns=[intron])
         assert transcript.introns == [intron]
 
         assert transcript.translation is None
@@ -528,6 +622,71 @@ class TestTranscriptProperties:
         assert cds.seq is not None
         assert len(cds.seq) == 14
 
+    @staticmethod
+    def _transcript_with_utrs(
+        strand: Strand, *, translation_start: int = 3, translation_end: int = 45
+    ) -> Transcript:
+        """Build a coding transcript whose exons are ordered in transcript orientation."""
+        exons = [
+            Exon(start=1, end=10, strand=strand, stable_id="E0"),
+            Exon(start=20, end=31, strand=strand, stable_id="E1"),
+            Exon(start=40, end=49, strand=strand, stable_id="E2"),
+        ]
+        transcript = Transcript(start=1, end=49, strand=strand, stable_id="T")
+        transcript.spliced_exons = exons if strand == Strand.FORWARD else list(reversed(exons))
+        transcript.seed_attrs(
+            translation=Translation(
+                start=translation_start,
+                end=translation_end,
+                stable_id="P",
+            )
+        )
+        return transcript
+
+    @pytest.mark.parametrize(
+        ("strand", "expected_start", "expected_end"),
+        [
+            (Strand.FORWARD, 1, 2),
+            (Strand.REVERSE, 48, 49),
+        ],
+    )
+    def test_five_prime_utr(self, strand: Strand, expected_start: int, expected_end: int) -> None:
+        """The 5' UTR is the envelope before the coding start in transcript orientation."""
+        transcript = self._transcript_with_utrs(strand)
+
+        five_prime_utr = transcript.five_prime_utr
+
+        assert five_prime_utr is not None
+        assert (five_prime_utr.start, five_prime_utr.end) == (expected_start, expected_end)
+        assert five_prime_utr.strand == strand
+        assert five_prime_utr.transcript is transcript
+
+    @pytest.mark.parametrize(
+        ("strand", "expected_start", "expected_end"),
+        [
+            (Strand.FORWARD, 46, 49),
+            (Strand.REVERSE, 1, 4),
+        ],
+    )
+    def test_three_prime_utr(self, strand: Strand, expected_start: int, expected_end: int) -> None:
+        """The 3' UTR is the envelope after the coding end in transcript orientation."""
+        transcript = self._transcript_with_utrs(strand)
+
+        three_prime_utr = transcript.three_prime_utr
+
+        assert three_prime_utr is not None
+        assert (three_prime_utr.start, three_prime_utr.end) == (expected_start, expected_end)
+        assert three_prime_utr.strand == strand
+        assert three_prime_utr.transcript is transcript
+
+    @pytest.mark.parametrize("strand", [Strand.FORWARD, Strand.REVERSE])
+    def test_utrs_are_none_when_coding_region_reaches_transcript_ends(self, strand: Strand) -> None:
+        """A coding region spanning the transcript leaves no UTR on either side."""
+        transcript = self._transcript_with_utrs(strand, translation_start=1, translation_end=49)
+
+        assert transcript.five_prime_utr is None
+        assert transcript.three_prime_utr is None
+
     def test_reverse_strand_cds_read_first_keeps_coding_boundaries(self) -> None:
         """Reading the derived CDS before coding_start/end does not flip them on the reverse strand."""
         dummy_slice = DummySlice("ACGT" * 25, feature_start=1)
@@ -608,71 +767,6 @@ class TestTranscriptProperties:
         """Test three_prime_utr is None if there are no exons or no coding_end"""
         assert transcript.three_prime_utr is None
         transcript.spliced_exons = spliced_exons
-        assert transcript.three_prime_utr is None
-
-    @staticmethod
-    def _transcript_with_utrs(
-        strand: Strand, *, translation_start: int = 3, translation_end: int = 45
-    ) -> Transcript:
-        """Build a coding transcript whose exons are ordered in transcript orientation."""
-        exons = [
-            Exon(start=1, end=10, strand=strand, stable_id="E0"),
-            Exon(start=20, end=31, strand=strand, stable_id="E1"),
-            Exon(start=40, end=49, strand=strand, stable_id="E2"),
-        ]
-        transcript = Transcript(start=1, end=49, strand=strand, stable_id="T")
-        transcript.spliced_exons = exons if strand == Strand.FORWARD else list(reversed(exons))
-        transcript.seed_attrs(
-            translation=Translation(
-                start=translation_start,
-                end=translation_end,
-                stable_id="P",
-            )
-        )
-        return transcript
-
-    @pytest.mark.parametrize(
-        ("strand", "expected_start", "expected_end"),
-        [
-            (Strand.FORWARD, 1, 2),
-            (Strand.REVERSE, 48, 49),
-        ],
-    )
-    def test_five_prime_utr(self, strand: Strand, expected_start: int, expected_end: int) -> None:
-        """The 5' UTR is the envelope before the coding start in transcript orientation."""
-        transcript = self._transcript_with_utrs(strand)
-
-        five_prime_utr = transcript.five_prime_utr
-
-        assert five_prime_utr is not None
-        assert (five_prime_utr.start, five_prime_utr.end) == (expected_start, expected_end)
-        assert five_prime_utr.strand == strand
-        assert five_prime_utr.transcript is transcript
-
-    @pytest.mark.parametrize(
-        ("strand", "expected_start", "expected_end"),
-        [
-            (Strand.FORWARD, 46, 49),
-            (Strand.REVERSE, 1, 4),
-        ],
-    )
-    def test_three_prime_utr(self, strand: Strand, expected_start: int, expected_end: int) -> None:
-        """The 3' UTR is the envelope after the coding end in transcript orientation."""
-        transcript = self._transcript_with_utrs(strand)
-
-        three_prime_utr = transcript.three_prime_utr
-
-        assert three_prime_utr is not None
-        assert (three_prime_utr.start, three_prime_utr.end) == (expected_start, expected_end)
-        assert three_prime_utr.strand == strand
-        assert three_prime_utr.transcript is transcript
-
-    @pytest.mark.parametrize("strand", [Strand.FORWARD, Strand.REVERSE])
-    def test_utrs_are_none_when_coding_region_reaches_transcript_ends(self, strand: Strand) -> None:
-        """A coding region spanning the transcript leaves no UTR on either side."""
-        transcript = self._transcript_with_utrs(strand, translation_start=1, translation_end=49)
-
-        assert transcript.five_prime_utr is None
         assert transcript.three_prime_utr is None
 
     @pytest.mark.parametrize(

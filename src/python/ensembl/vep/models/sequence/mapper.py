@@ -48,7 +48,7 @@ class MapperIndex:
 
     Attributes:
         offset_to_position (list[int]): 0-based CDS offset -> Genomic position, index ``i`` is the
-            genomic position of CDS offset ``i``.
+            genomic position of CDS offset ``padding + i`` (see ``Mapper.padding``).
         position_to_offset (dict[int, int]): Genomic position -> 0-based CDS offset, inverse of
             ``offset_to_position``.
     """
@@ -71,18 +71,24 @@ class Mapper:
     only mean anything on a mapper built over CDS spans; calling them on a cDNA mapper is a
     caller error, not something this class can detect.
 
+    ``padding`` offsets come before the first genomic base and map to none. A CDS whose 5' end is
+    incomplete starts part-way through a codon; VEP pads it with that many ``N`` so the reading
+    frame, the codon numbering and the CDS positions it reports all count from a whole codon.
+
     Attributes:
         genomic_spans (list[tuple[int, int]]): The genomic spans, in transcript (5' to 3') order.
             Index 0 is always the first span. Genomic-descending on the reverse strand.
         strand (Strand): The owning transcript's strand.
         coding_start_offset (int): 0-based offset to the first coding base
         coding_end_offset (int): 0-based offset to the last coding base
+        padding (int): Offsets before the first genomic base, 0 for a CDS starting on a whole codon.
     """
 
     genomic_spans: list[tuple[int, int]]
     strand: Strand
     coding_start_offset: int
     coding_end_offset: int
+    padding: int = 0
     _prefix_lengths: list[int] = field(init=False, repr=False)
     _ordered_genomic_spans: list[tuple[int, int]] = field(init=False, repr=False)
     _ordered_span_starts: list[int] = field(init=False, repr=False)
@@ -91,7 +97,7 @@ class Mapper:
     def __attrs_post_init__(self) -> None:
         """Build both bisect views: transcript order (for offset->genomic) and genomic order (for
         genomic->offset)."""
-        prefix_lengths = [0]
+        prefix_lengths = [self.padding]
         for span_start, span_end in self.genomic_spans:
             prefix_lengths.append(prefix_lengths[-1] + (span_end - span_start + 1))
         self._prefix_lengths = prefix_lengths
@@ -116,8 +122,8 @@ class Mapper:
         """Total number of nucleotides covered by ``genomic_spans``.
 
         Returns:
-            int: Length in bases (0 if ``genomic_spans`` is empty). CDS length on a CDS mapper,
-                cDNA length on a cDNA mapper.
+            int: Length in bases, ``padding`` included (just ``padding`` if ``genomic_spans`` is
+                empty). CDS length on a CDS mapper, cDNA length on a cDNA mapper.
         """
         return self._prefix_lengths[-1]
 
@@ -167,7 +173,7 @@ class Mapper:
                 falls back to an O(log exon count) bisect search.
 
         Returns:
-            int | None: The genomic position, or None if the offset is out of range.
+            int | None: The genomic position, or None if the offset is out of range or padding.
         """
         if self.strand == Strand.UNKNOWN:
             logger.warning(
@@ -177,9 +183,10 @@ class Mapper:
 
         if accelerator is not None:
             index = accelerator.offset_to_position
-            return index[offset] if 0 <= offset < len(index) else None
+            unpadded_offset = offset - self.padding
+            return index[unpadded_offset] if 0 <= unpadded_offset < len(index) else None
 
-        if not 0 <= offset < self.length:
+        if not self.padding <= offset < self.length:
             return None
 
         span_index = bisect.bisect_right(self._prefix_lengths, offset) - 1
@@ -349,5 +356,7 @@ class Mapper:
                 else range(span_start, span_end + 1)
             )
             genomic_positions.extend(span_positions)
-        position_to_offset = {position: offset for offset, position in enumerate(genomic_positions)}
+        position_to_offset = {
+            position: offset for offset, position in enumerate(genomic_positions, start=self.padding)
+        }
         return MapperIndex(offset_to_position=genomic_positions, position_to_offset=position_to_offset)

@@ -24,14 +24,15 @@ from attrs import define, field
 
 from ensembl.vep.models import Feature
 from ensembl.vep.models.genic.cds import CDS
+from ensembl.vep.models.genic.intron import Intron
 from ensembl.vep.models.genic.translation import Translation
 from ensembl.vep.models.genic.utr import UTR
 from ensembl.vep.models.sequence import Mapper, MapperIndex
-from ensembl.vep.common import Attribute, Strand, invalidates, is_resolved, reverse_complement
+from ensembl.vep.common import Attribute, ExonPhase, Strand, invalidates, is_resolved
 from ensembl.vep.common.codons import translate_dna
 
 if TYPE_CHECKING:
-    from ensembl.vep.models.genic import Gene, Exon, Intron, CDNA
+    from ensembl.vep.models.genic import Gene, Exon, CDNA
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +44,7 @@ _CODING_DERIVATIONS: tuple[str, ...] = (
     "_last_coding_exon_index",
     "_exon_coding_start",
     "_exon_coding_end",
+    "_cds_start_phase",
     "_cdna_coding_start",
     "_cdna_coding_end",
     "_cds",
@@ -87,7 +89,8 @@ class Transcript(Feature):
           List of exons that are spliced together to form the transcript, in transcript (5' to
           3') order, therefore, index 0 is always the first exon.
         introns (list[Intron]):
-          List of introns in the transcript.
+          Introns between consecutive spliced exons, in transcript order. Derived from
+          ``spliced_exons`` on first access rather than loaded; seed with ``seed_attrs``.
         translation (Translation | None):
           The translation associated with this transcript, explicitly assigned or derived from
           whatever coding-boundary information is available.
@@ -109,9 +112,9 @@ class Transcript(Feature):
             *_CODING_DERIVATIONS,
             "_spliced_seq",
             "_translated_seq",
+            "_introns",
         ),
     )
-    introns: list[Intron] = field(factory=list, init=False)
     alternative_translations: list[Translation] | None = field(factory=list, init=False)
     attributes: list[Attribute] | None = field(factory=list, init=False)
     _lock: RLock = field(factory=RLock, init=False, repr=False)
@@ -123,6 +126,40 @@ class Transcript(Feature):
         "three_prime_utr": _CODING_DERIVATIONS,
     }
     """Seeding any coding-signal source invalidates the whole coding derivation closure."""
+
+    @property
+    def introns(self) -> list[Intron]:
+        """Public accessor for _introns.
+
+        Returns:
+            list[Intron]: The introns between consecutive spliced exons, in transcript (5' to 3')
+                order.
+        """
+        return self._introns
+
+    @cached_property
+    def _introns(self) -> list[Intron]:
+        """Derive one intron per pair of consecutive spliced exons.
+
+        Every adjacent pair gets an intron, including a pair with no genomic gap between them --
+        such an intron has ``start > end`` and records adjacency only; callers that care about gap
+        size check that themselves.
+
+        Returns:
+            list[Intron]: The introns, in transcript (5' to 3') order.
+        """
+        with self._lock:
+            introns: list[Intron] = []
+            for prev_exon, next_exon in zip(self.spliced_exons, self.spliced_exons[1:]):
+                first, second = (
+                    (next_exon, prev_exon) if self.strand == Strand.REVERSE else (prev_exon, next_exon)
+                )
+                intron = Intron(
+                    start=first.end + 1, end=second.start - 1, strand=self.strand, slice=self.slice
+                )
+                intron.assign_without_hooks(prev_exon=prev_exon, next_exon=next_exon)
+                introns.append(intron)
+            return introns
 
     # --------------------------------------------------------------------------
     # Coding boundaries derivation:
@@ -353,6 +390,36 @@ class Transcript(Feature):
                     else (end_exon.end - target_position + 1)
                 )
             return None
+
+    @property
+    def cds_start_phase(self) -> int:
+        """Public accessor for _cds_start_phase.
+
+        Returns:
+            int: Bases of the first codon missing from the CDS's 5' end, 0 when it is complete.
+        """
+        return self._cds_start_phase
+
+    @cached_property
+    def _cds_start_phase(self) -> int:
+        """Derive the start phase from the first coding exon, as VEP does.
+
+        An exon's phase counts the bases of its first codon that lie before it. On the first coding
+        exon that can only mean the CDS begins part-way through a codon, and VEP pads the
+        translateable sequence with that many ``N`` (``Bio::EnsEMBL::Transcript::translateable_seq``).
+        No phase, or an unknown one, means a complete 5' end.
+
+        Returns:
+            int: 0, 1 or 2.
+        """
+        with self._lock:
+            first_coding_exon_index = self.first_coding_exon_index
+            if first_coding_exon_index is None:
+                return 0
+            phase = self.spliced_exons[first_coding_exon_index].phase
+            if phase in (ExonPhase.ONE, ExonPhase.TWO):
+                return phase.value
+            return 0
 
     @property
     def cdna_coding_start(self) -> int | None:
@@ -679,28 +746,29 @@ class Transcript(Feature):
     def _coding_sequence(self) -> str | None:
         """Returns the full CDS nucleotide sequence in transcript-sense.
 
+        Prefixed with ``cds_start_phase`` ``N``, so that it lines up with ``cds_mapper`` offsets.
+
         Returns:
             str | None: CDS nucleotide sequence in transcript-sense orientation, or None if the
                 transcript is not coding or no sequence is available from either source.
         """
         with self._lock:
+            padding = "N" * self.cds_start_phase
             cds = self.cds
             if cds is not None and cds.seq is not None:
-                return cds.seq
+                return padding + cds.seq
 
             genomic_spans = self.cds_genomic_spans
-            if genomic_spans is None or self.slice is None or self.slice.seq is None:
+            if genomic_spans is None or self.slice is None:
                 return None
 
-            slice_sequence = self.slice.seq
-            return "".join(
-                (
-                    reverse_complement(slice_sequence[block_start - 1 : block_end])
-                    if self.strand == Strand.REVERSE
-                    else slice_sequence[block_start - 1 : block_end]
-                )
-                for block_start, block_end in genomic_spans
-            )
+            blocks: list[str] = [padding]
+            for block_start, block_end in genomic_spans:
+                block = self.slice.subseq(block_start, block_end, self.strand)
+                if block is None:
+                    return None
+                blocks.append(block)
+            return "".join(blocks)
 
     @property
     def translated_seq(self) -> str | None:
@@ -722,14 +790,15 @@ class Transcript(Feature):
             if self.translation is not None and self.translation.seq is not None:
                 return self.translation.seq
 
-            if self.cds is None or self.cds.seq is None:
+            coding_sequence = self.coding_sequence
+            if coding_sequence is None:
                 logger.warning(
                     f"Cannot compute translated_seq for transcript {self.stable_id} because "
                     f"translation and CDS sequence are both not available."
                 )
                 return None
 
-            return translate_dna(self.cds.seq)
+            return translate_dna(coding_sequence)
 
     # ----------------------------------------------------------------------
     # Genomic <-> CDS and Genomic <-> cDNA mapping.
@@ -888,10 +957,11 @@ class Transcript(Feature):
         """Public accessor for _cds_mapper.
 
         Offsets are **CDS-relative**: offset 0 is the first base of the start codon, and UTR bases
-        map to nothing at all. Use this for anything expressed in coding coordinates, e.g., codon
-        windows, protein offsets. Its sibling ``cdna_mapper`` covers the whole spliced transcript
-        instead; the two disagree by ``cdna_coding_start - 1`` over the CDS, and only
-        ``cdna_mapper`` can place a UTR position.
+        map to nothing at all. A CDS with an incomplete 5' end starts at offset ``cds_start_phase``
+        instead, the offsets before it being VEP's ``N`` padding. Use this for anything expressed in
+        coding coordinates, e.g., codon windows, protein offsets. Its sibling ``cdna_mapper`` covers
+        the whole spliced transcript instead; the two disagree by ``cdna_coding_start - 1`` over the
+        CDS, and only ``cdna_mapper`` can place a UTR position.
 
         Returns:
             Mapper | None: The genomic<->CDS<->protein coordinate mapper for this transcript's
@@ -913,7 +983,10 @@ class Transcript(Feature):
             genomic_spans=genomic_spans,
             strand=self.strand,
             coding_start_offset=0,
-            coding_end_offset=self.cds_length - 1,
+            # Offsets in this mapper start after the padding, so the last coding one is that far
+            # along from cds_length's own unpadded count.
+            coding_end_offset=self.cds_start_phase + self.cds_length - 1,
+            padding=self.cds_start_phase,
         )
 
     @property
@@ -937,17 +1010,26 @@ class Transcript(Feature):
         The whole-transcript sibling of ``cds_mapper``, same class and mechanism, just built from
         every spliced exon rather than the CDS-clipped spans.
 
+        A non-coding transcript still gets a mapper, since a cDNA position is meaningful without a
+        CDS -- VEP reports one for a non-coding transcript variant. Its coding range is left empty
+        (``coding_end_offset`` below ``coding_start_offset``), so the codon and protein methods
+        answer None rather than reading a frame that does not exist.
+
         Returns:
             Mapper | None: The coordinate mapper, or None if the transcript has no exons.
         """
-        if not self.spliced_exons or self.cdna_coding_start is None or self.cdna_coding_end is None:
+        if not self.spliced_exons:
             return None
         genomic_spans = [(exon.start, exon.end) for exon in self.spliced_exons]
+        cdna_coding_start, cdna_coding_end = self.cdna_coding_start, self.cdna_coding_end
+        if cdna_coding_start is None or cdna_coding_end is None:
+            # No coding region: an empty range, which the codon and protein methods answer None to.
+            cdna_coding_start, cdna_coding_end = 0, -1
         return Mapper(
             genomic_spans=genomic_spans,
             strand=self.strand,
-            coding_start_offset=self.cdna_coding_start,
-            coding_end_offset=self.cdna_coding_end,
+            coding_start_offset=cdna_coding_start,
+            coding_end_offset=cdna_coding_end,
         )
 
     @property

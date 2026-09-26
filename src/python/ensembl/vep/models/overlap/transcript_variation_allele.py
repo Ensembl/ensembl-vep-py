@@ -350,9 +350,10 @@ class TranscriptVariationAllele(FeatureOverlap):
         Rather than just the CDS it uses cDNA sequence to optionally allow readthrough into the UTR. If not
         opted-for, the CDS is truncated to include only the coding sequence.
 
-        ``reference_cds`` reuses ``transcript.cds.seq`` in place of re-slicing ``spliced_seq`` when the
-        transcript's CDS is built and its length matches -- both are assembled from the same coding
-        exons, so the content agrees (proved corpus-wide by tests, not re-checked per overlap).
+        ``reference_cds`` reuses ``transcript.coding_sequence`` in place of re-slicing ``spliced_seq``
+        when its length matches -- both are assembled from the same coding exons, so the content
+        agrees (proved corpus-wide by tests, not re-checked per overlap). Both sides carry the
+        transcript's ``cds_start_phase`` ``N`` padding, as its CDS offsets do.
         ``alternate_peptide`` is the translation ``_nucleotide_sequence_up_to_stop`` already produced
         while truncating ``alternate_cds`` at its first stop codon, so ``_full_peptide_alleles`` can
         reuse it instead of re-translating. It is None only when the variant touches no exon at all,
@@ -374,14 +375,16 @@ class TranscriptVariationAllele(FeatureOverlap):
             if cdna_mapper is None or spliced_seq is None or not cds_length or cdna_coding_start is None:
                 return None
 
-            # 0-based start/end position for slicing
+            # 0-based start/end position for slicing. cds_length counts only real bases, so the
+            # padding is prefixed separately; the spliced sequence does not carry it either.
+            padding = "N" * transcript.cds_start_phase
             cdna_coding_start0 = cdna_coding_start - 1
             cdna_coding_end0 = cdna_coding_start0 + cds_length
-            cds = transcript.cds
-            if cds is not None and cds.seq is not None and len(cds.seq) == cds_length:
-                reference_cds = cds.seq
+            coding_sequence = transcript.coding_sequence
+            if coding_sequence is not None and len(coding_sequence) == cds_length + len(padding):
+                reference_cds = coding_sequence
             else:
-                reference_cds = spliced_seq[cdna_coding_start0:cdna_coding_end0]
+                reference_cds = padding + spliced_seq[cdna_coding_start0:cdna_coding_end0]
 
             edit = self._cdna_edit
             if edit is None:
@@ -404,7 +407,7 @@ class TranscriptVariationAllele(FeatureOverlap):
             else:
                 end_bound = _edited_boundary(cdna_coding_end0, edit_start, edit_end, length_change)
 
-            alternate_tail = alternate_spliced_seq[anchor:end_bound]
+            alternate_tail = padding + alternate_spliced_seq[anchor:end_bound]
             alternate_cds, alternate_peptide = _nucleotide_sequence_up_to_stop(alternate_tail)
 
             if self.readthrough >= Readthrough.BEYOND_TRANSCRIPT and "*" not in alternate_peptide:
