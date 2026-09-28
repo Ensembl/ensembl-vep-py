@@ -20,6 +20,7 @@ import os
 from pathlib import Path
 
 from attrs import define, field
+from attrs.setters import frozen
 
 from ensembl.vep.parsers.fasta import FastaParser
 from ensembl.vep.sources.sequence_source import SequenceSource
@@ -35,7 +36,7 @@ class FastaSequenceSource(SequenceSource):
         file_path (str | Path | None): FASTA file path.
     """
 
-    file_path: str | Path | None = field(default=None)
+    file_path: str | Path | None = field(default=None, on_setattr=frozen)
     adaptor: FastaParser = field(factory=FastaParser)
     _metadata_lengths: dict[str, int] | None = field(default=None, init=False, repr=False)
     _warned_sequential: bool = field(default=False, init=False, repr=False)

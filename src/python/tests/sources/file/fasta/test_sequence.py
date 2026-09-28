@@ -16,6 +16,7 @@
 import os
 from pathlib import Path
 
+from attrs.exceptions import FrozenAttributeError
 import pytest
 
 from ensembl.vep.common import Strand
@@ -145,6 +146,20 @@ class TestFastaSequenceSourceOpenClose:
             assert source.get_sequence_by_start_end_strand("chr1", 1, 4) == "ACGT"
 
         assert not source.adaptor.metadata  # pylint: disable=protected-access
+
+    def test_changing_file_path_is_error(self, tmp_path: Path) -> None:
+        """Test that the file_path attribute is frozen."""
+
+        first_path = _write_indexed_fasta(tmp_path / "sample.fa", SAMPLE)
+        source = _make_fasta_source(first_path, "query")
+        assert source.get_sequence_by_start_end_strand("chr1", 1, 4) == "ACGT"
+
+        second_path = _write_indexed_fasta(
+            tmp_path / "sample-2.fa",
+            ">chr1\nAAAAAAAA\n",
+            "chr1\t8\t6\t8\t9\n")
+        with pytest.raises(FrozenAttributeError, match="can't set attribute"):
+            source.file_path = second_path
 
 
 class TestFastaSequenceSourceSequence:
@@ -293,6 +308,18 @@ class TestFastaSequenceSourceSequence:
         assert source.get_sequence_by_start_end_strand("chr1", 1, 4) == "ACGT"
         assert source.get_sequence_by_start_end_strand("chr2", 1, 4) == "AAAA"
         assert not hasattr(source, "_sequences")
+
+    def test_no_file_returns_ns(self) -> None:
+        """Test if source.file_path is None, _fetch_sequence_chunk returns Ns"""
+        source = FastaSequenceSource()
+        # pylint: disable-next=protected-access
+        assert source._fetch_sequence_chunk(seq_region_name="chr1", start=101, end=110) == "NNNNNNNNNN"
+
+    def test_no_file_metadata_is_empty_frozenset(self) -> None:
+        """Test if source.file_path is None, _fetch_sequence_chunk returns Ns"""
+        source = FastaSequenceSource()
+        # pylint: disable-next=protected-access
+        assert source.sequence_region_names == frozenset()
 
 
 class TestFastaSequenceSourceLength:
