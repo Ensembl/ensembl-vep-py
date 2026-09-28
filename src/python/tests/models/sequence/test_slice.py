@@ -240,6 +240,11 @@ class TestSliceSubseq:
         assert span == "AA"
         assert dummy_sequence_source.calls == [("1", 3, 10)]
 
+        span = genomic_slice.subseq(7, 9, Strand.REVERSE)
+
+        assert span == "TT"
+        assert dummy_sequence_source.calls == [("1", 3, 10)]
+
     def test_reverse_slice_fetches_only_the_span(self, dummy_sequence_source: DummySequenceSource) -> None:
         """Test a reverse slice measures the span back from its genomic end."""
         genomic_slice = self._sourced_slice(dummy_sequence_source, Strand.REVERSE)
