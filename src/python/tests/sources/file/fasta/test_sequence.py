@@ -13,10 +13,7 @@
 # limitations under the License.
 """Unit tests for the FASTA sequence source."""
 
-<<<<<<< HEAD
-=======
 import logging
->>>>>>> f23807f (tolerant fasta sequence source)
 import os
 from pathlib import Path
 
@@ -391,18 +388,6 @@ class TestFastaSequenceSourceLength:
         assert source.get_seq_region_length("chr1") == 8
         assert source.sequence_region_names == frozenset({"chr1", "chr2"})
 
-<<<<<<< HEAD
-    def test_length_is_scanned_from_an_unindexed_fasta(self, tmp_path: Path) -> None:
-        """Test sequential fallback derives authoritative lengths without retaining records."""
-
-        path = _write_fasta(tmp_path / "sample.fa")
-        source = _make_fasta_source(path, "sequential")
-
-        assert source.get_seq_region_length("chr1") == 8
-        assert source.sequence_region_names == frozenset({"chr1", "chr2"})
-
-=======
->>>>>>> f23807f (tolerant fasta sequence source)
     def test_length_comes_from_metadata_without_scanning_sequences(self, tmp_path: Path) -> None:
         """Test length lookup does not load FASTA records."""
 
