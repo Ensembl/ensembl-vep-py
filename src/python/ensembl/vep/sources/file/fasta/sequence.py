@@ -15,13 +15,9 @@
 
 from __future__ import annotations
 
-import gzip
 import logging
 import os
-from collections.abc import Iterator
-from contextlib import contextmanager
 from pathlib import Path
-from typing import TextIO
 
 from attrs import define, field
 from attrs.setters import frozen
