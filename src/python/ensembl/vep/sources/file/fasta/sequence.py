@@ -15,9 +15,13 @@
 
 from __future__ import annotations
 
+import gzip
 import logging
 import os
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
+from typing import TextIO
 
 from attrs import define, field
 from attrs.setters import frozen
@@ -27,17 +31,32 @@ from ensembl.vep.sources.sequence_source import SequenceSource
 
 logger = logging.getLogger(__name__)
 
+UNKNOWN_REGION_LENGTH = 2**31 - 1
+"""Length reported for a sequence region the FASTA does not carry.
+
+Its value does not matter: nothing annotates against these regions, it exists only so a slice can
+be built at all.
+"""
+
 
 @define(kw_only=True, auto_attribs=True)
 class FastaSequenceSource(SequenceSource):
     """Sequence source backed by a FASTA file.
 
+    A region the FASTA does not carry gets ``UNKNOWN_REGION_LENGTH`` rather than no length. A slice
+    cannot be built without a sequence-region length, and the reader raises when one cannot be
+    resolved -- so a single contig missing from the FASTA would abort the entire run. Reporting a
+    placeholder lets those variants be read; they pair with nothing -- the transcript file has no
+    such contig either -- and the runner writes them through unannotated.
+
     Attributes:
         file_path (str | Path | None): FASTA file path.
+        unknown_regions (set[str]): Regions asked for that the FASTA does not carry.
     """
 
     file_path: str | Path | None = field(default=None, on_setattr=frozen)
     adaptor: FastaParser = field(factory=FastaParser)
+    unknown_regions: set[str] = field(factory=set, init=False)
     _metadata_lengths: dict[str, int] | None = field(default=None, init=False, repr=False)
     _warned_sequential: bool = field(default=False, init=False, repr=False)
     _adaptor_pid: int | None = field(default=None, init=False, repr=False)
@@ -99,14 +118,26 @@ class FastaSequenceSource(SequenceSource):
         Rust reader derives the same lengths from one scan that retains no sequence.
 
         Returns:
-            int | None: The sequence length or None if unavailable.
+            int | None: The sequence length, or ``UNKNOWN_REGION_LENGTH`` where the FASTA does not
+                carry the region.
         """
 
         self._load_metadata_lengths()
 
         assert self._metadata_lengths is not None
         length = self._metadata_lengths.get(seq_region_name)
-        return int(length) if length is not None else None
+        if length is not None:
+            return int(length)
+
+        if seq_region_name not in self.unknown_regions:
+            # Once per region, not once per variant: ClinVar has 51 such variants and would
+            # otherwise emit 51 warnings saying the same seven things.
+            self.unknown_regions.add(seq_region_name)
+            logger.warning(
+                "%s sequence region not found, variants on it will be reported unannotated",
+                seq_region_name,
+            )
+        return UNKNOWN_REGION_LENGTH
 
     @property
     def sequence_region_names(self) -> frozenset[str]:

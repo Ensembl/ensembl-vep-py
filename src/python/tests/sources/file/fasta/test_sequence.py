@@ -13,6 +13,10 @@
 # limitations under the License.
 """Unit tests for the FASTA sequence source."""
 
+<<<<<<< HEAD
+=======
+import logging
+>>>>>>> f23807f (tolerant fasta sequence source)
 import os
 from pathlib import Path
 
@@ -21,7 +25,7 @@ import pytest
 
 from ensembl.vep.common import Strand
 from ensembl.vep.parsers.fasta import FastaParser
-from ensembl.vep.sources.file.fasta.sequence import FastaSequenceSource
+from ensembl.vep.sources.file.fasta.sequence import FastaSequenceSource, UNKNOWN_REGION_LENGTH
 
 SAMPLE = """>chr1
 ACGTTGCA
@@ -342,14 +346,52 @@ class TestFastaSequenceSourceLength:
         assert source.get_seq_region_length("chr1") == 8
         assert source._seq_region_lengths == {"chr1": 8}  # pylint: disable=protected-access
 
-    def test_length_returns_none_for_missing_region(self, tmp_path: Path) -> None:
-        """Test missing sequence region length returns None."""
+    def test_a_missing_region_gets_the_placeholder_length(self, tmp_path: Path) -> None:
+        """A contig the FASTA does not carry is still given a length, so its variants can be read."""
 
         path = _write_indexed_fasta(tmp_path / "sample.fa")
         source = _make_fasta_source(path, "query")
 
-        assert source.get_seq_region_length("chr3") is None
+        assert source.get_seq_region_length("chr3") == UNKNOWN_REGION_LENGTH
+        assert source.unknown_regions == {"chr3"}
 
+    def test_a_missing_region_is_reported_once(
+        self, tmp_path: Path, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """ClinVar asks for the same seven absent scaffolds 51 times; one warning each is enough."""
+
+        path = _write_indexed_fasta(tmp_path / "sample.fa")
+        source = _make_fasta_source(path, "query")
+
+        with caplog.at_level(logging.WARNING):
+            source.get_seq_region_length("chr3")
+            # The length cache would answer the second ask on its own; clearing it puts the
+            # question back to the source, which is what has to stay quiet.
+            source._seq_region_lengths.clear()  # pylint: disable=protected-access
+            source.get_seq_region_length("chr3")
+
+        warnings = [record for record in caplog.records if "chr3" in record.getMessage()]
+        assert len(warnings) == 1
+
+    def test_a_known_region_is_not_recorded_as_unknown(self, tmp_path: Path) -> None:
+        """A region the index carries keeps its real length and is not recorded."""
+
+        path = _write_indexed_fasta(tmp_path / "sample.fa", SAMPLE)
+        source = _make_fasta_source(path, "query")
+
+        assert source.get_seq_region_length("chr1") == 8
+        assert not source.unknown_regions
+
+    def test_length_is_scanned_from_an_unindexed_fasta(self, tmp_path: Path) -> None:
+        """Test sequential fallback derives authoritative lengths without retaining records."""
+
+        path = _write_indexed_fasta(tmp_path / "sample.fa")
+        source = _make_fasta_source(path, "query")
+
+        assert source.get_seq_region_length("chr1") == 8
+        assert source.sequence_region_names == frozenset({"chr1", "chr2"})
+
+<<<<<<< HEAD
     def test_length_is_scanned_from_an_unindexed_fasta(self, tmp_path: Path) -> None:
         """Test sequential fallback derives authoritative lengths without retaining records."""
 
@@ -359,6 +401,8 @@ class TestFastaSequenceSourceLength:
         assert source.get_seq_region_length("chr1") == 8
         assert source.sequence_region_names == frozenset({"chr1", "chr2"})
 
+=======
+>>>>>>> f23807f (tolerant fasta sequence source)
     def test_length_comes_from_metadata_without_scanning_sequences(self, tmp_path: Path) -> None:
         """Test length lookup does not load FASTA records."""
 
