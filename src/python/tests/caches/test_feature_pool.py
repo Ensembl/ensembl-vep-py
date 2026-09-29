@@ -186,7 +186,7 @@ class TestRegionChange:
             pool.get(("chr2", chr2_transcript.stable_id, chr2_transcript.start, chr2_transcript.end))
             is chr2_transcript
         )
-        assert pool.region_eviction_count == 1
+        assert pool.seq_region_eviction_count == 1
         assert len(pool) == 1
 
     def test_revisiting_a_dropped_region_is_just_a_miss(self) -> None:
@@ -216,12 +216,12 @@ class TestClear:
 
         assert len(pool) == 0
         assert pool._total_bytes == 0  # pylint: disable=protected-access
-        assert pool._region is None  # pylint: disable=protected-access
+        assert pool._seq_region_name is None  # pylint: disable=protected-access
         # A transcript from a different region can now be inserted without triggering a region
         # eviction, proving the pooled region really was forgotten.
         other = _build_transcript(stable_id="ENST0002", start=1, end=50)
         pool.put(("chr9", "ENST0002", 1, 50), other)
-        assert pool.region_eviction_count == 0
+        assert pool.seq_region_eviction_count == 0
 
 
 def _estimate(transcript: Transcript) -> int:

@@ -51,7 +51,7 @@ __all__ = [
 FeatureT = TypeVar("FeatureT", bound=Feature)
 
 FeatureKey = tuple[str, str, int, int]
-"""``(region, stable_id, start, end)`` -- a built feature's pool identity.
+"""``(seq_region_name, stable_id, start, end)`` -- a built feature's pool identity.
 
 Matches ``BinnedFeatureCache.add``'s own dedup key, so a feature is addressed the same way whether
 the caller means "the cache for this payload" or "the pool across payloads".
@@ -97,7 +97,7 @@ DEFAULT_TRANSCRIPT_POOL_BYTES = 128 * 1024 * 1024
 """Default byte budget for ``TranscriptPool``, shared by the config default and every call site."""
 
 TranscriptKey = FeatureKey
-"""``(region, stable_id, start, end)`` -- the ``FeatureKey`` spelling a transcript pool uses."""
+"""``(seq_region_name, stable_id, start, end)`` -- the ``FeatureKey`` spelling a transcript pool uses."""
 
 _BYTES_PER_EXON = 600
 """Estimated per-exon overhead: the ``Exon`` object, its ``Slice`` reference and attrs bookkeeping.
@@ -175,7 +175,7 @@ class TranscriptPool(FeaturePool[Transcript]):
         hit_count (int): Number of ``get`` calls served from the pool so far.
         miss_count (int): Number of ``get`` calls that found nothing so far.
         eviction_count (int): Number of entries evicted for being over the byte budget so far.
-        region_eviction_count (int): Number of entries dropped so far because the pooled region
+        seq_region_eviction_count (int): Number of entries dropped so far because the pooled seq_region
             changed.
     """
 
@@ -183,8 +183,8 @@ class TranscriptPool(FeaturePool[Transcript]):
     hit_count: int = field(default=0, init=False)
     miss_count: int = field(default=0, init=False)
     eviction_count: int = field(default=0, init=False)
-    region_eviction_count: int = field(default=0, init=False)
-    _region: str | None = field(default=None, init=False, repr=False)
+    seq_region_eviction_count: int = field(default=0, init=False)
+    _seq_region_name: str | None = field(default=None, init=False, repr=False)
     _transcripts: OrderedDict[TranscriptKey, Transcript] = field(factory=OrderedDict, init=False, repr=False)
     _sizes: dict[TranscriptKey, int] = field(factory=dict, init=False, repr=False)
     _total_bytes: int = field(default=0, init=False, repr=False)
@@ -213,24 +213,24 @@ class TranscriptPool(FeaturePool[Transcript]):
             return transcript
 
     def put(self, key: TranscriptKey, transcript: Transcript) -> None:
-        """Insert a freshly built transcript, evicting by region change and then by byte budget.
+        """Insert a freshly built transcript, evicting by seq_region_name change and then by byte budget.
 
         A no-op when the pool is disabled (``max_bytes <= 0``).
 
         Args:
-            key (TranscriptKey): The transcript's pool identity. ``key[0]`` is the region.
+            key (TranscriptKey): The transcript's pool identity. ``key[0]`` is the seq_region_name.
             transcript (Transcript): The built transcript to store.
         """
         if self.max_bytes <= 0:
             return
 
-        region = key[0]
+        seq_region_name = key[0]
         size = _estimate_transcript_bytes(transcript)
 
         with self._lock:
-            if self._region is not None and self._region != region:
-                self._drop_region_locked(self._region)
-            self._region = region
+            if self._seq_region_name is not None and self._seq_region_name != seq_region_name:
+                self._drop_region_locked(self._seq_region_name)
+            self._seq_region_name = seq_region_name
 
             if key in self._sizes:
                 self._total_bytes -= self._sizes[key]
@@ -250,16 +250,16 @@ class TranscriptPool(FeaturePool[Transcript]):
             self._transcripts.clear()
             self._sizes.clear()
             self._total_bytes = 0
-            self._region = None
+            self._seq_region_name = None
 
     def __len__(self) -> int:
         """Return the number of pooled transcripts."""
         return len(self._transcripts)
 
-    def _drop_region_locked(self, region: str) -> None:
-        """Remove every entry for ``region``. Caller must hold ``_lock``."""
-        stale_keys = [key for key in self._transcripts if key[0] == region]
+    def _drop_region_locked(self, seq_region_name: str) -> None:
+        """Remove every entry for ``seq_region_name``. Caller must hold ``_lock``."""
+        stale_keys = [key for key in self._transcripts if key[0] == seq_region_name]
         for key in stale_keys:
             del self._transcripts[key]
             self._total_bytes -= self._sizes.pop(key, 0)
-        self.region_eviction_count += len(stale_keys)
+        self.seq_region_eviction_count += len(stale_keys)
