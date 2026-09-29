@@ -1034,7 +1034,7 @@ class Transcript(Feature):
 
     @property
     def cds_length(self) -> int | None:
-        """Number of nucleotides in the CDS. Delegates to Mapper.cds_length.
+        """Number of nucleotides in the CDS.
 
         Returns:
             int | None: Number of nucleotides in the CDS, or None if the transcript is not coding.

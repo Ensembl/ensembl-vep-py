@@ -19,7 +19,7 @@ import logging
 
 import pytest
 
-from ensembl.vep.common.enums import CoordSystemLevel, Strand
+from ensembl.vep.common.enums import CoordSystemLevel, Strand, ExonPhase
 from ensembl.vep.common.containers import Attribute
 from ensembl.vep.common.methods import invalidate, reverse_complement
 from ensembl.vep.models.genic import Transcript, Exon, Intron, Translation, CDS, UTR
@@ -362,6 +362,34 @@ class TestTranscriptProperties:
         transcript.seed_attrs(exon_coding_start=3, exon_coding_end=6)
         assert transcript.exon_coding_start == 3
         assert transcript.exon_coding_end == 6
+
+    def test_lengths_with_cds_phase(self, transcript: Transcript) -> None:
+        """Test cds lengths are calculated properly when a CDS has phase other than ZERO."""
+        # Create a two exon transcript where the CDS starts in ExonPhase.ONE
+        genomic_sequence = "GGGTGGGAGANNNNNNNNNCAAGTAAGGGG"
+        transcript_slice = DummySlice(genomic_sequence, feature_start=1)
+        exons = [
+            Exon(start=1, end=10, strand=Strand.FORWARD, stable_id="ENSE00000000001", slice=transcript_slice),
+            Exon(
+                start=20, end=30, strand=Strand.FORWARD, stable_id="ENSE00000000002", slice=transcript_slice
+            ),
+        ]
+        exons[0].phase = ExonPhase.ONE
+        transcript.spliced_exons = exons
+        transcript.seed_attrs(
+            first_coding_exon_index=0, last_coding_exon_index=1, exon_coding_start=4, exon_coding_end=7
+        )
+        # compare the different ways of calculating the CDS length
+        cds_length = transcript.cds_length
+        cds = transcript.cds
+        cds_seq_len = len(cds.seq) if cds and cds.seq else None
+        cds_nucleotide_length = cds.nucleotide_length if cds else None
+        mapper_length = transcript.cds_mapper.length if transcript.cds_mapper else None
+        # mapper length is one larger than all the other lengths
+        assert cds_length == cds_seq_len == cds_nucleotide_length == mapper_length - 1
+
+        cds_protein_length = cds.protein_length if cds else None
+        assert cds_protein_length == cds_length // 3
 
     def test_cds_cdna_coding_start(self, transcript: Transcript, translation: Translation) -> None:
         """Test that cds_cdna_coding_start is calculated correctly."""

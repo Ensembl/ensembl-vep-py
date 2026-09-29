@@ -63,8 +63,8 @@ class CDS(Feature):
             int | None: Length in nucleotides, or None if not applicable.
         """
         with self._lock:
-            if self.transcript is not None and self.transcript.cds_mapper is not None:
-                return self.transcript.cds_mapper.length
+            if self.transcript is not None and self.transcript.cds_length is not None:
+                return self.transcript.cds_length
             return len(self.seq) if self.seq is not None else None
 
     @property
