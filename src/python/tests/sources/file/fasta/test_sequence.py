@@ -155,9 +155,8 @@ class TestFastaSequenceSourceOpenClose:
         assert source.get_sequence_by_start_end_strand("chr1", 1, 4) == "ACGT"
 
         second_path = _write_indexed_fasta(
-            tmp_path / "sample-2.fa",
-            ">chr1\nAAAAAAAA\n",
-            "chr1\t8\t6\t8\t9\n")
+            tmp_path / "sample-2.fa", ">chr1\nAAAAAAAA\n", "chr1\t8\t6\t8\t9\n"
+        )
         with pytest.raises(FrozenAttributeError, match="can't set attribute"):
             source.file_path = second_path
 
