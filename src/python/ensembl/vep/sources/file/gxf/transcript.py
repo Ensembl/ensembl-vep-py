@@ -42,6 +42,7 @@ from ensembl.vep.common import (
     CoordSystemLevel,
     ExonPhase,
     STRAND_SYMBOL_TO_ENUM,
+    GFF_TO_ENSEMBL_PHASE,
     Strand,
     format_region_string,
     parse_region_string,
@@ -61,11 +62,6 @@ _ORDERED_FILE_ASSUMPTION_MESSAGE = (
     "several transcript records and their exon/CDS children. Files that revisit a gene after "
     "starting another gene require an index for complete assembly."
 )
-
-_GFF_TO_ENSEMBL_PHASE: dict[int, ExonPhase] = {0: ExonPhase.ZERO, 1: ExonPhase.TWO, 2: ExonPhase.ONE}
-"""A CDS row's GFF phase (bases to skip to reach a codon) as an Ensembl exon phase (bases of the
-first codon on what came before), converted as ``Bio::EnsEMBL::VEP::AnnotationSource::File::
-BaseGXF::_convert_phase`` does."""
 
 P = TypeVar("P", bound=Parser)
 
@@ -915,7 +911,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
             if exon_record.start <= cds_record.start <= exon_record.end:
                 if cds_record.phase_value is None:
                     return ExonPhase.UNKNOWN
-                return _GFF_TO_ENSEMBL_PHASE.get(cds_record.phase_value, ExonPhase.UNKNOWN)
+                return GFF_TO_ENSEMBL_PHASE.get(cds_record.phase_value, ExonPhase.UNKNOWN)
         return ExonPhase.UNKNOWN
 
     def _build_translation(self, cds_records: list[_GXFRecord], transcript: Transcript) -> Translation | None:

@@ -15,7 +15,6 @@
 
 from ensembl.vep.common.enums import ExonPhase, Strand, ClassSOTerm
 
-
 CLASS_SO_TERM_ABBRV_TO_ENUM: dict[str, ClassSOTerm] = {
     "INS": ClassSOTerm.INSERTION,
     "INS_ME": ClassSOTerm.MOBILE_ELEMENT_INSERTION,
@@ -45,8 +44,11 @@ STRAND_SYMBOL_TO_ENUM = {
     "?": Strand.UNKNOWN,
 }
 
-PHASE_VALUE_TO_ENUM = {
+GFF_TO_ENSEMBL_PHASE = {
     0: ExonPhase.ZERO,
-    1: ExonPhase.ONE,
-    2: ExonPhase.TWO,
+    2: ExonPhase.ONE,
+    1: ExonPhase.TWO,
 }
+"""A CDS row's GFF phase (bases to skip to reach a codon) as an Ensembl exon phase (bases of the
+first codon on what came before), converted as ``Bio::EnsEMBL::VEP::AnnotationSource::File::
+BaseGXF::_convert_phase`` does."""
