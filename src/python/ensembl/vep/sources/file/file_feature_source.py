@@ -15,7 +15,8 @@
 
 import logging
 from abc import abstractmethod
-from typing import Generic, Iterator, TypeVar
+from collections.abc import Iterator
+from typing import Generic, TypeVar
 from attrs import define, field
 
 from ensembl.vep.common import SourceType

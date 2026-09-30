@@ -42,6 +42,19 @@ class GTFTranscriptSource(GXFTranscriptSource[GTFParser]):
         "transcript": "gene",
     }
 
+    def _query_typed_records(
+        self,
+        region: str,
+        *,
+        feature_types: frozenset[str] | None = None,
+    ) -> list[GTFRecord]:
+        """Seek the persistent GTF query parser and read its records."""
+
+        query_parser = self._open_query_parser()
+        if not query_parser.seek(region):
+            return []
+        return query_parser.records(limit=None, feature_types=feature_types)
+
     def get_record_id(self, record: GTFRecord) -> str:
         """Return the GTF record identifier for a record.
 

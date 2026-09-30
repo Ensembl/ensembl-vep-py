@@ -16,6 +16,8 @@
 import os
 from pathlib import Path
 
+import pytest
+
 from ensembl.vep.common import ExonPhase, Strand
 from ensembl.vep.parsers import GTFParser
 from ensembl.vep.models.genic import Transcript
@@ -66,9 +68,10 @@ chr2\tensembl\texon\t800\t900\t.\t-\t.\tgene_id "gene:3"; transcript_id "transcr
 chr2\tensembl\texon\t1000\t1100\t.\t-\t.\tgene_id "gene:3"; transcript_id "transcript:3";
 """
 
-_GTF_EXON_WITH_PHASE = """\
+_GTF_CDS_WITH_PHASE = """\
 chr1\tensembl\ttranscript\t1000\t2000\t.\t+\t.\tgene_id "gene:1"; transcript_id "transcript:1";
-chr1\tensembl\texon\t1000\t2000\t.\t+\t1\tgene_id "gene:1"; transcript_id "transcript:1";
+chr1\tensembl\texon\t1000\t2000\t.\t+\t.\tgene_id "gene:1"; transcript_id "transcript:1";
+chr1\tensembl\tCDS\t1000\t1900\t.\t+\t1\tgene_id "gene:1"; transcript_id "transcript:1";
 """
 
 _GTF_NO_TRANSCRIPT_ID = """\
@@ -140,7 +143,7 @@ class TestGetRecordId:
         """Test the <feature>_id attribute is used as the record identifier."""
 
         records = GTFParser.parse_text(_GTF_ONE_TRANSCRIPT)
-        source = GTFTranscriptSource()
+        source = GTFTranscriptSource(file_path="")
 
         assert source.get_record_id(records[1]) == "transcript:1"
 
@@ -148,7 +151,7 @@ class TestGetRecordId:
         """Test a synthetic identifier is built when the feature has no matching *_id attribute."""
 
         record = GTFParser.parse_text(_GTF_NO_TRANSCRIPT_ID)[0]
-        source = GTFTranscriptSource()
+        source = GTFTranscriptSource(file_path="")
 
         assert source.get_record_id(record) == "transcript:chr1:1000-2000"
 
@@ -160,7 +163,7 @@ class TestGetParentId:
         """Test the parent feature type's id attribute is returned."""
 
         records = GTFParser.parse_text(_GTF_ONE_TRANSCRIPT)
-        source = GTFTranscriptSource()
+        source = GTFTranscriptSource(file_path="")
 
         assert source.get_parent_id(records[1]) == "gene:1"
 
@@ -168,7 +171,7 @@ class TestGetParentId:
         """Test None is returned for a feature type with no configured parent."""
 
         records = GTFParser.parse_text(_GTF_ONE_TRANSCRIPT)
-        source = GTFTranscriptSource()
+        source = GTFTranscriptSource(file_path="")
 
         assert source.get_parent_id(records[0]) is None
 
@@ -195,8 +198,9 @@ class TestGetAllFeatures:
         assert len(transcript.spliced_exons) == 2
         assert len(transcript.introns) == 1
         assert transcript.translation is not None
-        assert transcript.translation.start == 1100
-        assert transcript.translation.end == 4900
+        # Offsets from the transcript's start, not genomic: CDS 1100-4900, transcript starts at 1000.
+        assert transcript.translation.start == 101
+        assert transcript.translation.end == 3901
         assert transcript.translation.stable_id == "ENSP0001"
 
     def test_get_all_features_returns_one_transcript_per_group(self, tmp_path: Path) -> None:
@@ -220,15 +224,15 @@ class TestGetAllFeatures:
 
         assert all(t.translation is None for t in transcripts)
 
-    def test_exon_phase_is_set_from_record(self, tmp_path: Path) -> None:
-        """Test that the exon phase is correctly set from the GTF record."""
+    def test_exon_phase_is_read_from_its_cds_row(self, tmp_path: Path) -> None:
+        """GFF phase 1 (skip one base) is Ensembl phase 2 (two bases of the codon came before)."""
 
-        path = _write_gtf(tmp_path / "sample.gtf", _GTF_EXON_WITH_PHASE)
+        path = _write_gtf(tmp_path / "sample.gtf", _GTF_CDS_WITH_PHASE)
         source = GTFTranscriptSource(file_path=path)
 
         transcript = source.get_all_features()[0]
 
-        assert transcript.spliced_exons[0].phase == ExonPhase.ONE
+        assert transcript.spliced_exons[0].phase == ExonPhase.TWO
 
     def test_reverse_strand_transcript_orders_exons_and_introns(self, tmp_path: Path) -> None:
         """Test that a reverse strand transcript orders exons and introns correctly."""
@@ -299,8 +303,9 @@ class TestIterAllFeatures:
         assert len(transcript.spliced_exons) == 2
         assert len(transcript.introns) == 1
         assert transcript.translation is not None
-        assert transcript.translation.start == 1100
-        assert transcript.translation.end == 4900
+        # Offsets from the transcript's start, not genomic: CDS 1100-4900, transcript starts at 1000.
+        assert transcript.translation.start == 101
+        assert transcript.translation.end == 3901
         assert transcript.translation.stable_id == "ENSP0001"
 
     def test_iter_all_features_yields_one_transcript_per_group(self, tmp_path: Path) -> None:
@@ -345,31 +350,29 @@ class TestGetFeaturesByRegion:
 
 
 class TestIterFeaturesByRegion:
-    """Integration-style tests for GTF-backed transcript building via region queries."""
+    """One lazy region is served by the same sequential pass as a batch of regions."""
 
-    def test_iter_features_uses_tabix(self, tmp_path: Path, monkeypatch) -> None:
-        """Test that iter_features_by_region uses tabix to query a GTF file."""
+    def test_iter_features_by_region_streams_complete_transcripts(self, tmp_path: Path) -> None:
+        """A single region yields whole transcripts, both exons included, not just the overlapping one."""
 
-        path = _write_query_gtf(tmp_path / "sample.gtf.gz", "\n".join(HEADER_LINES) + "\n")
-        _write_query_mock_tabix(tmp_path, monkeypatch)
+        path = _write_gtf(tmp_path / "sample.gtf", _GTF_TWO_TRANSCRIPTS)
         source = GTFTranscriptSource(file_path=str(path))
 
-        transcripts = list(source.iter_features_by_region(seq_region_name="chr1", start=1000, end=2000))
+        transcripts = list(source.iter_features_by_region(seq_region_name="chr1", start=7000, end=7000))
 
-        assert len(transcripts) == 1
-        assert transcripts[0].stable_id == "transcript:1"
-        assert len(transcripts[0].spliced_exons) == 1
+        assert [transcript.stable_id for transcript in transcripts] == ["transcript:2"]
+        assert [(exon.start, exon.end) for exon in transcripts[0].spliced_exons] == [
+            (6000, 8000),
+            (2000, 3000),
+        ]
 
-    def test_iter_features_empty_region_returns_empty(self, tmp_path: Path, monkeypatch) -> None:
-        """Test that iter_features_by_region returns an empty iterator for a region with no features."""
+    def test_iter_features_by_region_on_another_region_yields_nothing(self, tmp_path: Path) -> None:
+        """A region the file does not carry yields nothing rather than everything."""
 
-        path = _write_query_gtf(tmp_path / "sample.gtf.gz", "\n".join(HEADER_LINES) + "\n")
-        _write_query_mock_tabix(tmp_path, monkeypatch)
+        path = _write_gtf(tmp_path / "sample.gtf", _GTF_TWO_TRANSCRIPTS)
         source = GTFTranscriptSource(file_path=str(path))
 
-        transcripts = list(source.iter_features_by_region(seq_region_name="chr3", start=1, end=10))
-
-        assert transcripts == []
+        assert not list(source.iter_features_by_region(seq_region_name="chr9", start=1, end=100))
 
 
 class TestContextManager:

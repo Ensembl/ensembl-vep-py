@@ -36,6 +36,19 @@ class GFF3TranscriptSource(GXFTranscriptSource[GFF3Parser]):
     )
     adaptor: GFF3Parser = field(init=False, factory=GFF3Parser)
 
+    def _query_typed_records(
+        self,
+        region: str,
+        *,
+        feature_types: frozenset[str] | None = None,
+    ) -> list[GFF3Record]:
+        """Seek the persistent GFF3 query parser and read its records."""
+
+        query_parser = self._open_query_parser()
+        if not query_parser.seek(region):
+            return []
+        return query_parser.records(limit=None, feature_types=feature_types)
+
     def get_record_id(self, record: GFF3Record) -> str | None:
         """Return the GFF3 record identifier.
 

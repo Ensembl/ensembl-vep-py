@@ -15,6 +15,10 @@
 
 import os
 from pathlib import Path
+import subprocess
+from typing import Protocol
+
+import pytest
 
 from ensembl.vep.common import ExonPhase, Strand
 from ensembl.vep.parsers import GFF3Parser
@@ -66,10 +70,22 @@ chr2\tensembl\texon\t800\t900\t.\t-\t.\tID=exon:ENSE011;Parent=transcript:ENST00
 chr2\tensembl\texon\t1000\t1100\t.\t-\t.\tID=exon:ENSE012;Parent=transcript:ENST003
 """
 
-_GFF3_EXON_WITH_PHASE = """\
+_GFF3_CDS_WITH_PHASE = """\
 chr1\tensembl\tmRNA\t1000\t2000\t.\t+\t.\tID=transcript:ENST001;Parent=gene:ENSG001
-chr1\tensembl\texon\t1000\t2000\t.\t+\t1\tID=exon:ENSE001;Parent=transcript:ENST001
+chr1\tensembl\texon\t1000\t2000\t.\t+\t.\tID=exon:ENSE001;Parent=transcript:ENST001
+chr1\tensembl\tCDS\t1000\t1900\t.\t+\t1\tID=cds:P001;Parent=transcript:ENST001
 """
+
+_GFF3_REVERSE_CDS_PHASES = """\
+chr1\tensembl\tmRNA\t500\t1100\t.\t-\t.\tID=transcript:ENST002;Parent=gene:ENSG002
+chr1\tensembl\texon\t1000\t1100\t.\t-\t.\tID=exon:ENSE011;Parent=transcript:ENST002
+chr1\tensembl\texon\t800\t900\t.\t-\t.\tID=exon:ENSE012;Parent=transcript:ENST002
+chr1\tensembl\texon\t500\t600\t.\t-\t.\tID=exon:ENSE013;Parent=transcript:ENST002
+chr1\tensembl\tCDS\t1000\t1050\t.\t-\t2\tID=cds:P002;Parent=transcript:ENST002
+chr1\tensembl\tCDS\t800\t900\t.\t-\t0\tID=cds:P002;Parent=transcript:ENST002
+"""
+"""A reverse-strand transcript whose CDS starts part-way through a codon (GFF phase 2) and whose
+last exon is entirely 3' UTR."""
 
 _GFF3_NO_ID_OR_NAME = """\
 chr1\tensembl\tmRNA\t1000\t2000\t.\t+\t.\tParent=gene:ENSG001
@@ -136,7 +152,7 @@ class TestGetRecordId:
         """Test the ID attribute is used verbatim as the record identifier."""
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
-        source = GFF3TranscriptSource()
+        source = GFF3TranscriptSource(file_path="")
 
         assert source.get_record_id(records[1]) == "transcript:ENST001"
 
@@ -144,7 +160,7 @@ class TestGetRecordId:
         """Test Name is used when ID is absent."""
 
         record = GFF3Parser.parse_text("chr1\tensembl\tgene\t1\t10\t.\t+\t.\tName=BRCA1\n")[0]
-        source = GFF3TranscriptSource()
+        source = GFF3TranscriptSource(file_path="")
 
         assert source.get_record_id(record) == "BRCA1"
 
@@ -152,7 +168,7 @@ class TestGetRecordId:
         """Test a synthetic identifier is built when ID and Name are both absent."""
 
         record = GFF3Parser.parse_text(_GFF3_NO_ID_OR_NAME)[0]
-        source = GFF3TranscriptSource()
+        source = GFF3TranscriptSource(file_path="")
 
         assert source.get_record_id(record) == "mrna:chr1:1000-2000"
 
@@ -164,7 +180,7 @@ class TestGetParentId:
         """Test the Parent attribute is returned as the parent identifier."""
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
-        source = GFF3TranscriptSource()
+        source = GFF3TranscriptSource(file_path="")
 
         assert source.get_parent_id(records[1]) == "gene:ENSG001"
 
@@ -172,7 +188,7 @@ class TestGetParentId:
         """Test None is returned when the record has no Parent attribute."""
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
-        source = GFF3TranscriptSource()
+        source = GFF3TranscriptSource(file_path="")
 
         assert source.get_parent_id(records[0]) is None
 
@@ -199,9 +215,58 @@ class TestGetAllFeatures:
         assert len(transcript.spliced_exons) == 2
         assert len(transcript.introns) == 1
         assert transcript.translation is not None
-        assert transcript.translation.start == 1100
-        assert transcript.translation.end == 4900
+        # Offsets from the transcript's start, not genomic: CDS 1100-4900, transcript starts at 1000.
+        assert transcript.translation.start == 101
+        assert transcript.translation.end == 3901
         assert transcript.translation.stable_id == "ENSP001"
+
+    def test_sequence_region_names_come_from_gff_directives(self, tmp_path: Path) -> None:
+        """Expose declared query names without scanning feature records."""
+        path = _write_gff3(
+            tmp_path / "sample.gff3",
+            "##gff-version 3\n"
+            "##sequence-region 1 1 5000\n"
+            "##sequence-region MT 1 100\n" + _GFF3_ONE_TRANSCRIPT.replace("chr1", "1"),
+        )
+        source = GFF3TranscriptSource(file_path=str(path))
+
+        assert source.sequence_region_names == frozenset({"1", "MT"})
+
+    def test_sequence_region_names_unions_index_and_header_names(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Combine the index's declared names with ``##sequence-region`` directives.
+
+        The index is exact and always in sync with what ``seek`` accepts, but it only lists
+        contigs with at least one row -- a header can still declare a contig the index omits.
+        """
+        path = _write_gff3(
+            tmp_path / "sample.gff3",
+            "##gff-version 3\n##sequence-region 1 1 5000\n" + _GFF3_ONE_TRANSCRIPT.replace("chr1", "1"),
+        )
+        monkeypatch.setattr(GFF3Parser, "index_sequence_names", property(lambda _self: ["1", "2"]))
+        source = GFF3TranscriptSource(file_path=str(path))
+
+        assert source.sequence_region_names == frozenset({"1", "2"})
+
+    def test_sequence_region_names_includes_a_header_only_contig_the_index_omits(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Keep a header-declared contig the index has no rows for.
+
+        A tabix index only lists contigs it has chunks for, so a contig declared in a
+        ``##sequence-region`` line but with zero features (for example a short patch or MT) would
+        otherwise disappear from the resolver's known names once the index takes part.
+        """
+        path = _write_gff3(
+            tmp_path / "sample.gff3",
+            "##gff-version 3\n##sequence-region 1 1 5000\n##sequence-region MT 1 100\n"
+            + _GFF3_ONE_TRANSCRIPT.replace("chr1", "1"),
+        )
+        monkeypatch.setattr(GFF3Parser, "index_sequence_names", property(lambda _self: ["1"]))
+        source = GFF3TranscriptSource(file_path=str(path))
+
+        assert source.sequence_region_names == frozenset({"1", "MT"})
 
     def test_get_all_features_returns_one_transcript_per_group(self, tmp_path: Path) -> None:
         """Test that multiple transcripts are built from a GFF3 file with multiple transcript groups."""
@@ -224,15 +289,39 @@ class TestGetAllFeatures:
 
         assert all(t.translation is None for t in transcripts)
 
-    def test_exon_phase_is_set_from_record(self, tmp_path: Path) -> None:
-        """Test that the exon phase is correctly set from the GFF3 record."""
+    def test_exon_phase_is_read_from_its_cds_row(self, tmp_path: Path) -> None:
+        """GFF phase 1 (skip one base) is Ensembl phase 2 (two bases of the codon came before)."""
 
-        path = _write_gff3(tmp_path / "sample.gff3", _GFF3_EXON_WITH_PHASE)
+        path = _write_gff3(tmp_path / "sample.gff3", _GFF3_CDS_WITH_PHASE)
         source = GFF3TranscriptSource(file_path=str(path))
 
         transcript = source.get_all_features()[0]
 
-        assert transcript.spliced_exons[0].phase == ExonPhase.ONE
+        assert transcript.spliced_exons[0].phase == ExonPhase.TWO
+        assert transcript.cds_start_phase == 2
+
+    def test_reverse_strand_phases_follow_transcript_order(self, tmp_path: Path) -> None:
+        """Each exon takes its own CDS row's phase, and an exon with no CDS row has none."""
+
+        path = _write_gff3(tmp_path / "sample.gff3", _GFF3_REVERSE_CDS_PHASES)
+        source = GFF3TranscriptSource(file_path=str(path))
+
+        transcript = source.get_all_features()[0]
+
+        phases = [exon.phase for exon in transcript.spliced_exons]
+        assert phases == [ExonPhase.ONE, ExonPhase.ZERO, ExonPhase.UNKNOWN]
+        assert transcript.cds_start_phase == 1
+
+    def test_a_transcript_without_cds_rows_leaves_phases_unset(self, tmp_path: Path) -> None:
+        """No CDS row, nothing to read a phase from."""
+
+        path = _write_gff3(tmp_path / "sample.gff3", _GFF3_REVERSE_STRAND)
+        source = GFF3TranscriptSource(file_path=str(path))
+
+        transcript = source.get_all_features()[0]
+
+        assert all(exon.phase is None for exon in transcript.spliced_exons)
+        assert transcript.cds_start_phase == 0
 
     def test_reverse_strand_transcript_orders_exons_and_introns(self, tmp_path: Path) -> None:
         """Test that a reverse strand transcript orders exons and introns correctly."""
@@ -303,8 +392,9 @@ class TestIterAllFeatures:
         assert len(transcript.spliced_exons) == 2
         assert len(transcript.introns) == 1
         assert transcript.translation is not None
-        assert transcript.translation.start == 1100
-        assert transcript.translation.end == 4900
+        # Offsets from the transcript's start, not genomic: CDS 1100-4900, transcript starts at 1000.
+        assert transcript.translation.start == 101
+        assert transcript.translation.end == 3901
         assert transcript.translation.stable_id == "ENSP001"
 
     def test_iter_all_features_yields_one_transcript_per_group(self, tmp_path: Path) -> None:
@@ -318,6 +408,64 @@ class TestIterAllFeatures:
         assert len(iterated) == 2
         assert all(isinstance(t, Transcript) for t in iterated)
         assert {t.stable_id for t in iterated} == {"transcript:ENST001", "transcript:ENST002"}
+
+    def test_gene_grouping_allows_transcripts_before_their_children(self, tmp_path: Path) -> None:
+        """Assemble a valid gene block whose transcript declarations precede all exons."""
+
+        data = (
+            "chr1\tensembl\tgene\t100\t500\t.\t+\t.\tID=gene:G1\n"
+            "chr1\tensembl\tmRNA\t100\t300\t.\t+\t.\tID=transcript:T1;Parent=gene:G1\n"
+            "chr1\tensembl\tmRNA\t200\t500\t.\t+\t.\tID=transcript:T2;Parent=gene:G1\n"
+            "chr1\tensembl\texon\t100\t300\t.\t+\t.\tID=exon:E1;Parent=transcript:T1\n"
+            "chr1\tensembl\texon\t200\t500\t.\t+\t.\tID=exon:E2;Parent=transcript:T2\n"
+        )
+        path = _write_gff3(tmp_path / "gene-grouped.gff3", data)
+        source = GFF3TranscriptSource(file_path=str(path))
+
+        transcripts = list(source.iter_all_features())
+
+        assert [transcript.stable_id for transcript in transcripts] == [
+            "transcript:T1",
+            "transcript:T2",
+        ]
+        assert [transcript.spliced_exons[0].stable_id for transcript in transcripts] == [
+            "exon:E1",
+            "exon:E2",
+        ]
+
+    def test_interval_stream_filters_before_building_transcript_graphs(
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """An unindexed scan does not construct models outside the payload intervals."""
+
+        second_gene = (
+            "chr2\tensembl\tgene\t100\t200\t.\t+\t.\tID=gene:ENSG002\n"
+            "chr2\tensembl\tmRNA\t100\t200\t.\t+\t.\t"
+            "ID=transcript:ENST002;Parent=gene:ENSG002\n"
+            "chr2\tensembl\texon\t100\t200\t.\t+\t.\t"
+            "ID=exon:ENSE002;Parent=transcript:ENST002\n"
+        )
+        path = _write_gff3(tmp_path / "sample.gff3", _GFF3_ONE_TRANSCRIPT + second_gene)
+        source = GFF3TranscriptSource(file_path=str(path))
+        built: list[str | None] = []
+        build_transcript = GFF3TranscriptSource._build_transcript_from_record_group
+
+        def record_build(source, group, slice_cache):
+            built.append(source.get_record_id(group.transcript_record))
+            return build_transcript(source, group, slice_cache)
+
+        monkeypatch.setattr(
+            GFF3TranscriptSource,
+            "_build_transcript_from_record_group",
+            record_build,
+        )
+
+        transcripts = list(source.iter_features_by_regions({"chr2": [(150, 150)]}))
+
+        assert [transcript.stable_id for transcript in transcripts] == ["transcript:ENST002"]
+        assert built == ["transcript:ENST002"]
 
 
 class TestGetFeaturesByRegion:
@@ -348,32 +496,83 @@ class TestGetFeaturesByRegion:
         assert transcripts == []
 
 
+class TestQueryParserReuse:
+    """Tests for the persistent region-query parser."""
+
+    def test_region_queries_open_the_file_once(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Test repeated complete-feature queries reuse one open query parser."""
+
+        path = _write_query_gff3(tmp_path / "sample.gff3.gz", "\n".join(HEADER_LINES) + "\n")
+        _write_query_mock_tabix(tmp_path, monkeypatch)
+        source = GFF3TranscriptSource(file_path=str(path))
+        opened: list[str] = []
+        original_open = GFF3Parser.open
+
+        def counting_open(parser: GFF3Parser, file_path: str, mode: str = "auto") -> GFF3Parser:
+            opened.append(mode)
+            return original_open(parser, file_path, mode)
+
+        monkeypatch.setattr(GFF3Parser, "open", counting_open)
+
+        first = source.get_features_by_region(seq_region_name="chr1", start=1000, end=2000)
+        second = source.get_features_by_region(seq_region_name="chr1", start=1000, end=2000)
+
+        assert [transcript.stable_id for transcript in first] == ["transcript:ENST001"]
+        assert [transcript.stable_id for transcript in second] == ["transcript:ENST001"]
+        assert opened == ["query"]
+
+    def test_close_releases_query_parser(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Test closing the source drops its query parser so the next query opens a new one."""
+
+        path = _write_query_gff3(tmp_path / "sample.gff3.gz", "\n".join(HEADER_LINES) + "\n")
+        _write_query_mock_tabix(tmp_path, monkeypatch)
+        source = GFF3TranscriptSource(file_path=str(path))
+        source.get_features_by_region(seq_region_name="chr1", start=1000, end=2000)
+
+        source.close()
+
+        assert source._query_parser is None  # pylint: disable=protected-access
+        assert source.get_features_by_region(seq_region_name="chr1", start=1000, end=2000)
+
+
 class TestIterFeaturesByRegion:
-    """Integration-style tests for GFF3-backed transcript building via region queries."""
+    """One lazy region is served by the same sequential pass as a batch of regions."""
 
-    def test_iter_features_uses_tabix(self, tmp_path: Path, monkeypatch) -> None:
-        """Test that iter_features_by_region uses tabix to query a GFF3 file."""
+    def test_iter_features_by_region_streams_complete_transcripts(self, tmp_path: Path) -> None:
+        """A single region yields whole transcripts, exons included, and drops the other region's."""
 
-        path = _write_query_gff3(tmp_path / "sample.gff3.gz", "\n".join(HEADER_LINES) + "\n")
-        _write_query_mock_tabix(tmp_path, monkeypatch)
+        second_gene = (
+            "chr2\tensembl\tgene\t100\t200\t.\t+\t.\tID=gene:ENSG002\n"
+            "chr2\tensembl\tmRNA\t100\t200\t.\t+\t.\t"
+            "ID=transcript:ENST002;Parent=gene:ENSG002\n"
+            "chr2\tensembl\texon\t100\t200\t.\t+\t.\t"
+            "ID=exon:ENSE002;Parent=transcript:ENST002\n"
+        )
+        path = _write_gff3(tmp_path / "sample.gff3", _GFF3_ONE_TRANSCRIPT + second_gene)
         source = GFF3TranscriptSource(file_path=str(path))
 
-        transcripts = list(source.iter_features_by_region(seq_region_name="chr1", start=1000, end=2000))
+        transcripts = list(source.iter_features_by_region(seq_region_name="chr2", start=150, end=150))
 
-        assert len(transcripts) == 1
-        assert transcripts[0].stable_id == "transcript:ENST001"
-        assert len(transcripts[0].spliced_exons) == 1
+        assert [transcript.stable_id for transcript in transcripts] == ["transcript:ENST002"]
+        assert [exon.stable_id for exon in transcripts[0].spliced_exons] == ["exon:ENSE002"]
 
-    def test_iter_features_empty_region_returns_empty(self, tmp_path: Path, monkeypatch) -> None:
-        """Test that iter_features_by_region returns an empty iterator for a region with no features."""
+    def test_iter_features_by_region_without_coordinates_takes_the_whole_region(self, tmp_path: Path) -> None:
+        """A region with no bounds means every transcript on it, as ``get_features_by_region`` does."""
 
-        path = _write_query_gff3(tmp_path / "sample.gff3.gz", "\n".join(HEADER_LINES) + "\n")
-        _write_query_mock_tabix(tmp_path, monkeypatch)
+        path = _write_gff3(tmp_path / "sample.gff3")
         source = GFF3TranscriptSource(file_path=str(path))
 
-        transcripts = list(source.iter_features_by_region(seq_region_name="chr3", start=1, end=10))
+        transcripts = list(source.iter_features_by_region("chr1"))
 
-        assert transcripts == []
+        assert [transcript.stable_id for transcript in transcripts] == ["transcript:ENST001"]
+
+    def test_iter_features_by_region_on_another_region_yields_nothing(self, tmp_path: Path) -> None:
+        """A region the file does not carry yields nothing rather than everything."""
+
+        path = _write_gff3(tmp_path / "sample.gff3")
+        source = GFF3TranscriptSource(file_path=str(path))
+
+        assert not list(source.iter_features_by_region(seq_region_name="chr9", start=1, end=100))
 
 
 class TestContextManager:
@@ -399,3 +598,57 @@ class TestContextManager:
             transcripts = source.get_all_features()
 
         assert len(transcripts) == 1
+
+
+class HtslibToolchain(Protocol):
+    """Protocol for HTSlib toolchain fixtures."""
+
+    bgzip: str
+    tabix: str
+
+
+def _create_tabix_gff3_cli(path: Path, htslib_toolchain: HtslibToolchain) -> Path:
+    """Create and tabix-index a real GFF3 fixture with a real HTSlib toolchain.
+
+    Only ``chr1`` is declared -- a query for any other contig exercises the unindexed-contig
+    path against a genuine, in-process (noodles) tabix index rather than a mock.
+    """
+
+    unzip_path = path.with_suffix(path.suffix.replace(".gz", ""))
+    unzip_path.write_text(_GFF3_ONE_TRANSCRIPT)
+
+    subprocess.run([htslib_toolchain.bgzip, "-f", str(unzip_path)], check=True)
+    subprocess.run([htslib_toolchain.tabix, "-f", "-p", "gff", str(path)], check=True)
+
+    return path
+
+
+@pytest.mark.integration
+class TestUnindexedContigQuery:
+    """A variant on a contig absent from the GFF index must not raise."""
+
+    def test_get_features_by_region_on_unindexed_contig_returns_empty(
+        self, tmp_path: Path, htslib_toolchain: HtslibToolchain
+    ) -> None:
+        """Test querying a contig the index does not declare returns no transcripts."""
+
+        path = _create_tabix_gff3_cli(tmp_path / "sample.gff3.gz", htslib_toolchain)
+        source = GFF3TranscriptSource(file_path=str(path))
+
+        transcripts = source.get_features_by_region(seq_region_name="chrZ", start=1, end=100)
+
+        assert transcripts == []
+
+        # The source stays usable for a subsequent, known contig.
+        known = source.get_features_by_region(seq_region_name="chr1", start=1000, end=5000)
+        assert [transcript.stable_id for transcript in known] == ["transcript:ENST001"]
+
+    def test_sequence_region_names_uses_the_real_index(
+        self, tmp_path: Path, htslib_toolchain: HtslibToolchain
+    ) -> None:
+        """Test the resolver source names come from the real index, not file headers."""
+
+        path = _create_tabix_gff3_cli(tmp_path / "sample.gff3.gz", htslib_toolchain)
+        source = GFF3TranscriptSource(file_path=str(path))
+
+        assert source.sequence_region_names == frozenset({"chr1"})
