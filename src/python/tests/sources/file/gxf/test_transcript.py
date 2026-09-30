@@ -15,6 +15,7 @@
 
 from pathlib import Path
 import subprocess
+from collections.abc import Iterator
 from typing import Any, Protocol
 
 from attrs import define, field
@@ -22,11 +23,13 @@ import pytest
 
 from ensembl.vep.caches.feature_pool import TranscriptPool
 from ensembl.vep.common import Strand, is_resolved
-from ensembl.vep.models.genic import Exon, Translation
+from ensembl.vep.models.genic import Exon, Gene, Translation
 from ensembl.vep.models.genic.transcript import _CODING_DERIVATIONS, Transcript
-from ensembl.vep.parsers import GFF3Parser
+from ensembl.vep.parsers import GFF3Parser, GFF3Record
+from ensembl.vep.sources.sequence_source import SequenceSource
 from ensembl.vep.sources.file.gff3.transcript import GFF3TranscriptSource
-from ensembl.vep.sources.file.gxf.transcript import GXFTranscriptSource, _GXFTranscriptGroup
+from ensembl.vep.models.sequence import Slice
+from ensembl.vep.sources.file.gxf.transcript import GXFTranscriptSource, _GXFRecord, _GXFTranscriptGroup
 from ensembl.vep.sources.synonym import SequenceRegionResolver
 
 
@@ -66,39 +69,48 @@ chr1\tensembl\tmRNA\t1000\t5000\t.\t+\t.\tID=transcript:ENST001
 """
 
 
-class DummySequenceSource:
+@define(auto_attribs=True)
+class DummySequenceSource(SequenceSource):
     """Minimal sequence source fixture for slice-length assertions."""
 
-    def __init__(self, lengths: dict[str, int], sequences: dict[str, str] | None = None) -> None:
-        self.lengths = lengths
-        self.sequences = sequences or {}
-        self.closed = False
+    lengths: dict[str, int]
+    sequences: dict[str, str] = field(factory=dict)
+    closed: bool = field(default=False, init=False)
 
-    def get_sequence_by_start_end_strand(
-        self, seq_region_name, start, end, strand
-    ):  # pragma: no cover - helper
+    def get_sequence_by_start_end_strand(  # pylint: disable=unused-argument
+        self, seq_region_name: str, start: int, end: int, *, strand: Strand = Strand.FORWARD
+    ) -> str | None:
+        """Return the whole stored sequence, ignoring the requested span."""
         return self.sequences.get(seq_region_name)
 
-    def get_seq_region_length(self, seq_region_name: str) -> int | None:
-        return self.lengths.get(seq_region_name)
-
     def close(self) -> None:
+        """Record that the source was closed."""
         self.closed = True
+
+    def _fetch_sequence_chunk(self, seq_region_name: str, start: int, end: int) -> str:
+        """Return Ns; spans are served by ``get_sequence_by_start_end_strand``."""
+        return "N" * (end - start + 1)
+
+    def _get_seq_region_length(self, seq_region_name: str) -> int | None:
+        """Return the configured length for a sequence region."""
+        return self.lengths.get(seq_region_name)
 
 
 @define(kw_only=True, auto_attribs=True)
-class DummyGXFTranscriptSource(GXFTranscriptSource[object]):
+class DummyGXFTranscriptSource(GXFTranscriptSource[GFF3Parser]):
     """Concrete source used to exercise the shared GXF assembly helpers."""
 
     transcript_feature_types = frozenset(
         {"mrna", "transcript", "lnc_rna", "pseudogenic_transcript", "processed_transcript"}
     )
-    adaptor: object = field(init=False, default=None)
+    adaptor: GFF3Parser = field(init=False, factory=GFF3Parser)
 
-    def get_record_id(self, record):
+    def get_record_id(self, record: _GXFRecord) -> str | None:
+        """Return the GFF3 ``ID`` or GTF ``transcript_id``."""
         return record.attributes.get("ID", (None,))[0] or record.attributes.get("transcript_id", (None,))[0]
 
-    def get_parent_id(self, record):
+    def get_parent_id(self, record: _GXFRecord) -> str | None:
+        """Return the GFF3 ``Parent`` or GTF ``gene_id``."""
         return record.attributes.get("Parent", (None,))[0] or record.attributes.get("gene_id", (None,))[0]
 
     def _query_typed_records(  # pragma: no cover
@@ -106,12 +118,19 @@ class DummyGXFTranscriptSource(GXFTranscriptSource[object]):
     ) -> list[Any]:
         return []
 
-    def iter_all_features(self):  # pragma: no cover - fixture helper
+    def iter_all_features(self) -> Iterator[Transcript]:  # pragma: no cover - fixture helper
+        """Yield nothing."""
         return iter(())
 
-    def iter_features_by_region(
-        self, region=None, *, seq_region_name=None, start=None, end=None
-    ):  # pragma: no cover
+    def iter_features_by_region(  # pragma: no cover
+        self,
+        region: str | None = None,
+        *,
+        seq_region_name: str | None = None,
+        start: int | None = None,
+        end: int | None = None,
+    ) -> Iterator[Transcript]:
+        """Yield nothing."""
         return iter(())
 
 
@@ -158,7 +177,14 @@ class TestCompleteRegionFeatures:
         )
         calls: list[tuple[int, int]] = []
 
-        def records_for_region(_source, _region: str, start: int, end: int, *, feature_types=None):
+        def records_for_region(
+            _source: DummyGXFTranscriptSource,
+            _region: str,
+            start: int,
+            end: int,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
             del feature_types
             calls.append((start, end))
             if (start, end) == (1500, 1600):
@@ -186,7 +212,14 @@ class TestCompleteRegionFeatures:
         )
         calls: list[tuple[tuple[int, int], frozenset[str] | None]] = []
 
-        def records_for_region(_source, _region: str, start: int, end: int, *, feature_types=None):
+        def records_for_region(
+            _source: DummyGXFTranscriptSource,
+            _region: str,
+            start: int,
+            end: int,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
             calls.append(((start, end), feature_types))
             return records
 
@@ -210,7 +243,14 @@ class TestCompleteRegionFeatures:
         )
         calls: list[str] = []
 
-        def query_records(_source, sequence_region: str, _start: int, _end: int, *, feature_types=None):
+        def query_records(
+            _source: DummyGXFTranscriptSource,
+            sequence_region: str,
+            _start: int,
+            _end: int,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
             del feature_types
             calls.append(sequence_region)
             return []
@@ -232,7 +272,14 @@ class TestCompleteRegionFeatures:
         )
         calls: list[str] = []
 
-        def query_records(_source, sequence_region: str, _start: int, _end: int, *, feature_types=None):
+        def query_records(
+            _source: DummyGXFTranscriptSource,
+            sequence_region: str,
+            _start: int,
+            _end: int,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
             del feature_types
             calls.append(sequence_region)
             return [object()] if sequence_region == "1" else []
@@ -256,7 +303,14 @@ class TestCompleteRegionFeatures:
         )
         calls: list[str] = []
 
-        def query_records(_source, sequence_region: str, _start: int, _end: int, *, feature_types=None):
+        def query_records(
+            _source: DummyGXFTranscriptSource,
+            sequence_region: str,
+            _start: int,
+            _end: int,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
             del feature_types
             calls.append(sequence_region)
             return [object()] if sequence_region == "2" else []
@@ -353,23 +407,20 @@ class TestResolveGene:
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
         source = DummyGXFTranscriptSource(file_path="")
         group = source._group_records(records)[0]  # pylint: disable=protected-access
-        slice_cache: dict[str, object] = {}
-        gene_cache: dict[str, object] = {}
+        slice_cache: dict[str, Slice] = {}
+        gene_cache: dict[str, Gene] = {}
 
-        transcript_1 = source._build_transcript_from_record_group(
-            group, slice_cache
-        )  # pylint: disable=protected-access
-        transcript_2 = source._build_transcript_from_record_group(
-            group, slice_cache
-        )  # pylint: disable=protected-access
-        source._resolve_gene(
-            group.gene_record, group.gene_id, transcript_1, gene_cache, slice_cache
-        )  # pylint: disable=protected-access
-        source._resolve_gene(
-            group.gene_record, group.gene_id, transcript_2, gene_cache, slice_cache
-        )  # pylint: disable=protected-access
+        # pylint: disable-next=protected-access
+        transcript_1 = source._build_transcript_from_record_group(group, slice_cache)
+        # pylint: disable-next=protected-access
+        transcript_2 = source._build_transcript_from_record_group(group, slice_cache)
+        # pylint: disable-next=protected-access
+        source._resolve_gene(group.gene_record, group.gene_id, transcript_1, gene_cache, slice_cache)
+        # pylint: disable-next=protected-access
+        source._resolve_gene(group.gene_record, group.gene_id, transcript_2, gene_cache, slice_cache)
 
         assert transcript_1.gene is transcript_2.gene
+        assert transcript_1.gene is not None
         assert transcript_1.gene.transcripts == [transcript_1, transcript_2]
 
 
@@ -393,6 +444,7 @@ class TestBuildTranscriptFromRecordGroup:
         transcript = source._build_transcript_from_record_group(group, {})  # pylint: disable=protected-access
 
         assert transcript.stable_id == "transcript:ENST001"
+        assert transcript.slice is not None
         assert transcript.slice.end == 9000
         assert len(transcript.spliced_exons) == 2
         assert len(transcript.introns) == 1
@@ -478,7 +530,7 @@ class TestGetOrBuildSlice:
             file_path="", sequence_source=DummySequenceSource({"chr1": 42}, {"chr1": "ACGT"})
         )
 
-        slice_cache: dict[str, object] = {}
+        slice_cache: dict[str, Slice] = {}
         seq_slice = source._get_or_build_slice("chr1", slice_cache)  # pylint: disable=protected-access
 
         assert seq_slice.end == 42
@@ -500,7 +552,7 @@ class TestGetOrBuildSlice:
         """Test the same Slice instance is returned for the same region."""
 
         source = DummyGXFTranscriptSource(file_path="")
-        slice_cache: dict[str, object] = {}
+        slice_cache: dict[str, Slice] = {}
 
         first = source._get_or_build_slice("chr1", slice_cache)  # pylint: disable=protected-access
         second = source._get_or_build_slice("chr1", slice_cache)  # pylint: disable=protected-access
@@ -511,7 +563,7 @@ class TestGetOrBuildSlice:
         """Test different regions produce distinct Slice instances."""
 
         source = DummyGXFTranscriptSource(file_path="")
-        slice_cache: dict[str, object] = {}
+        slice_cache: dict[str, Slice] = {}
 
         chr1_slice = source._get_or_build_slice("chr1", slice_cache)  # pylint: disable=protected-access
         chr2_slice = source._get_or_build_slice("chr2", slice_cache)  # pylint: disable=protected-access
@@ -673,7 +725,14 @@ class TestCandidateFiltering:
 
         monkeypatch.setattr(DummyGXFTranscriptSource, "_build_transcript_from_record_group", counting_build)
 
-        def records_for_region(_source, _region: str, start: int, end: int, *, feature_types=None):
+        def records_for_region(
+            _source: DummyGXFTranscriptSource,
+            _region: str,
+            start: int,
+            end: int,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
             del feature_types
             if (start, end) == (1500, 1600):
                 # Stage 1: the narrow query only ever touches the ENST001 transcript row.
@@ -702,7 +761,14 @@ class TestCandidateFiltering:
         records = GFF3Parser.parse_text(_GFF3_TWO_TRANSCRIPTS)
         source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
 
-        def records_for_region(_source, _region: str, start: int, end: int, *, feature_types=None):
+        def records_for_region(
+            _source: DummyGXFTranscriptSource,
+            _region: str,
+            start: int,
+            end: int,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
             del feature_types
             if (start, end) == (1500, 1600):
                 return [records[1]]
@@ -756,7 +822,14 @@ class TestTranscriptPoolReuse:
             transcript_pool=pool,
         )
 
-        def records_for_region(_source, _region: str, _start: int, _end: int, *, feature_types=None):
+        def records_for_region(
+            _source: DummyGXFTranscriptSource,
+            _region: str,
+            _start: int,
+            _end: int,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
             del feature_types
             return records
 
@@ -765,7 +838,14 @@ class TestTranscriptPoolReuse:
         (transcript,) = source.get_features_by_region(seq_region_name="chr1", start=1500, end=1600)
         assert len(pool) == 1
 
-        def stage_two_forbidden(_source, _region: str, _start: int, _end: int, *, feature_types=None):
+        def stage_two_forbidden(
+            _source: DummyGXFTranscriptSource,
+            _region: str,
+            _start: int,
+            _end: int,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
             if feature_types is None:
                 raise AssertionError("stage 2 must not run on a pool hit")
             return records
@@ -808,7 +888,14 @@ class TestTranscriptPoolReuse:
         )
         stage_two_calls: list[tuple[int, int]] = []
 
-        def records_for_region(_source, _region: str, start: int, end: int, *, feature_types=None):
+        def records_for_region(
+            _source: DummyGXFTranscriptSource,
+            _region: str,
+            start: int,
+            end: int,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
             if feature_types is None:
                 stage_two_calls.append((start, end))
             return records
@@ -842,7 +929,14 @@ class TestTranscriptPoolReuse:
             transcript_pool=pool,
         )
 
-        def records_for_region(_source, _region: str, start: int, end: int, *, feature_types=None):
+        def records_for_region(
+            _source: DummyGXFTranscriptSource,
+            _region: str,
+            start: int,
+            end: int,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
             del feature_types
             if (start, end) == (1500, 1600):
                 return duplicated
@@ -877,7 +971,14 @@ class TestTranscriptPoolReuse:
         pool.put(("chr1", "transcript:ENST002", enst002.start, enst002.end), enst002)
         source.transcript_pool = pool
 
-        def records_for_region(_source, _region, start, end, *, feature_types=None):
+        def records_for_region(
+            _source: DummyGXFTranscriptSource,
+            _region: str,
+            start: int,
+            end: int,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
             # A real tabix query only returns records overlapping the queried span; ENST002 is
             # pooled and so must never legitimately turn up when only ENST001's span is queried.
             del feature_types

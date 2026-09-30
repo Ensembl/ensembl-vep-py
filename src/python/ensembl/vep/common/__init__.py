@@ -19,4 +19,3 @@ from .mixins import *
 from .methods import *
 from .containers import *
 from .codons import *
-from .constants import *

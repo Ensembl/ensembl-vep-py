@@ -16,10 +16,8 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Iterator
-
-from abc import ABC, abstractmethod
 from typing import Iterator, Generic, TypeVar
+
 from attr import define, field
 
 from ensembl.vep.caches import SliceCache, WeakSliceCache

@@ -16,32 +16,41 @@
 import os
 from pathlib import Path
 
+from attrs import define, field
 import pytest
 
 from ensembl.vep.common import ExonPhase, Strand
 from ensembl.vep.parsers import GTFParser
 from ensembl.vep.models.genic import Transcript
+from ensembl.vep.sources.sequence_source import SequenceSource
 from ensembl.vep.sources.file.gtf.transcript import GTFTranscriptSource
 
 
-class DummySequenceSource:
+@define(auto_attribs=True)
+class DummySequenceSource(SequenceSource):
     """Minimal sequence source fixture for slice-length assertions."""
 
-    def __init__(self, lengths: dict[str, int], sequences: dict[str, str] | None = None) -> None:
-        self.lengths = lengths
-        self.sequences = sequences or {}
-        self.closed = False
+    lengths: dict[str, int]
+    sequences: dict[str, str] = field(factory=dict)
+    closed: bool = field(default=False, init=False)
 
-    def get_sequence_by_start_end_strand(
-        self, seq_region_name, start, end, strand
-    ):  # pragma: no cover - helper
+    def get_sequence_by_start_end_strand(  # pylint: disable=unused-argument
+        self, seq_region_name: str, start: int, end: int, *, strand: Strand = Strand.FORWARD
+    ) -> str | None:
+        """Return the whole stored sequence, ignoring the requested span."""
         return self.sequences.get(seq_region_name)
 
-    def get_seq_region_length(self, seq_region_name: str) -> int | None:
-        return self.lengths.get(seq_region_name)
-
     def close(self) -> None:
+        """Record that the source was closed."""
         self.closed = True
+
+    def _fetch_sequence_chunk(self, seq_region_name: str, start: int, end: int) -> str:
+        """Return Ns; spans are served by ``get_sequence_by_start_end_strand``."""
+        return "N" * (end - start + 1)
+
+    def _get_seq_region_length(self, seq_region_name: str) -> int | None:
+        """Return the configured length for a sequence region."""
+        return self.lengths.get(seq_region_name)
 
 
 _GTF_ONE_TRANSCRIPT = """\
@@ -103,7 +112,7 @@ def _write_query_gtf(path: Path, data: str) -> Path:
     return path
 
 
-def _write_query_mock_tabix(tmp_path: Path, monkeypatch) -> Path:
+def _write_query_mock_tabix(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     """Write a mock tabix executable on PATH that returns deterministic GTF records.
 
     GTFTranscriptSource's adaptor is constructed without access to the source's own
@@ -183,7 +192,7 @@ class TestGetAllFeatures:
         """Test that a transcript object is built from a GTF file."""
 
         path = _write_gtf(tmp_path / "sample.gtf")
-        source = GTFTranscriptSource(file_path=path)
+        source = GTFTranscriptSource(file_path=str(path))
 
         transcripts = source.get_all_features()
 
@@ -207,7 +216,7 @@ class TestGetAllFeatures:
         """Test that multiple transcripts are built from a GTF file with multiple transcript groups."""
 
         path = _write_gtf(tmp_path / "sample.gtf", _GTF_TWO_TRANSCRIPTS)
-        source = GTFTranscriptSource(file_path=path)
+        source = GTFTranscriptSource(file_path=str(path))
 
         transcripts = source.get_all_features()
 
@@ -218,7 +227,7 @@ class TestGetAllFeatures:
         """Test that a transcript without a CDS feature has no translation object."""
 
         path = _write_gtf(tmp_path / "sample.gtf", _GTF_TWO_TRANSCRIPTS)
-        source = GTFTranscriptSource(file_path=path)
+        source = GTFTranscriptSource(file_path=str(path))
 
         transcripts = source.get_all_features()
 
@@ -228,7 +237,7 @@ class TestGetAllFeatures:
         """GFF phase 1 (skip one base) is Ensembl phase 2 (two bases of the codon came before)."""
 
         path = _write_gtf(tmp_path / "sample.gtf", _GTF_CDS_WITH_PHASE)
-        source = GTFTranscriptSource(file_path=path)
+        source = GTFTranscriptSource(file_path=str(path))
 
         transcript = source.get_all_features()[0]
 
@@ -238,7 +247,7 @@ class TestGetAllFeatures:
         """Test that a reverse strand transcript orders exons and introns correctly."""
 
         path = _write_gtf(tmp_path / "sample.gtf", _GTF_REVERSE_STRAND)
-        source = GTFTranscriptSource(file_path=path)
+        source = GTFTranscriptSource(file_path=str(path))
 
         transcript = source.get_all_features()[0]
 
@@ -261,11 +270,12 @@ class TestGetAllFeatures:
 
         path = _write_gtf(tmp_path / "sample.gtf")
         source = GTFTranscriptSource(
-            file_path=path, sequence_source=DummySequenceSource({"chr1": 42}, {"chr1": "ACGT"})
+            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 42}, {"chr1": "ACGT"})
         )
 
         transcript = source.get_all_features()[0]
 
+        assert transcript.slice is not None
         assert transcript.slice.end == 42
         assert transcript.slice.seq_region_length == 42
         assert transcript.slice.seq == "ACGT"
@@ -274,11 +284,12 @@ class TestGetAllFeatures:
         """Test that the transcript and its exons share the same Slice instance."""
 
         path = _write_gtf(tmp_path / "sample.gtf")
-        source = GTFTranscriptSource(file_path=path)
+        source = GTFTranscriptSource(file_path=str(path))
 
         transcript = source.get_all_features()[0]
 
         assert transcript.slice is transcript.spliced_exons[0].slice
+        assert transcript.gene is not None
         assert transcript.slice is transcript.gene.slice
 
 
@@ -289,7 +300,7 @@ class TestIterAllFeatures:
         """Test that iter_all_features yields a transcript object from a GTF file."""
 
         path = _write_gtf(tmp_path / "sample.gtf")
-        source = GTFTranscriptSource(file_path=path)
+        source = GTFTranscriptSource(file_path=str(path))
 
         transcripts = list(source.iter_all_features())
 
@@ -312,7 +323,7 @@ class TestIterAllFeatures:
         """Test that iter_all_features yields the same transcripts as get_all_features."""
 
         path = _write_gtf(tmp_path / "sample.gtf", _GTF_TWO_TRANSCRIPTS)
-        source = GTFTranscriptSource(file_path=path)
+        source = GTFTranscriptSource(file_path=str(path))
 
         iterated = list(source.iter_all_features())
 
@@ -324,7 +335,7 @@ class TestIterAllFeatures:
 class TestGetFeaturesByRegion:
     """Integration-style tests for GTF-backed transcript building via region queries."""
 
-    def test_get_features_by_region_uses_tabix(self, tmp_path: Path, monkeypatch) -> None:
+    def test_get_features_by_region_uses_tabix(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test that get_features_by_region uses tabix to query a GTF file."""
 
         path = _write_query_gtf(tmp_path / "sample.gtf.gz", "\n".join(HEADER_LINES) + "\n")
@@ -337,7 +348,9 @@ class TestGetFeaturesByRegion:
         assert transcripts[0].stable_id == "transcript:1"
         assert len(transcripts[0].spliced_exons) == 1
 
-    def test_get_features_by_region_empty_region_returns_empty(self, tmp_path: Path, monkeypatch) -> None:
+    def test_get_features_by_region_empty_region_returns_empty(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         """Test that get_features_by_region returns an empty list for a region with no features."""
 
         path = _write_query_gtf(tmp_path / "sample.gtf.gz", "\n".join(HEADER_LINES) + "\n")
@@ -383,7 +396,7 @@ class TestContextManager:
 
         path = _write_gtf(tmp_path / "sample.gtf")
         sequence_source = DummySequenceSource({})
-        source = GTFTranscriptSource(file_path=path, sequence_source=sequence_source)
+        source = GTFTranscriptSource(file_path=str(path), sequence_source=sequence_source)
 
         source.close()
 
@@ -394,7 +407,7 @@ class TestContextManager:
 
         path = _write_gtf(tmp_path / "sample.gtf")
 
-        with GTFTranscriptSource(file_path=path) as source:
+        with GTFTranscriptSource(file_path=str(path)) as source:
             transcripts = source.get_all_features()
 
         assert len(transcripts) == 1

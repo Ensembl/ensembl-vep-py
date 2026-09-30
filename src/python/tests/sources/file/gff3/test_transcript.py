@@ -18,32 +18,43 @@ from pathlib import Path
 import subprocess
 from typing import Protocol
 
+from attrs import define, field
 import pytest
 
 from ensembl.vep.common import ExonPhase, Strand
 from ensembl.vep.parsers import GFF3Parser
 from ensembl.vep.models.genic import Transcript
+from ensembl.vep.sources.sequence_source import SequenceSource
+from ensembl.vep.models.sequence import Slice
 from ensembl.vep.sources.file.gff3.transcript import GFF3TranscriptSource
+from ensembl.vep.sources.file.gxf.transcript import _GXFTranscriptGroup
 
 
-class DummySequenceSource:
+@define(auto_attribs=True)
+class DummySequenceSource(SequenceSource):
     """Minimal sequence source fixture for slice-length assertions."""
 
-    def __init__(self, lengths: dict[str, int], sequences: dict[str, str] | None = None) -> None:
-        self.lengths = lengths
-        self.sequences = sequences or {}
-        self.closed = False
+    lengths: dict[str, int]
+    sequences: dict[str, str] = field(factory=dict)
+    closed: bool = field(default=False, init=False)
 
-    def get_sequence_by_start_end_strand(
-        self, seq_region_name, start, end, strand
-    ):  # pragma: no cover - helper
+    def get_sequence_by_start_end_strand(  # pylint: disable=unused-argument
+        self, seq_region_name: str, start: int, end: int, *, strand: Strand = Strand.FORWARD
+    ) -> str | None:
+        """Return the whole stored sequence, ignoring the requested span."""
         return self.sequences.get(seq_region_name)
 
-    def get_seq_region_length(self, seq_region_name: str) -> int | None:
-        return self.lengths.get(seq_region_name)
-
     def close(self) -> None:
+        """Record that the source was closed."""
         self.closed = True
+
+    def _fetch_sequence_chunk(self, seq_region_name: str, start: int, end: int) -> str:
+        """Return Ns; spans are served by ``get_sequence_by_start_end_strand``."""
+        return "N" * (end - start + 1)
+
+    def _get_seq_region_length(self, seq_region_name: str) -> int | None:
+        """Return the configured length for a sequence region."""
+        return self.lengths.get(seq_region_name)
 
 
 _GFF3_ONE_TRANSCRIPT = """\
@@ -112,7 +123,7 @@ def _write_query_gff3(path: Path, data: str) -> Path:
     return path
 
 
-def _write_query_mock_tabix(tmp_path: Path, monkeypatch) -> Path:
+def _write_query_mock_tabix(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     """Write a mock tabix executable on PATH that returns deterministic GFF3 records.
 
     GFF3TranscriptSource's adaptor is constructed without access to the source's own
@@ -355,6 +366,7 @@ class TestGetAllFeatures:
 
         transcript = source.get_all_features()[0]
 
+        assert transcript.slice is not None
         assert transcript.slice.end == 42
         assert transcript.slice.seq_region_length == 42
         assert transcript.slice.seq == "ACGT"
@@ -368,6 +380,7 @@ class TestGetAllFeatures:
         transcript = source.get_all_features()[0]
 
         assert transcript.slice is transcript.spliced_exons[0].slice
+        assert transcript.gene is not None
         assert transcript.slice is transcript.gene.slice
 
 
@@ -450,9 +463,12 @@ class TestIterAllFeatures:
         path = _write_gff3(tmp_path / "sample.gff3", _GFF3_ONE_TRANSCRIPT + second_gene)
         source = GFF3TranscriptSource(file_path=str(path))
         built: list[str | None] = []
+        # pylint: disable-next=protected-access
         build_transcript = GFF3TranscriptSource._build_transcript_from_record_group
 
-        def record_build(source, group, slice_cache):
+        def record_build(
+            source: GFF3TranscriptSource, group: _GXFTranscriptGroup, slice_cache: dict[str, Slice]
+        ) -> Transcript:
             built.append(source.get_record_id(group.transcript_record))
             return build_transcript(source, group, slice_cache)
 
@@ -471,7 +487,7 @@ class TestIterAllFeatures:
 class TestGetFeaturesByRegion:
     """Integration-style tests for GFF3-backed transcript building via region queries."""
 
-    def test_get_features_by_region_uses_tabix(self, tmp_path: Path, monkeypatch) -> None:
+    def test_get_features_by_region_uses_tabix(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test that get_features_by_region uses tabix to query a GFF3 file."""
 
         path = _write_query_gff3(tmp_path / "sample.gff3.gz", "\n".join(HEADER_LINES) + "\n")
@@ -484,7 +500,9 @@ class TestGetFeaturesByRegion:
         assert transcripts[0].stable_id == "transcript:ENST001"
         assert len(transcripts[0].spliced_exons) == 1
 
-    def test_get_features_by_region_empty_region_returns_empty(self, tmp_path: Path, monkeypatch) -> None:
+    def test_get_features_by_region_empty_region_returns_empty(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         """Test that get_features_by_region returns an empty list for a region with no features."""
 
         path = _write_query_gff3(tmp_path / "sample.gff3.gz", "\n".join(HEADER_LINES) + "\n")
