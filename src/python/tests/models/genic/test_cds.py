@@ -78,16 +78,13 @@ class TestCDSProperties:
         cds.seq = "ATG" * 10
         assert cds.nucleotide_length == 30
 
-    def test_nucleotide_length_prefers_transcript_cds_length(self, cds: CDS, transcript: Transcript) -> None:
+    def test_nucleotide_length_prefers_transcript_cds_length(self, cds: CDS) -> None:
         """The transcript's cds_length property takes priority over the sequence length."""
-
-        class DummyTranscript:
-            """Minimal transcript stand-in exposing only the property used by nucleotide_length."""
-
-            cds_length = 12
-
+        transcript = Transcript(stable_id="ENST00000000001", start=1, end=12, strand=Strand.FORWARD)
+        # seed cds_genomic_spans so that transcript.cds_length has a different value to len(cds.seq)
+        transcript.seed_attrs(cds_genomic_spans=[(1, 12)])
         cds.seq = "ATG" * 10
-        cds.transcript = DummyTranscript()
+        cds.transcript = transcript
 
         assert len(cds.seq) == 30
         assert cds.nucleotide_length == 12
