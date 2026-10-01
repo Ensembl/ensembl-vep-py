@@ -168,3 +168,23 @@ class TestSequenceRegionResolver:
 
         with pytest.raises(ValueError, match="differ only by case"):
             SequenceRegionResolver(source_names=frozenset({"chrM", "CHRM"}))
+
+    def test_get_one_synonym_for_another(self, tmp_path: Path) -> None:
+        """Get contig name for chromosome name."""
+
+        path = tmp_path / "synonyms.txt"
+        path.write_text("1\tchr1\tNC_000001.11\n2\tchr2\n", encoding="utf-8")
+        synonyms = ChromosomeSynonyms.from_file(path)
+        contig_resolver = SequenceRegionResolver(source_names=frozenset({"NC_000001.11"}), synonyms=synonyms)
+
+        assert contig_resolver.resolve("chr1") == "NC_000001.11"
+
+    def test_chr_synonym_from_contig(self, tmp_path: Path) -> None:
+        """Get contig name for chromosome name."""
+
+        path = tmp_path / "synonyms.txt"
+        path.write_text("1\tchr1\tNC_000001.11\n2\tchr2\n", encoding="utf-8")
+        synonyms = ChromosomeSynonyms.from_file(path)
+        chr_resolver = SequenceRegionResolver(source_names=frozenset({"chr1"}), synonyms=synonyms)
+
+        assert chr_resolver.resolve("NC_000001.11") == "chr1"
