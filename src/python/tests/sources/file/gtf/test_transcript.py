@@ -192,7 +192,9 @@ class TestGetAllFeatures:
         """Test that a transcript object is built from a GTF file."""
 
         path = _write_gtf(tmp_path / "sample.gtf")
-        source = GTFTranscriptSource(file_path=str(path))
+        source = GTFTranscriptSource(
+            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
+        )
 
         transcripts = source.get_all_features()
 
@@ -216,7 +218,9 @@ class TestGetAllFeatures:
         """Test that multiple transcripts are built from a GTF file with multiple transcript groups."""
 
         path = _write_gtf(tmp_path / "sample.gtf", _GTF_TWO_TRANSCRIPTS)
-        source = GTFTranscriptSource(file_path=str(path))
+        source = GTFTranscriptSource(
+            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
+        )
 
         transcripts = source.get_all_features()
 
@@ -227,7 +231,9 @@ class TestGetAllFeatures:
         """Test that a transcript without a CDS feature has no translation object."""
 
         path = _write_gtf(tmp_path / "sample.gtf", _GTF_TWO_TRANSCRIPTS)
-        source = GTFTranscriptSource(file_path=str(path))
+        source = GTFTranscriptSource(
+            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
+        )
 
         transcripts = source.get_all_features()
 
@@ -237,7 +243,9 @@ class TestGetAllFeatures:
         """GFF phase 1 (skip one base) is Ensembl phase 2 (two bases of the codon came before)."""
 
         path = _write_gtf(tmp_path / "sample.gtf", _GTF_CDS_WITH_PHASE)
-        source = GTFTranscriptSource(file_path=str(path))
+        source = GTFTranscriptSource(
+            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
+        )
 
         transcript = source.get_all_features()[0]
 
@@ -247,7 +255,9 @@ class TestGetAllFeatures:
         """Test that a reverse strand transcript orders exons and introns correctly."""
 
         path = _write_gtf(tmp_path / "sample.gtf", _GTF_REVERSE_STRAND)
-        source = GTFTranscriptSource(file_path=str(path))
+        source = GTFTranscriptSource(
+            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
+        )
 
         transcript = source.get_all_features()[0]
 
@@ -284,7 +294,9 @@ class TestGetAllFeatures:
         """Test that the transcript and its exons share the same Slice instance."""
 
         path = _write_gtf(tmp_path / "sample.gtf")
-        source = GTFTranscriptSource(file_path=str(path))
+        source = GTFTranscriptSource(
+            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
+        )
 
         transcript = source.get_all_features()[0]
 
@@ -300,7 +312,9 @@ class TestIterAllFeatures:
         """Test that iter_all_features yields a transcript object from a GTF file."""
 
         path = _write_gtf(tmp_path / "sample.gtf")
-        source = GTFTranscriptSource(file_path=str(path))
+        source = GTFTranscriptSource(
+            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
+        )
 
         transcripts = list(source.iter_all_features())
 
@@ -323,7 +337,9 @@ class TestIterAllFeatures:
         """Test that iter_all_features yields the same transcripts as get_all_features."""
 
         path = _write_gtf(tmp_path / "sample.gtf", _GTF_TWO_TRANSCRIPTS)
-        source = GTFTranscriptSource(file_path=str(path))
+        source = GTFTranscriptSource(
+            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
+        )
 
         iterated = list(source.iter_all_features())
 
@@ -340,7 +356,9 @@ class TestGetFeaturesByRegion:
 
         path = _write_query_gtf(tmp_path / "sample.gtf.gz", "\n".join(HEADER_LINES) + "\n")
         _write_query_mock_tabix(tmp_path, monkeypatch)
-        source = GTFTranscriptSource(file_path=str(path))
+        source = GTFTranscriptSource(
+            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
+        )
 
         transcripts = source.get_features_by_region(seq_region_name="chr1", start=1000, end=2000)
 
@@ -355,7 +373,9 @@ class TestGetFeaturesByRegion:
 
         path = _write_query_gtf(tmp_path / "sample.gtf.gz", "\n".join(HEADER_LINES) + "\n")
         _write_query_mock_tabix(tmp_path, monkeypatch)
-        source = GTFTranscriptSource(file_path=str(path))
+        source = GTFTranscriptSource(
+            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
+        )
 
         transcripts = source.get_features_by_region(seq_region_name="chr3", start=1, end=10)
 
@@ -369,7 +389,9 @@ class TestIterFeaturesByRegion:
         """A single region yields whole transcripts, both exons included, not just the overlapping one."""
 
         path = _write_gtf(tmp_path / "sample.gtf", _GTF_TWO_TRANSCRIPTS)
-        source = GTFTranscriptSource(file_path=str(path))
+        source = GTFTranscriptSource(
+            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
+        )
 
         transcripts = list(source.iter_features_by_region(seq_region_name="chr1", start=7000, end=7000))
 
@@ -383,7 +405,9 @@ class TestIterFeaturesByRegion:
         """A region the file does not carry yields nothing rather than everything."""
 
         path = _write_gtf(tmp_path / "sample.gtf", _GTF_TWO_TRANSCRIPTS)
-        source = GTFTranscriptSource(file_path=str(path))
+        source = GTFTranscriptSource(
+            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
+        )
 
         assert not list(source.iter_features_by_region(seq_region_name="chr9", start=1, end=100))
 
@@ -407,7 +431,9 @@ class TestContextManager:
 
         path = _write_gtf(tmp_path / "sample.gtf")
 
-        with GTFTranscriptSource(file_path=str(path)) as source:
+        with GTFTranscriptSource(
+            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
+        ) as source:
             transcripts = source.get_all_features()
 
         assert len(transcripts) == 1

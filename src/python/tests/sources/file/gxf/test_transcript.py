@@ -22,9 +22,10 @@ from attrs import define, field
 import pytest
 
 from ensembl.vep.caches.feature_pool import TranscriptPool
-from ensembl.vep.common import Strand, is_resolved
+from ensembl.vep.common import CoordSystemLevel, Strand, is_resolved
 from ensembl.vep.models.genic import Exon, Gene, Translation
 from ensembl.vep.models.genic.transcript import _CODING_DERIVATIONS, Transcript
+from ensembl.vep.models.sequence.coord_system import CoordSystem
 from ensembl.vep.parsers import GFF3Parser, GFF3Record
 from ensembl.vep.sources.sequence_source import SequenceSource
 from ensembl.vep.sources.file.gff3.transcript import GFF3TranscriptSource
@@ -393,11 +394,11 @@ class TestResolveGene:
         """Test nothing is attached when there is no gene record."""
 
         records = GFF3Parser.parse_text(_GFF3_NO_GENE_OR_CDS)
-        source = DummyGXFTranscriptSource(file_path="")
+        source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
         group = source._group_records(records)[0]  # pylint: disable=protected-access
-        transcript = source._build_transcript_from_record_group(group, {})  # pylint: disable=protected-access
+        transcript = source._build_transcript_from_record_group(group)  # pylint: disable=protected-access
 
-        source._resolve_gene(None, None, transcript, {}, {})  # pylint: disable=protected-access
+        source._resolve_gene(None, None, transcript, {})  # pylint: disable=protected-access
 
         assert transcript.gene is None
 
@@ -405,19 +406,19 @@ class TestResolveGene:
         """Test the same Gene instance is reused across transcripts sharing a gene id."""
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
-        source = DummyGXFTranscriptSource(file_path="")
+        source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
         group = source._group_records(records)[0]  # pylint: disable=protected-access
-        slice_cache: dict[str, Slice] = {}
+        # slice_cache: dict[str, Slice] = {}
         gene_cache: dict[str, Gene] = {}
 
         # pylint: disable-next=protected-access
-        transcript_1 = source._build_transcript_from_record_group(group, slice_cache)
+        transcript_1 = source._build_transcript_from_record_group(group)
         # pylint: disable-next=protected-access
-        transcript_2 = source._build_transcript_from_record_group(group, slice_cache)
+        transcript_2 = source._build_transcript_from_record_group(group)
         # pylint: disable-next=protected-access
-        source._resolve_gene(group.gene_record, group.gene_id, transcript_1, gene_cache, slice_cache)
+        source._resolve_gene(group.gene_record, group.gene_id, transcript_1, gene_cache)
         # pylint: disable-next=protected-access
-        source._resolve_gene(group.gene_record, group.gene_id, transcript_2, gene_cache, slice_cache)
+        source._resolve_gene(group.gene_record, group.gene_id, transcript_2, gene_cache)
 
         assert transcript_1.gene is transcript_2.gene
         assert transcript_1.gene is not None
@@ -441,7 +442,7 @@ class TestBuildTranscriptFromRecordGroup:
             cds_records=[records[3], records[5]],
         )
 
-        transcript = source._build_transcript_from_record_group(group, {})  # pylint: disable=protected-access
+        transcript = source._build_transcript_from_record_group(group)  # pylint: disable=protected-access
 
         assert transcript.stable_id == "transcript:ENST001"
         assert transcript.slice is not None
@@ -458,10 +459,10 @@ class TestBuildTranscriptFromRecordGroup:
         """Test a transcript with no CDS records has no translation."""
 
         records = GFF3Parser.parse_text(_GFF3_NO_GENE_OR_CDS)
-        source = DummyGXFTranscriptSource(file_path="")
+        source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
         group = source._group_records(records)[0]  # pylint: disable=protected-access
 
-        transcript = source._build_transcript_from_record_group(group, {})  # pylint: disable=protected-access
+        transcript = source._build_transcript_from_record_group(group)  # pylint: disable=protected-access
 
         assert transcript.translation is None
 
@@ -469,10 +470,10 @@ class TestBuildTranscriptFromRecordGroup:
         """Test the transcript and its exons share the same Slice instance."""
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
-        source = DummyGXFTranscriptSource(file_path="")
+        source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
         group = source._group_records(records)[0]  # pylint: disable=protected-access
 
-        transcript = source._build_transcript_from_record_group(group, {})  # pylint: disable=protected-access
+        transcript = source._build_transcript_from_record_group(group)  # pylint: disable=protected-access
 
         assert transcript.slice is transcript.spliced_exons[0].slice
         assert transcript.slice is transcript.spliced_exons[1].slice
@@ -486,14 +487,14 @@ class TestBuildTranslation:
         """The transcript the offsets are relative to, built the way the source builds it."""
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
-        source = DummyGXFTranscriptSource(file_path="")
+        source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
         group = source._group_records(records)[0]  # pylint: disable=protected-access
-        return source._build_transcript_from_record_group(group, {})  # pylint: disable=protected-access
+        return source._build_transcript_from_record_group(group)  # pylint: disable=protected-access
 
     def test_returns_none_for_empty_cds_records(self) -> None:
         """Test no translation is built when there are no CDS records."""
 
-        source = DummyGXFTranscriptSource(file_path="")
+        source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
 
         # pylint: disable-next=protected-access
         assert source._build_translation([], self._transcript()) is None
@@ -509,7 +510,7 @@ class TestBuildTranslation:
         """
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
-        source = DummyGXFTranscriptSource(file_path="")
+        source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
         cds_records = [records[3], records[5]]
 
         # pylint: disable-next=protected-access
@@ -518,72 +519,6 @@ class TestBuildTranslation:
         assert translation is not None
         assert translation.start == 101
         assert translation.end == 3901
-
-
-class TestGetOrBuildSlice:
-    """Tests for the shared, cached Slice builder."""
-
-    def test_get_or_build_slice_uses_sequence_source_length(self) -> None:
-        """Test the built slice uses the sequence source's region length."""
-
-        source = DummyGXFTranscriptSource(
-            file_path="", sequence_source=DummySequenceSource({"chr1": 42}, {"chr1": "ACGT"})
-        )
-
-        slice_cache: dict[str, Slice] = {}
-        seq_slice = source._get_or_build_slice("chr1", slice_cache)  # pylint: disable=protected-access
-
-        assert seq_slice.end == 42
-        assert seq_slice.seq_region_length == 42
-        assert seq_slice.seq == "ACGT"
-
-    def test_get_or_build_slice_without_sequence_source_uses_placeholder_end(self) -> None:
-        """Test the built slice falls back to a placeholder end without a sequence source."""
-
-        source = DummyGXFTranscriptSource(file_path="")
-
-        seq_slice = source._get_or_build_slice("chr1", {})  # pylint: disable=protected-access
-
-        assert seq_slice.start == 1
-        assert seq_slice.seq_region_length is None
-        assert seq_slice.end == 2**31 - 1
-
-    def test_get_or_build_slice_reuses_cached_instance(self) -> None:
-        """Test the same Slice instance is returned for the same region."""
-
-        source = DummyGXFTranscriptSource(file_path="")
-        slice_cache: dict[str, Slice] = {}
-
-        first = source._get_or_build_slice("chr1", slice_cache)  # pylint: disable=protected-access
-        second = source._get_or_build_slice("chr1", slice_cache)  # pylint: disable=protected-access
-
-        assert first is second
-
-    def test_get_or_build_slice_different_regions_get_different_instances(self) -> None:
-        """Test different regions produce distinct Slice instances."""
-
-        source = DummyGXFTranscriptSource(file_path="")
-        slice_cache: dict[str, Slice] = {}
-
-        chr1_slice = source._get_or_build_slice("chr1", slice_cache)  # pylint: disable=protected-access
-        chr2_slice = source._get_or_build_slice("chr2", slice_cache)  # pylint: disable=protected-access
-
-        assert chr1_slice is not chr2_slice
-        assert chr1_slice.seq_region_name == "chr1"
-        assert chr2_slice.seq_region_name == "chr2"
-
-    def test_get_or_build_slice_resolves_raw_gxf_name_to_reference_name(self) -> None:
-        """Build transcript models on the same canonical slice as uploaded variants."""
-        source = DummyGXFTranscriptSource(
-            file_path="",
-            sequence_source=DummySequenceSource({"chr1": 42}),
-            reference_region_resolver=SequenceRegionResolver(source_names=frozenset({"chr1"})),
-        )
-
-        seq_slice = source._get_or_build_slice("1", {})  # pylint: disable=protected-access
-
-        assert seq_slice.seq_region_name == "chr1"
-        assert seq_slice.end == 42
 
 
 class TestFirstAttr:
@@ -651,9 +586,16 @@ class TestBuilderFastPath:
         source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
         group = source._group_records(records)[0]  # pylint: disable=protected-access
 
-        fast = source._build_transcript_from_record_group(group, {})  # pylint: disable=protected-access
+        fast = source._build_transcript_from_record_group(group)  # pylint: disable=protected-access
 
-        reference_slice = source._get_or_build_slice("chr1", {})  # pylint: disable=protected-access
+        reference_slice = Slice(
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME, default=True),
+            seq_region_name="chr1",
+            start=1,
+            end=9000,
+            strand=Strand.FORWARD,
+            sequence_source=DummySequenceSource({"chr1": 9000}),
+        )
         reference = Transcript(
             stable_id="transcript:ENST001", start=1000, end=5000, strand=Strand.FORWARD, slice=reference_slice
         )
@@ -698,7 +640,7 @@ class TestBuilderFastPath:
         source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
         group = source._group_records(records)[0]  # pylint: disable=protected-access
 
-        transcript = source._build_transcript_from_record_group(group, {})  # pylint: disable=protected-access
+        transcript = source._build_transcript_from_record_group(group)  # pylint: disable=protected-access
 
         for name in _CODING_DERIVATIONS:
             assert not is_resolved(transcript, name), f"{name} was resolved as a side effect of building"
@@ -719,9 +661,9 @@ class TestCandidateFiltering:
         # pylint: disable-next=protected-access
         original_build = GXFTranscriptSource._build_transcript_from_record_group
 
-        def counting_build(self, group, slice_cache):  # type: ignore[no-untyped-def]
+        def counting_build(self, group):  # type: ignore[no-untyped-def]
             build_calls.append(group.transcript_id)
-            return original_build(self, group, slice_cache)
+            return original_build(self, group)
 
         monkeypatch.setattr(DummyGXFTranscriptSource, "_build_transcript_from_record_group", counting_build)
 
@@ -966,7 +908,7 @@ class TestTranscriptPoolReuse:
         groups = source._group_records(records)  # pylint: disable=protected-access
         enst002_group = next(group for group in groups if group.transcript_id == "transcript:ENST002")
         enst002 = source._build_transcript_from_record_group(  # pylint: disable=protected-access
-            enst002_group, {}
+            enst002_group
         )
         pool.put(("chr1", "transcript:ENST002", enst002.start, enst002.end), enst002)
         source.transcript_pool = pool

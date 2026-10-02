@@ -320,7 +320,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         for span_start, span_end in self._merged_spans(candidates.values()):
             complete_records.extend(self._records_for_region(seq_region_name, span_start, span_end))
         return self._build_transcripts(
-            complete_records, gene_records={}, gene_cache={}, slice_cache={}, candidate_ids=candidates
+            complete_records, gene_records={}, gene_cache={}, candidate_ids=candidates
         )
 
     def _build_candidates_with_pool(
@@ -358,7 +358,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
             return self._build_candidates(seq_region_name, candidates)
 
         built = self._build_transcripts(
-            complete_records, gene_records={}, gene_cache={}, slice_cache={}, candidate_ids=missing
+            complete_records, gene_records={}, gene_cache={}, candidate_ids=missing
         )
         built_by_id: dict[str, Transcript] = {}
         for transcript in built:
@@ -515,7 +515,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         calls. Fresh dictionaries are passed every time: ``_build_transcripts`` defaults to shared
         mutable dictionaries, which would carry genes and slices over from one call to the next.
         """
-        return self._build_transcripts(records, gene_records={}, gene_cache={}, slice_cache={})
+        return self._build_transcripts(records, gene_records={}, gene_cache={})
 
     def _iter_features_from_adaptor(
         self,
@@ -536,7 +536,6 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         """
 
         gene_cache: dict[str, Gene] = {}
-        slice_cache: dict[str, Slice] = {}
         buffer: list[_GXFRecord] = []
         current_gene_key: str | None = None
 
@@ -546,7 +545,6 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
                 yield from self._stream_buffer_features(
                     buffer,
                     gene_cache=gene_cache,
-                    slice_cache=slice_cache,
                     transcript_predicate=transcript_predicate,
                 )
                 buffer = []
@@ -559,7 +557,6 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
             yield from self._stream_buffer_features(
                 buffer,
                 gene_cache=gene_cache,
-                slice_cache=slice_cache,
                 transcript_predicate=transcript_predicate,
             )
 
@@ -568,7 +565,6 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         records: list[_GXFRecord],
         *,
         gene_cache: dict[str, Gene],
-        slice_cache: dict[str, Slice],
         transcript_predicate: Callable[[_GXFRecord], bool] | None,
     ) -> list[Transcript]:
         """Build requested transcripts from one gene-sized streamed record block."""
@@ -579,7 +575,6 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         return self._groups_to_features_with_context(
             groups,
             gene_cache=gene_cache,
-            slice_cache=slice_cache,
         )
 
     def _stream_gene_key(self, record: _GXFRecord) -> str | None:
@@ -632,7 +627,6 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         *,
         gene_records: dict[str, _GXFRecord] | None = None,
         gene_cache: dict[str, Gene] | None = None,
-        slice_cache: dict[str, Slice] | None = None,
         candidate_ids: Mapping[str, tuple[int, int]] | None = None,
     ) -> list[Transcript]:
         """Convert buffered records into Transcript objects while reusing caches.
@@ -641,7 +635,6 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
             records (list[_GXFRecord]): Buffered records that belong to one streaming chunk.
             gene_records (dict[str, _GXFRecord]): Previously seen gene records keyed by gene id.
             gene_cache (dict[str, Gene]): Previously built Gene objects keyed by gene id.
-            slice_cache (dict[str, Slice]): Previously built Slice objects keyed by sequence-region name.
             candidate_ids (Mapping[str, tuple[int, int]] | None): When given, only transcripts
                 whose id is a key of this mapping are built; every other transcript is dropped
                 while grouping, before any model is constructed for it.
@@ -652,13 +645,11 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
 
         gene_records = {} if gene_records is None else gene_records
         gene_cache = {} if gene_cache is None else gene_cache
-        slice_cache = {} if slice_cache is None else slice_cache
         groups = self._group_records(records, candidate_ids=candidate_ids)
         return self._groups_to_features_with_context(
             groups,
             gene_records=gene_records,
             gene_cache=gene_cache,
-            slice_cache=slice_cache,
         )
 
     def _groups_to_features_with_context(
@@ -667,18 +658,16 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         *,
         gene_records: dict[str, _GXFRecord] | None = None,
         gene_cache: dict[str, Gene] | None = None,
-        slice_cache: dict[str, Slice] | None = None,
     ) -> list[Transcript]:
         """Build already-grouped transcripts while reusing gene and slice models."""
 
         gene_records = {} if gene_records is None else gene_records
         gene_cache = {} if gene_cache is None else gene_cache
-        slice_cache = {} if slice_cache is None else slice_cache
-        transcripts = [self._build_transcript_from_record_group(group, slice_cache) for group in groups]
+        transcripts = [self._build_transcript_from_record_group(group) for group in groups]
 
         for group, transcript in zip(groups, transcripts, strict=True):
             gene_record = self._resolve_gene_record(group, gene_records)
-            self._resolve_gene(gene_record, group.gene_id, transcript, gene_cache, slice_cache)
+            self._resolve_gene(gene_record, group.gene_id, transcript, gene_cache)
 
         return transcripts
 
@@ -785,7 +774,6 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         gene_id: str | None,
         transcript: Transcript,
         gene_cache: dict[str, Gene] | None = None,
-        slice_cache: dict[str, Slice] | None = None,
     ) -> None:
         """Attach a Gene to a Transcript, reusing cached Gene objects when possible.
 
@@ -796,18 +784,16 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
                 recomputed from ``gene_record``.
             transcript (Transcript): The transcript to attach the gene to.
             gene_cache (dict[str, Gene]): Previously built Gene objects keyed by gene id.
-            slice_cache (dict[str, Slice]): Previously built Slice objects keyed by sequence-region name.
         """
 
         if gene_record is None:
             return
 
         gene_cache = {} if gene_cache is None else gene_cache
-        slice_cache = {} if slice_cache is None else slice_cache
         gene_key = gene_id or ""
         gene = gene_cache.get(gene_key)
         if gene is None:
-            gene = self._build_gene(gene_record, slice_cache)
+            gene = self._build_gene(gene_record)
             gene_cache[gene_key] = gene
 
         assert gene.transcripts is not None
@@ -817,13 +803,11 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
     def _build_transcript_from_record_group(
         self,
         group: _GXFTranscriptGroup,
-        slice_cache: dict[str, Slice],
     ) -> Transcript:
         """Construct a Transcript from one grouped record block.
 
         Args:
             group: The grouped records to convert.
-            slice_cache: Previously built Slice cache keyed by sequence-region name.
 
         Returns:
             Transcript: The assembled transcript object.
@@ -831,7 +815,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
 
         transcript_record = group.transcript_record
         strand = STRAND_SYMBOL_TO_ENUM.get(transcript_record.strand_symbol, Strand.UNKNOWN)
-        genomic_slice = self._get_or_build_slice(transcript_record.seqid, slice_cache)
+        genomic_slice = self.slice_cache.get_slice(transcript_record.seqid, self.sequence_source)
 
         transcript = Transcript(
             stable_id=group.transcript_id,
@@ -947,12 +931,11 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         stable_id = self._first_attr(cds_records[0], "protein_id") or ""
         return Translation(start=start, end=end, stable_id=stable_id)
 
-    def _build_gene(self, gene_record: _GXFRecord, slice_cache: dict[str, Slice]) -> Gene:
+    def _build_gene(self, gene_record: _GXFRecord) -> Gene:
         """Construct a Gene object from a grouped gene record.
 
         Args:
             gene_record: The gene record to convert.
-            slice_cache: Previously built Slice cache keyed by sequence-region name.
 
         Returns:
             Gene: The assembled gene object.
@@ -966,43 +949,13 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
             start=gene_record.start,
             end=gene_record.end,
             strand=strand,
-            slice=self._get_or_build_slice(gene_record.seqid, slice_cache),
+            slice=self.slice_cache.get_slice(gene_record.seqid, self.sequence_source),
         )
         name = self._first_attr(gene_record, "Name") or self._first_attr(gene_record, "gene_name")
         biotype = self._first_attr(gene_record, "biotype") or self._first_attr(gene_record, "gene_biotype")
         # Brand-new gene: nothing cached yet, same reasoning as the transcript and exon paths above.
         gene.assign_without_hooks(name=name, biotype=biotype, transcripts=[])
         return gene
-
-    def _get_or_build_slice(self, seq_region_name: str, slice_cache: dict[str, Slice]) -> Slice:
-        """Return the shared Slice for a sequence region, creating it when needed.
-
-        Args:
-            seq_region_name: The sequence-region name to look up.
-            slice_cache: Previously built Slice cache keyed by sequence-region name.
-
-        Returns:
-            Slice: The shared Slice object for the sequence region.
-        """
-
-        reference_name = seq_region_name
-        if self.reference_region_resolver is not None:
-            reference_name = self.reference_region_resolver.resolve(seq_region_name)
-
-        if reference_name not in slice_cache:
-            seq_region_length = None
-            if self.sequence_source is not None:
-                seq_region_length = self.sequence_source.get_seq_region_length(reference_name)
-
-            slice_cache[reference_name] = Slice(
-                coord_system=_CHROMOSOME_COORD_SYSTEM,
-                seq_region_name=reference_name,
-                start=1,
-                end=seq_region_length if seq_region_length is not None else _PLACEHOLDER_SEQ_REGION_END,
-                strand=Strand.FORWARD,
-                sequence_source=self.sequence_source,
-            )
-        return slice_cache[reference_name]
 
     @staticmethod
     def _first_attr(record: _GXFRecord, key: str) -> str | None:
