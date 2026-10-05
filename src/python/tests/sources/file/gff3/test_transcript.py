@@ -106,6 +106,18 @@ CHR1_TRANSCRIPT_ROW = "chr1\tensembl\tmRNA\t1000\t2000\t.\t+\t.\tID=transcript:E
 CHR1_EXON_ROW = "chr1\tensembl\texon\t1000\t2000\t.\t+\t.\tID=exon:ENSE001;Parent=transcript:ENST001"
 CHR2_TRANSCRIPT_ROW = "chr2\tensembl\tmRNA\t100\t200\t.\t+\t.\tID=transcript:ENST002;Parent=gene:ENSG002"
 
+_GFF3_TWO_TRANSCRIPTS_SHARED_EXON_ONE_LINE = """\
+chr1\tensembl\tgene\t1000\t5000\t.\t+\t.\tID=gene:ENSG001;Name=BRCA1
+chr1\tensembl\tmRNA\t1000\t5000\t.\t+\t.\tID=transcript:ENST001;Parent=gene:ENSG001;biotype=protein_coding
+chr1\tensembl\tmRNA\t1000\t5000\t.\t+\t.\tID=transcript:ENST002;Parent=gene:ENSG001;biotype=protein_coding
+chr1\tensembl\texon\t1000\t2000\t.\t+\t.\tID=exon:ENSE001;Parent=transcript:ENST001,transcript:ENST002
+chr1\tensembl\tCDS\t1100\t2000\t.\t+\t0\tParent=transcript:ENST001,transcript:ENST002
+chr1\tensembl\texon\t2500\t4000\t.\t+\t.\tID=exon:ENSE002;Parent=transcript:ENST002
+chr1\tensembl\tCDS\t2500\t3900\t.\t+\t.\tParent=transcript:ENST002
+chr1\tensembl\texon\t3000\t5000\t.\t+\t.\tID=exon:ENSE003;Parent=transcript:ENST001
+chr1\tensembl\tCDS\t3000\t4900\t.\t+\t0\tParent=transcript:ENST001
+"""
+
 
 def _write_gff3(path: Path, data: str = _GFF3_ONE_TRANSCRIPT) -> Path:
     """Write a GFF3 fixture file."""
@@ -186,21 +198,29 @@ class TestGetRecordId:
 class TestGetParentId:
     """Tests for the GFF3-specific parent identifier resolution."""
 
-    def test_get_parent_id_returns_parent_attribute(self) -> None:
+    def test_get_parent_ids_returns_parent_attribute(self) -> None:
         """Test the Parent attribute is returned as the parent identifier."""
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
         source = GFF3TranscriptSource(file_path="")
 
-        assert source.get_parent_id(records[1]) == "gene:ENSG001"
+        assert source.get_parent_ids(records[1]) == ("gene:ENSG001",)
 
-    def test_get_parent_id_returns_none_when_absent(self) -> None:
+    def test_get_parent_ids_returns_empty_tuple_when_absent(self) -> None:
         """Test None is returned when the record has no Parent attribute."""
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
         source = GFF3TranscriptSource(file_path="")
 
-        assert source.get_parent_id(records[0]) is None
+        assert not source.get_parent_ids(records[0])
+
+    def test_get_parent_ids_shared_exon(self) -> None:
+        """Test the Parent attribute is returned as the parent identifier."""
+
+        records = GFF3Parser.parse_text(_GFF3_TWO_TRANSCRIPTS_SHARED_EXON_ONE_LINE)
+        source = GFF3TranscriptSource(file_path="")
+
+        assert source.get_parent_ids(records[3]) == ("transcript:ENST001", "transcript:ENST002")
 
 
 class TestGetAllFeatures:
@@ -231,6 +251,25 @@ class TestGetAllFeatures:
         assert transcript.translation.start == 101
         assert transcript.translation.end == 3901
         assert transcript.translation.stable_id == "ENSP001"
+
+    def test_get_all_features_excludes_shared_exon(self, tmp_path: Path) -> None:
+        """Test that a transcript object misses a shared exon from a GFF3 file."""
+
+        path = _write_gff3(tmp_path / "sample.gff3", _GFF3_TWO_TRANSCRIPTS_SHARED_EXON_ONE_LINE)
+        source = GFF3TranscriptSource(
+            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
+        )
+
+        transcripts = source.get_all_features()
+        print([exon.stable_id for exon in transcripts[0].spliced_exons])
+        print([exon.stable_id for exon in transcripts[1].spliced_exons])
+
+        assert len(transcripts) == 2
+        transcript = transcripts[0]
+        assert len(transcript.spliced_exons) == 2
+
+        transcript_2 = transcripts[1]
+        assert len(transcript_2.spliced_exons) == 2
 
     def test_sequence_region_names_come_from_gff_directives(self, tmp_path: Path) -> None:
         """Expose declared query names without scanning feature records."""

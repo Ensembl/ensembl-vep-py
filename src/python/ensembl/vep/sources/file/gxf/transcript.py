@@ -587,9 +587,9 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         if feature_type in self.gene_feature_types:
             return self.get_record_id(record)
         if feature_type in self.transcript_feature_types:
-            parent_id = self.get_parent_id(record)
-            if parent_id is not None:
-                return parent_id
+            parent_ids = self.get_parent_ids(record)
+            if parent_ids:
+                return parent_ids[0]
             return f"transcript:{self.get_record_id(record)}"
         return None
 
@@ -608,14 +608,14 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         raise NotImplementedError
 
     @abstractmethod
-    def get_parent_id(self, record: _GXFRecord) -> str | None:
-        """Return the parent identifier for a GFF3/GTF record, if one exists.
+    def get_parent_ids(self, record: _GXFRecord) -> tuple[str, ...]:
+        """Return the parent identifiers for a GFF3/GTF record, if they exist.
 
         Args:
             record: The record to inspect.
 
         Returns:
-            str | None: The parent identifier, or None when the record has no
+            tuple[str, ...]: A tuple of parent identifiers, or an empty tuple when the record has no
             parent.
         """
 
@@ -720,16 +720,17 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
                         # One row can arrive once per merged span; a different span is a real duplicate.
                         self._disable_pool_for_duplicate_id(record_id)
                     # A later duplicate without a Parent keeps the earlier gene id.
-                    parent_id = self.get_parent_id(record)
+                    parent_ids = self.get_parent_ids(record)
+                    parent_id = parent_ids[0] if parent_ids else None
                     previous_gene_id = previous[1] if previous is not None else None
                     transcript_map[record_id] = (record, parent_id or previous_gene_id)
             elif feature_type in self.exon_feature_types:
-                parent_id = self.get_parent_id(record)
-                if parent_id:
+                parent_ids = self.get_parent_ids(record)
+                for parent_id in parent_ids:
                     exon_map[parent_id].append(record)
             elif feature_type in self.coding_feature_types:
-                parent_id = self.get_parent_id(record)
-                if parent_id:
+                parent_ids = self.get_parent_ids(record)
+                for parent_id in parent_ids:
                     cds_map[parent_id].append(record)
 
         return [

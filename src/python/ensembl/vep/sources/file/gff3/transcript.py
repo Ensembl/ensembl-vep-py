@@ -65,15 +65,15 @@ class GFF3TranscriptSource(GXFTranscriptSource[GFF3Parser]):
             _id = f"{record.feature_type.lower()}:{record.seqid}:{record.start}-{record.end}"
         return _id
 
-    def get_parent_id(self, record: GFF3Record) -> str | None:
+    def get_parent_ids(self, record: GFF3Record) -> tuple[str, ...]:
         """Return the GFF3 parent identifier, if present.
 
         Args:
             record: The parser record to inspect.
 
         Returns:
-            str | None: The parent identifier, or None when the record has no
+            tuple[str, ...]: A tuple of parent identifiers, or empty tuple when the record has no
             parent.
         """
 
-        return self._first_attr(record, "Parent")
+        return record.attributes.get("Parent", ())

@@ -168,21 +168,21 @@ class TestGetRecordId:
 class TestGetParentId:
     """Tests for the GTF-specific parent identifier resolution."""
 
-    def test_get_parent_id_returns_parent_feature_id(self) -> None:
+    def test_get_parent_ids_returns_parent_feature_id(self) -> None:
         """Test the parent feature type's id attribute is returned."""
 
         records = GTFParser.parse_text(_GTF_ONE_TRANSCRIPT)
         source = GTFTranscriptSource(file_path="")
 
-        assert source.get_parent_id(records[1]) == "gene:1"
+        assert source.get_parent_ids(records[1]) == ("gene:1",)
 
-    def test_get_parent_id_returns_none_for_gene_records(self) -> None:
+    def test_get_parent_ids_returns_empty_tuple_for_gene_records(self) -> None:
         """Test None is returned for a feature type with no configured parent."""
 
         records = GTFParser.parse_text(_GTF_ONE_TRANSCRIPT)
         source = GTFTranscriptSource(file_path="")
 
-        assert source.get_parent_id(records[0]) is None
+        assert not source.get_parent_ids(records[0])
 
 
 class TestGetAllFeatures:

@@ -110,9 +110,12 @@ class DummyGXFTranscriptSource(GXFTranscriptSource[GFF3Parser]):
         """Return the GFF3 ``ID`` or GTF ``transcript_id``."""
         return record.attributes.get("ID", (None,))[0] or record.attributes.get("transcript_id", (None,))[0]
 
-    def get_parent_id(self, record: _GXFRecord) -> str | None:
+    def get_parent_ids(self, record: _GXFRecord) -> tuple[str, ...]:
         """Return the GFF3 ``Parent`` or GTF ``gene_id``."""
-        return record.attributes.get("Parent", (None,))[0] or record.attributes.get("gene_id", (None,))[0]
+        gff_parent_ids = record.attributes.get("Parent")
+        if gff_parent_ids is not None:
+            return gff_parent_ids
+        return record.attributes.get("gene_id", ())
 
     def _query_typed_records(  # pragma: no cover
         self, region: str, *, feature_types: frozenset[str] | None = None
