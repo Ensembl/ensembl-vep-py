@@ -16,11 +16,13 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import pytest
 
 from ensembl.vep.config import AnnotationConfig, Config, ExecutionConfig, LoggingConfig, SourceConfig
 from ensembl.vep.config.option_spec import section_options
+from ensembl.vep.config.sections import BenchEndToEndConfig, BenchMatrixConfig
 from ensembl.vep.config.sections.base import ConfigSection
 
 
@@ -40,7 +42,7 @@ class TestSectionBehaviour:
     def test_an_explicit_level_is_used_when_neither_shorthand_is_set(self) -> None:
         """An explicit level is used as-is."""
 
-        assert LoggingConfig(level="warning").effective_level() == "warning"
+        assert LoggingConfig(log_level="warning").effective_level() == "warning"
 
     @pytest.mark.parametrize(
         "kwargs,expected",
@@ -61,11 +63,11 @@ class TestSectionBehaviour:
 
     def test_transcript_pool_bytes_default_matches_the_caches_module(self) -> None:
         """The config layer keeps its own literal (to avoid a domain import), so it must agree
-        with ``caches.transcript_pool.DEFAULT_TRANSCRIPT_POOL_BYTES``, the source of truth every
+        with ``caches.feature_pool.DEFAULT_TRANSCRIPT_POOL_BYTES``, the source of truth every
         other call site imports."""
-        transcript_pool = pytest.importorskip("ensembl.vep.caches.transcript_pool")
+        feature_pool = pytest.importorskip("ensembl.vep.caches.feature_pool")
 
-        assert ExecutionConfig().transcript_pool_bytes == transcript_pool.DEFAULT_TRANSCRIPT_POOL_BYTES
+        assert ExecutionConfig().transcript_pool_bytes == feature_pool.DEFAULT_TRANSCRIPT_POOL_BYTES
 
     def test_annotation_defaults_select_columnar_staging_with_every_cache_off(self) -> None:
         """Select columnar staging by default; every cache, including the zone map, is opt-in."""
@@ -96,7 +98,7 @@ class TestSectionBehaviour:
                 {"mapper_cache": True, "mapper_cache_bytes": 0},
                 "mapper_cache_bytes",
             ),
-            (SourceConfig, {"flank": -1}, "flank"),
+            (SourceConfig, {"distance": -1}, "distance"),
             (ExecutionConfig, {"processes": 0}, "processes"),
             (ExecutionConfig, {"fork": 0}, "fork"),
             (ExecutionConfig, {"processes": 2, "fork": 3}, "processes and fork"),
@@ -117,6 +119,31 @@ class TestSectionBehaviour:
 
         with pytest.raises(ValueError, match=message):
             config_type(**kwargs)
+
+
+class TestBenchEndToEndSection:
+    """The end-to-end benchmark's own options."""
+
+    def test_a_single_process_run_is_the_default(self) -> None:
+        """One worker, so the default run measures the pipeline rather than the scheduler."""
+        assert BenchEndToEndConfig().processes == (1,)
+
+    def test_the_default_cache_sets_match_the_matrix_verb(self) -> None:
+        """A configuration label has to mean the same run in both benchmark tables."""
+        assert BenchEndToEndConfig().caches == BenchMatrixConfig().caches
+
+    @pytest.mark.parametrize(
+        ("kwargs", "message"),
+        [
+            pytest.param({"processes": ()}, "at least one worker count", id="no_processes"),
+            pytest.param({"processes": (1, 0)}, "process count", id="zero_process_count"),
+            pytest.param({"batch_size": 0}, "batch_size", id="zero_batch_size"),
+        ],
+    )
+    def test_unrunnable_counts_are_rejected(self, kwargs: dict[str, Any], message: str) -> None:
+        """A configuration that could not be run fails while it is built."""
+        with pytest.raises(ValueError, match=message):
+            BenchEndToEndConfig(**kwargs)
 
 
 class TestEverySection:

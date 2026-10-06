@@ -26,6 +26,7 @@ from attrs import define, field
 from ensembl.vep.config import Config, load
 from ensembl.vep.config.option_spec import option
 from ensembl.vep.config.sections.base import ConfigSection
+from ensembl.vep.config.parser.common import resolve_option, resolve_option_key
 from ensembl.vep.config.parser.cli import (
     add_section_arguments,
     build_parser,
@@ -59,6 +60,20 @@ class SampleConfig(ConfigSection):
     renamed: int = field(default=0, metadata=option("has its own flag", flag="other_name"))
     concealed: int = field(default=0, metadata=option("kept out of help", hidden=True))
     colour: Colour = field(default=Colour.RED, metadata=option("an enum-typed option"))
+    aliased: str | None = field(default=None, metadata=option("has synonyms", synonyms=("alias", "second")))
+    shaped: str = field(
+        default="plain",
+        metadata=option("set by name or by shorthand", constants={"fancy": "ornate", "bare": "plain"}),
+    )
+
+
+@define(frozen=True, kw_only=True, auto_attribs=True)
+class OtherConfig(ConfigSection):
+    """A second section declaring the same field name, as source and stats both declare format."""
+
+    section_name: ClassVar[str] = "other"
+
+    mode: str = field(default="z", metadata=option("the other mode", flag="other_mode"))
 
 
 @pytest.fixture(name="parser")
@@ -188,6 +203,66 @@ class TestHelp:
         """Sections are grouped in help output."""
         types = Config.section_types_for(("corpus", "logging"))
         assert "corpus options:" in build_parser("vep x", "", types).format_help()
+
+
+class TestSynonyms:
+    """Further long spellings of one option, for the names Perl VEP uses."""
+
+    def test_each_synonym_sets_the_option(self, parser: argparse.ArgumentParser) -> None:
+        """Every spelling reaches the same field."""
+        for spelling in ("--aliased", "--alias", "--second"):
+            layer = parse_args(parser, [spelling, "given"], (SampleConfig,))
+            assert layer["sample"]["aliased"] == "given"
+
+    def test_a_synonym_is_shown_with_the_option(self, parser: argparse.ArgumentParser) -> None:
+        """A caller reading --help sees the spelling they may already know."""
+        assert "--alias" in parser.format_help()
+
+    def test_a_synonym_resolves_from_a_flat_key(self) -> None:
+        """A config file may use the synonym as its key."""
+        assert resolve_option_key("alias", (SampleConfig,)) == ("sample", "aliased")
+
+
+class TestConstants:
+    """Flags that set an option to a fixed value, as Perl VEP's --vcf does."""
+
+    def test_a_constant_flag_sets_its_value(self, parser: argparse.ArgumentParser) -> None:
+        """The flag carries the value, so none is given with it."""
+        layer = parse_args(parser, ["--fancy"], (SampleConfig,))
+        assert layer["sample"]["shaped"] == "ornate"
+
+    def test_the_option_itself_still_takes_a_value(self, parser: argparse.ArgumentParser) -> None:
+        """The shorthand is an addition, not a replacement."""
+        layer = parse_args(parser, ["--shaped", "ornate"], (SampleConfig,))
+        assert layer["sample"]["shaped"] == "ornate"
+
+    def test_a_constant_flag_is_described_in_help(self, parser: argparse.ArgumentParser) -> None:
+        """The help says which option it stands for."""
+        assert "shorthand for --shaped ornate" in parser.format_help()
+
+    def test_a_constant_resolves_from_a_flat_key_with_its_value(self) -> None:
+        """A legacy config file writes "vcf 1"; the flag's own value is what it means."""
+        assert resolve_option("fancy", "1", (SampleConfig,)) == ("sample", "shaped", "ornate")
+
+
+class TestSectionNamespacing:
+    """Two sections of one command may declare the same field name."""
+
+    def test_a_value_reaches_only_the_section_it_was_declared_in(self) -> None:
+        """``--other_mode`` is the other section's; ``--mode`` is the sample's."""
+        parser = build_parser("vep two", "", (SampleConfig, OtherConfig))
+
+        layer = parse_args(parser, ["--other_mode", "z"], (SampleConfig, OtherConfig))
+
+        assert layer["other"]["mode"] == "z"
+        assert "mode" not in layer.get("sample", {})
+
+    def test_the_value_name_in_help_follows_the_flag(self) -> None:
+        """The namespaced destination must not leak into the usage line."""
+        parser = build_parser("vep two", "", (SampleConfig, OtherConfig))
+
+        assert "--other_mode OTHER_MODE" in parser.format_help()
+        assert "SAMPLE__" not in parser.format_help()
 
 
 class TestFlagCollisions:

@@ -23,10 +23,12 @@ import attrs
 from attrs import define, field, fields
 
 from ensembl.vep.config.option_spec import section_options
+from ensembl.vep.config.parser.common import resolve_option
 from ensembl.vep.config.parser import build_parser, parse_args, read_config_file, read_environment
 from ensembl.vep.config.sections import (
     AnnotationConfig,
     BenchConfig,
+    BenchEndToEndConfig,
     BenchMatrixConfig,
     BenchOracleConfig,
     BenchSweepConfig,
@@ -49,7 +51,7 @@ from ensembl.vep.config.sections import (
     SourceConfig,
     StatsConfig,
 )
-from ensembl.vep.config.sources import ConfigLayer, ConfigSource, merge_layers
+from ensembl.vep.config.sources import ConfigLayer, ConfigSource, coerce_layer, merge_layers
 
 __all__ = ["Config", "load"]
 
@@ -60,6 +62,7 @@ class Config:
 
     annotation: AnnotationConfig = field(factory=AnnotationConfig)
     bench: BenchConfig = field(factory=BenchConfig)
+    bench_endtoend: BenchEndToEndConfig = field(factory=BenchEndToEndConfig)
     bench_matrix: BenchMatrixConfig = field(factory=BenchMatrixConfig)
     bench_oracle: BenchOracleConfig = field(factory=BenchOracleConfig)
     bench_sweep: BenchSweepConfig = field(factory=BenchSweepConfig)
@@ -86,6 +89,7 @@ class Config:
     section_types: ClassVar[dict[str, type[ConfigSection]]] = {
         "annotation": AnnotationConfig,
         "bench": BenchConfig,
+        "bench_endtoend": BenchEndToEndConfig,
         "bench_matrix": BenchMatrixConfig,
         "bench_oracle": BenchOracleConfig,
         "bench_sweep": BenchSweepConfig,
@@ -141,6 +145,63 @@ class Config:
                 for field_name in values:
                     sources.setdefault(section, {})[field_name] = source
         return sources
+
+    @classmethod
+    def for_command(cls, command: str, **options: object) -> Config:
+        """Return the configuration for one command, named as the command line names its options.
+
+        The command's own sections decide where each option belongs, so a caller gives flat option
+        names and never has to know which section declares which. Values are coerced as the command
+        line coerces them, so a path may be given as a string.
+
+        Args:
+            command (str): A registered command, such as ``run.default``.
+            **options (object): Option values, named by field or by flag.
+
+        Returns:
+            Config: The command's sections built from these options, every other section left at
+                its defaults.
+
+        Raises:
+            ValueError: If the command is not registered, or an option is not one it reads.
+        """
+
+        section_names = cls._command_section_names(command)
+        section_types = cls.section_types_for(section_names)
+
+        given: ConfigLayer = {}
+        for key, value in options.items():
+            resolved = resolve_option(key, value, section_types)
+            if resolved is None:
+                raise ValueError(f"{key!r} is not an option of {command!r}")
+            section_name, field_name, resolved_value = resolved
+            given.setdefault(section_name, {})[field_name] = resolved_value
+
+        coerced = coerce_layer(given, section_types)
+        built: dict[str, ConfigSection] = {}
+        for name in section_names:
+            section_type = cls.section_types[name]
+            built[name] = cls.build_section(section_type, coerced.get(section_type.section_name, {}))
+        return cls(**built, command=command)  # type: ignore[arg-type]
+
+    @staticmethod
+    def _command_section_names(command: str) -> tuple[str, ...]:
+        """Return the sections a registered command reads.
+
+        The registry is imported here rather than at module scope because importing it registers
+        the runners, and every runner module imports this one.
+
+        Raises:
+            ValueError: If no command is registered under the name.
+        """
+
+        # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
+        from ensembl.vep.runner import get_runner
+
+        try:
+            return get_runner(command).sections
+        except KeyError as unknown:
+            raise ValueError(str(unknown).strip("\"'")) from unknown
 
     def sections(self) -> tuple[ConfigSection, ...]:
         """Return the configured sections in declaration order."""

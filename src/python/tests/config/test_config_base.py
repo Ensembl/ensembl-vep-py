@@ -15,12 +15,22 @@
 
 from __future__ import annotations
 
+from importlib.util import find_spec
 from pathlib import Path
+from typing import Any
 
 import pytest
 
 from ensembl.vep.config import Config, ConfigSource, CorpusConfig, load
 from ensembl.vep.config.option_spec import section_options
+
+RUNNER_AVAILABLE = find_spec("ensembl.vep.runner") is not None
+
+
+def get_runner(name: str) -> Any:
+    """Return a runner when that later stack component is available."""
+    runner = pytest.importorskip("ensembl.vep.runner")
+    return runner.get_runner(name)
 
 
 @pytest.fixture(name="toml_file")
@@ -67,6 +77,133 @@ class TestConfig:
     def test_the_command_is_recorded(self) -> None:
         """The command name is preserved."""
         assert load([], command="run", section_names=("corpus",), environ={}).command == "run"
+
+
+@pytest.mark.skipif(not RUNNER_AVAILABLE, reason="runner component is not available")
+class TestPerlSpellings:
+    """The option names Perl VEP uses, as a run would be given them."""
+
+    @staticmethod
+    def _run(*argv: str) -> Config:
+        """Load a run configuration from command-line arguments."""
+        return load(list(argv), command="run.default", section_names=get_runner("run.default").sections)
+
+    @pytest.mark.parametrize(
+        ("argv", "section", "field_name", "expected"),
+        [
+            pytest.param(["--level", "debug"], "logging", "log_level", "debug", id="level"),
+            pytest.param(
+                ["--warning_file", "w.txt"], "logging", "log_file", Path("w.txt"), id="warning_file"
+            ),
+            pytest.param(["--input_format", "vcf"], "source", "format", "vcf", id="input_format"),
+            pytest.param(["--flank", "250"], "source", "distance", (250,), id="flank"),
+            pytest.param(["--force"], "run", "force_overwrite", True, id="force"),
+            pytest.param(["--vcf"], "run", "output_format", "vcf", id="vcf"),
+            pytest.param(["--json"], "run", "output_format", "json", id="json"),
+            pytest.param(["--stats_html"], "run", "stats_format", "html", id="stats_html"),
+            pytest.param(["--stats_text"], "run", "stats_format", "text", id="stats_text"),
+            pytest.param(["--sf", "s.html"], "run", "stats_file", Path("s.html"), id="sf"),
+            pytest.param(["-i", "in.vcf"], "source", "input_file", Path("in.vcf"), id="short_input"),
+            pytest.param(["-o", "out.vcf"], "run", "output_file", Path("out.vcf"), id="short_output"),
+        ],
+    )
+    def test_a_perl_spelling_sets_our_option(
+        self, argv: list[str], section: str, field_name: str, expected: object
+    ) -> None:
+        """Each spelling Perl VEP documents reaches the option behind it."""
+        config = self._run(*argv)
+
+        assert getattr(config.section(section), field_name) == expected
+
+    def test_the_canonical_spelling_still_works(self) -> None:
+        """A synonym is an addition, so our own names keep working."""
+        config = self._run("--log_level", "warning", "--distance", "10", "--force_overwrite")
+
+        assert config.logging.log_level == "warning"
+        assert config.source.distance == (10,)
+        assert config.run.force_overwrite
+
+    def test_a_legacy_config_file_is_read_with_perl_names(self, tmp_path: Path) -> None:
+        """A config file from an existing VEP install needs no translation."""
+        path = tmp_path / "vep.conf"
+        path.write_text("force_overwrite\nvcf\nstats_text\ndistance 2500\n", encoding="utf-8")
+
+        config = load(
+            [],
+            command="run.default",
+            section_names=get_runner("run.default").sections,
+            config_file=path,
+        )
+
+        assert config.run.force_overwrite
+        assert config.run.output_format == "vcf"
+        assert config.run.stats_format == "text"
+        assert config.source.distance == (2500,)
+
+
+@pytest.mark.skipif(not RUNNER_AVAILABLE, reason="runner component is not available")
+class TestForCommand:
+    """Building a configuration for one command from flat option names."""
+
+    def test_each_option_reaches_the_section_that_declares_it(self) -> None:
+        """A caller names options as the command line names them, not by section."""
+        config = Config.for_command(
+            "run.default",
+            input_file="variants.vcf",
+            fasta="reference.fa",
+            output_file="annotated.vcf",
+            no_stats=True,
+        )
+
+        assert config.command == "run.default"
+        assert config.source.input_file == Path("variants.vcf")
+        assert config.source.fasta == Path("reference.fa")
+        assert config.run.output_file == Path("annotated.vcf")
+        assert config.run.no_stats
+
+    def test_values_are_coerced_as_the_command_line_coerces_them(self) -> None:
+        """A path given as text becomes a Path, so an API caller need not import one."""
+        config = Config.for_command("corpus.save", fuzz="7", corpus_dir="corpus", force="yes")
+
+        assert config.corpus.fuzz == 7
+        assert config.corpus.corpus_dir == Path("corpus")
+        assert config.corpus_save.force is True
+
+    def test_a_perl_synonym_and_shorthand_are_accepted(self) -> None:
+        """The names a Perl VEP user already knows work here too."""
+        config = Config.for_command("run.default", input_file="variants.vcf", flank=100, force=True, vcf=True)
+
+        assert config.source.distance == (100,)
+        assert config.source.upstream_distance == 100
+        assert config.run.force_overwrite is True
+        assert config.run.output_format == "vcf"
+
+    def test_a_flag_spelling_is_accepted(self) -> None:
+        """The flag a command advertises resolves to the field behind it."""
+        config = Config.for_command("explain", list="true")
+
+        assert config.explain.list_overlaps is True
+
+    def test_sections_the_command_does_not_read_keep_their_defaults(self) -> None:
+        """Only the command's own sections are built from the given options."""
+        config = Config.for_command("run.default", input_file="variants.vcf")
+
+        assert config.corpus == CorpusConfig()
+
+    def test_an_option_the_command_does_not_read_is_rejected(self) -> None:
+        """Silently dropping it would annotate with something other than what was asked for."""
+        with pytest.raises(ValueError, match="'processes' is not an option of 'explain'"):
+            Config.for_command("explain", processes=4)
+
+    def test_an_unknown_option_is_rejected(self) -> None:
+        """A typo fails at construction rather than at use."""
+        with pytest.raises(ValueError, match="not an option of"):
+            Config.for_command("run.default", fasta_file="reference.fa")
+
+    def test_an_unknown_command_lists_the_registered_ones(self) -> None:
+        """The registry's own message is the useful half of the error."""
+        with pytest.raises(ValueError, match="Unknown command 'run.nope'"):
+            Config.for_command("run.nope")
 
 
 class TestSectionTypesFor:
