@@ -15,7 +15,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from enum import Enum
 from pathlib import Path
 from typing import Any, get_args, get_origin
@@ -77,8 +77,12 @@ def _to_tuple(raw: object, type_annotation: Any) -> tuple:
             stripped = piece.strip()
             if stripped:
                 pieces.append(stripped)
+    elif isinstance(raw, Iterable):
+        pieces = list(raw)
     else:
-        pieces = list(raw)  # type: ignore[call-overload]
+        # One value for a field that takes several: a TOML "distance = 5000", or an int from a
+        # Python caller. Perl VEP's own comma options accept the single form the same way.
+        pieces = [raw]
     converted: list[Any] = []
     for value in pieces:
         converted.append(item_type(value))

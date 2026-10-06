@@ -15,12 +15,12 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from types import NoneType, UnionType
 from typing import TYPE_CHECKING, Any, Union, get_args, get_origin
 
 import attrs
-from attrs import define, fields
+from attrs import Factory, define, fields
 
 if TYPE_CHECKING:
     from ensembl.vep.config.sections.base import ConfigSection
@@ -39,6 +39,11 @@ class OptionSpec:
         help (str): One-line description, used as the argparse help text.
         flag (str | None): Long flag spelling without the dashes, or None for the field name.
         short (str | None): Single-character short flag, without the dash.
+        synonyms (tuple[str, ...]): Further long spellings that set the same option, for the names
+            Perl VEP uses. They work on the command line and in a config file; the environment
+            variable keeps the canonical name.
+        constants (Mapping[str, object]): Flags that set this option to a fixed value, such as
+            Perl VEP's ``--vcf`` for ``--output_format vcf``, as flag name -> value.
         choices (Sequence[object] | Callable[[], Sequence[object]] | None): The permitted values,
             or a callable returning them for a vocabulary another package owns.
         metavar (str | None): argparse metavar override.
@@ -49,6 +54,8 @@ class OptionSpec:
     help: str
     flag: str | None = None
     short: str | None = None
+    synonyms: tuple[str, ...] = ()
+    constants: Mapping[str, object] = Factory(dict)
     choices: Sequence[object] | Callable[[], Sequence[object]] | None = None
     metavar: str | None = None
     env: str | None = None
@@ -70,6 +77,8 @@ def option(
     *,
     flag: str | None = None,
     short: str | None = None,
+    synonyms: tuple[str, ...] = (),
+    constants: Mapping[str, object] | None = None,
     choices: Sequence[object] | Callable[[], Sequence[object]] | None = None,
     metavar: str | None = None,
     env: str | None = None,
@@ -81,6 +90,9 @@ def option(
         help (str): One-line description, used as the argparse help text.
         flag (str | None): Long flag spelling without the dashes, or None for the field name.
         short (str | None): Single-character short flag, without the dash.
+        synonyms (tuple[str, ...]): Further long spellings that set the same option.
+        constants (Mapping[str, object] | None): Flags that set this option to a fixed value, as
+            flag name -> value.
         choices (Sequence[object] | Callable[[], Sequence[object]] | None): The permitted values,
             or a callable returning them.
         metavar (str | None): argparse metavar override.
@@ -94,6 +106,8 @@ def option(
         help=help,
         flag=flag,
         short=short,
+        synonyms=synonyms,
+        constants={} if constants is None else dict(constants),
         choices=choices,
         metavar=metavar,
         env=env,
