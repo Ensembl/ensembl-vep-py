@@ -87,6 +87,10 @@ _GTF_NO_TRANSCRIPT_ID = """\
 chr1\tensembl\ttranscript\t1000\t2000\t.\t+\t.\tgene_id "gene:1";
 """
 
+_GTF_NO_PARENT_ID = """\
+chr1\tensembl\ttranscript\t1000\t2000\t.\t+\t.\ttranscript_id "transcript:1";
+"""
+
 HEADER_LINES = ["#!genome-version test"]
 CHR1_TRANSCRIPT_ROW = (
     'chr1\tensembl\ttranscript\t1000\t2000\t.\t+\t.\tgene_id "gene:1"; transcript_id "transcript:1";'
@@ -177,9 +181,17 @@ class TestGetParentId:
         assert source.get_parent_ids(records[1]) == ("gene:1",)
 
     def test_get_parent_ids_returns_empty_tuple_for_gene_records(self) -> None:
-        """Test None is returned for a feature type with no configured parent."""
+        """Test () is returned for a feature type with no configured parent."""
 
         records = GTFParser.parse_text(_GTF_ONE_TRANSCRIPT)
+        source = GTFTranscriptSource(file_path="")
+
+        assert not source.get_parent_ids(records[0])
+
+    def test_get_parent_ids_returns_empty_tuple_for_record_with_no_parent_id(self) -> None:
+        """Test None is returned for a feature type with no configured parent."""
+
+        records = GTFParser.parse_text(_GTF_NO_PARENT_ID)
         source = GTFTranscriptSource(file_path="")
 
         assert not source.get_parent_ids(records[0])

@@ -70,6 +70,17 @@ chr1\tensembl\tmRNA\t1000\t5000\t.\t+\t.\tID=transcript:ENST001
 """
 
 
+def _filter_records_by_feature_type(
+    records: list[GFF3Record],
+    feature_types: frozenset[str] | None,
+) -> list[GFF3Record]:
+    """Mirror the parser-side feature type filter used by indexed stage-one queries."""
+
+    if feature_types is None:
+        return records
+    return [record for record in records if record.feature_type.lower() in feature_types]
+
+
 @define(auto_attribs=True)
 class DummySequenceSource(SequenceSource):
     """Minimal sequence source fixture for slice-length assertions."""
@@ -189,11 +200,10 @@ class TestCompleteRegionFeatures:
             *,
             feature_types: frozenset[str] | None = None,
         ) -> list[GFF3Record]:
-            del feature_types
             calls.append((start, end))
             if (start, end) == (1500, 1600):
-                return records[:4]
-            return records
+                return _filter_records_by_feature_type(records[:4], feature_types)
+            return _filter_records_by_feature_type(records, feature_types)
 
         monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
 
@@ -225,7 +235,7 @@ class TestCompleteRegionFeatures:
             feature_types: frozenset[str] | None = None,
         ) -> list[GFF3Record]:
             calls.append(((start, end), feature_types))
-            return records
+            return _filter_records_by_feature_type(records, feature_types)
 
         monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
 
@@ -775,8 +785,7 @@ class TestTranscriptPoolReuse:
             *,
             feature_types: frozenset[str] | None = None,
         ) -> list[GFF3Record]:
-            del feature_types
-            return records
+            return _filter_records_by_feature_type(records, feature_types)
 
         monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
 
@@ -793,7 +802,7 @@ class TestTranscriptPoolReuse:
         ) -> list[GFF3Record]:
             if feature_types is None:
                 raise AssertionError("stage 2 must not run on a pool hit")
-            return records
+            return _filter_records_by_feature_type(records, feature_types)
 
         monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", stage_two_forbidden)
 
@@ -814,7 +823,9 @@ class TestTranscriptPoolReuse:
         monkeypatch.setattr(
             DummyGXFTranscriptSource,
             "_records_for_region",
-            lambda _source, _region, start, end, *, feature_types=None: records,
+            lambda _source, _region, start, end, *, feature_types=None: _filter_records_by_feature_type(
+                records, feature_types
+            ),
         )
 
         (transcript,) = source.get_features_by_region(seq_region_name="chr1", start=1500, end=1600)
@@ -843,7 +854,7 @@ class TestTranscriptPoolReuse:
         ) -> list[GFF3Record]:
             if feature_types is None:
                 stage_two_calls.append((start, end))
-            return records
+            return _filter_records_by_feature_type(records, feature_types)
 
         monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
 
@@ -882,10 +893,9 @@ class TestTranscriptPoolReuse:
             *,
             feature_types: frozenset[str] | None = None,
         ) -> list[GFF3Record]:
-            del feature_types
             if (start, end) == (1500, 1600):
-                return duplicated
-            return records
+                return _filter_records_by_feature_type(duplicated, feature_types)
+            return _filter_records_by_feature_type(records, feature_types)
 
         monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
 
@@ -926,8 +936,8 @@ class TestTranscriptPoolReuse:
         ) -> list[GFF3Record]:
             # A real tabix query only returns records overlapping the queried span; ENST002 is
             # pooled and so must never legitimately turn up when only ENST001's span is queried.
-            del feature_types
-            return [record for record in records if record.start <= end and record.end >= start]
+            overlapping = [record for record in records if record.start <= end and record.end >= start]
+            return _filter_records_by_feature_type(overlapping, feature_types)
 
         monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
 

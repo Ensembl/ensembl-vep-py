@@ -289,9 +289,6 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         candidates: dict[str, tuple[int, int]] = {}
         has_duplicate_candidate = False
         for record in records:
-            # The parser already filters by type; kept for sources that do not.
-            if record.feature_type.lower() not in self.transcript_feature_types:
-                continue
             transcript_id = self.get_record_id(record)
             if transcript_id is None:
                 continue
