@@ -13,10 +13,10 @@
 # limitations under the License.
 """The configuration sections."""
 
-from ensembl.vep.config.sections.annotation import AnnotationConfig
 from ensembl.vep.config.sections.base import ConfigSection
 from ensembl.vep.config.sections.bench import (
     BenchConfig,
+    BenchEndToEndConfig,
     BenchMatrixConfig,
     BenchOracleConfig,
     BenchSweepConfig,
@@ -30,22 +30,26 @@ from ensembl.vep.config.sections.catalogue import (
     CatalogueValidateConfig,
     CatalogueWriteConfig,
 )
-from ensembl.vep.config.sections.corpus import (
+from ensembl.vep.config.sections.common import (
+    AnnotationConfig,
     CorpusConfig,
+    ExecutionConfig,
+    LoggingConfig,
+    SourceConfig,
+)
+from ensembl.vep.config.sections.corpus import (
     CorpusDescribeConfig,
     CorpusGoldenConfig,
     CorpusSaveConfig,
 )
 from ensembl.vep.config.sections.explain import ExplainConfig
-from ensembl.vep.config.sections.execution import ExecutionConfig
-from ensembl.vep.config.sections.logging import LoggingConfig
 from ensembl.vep.config.sections.run import RunConfig
-from ensembl.vep.config.sections.source import SourceConfig
 from ensembl.vep.config.sections.stats import StatsConfig
 
 __all__ = [
     "AnnotationConfig",
     "BenchConfig",
+    "BenchEndToEndConfig",
     "BenchMatrixConfig",
     "BenchOracleConfig",
     "BenchSweepConfig",

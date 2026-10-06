@@ -14,8 +14,9 @@
 """Benchmark options: what every verb shares, then one section per verb."""
 
 from ensembl.vep.config.sections.bench.bench import BenchConfig
+from ensembl.vep.config.sections.bench.endtoend import BenchEndToEndConfig
 from ensembl.vep.config.sections.bench.matrix import BenchMatrixConfig
 from ensembl.vep.config.sections.bench.oracle import BenchOracleConfig
 from ensembl.vep.config.sections.bench.sweep import BenchSweepConfig
 
-__all__ = ["BenchConfig", "BenchMatrixConfig", "BenchOracleConfig", "BenchSweepConfig"]
+__all__ = ["BenchConfig", "BenchEndToEndConfig", "BenchMatrixConfig", "BenchOracleConfig", "BenchSweepConfig"]

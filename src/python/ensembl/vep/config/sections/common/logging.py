@@ -33,19 +33,25 @@ class LoggingConfig(ConfigSection):
     """How much the run says, and where it says it.
 
     Attributes:
-        level (str): Root level for the ``ensembl.vep`` logger hierarchy.
+        log_level (str): Root level for the ``ensembl.vep`` logger hierarchy.
         log_file (Path | None): File to append log records to, or None for stream output only.
-        verbose (bool): Shorthand for ``level="debug"``. Also what turns derivation tracing on,
+            Perl VEP calls this ``--warning_file``, which is accepted as a synonym.
+        verbose (bool): Shorthand for ``log_level="debug"``. Also what turns derivation tracing on,
             since ensembl.vep.trace keys off the strategy logger being at DEBUG.
-        quiet (bool): Shorthand for ``level="error"``.
+        quiet (bool): Shorthand for ``log_level="error"``.
     """
 
     section_name: ClassVar[str] = "logging"
 
-    level: str = field(default="info", metadata=option("logging level", choices=LOG_LEVELS))
-    log_file: Path | None = field(default=None, metadata=option("write log records to this file"))
+    log_level: str = field(
+        default="info", metadata=option("logging level", synonyms=("level",), choices=LOG_LEVELS)
+    )
+    log_file: Path | None = field(
+        default=None,
+        metadata=option("write log records to this file", synonyms=("warning_file",)),
+    )
     verbose: bool = field(default=False, metadata=option("log at debug level", short="v"))
-    quiet: bool = field(default=False, metadata=option("log errors only"))
+    quiet: bool = field(default=False, metadata=option("log errors only", short="q"))
 
     def effective_level(self) -> str:
         """Returns the level to apply once ``verbose``/``quiet`` are taken into account.
@@ -58,4 +64,4 @@ class LoggingConfig(ConfigSection):
             return "error"
         if self.verbose:
             return "debug"
-        return self.level
+        return self.log_level

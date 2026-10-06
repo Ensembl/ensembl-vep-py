@@ -21,11 +21,10 @@ from typing import ClassVar
 from attrs import define, field
 
 from ensembl.vep.config.option_spec import option
+from ensembl.vep.config.report import REPORT_FORMATS
 from ensembl.vep.config.sections.base import ConfigSection
 
 __all__ = ["CatalogueCostsConfig"]
-
-TABLE_FORMATS = ("markdown", "confluence", "text", "html")
 
 
 @define(frozen=True, kw_only=True, auto_attribs=True)
@@ -39,5 +38,8 @@ class CatalogueCostsConfig(ConfigSection):
 
     section_name: ClassVar[str] = "catalogue_costs"
 
-    format: str = field(default="text", metadata=option("table format", choices=TABLE_FORMATS))
+    output_format: str | None = field(
+        default=None,
+        metadata=option("report format (default: text)", choices=REPORT_FORMATS),
+    )
     output_file: Path | None = field(default=None, metadata=option("write the measured cost table here"))

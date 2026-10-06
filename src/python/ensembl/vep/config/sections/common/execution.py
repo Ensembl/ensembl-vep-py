@@ -25,9 +25,9 @@ from ensembl.vep.config.sections.base import ConfigSection
 
 __all__ = ["ExecutionConfig"]
 
-# Mirrors ensembl.vep.caches.transcript_pool.DEFAULT_TRANSCRIPT_POOL_BYTES (the source of truth
+# Mirrors ensembl.vep.caches.feature_pool.DEFAULT_TRANSCRIPT_POOL_BYTES (the source of truth
 # every other call site imports). Not imported here so this config layer stays free of the
-# domain-layer dependencies caches.transcript_pool pulls in transitively (models.genic); kept in
+# domain-layer dependencies caches.feature_pool pulls in transitively (models.genic); kept in
 # sync by test_transcript_pool_bytes_default_matches_the_caches_module.
 _DEFAULT_TRANSCRIPT_POOL_BYTES = 128 * 1024 * 1024
 

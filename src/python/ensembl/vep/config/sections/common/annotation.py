@@ -32,6 +32,7 @@ from ensembl.vep.config.sections.base import ConfigSection
 __all__ = ["AnnotationConfig"]
 
 READTHROUGH_LEVELS = ("none", "utr", "beyond_transcript")
+DEFAULT_ANNOTATOR = "consequence.columnar-staged"
 
 # Mirrors ensembl.vep.caches.zone_map.DEFAULT_ZONE_MAP_BYTES (the source of truth every other
 # call site imports). Not imported here so this config layer stays free of the domain-layer
@@ -51,7 +52,12 @@ def _annotator_names() -> tuple[str, ...]:
         tuple[str, ...]: Every registered annotator name, sorted.
     """
     # pylint: disable=import-outside-toplevel
-    from ensembl.vep.annotators.registry import available_annotators
+    try:
+        from ensembl.vep.annotators.registry import available_annotators
+    except ModuleNotFoundError as error:
+        if error.name != "ensembl.vep.annotators":
+            raise
+        return (DEFAULT_ANNOTATOR,)
 
     return available_annotators()
 
@@ -79,7 +85,7 @@ class AnnotationConfig(ConfigSection):
     section_name: ClassVar[str] = "annotation"
 
     annotator: str = field(
-        default="consequence.columnar-staged",
+        default=DEFAULT_ANNOTATOR,
         metadata=option("annotator to run", choices=_annotator_names, metavar="NAME"),
     )
     batch_size: int = field(default=256, metadata=option("overlaps per batch", metavar="N"))

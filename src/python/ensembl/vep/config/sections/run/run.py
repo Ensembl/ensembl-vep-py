@@ -48,13 +48,29 @@ class RunConfig(ConfigSection):
 
     output_file: Path = field(
         factory=lambda: Path("variant_effect_output.txt"),
-        metadata=option("annotation output file"),
+        metadata=option("annotation output file", short="o"),
     )
-    output_format: str = field(default="vcf", metadata=option("registered annotation output format"))
-    force_overwrite: bool = field(default=False, metadata=option("overwrite an existing output file"))
+    output_format: str = field(
+        default="vcf",
+        metadata=option(
+            "registered annotation output format",
+            constants={"vcf": "vcf", "json": "json"},
+        ),
+    )
+    force_overwrite: bool = field(
+        default=False,
+        metadata=option("overwrite an existing output file", synonyms=("force",)),
+    )
     no_progress: bool = field(default=False, metadata=option("do not show variant progress"))
     no_stats: bool = field(default=False, metadata=option("do not write a run summary"))
-    stats_file: Path | None = field(default=None, metadata=option("run summary output file"))
+    stats_file: Path | None = field(
+        default=None, metadata=option("run summary output file", synonyms=("sf",))
+    )
     stats_format: str = field(
-        default="html", metadata=option("run summary format", choices=("html", "text", "json"))
+        default="html",
+        metadata=option(
+            "run summary format",
+            choices=("html", "text", "json"),
+            constants={"stats_html": "html", "stats_text": "text"},
+        ),
     )

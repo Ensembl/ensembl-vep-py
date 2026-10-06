@@ -21,6 +21,7 @@ from typing import ClassVar
 from attrs import define, field
 
 from ensembl.vep.config.option_spec import option
+from ensembl.vep.config.report import REPORT_FORMATS
 from ensembl.vep.config.sections.base import ConfigSection
 
 __all__ = ["CatalogueShowConfig"]
@@ -34,10 +35,6 @@ SORT_KEYS = ("name", "impact", "cost_tier")
 ``name`` applies to both. ``impact`` is a term's property and ``cost_tier`` a fact's, so asking for
 one on the other subject falls back to that subject's natural order rather than failing.
 """
-
-TABLE_FORMATS = ("markdown", "confluence", "text", "html")
-GRAPH_FORMATS = ("svg", "dot", "mermaid")
-"""Kept apart from the table formats: a table format cannot draw a graph, and vice versa."""
 
 
 @define(frozen=True, kw_only=True, auto_attribs=True)
@@ -60,9 +57,10 @@ class CatalogueShowConfig(ConfigSection):
 
     subject: str = field(default="terms", metadata=option("what to list", choices=SUBJECTS))
     select: str | None = field(default=None, metadata=option("show only this term or fact"))
-    graph: str | None = field(
-        default=None, metadata=option("draw as a graph in this format", choices=GRAPH_FORMATS)
+    graph: bool = field(default=False, metadata=option("draw as a diagram"))
+    output_format: str | None = field(
+        default=None,
+        metadata=option("report format (default: markdown, svg with --graph)", choices=REPORT_FORMATS),
     )
-    format: str = field(default="markdown", metadata=option("table format", choices=TABLE_FORMATS))
     sort: str | None = field(default=None, metadata=option("row order", choices=SORT_KEYS))
     output_file: Path | None = field(default=None, metadata=option("write output here"))

@@ -11,11 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Synthetic corpus options: the corpus itself, then one section per verb."""
+"""Synthetic corpus commands, one section per verb.
 
-from ensembl.vep.config.sections.corpus.corpus import CorpusConfig
+The corpus options themselves are read by other groups too, so they live in
+``sections.common.corpus``.
+"""
+
 from ensembl.vep.config.sections.corpus.describe import CorpusDescribeConfig
 from ensembl.vep.config.sections.corpus.golden import CorpusGoldenConfig
 from ensembl.vep.config.sections.corpus.save import CorpusSaveConfig
 
-__all__ = ["CorpusConfig", "CorpusDescribeConfig", "CorpusGoldenConfig", "CorpusSaveConfig"]
+__all__ = ["CorpusDescribeConfig", "CorpusGoldenConfig", "CorpusSaveConfig"]

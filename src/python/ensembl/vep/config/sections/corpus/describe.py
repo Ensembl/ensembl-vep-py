@@ -21,11 +21,10 @@ from typing import ClassVar
 from attrs import define, field
 
 from ensembl.vep.config.option_spec import option
+from ensembl.vep.config.report import REPORT_FORMATS
 from ensembl.vep.config.sections.base import ConfigSection
 
 __all__ = ["CorpusDescribeConfig"]
-
-TABLE_FORMATS = ("markdown", "confluence", "text", "html")
 
 
 @define(frozen=True, kw_only=True, auto_attribs=True)
@@ -44,6 +43,9 @@ class CorpusDescribeConfig(ConfigSection):
     section_name: ClassVar[str] = "corpus_describe"
 
     select: str | None = field(default=None, metadata=option("list only this variant's overlaps"))
-    format: str = field(default="markdown", metadata=option("table format", choices=TABLE_FORMATS))
+    output_format: str | None = field(
+        default=None,
+        metadata=option("report format (default: markdown)", choices=REPORT_FORMATS),
+    )
     output_file: Path | None = field(default=None, metadata=option("write output here"))
     annotate: bool = field(default=False, metadata=option("also annotate the corpus and count its terms"))

@@ -32,7 +32,8 @@ class StatsConfig(ConfigSection):
 
     Attributes:
         output_file (Path | None): Report path, or None for stdout.
-        format (str): Report format.
+        output_format (str): Report format. Spelled apart from ``--format``, which is the input
+            format of the file it summarises.
         profile (bool): Also collect the fact-level profile. This one genuinely costs -- it wraps
             every fact's compute function -- so it is never on by default.
     """
@@ -40,5 +41,7 @@ class StatsConfig(ConfigSection):
     section_name: ClassVar[str] = "stats"
 
     output_file: Path | None = field(default=None, metadata=option("report output file"))
-    format: str = field(default="html", metadata=option("report format", choices=("html", "text", "json")))
+    output_format: str = field(
+        default="html", metadata=option("report format", choices=("html", "text", "json"))
+    )
     profile: bool = field(default=False, metadata=option("collect fact-level profiling (slower)"))

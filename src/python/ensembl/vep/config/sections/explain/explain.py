@@ -21,11 +21,13 @@ from typing import ClassVar
 from attrs import define, field
 
 from ensembl.vep.config.option_spec import option
+from ensembl.vep.config.report import GRAPH_FORMATS
 from ensembl.vep.config.sections.base import ConfigSection
 
 __all__ = ["ExplainConfig"]
 
-GRAPH_FORMATS = ("none", "svg", "dot", "mermaid")
+EXPLAIN_FORMATS = ("text",) + GRAPH_FORMATS
+"""A derivation renders as text or as a diagram; it has no tabular form."""
 
 
 @define(frozen=True, kw_only=True, auto_attribs=True)
@@ -42,6 +44,9 @@ class ExplainConfig(ConfigSection):
         transcript (str | None): Transcript stable id, to disambiguate when several overlap.
         compare (tuple[str, ...]): Two annotator names to diff against each other.
         against_input (bool): Diff the derivation against the terms the input file already carries.
+        graph (bool): Draw the derivation as a diagram rather than printing it.
+        output_format (str | None): The format to render in, or None for the default of the kind asked
+            for. Spelled ``--report_format`` because ``--format`` is the input format.
         list_overlaps (bool): List the selectable overlaps and exit.
         graph (str): Derivation graph format, or ``"none"`` for the text explanation only.
         output_file (Path | None): Write the explanation here instead of to stdout.
@@ -73,5 +78,9 @@ class ExplainConfig(ConfigSection):
         default=False,
         metadata=option("list selectable overlaps and exit (see also: vep corpus describe)", flag="list"),
     )
-    graph: str = field(default="none", metadata=option("derivation graph format", choices=GRAPH_FORMATS))
+    graph: bool = field(default=False, metadata=option("draw the derivation as a diagram"))
+    output_format: str | None = field(
+        default=None,
+        metadata=option("report format (default: text, svg with --graph)", choices=EXPLAIN_FORMATS),
+    )
     output_file: Path | None = field(default=None, metadata=option("write the explanation here"))
