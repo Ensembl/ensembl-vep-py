@@ -14,12 +14,27 @@
 """Tests for sequence-region synonyms and resolving names against one source."""
 
 from __future__ import annotations
+import logging
 
 from pathlib import Path
 
 import pytest
 
 from ensembl.vep.sources.synonym import ChromosomeSynonyms, SequenceRegionResolver
+
+CHR1_ALL_SYNONYMS_TEXT = """\
+1\tchr1
+1\tCM000663.2
+1\tNC_000001.11
+CM000663.2\tchr1
+CM000663.2\tNC_000001.11
+NC_000001.11\tchr1
+"""
+
+CHR1_NOT_ALL_COMINATIONS_TEXT = """\
+1\tCM000663.2
+CM000663.2\tNC_000001.11
+"""
 
 
 def _synonyms(reference_name: str, *synonyms: str) -> ChromosomeSynonyms:
@@ -40,7 +55,7 @@ class TestChromosomeSynonyms:
         """Each synonym maps to the reference name and the reference name to all of them."""
 
         path = tmp_path / "synonyms.txt"
-        path.write_text("1\tchr1\tNC_000001.11\n2\tchr2\n", encoding="utf-8")
+        path.write_text("1\tchr1\n1\tNC_000001.11\n2\tchr2\n", encoding="utf-8")
 
         synonyms = ChromosomeSynonyms.from_file(path)
 
@@ -75,6 +90,21 @@ class TestChromosomeSynonyms:
 
         with pytest.raises(OSError, match="absent.txt"):
             ChromosomeSynonyms.from_file(tmp_path / "absent.txt")
+
+    def test_more_than_two_columns_gives_a_warning(
+        self,
+        tmp_path: Path,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        """A synonyms file with more than two columns triggers a warning."""
+        path = tmp_path / "synonyms.txt"
+        path.write_text("1\tchr1\t1\tNC_000001.11\n2\tchr2\n", encoding="utf-8")
+
+        with caplog.at_level(logging.WARNING):
+            _ = ChromosomeSynonyms.from_file(path)
+            assert (
+                "Only two columns are expected in the synonyms file" in caplog.text
+            ), "Incorrect warning in ChromosomeSynonyms.from_file"
 
 
 class TestSequenceRegionResolver:
@@ -169,22 +199,58 @@ class TestSequenceRegionResolver:
         with pytest.raises(ValueError, match="differ only by case"):
             SequenceRegionResolver(source_names=frozenset({"chrM", "CHRM"}))
 
-    def test_get_one_synonym_for_another(self, tmp_path: Path) -> None:
-        """Get contig name for chromosome name."""
+    def test_chr_synonym_from_contig(self, tmp_path: Path) -> None:
+        """Get contig name for chromosome name and vice-versa."""
 
         path = tmp_path / "synonyms.txt"
-        path.write_text("1\tchr1\tNC_000001.11\n2\tchr2\n", encoding="utf-8")
+        path.write_text("1\tchr1\n1\tNC_000001.11\nchr1\tNC_000001.11\n2\tchr2\n", encoding="utf-8")
         synonyms = ChromosomeSynonyms.from_file(path)
         contig_resolver = SequenceRegionResolver(source_names=frozenset({"NC_000001.11"}), synonyms=synonyms)
-
         assert contig_resolver.resolve("chr1") == "NC_000001.11"
 
-    def test_chr_synonym_from_contig(self, tmp_path: Path) -> None:
-        """Get contig name for chromosome name."""
+        chr_resolver = SequenceRegionResolver(source_names=frozenset({"chr1"}), synonyms=synonyms)
+        assert chr_resolver.resolve("NC_000001.11") == "chr1"
+
+    def test_all_chr1_synonyms(self, tmp_path: Path) -> None:
+        """Test that all possible combinations exist in the resolver."""
 
         path = tmp_path / "synonyms.txt"
-        path.write_text("1\tchr1\tNC_000001.11\n2\tchr2\n", encoding="utf-8")
+        path.write_text(CHR1_ALL_SYNONYMS_TEXT, encoding="utf-8")
         synonyms = ChromosomeSynonyms.from_file(path)
-        chr_resolver = SequenceRegionResolver(source_names=frozenset({"chr1"}), synonyms=synonyms)
 
+        chr_num_resolver = SequenceRegionResolver(source_names=frozenset({"1"}), synonyms=synonyms)
+        assert chr_num_resolver.resolve("NC_000001.11") == "1"
+        assert chr_num_resolver.resolve("chr1") == "1"
+        assert chr_num_resolver.resolve("CM000663.2") == "1"
+
+        chr_resolver = SequenceRegionResolver(source_names=frozenset({"chr1"}), synonyms=synonyms)
         assert chr_resolver.resolve("NC_000001.11") == "chr1"
+        assert chr_resolver.resolve("1") == "chr1"
+        assert chr_resolver.resolve("CM000663.2") == "chr1"
+
+        contig_resolver = SequenceRegionResolver(source_names=frozenset({"NC_000001.11"}), synonyms=synonyms)
+        assert contig_resolver.resolve("1") == "NC_000001.11"
+        assert contig_resolver.resolve("chr1") == "NC_000001.11"
+        assert contig_resolver.resolve("CM000663.2") == "NC_000001.11"
+
+        accession_resolver = SequenceRegionResolver(source_names=frozenset({"CM000663.2"}), synonyms=synonyms)
+        assert accession_resolver.resolve("chr1") == "CM000663.2"
+        assert accession_resolver.resolve("1") == "CM000663.2"
+        assert accession_resolver.resolve("NC_000001.11") == "CM000663.2"
+
+    def test_not_all_synonym_links_in_file(self, tmp_path: Path) -> None:
+        """Test whether all combinations need to be present in synonyms file"""
+
+        path = tmp_path / "synonyms.txt"
+        path.write_text(CHR1_NOT_ALL_COMINATIONS_TEXT, encoding="utf-8")
+        synonyms = ChromosomeSynonyms.from_file(path)
+
+        # 1 is connected to CM000663.2
+        accession_resolver = SequenceRegionResolver(source_names=frozenset({"CM000663.2"}), synonyms=synonyms)
+        assert accession_resolver.resolve("1") == "CM000663.2"
+
+        contig_resolver = SequenceRegionResolver(source_names=frozenset({"NC_000001.11"}), synonyms=synonyms)
+        # CM000663.2 is connected to NC_000001.11
+        assert contig_resolver.resolve("CM000663.2") == "NC_000001.11"
+        # but 1 is not connected to NC_000001.11
+        assert contig_resolver.resolve("1") == "1"

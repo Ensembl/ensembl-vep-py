@@ -68,10 +68,14 @@ class ChromosomeSynonyms:
                 names = line.split()
                 if len(names) < 2:
                     continue
-                reference_name, synonyms = names[0], names[1:]
-                for synonym in synonyms:
-                    pairs.setdefault(reference_name, set()).add(synonym)
-                    pairs.setdefault(synonym, set()).add(reference_name)
+                if len(names) > 2:
+                    logger.warning(
+                        f"Only two columns are expected in the synonyms file, {path}. "
+                        "Other columns will be ignored."
+                    )
+                reference_name, synonym = names[0], names[1]
+                pairs.setdefault(reference_name, set()).add(synonym)
+                pairs.setdefault(synonym, set()).add(reference_name)
         logger.info("read %d sequence-region synonyms from %s", len(pairs), path)
         return cls(by_name={name: frozenset(synonyms) for name, synonyms in pairs.items()})
 
