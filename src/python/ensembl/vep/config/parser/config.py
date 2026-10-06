@@ -25,7 +25,7 @@ import tomllib
 from pathlib import Path
 
 from ensembl.vep.config.sections.base import ConfigSection
-from ensembl.vep.config.parser.common import resolve_option_key
+from ensembl.vep.config.parser.common import resolve_option
 from ensembl.vep.config.sources import ConfigLayer, coerce_layer
 
 __all__ = ["read_config_file", "read_legacy_config_file"]
@@ -47,14 +47,14 @@ def read_legacy_config_file(path: Path, section_types: tuple[type[ConfigSection]
         stripped = line.split("#", 1)[0].strip()
         if not stripped:
             continue
-        key, _separator, value = stripped.partition(" ")
-        resolved = resolve_option_key(key, section_types)
+        key, _separator, raw_value = stripped.partition(" ")
+        # Legacy VEP writes "option value", but a hand-written file may use "option = value".
+        raw_value = raw_value.strip().removeprefix("=").strip()
+        resolved = resolve_option(key, raw_value or "1", section_types)
         if resolved is None:
             continue
-        section, field_name = resolved
-        # Legacy VEP writes "option value", but a hand-written file may use "option = value".
-        value = value.strip().removeprefix("=").strip()
-        layer.setdefault(section, {})[field_name] = value or "1"
+        section, field_name, value = resolved
+        layer.setdefault(section, {})[field_name] = value
     return coerce_layer(layer, section_types)
 
 
@@ -76,7 +76,18 @@ def read_config_file(path: Path, section_types: tuple[type[ConfigSection], ...])
         parsed = tomllib.loads(text)
     except tomllib.TOMLDecodeError:
         return read_legacy_config_file(path, section_types)
-    tables = {str(section): dict(values) for section, values in parsed.items() if isinstance(values, dict)}
+    tables: ConfigLayer = {}
+    for section, values in parsed.items():
+        if not isinstance(values, dict):
+            continue
+        for key, value in values.items():
+            resolved = resolve_option(str(key), value, section_types)
+            if resolved is None:
+                continue
+            resolved_section, field_name, resolved_value = resolved
+            if resolved_section != str(section):
+                continue
+            tables.setdefault(resolved_section, {})[field_name] = resolved_value
     if not tables:
         return read_legacy_config_file(path, section_types)
     return coerce_layer(tables, section_types)

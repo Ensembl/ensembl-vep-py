@@ -26,11 +26,12 @@ from typing import Any, get_args, get_origin
 
 from ensembl.vep.config.option_spec import OptionSpec, section_options, unwrap_optional_type
 from ensembl.vep.config.sections.base import ConfigSection
-from ensembl.vep.config.parser.common import flag_for
+from ensembl.vep.config.parser.common import flag_for, option_spellings
 from ensembl.vep.config.sources import ConfigLayer
 
 __all__ = [
     "add_section_arguments",
+    "destination",
     "build_parser",
     "check_no_flag_collisions",
     "parse_args",
@@ -69,16 +70,31 @@ def _enum_converter(enum_type: type[Enum]) -> Any:
     return convert
 
 
-def _add_argument(parser: argparse._ActionsContainer, section_field: Any, spec: OptionSpec) -> None:
+def destination(section_name: str, field_name: str) -> str:
+    """Return the parsed-namespace key one section's option is read back from.
+
+    Namespaced by section because two sections of one command may declare the same field name --
+    ``format`` is the input format to ``source`` and the report format to ``stats`` -- and a bare
+    field name would land one value in both.
+    """
+
+    return f"{section_name}__{field_name}"
+
+
+def _add_argument(
+    parser: argparse._ActionsContainer, section_name: str, section_field: Any, spec: OptionSpec
+) -> None:
     """Add one declared option to a parser or argument group."""
     flag = flag_for(section_field.name, spec)
     flags = [f"--{flag}"]
+    for synonym in spec.synonyms:
+        flags.append(f"--{synonym}")
     if spec.short:
         flags.insert(0, f"-{spec.short}")
 
     type_annotation, _optional = unwrap_optional_type(section_field.type)
     keywords: dict[str, Any] = {
-        "dest": section_field.name,
+        "dest": destination(section_name, section_field.name),
         "default": argparse.SUPPRESS,
         "help": argparse.SUPPRESS if spec.hidden else spec.help,
     }
@@ -108,15 +124,39 @@ def _add_argument(parser: argparse._ActionsContainer, section_field: Any, spec: 
         keywords["choices"] = list(choices)
     if spec.metavar is not None:
         keywords["metavar"] = spec.metavar
+    elif "metavar" not in keywords and "action" not in keywords and "choices" not in keywords:
+        # argparse would name the value after the namespaced dest otherwise.
+        keywords["metavar"] = flag.upper()
 
     parser.add_argument(*flags, **keywords)
+    _add_constant_arguments(parser, section_name, section_field, spec, flag)
+
+
+def _add_constant_arguments(
+    parser: argparse._ActionsContainer,
+    section_name: str,
+    section_field: Any,
+    spec: OptionSpec,
+    flag: str,
+) -> None:
+    """Add the flags that set one option to a fixed value, as Perl VEP's ``--vcf`` does."""
+
+    for constant_flag, constant in spec.constants.items():
+        parser.add_argument(
+            f"--{constant_flag}",
+            dest=destination(section_name, section_field.name),
+            action="store_const",
+            const=constant,
+            default=argparse.SUPPRESS,
+            help=argparse.SUPPRESS if spec.hidden else f"shorthand for --{flag} {constant}",
+        )
 
 
 def add_section_arguments(parser: argparse.ArgumentParser, section_type: type[ConfigSection]) -> None:
     """Add every option a section declares to a parser, as its own argument group."""
     group = parser.add_argument_group(f"{section_type.section_name} options")
     for section_field, spec in section_options(section_type).values():
-        _add_argument(group, section_field, spec)
+        _add_argument(group, section_type.section_name, section_field, spec)
 
 
 def check_no_flag_collisions(section_types: tuple[type[ConfigSection], ...]) -> None:
@@ -132,7 +172,13 @@ def check_no_flag_collisions(section_types: tuple[type[ConfigSection], ...]) -> 
     owners: dict[str, list[str]] = {}
     for section_type in section_types:
         for field_name, (_field, spec) in section_options(section_type).items():
-            owners.setdefault(flag_for(field_name, spec), []).append(section_type.section_name)
+            for spelling in option_spellings(field_name, spec):
+                if spelling == field_name and spelling != flag_for(field_name, spec):
+                    # The field name is not a flag when the option renames itself.
+                    continue
+                owners.setdefault(spelling, []).append(section_type.section_name)
+            for constant_flag in spec.constants:
+                owners.setdefault(constant_flag, []).append(section_type.section_name)
     collisions = {flag: sections for flag, sections in owners.items() if len(sections) > 1}
     if collisions:
         details: list[str] = []
@@ -173,8 +219,9 @@ def parse_args(
     for section_type in section_types:
         values: dict[str, object] = {}
         for name in section_options(section_type):
-            if name in given:
-                values[name] = given[name]
+            key = destination(section_type.section_name, name)
+            if key in given:
+                values[name] = given[key]
         if values:
             layer[section_type.section_name] = values
     return layer
