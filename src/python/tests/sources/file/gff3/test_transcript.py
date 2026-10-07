@@ -672,6 +672,17 @@ class TestIterFeaturesByRegion:
 
         assert not list(source.iter_features_by_region(seq_region_name="chr9", start=1, end=100))
 
+    def test_iter_features_by_region_returns_empty_list_on_bad_region(self, tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+        path = _write_gff3(tmp_path / "sample.gff3")
+        source = GFF3TranscriptSource(
+            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
+        )
+
+        with caplog.at_level("DEBUG"):
+            transcript = list(source.iter_features_by_region(seq_region_name="chr1", start=-1, end=100))
+            assert transcript == []
+            assert "Cannot parse region" in caplog.text
+
 
 class TestContextManager:
     """Tests for the GFF3TranscriptSource context manager."""

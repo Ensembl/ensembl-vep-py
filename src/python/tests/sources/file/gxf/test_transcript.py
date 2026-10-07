@@ -137,17 +137,6 @@ class DummyGXFTranscriptSource(GXFTranscriptSource[GFF3Parser]):
         """Yield nothing."""
         return iter(())
 
-    def iter_features_by_region(  # pragma: no cover
-        self,
-        region: str | None = None,
-        *,
-        seq_region_name: str | None = None,
-        start: int | None = None,
-        end: int | None = None,
-    ) -> Iterator[Transcript]:
-        """Yield nothing."""
-        return iter(())
-
 
 class TestGroupRecords:
     """Tests for the shared record-grouping helper."""
