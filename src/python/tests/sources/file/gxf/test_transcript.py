@@ -15,7 +15,7 @@
 
 from pathlib import Path
 import subprocess
-from collections.abc import Iterator
+from collections.abc import Iterator, Mapping
 from typing import Any, Protocol
 
 from attrs import define, field
@@ -213,6 +213,40 @@ class TestCompleteRegionFeatures:
         assert len(transcripts[0].spliced_exons) == 2
         assert transcripts[0].translation is not None
         assert calls == [(1500, 1600), (1000, 5000)]
+
+    def test_overlapping_candidate_spans_are_merged_for_stage_two_query(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """Overlapping candidate transcript spans are reloaded with one combined full-span query."""
+        records = GFF3Parser.parse_text(_GFF3_TWO_TRANSCRIPTS)
+        source = DummyGXFTranscriptSource(
+            file_path="",
+            sequence_source=DummySequenceSource({"chr1": 9000}),
+        )
+        stage_two_calls: list[tuple[int | None, int | None]] = []
+
+        def records_for_region(
+            _source: DummyGXFTranscriptSource,
+            _region: str,
+            start: int | None,
+            end: int | None,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
+            if feature_types is None:
+                stage_two_calls.append((start, end))
+            return _filter_records_by_feature_type(records, feature_types)
+
+        monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
+
+        transcripts = source.get_features_by_region(seq_region_name="chr1", start=1500, end=1600)
+
+        assert [transcript.stable_id for transcript in transcripts] == [
+            "transcript:ENST001",
+            "transcript:ENST002",
+        ]
+        assert stage_two_calls == [(1000, 5000)]
 
     def test_stage_one_query_is_filtered_to_transcript_feature_types(
         self,
@@ -764,6 +798,29 @@ class TestWholeRegionQuery:
         assert queried == [("chr1", None, None)]
 
 
+class TestStreamingIteration:
+    """Streaming transcript assembly from sequential parser records."""
+
+    def test_parentless_transcript_streams_as_its_own_gene_block(self, tmp_path: Path) -> None:
+        """A transcript row without Parent still forms a streamable synthetic block."""
+        path = tmp_path / "parentless.gff3"
+        path.write_text(
+            "##gff-version 3\n"
+            "chr1\tensembl\tmRNA\t1000\t2000\t.\t+\t.\tID=transcript:ORPHAN\n"
+            "chr1\tensembl\texon\t1000\t2000\t.\t+\t.\tID=exon:ORPHAN;Parent=transcript:ORPHAN\n"
+        )
+        source = GFF3TranscriptSource(
+            file_path=str(path),
+            sequence_source=DummySequenceSource({"chr1": 9000}),
+        )
+
+        transcripts = list(source.iter_all_features())
+
+        assert [transcript.stable_id for transcript in transcripts] == ["transcript:ORPHAN"]
+        assert transcripts[0].gene is None
+        assert [(exon.start, exon.end) for exon in transcripts[0].spliced_exons] == [(1000, 2000)]
+
+
 class TestTranscriptPoolReuse:
     """Reusing pooled transcripts across ``get_features_by_region`` calls."""
 
@@ -832,6 +889,59 @@ class TestTranscriptPoolReuse:
 
         assert pool.miss_count == 1
         assert pool.get(("chr1", transcript.stable_id, transcript.start, transcript.end)) is transcript
+
+    def test_pooled_conflicting_span_falls_back_to_unpooled_rebuild(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """A pooled ID resurfacing at a different span poisons the pool and rebuilds all candidates."""
+        records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
+        (conflicting_record,) = GFF3Parser.parse_text(
+            "chr1\tensembl\tmRNA\t2000\t6000\t.\t+\t.\tID=transcript:ENST001;Parent=gene:ENSG001\n"
+        )
+        pool = TranscriptPool()
+        source = DummyGXFTranscriptSource(
+            file_path="",
+            sequence_source=DummySequenceSource({"chr1": 9000}),
+            transcript_pool=pool,
+        )
+        # pylint: disable-next=protected-access
+        (cached,) = source._build_transcripts(records, gene_records={}, gene_cache={})
+        pool.put(("chr1", cached.stable_id, cached.start, cached.end), cached)
+        candidates = {
+            "transcript:ENST001": (cached.start, cached.end),
+            "transcript:ENST002": (2000, 6000),
+        }
+        fallback_calls: list[tuple[str, dict[str, tuple[int, int]]]] = []
+
+        def records_for_region(
+            _source: DummyGXFTranscriptSource,
+            _region: str,
+            start: int | None = None,
+            end: int | None = None,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
+            del start, end, feature_types
+            return [conflicting_record]
+
+        def fallback_build_candidates(
+            _source: DummyGXFTranscriptSource,
+            seq_region_name: str,
+            rebuild_candidates: Mapping[str, tuple[int, int]],
+        ) -> list[Transcript]:
+            fallback_calls.append((seq_region_name, dict(rebuild_candidates)))
+            return [cached]
+
+        monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
+        monkeypatch.setattr(DummyGXFTranscriptSource, "_build_candidates", fallback_build_candidates)
+
+        # pylint: disable-next=protected-access
+        rebuilt = source._build_candidates_with_pool("chr1", candidates, pool)
+
+        assert rebuilt == [cached]
+        assert source.transcript_pool_poisoned
+        assert len(pool) == 0
+        assert fallback_calls == [("chr1", candidates)]
 
     def test_disabled_pool_behaves_like_no_pool(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """``max_bytes <= 0`` disables reuse even when a pool instance is configured."""
