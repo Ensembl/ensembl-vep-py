@@ -38,6 +38,55 @@ __all__ = [
 ]
 
 
+class BooleanSwitchAction(argparse.Action):
+    """Set a boolean to True or False according to which spelling was given.
+
+    One action carries both senses so ``--help`` lists them together, ``--zone_map, --no_zone_map``.
+    """
+
+    def __init__(
+        self,
+        option_strings: list[str],
+        dest: str,
+        *,
+        false_flags: tuple[str, ...] = (),
+        default: Any = argparse.SUPPRESS,
+        help: str | None = None,  # pylint: disable=redefined-builtin
+    ) -> None:
+        super().__init__(option_strings=option_strings, dest=dest, nargs=0, default=default, help=help)
+        self.false_flags = frozenset(false_flags)
+
+    def __call__(
+        self,
+        parser: argparse.ArgumentParser,
+        namespace: argparse.Namespace,
+        values: Any,
+        option_string: str | None = None,
+    ) -> None:
+        setattr(namespace, self.dest, option_string not in self.false_flags)
+
+
+class AppendItemAction(argparse.Action):
+    """Collect each occurrence of a repeatable option into a tuple, keeping every value whole."""
+
+    def __call__(
+        self,
+        parser: argparse.ArgumentParser,
+        namespace: argparse.Namespace,
+        values: Any,
+        option_string: str | None = None,
+    ) -> None:
+        collected = getattr(namespace, self.dest, ())
+        setattr(namespace, self.dest, (*collected, values))
+
+
+def opposite_spelling(spelling: str) -> str:
+    """Return the spelling that sets a boolean the other way: ``zone_map`` <-> ``no_zone_map``."""
+    if spelling.startswith("no_"):
+        return spelling.removeprefix("no_")
+    return f"no_{spelling}"
+
+
 def _comma_separated(item_type: Any) -> Any:
     """Return a converter parsing a comma-separated string into a tuple."""
 
@@ -93,17 +142,18 @@ def _add_argument(
         flags.insert(0, f"-{spec.short}")
 
     type_annotation, _optional = unwrap_optional_type(section_field.type)
+    if type_annotation is bool:
+        _add_boolean_arguments(parser, section_name, section_field, spec, flags)
+        _add_constant_arguments(parser, section_name, section_field, spec, flag)
+        return
+
     keywords: dict[str, Any] = {
         "dest": destination(section_name, section_field.name),
         "default": argparse.SUPPRESS,
         "help": argparse.SUPPRESS if spec.hidden else spec.help,
     }
 
-    if type_annotation is bool:
-        # A negative-sense flag (legacy VEP's --no_stats) has no positive counterpart, and
-        # BooleanOptionalAction refuses to derive one for a name that already starts with "no".
-        keywords["action"] = "store_true" if flag.startswith("no_") else argparse.BooleanOptionalAction
-    elif isinstance(type_annotation, type) and issubclass(type_annotation, Enum):
+    if isinstance(type_annotation, type) and issubclass(type_annotation, Enum):
         keywords["type"] = _enum_converter(type_annotation)
         keywords["choices"] = list(type_annotation)
         keywords["metavar"] = "{" + ",".join(member.name.lower() for member in type_annotation) + "}"
@@ -113,7 +163,12 @@ def _add_argument(
             if argument is Ellipsis:
                 continue
             item_types.append(argument)
-        keywords["type"] = _comma_separated(item_types[0] if item_types else str)
+        item_type = item_types[0] if item_types else str
+        if spec.repeatable:
+            keywords["action"] = AppendItemAction
+            keywords["type"] = item_type
+        else:
+            keywords["type"] = _comma_separated(item_type)
     elif type_annotation is Path:
         keywords["type"] = Path
     else:
@@ -124,12 +179,60 @@ def _add_argument(
         keywords["choices"] = list(choices)
     if spec.metavar is not None:
         keywords["metavar"] = spec.metavar
-    elif "metavar" not in keywords and "action" not in keywords and "choices" not in keywords:
+    elif (
+        "metavar" not in keywords
+        and "choices" not in keywords
+        and keywords.get("action") in (None, AppendItemAction)
+    ):
         # argparse would name the value after the namespaced dest otherwise.
         keywords["metavar"] = flag.upper()
 
     parser.add_argument(*flags, **keywords)
     _add_constant_arguments(parser, section_name, section_field, spec, flag)
+
+
+def _add_boolean_arguments(
+    parser: argparse._ActionsContainer,
+    section_name: str,
+    section_field: Any,
+    spec: OptionSpec,
+    flags: list[str],
+) -> None:
+    """Add the spellings of a boolean option, in Perl VEP's underscore style.
+
+    A positive option (``zone_map``) takes ``--zone_map`` and ``--no_zone_map``, plus the hyphenated
+    ``--no-zone_map`` as a hidden alias. A negative-sense option (``no_stats``) keeps ``--no_stats``
+    and gains a hidden ``--stats`` that turns it back off, named in the help of the first.
+    """
+    dest = destination(section_name, section_field.name)
+    flag = flag_for(section_field.name, spec)
+    help_text = argparse.SUPPRESS if spec.hidden else spec.help
+    opposites = [
+        f"--{opposite_spelling(spelling.lstrip('-'))}" for spelling in flags if spelling.startswith("--")
+    ]
+
+    if flag.startswith("no_"):
+        if not spec.hidden:
+            help_text = f"{spec.help} ({', '.join(opposites)} turns it back on)"
+        parser.add_argument(*flags, dest=dest, action="store_true", default=argparse.SUPPRESS, help=help_text)
+        parser.add_argument(
+            *opposites, dest=dest, action="store_false", default=argparse.SUPPRESS, help=argparse.SUPPRESS
+        )
+        return
+
+    parser.add_argument(
+        *flags,
+        *opposites,
+        dest=dest,
+        action=BooleanSwitchAction,
+        false_flags=tuple(opposites),
+        default=argparse.SUPPRESS,
+        help=help_text,
+    )
+    hyphenated = [opposite.replace("no_", "no-", 1) for opposite in opposites]
+    parser.add_argument(
+        *hyphenated, dest=dest, action="store_false", default=argparse.SUPPRESS, help=argparse.SUPPRESS
+    )
 
 
 def _add_constant_arguments(
@@ -171,12 +274,15 @@ def check_no_flag_collisions(section_types: tuple[type[ConfigSection], ...]) -> 
     """
     owners: dict[str, list[str]] = {}
     for section_type in section_types:
-        for field_name, (_field, spec) in section_options(section_type).items():
+        for field_name, (section_field, spec) in section_options(section_type).items():
             for spelling in option_spellings(field_name, spec):
                 if spelling == field_name and spelling != flag_for(field_name, spec):
                     # The field name is not a flag when the option renames itself.
                     continue
                 owners.setdefault(spelling, []).append(section_type.section_name)
+            if unwrap_optional_type(section_field.type)[0] is bool:
+                for spelling in (flag_for(field_name, spec), *spec.synonyms):
+                    owners.setdefault(opposite_spelling(spelling), []).append(section_type.section_name)
             for constant_flag in spec.constants:
                 owners.setdefault(constant_flag, []).append(section_type.section_name)
     collisions = {flag: sections for flag, sections in owners.items() if len(sections) > 1}

@@ -19,7 +19,7 @@ import os
 
 from ensembl.vep.config.option_spec import section_options
 from ensembl.vep.config.sections.base import ConfigSection
-from ensembl.vep.config.sources import ConfigLayer, coerce_value
+from ensembl.vep.config.sources import ConfigLayer, coerce_layer
 
 __all__ = ["ENV_PREFIX", "default_env_name", "read_environment"]
 
@@ -42,14 +42,15 @@ def read_environment(
 
     Returns:
         ConfigLayer: The options the environment sets, coerced to their declared types.
+
+    Raises:
+        ValueError: If a value is not of its declared type or not one of its choices.
     """
     source = os.environ if environ is None else environ
     layer: ConfigLayer = {}
     for section_type in section_types:
-        for field_name, (section_field, spec) in section_options(section_type).items():
+        for field_name, (_field, spec) in section_options(section_type).items():
             name = spec.env or default_env_name(section_type.section_name, field_name)
             if name in source:
-                layer.setdefault(section_type.section_name, {})[field_name] = coerce_value(
-                    source[name], section_field.type
-                )
-    return layer
+                layer.setdefault(section_type.section_name, {})[field_name] = source[name]
+    return coerce_layer(layer, section_types)
