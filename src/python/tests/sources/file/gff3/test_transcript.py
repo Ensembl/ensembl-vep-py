@@ -27,6 +27,7 @@ from ensembl.vep.models.genic import Transcript
 from ensembl.vep.sources.sequence_source import SequenceSource
 from ensembl.vep.sources.file.gff3.transcript import GFF3TranscriptSource
 from ensembl.vep.sources.file.gxf.transcript import _GXFTranscriptGroup
+from ensembl.vep.sources.synonym import ChromosomeSynonyms, SequenceRegionResolver
 
 
 @define(auto_attribs=True)
@@ -686,6 +687,35 @@ class TestIterFeaturesByRegion:
             transcript = list(source.iter_features_by_region(seq_region_name="chr1", start=-1, end=100))
             assert not transcript
             assert "Cannot parse region" in caplog.text
+
+    def test_iter_features_by_regions_with_resolver(self, tmp_path: Path) -> None:
+        """Test using a reference_region_resolver to convert contig to chr names."""
+        _GFF3_CONTIG_NAMES = """\
+NC_000001.11\tensembl\tgene\t1000\t5000\t.\t+\t.\tID=gene:ENSG001;Name=BRCA1;biotype=protein_coding
+NC_000001.11\tensembl\tmRNA\t1000\t5000\t.\t+\t.\tID=transcript:ENST001;Parent=gene:ENSG001
+NC_000001.11\tensembl\texon\t1000\t5000\t.\t+\t.\tID=exon:ENSE001;Parent=transcript:ENST001
+NC_000001.11\tensembl\tCDS\t1100\t4900\t.\t+\t0\tID=cds:ENSP001;Parent=transcript:ENST001;protein_id=ENSP001
+"""
+        path = _write_gff3(tmp_path / "sample.gff3", data=_GFF3_CONTIG_NAMES)
+
+        chr_synonyms = ChromosomeSynonyms(
+            by_name={
+                "chr1": frozenset({"NC_000001.11", "CM000663.2"}),
+                **{synonym: frozenset({"chr1"}) for synonym in ("NC_000001.11", "CM000663.2")},
+            }
+        )
+        chr_resolver = SequenceRegionResolver(
+            source_names=frozenset({"chr1"}),
+            synonyms=chr_synonyms,
+        )
+        source = GFF3TranscriptSource(
+            file_path=str(path),
+            sequence_source=DummySequenceSource({"NC_000001.11": 9000, "NC_000002.12": 8000}),
+            reference_region_resolver=chr_resolver,
+        )
+
+        (transcript,) = list(source.iter_features_by_region(seq_region_name="chr1", start=2000, end=4000))
+        assert transcript.stable_id == "transcript:ENST001"
 
 
 class TestContextManager:
