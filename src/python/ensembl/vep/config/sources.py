@@ -15,12 +15,13 @@
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable, Iterable
 from enum import Enum
 from pathlib import Path
 from typing import Any, get_args, get_origin
 
-from ensembl.vep.config.option_spec import section_options, unwrap_optional_type
+from ensembl.vep.config.option_spec import OptionSpec, section_options, unwrap_optional_type
 from ensembl.vep.config.sections.base import ConfigSection
 
 __all__ = [
@@ -30,6 +31,8 @@ __all__ = [
     "coerce_value",
     "merge_layers",
 ]
+
+logger = logging.getLogger(__name__)
 
 ConfigLayer = dict[str, dict[str, object]]
 """One layer of configuration: section name -> field name -> value, carrying only what it sets."""
@@ -89,6 +92,21 @@ def _to_tuple(raw: object, type_annotation: Any) -> tuple:
     return tuple(converted)
 
 
+def _to_enum(raw: object, enum_type: type[Enum]) -> Enum:
+    """Read an enum member from itself or from its name, in any case.
+
+    Raises:
+        ValueError: If the text names no member.
+    """
+    if isinstance(raw, enum_type):
+        return raw
+    try:
+        return enum_type[str(raw).upper()]
+    except KeyError:
+        accepted = ", ".join(member.name.lower() for member in enum_type)
+        raise ValueError(f"{str(raw)!r} is not one of {accepted}") from None
+
+
 def _converter_for(type_annotation: Any) -> Callable[[object], object]:
     """Return the converter that reads one declared type.
 
@@ -99,7 +117,7 @@ def _converter_for(type_annotation: Any) -> Callable[[object], object]:
     if type_annotation is Path:
         return lambda raw: Path(str(raw))
     if isinstance(type_annotation, type) and issubclass(type_annotation, Enum):
-        return lambda raw: raw if isinstance(raw, type_annotation) else type_annotation[str(raw).upper()]
+        return lambda raw: _to_enum(raw, type_annotation)
     if get_origin(type_annotation) is tuple:
         return lambda raw: _to_tuple(raw, type_annotation)
     if type_annotation in (int, float, str):
@@ -129,8 +147,45 @@ def coerce_value(raw: object, type_annotation: Any) -> object:
     return _converter_for(type_annotation)(raw)
 
 
+def _check_choices(section: str, field_name: str, value: object, spec: OptionSpec) -> None:
+    """Check a coerced value against the option's declared choices, if it has any.
+
+    Raises:
+        ValueError: If the value, or any member of a tuple value, is not a permitted choice.
+    """
+    choices = spec.resolved_choices()
+    if choices is None or value is None or isinstance(value, Enum):
+        return
+    members = value if isinstance(value, tuple) else (value,)
+    for member in members:
+        if member not in choices:
+            accepted = ", ".join(str(choice) for choice in choices)
+            raise ValueError(f"{section}.{field_name}: {member!r} is not one of {accepted}")
+
+
+def _coerce_repeatable(raw: object, type_annotation: Any) -> tuple:
+    """Coerce a repeatable option's value without splitting an item on its commas.
+
+    One ``custom`` spec is itself comma-separated, so a lone string is one item, and a list or
+    tuple is one item per element -- the TOML spelling of giving the option twice.
+    """
+    item_type, _optional = unwrap_optional_type(type_annotation)
+    arguments = [argument for argument in get_args(item_type) if argument is not Ellipsis]
+    converter = _converter_for(arguments[0] if arguments else str)
+    items = raw if isinstance(raw, (list, tuple)) else [raw]
+    return tuple(converter(item) for item in items)
+
+
 def coerce_layer(layer: ConfigLayer, section_types: tuple[type[ConfigSection], ...]) -> ConfigLayer:
-    """Coerce every value in a layer to its declared type, dropping unknown keys."""
+    """Coerce every value in a layer to its declared type and check it against its choices.
+
+    Unknown sections are dropped silently, since a layer may cover sections the command does not
+    read. An unknown field in a known section is dropped with a warning.
+
+    Raises:
+        ValueError: If a value cannot be read as its declared type or is not a permitted choice. The
+            message names the section and field.
+    """
     by_name = {section_type.section_name: section_type for section_type in section_types}
     coerced: ConfigLayer = {}
     for section, values in layer.items():
@@ -140,9 +195,18 @@ def coerce_layer(layer: ConfigLayer, section_types: tuple[type[ConfigSection], .
         options = section_options(section_type)
         for field_name, raw in values.items():
             if field_name not in options:
+                logger.warning("Ignoring unknown option '%s' in section '%s'", field_name, section)
                 continue
-            section_field, _spec = options[field_name]
-            coerced.setdefault(section, {})[field_name] = coerce_value(raw, section_field.type)
+            section_field, spec = options[field_name]
+            try:
+                if spec.repeatable:
+                    value: object = _coerce_repeatable(raw, section_field.type)
+                else:
+                    value = coerce_value(raw, section_field.type)
+            except ValueError as invalid:
+                raise ValueError(f"{section}.{field_name}: {invalid}") from invalid
+            _check_choices(section, field_name, value, spec)
+            coerced.setdefault(section, {})[field_name] = value
     return coerced
 
 

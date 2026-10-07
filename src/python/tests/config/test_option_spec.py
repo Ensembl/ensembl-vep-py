@@ -55,6 +55,11 @@ class TestOptionSpec:
         """Callable choices are resolved when needed."""
         assert OptionSpec(help="h", choices=lambda: ["x"]).resolved_choices() == ("x",)
 
+    def test_options_are_not_repeatable_unless_declared(self) -> None:
+        """``repeatable`` defaults to False and is carried through ``option()``."""
+        assert not OptionSpec(help="h").repeatable
+        assert option("h", repeatable=True)["vep.option"].repeatable
+
     def test_no_choices_means_unrestricted(self) -> None:
         """Missing choices stay unrestricted."""
         assert OptionSpec(help="h").resolved_choices() is None

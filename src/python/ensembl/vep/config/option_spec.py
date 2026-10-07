@@ -49,6 +49,8 @@ class OptionSpec:
         metavar (str | None): argparse metavar override.
         env (str | None): Environment variable name, or None to derive one.
         hidden (bool): True to keep the option out of ``--help``.
+        repeatable (bool): True for a tuple option given once per item, as Perl VEP's
+            ``--custom`` is. Each occurrence is kept whole, with no comma splitting.
     """
 
     help: str
@@ -60,6 +62,7 @@ class OptionSpec:
     metavar: str | None = None
     env: str | None = None
     hidden: bool = False
+    repeatable: bool = False
 
     def resolved_choices(self) -> tuple[object, ...] | None:
         """Return the permitted values, calling ``choices`` if needed."""
@@ -83,6 +86,7 @@ def option(
     metavar: str | None = None,
     env: str | None = None,
     hidden: bool = False,
+    repeatable: bool = False,
 ) -> dict[str, OptionSpec]:
     """Return ``attrs`` field metadata for one option.
 
@@ -98,6 +102,7 @@ def option(
         metavar (str | None): argparse metavar override.
         env (str | None): Environment variable name, or None to derive one.
         hidden (bool): True to keep the option out of ``--help``.
+        repeatable (bool): True for a tuple option given once per item, each kept whole.
 
     Returns:
         dict[str, OptionSpec]: The metadata to pass as ``field(metadata=...)``.
@@ -112,6 +117,7 @@ def option(
         metavar=metavar,
         env=env,
         hidden=hidden,
+        repeatable=repeatable,
     )
     return {METADATA_KEY: spec}
 
