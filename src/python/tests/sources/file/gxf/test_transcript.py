@@ -382,6 +382,33 @@ class TestCompleteRegionFeatures:
         assert len(groups) == 1
         assert isinstance(groups[0], _GXFTranscriptGroup)
 
+    def test_stage_one_transcript_row_with_no_id_is_skipped(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """Overlapping candidate transcript spans are reloaded with one combined full-span query."""
+        records = GFF3Parser.parse_text("chr1\tensembl\tmRNA\t1000\t2000\t.\t+\t.\tParent=gene:ENSG001")
+        source = DummyGXFTranscriptSource(
+            file_path="",
+            sequence_source=DummySequenceSource({"chr1": 9000}),
+        )
+
+        def records_for_region(
+            _source: DummyGXFTranscriptSource,
+            _region: str,
+            _start: int,
+            _end: int,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
+            return _filter_records_by_feature_type(records, feature_types)
+
+        monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
+
+        transcripts = source.get_features_by_region(seq_region_name="chr1", start=1500, end=1600)
+
+        assert len(transcripts) == 0
+
 
 class TestResolveGeneRecord:
     """Tests for resolving a transcript group's gene record."""
@@ -1048,6 +1075,17 @@ class TestTranscriptPoolReuse:
         ]
         assert transcripts[1] is enst002
 
+    def test_first_pooled_id_in_records_record_with_no_id_is_skipped(self) -> None:
+        """Test that a record with no id gets skipped when checking pool for duplicate ids
+        with different spans."""
+        records = GFF3Parser.parse_text("chr1\tensembl\tmRNA\t1000\t2000\t.\t+\t.\tParent=gene:ENSG001")
+        source = DummyGXFTranscriptSource(
+            file_path="",
+            sequence_source=DummySequenceSource({"chr1": 9000}),
+        )
+        # pylint: disable-next=protected-access
+        assert source._first_pooled_id_in_records(records, {}) is None
+
 
 class TestDuplicateTranscriptIdDisablesPool:
     """A repeated transcript id makes pool-on diverge from pool-off unless pooling is disabled.
@@ -1098,12 +1136,16 @@ chr1\tt\texon\t5000\t8000\t.\t+\t.\tParent=transcript:X
         self, indexed_duplicate_id_path: Path
     ) -> None:
         """Pool-on and pool-off must describe the second window identically."""
-        baseline_source = GFF3TranscriptSource(file_path=str(indexed_duplicate_id_path))
+        baseline_source = GFF3TranscriptSource(
+            file_path=str(indexed_duplicate_id_path), sequence_source=DummySequenceSource({"chr1": 9000})
+        )
         baseline = self._query_both_windows(baseline_source)
         baseline_source.close()
 
         pooled_source = GFF3TranscriptSource(
-            file_path=str(indexed_duplicate_id_path), transcript_pool=TranscriptPool()
+            file_path=str(indexed_duplicate_id_path),
+            transcript_pool=TranscriptPool(),
+            sequence_source=DummySequenceSource({"chr1": 9000}),
         )
         pooled = self._query_both_windows(pooled_source)
         pooled_source.close()
@@ -1116,7 +1158,11 @@ chr1\tt\texon\t5000\t8000\t.\t+\t.\tParent=transcript:X
     ) -> None:
         """The pool is cleared and marked poisoned, with exactly one warning logged."""
         pool = TranscriptPool()
-        source = GFF3TranscriptSource(file_path=str(indexed_duplicate_id_path), transcript_pool=pool)
+        source = GFF3TranscriptSource(
+            file_path=str(indexed_duplicate_id_path),
+            transcript_pool=pool,
+            sequence_source=DummySequenceSource({"chr1": 9000}),
+        )
 
         with caplog.at_level("WARNING"):
             self._query_both_windows(source)
@@ -1173,7 +1219,11 @@ chr1\tt\texon\t8900\t9000\t.\t+\t.\tParent=transcript:B
     ) -> None:
         """Querying A and B after WIDE is already pooled must not poison the pool."""
         pool = TranscriptPool()
-        source = GFF3TranscriptSource(file_path=str(indexed_wide_transcript_path), transcript_pool=pool)
+        source = GFF3TranscriptSource(
+            file_path=str(indexed_wide_transcript_path),
+            transcript_pool=pool,
+            sequence_source=DummySequenceSource({"chr1": 9000}),
+        )
 
         # Pools WIDE alone: this window touches only its middle, not A or B.
         first = source.get_features_by_region(seq_region_name="chr1", start=4000, end=5000)

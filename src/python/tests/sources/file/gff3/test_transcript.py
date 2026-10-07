@@ -326,6 +326,14 @@ class TestGetAllFeatures:
 
         assert source.sequence_region_names == frozenset({"1", "MT"})
 
+    def test_sequence_region_names_returns_empty_on_os_error(self) -> None:
+        """Return empty set if the file doesn't exist or isn't readable."""
+        source = GFF3TranscriptSource(
+            file_path="non-existent-file", sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
+        )
+
+        assert not source.sequence_region_names
+
     def test_get_all_features_returns_one_transcript_per_group(self, tmp_path: Path) -> None:
         """Test that multiple transcripts are built from a GFF3 file with multiple transcript groups."""
 
@@ -581,6 +589,21 @@ class TestGetFeaturesByRegion:
         )
 
         transcripts = source.get_features_by_region(seq_region_name="chr3", start=1, end=10)
+
+        assert transcripts == []
+
+    def test_get_features_by_region_bad_region_returns_empty(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Test that get_features_by_region returns an empty list for a incorrectly specified region."""
+
+        path = _write_query_gff3(tmp_path / "sample.gff3.gz", "\n".join(HEADER_LINES) + "\n")
+        _write_query_mock_tabix(tmp_path, monkeypatch)
+        source = GFF3TranscriptSource(
+            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
+        )
+
+        transcripts = source.get_features_by_region(seq_region_name="chr1", start=-1, end=10)
 
         assert transcripts == []
 
