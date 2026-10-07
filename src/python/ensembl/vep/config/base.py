@@ -242,7 +242,6 @@ def load(
     config_file: Path | None = None,
     environ: dict[str, str] | None = None,
     parser: argparse.ArgumentParser | None = None,
-    overrides: ConfigLayer | None = None,
 ) -> Config:
     """Load configuration from the available layers."""
     section_names = section_names or tuple(Config.section_types)
@@ -256,8 +255,6 @@ def load(
     if argv is not None:
         command_line_parser = parser or build_parser(f"vep {command}".strip(), "", section_types)
         layers.append((ConfigSource.COMMAND_LINE, parse_args(command_line_parser, argv, section_types)))
-    if overrides:
-        layers.append((ConfigSource.COMMAND_LINE, overrides))
 
     merged = merge_layers(*(layer for _, layer in layers))
     built: dict[str, ConfigSection] = {}

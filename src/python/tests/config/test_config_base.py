@@ -329,11 +329,6 @@ class TestPrecedence:
         config = load(["--step", "888"], section_names=("corpus",), config_file=toml_file, environ={})
         assert (config.corpus.step, config.corpus.fuzz) == (888, 111)
 
-    def test_overrides_are_the_api_entry_point(self) -> None:
-        """Overrides are the API entry point."""
-        config = load(None, section_names=("corpus",), overrides={"corpus": {"fuzz": 12}}, environ={})
-        assert config.corpus.fuzz == 12
-
     def test_no_argv_skips_the_command_line_layer(self) -> None:
         """Passing no argv skips command-line parsing."""
         assert load(None, section_names=("corpus",), environ={}).corpus.fuzz == 4000
