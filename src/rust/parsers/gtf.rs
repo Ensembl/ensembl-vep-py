@@ -16,8 +16,8 @@ use crate::{
     parsers::{
         tabix::{self, has_tabix_index},
         utils::{
-            ReaderMode, associated_index_path, noodles_phase_to_u8, noodles_strand_to_string,
-            open_sequential_reader,
+            FeatureTypeFilter, ReaderMode, associated_index_path, noodles_phase_to_u8,
+            noodles_strand_to_string, open_sequential_reader,
         },
     },
     utils::{bytes_to_string, to_py_error},
@@ -76,6 +76,18 @@ impl GtfRecord {
         Ok(dict)
     }
 
+    /// Return the first value for an attribute key, or `None` when the key is absent.
+    ///
+    /// Equivalent to `attributes[key][0]`, but a linear scan of the stored pairs instead of
+    /// building a whole `dict` per call.
+    fn first_attribute(&self, key: &str) -> Option<&str> {
+        self.attributes
+            .iter()
+            .find(|(pair_key, _)| pair_key == key)
+            .and_then(|(_, values)| values.first())
+            .map(String::as_str)
+    }
+
     fn __repr__(&self) -> String {
         format!(
             "GTFRecord(seqid={:?}, feature_type={:?}, start={}, end={}, strand_symbol={:?}, phase_value={:?})",
@@ -128,8 +140,18 @@ impl GtfReader {
         self.backend.next()
     }
 
+    /// Read the next record whose column-3 feature type is in `filter`, skipping non-matching
+    /// lines before they are parsed into a record.
+    fn next_filtered(&mut self, filter: &FeatureTypeFilter) -> io::Result<Option<GtfRecord>> {
+        self.backend.next_filtered(filter)
+    }
+
     fn seek(&mut self, region: &str) -> io::Result<bool> {
         self.backend.seek(region)
+    }
+
+    fn index_sequence_names(&mut self) -> io::Result<Vec<String>> {
+        self.backend.index_sequence_names()
     }
 
     fn metadata(&mut self) -> io::Result<&GtfMetadata> {
@@ -196,10 +218,24 @@ impl Backend {
         }
     }
 
+    fn next_filtered(&mut self, filter: &FeatureTypeFilter) -> io::Result<Option<GtfRecord>> {
+        match self {
+            Self::Sequential(reader) => reader.next_filtered(filter),
+            Self::Tabix(reader) => reader.next_filtered(filter),
+        }
+    }
+
     fn seek(&mut self, region: &str) -> io::Result<bool> {
         match self {
             Self::Sequential(reader) => reader.seek(region),
             Self::Tabix(reader) => reader.seek(region),
+        }
+    }
+
+    fn index_sequence_names(&mut self) -> io::Result<Vec<String>> {
+        match self {
+            Self::Sequential(_) => Ok(Vec::new()),
+            Self::Tabix(reader) => reader.index_sequence_names(),
         }
     }
 }
@@ -210,6 +246,8 @@ impl Backend {
 
 struct SequentialBackend {
     reader: gtf::io::Reader<Box<dyn BufRead + Send + Sync>>,
+    /// Reused across calls so each record read does not allocate a fresh `Line` buffer.
+    line: gtf::Line,
 }
 
 impl SequentialBackend {
@@ -219,6 +257,7 @@ impl SequentialBackend {
     {
         Ok(Self {
             reader: open_sequential_gtf_reader(file_path.as_ref())?,
+            line: gtf::Line::default(),
         })
     }
 
@@ -229,7 +268,11 @@ impl SequentialBackend {
     }
 
     fn next(&mut self) -> io::Result<Option<GtfRecord>> {
-        read_next_record(&mut self.reader)
+        read_next_record(&mut self.reader, &mut self.line, None)
+    }
+
+    fn next_filtered(&mut self, filter: &FeatureTypeFilter) -> io::Result<Option<GtfRecord>> {
+        read_next_record(&mut self.reader, &mut self.line, Some(filter))
     }
 }
 
@@ -240,6 +283,8 @@ impl SequentialBackend {
 struct TabixBackend {
     reader: Option<tabix::TabixReader>,
     query_active: bool,
+    /// Reused across calls so each queried line does not allocate a fresh `Line` buffer.
+    line: gtf::Line,
 }
 
 impl TabixBackend {
@@ -250,6 +295,7 @@ impl TabixBackend {
         Ok(Self {
             reader: Some(tabix::TabixReader::open(file_path.as_ref(), tabix_path)?),
             query_active: false,
+            line: gtf::Line::default(),
         })
     }
 
@@ -276,13 +322,42 @@ impl TabixBackend {
                     return Ok(None);
                 };
 
-                if let Some(record) = parse_gtf_line(&line)? {
+                if let Some(record) = parse_gtf_line_into(&line, &mut self.line, None)? {
                     return Ok(Some(record));
                 }
             }
         }
 
         Ok(None)
+    }
+
+    fn next_filtered(&mut self, filter: &FeatureTypeFilter) -> io::Result<Option<GtfRecord>> {
+        if self.query_active {
+            let Some(reader) = self.reader.as_mut() else {
+                return Err(io::Error::other("tabix reader is not initialized"));
+            };
+
+            loop {
+                let Some(line) = reader.next()? else {
+                    self.query_active = false;
+                    return Ok(None);
+                };
+
+                if let Some(record) = parse_gtf_line_into(&line, &mut self.line, Some(filter))? {
+                    return Ok(Some(record));
+                }
+            }
+        }
+
+        Ok(None)
+    }
+
+    /// Reference sequence names declared by the tabix index, or empty when unopened.
+    fn index_sequence_names(&mut self) -> io::Result<Vec<String>> {
+        match self.reader.as_mut() {
+            Some(reader) => reader.reference_names(),
+            None => Ok(Vec::new()),
+        }
     }
 }
 
@@ -351,6 +426,19 @@ impl GtfParser {
         self.reader_mode.as_str()
     }
 
+    /// Reference sequence names declared by the tabix index, in index order.
+    ///
+    /// Empty when the file is unopened or read sequentially. Callers can use these names to
+    /// resolve a query contig to the exact spelling the index declares before seeking, instead of
+    /// retrying alternate spellings on a miss.
+    #[getter]
+    fn index_sequence_names(&mut self) -> PyResult<Vec<String>> {
+        match self.reader.as_mut() {
+            Some(reader) => reader.index_sequence_names().map_err(to_py_error),
+            None => Ok(Vec::new()),
+        }
+    }
+
     fn open(&mut self, file_path: &str, mode: Option<String>) -> PyResult<()> {
         let path = PathBuf::from(file_path);
         let reader_mode = ReaderMode::parse(mode.as_deref())?;
@@ -380,12 +468,29 @@ impl GtfParser {
         self.reader()?.next().map_err(to_py_error)
     }
 
-    #[pyo3(signature = (limit=10000))]
-    fn records(&mut self, limit: Option<usize>) -> PyResult<Vec<GtfRecord>> {
+    /// Return up to `limit` records, optionally keeping only rows whose column 3 (feature type)
+    /// is in `feature_types` (compared case-insensitively).
+    ///
+    /// The filter is applied on the Rust side before a matching line is parsed into a record or
+    /// converted into a Python object: a non-matching line costs one tab-split byte scan, not a
+    /// full record build.
+    #[pyo3(signature = (limit=10000, feature_types=None))]
+    fn records(
+        &mut self,
+        limit: Option<usize>,
+        feature_types: Option<Vec<String>>,
+    ) -> PyResult<Vec<GtfRecord>> {
+        let filter = feature_types.as_deref().map(FeatureTypeFilter::new);
         let mut records = Vec::new();
 
         while limit.is_none_or(|n| records.len() < n) {
-            match self.next()? {
+            let next = match filter.as_ref() {
+                Some(filter) => self.reader()?.next_filtered(filter),
+                None => self.reader()?.next(),
+            }
+            .map_err(to_py_error)?;
+
+            match next {
                 Some(record) => records.push(record),
                 None => break,
             }
@@ -462,14 +567,24 @@ where
     Ok(metadata)
 }
 
-fn read_next_record<R>(reader: &mut gtf::io::Reader<R>) -> io::Result<Option<GtfRecord>>
+/// Read the next record, reusing a caller-owned `Line` buffer across calls.
+///
+/// Hoisting the buffer out lets a hot loop (one `Line` per `TabixBackend` or
+/// `SequentialBackend`, rather than a fresh one per record) avoid a per-record allocation.
+///
+/// `filter`, when given, is checked against the raw line's column 3 before `line.as_record()` is
+/// called: a non-matching line is skipped without being parsed into a record or converted into a
+/// Python object. `None` keeps today's unfiltered behaviour exactly.
+fn read_next_record<R>(
+    reader: &mut gtf::io::Reader<R>,
+    line: &mut gtf::Line,
+    filter: Option<&FeatureTypeFilter>,
+) -> io::Result<Option<GtfRecord>>
 where
     R: BufRead,
 {
-    let mut line = gtf::Line::default();
-
     loop {
-        if reader.read_line(&mut line)? == 0 {
+        if reader.read_line(line)? == 0 {
             return Ok(None);
         }
 
@@ -477,11 +592,17 @@ where
             continue;
         }
 
+        if let Some(filter) = filter
+            && !filter.matches(line.as_ref().as_ref())
+        {
+            continue;
+        }
+
         let Some(result) = line.as_record() else {
             continue;
         };
 
-        let raw_attributes = raw_attributes(&line);
+        let raw_attributes = raw_attributes(line);
         let record = result?;
 
         return record_to_py(record, raw_attributes).map(Some);
@@ -496,9 +617,10 @@ where
     R: BufRead,
 {
     let mut records = Vec::new();
+    let mut line = gtf::Line::default();
 
     while limit.is_none_or(|n| records.len() < n) {
-        match read_next_record(reader)? {
+        match read_next_record(reader, &mut line, None)? {
             Some(record) => records.push(record),
             None => break,
         }
@@ -512,12 +634,25 @@ fn parse_gtf_bytes(data: &[u8], limit: Option<usize>) -> io::Result<Vec<GtfRecor
     read_records(&mut reader, limit)
 }
 
-fn parse_gtf_line(line: &str) -> io::Result<Option<GtfRecord>> {
-    let mut data = Vec::with_capacity(line.len() + 1);
-    data.extend_from_slice(line.as_bytes());
-    data.push(b'\n');
+/// Parse one already-dechomped line, reusing a caller-owned `Line` buffer.
+///
+/// `&[u8]` implements `BufRead` directly, so this reads straight from `line`'s bytes: no
+/// intermediate `Vec<u8>` copy and no new `Line` allocation per call, the two costs the
+/// `TabixBackend` hot loop previously paid for every queried row.
+fn parse_gtf_line_into(
+    line: &str,
+    buffer: &mut gtf::Line,
+    filter: Option<&FeatureTypeFilter>,
+) -> io::Result<Option<GtfRecord>> {
+    let mut reader = gtf::io::Reader::new(line.as_bytes());
+    read_next_record(&mut reader, buffer, filter)
+}
 
-    Ok(parse_gtf_bytes(&data, Some(1))?.pop())
+/// Test-only convenience over [`parse_gtf_line_into`]: production code always has a `TabixBackend`
+/// to own the reused `Line` buffer, so only tests need a one-shot, buffer-allocating variant.
+#[cfg(test)]
+fn parse_gtf_line(line: &str) -> io::Result<Option<GtfRecord>> {
+    parse_gtf_line_into(line, &mut gtf::Line::default(), None)
 }
 
 fn record_to_py(record: gtf::Record<'_>, raw_attributes: String) -> io::Result<GtfRecord> {
@@ -971,11 +1106,13 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
     #[test]
     fn test_read_next_record_reads_records_one_by_one() -> io::Result<()> {
         let mut reader = gtf::io::Reader::new(SAMPLE);
+        let mut line = gtf::Line::default();
 
-        let first = read_next_record(&mut reader)?.expect("expected first record");
+        let first = read_next_record(&mut reader, &mut line, None)?.expect("expected first record");
         assert_first_sample_record(&first);
 
-        let second = read_next_record(&mut reader)?.expect("expected second record");
+        let second =
+            read_next_record(&mut reader, &mut line, None)?.expect("expected second record");
         assert_second_sample_record(&second);
         Ok(())
     }
@@ -983,18 +1120,38 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
     #[test]
     fn test_read_next_record_returns_none_at_eof() -> io::Result<()> {
         let mut reader = gtf::io::Reader::new(SAMPLE);
-        read_next_record(&mut reader)?; // first record
-        read_next_record(&mut reader)?; // second record
+        let mut line = gtf::Line::default();
+        read_next_record(&mut reader, &mut line, None)?; // first record
+        read_next_record(&mut reader, &mut line, None)?; // second record
 
-        assert_eq!(read_next_record(&mut reader)?, None);
+        assert_eq!(read_next_record(&mut reader, &mut line, None)?, None);
         Ok(())
     }
 
     #[test]
     fn test_read_next_record_no_records() -> io::Result<()> {
         let mut reader = gtf::io::Reader::new(b"#!genome-version GRCh38\n# a comment".as_slice());
+        let mut line = gtf::Line::default();
 
-        assert_eq!(read_next_record(&mut reader)?, None);
+        assert_eq!(read_next_record(&mut reader, &mut line, None)?, None);
+        Ok(())
+    }
+
+    /// Reusing one `Line` buffer across calls must not leak a previous record's bytes into the
+    /// next result — the earlier record has already been converted into an owned `GtfRecord`
+    /// before the buffer is reused, so there is nothing to leak, but this pins that invariant.
+    #[test]
+    fn test_read_next_record_reused_buffer_does_not_leak_previous_line() -> io::Result<()> {
+        let mut reader = gtf::io::Reader::new(SAMPLE);
+        let mut line = gtf::Line::default();
+
+        let first = read_next_record(&mut reader, &mut line, None)?.expect("expected first record");
+        let second =
+            read_next_record(&mut reader, &mut line, None)?.expect("expected second record");
+
+        assert_ne!(first.feature_type, second.feature_type);
+        assert_first_sample_record(&first);
+        assert_second_sample_record(&second);
         Ok(())
     }
 
@@ -1215,7 +1372,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
         );
         assert!(
             parser
-                .records(None)
+                .records(None, None)
                 .unwrap_err()
                 .to_string()
                 .contains("not open")
@@ -1264,7 +1421,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
 
         assert_eq!(parser.reader_mode(), "sequential");
 
-        let records = parser.records(None).map_err(from_py_error)?;
+        let records = parser.records(None, None).map_err(from_py_error)?;
         assert_eq!(records.len(), 2);
         assert_first_sample_record(&records[0]);
         assert_second_sample_record(&records[1]);
@@ -1290,10 +1447,200 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
         assert_eq!(parser.reader_mode(), "query");
         parser.seek("chr1:10-20").map_err(from_py_error)?;
 
-        let records = parser.records(None).map_err(from_py_error)?;
+        let records = parser.records(None, None).map_err(from_py_error)?;
         assert_eq!(records.len(), 2);
         assert_first_sample_record(&records[0]);
         assert_second_sample_record(&records[1]);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // GtfParser:records - feature_types filter
+    // -----------------------------------------------------------------------
+
+    const FILTER_SAMPLE: &[u8] = b"\
+#!genome-version GRCh38
+chr1\tensembl\tgene\t1\t100\t.\t+\t.\tgene_id \"gene:1\";
+chr1\tensembl\ttranscript\t1\t100\t.\t+\t.\tgene_id \"gene:1\"; transcript_id \"transcript:1\";
+chr1\tensembl\texon\t1\t50\t.\t+\t.\tgene_id \"gene:1\"; transcript_id \"transcript:1\";
+# a comment between records
+chr1\tensembl\tCDS\t1\t50\t.\t+\t0\tgene_id \"gene:1\"; transcript_id \"transcript:1\";
+chr1\tensembl\tTranscript\t60\t100\t.\t+\t.\tgene_id \"gene:1\"; transcript_id \"transcript:2\";
+";
+
+    #[test]
+    fn test_gtf_parser_records_feature_types_filter_sequential() -> io::Result<()> {
+        let dir = create_temp_dir("gtf-parser-records-filter-seq")?;
+        let path = write_sample_file(&dir, "sample.gtf", FILTER_SAMPLE)?;
+        let file_path = path.to_string_lossy().into_owned();
+
+        let mut parser =
+            GtfParser::new(None, None, Some("sequential".to_string())).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
+
+        // Mixed case in both the file ("transcript"/"Transcript") and the filter ("TRANSCRIPT")
+        // must still match.
+        let records = parser
+            .records(None, Some(vec!["TRANSCRIPT".to_string()]))
+            .map_err(from_py_error)?;
+
+        assert_eq!(records.len(), 2);
+        assert_eq!(records[0].feature_type, "transcript");
+        assert_eq!(records[1].feature_type, "Transcript");
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_gtf_parser_records_feature_types_filter_query() -> io::Result<()> {
+        let dir = create_temp_dir("gtf-parser-records-filter-query")?;
+        let (gz_path, _tbi_path) = write_gtf_with_tbi(
+            &dir,
+            str::from_utf8(FILTER_SAMPLE)
+                .ok()
+                .map(|s| s.lines().map(str::to_owned).collect()),
+        )?;
+        let file_path = gz_path.to_string_lossy().into_owned();
+
+        let mut parser = GtfParser::new(None, None, None).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
+        assert_eq!(parser.reader_mode(), "query");
+        parser.seek("chr1:1-100").map_err(from_py_error)?;
+
+        let records = parser
+            .records(None, Some(vec!["transcript".to_string()]))
+            .map_err(from_py_error)?;
+
+        assert_eq!(records.len(), 2);
+        assert!(
+            records
+                .iter()
+                .all(|record| record.feature_type.eq_ignore_ascii_case("transcript"))
+        );
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_gtf_parser_records_no_filter_matches_unfiltered_records() -> io::Result<()> {
+        let dir = create_temp_dir("gtf-parser-records-no-filter")?;
+        let path = write_sample_file(&dir, "sample.gtf", FILTER_SAMPLE)?;
+        let file_path = path.to_string_lossy().into_owned();
+
+        let mut unfiltered_parser = GtfParser::new(None, None, None).map_err(from_py_error)?;
+        unfiltered_parser
+            .open(&file_path, None)
+            .map_err(from_py_error)?;
+        let unfiltered = unfiltered_parser
+            .records(None, None)
+            .map_err(from_py_error)?;
+
+        let mut none_filter_parser = GtfParser::new(None, None, None).map_err(from_py_error)?;
+        none_filter_parser
+            .open(&file_path, None)
+            .map_err(from_py_error)?;
+        let explicit_none = none_filter_parser
+            .records(None, None)
+            .map_err(from_py_error)?;
+
+        assert_eq!(unfiltered, explicit_none);
+        assert_eq!(unfiltered.len(), 5);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_gtf_parser_records_feature_types_filter_skips_comments() -> io::Result<()> {
+        let dir = create_temp_dir("gtf-parser-records-filter-comments")?;
+        let path = write_sample_file(&dir, "sample.gtf", FILTER_SAMPLE)?;
+        let file_path = path.to_string_lossy().into_owned();
+
+        let mut parser = GtfParser::new(None, None, None).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
+
+        let records = parser
+            .records(None, Some(vec!["CDS".to_string()]))
+            .map_err(from_py_error)?;
+
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].feature_type, "CDS");
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    /// A line with fewer than 3 tab-separated fields has no column 3 to compare against the
+    /// filter, so it is silently skipped rather than reaching the full parser (which would raise
+    /// on it, as the unfiltered case below confirms it still does without a filter active).
+    #[test]
+    fn test_gtf_parser_records_feature_types_filter_skips_short_lines_without_erroring()
+    -> io::Result<()> {
+        let dir = create_temp_dir("gtf-parser-records-filter-short-line")?;
+        let short_line_sample = b"\
+#!genome-version GRCh38
+chr1\tensembl
+chr1\tensembl\tCDS\t1\t50\t.\t+\t0\tgene_id \"gene:1\";
+";
+        let path = write_sample_file(&dir, "sample.gtf", short_line_sample)?;
+        let file_path = path.to_string_lossy().into_owned();
+
+        let mut parser = GtfParser::new(None, None, None).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
+
+        let records = parser
+            .records(None, Some(vec!["CDS".to_string()]))
+            .map_err(from_py_error)?;
+
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].feature_type, "CDS");
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    /// The same short line, unfiltered, still reaches the full parser and errors -- the filter
+    /// changes what happens to a short line only when it is actually applied.
+    #[test]
+    fn test_gtf_parser_records_no_filter_still_errors_on_short_line() -> io::Result<()> {
+        let dir = create_temp_dir("gtf-parser-records-no-filter-short-line")?;
+        let short_line_sample = b"chr1\tensembl\n";
+        let path = write_sample_file(&dir, "sample.gtf", short_line_sample)?;
+        let file_path = path.to_string_lossy().into_owned();
+
+        Python::initialize();
+        let mut parser = GtfParser::new(None, None, None).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
+
+        let err = parser.records(None, None).unwrap_err();
+        assert!(
+            err.to_string().contains("unexpected end of file"),
+            "unexpected error: {err}"
+        );
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_gtf_parser_records_feature_types_filter_honours_limit() -> io::Result<()> {
+        let dir = create_temp_dir("gtf-parser-records-filter-limit")?;
+        let path = write_sample_file(&dir, "sample.gtf", FILTER_SAMPLE)?;
+        let file_path = path.to_string_lossy().into_owned();
+
+        let mut parser = GtfParser::new(None, None, None).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
+
+        let records = parser
+            .records(Some(1), Some(vec!["transcript".to_string()]))
+            .map_err(from_py_error)?;
+
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].feature_type, "transcript");
 
         fs::remove_dir_all(dir)?;
         Ok(())
@@ -1371,7 +1718,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
 
         assert_eq!(parser.reader_mode(), "query");
         parser.seek("chr1:10-20").map_err(from_py_error)?;
-        let records = parser.records(None).map_err(from_py_error)?;
+        let records = parser.records(None, None).map_err(from_py_error)?;
         assert_eq!(records.len(), 2);
         assert_first_sample_record(&records[0]);
         assert_second_sample_record(&records[1]);
@@ -1426,7 +1773,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
         parser.open(&file_path, None).map_err(from_py_error)?;
         assert_eq!(parser.reader_mode(), "sequential");
 
-        let records = parser.records(None).map_err(from_py_error)?;
+        let records = parser.records(None, None).map_err(from_py_error)?;
         assert_eq!(records.len(), 2);
         assert_first_sample_record(&records[0]);
         assert_second_sample_record(&records[1]);
@@ -1455,7 +1802,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
             .map_err(from_py_error)?;
         assert_eq!(parser.reader_mode(), "sequential");
 
-        let records = parser.records(None).map_err(from_py_error)?;
+        let records = parser.records(None, None).map_err(from_py_error)?;
         assert_eq!(records.len(), 2);
         assert_first_sample_record(&records[0]);
         assert_second_sample_record(&records[1]);
@@ -1536,7 +1883,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
         );
         assert!(
             parser
-                .records(None)
+                .records(None, None)
                 .unwrap_err()
                 .to_string()
                 .contains("not open")
@@ -1696,7 +2043,9 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
         let (gz_path, _tbi_path) = write_gtf_with_tbi(&dir, None)?;
         let mut backend = TabixBackend::new(&gz_path, "tabix-nonexistent-binary-for-test")?;
 
-        let err = backend.seek(":::invalid:::").unwrap_err();
+        // "chr1:10-" fails region *syntax* parsing (trailing hyphen, no numeric end) -- distinct
+        // from a syntactically valid but unindexed name, which now returns `false` instead.
+        let err = backend.seek("chr1:10-").unwrap_err();
         assert_eq!(err.kind(), io::ErrorKind::InvalidInput);
 
         fs::remove_dir_all(dir)?;
@@ -1816,6 +2165,147 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";
             "GTFRecord(seqid=\"chr1\", feature_type=\"gene\", start=10, end=20, strand_symbol=\"+\", phase_value=None)"
         );
 
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // GTFRecord::first_attribute
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_first_attribute_present_single_valued() -> io::Result<()> {
+        let records = parse_gtf_bytes(SAMPLE, Some(1))?;
+        let record = records.first().expect("expected record");
+
+        assert_eq!(record.first_attribute("gene_id"), Some("gene:1"));
+        assert_eq!(record.first_attribute("gene_name"), Some("BRCA2"));
+        Ok(())
+    }
+
+    #[test]
+    fn test_first_attribute_present_multi_valued_returns_first() -> io::Result<()> {
+        let line = to_gtf_line(
+            "chr1\tensembl\tgene\t10\t20\t.\t+\t.\ttag \"CCDS\"; tag \"basic\"; tag \"Ensembl_canonical\";",
+        );
+        let record = line.as_record().unwrap()?;
+        let raw_attributes = raw_attributes(&line);
+        let py_record = record_to_py(record, raw_attributes)?;
+
+        // tag has three values — first_attribute returns only the first, matching
+        // attributes[key][0].
+        assert_eq!(py_record.first_attribute("tag"), Some("CCDS"));
+        Ok(())
+    }
+
+    #[test]
+    fn test_first_attribute_missing_key_returns_none() -> io::Result<()> {
+        let records = parse_gtf_bytes(SAMPLE, Some(1))?;
+        let record = records.first().expect("expected record");
+
+        assert_eq!(record.first_attribute("transcript_id"), None);
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // parse_gtf_line_into — reused buffer parity with parse_gtf_line
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_parse_gtf_line_into_reused_buffer_matches_parse_gtf_line() -> io::Result<()> {
+        let mut buffer = gtf::Line::default();
+
+        let first = parse_gtf_line_into(
+            "chr1\tensembl\tgene\t10\t20\t.\t+\t.\tgene_id \"gene:1\"; gene_name \"BRCA2\";",
+            &mut buffer,
+            None,
+        )?
+        .expect("expected first record");
+        assert_first_sample_record(&first);
+
+        let second = parse_gtf_line_into(
+            "chr1\tensembl\ttranscript\t12\t18\t4.5\t-\t2\tgene_id \"gene:1\"; \
+             transcript_id \"transcript:1\"; transcript_name \"BRCA2-001\";",
+            &mut buffer,
+            None,
+        )?
+        .expect("expected second record");
+        assert_second_sample_record(&second);
+
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // TabixBackend::index_sequence_names / GtfParser::index_sequence_names
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_tabix_backend_index_sequence_names() -> io::Result<()> {
+        let dir = create_temp_dir("gtf-tabix-index-names")?;
+        let (gz_path, _tbi_path) = write_gtf_with_tbi(&dir, None)?;
+        let mut backend = TabixBackend::new(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        assert_eq!(
+            backend.index_sequence_names()?,
+            vec!["chr1".to_string(), "chr2".to_string()]
+        );
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_sequential_backend_index_sequence_names_is_empty() -> io::Result<()> {
+        let dir = create_temp_dir("gtf-sequential-index-names")?;
+        let path = write_sample_file(&dir, "sample.gtf", SAMPLE)?;
+
+        let mut reader = GtfReader::open(
+            &path,
+            "tabix-nonexistent-binary-for-test",
+            ReaderMode::Sequential,
+        )?;
+        assert!(reader.index_sequence_names()?.is_empty());
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_gtf_parser_index_sequence_names() -> io::Result<()> {
+        let dir = create_temp_dir("gtf-parser-index-names")?;
+        let (gz_path, _tbi_path) = write_gtf_with_tbi(&dir, None)?;
+        let file_path = gz_path.to_string_lossy().into_owned();
+
+        let mut parser = GtfParser::new(None, None, None).map_err(from_py_error)?;
+        assert!(
+            parser
+                .index_sequence_names()
+                .map_err(from_py_error)?
+                .is_empty()
+        );
+
+        parser.open(&file_path, None).map_err(from_py_error)?;
+        assert_eq!(
+            parser.index_sequence_names().map_err(from_py_error)?,
+            vec!["chr1".to_string(), "chr2".to_string()]
+        );
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_gtf_parser_seek_unknown_contig_returns_false() -> io::Result<()> {
+        let dir = create_temp_dir("gtf-parser-unknown-contig")?;
+        let (gz_path, _tbi_path) = write_gtf_with_tbi(&dir, None)?;
+        let file_path = gz_path.to_string_lossy().into_owned();
+
+        let mut parser = GtfParser::new(None, None, None).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
+
+        assert!(!parser.seek("chrZ:1-100").map_err(from_py_error)?);
+        assert_eq!(parser.next().map_err(from_py_error)?, None);
+
+        fs::remove_dir_all(dir)?;
         Ok(())
     }
 }

@@ -84,6 +84,24 @@ class TestUnsafeSetterMixin:
         assert probe.source_value == 100
         assert probe.seeded_value == 99
 
+    def test_assign_without_hooks_sets_the_real_field(self) -> None:
+        """assign_without_hooks writes the real field, not a seeded protected slot."""
+        probe = _UnsafeSetterProbe(source_value=1)
+
+        probe.assign_without_hooks(source_value=42)
+
+        assert probe.source_value == 42
+
+    def test_assign_without_hooks_does_not_invalidate(self) -> None:
+        """assign_without_hooks bypasses the on_setattr hook, so nothing is invalidated."""
+        probe = _UnsafeSetterProbe(source_value=1)
+        assert probe.seeded_value == 99
+
+        probe.assign_without_hooks(source_value=42)
+
+        assert probe.source_value == 42
+        assert probe.seeded_value == 99
+
     def test_seed_attrs(self) -> None:
         """Test seed_attrs supplies a derived attribute value."""
         probe = _UnsafeSetterProbe(source_value=1)

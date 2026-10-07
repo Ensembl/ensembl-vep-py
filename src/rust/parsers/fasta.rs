@@ -60,21 +60,12 @@ impl FastaRecord {
 }
 
 // ---------------------------------------------------------------------------
-// FASTAMetadata
+// FastaMetadata
 // ---------------------------------------------------------------------------
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 struct FastaMetadata {
-    header: Vec<String>,
     sequence_lengths: HashMap<String, usize>,
-    sequence_descriptions: HashMap<String, String>,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-struct FastaHeader {
-    raw: String,
-    seq_region_name: String,
-    description: Option<String>,
 }
 
 // ---------------------------------------------------------------------------
@@ -112,7 +103,6 @@ type FaiIndex = HashMap<String, FaiEntry>;
 // ---------------------------------------------------------------------------
 
 pub struct FastaReader {
-    file_path: PathBuf,
     backend: Backend,
     mode: ReaderMode,
     metadata: Option<FastaMetadata>,
@@ -122,7 +112,6 @@ impl FastaReader {
     fn open(file_path: &Path, mode: ReaderMode) -> io::Result<Self> {
         let (backend, mode) = Backend::open(file_path, mode)?;
         Ok(Self {
-            file_path: file_path.to_path_buf(),
             backend,
             mode,
             metadata: None,
@@ -131,7 +120,7 @@ impl FastaReader {
 
     fn metadata(&mut self) -> io::Result<&FastaMetadata> {
         if self.metadata.is_none() {
-            self.metadata = Some(read_fasta_metadata(&self.file_path)?);
+            self.metadata = Some(self.backend.metadata()?);
         }
 
         Ok(self.metadata.as_ref().expect("metadata should be cached"))
@@ -145,6 +134,10 @@ impl FastaReader {
         self.backend.seek(region)
     }
 }
+
+// ---------------------------------------------------------------------------
+// Backend
+// ---------------------------------------------------------------------------
 
 enum Backend {
     Sequential(SequentialBackend),
@@ -221,6 +214,21 @@ impl Backend {
         }
     }
 
+    /// Sequence lengths from the `.fai` index, or from a one-off scan when there is none.
+    fn metadata(&mut self) -> io::Result<FastaMetadata> {
+        let sequence_lengths = match self {
+            Self::Sequential(reader) => reader
+                .scanned_sequences()?
+                .iter()
+                .map(|(seqid, sequence)| (seqid.clone(), sequence.length))
+                .collect(),
+            Self::Fai(reader) => fai_sequence_lengths(&reader.index),
+            Self::Bgzf(reader) => fai_sequence_lengths(&reader.index),
+        };
+
+        Ok(FastaMetadata { sequence_lengths })
+    }
+
     fn seek(&mut self, region: &str) -> io::Result<bool> {
         match self {
             Self::Sequential(reader) => reader.seek(region),
@@ -230,29 +238,113 @@ impl Backend {
     }
 }
 
+fn fai_sequence_lengths(index: &FaiIndex) -> HashMap<String, usize> {
+    index
+        .iter()
+        .map(|(seqid, entry)| (seqid.clone(), entry.length))
+        .collect()
+}
+
+// ---------------------------------------------------------------------------
+// SequentialBackend
+// ---------------------------------------------------------------------------
+
+/// Reads an unindexed FASTA.
+///
+/// Before any `seek`, `next` streams whole records. The first `seek` (or `metadata`) scans the
+/// file once and records every sequence's length and, where its lines are regular, the same byte
+/// layout a `.fai` would hold. Later seeks read those sequences directly; the rest, and every
+/// sequence in a BGZF file (whose offsets are only meaningful with a `.gzi`), are rescanned from
+/// the start of the file. The first record wins when a name is repeated.
 struct SequentialBackend {
+    file_path: PathBuf,
+    is_bgzf: bool,
     reader: Box<dyn BufRead + Send + Sync>,
     pending_header: Option<String>,
+    scanned_sequences: Option<HashMap<String, ScannedSequence>>,
+    /// Handle for direct reads of regular sequences, opened on first use.
+    file: Option<File>,
+    query_result: Option<FastaRecord>,
+    /// Whether `seek` has been called, which switches `next` from streaming to query results.
+    query_active: bool,
 }
 
 impl SequentialBackend {
     fn new(file_path: &Path) -> io::Result<Self> {
         Ok(Self {
+            file_path: file_path.to_path_buf(),
+            is_bgzf: is_bgzf_file(file_path)?,
             reader: open_sequential_reader(file_path)?,
             pending_header: None,
+            scanned_sequences: None,
+            file: None,
+            query_result: None,
+            query_active: false,
         })
     }
 
     fn next(&mut self) -> io::Result<Option<FastaRecord>> {
+        if self.query_active {
+            return Ok(self.query_result.take());
+        }
         read_next_record(&mut self.reader, &mut self.pending_header)
     }
 
-    fn seek(&mut self, _region: &str) -> io::Result<bool> {
-        Err(io::Error::other(
-            "FASTA reader is set to 'sequential'; set reader to 'query' before seek",
-        ))
+    fn seek(&mut self, region: &str) -> io::Result<bool> {
+        self.query_active = true;
+        self.query_result = None;
+
+        let parsed = parse_sequence_region(region)?;
+        let Some(sequence) = self.scanned_sequences()?.get(&parsed.seq_region_name) else {
+            return Ok(false);
+        };
+
+        let start = parsed.start.unwrap_or(1);
+        // WARNING: With no end coordinate, this may return a very long sequence.
+        let end = parsed.end.unwrap_or(sequence.length);
+        let fai_entry = sequence.fai_entry.clone();
+
+        let bases = match fai_entry {
+            Some(entry) => {
+                if self.file.is_none() {
+                    self.file = Some(File::open(&self.file_path)?);
+                }
+                let file = self.file.as_mut().expect("file should be open");
+                read_indexed_sequence(file, &entry, start, end)?
+            }
+            None => {
+                let mut reader = open_sequential_reader(&self.file_path)?;
+                scan_sequence_chunk(&mut reader, &parsed.seq_region_name, start, end)?
+            }
+        };
+
+        self.query_result = Some(FastaRecord {
+            seqid: parsed.seq_region_name,
+            start,
+            end,
+            sequence: bases,
+        });
+
+        Ok(true)
+    }
+
+    /// Scan the file once for sequence lengths and byte layouts.
+    fn scanned_sequences(&mut self) -> io::Result<&HashMap<String, ScannedSequence>> {
+        if self.scanned_sequences.is_none() {
+            let mut reader = open_sequential_reader(&self.file_path)?;
+            self.scanned_sequences = Some(scan_sequences(&mut reader, !self.is_bgzf)?);
+        }
+
+        Ok(self
+            .scanned_sequences
+            .as_ref()
+            .expect("scanned sequences should be cached"))
     }
 }
+
+// ---------------------------------------------------------------------------
+// FaiBackend
+// ---------------------------------------------------------------------------
 
 struct FaiBackend {
     index: FaiIndex,
@@ -294,6 +386,10 @@ impl FaiBackend {
         Ok(true)
     }
 }
+
+// ---------------------------------------------------------------------------
+// BgzfBackend
+// ---------------------------------------------------------------------------
 
 struct BgzfBackend {
     index: FaiIndex,
@@ -337,6 +433,221 @@ impl BgzfBackend {
 
         Ok(true)
     }
+}
+
+// ---------------------------------------------------------------------------
+// SequenceScan — one-pass sequential scan and `.fai` layout detection
+// ---------------------------------------------------------------------------
+
+/// One sequence recorded by a sequential scan.
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct ScannedSequence {
+    length: usize,
+    /// Byte layout for direct reads, or `None` when the lines are irregular or offsets were not
+    /// tracked.
+    fai_entry: Option<FaiEntry>,
+}
+
+/// Running state for the sequence currently being scanned.
+struct SequenceScan {
+    seq_region_name: String,
+    length: usize,
+    first_base_offset: Option<u64>,
+    line_bases: usize,
+    line_width: usize,
+    /// A short or blank line has been seen, so any further bases make the layout irregular.
+    ended: bool,
+    regular: bool,
+}
+
+impl SequenceScan {
+    fn new(seq_region_name: String) -> Self {
+        Self {
+            seq_region_name,
+            length: 0,
+            first_base_offset: None,
+            line_bases: 0,
+            line_width: 0,
+            ended: false,
+            regular: true,
+        }
+    }
+
+    /// Count a sequence line's bases and check it keeps the layout `.fai`-compatible.
+    fn add_line(&mut self, line: &[u8], line_offset: u64) {
+        let bases = line
+            .iter()
+            .filter(|byte| !byte.is_ascii_whitespace())
+            .count();
+        self.length += bases;
+        if !self.regular {
+            return;
+        }
+        if bases == 0 {
+            self.ended = true;
+            return;
+        }
+
+        let has_newline = line.last() == Some(&b'\n');
+        let content_length = line_content(line).len();
+        if self.ended || content_length != bases {
+            self.regular = false;
+            return;
+        }
+
+        if self.first_base_offset.is_none() {
+            self.first_base_offset = Some(line_offset);
+            self.line_bases = bases;
+            self.line_width = line.len();
+        } else if bases > self.line_bases
+            || (bases == self.line_bases && has_newline && line.len() != self.line_width)
+        {
+            self.regular = false;
+            return;
+        }
+
+        if bases < self.line_bases || !has_newline {
+            self.ended = true;
+        }
+    }
+
+    fn finish(self, track_offsets: bool) -> (String, ScannedSequence) {
+        let fai_entry = (track_offsets && self.regular).then(|| FaiEntry {
+            length: self.length,
+            offset: self.first_base_offset.unwrap_or(0),
+            line_bases: self.line_bases,
+            line_width: self.line_width,
+        });
+
+        (
+            self.seq_region_name,
+            ScannedSequence {
+                length: self.length,
+                fai_entry,
+            },
+        )
+    }
+}
+
+/// Scan a FASTA once, recording each sequence's length and, with `track_offsets`, its byte layout.
+fn scan_sequences<R>(
+    reader: &mut R,
+    track_offsets: bool,
+) -> io::Result<HashMap<String, ScannedSequence>>
+where
+    R: BufRead,
+{
+    let mut sequences = HashMap::new();
+    let mut current: Option<SequenceScan> = None;
+    let mut line = Vec::new();
+    let mut offset = 0u64;
+
+    loop {
+        line.clear();
+        let bytes_read = reader.read_until(b'\n', &mut line)?;
+        if bytes_read == 0 {
+            break;
+        }
+        let line_offset = offset;
+        offset += bytes_read as u64;
+
+        if let Some(header) = line.strip_prefix(b">") {
+            if let Some(scan) = current.take() {
+                let (seq_region_name, sequence) = scan.finish(track_offsets);
+                sequences.insert(seq_region_name, sequence);
+            }
+            let seq_region_name = fasta_header_name(&String::from_utf8_lossy(header)).to_string();
+            if !sequences.contains_key(&seq_region_name) {
+                current = Some(SequenceScan::new(seq_region_name));
+            }
+            continue;
+        }
+
+        if let Some(scan) = current.as_mut() {
+            scan.add_line(&line, line_offset);
+        }
+    }
+
+    if let Some(scan) = current.take() {
+        let (seq_region_name, sequence) = scan.finish(track_offsets);
+        sequences.insert(seq_region_name, sequence);
+    }
+
+    Ok(sequences)
+}
+
+/// Read `[start, end]` of the first sequence named `seq_region_name` by scanning from the current
+/// position, padding with `N` past the sequence end.
+fn scan_sequence_chunk<R>(
+    reader: &mut R,
+    seq_region_name: &str,
+    start: usize,
+    end: usize,
+) -> io::Result<String>
+where
+    R: BufRead,
+{
+    if start < 1 || end < start {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidInput,
+            "FASTA regions must be 1-based and start must be <= end",
+        ));
+    }
+
+    let mut chunk = Vec::with_capacity(end - start + 1);
+    let mut line = Vec::new();
+    let mut line_bases = Vec::new();
+    let mut position = 0usize;
+    let mut in_requested_region = false;
+
+    loop {
+        line.clear();
+        if reader.read_until(b'\n', &mut line)? == 0 {
+            break;
+        }
+
+        if let Some(header) = line.strip_prefix(b">") {
+            if in_requested_region {
+                break;
+            }
+            in_requested_region =
+                fasta_header_name(&String::from_utf8_lossy(header)) == seq_region_name;
+            position = 0;
+            continue;
+        }
+        if !in_requested_region {
+            continue;
+        }
+
+        line_bases.clear();
+        line_bases.extend(
+            line.iter()
+                .filter(|byte| !byte.is_ascii_whitespace())
+                .map(u8::to_ascii_uppercase),
+        );
+        let line_start = position + 1;
+        let line_end = position + line_bases.len();
+        let overlap_start = start.max(line_start);
+        let overlap_end = end.min(line_end);
+        if overlap_start <= overlap_end {
+            chunk.extend_from_slice(
+                &line_bases[overlap_start - line_start..=overlap_end - line_start],
+            );
+        }
+        position = line_end;
+        if position >= end {
+            break;
+        }
+    }
+
+    chunk.resize(end - start + 1, b'N');
+    String::from_utf8(chunk).map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))
+}
+
+/// Strip a trailing `\n` or `\r\n` from a raw line.
+fn line_content(line: &[u8]) -> &[u8] {
+    let line = line.strip_suffix(b"\n").unwrap_or(line);
+    line.strip_suffix(b"\r").unwrap_or(line)
 }
 
 // ---------------------------------------------------------------------------
@@ -385,25 +696,12 @@ impl FastaParser {
 
         let metadata = reader.metadata().map_err(to_py_error)?;
 
-        if !metadata.header.is_empty() {
-            let header: Vec<_> = metadata.header.iter().map(String::as_str).collect();
-            dict.set_item("header", header)?;
-        }
-
         if !metadata.sequence_lengths.is_empty() {
             let lengths = PyDict::new(py);
             for (seqid, length) in &metadata.sequence_lengths {
                 lengths.set_item(seqid, length)?;
             }
             dict.set_item("sequence_lengths", lengths)?;
-        }
-
-        if !metadata.sequence_descriptions.is_empty() {
-            let descriptions = PyDict::new(py);
-            for (seqid, description) in &metadata.sequence_descriptions {
-                descriptions.set_item(seqid, description)?;
-            }
-            dict.set_item("sequence_descriptions", descriptions)?;
         }
 
         Ok(dict)
@@ -585,85 +883,45 @@ where
     }
 
     let actual_end = end.min(entry.length);
-    let mut sequence = String::with_capacity(end - start + 1);
+    let expected_bases = actual_end - start + 1;
+    let start_offset = entry.byte_offset(start)?;
+    let end_offset = entry.byte_offset(actual_end)?;
+    let raw_length = end_offset
+        .checked_sub(start_offset)
+        .and_then(|length| length.checked_add(1))
+        .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "invalid FASTA index offsets"))?;
+    let mut remaining = usize::try_from(raw_length)
+        .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))?;
+    let mut sequence = Vec::with_capacity(end - start + 1);
+    let mut buffer = [0u8; 64 * 1024];
 
-    for position in start..=actual_end {
-        let byte_offset = entry.byte_offset(position)?;
-        let mut byte = [0u8; 1];
-        reader.seek(SeekFrom::Start(byte_offset))?;
-        reader.read_exact(&mut byte)?;
-        sequence.push((byte[0] as char).to_ascii_uppercase());
+    reader.seek(SeekFrom::Start(start_offset))?;
+    while remaining > 0 {
+        let chunk_length = remaining.min(buffer.len());
+        reader.read_exact(&mut buffer[..chunk_length])?;
+        for byte in &buffer[..chunk_length] {
+            if !byte.is_ascii_whitespace() {
+                sequence.push(byte.to_ascii_uppercase());
+            }
+        }
+        remaining -= chunk_length;
+    }
+
+    if sequence.len() != expected_bases {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidData,
+            format!(
+                "FASTA index described {expected_bases} bases but the indexed range contained {}",
+                sequence.len()
+            ),
+        ));
     }
 
     if end > entry.length {
-        sequence.push_str(&"N".repeat(end - entry.length));
+        sequence.extend(std::iter::repeat_n(b'N', end - entry.length));
     }
 
-    Ok(sequence)
-}
-
-fn read_fasta_metadata(file_path: &Path) -> io::Result<FastaMetadata> {
-    let mut reader = open_sequential_reader(file_path)?;
-    read_fasta_metadata_from_reader(&mut reader)
-}
-
-fn read_fasta_metadata_from_reader<R>(reader: &mut R) -> io::Result<FastaMetadata>
-where
-    R: BufRead,
-{
-    let mut metadata = FastaMetadata::default();
-    let mut current_header: Option<FastaHeader> = None;
-    let mut current_length = 0usize;
-    let mut line = String::new();
-
-    loop {
-        line.clear();
-
-        if reader.read_line(&mut line)? == 0 {
-            flush_metadata_record(&mut metadata, current_header.take(), current_length);
-            break;
-        }
-
-        let trimmed = line.trim_end();
-        if trimmed.is_empty() {
-            continue;
-        }
-
-        if let Some(raw_header) = trimmed.strip_prefix('>') {
-            flush_metadata_record(&mut metadata, current_header.take(), current_length);
-            let header = parse_fasta_header(raw_header);
-            metadata.header.push(format!(">{}", header.raw));
-            current_header = Some(header);
-            current_length = 0;
-            continue;
-        }
-
-        if current_header.is_some() {
-            current_length += trimmed.len();
-        }
-    }
-
-    Ok(metadata)
-}
-
-fn flush_metadata_record(
-    metadata: &mut FastaMetadata,
-    header: Option<FastaHeader>,
-    sequence_length: usize,
-) {
-    let Some(header) = header else {
-        return;
-    };
-
-    metadata
-        .sequence_lengths
-        .insert(header.seq_region_name.clone(), sequence_length);
-
-    if let Some(description) = header.description {
-        metadata
-            .sequence_descriptions
-            .insert(header.seq_region_name, description);
-    }
+    String::from_utf8(sequence).map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))
 }
 
 fn read_next_record<R>(
@@ -716,11 +974,10 @@ where
         sequence.push_str(&trimmed.to_uppercase());
     }
 
-    let header = parse_fasta_header(&header);
     let end = sequence.len();
 
     Ok(Some(FastaRecord {
-        seqid: header.seq_region_name,
+        seqid: fasta_header_name(&header).to_string(),
         start: 1,
         end,
         sequence,
@@ -749,16 +1006,9 @@ fn parse_fasta_bytes(data: &[u8], limit: Option<usize>) -> io::Result<Vec<FastaR
     read_records(&mut reader, limit)
 }
 
-fn parse_fasta_header(header: &str) -> FastaHeader {
-    let mut parts = header.splitn(2, char::is_whitespace);
-    let seq_region_name = parts.next().unwrap_or_default().to_string();
-    let description = parts.next().map(str::to_string);
-
-    FastaHeader {
-        raw: header.to_string(),
-        seq_region_name,
-        description,
-    }
+/// Return the sequence-region name from a FASTA header (without its `>`).
+fn fasta_header_name(header: &str) -> &str {
+    header.split_whitespace().next().unwrap_or_default()
 }
 
 #[cfg(test)]
@@ -802,6 +1052,36 @@ AAAA
         Ok((dir, path))
     }
 
+    struct CountingReader {
+        inner: Cursor<Vec<u8>>,
+        reads: usize,
+        seeks: usize,
+    }
+
+    impl CountingReader {
+        fn new(data: &[u8]) -> Self {
+            Self {
+                inner: Cursor::new(data.to_vec()),
+                reads: 0,
+                seeks: 0,
+            }
+        }
+    }
+
+    impl Read for CountingReader {
+        fn read(&mut self, buffer: &mut [u8]) -> io::Result<usize> {
+            self.reads += 1;
+            self.inner.read(buffer)
+        }
+    }
+
+    impl Seek for CountingReader {
+        fn seek(&mut self, position: SeekFrom) -> io::Result<u64> {
+            self.seeks += 1;
+            self.inner.seek(position)
+        }
+    }
+
     fn write_sample_bgzf_with_indexes(prefix: &str) -> io::Result<(PathBuf, PathBuf)> {
         let dir = create_temp_dir(prefix)?;
         let path = write_bgzf_file(&dir, sample_lines(), Some("sample.fa.gz"))?;
@@ -833,33 +1113,22 @@ AAAA
     }
 
     // -----------------------------------------------------------------------
-    // parse_fasta_header
+    // fasta_header_name
     // -----------------------------------------------------------------------
 
     #[test]
-    fn test_parse_fasta_header_with_description() {
+    fn test_fasta_header_name_drops_description() {
         assert_eq!(
-            parse_fasta_header("chr1 dna:chromosome chromosome:GRCh38:1:1:248956422:1 REF"),
-            FastaHeader {
-                raw: "chr1 dna:chromosome chromosome:GRCh38:1:1:248956422:1 REF".to_string(),
-                seq_region_name: "chr1".to_string(),
-                description: Some(
-                    "dna:chromosome chromosome:GRCh38:1:1:248956422:1 REF".to_string()
-                ),
-            }
+            fasta_header_name("chr1 dna:chromosome chromosome:GRCh38:1:1:248956422:1 REF"),
+            "chr1"
         );
     }
 
     #[test]
-    fn test_parse_fasta_header_without_description() {
-        assert_eq!(
-            parse_fasta_header("chr1"),
-            FastaHeader {
-                raw: "chr1".to_string(),
-                seq_region_name: "chr1".to_string(),
-                description: None,
-            }
-        );
+    fn test_fasta_header_name_skips_leading_whitespace() {
+        assert_eq!(fasta_header_name("  chr1\tdescription"), "chr1");
+        assert_eq!(fasta_header_name("chr1"), "chr1");
+        assert_eq!(fasta_header_name(""), "");
     }
 
     // -----------------------------------------------------------------------
@@ -962,95 +1231,6 @@ AAAA
     }
 
     // -----------------------------------------------------------------------
-    // flush_metadata_record
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_flush_metadata_record_ignores_missing_header() {
-        let mut metadata = FastaMetadata::default();
-        flush_metadata_record(&mut metadata, None, 10);
-        assert!(metadata.sequence_lengths.is_empty());
-        assert!(metadata.sequence_descriptions.is_empty());
-    }
-
-    #[test]
-    fn test_flush_metadata_record_without_description() {
-        let mut metadata = FastaMetadata::default();
-        flush_metadata_record(
-            &mut metadata,
-            Some(FastaHeader {
-                raw: "chr1".to_string(),
-                seq_region_name: "chr1".to_string(),
-                description: None,
-            }),
-            8,
-        );
-
-        assert_eq!(metadata.sequence_lengths["chr1"], 8);
-        assert!(metadata.sequence_descriptions.is_empty());
-    }
-
-    // -----------------------------------------------------------------------
-    // read_fasta_metadata_from_reader
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_read_fasta_metadata_from_reader_collects_headers_lengths_and_descriptions()
-    -> io::Result<()> {
-        let mut reader = Cursor::new(DESCRIBED_SAMPLE);
-        let metadata = read_fasta_metadata_from_reader(&mut reader)?;
-        assert_eq!(
-            metadata.header,
-            vec![
-                ">chr1 dna:chromosome chromosome:GRCh38:1:1:248956422:1 REF".to_string(),
-                ">chr2 alternate sequence".to_string(),
-            ]
-        );
-        assert_eq!(metadata.sequence_lengths["chr1"], 8);
-        assert_eq!(metadata.sequence_lengths["chr2"], 4);
-        assert_eq!(
-            metadata.sequence_descriptions["chr1"],
-            "dna:chromosome chromosome:GRCh38:1:1:248956422:1 REF"
-        );
-        assert_eq!(metadata.sequence_descriptions["chr2"], "alternate sequence");
-        Ok(())
-    }
-
-    #[test]
-    fn test_read_fasta_metadata_from_reader_ignores_sequence_before_header() -> io::Result<()> {
-        let mut reader = Cursor::new(b"\nACGT\n\n>chr1\nTT\n");
-        let metadata = read_fasta_metadata_from_reader(&mut reader)?;
-        assert_eq!(metadata.header, vec![">chr1".to_string()]);
-        assert_eq!(metadata.sequence_lengths["chr1"], 2);
-        Ok(())
-    }
-
-    #[test]
-    fn test_read_fasta_metadata_from_reader_empty_file() -> io::Result<()> {
-        let mut reader = Cursor::new(b"");
-        let metadata = read_fasta_metadata_from_reader(&mut reader)?;
-        assert!(metadata.header.is_empty());
-        assert!(metadata.sequence_lengths.is_empty());
-        Ok(())
-    }
-
-    // -----------------------------------------------------------------------
-    // read_fasta_metadata
-    // -----------------------------------------------------------------------
-
-    #[test]
-    fn test_read_fasta_metadata_reads_plain_file() -> io::Result<()> {
-        let dir = create_temp_dir("fasta-metadata-file-test")?;
-        let path = dir.join("sample.fa");
-        fs::write(&path, DESCRIBED_SAMPLE)?;
-
-        let metadata = read_fasta_metadata(&path)?;
-        assert_eq!(metadata.sequence_lengths["chr1"], 8);
-        assert_eq!(metadata.sequence_lengths["chr2"], 4);
-        Ok(())
-    }
-
-    // -----------------------------------------------------------------------
     // read_indexed_sequence
     // -----------------------------------------------------------------------
 
@@ -1079,6 +1259,36 @@ AAAA
         };
 
         assert_eq!(read_indexed_sequence(&mut reader, &entry, 2, 5)?, "CGTT");
+        Ok(())
+    }
+
+    #[test]
+    fn test_read_indexed_sequence_buffers_across_line_breaks() -> io::Result<()> {
+        let mut reader = CountingReader::new(b"ACGT\nTGCA\n");
+        let entry = FaiEntry {
+            length: 8,
+            offset: 0,
+            line_bases: 4,
+            line_width: 5,
+        };
+
+        assert_eq!(read_indexed_sequence(&mut reader, &entry, 3, 7)?, "GTTGC");
+        assert_eq!(reader.seeks, 1);
+        assert_eq!(reader.reads, 1);
+        Ok(())
+    }
+
+    #[test]
+    fn test_read_indexed_sequence_handles_crlf_line_breaks() -> io::Result<()> {
+        let mut reader = Cursor::new(b"ACGT\r\nTGCA\r\n".to_vec());
+        let entry = FaiEntry {
+            length: 8,
+            offset: 0,
+            line_bases: 4,
+            line_width: 6,
+        };
+
+        assert_eq!(read_indexed_sequence(&mut reader, &entry, 3, 7)?, "GTTGC");
         Ok(())
     }
 
@@ -1322,7 +1532,7 @@ AAAA
     }
 
     #[test]
-    fn test_fasta_parser_metadata_sequential() -> io::Result<()> {
+    fn test_fasta_parser_metadata_sequential_reports_lengths_only() -> io::Result<()> {
         let dir = create_temp_dir("fasta-parser-metadata-seq")?;
         let path = dir.join("sample.fa");
         fs::write(&path, DESCRIBED_SAMPLE)?;
@@ -1334,36 +1544,21 @@ AAAA
             .map_err(from_py_error)?;
 
         Python::initialize();
-        Python::attach(|py| -> PyResult<()> {
-            let metadata = parser.metadata(py)?;
-            let header: Vec<String> = metadata
-                .get_item("header")?
-                .expect("metadata should contain header")
-                .extract()?;
+        Python::attach(|py| {
+            let metadata = parser.metadata(py).unwrap();
+            let keys: Vec<String> = metadata.keys().extract().unwrap();
+            assert_eq!(keys, ["sequence_lengths"]);
             let lengths: HashMap<String, usize> = metadata
-                .get_item("sequence_lengths")?
-                .expect("metadata should contain sequence lengths")
-                .extract()?;
-            let descriptions: HashMap<String, String> = metadata
-                .get_item("sequence_descriptions")?
-                .expect("metadata should contain sequence descriptions")
-                .extract()?;
-
+                .get_item("sequence_lengths")
+                .unwrap()
+                .unwrap()
+                .extract()
+                .unwrap();
             assert_eq!(
-                header,
-                vec![
-                    ">chr1 dna:chromosome chromosome:GRCh38:1:1:248956422:1 REF".to_string(),
-                    ">chr2 alternate sequence".to_string(),
-                ]
+                lengths,
+                HashMap::from([("chr1".to_string(), 8), ("chr2".to_string(), 4)])
             );
-            assert_eq!(lengths["chr1"], 8);
-            assert_eq!(
-                descriptions["chr1"],
-                "dna:chromosome chromosome:GRCh38:1:1:248956422:1 REF"
-            );
-            Ok(())
-        })
-        .map_err(from_py_error)?;
+        });
 
         Ok(())
     }
@@ -1387,16 +1582,9 @@ AAAA
         assert_first_record(&first);
 
         Python::initialize();
-        Python::attach(|py| -> PyResult<()> {
-            let metadata = parser.metadata(py)?;
-            let lengths: HashMap<String, usize> = metadata
-                .get_item("sequence_lengths")?
-                .expect("metadata should contain sequence lengths")
-                .extract()?;
-            assert_eq!(lengths["chr1"], 8);
-            Ok(())
-        })
-        .map_err(from_py_error)?;
+        Python::attach(|py| {
+            assert!(!parser.metadata(py).unwrap().is_empty());
+        });
 
         let second = parser
             .next()
@@ -1863,16 +2051,295 @@ AAAA
         Ok(())
     }
 
-    #[test]
-    fn test_sequential_backend_rejects_seek() -> io::Result<()> {
-        let dir = create_temp_dir("fasta-sequential-seek-test")?;
+    fn write_sequential_fasta(prefix: &str, data: &[u8]) -> io::Result<PathBuf> {
+        let dir = create_temp_dir(prefix)?;
         let path = dir.join("sample.fa");
-        fs::write(&path, SAMPLE)?;
+        fs::write(&path, data)?;
+        Ok(path)
+    }
 
+    fn sequential_seek(
+        backend: &mut SequentialBackend,
+        region: &str,
+    ) -> io::Result<Option<String>> {
+        if !backend.seek(region)? {
+            return Ok(None);
+        }
+        Ok(backend.next()?.map(|record| record.sequence))
+    }
+
+    const MULTILINE_SAMPLE: &[u8] = b"\
+>chr1 first
+ACGT
+tgca
+AC
+>chr2
+GGGG
+CC
+";
+
+    #[test]
+    fn test_sequential_backend_seek_reads_regular_sequence_directly() -> io::Result<()> {
+        let path = write_sequential_fasta("fasta-sequential-seek-direct", MULTILINE_SAMPLE)?;
         let mut backend = SequentialBackend::new(&path)?;
-        let err = backend.seek("chr1:1-4").unwrap_err();
-        assert!(err.to_string().contains("sequential"));
+
+        assert_eq!(
+            sequential_seek(&mut backend, "chr1:3-7")?.as_deref(),
+            Some("GTTGC")
+        );
+        assert!(backend.scanned_sequences()?["chr1"].fai_entry.is_some());
+        assert!(backend.file.is_some());
+        assert_eq!(
+            sequential_seek(&mut backend, "chr2:5-8")?.as_deref(),
+            Some("CCNN")
+        );
+        assert_eq!(
+            sequential_seek(&mut backend, "chr1")?.as_deref(),
+            Some("ACGTTGCAAC")
+        );
+        assert_eq!(backend.next()?, None);
         Ok(())
+    }
+
+    #[test]
+    fn test_sequential_backend_seek_returns_false_for_missing_sequence() -> io::Result<()> {
+        let path = write_sequential_fasta("fasta-sequential-seek-missing", SAMPLE)?;
+        let mut backend = SequentialBackend::new(&path)?;
+
+        assert_eq!(
+            sequential_seek(&mut backend, "chr1:1-4")?.as_deref(),
+            Some("ACGT")
+        );
+        assert!(!backend.seek("chr3:1-4")?);
+        assert_eq!(backend.next()?, None);
+        Ok(())
+    }
+
+    #[test]
+    fn test_sequential_backend_seek_rejects_start_after_end() -> io::Result<()> {
+        let path = write_sequential_fasta("fasta-sequential-seek-invalid", SAMPLE)?;
+        let mut backend = SequentialBackend::new(&path)?;
+
+        assert!(backend.seek("chr1:5-4").is_err());
+        Ok(())
+    }
+
+    #[test]
+    fn test_sequential_backend_seek_rescans_irregular_sequence() -> io::Result<()> {
+        let path = write_sequential_fasta(
+            "fasta-sequential-seek-irregular",
+            b">chr1\nAC\nGTTG\nCA\n>chr2\nAA AA\n",
+        )?;
+        let mut backend = SequentialBackend::new(&path)?;
+
+        assert_eq!(
+            sequential_seek(&mut backend, "chr1:2-7")?.as_deref(),
+            Some("CGTTGC")
+        );
+        assert_eq!(
+            sequential_seek(&mut backend, "chr2")?.as_deref(),
+            Some("AAAA")
+        );
+        assert!(backend.scanned_sequences()?["chr1"].fai_entry.is_none());
+        assert!(backend.scanned_sequences()?["chr2"].fai_entry.is_none());
+        assert!(backend.file.is_none());
+        Ok(())
+    }
+
+    #[test]
+    fn test_sequential_backend_seek_rescans_bgzf() -> io::Result<()> {
+        let dir = create_temp_dir("fasta-sequential-seek-bgzf")?;
+        let path = write_bgzf_file(&dir, sample_lines(), Some("sample.fa.gz"))?;
+        let mut backend = SequentialBackend::new(&path)?;
+
+        assert_eq!(
+            sequential_seek(&mut backend, "chr1:3-6")?.as_deref(),
+            Some("GTTG")
+        );
+        assert_eq!(
+            sequential_seek(&mut backend, "chr2:3-6")?.as_deref(),
+            Some("AANN")
+        );
+        assert!(backend.scanned_sequences()?["chr1"].fai_entry.is_none());
+        Ok(())
+    }
+
+    #[test]
+    fn test_sequential_backend_seek_uses_first_duplicate_record() -> io::Result<()> {
+        let path = write_sequential_fasta(
+            "fasta-sequential-seek-duplicate",
+            b">chr1\nAC\n>chr1\nGGGG\n",
+        )?;
+        let mut backend = SequentialBackend::new(&path)?;
+
+        assert_eq!(
+            sequential_seek(&mut backend, "chr1")?.as_deref(),
+            Some("AC")
+        );
+        assert_eq!(backend.scanned_sequences()?["chr1"].length, 2);
+        Ok(())
+    }
+
+    #[test]
+    fn test_sequential_backend_seek_matches_fai_backend() -> io::Result<()> {
+        let data = b">chr1\nACGTACGTAC\nGTACGTACGT\nACG\n>chr2 described\nTTTTTGGGGG\nCC\n";
+        let path = write_sequential_fasta("fasta-sequential-seek-parity", data)?;
+        fs::write(
+            associated_index_path(&path, "fai"),
+            "chr1\t23\t6\t10\t11\nchr2\t12\t48\t10\t11\n",
+        )?;
+        let mut sequential_backend = SequentialBackend::new(&path)?;
+        let mut fai_backend = FaiBackend::new(&path)?;
+
+        for (seq_region_name, length) in [("chr1", 23), ("chr2", 12)] {
+            for start in 1..=length + 2 {
+                for end in start..=length + 2 {
+                    let region = format!("{seq_region_name}:{start}-{end}");
+                    assert!(fai_backend.seek(&region)?);
+                    let expected = fai_backend.next()?.map(|record| record.sequence);
+                    assert_eq!(
+                        sequential_seek(&mut sequential_backend, &region)?,
+                        expected,
+                        "{region}"
+                    );
+                }
+            }
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn test_sequential_backend_next_streams_until_first_seek() -> io::Result<()> {
+        let path = write_sequential_fasta("fasta-sequential-stream-then-seek", SAMPLE)?;
+        let mut backend = SequentialBackend::new(&path)?;
+
+        assert_first_record(&backend.next()?.expect("first record should be available"));
+        assert_eq!(
+            sequential_seek(&mut backend, "chr1:1-2")?.as_deref(),
+            Some("AC")
+        );
+        assert_eq!(backend.next()?, None);
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // scan_sequences / scan_sequence_chunk
+    // -----------------------------------------------------------------------
+
+    fn scanned(data: &[u8]) -> io::Result<HashMap<String, ScannedSequence>> {
+        scan_sequences(&mut Cursor::new(data), true)
+    }
+
+    #[test]
+    fn test_scan_sequences_records_fai_layout() -> io::Result<()> {
+        let sequences = scanned(MULTILINE_SAMPLE)?;
+
+        assert_eq!(
+            sequences["chr1"].fai_entry,
+            Some(FaiEntry {
+                length: 10,
+                offset: 12,
+                line_bases: 4,
+                line_width: 5,
+            })
+        );
+        assert_eq!(sequences["chr2"].length, 6);
+        Ok(())
+    }
+
+    #[test]
+    fn test_scan_sequences_accepts_crlf_and_missing_final_newline() -> io::Result<()> {
+        let sequences = scanned(b">chr1\r\nACGT\r\nAC")?;
+
+        assert_eq!(
+            sequences["chr1"].fai_entry,
+            Some(FaiEntry {
+                length: 6,
+                offset: 7,
+                line_bases: 4,
+                line_width: 6,
+            })
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn test_scan_sequences_allows_trailing_blank_lines() -> io::Result<()> {
+        let sequences = scanned(b">chr1\nACGT\nAC\n\n>chr2\nA\n")?;
+
+        assert!(sequences["chr1"].fai_entry.is_some());
+        assert_eq!(sequences["chr1"].length, 6);
+        Ok(())
+    }
+
+    #[test]
+    fn test_scan_sequences_marks_irregular_layouts() -> io::Result<()> {
+        let sequences = scanned(
+            b">long_middle\nAC\nACGT\n>short_middle\nACGT\nAC\nACGT\n>blank_middle\nAC\n\nAC\n\
+              >inner_space\nAC GT\n>leading_space\n ACGT\n",
+        )?;
+
+        for seq_region_name in [
+            "long_middle",
+            "short_middle",
+            "blank_middle",
+            "inner_space",
+            "leading_space",
+        ] {
+            assert!(
+                sequences[seq_region_name].fai_entry.is_none(),
+                "{seq_region_name}"
+            );
+        }
+        assert_eq!(sequences["inner_space"].length, 4);
+        assert_eq!(sequences["leading_space"].length, 4);
+        Ok(())
+    }
+
+    #[test]
+    fn test_scan_sequences_without_offsets_has_no_layout() -> io::Result<()> {
+        let sequences = scan_sequences(&mut Cursor::new(SAMPLE), false)?;
+
+        assert_eq!(sequences["chr1"].length, 8);
+        assert!(sequences["chr1"].fai_entry.is_none());
+        Ok(())
+    }
+
+    #[test]
+    fn test_scan_sequences_names_and_ignores_sequence_before_header() -> io::Result<()> {
+        let sequences = scanned(b"ACGT\n>  chr1 description\nAC\n>chr1\nGGGG\n>empty\n")?;
+
+        assert_eq!(sequences.len(), 2);
+        assert_eq!(sequences["chr1"].length, 2);
+        assert_eq!(sequences["empty"].length, 0);
+        Ok(())
+    }
+
+    #[test]
+    fn test_scan_sequence_chunk_reads_across_lines_and_pads() -> io::Result<()> {
+        let chunk = |start, end| {
+            scan_sequence_chunk(&mut Cursor::new(MULTILINE_SAMPLE), "chr1", start, end)
+        };
+
+        assert_eq!(chunk(1, 10)?, "ACGTTGCAAC");
+        assert_eq!(chunk(4, 5)?, "TT");
+        assert_eq!(chunk(9, 12)?, "ACNN");
+        assert_eq!(chunk(20, 21)?, "NN");
+        Ok(())
+    }
+
+    #[test]
+    fn test_scan_sequence_chunk_missing_sequence_is_all_n() -> io::Result<()> {
+        let chunk = scan_sequence_chunk(&mut Cursor::new(SAMPLE), "chr3", 1, 3)?;
+
+        assert_eq!(chunk, "NNN");
+        Ok(())
+    }
+
+    #[test]
+    fn test_scan_sequence_chunk_rejects_invalid_range() {
+        assert!(scan_sequence_chunk(&mut Cursor::new(SAMPLE), "chr1", 0, 3).is_err());
+        assert!(scan_sequence_chunk(&mut Cursor::new(SAMPLE), "chr1", 4, 3).is_err());
     }
 
     // -----------------------------------------------------------------------
@@ -2014,12 +2481,14 @@ AAAA
 
         let record = backend.next()?.expect("expected sequential record");
         assert_first_record(&record);
-        assert!(
-            backend
-                .seek("chr1:1-4")
-                .unwrap_err()
-                .to_string()
-                .contains("sequential")
+        assert!(backend.seek("chr1:1-4")?);
+        assert_eq!(
+            backend.next()?.map(|record| record.sequence).as_deref(),
+            Some("ACGT")
+        );
+        assert_eq!(
+            backend.metadata()?.sequence_lengths,
+            HashMap::from([("chr1".to_string(), 8), ("chr2".to_string(), 4)])
         );
         Ok(())
     }
@@ -2029,18 +2498,12 @@ AAAA
     // -----------------------------------------------------------------------
 
     #[test]
-    fn test_fasta_reader_metadata_is_cached() -> io::Result<()> {
-        let dir = create_temp_dir("fasta-reader-metadata-test")?;
-        let path = dir.join("sample.fa");
-        fs::write(&path, DESCRIBED_SAMPLE)?;
-
-        let mut reader = FastaReader::open(&path, ReaderMode::Sequential)?;
+    fn test_fasta_reader_query_metadata_is_cached_from_fai() -> io::Result<()> {
+        let (_dir, path) = write_sample_fasta_with_fai("fasta-reader-metadata-test")?;
+        let mut reader = FastaReader::open(&path, ReaderMode::Query)?;
         let metadata = reader.metadata()?;
         assert_eq!(metadata.sequence_lengths["chr1"], 8);
-        assert_eq!(
-            metadata.sequence_descriptions["chr1"],
-            "dna:chromosome chromosome:GRCh38:1:1:248956422:1 REF"
-        );
+        assert_eq!(metadata.sequence_lengths["chr2"], 4);
         assert!(reader.metadata.is_some());
         Ok(())
     }

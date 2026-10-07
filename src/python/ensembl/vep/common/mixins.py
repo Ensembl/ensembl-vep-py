@@ -57,6 +57,24 @@ class UnsafeSetterMixin:
             # restore the original class
             object.__setattr__(self, "__class__", safe_cls)
 
+    def assign_without_hooks(self, **values: object) -> None:
+        """Assign real (non-derived) fields directly, via ``object.__setattr__``.
+
+        Unlike ``seed_attrs``, which seeds a protected cached-property slot (``_name``), this sets
+        the real field (``name``) -- bypassing not just any ``on_setattr`` hook but also any
+        validator or converter attrs would normally run.
+
+        Only for building a brand-new object, before construction is complete and before anything
+        has read a value derived from the field being set: an already-live object's hooks,
+        validators and converters would not run, so its invariants could break silently.
+
+        Args:
+            **values (object): Field name to value, exactly as the attrs field is declared (no
+                leading underscore).
+        """
+        for name, value in values.items():
+            object.__setattr__(self, name, value)
+
     def seed_attrs(self, **seeds: object) -> None:
         """(Pre-)populate derived and cached attributes, by name, without triggering their normal
         derivation.

@@ -250,6 +250,64 @@ class TestProteinMapping:
         assert forward_mapper.protein_offset_to_span(-1) is None
 
 
+class TestPadding:
+    """Offsets before the first genomic base: VEP's ``N`` padding of an incomplete 5' CDS."""
+
+    @pytest.mark.parametrize(
+        ("spans", "strand"),
+        [(FORWARD_GENOMIC_SPANS, Strand.FORWARD), (REVERSE_GENOMIC_SPANS, Strand.REVERSE)],
+    )
+    def test_padding_shifts_every_offset(self, spans: list[tuple[int, int]], strand: Strand) -> None:
+        """The first genomic base sits at offset ``padding``, and the pad offsets map to none."""
+        unpadded = Mapper(genomic_spans=spans, strand=strand, coding_start_offset=0, coding_end_offset=19)
+        padded = Mapper(
+            genomic_spans=spans, strand=strand, coding_start_offset=0, coding_end_offset=21, padding=2
+        )
+
+        assert padded.length == unpadded.length + 2
+        assert padded.offset_to_genomic(0) is None
+        assert padded.offset_to_genomic(1) is None
+        for offset in range(unpadded.length):
+            genomic_position = unpadded.offset_to_genomic(offset)
+            assert padded.offset_to_genomic(offset + 2) == genomic_position
+            assert genomic_position is not None
+            assert padded.genomic_to_offset(genomic_position) == offset + 2
+        assert padded.genomic_span_to_offsets(100, 209) == (2, 21)
+
+    def test_the_first_codon_spans_only_its_genomic_bases(self) -> None:
+        """Codon 0 is one pad base plus the first two genomic bases."""
+        padded = Mapper(
+            genomic_spans=FORWARD_GENOMIC_SPANS,
+            strand=Strand.FORWARD,
+            coding_start_offset=0,
+            coding_end_offset=20,
+            padding=1,
+        )
+
+        assert padded.codon_genomic_spans(0) == [(100, 101)]
+        assert padded.codon_genomic_spans(3) == [(102, 104)]
+
+    def test_the_accelerator_agrees_with_bisect(self) -> None:
+        """The index skips the pad offsets, and both lookups say so."""
+        padded = Mapper(
+            genomic_spans=REVERSE_GENOMIC_SPANS,
+            strand=Strand.REVERSE,
+            coding_start_offset=0,
+            coding_end_offset=20,
+            padding=1,
+        )
+        accelerator = padded.build_index()
+
+        for offset in range(-1, padded.length + 1):
+            assert padded.offset_to_genomic(offset, accelerator=accelerator) == padded.offset_to_genomic(
+                offset
+            )
+        for position in range(95, 215):
+            assert padded.genomic_to_offset(position, accelerator=accelerator) == padded.genomic_to_offset(
+                position
+            )
+
+
 class TestAccelerator:
     """Test indexed coordinate mapping."""
 

@@ -342,6 +342,43 @@ def shift_sequence(
     return (shift_length, "".join(seq_d), start, end, changed)
 
 
+def parse_region_string(region: str) -> tuple[str, int | None, int | None]:
+    """Split a region string into its sequence-region name and optional bounds.
+
+    The inverse of format_region_string: "1:100-200" -> ("1", 100, 200), "1:100" -> ("1", 100,
+    None), "1" -> ("1", None, None). A name may itself contain ":" (as HLA contigs do), so only
+    the last ":" separates the coordinates, and only when what follows parses as bounds.
+
+    Args:
+        region (str): A region string in the format "seq_region_name[:start[-end]]".
+
+    Returns:
+        tuple[str, int | None, int | None]: The name, start and end.
+
+    Raises:
+        ValueError: If region is empty, or its coordinates are not positive integers.
+    """
+
+    if not region:
+        raise ValueError("region must not be empty")
+
+    name, separator, coordinates = region.rpartition(":")
+    if not separator:
+        return region, None, None
+
+    start_text, _, end_text = coordinates.partition("-")
+    try:
+        start = int(start_text)
+        end = int(end_text) if end_text else None
+    except ValueError as invalid:
+        raise ValueError(f"region coordinates must be integers: {region!r}") from invalid
+
+    if start < 1 or (end is not None and end < 1):
+        raise ValueError("regions are 1-based and must be positive")
+
+    return name, start, end
+
+
 def format_region_string(
     region: str | None = None,
     *,

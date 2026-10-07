@@ -13,13 +13,16 @@
 # limitations under the License.
 """Unit tests for the FASTA sequence source."""
 
+import logging
+import os
 from pathlib import Path
 
+from attrs.exceptions import FrozenAttributeError
 import pytest
 
 from ensembl.vep.common import Strand
 from ensembl.vep.parsers.fasta import FastaParser
-from ensembl.vep.sources.file.fasta.sequence import FastaSequenceSource
+from ensembl.vep.sources.file.fasta.sequence import FastaSequenceSource, UNKNOWN_REGION_LENGTH
 
 SAMPLE = """>chr1
 ACGTTGCA
@@ -115,23 +118,23 @@ class TestFastaSequenceSourceInitialization:
         assert source.file_path is None
         assert source.adaptor.format == "fasta"  # pylint: disable=protected-access
         assert source.adaptor.reader_mode == "auto"  # pylint: disable=protected-access
-        assert source._sequences is None  # pylint: disable=protected-access
+        assert source._metadata_lengths is None  # pylint: disable=protected-access
 
 
 class TestFastaSequenceSourceOpenClose:
     """Tests for FastaSequenceSource open and close."""
 
-    def test_close_clears_loaded_sequences_and_lengths(self, tmp_path: Path) -> None:
+    def test_close_clears_metadata_lengths(self, tmp_path: Path) -> None:
         """Test close clears FASTA-specific and derived source caches."""
 
-        path = _write_fasta(tmp_path / "sample.fa", SAMPLE)
-        source = _make_fasta_source(path, "sequential")
+        path = _write_indexed_fasta(tmp_path / "sample.fa", SAMPLE)
+        source = _make_fasta_source(path, "query")
 
         assert source.get_sequence_by_start_end_strand("chr1", 1, 4) == "ACGT"
         assert source.get_seq_region_length("chr1") == 8
         source.close()
 
-        assert source._sequences is None  # pylint: disable=protected-access
+        assert source._metadata_lengths is None  # pylint: disable=protected-access
         assert not source._seq_region_lengths  # pylint: disable=protected-access
 
     def test_context_manager_closes_source(self, tmp_path: Path) -> None:
@@ -145,9 +148,92 @@ class TestFastaSequenceSourceOpenClose:
 
         assert not source.adaptor.metadata  # pylint: disable=protected-access
 
+    def test_changing_file_path_is_error(self, tmp_path: Path) -> None:
+        """Test that the file_path attribute is frozen."""
+
+        first_path = _write_indexed_fasta(tmp_path / "sample.fa", SAMPLE)
+        source = _make_fasta_source(first_path, "query")
+        assert source.get_sequence_by_start_end_strand("chr1", 1, 4) == "ACGT"
+
+        second_path = _write_indexed_fasta(
+            tmp_path / "sample-2.fa", ">chr1\nAAAAAAAA\n", "chr1\t8\t6\t8\t9\n"
+        )
+        with pytest.raises(FrozenAttributeError, match="can't set attribute"):
+            source.file_path = second_path
+
 
 class TestFastaSequenceSourceSequence:
     """Tests for FASTA-backed sequence loading."""
+
+    def test_query_mode_reuses_open_reader_across_spans(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Test consecutive span fetches open the indexed FASTA once."""
+
+        path = _write_indexed_fasta(tmp_path / "sample.fa")
+        source = _make_fasta_source(path, "query")
+        opened: list[str] = []
+        original_open = FastaParser.open
+
+        def counting_open(parser: FastaParser, file_path: str, mode: str = "auto") -> FastaParser:
+            opened.append(mode)
+            return original_open(parser, file_path, mode)
+
+        monkeypatch.setattr(FastaParser, "open", counting_open)
+
+        assert source.get_sequence_by_start_end_strand("chr1", 1, 2) == "AC"
+        assert source.get_sequence_by_start_end_strand("chr1", 3, 4) == "GT"
+        assert opened == ["auto"]
+
+    def test_sequential_mode_reuses_open_reader_across_spans(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Test consecutive span fetches open the unindexed FASTA once."""
+
+        path = _write_fasta(tmp_path / "sample.fa")
+        source = _make_fasta_source(path, "sequential")
+        opened: list[str] = []
+        original_open = FastaParser.open
+
+        def counting_open(parser: FastaParser, file_path: str, mode: str = "auto") -> FastaParser:
+            opened.append(mode)
+            return original_open(parser, file_path, mode)
+
+        monkeypatch.setattr(FastaParser, "open", counting_open)
+
+        assert source.get_sequence_by_start_end_strand("chr1", 1, 2) == "AC"
+        assert source.get_sequence_by_start_end_strand("chr2", 3, 4) == "AA"
+        assert opened == ["auto"]
+        assert source.adaptor.reader_mode == "sequential"
+
+    def test_sequential_mode_warns_once(self, tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+        """Test an unindexed FASTA logs one warning across spans and length lookups."""
+
+        path = _write_fasta(tmp_path / "sample.fa")
+        source = _make_fasta_source(path, "sequential")
+
+        with caplog.at_level("WARNING"):
+            assert source.get_sequence_by_start_end_strand("chr1", 1, 2) == "AC"
+            assert source.get_seq_region_length("chr2") == 4
+            assert source.get_sequence_by_start_end_strand("chr1", 3, 4) == "GT"
+
+        assert [record.message for record in caplog.records if "no usable FASTA index" in record.message] == [
+            f"{path} has no usable FASTA index; sequential fallback is bounded but may be slow"
+        ]
+
+    def test_query_mode_reopens_reader_in_another_process(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Test a reader inherited from another process id is opened again."""
+
+        path = _write_indexed_fasta(tmp_path / "sample.fa")
+        source = _make_fasta_source(path, "query")
+        assert source.get_sequence_by_start_end_strand("chr1", 1, 2) == "AC"
+
+        monkeypatch.setattr(os, "getpid", lambda: -1)
+
+        assert source.get_sequence_by_start_end_strand("chr1", 3, 4) == "GT"
+        assert source._adaptor_pid == -1  # pylint: disable=protected-access
 
     def test_sequential_mode_loads_requested_span(self, tmp_path: Path) -> None:
         """Test sequential mode returns the requested sequence span."""
@@ -213,16 +299,27 @@ class TestFastaSequenceSourceSequence:
 
         assert source.get_sequence_by_start_end_strand("chr3", 1, 4) == "NNNN"
 
-    def test_sequential_sequences_are_loaded_once(self, tmp_path: Path) -> None:
-        """Test sequential mode keeps loaded FASTA records in memory."""
+    def test_sequential_spans_do_not_retain_complete_reference_sequences(self, tmp_path: Path) -> None:
+        """Test sequential lookup retains only its requested result span."""
 
         path = _write_fasta(tmp_path / "sample.fa")
         source = _make_fasta_source(path, "sequential")
 
         assert source.get_sequence_by_start_end_strand("chr1", 1, 4) == "ACGT"
-        loaded_sequences = source._sequences  # pylint: disable=protected-access
         assert source.get_sequence_by_start_end_strand("chr2", 1, 4) == "AAAA"
-        assert source._sequences is loaded_sequences  # pylint: disable=protected-access
+        assert not hasattr(source, "_sequences")
+
+    def test_no_file_returns_ns(self) -> None:
+        """Test if source.file_path is None, _fetch_sequence_chunk returns Ns"""
+        source = FastaSequenceSource()
+        # pylint: disable-next=protected-access
+        assert source._fetch_sequence_chunk(seq_region_name="chr1", start=101, end=110) == "NNNNNNNNNN"
+
+    def test_no_file_metadata_is_empty_frozenset(self) -> None:
+        """Test if source.file_path is None, _fetch_sequence_chunk returns Ns"""
+        source = FastaSequenceSource()
+        # pylint: disable-next=protected-access
+        assert source.sequence_region_names == frozenset()
 
 
 class TestFastaSequenceSourceLength:
@@ -231,8 +328,8 @@ class TestFastaSequenceSourceLength:
     def test_length_is_resolved_from_fasta_metadata(self, tmp_path: Path) -> None:
         """Test sequence region length is read from parser metadata."""
 
-        path = _write_fasta(tmp_path / "sample.fa", SAMPLE)
-        source = _make_fasta_source(path, "sequential")
+        path = _write_indexed_fasta(tmp_path / "sample.fa", SAMPLE)
+        source = _make_fasta_source(path, "query")
 
         assert source.get_seq_region_length("chr1") == 8
         assert source.get_seq_region_length("chr2") == 4
@@ -240,21 +337,58 @@ class TestFastaSequenceSourceLength:
     def test_length_is_cached_by_sequence_source(self, tmp_path: Path) -> None:
         """Test sequence region length lookup uses the shared source cache."""
 
-        path = _write_fasta(tmp_path / "sample.fa", SAMPLE)
-        source = _make_fasta_source(path, "sequential")
+        path = _write_indexed_fasta(tmp_path / "sample.fa", SAMPLE)
+        source = _make_fasta_source(path, "query")
 
         assert source.get_seq_region_length("chr1") == 8
         assert source._seq_region_lengths == {"chr1": 8}  # pylint: disable=protected-access
 
-    def test_length_returns_none_for_missing_region(self, tmp_path: Path) -> None:
-        """Test missing sequence region length returns None."""
+    def test_a_missing_region_gets_the_placeholder_length(self, tmp_path: Path) -> None:
+        """A contig the FASTA does not carry is still given a length, so its variants can be read."""
+
+        path = _write_indexed_fasta(tmp_path / "sample.fa")
+        source = _make_fasta_source(path, "query")
+
+        assert source.get_seq_region_length("chr3") == UNKNOWN_REGION_LENGTH
+        assert source.unknown_regions == {"chr3"}
+
+    def test_a_missing_region_is_reported_once(
+        self, tmp_path: Path, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """ClinVar asks for the same seven absent scaffolds 51 times; one warning each is enough."""
+
+        path = _write_indexed_fasta(tmp_path / "sample.fa")
+        source = _make_fasta_source(path, "query")
+
+        with caplog.at_level(logging.WARNING):
+            source.get_seq_region_length("chr3")
+            # The length cache would answer the second ask on its own; clearing it puts the
+            # question back to the source, which is what has to stay quiet.
+            source._seq_region_lengths.clear()  # pylint: disable=protected-access
+            source.get_seq_region_length("chr3")
+
+        warnings = [record for record in caplog.records if "chr3" in record.getMessage()]
+        assert len(warnings) == 1
+
+    def test_a_known_region_is_not_recorded_as_unknown(self, tmp_path: Path) -> None:
+        """A region the index carries keeps its real length and is not recorded."""
+
+        path = _write_indexed_fasta(tmp_path / "sample.fa", SAMPLE)
+        source = _make_fasta_source(path, "query")
+
+        assert source.get_seq_region_length("chr1") == 8
+        assert not source.unknown_regions
+
+    def test_length_is_scanned_from_an_unindexed_fasta(self, tmp_path: Path) -> None:
+        """Test sequential fallback derives authoritative lengths without retaining records."""
 
         path = _write_fasta(tmp_path / "sample.fa")
         source = _make_fasta_source(path, "sequential")
 
-        assert source.get_seq_region_length("chr3") is None
+        assert source.get_seq_region_length("chr1") == 8
+        assert source.sequence_region_names == frozenset({"chr1", "chr2"})
 
-    def test_length_comes_from_metadata_without_loading_sequences(self, tmp_path: Path) -> None:
+    def test_length_comes_from_metadata_without_scanning_sequences(self, tmp_path: Path) -> None:
         """Test length lookup does not load FASTA records."""
 
         path = _write_fasta(tmp_path / "sample.fa")
@@ -264,4 +398,4 @@ class TestFastaSequenceSourceLength:
         )
 
         assert source.get_seq_region_length("chr1") == 8
-        assert source._sequences is None  # pylint: disable=protected-access
+        assert source._metadata_lengths == {"chr1": 8}  # pylint: disable=protected-access

@@ -18,7 +18,7 @@
 from copy import deepcopy
 import pytest
 
-from ensembl.vep.common import CoordSystemLevel, Strand
+from ensembl.vep.common import CoordSystemLevel, Strand, reverse_complement
 from ensembl.vep.models.sequence import CoordSystem, Slice
 from tests.models.conftest import DummySequenceSource
 
@@ -196,3 +196,106 @@ class TestSliceEquality:
             strand=Strand.FORWARD,
         )
         assert genomic_slice != slice2
+
+
+class TestSliceSubseq:
+    """Test slice-relative span sequence."""
+
+    @staticmethod
+    def _sourced_slice(source: DummySequenceSource, strand: Strand = Strand.FORWARD) -> Slice:
+        """Create a slice on positions 3..10 of an in-memory region."""
+        source.data = {"1": "AACCGGTTAACC"}
+        return Slice(
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+            seq_region_name="1",
+            start=3,
+            end=10,
+            strand=strand,
+            sequence_source=source,
+        )
+
+    def test_forward_slice_fetches_only_the_span(self, dummy_sequence_source: DummySequenceSource) -> None:
+        """Test a forward slice reads only the requested span from its source."""
+        genomic_slice = self._sourced_slice(dummy_sequence_source)
+
+        span = genomic_slice.subseq(2, 4)
+
+        assert span == "CGG"
+        assert dummy_sequence_source.calls == [("1", 4, 6)]
+
+    def test_forward_slice_reverse_complements_span(self, dummy_sequence_source: DummySequenceSource) -> None:
+        """Test a reverse-strand span is returned reverse complemented."""
+        genomic_slice = self._sourced_slice(dummy_sequence_source)
+
+        assert genomic_slice.subseq(2, 4, Strand.REVERSE) == "CCG"
+
+    def test_span_past_slice_end_is_cut_from_slice_sequence(
+        self, dummy_sequence_source: DummySequenceSource
+    ) -> None:
+        """Test a span running past the slice end falls back to cutting the slice sequence."""
+        genomic_slice = self._sourced_slice(dummy_sequence_source)
+
+        span = genomic_slice.subseq(7, 9)
+
+        assert span == "AA"
+        assert dummy_sequence_source.calls == [("1", 3, 10)]
+
+        span = genomic_slice.subseq(7, 9, Strand.REVERSE)
+
+        assert span == "TT"
+        assert dummy_sequence_source.calls == [("1", 3, 10)]
+
+    def test_reverse_slice_fetches_only_the_span(self, dummy_sequence_source: DummySequenceSource) -> None:
+        """Test a reverse slice measures the span back from its genomic end."""
+        genomic_slice = self._sourced_slice(dummy_sequence_source, Strand.REVERSE)
+
+        span = genomic_slice.subseq(1, 3)
+
+        assert span == "TTA"
+        assert dummy_sequence_source.calls == [("1", 8, 10)]
+
+    def test_reverse_slice_composes_the_requested_strand(
+        self, dummy_sequence_source: DummySequenceSource
+    ) -> None:
+        """Test a reverse-relative span on a reverse slice reads forward genomic sequence."""
+        genomic_slice = self._sourced_slice(dummy_sequence_source, Strand.REVERSE)
+
+        assert genomic_slice.subseq(1, 3, Strand.REVERSE) == "TAA"
+
+    @pytest.mark.parametrize("slice_strand", [Strand.FORWARD, Strand.REVERSE])
+    @pytest.mark.parametrize("span_strand", [Strand.FORWARD, Strand.REVERSE])
+    @pytest.mark.parametrize(("start", "end"), [(1, 1), (1, 8), (2, 4), (6, 8), (8, 8)])
+    def test_span_fetch_matches_cutting_the_slice_sequence(
+        self,
+        dummy_sequence_source: DummySequenceSource,
+        slice_strand: Strand,
+        span_strand: Strand,
+        start: int,
+        end: int,
+    ) -> None:
+        """Test the fetched span equals what cutting the whole slice sequence would give."""
+        genomic_slice = self._sourced_slice(dummy_sequence_source, slice_strand)
+        slice_seq = genomic_slice.seq
+        assert slice_seq is not None
+        expected = slice_seq[start - 1 : end]
+        if span_strand == Strand.REVERSE:
+            expected = reverse_complement(expected)
+
+        assert genomic_slice.subseq(start, end, span_strand) == expected
+
+    def test_unknown_strand_slice_has_no_span(
+        self, dummy_sequence_source: DummySequenceSource, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """Test an unknown strand gives no span to measure, and says so."""
+        genomic_slice = self._sourced_slice(dummy_sequence_source, Strand.UNKNOWN)
+
+        with caplog.at_level("WARNING"):
+            span = genomic_slice.subseq(2, 4)
+
+        assert span is None
+        assert "unknown strand" in caplog.text
+        assert dummy_sequence_source.calls == []
+
+    def test_slice_without_sequence_returns_none(self, genomic_slice: Slice) -> None:
+        """Test a slice with no sequence source has no span sequence."""
+        assert genomic_slice.subseq(1, 3) is None

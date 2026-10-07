@@ -25,6 +25,7 @@ from ensembl.vep.common import (
     infer_variant_so_term,
     infer_symbolic_variant_so_term,
     format_region_string,
+    parse_region_string,
     invalidate,
     invalidates,
     is_resolved,
@@ -435,6 +436,43 @@ class TestShiftSequence:
             shift_sequence("A", post_seq=None, pre_seq="A", start=1, end=1)  # type: ignore[arg-type]
         with pytest.raises(ValueError):
             shift_sequence("A", post_seq="A", pre_seq=None, start=1, end=1)  # type: ignore[arg-type]
+
+
+class TestParseRegionString:
+    """Tests for the parse_region_string function."""
+
+    @pytest.mark.parametrize(
+        ("region", "expected"),
+        [
+            pytest.param("chr1:10-20", ("chr1", 10, 20), id="name-start-end"),
+            pytest.param("chr1:10", ("chr1", 10, None), id="name-start"),
+            pytest.param("chr1", ("chr1", None, None), id="name-only"),
+            pytest.param("HLA:DRB1:10-20", ("HLA:DRB1", 10, 20), id="name-with-colon"),
+        ],
+    )
+    def test_splits_a_region(self, region: str, expected: tuple[str, int | None, int | None]) -> None:
+        """Returns the sequence-region name with its optional bounds."""
+
+        assert parse_region_string(region) == expected
+
+    def test_round_trips_with_format_region_string(self) -> None:
+        """Parses back what format_region_string builds."""
+
+        assert parse_region_string(format_region_string(seq_region_name="1", start=5, end=9)) == ("1", 5, 9)
+
+    @pytest.mark.parametrize(
+        ("region", "error_match"),
+        [
+            pytest.param("", None, id="empty"),
+            pytest.param("chr1:x-20", None, id="not-a-number"),
+            pytest.param("chr1:0-20", "1-based", id="not-positive"),
+        ],
+    )
+    def test_rejects_an_unparseable_region(self, region: str, error_match: str | None) -> None:
+        """Raises when the region is empty or its coordinates are not integers."""
+
+        with pytest.raises(ValueError, match=error_match):
+            parse_region_string(region)
 
 
 class TestFormatRegionString:
