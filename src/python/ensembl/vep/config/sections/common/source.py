@@ -51,11 +51,12 @@ class SourceConfig(ConfigSection):
         fasta (Path | None): Reference FASTA, required alongside ``gff``/``gtf`` for sequence.
         synonyms (Path | None): File of sequence-region synonyms, one region per line: a reference
             name followed by its synonyms, whitespace-separated. Perl VEP's ``--synonyms`` format.
-        cache (Path | None): VEP cache directory to annotate from. Accepted so the option exists
-            where Perl VEP has it; no reader is implemented yet.
+        cache (bool): Annotate from a VEP cache, a switch as in Perl VEP; the directory is
+            ``dir_cache``. Accepted, not implemented yet.
+        dir_cache (Path | None): Directory of the VEP cache.
         database (bool): Annotate from an Ensembl database. Accepted, not implemented yet.
-        custom (tuple[str, ...]): Custom annotation files, in Perl VEP's ``--custom`` spelling.
-            Accepted, not implemented yet.
+        custom (tuple[str, ...]): Custom annotation specs, one per ``--custom`` occurrence and each
+            kept whole (Perl VEP's spec is itself comma-separated). Accepted, not implemented yet.
         distance (tuple[int, ...]): How far outside a feature a variant may fall and still be
             paired with it, as Perl VEP's ``--distance``: one value for both directions, or
             ``upstream,downstream``. ``--flank`` is accepted as a synonym. Read through
@@ -79,14 +80,16 @@ class SourceConfig(ConfigSection):
     synonyms: Path | None = field(
         default=None, metadata=option("file of sequence-region synonyms, one region per line")
     )
-    cache: Path | None = field(
-        default=None, metadata=option("VEP cache directory to annotate from (not implemented yet)")
-    )
+    cache: bool = field(default=False, metadata=option("annotate from a VEP cache (not implemented yet)"))
+    dir_cache: Path | None = field(default=None, metadata=option("directory of the VEP cache"))
     database: bool = field(
         default=False, metadata=option("annotate from an Ensembl database (not implemented yet)")
     )
     custom: tuple[str, ...] = field(
-        default=(), metadata=option("custom annotation files (not implemented yet)", metavar="SPEC")
+        default=(),
+        metadata=option(
+            "custom annotation spec, repeatable (not implemented yet)", metavar="SPEC", repeatable=True
+        ),
     )
     distance: tuple[int, ...] = field(
         default=(DEFAULT_DISTANCE,),

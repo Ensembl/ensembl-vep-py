@@ -25,6 +25,18 @@ from ensembl.vep.config.sections.base import ConfigSection
 
 __all__ = ["RunConfig"]
 
+_STDOUT_SPELLINGS = frozenset({"stdout", "-"})
+
+
+def _as_output_file(value: Path | str | None) -> Path | None:
+    """Map the stdout spellings, and an empty value, to ``None``; read anything else as a path."""
+    if value is None:
+        return None
+    text = str(value)
+    if text.lower() in _STDOUT_SPELLINGS:
+        return None
+    return Path(text)
+
 
 @define(frozen=True, kw_only=True, auto_attribs=True)
 class RunConfig(ConfigSection):
@@ -35,25 +47,30 @@ class RunConfig(ConfigSection):
     overlap, against a fact layer that is called about ninety times more often.
 
     Attributes:
-        output_file (Path): Annotation output path.
-        output_format (str): Annotation output format.
+        output_file (Path | None): Annotation output path, or None to stream to stdout. ``STDOUT``
+            (any case) and ``-`` mean stdout, as they do in Perl VEP.
+        output_format (str): Annotation output format. Defaults to ``vcf``; Perl VEP defaults to ``vep``,
+            which has no writer yet.
         force_overwrite (bool): Overwrite ``output_file`` if it already exists.
         no_progress (bool): Suppress interactive variant progress.
         no_stats (bool): Suppress the run summary entirely.
-        stats_file (Path | None): Summary path, or None to derive ``<output_file>_summary.html``.
+        stats_file (Path | None): Summary path, or None to derive ``<output_file>_summary.html``
+            (no summary file when output goes to stdout).
         stats_format (str): Summary format.
     """
 
     section_name: ClassVar[str] = "run"
 
-    output_file: Path = field(
-        factory=lambda: Path("variant_effect_output.txt"),
+    output_file: Path | None = field(
+        default=Path("variant_effect_output.txt"),
+        converter=_as_output_file,
         metadata=option("annotation output file", short="o"),
     )
     output_format: str = field(
         default="vcf",
         metadata=option(
-            "registered annotation output format",
+            "annotation output format (Perl VEP defaults to its own 'vep' format, "
+            "which has no writer here yet)",
             constants={"vcf": "vcf", "json": "json"},
         ),
     )

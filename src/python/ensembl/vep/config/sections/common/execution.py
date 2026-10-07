@@ -37,8 +37,8 @@ class ExecutionConfig(ConfigSection):
     """Configure worker processes and optional independent-track threads.
 
     Attributes:
-        processes (int): Number of worker processes.
-        fork (int | None): Compatibility spelling for ``processes``.
+        processes (int): Number of worker processes. Perl VEP spells it ``--fork``, accepted as a
+            synonym so every layer writes this one field and the highest-precedence layer wins.
         start_method (StartMethod): Multiprocessing start method, or ``auto``.
         threads (int): Threads available to independent annotation tracks in one worker.
         buffer_size (int): Maximum records in one sequence-region input buffer.
@@ -51,11 +51,7 @@ class ExecutionConfig(ConfigSection):
 
     section_name: ClassVar[str] = "execution"
 
-    processes: int = field(default=1, metadata=option("worker process count"))
-    fork: int | None = field(
-        default=None,
-        metadata=option("worker process count (Perl VEP compatibility)"),
-    )
+    processes: int = field(default=1, metadata=option("worker process count", synonyms=("fork",)))
     start_method: StartMethod = field(
         default=StartMethod.AUTO,
         metadata=option("multiprocessing start method"),
@@ -79,10 +75,6 @@ class ExecutionConfig(ConfigSection):
         """Reject execution settings that cannot produce a useful worker pool."""
         if self.processes < 1:
             raise ValueError("processes must be at least one")
-        if self.fork is not None and self.fork < 1:
-            raise ValueError("fork must be at least one")
-        if self.fork is not None and self.processes != 1 and self.processes != self.fork:
-            raise ValueError("processes and fork must agree when both are given")
         if self.threads < 1:
             raise ValueError("threads must be at least one")
         if self.buffer_size < 1:
@@ -93,8 +85,3 @@ class ExecutionConfig(ConfigSection):
             raise ValueError("max_in_flight must be at least one")
         if self.transcript_pool_bytes < 0:
             raise ValueError("transcript_pool_bytes must be at least zero")
-
-    @property
-    def worker_processes(self) -> int:
-        """Return the effective process count, applying the compatibility option."""
-        return self.fork if self.fork is not None else self.processes
