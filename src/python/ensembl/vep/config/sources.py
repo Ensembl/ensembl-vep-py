@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Configuration layers and how they combine."""
+"""Configuration layers (file, environment, command line etc.) and how they combine."""
 
 from __future__ import annotations
 
@@ -147,6 +147,19 @@ def coerce_value(raw: object, type_annotation: Any) -> object:
     return _converter_for(type_annotation)(raw)
 
 
+def _coerce_repeatable(raw: object, type_annotation: Any) -> tuple:
+    """Coerce a repeatable option's value without splitting an item on its commas.
+
+    One ``custom`` spec is itself comma-separated, so a lone string is one item, and a list or
+    tuple is one item per element -- the TOML spelling of giving the option twice.
+    """
+    item_type, _optional = unwrap_optional_type(type_annotation)
+    arguments = [argument for argument in get_args(item_type) if argument is not Ellipsis]
+    converter = _converter_for(arguments[0] if arguments else str)
+    items = raw if isinstance(raw, (list, tuple)) else [raw]
+    return tuple(converter(item) for item in items)
+
+
 def _check_choices(section: str, field_name: str, value: object, spec: OptionSpec) -> None:
     """Check a coerced value against the option's declared choices, if it has any.
 
@@ -161,19 +174,6 @@ def _check_choices(section: str, field_name: str, value: object, spec: OptionSpe
         if member not in choices:
             accepted = ", ".join(str(choice) for choice in choices)
             raise ValueError(f"{section}.{field_name}: {member!r} is not one of {accepted}")
-
-
-def _coerce_repeatable(raw: object, type_annotation: Any) -> tuple:
-    """Coerce a repeatable option's value without splitting an item on its commas.
-
-    One ``custom`` spec is itself comma-separated, so a lone string is one item, and a list or
-    tuple is one item per element -- the TOML spelling of giving the option twice.
-    """
-    item_type, _optional = unwrap_optional_type(type_annotation)
-    arguments = [argument for argument in get_args(item_type) if argument is not Ellipsis]
-    converter = _converter_for(arguments[0] if arguments else str)
-    items = raw if isinstance(raw, (list, tuple)) else [raw]
-    return tuple(converter(item) for item in items)
 
 
 def coerce_layer(layer: ConfigLayer, section_types: tuple[type[ConfigSection], ...]) -> ConfigLayer:
