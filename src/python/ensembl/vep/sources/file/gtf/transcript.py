@@ -87,7 +87,4 @@ class GTFTranscriptSource(GXFTranscriptSource[GTFParser]):
         parent_feature_type = self._PARENTS.get(record.feature_type.lower())
         if parent_feature_type is None:
             return ()
-        parent_id = self._first_attr(record, f"{parent_feature_type}_id")
-        if parent_id is None:
-            return ()
-        return (parent_id,)
+        return record.attributes.get(f"{parent_feature_type}_id", ())
