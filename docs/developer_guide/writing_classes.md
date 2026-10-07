@@ -163,6 +163,20 @@ with cls.unsafe():
     cls.core_attr1 = 2  # does not invalidate derived_attr1
 ```
 
+**Assigning attributes without running hooks**: When building a brand-new object, before construction is complete and before anything has read a value derived from the field being set, we may want to assign to attributes without running any hooks. The `assign_without_hooks` method can be used to set the real field and avoid running not just any ``on_setattr`` hooks, but also any validators or converters that `attrs` would normally run, and consequently speed up assigning those values.
+
+For example, when creating a `Transcript` object, we can immediately assign the `spliced_exons` attribute, because none of the downstream attributes have been cached yet, so there is nothing to invalidate. We can avoid numerous method calls and speed up attribute assignment.
+```python
+transcript = Transcript(
+    stable_id=group.transcript_id,
+    start=transcript_record.start,
+    end=transcript_record.end,
+    strand=strand,
+    slice=genomic_slice,
+)
+transcript.assign_without_hooks(spliced_exons=exons)
+```
+
 ## Use of attrs
 
 We heavily use the `attrs` module for writing classes. All classes use the following `attrs` decorator defaults:
