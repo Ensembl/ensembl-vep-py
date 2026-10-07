@@ -733,7 +733,7 @@ NC_000001.11\tensembl\tCDS\t1100\t4900\t.\t+\t0\tID=cds:ENSP001;Parent=transcrip
         )
         source = GFF3TranscriptSource(
             file_path=str(path),
-            sequence_source=DummySequenceSource({"NC_000001.11": 9000, "NC_000002.12": 8000}),
+            sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000}),
             reference_region_resolver=chr_resolver,
         )
 

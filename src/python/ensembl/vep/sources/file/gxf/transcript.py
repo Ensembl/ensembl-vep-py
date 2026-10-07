@@ -816,8 +816,11 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
 
         transcript_record = group.transcript_record
         strand = STRAND_SYMBOL_TO_ENUM.get(transcript_record.strand_symbol, Strand.UNKNOWN)
-        ### TO DO: Resolve the seqid to reference seq_region_name to get slice
-        genomic_slice = self.slice_cache.get_slice(transcript_record.seqid, self.sequence_source)
+        # Resolve seq region name from GXFRecord to reference name to fecth a Slice from the cache
+        sequence_region = transcript_record.seqid
+        if self.reference_region_resolver is not None:
+            sequence_region = self.reference_region_resolver.resolve(sequence_region)
+        genomic_slice = self.slice_cache.get_slice(sequence_region, self.sequence_source)
 
         transcript = Transcript(
             stable_id=group.transcript_id,
@@ -946,12 +949,17 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         strand = STRAND_SYMBOL_TO_ENUM.get(gene_record.strand_symbol, Strand.UNKNOWN)
         stable_id = self.get_record_id(gene_record) or ""
 
+        # Resolve seq region name from GXFRecord to reference name to fecth a Slice from the cache
+        sequence_region = gene_record.seqid
+        if self.reference_region_resolver is not None:
+            sequence_region = self.reference_region_resolver.resolve(sequence_region)
+
         gene = Gene(
             stable_id=stable_id,
             start=gene_record.start,
             end=gene_record.end,
             strand=strand,
-            slice=self.slice_cache.get_slice(gene_record.seqid, self.sequence_source),
+            slice=self.slice_cache.get_slice(sequence_region, self.sequence_source),
         )
         name = self._first_attr(gene_record, "Name") or self._first_attr(gene_record, "gene_name")
         biotype = self._first_attr(gene_record, "biotype") or self._first_attr(gene_record, "gene_biotype")
