@@ -416,6 +416,9 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         if records or source_name_is_declared:
             return records
 
+        # If no records are found using the source name declared in the index file or header,
+        # try common fallback names (chr prefix variations). This can happen for an un-indexed
+        # GFF/GTF file that doesn't have the ##sequence-region directive.
         fallback_names = [seq_region_name]
         fallback_names.append(
             seq_region_name[3:] if seq_region_name[:3].lower() == "chr" else f"chr{seq_region_name}"
@@ -813,6 +816,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
 
         transcript_record = group.transcript_record
         strand = STRAND_SYMBOL_TO_ENUM.get(transcript_record.strand_symbol, Strand.UNKNOWN)
+        ### TO DO: Resolve the seqid to reference seq_region_name to get slice
         genomic_slice = self.slice_cache.get_slice(transcript_record.seqid, self.sequence_source)
 
         transcript = Transcript(
