@@ -54,6 +54,7 @@ class TestConfig:
 
         monkeypatch.setattr("ensembl.vep.config.base.section_options", counting)
         built = Config.build_section(CorpusConfig, {"fuzz": 3, "step": 4, "nope": 5})
+        assert isinstance(built, CorpusConfig)
         assert (built.fuzz, built.step) == (3, 4)
         assert len(calls) == 1
 

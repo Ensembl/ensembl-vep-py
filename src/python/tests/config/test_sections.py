@@ -114,7 +114,7 @@ class TestSectionBehaviour:
     def test_invalid_worker_settings_are_rejected_before_execution(
         self,
         config_type: type[AnnotationConfig] | type[SourceConfig] | type[ExecutionConfig],
-        kwargs: dict[str, object],
+        kwargs: dict[str, Any],
         message: str,
     ) -> None:
         """Invalid worker inputs fail while the parent constructs configuration."""
