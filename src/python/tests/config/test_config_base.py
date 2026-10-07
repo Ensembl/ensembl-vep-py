@@ -44,6 +44,24 @@ def fixture_toml_file(tmp_path: Path) -> Path:
 class TestConfig:
     """The configuration root."""
 
+    def test_build_section_reads_the_declared_options_once(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """The option table is computed once per section, not once per value."""
+        calls: list[type] = []
+
+        def counting(section_type: type) -> dict:
+            calls.append(section_type)
+            return section_options(section_type)
+
+        monkeypatch.setattr("ensembl.vep.config.base.section_options", counting)
+        built = Config.build_section(CorpusConfig, {"fuzz": 3, "step": 4, "nope": 5})
+        assert (built.fuzz, built.step) == (3, 4)
+        assert len(calls) == 1
+
+    def test_a_bad_environment_choice_fails_the_load(self) -> None:
+        """An out-of-choice environment value is a ValueError out of load."""
+        with pytest.raises(ValueError, match="logging.log_level: 'verbose'"):
+            load(section_names=("logging",), environ={"ENSEMBL_VEP_LOGGING_LOG_LEVEL": "verbose"})
+
     def test_the_fields_are_the_section_registry(self) -> None:
         """The section registry matches the declared section attributes."""
         declared = {section.section_name: type(section) for section in Config().sections()}
@@ -218,6 +236,68 @@ class TestSectionTypesFor:
         """Unknown names fail during resolution."""
         with pytest.raises(KeyError):
             Config.section_types_for(("nope",))
+
+
+class TestForkSpelling:
+    """``--fork`` is a spelling of ``processes``, so the usual layer precedence applies to it."""
+
+    def test_the_command_line_fork_overrides_a_file_processes(self, tmp_path: Path) -> None:
+        """A file's ``processes`` does not make ``--fork 4`` an error; the command line wins."""
+        path = tmp_path / "vep.toml"
+        path.write_text("[execution]\nprocesses = 2\n", encoding="utf-8")
+
+        config = load(["--fork", "4"], section_names=("execution",), config_file=path, environ={})
+
+        assert config.execution.processes == 4
+
+    def test_the_command_line_fork_overrides_an_environment_processes(self) -> None:
+        """The environment's ``processes`` is overridden by ``--fork``."""
+        config = load(
+            ["--fork", "4"],
+            section_names=("execution",),
+            environ={"ENSEMBL_VEP_EXECUTION_PROCESSES": "2"},
+        )
+
+        assert config.execution.processes == 4
+
+    def test_the_command_line_processes_overrides_a_file_fork(self, tmp_path: Path) -> None:
+        """The reverse also holds: a file's ``fork`` loses to ``--processes``."""
+        path = tmp_path / "vep.toml"
+        path.write_text("[execution]\nfork = 2\n", encoding="utf-8")
+
+        config = load(["--processes", "3"], section_names=("execution",), config_file=path, environ={})
+
+        assert config.execution.processes == 3
+
+    def test_fork_in_a_legacy_config_file_sets_processes(self, tmp_path: Path) -> None:
+        """A Perl config line ``fork 4`` sets the worker count."""
+        path = tmp_path / "vep.conf"
+        path.write_text("fork 4\n", encoding="utf-8")
+
+        config = load([], section_names=("execution",), config_file=path, environ={})
+
+        assert config.execution.processes == 4
+
+
+class TestBooleanLayers:
+    """A negative-sense switch set by a lower layer can be turned off from the command line."""
+
+    def test_stats_turns_off_a_file_no_stats(self, tmp_path: Path) -> None:
+        """``--stats`` overrides ``no_stats = true`` from a file."""
+        path = tmp_path / "vep.toml"
+        path.write_text("[run]\nno_stats = true\n", encoding="utf-8")
+
+        kept = load([], section_names=("run",), config_file=path, environ={})
+        turned_on = load(["--stats"], section_names=("run",), config_file=path, environ={})
+
+        assert kept.run.no_stats
+        assert not turned_on.run.no_stats
+
+    def test_progress_turns_off_an_environment_no_progress(self) -> None:
+        """``--progress`` overrides ``no_progress`` set in the environment."""
+        config = load(["--progress"], section_names=("run",), environ={"ENSEMBL_VEP_RUN_NO_PROGRESS": "1"})
+
+        assert not config.run.no_progress
 
 
 class TestPrecedence:

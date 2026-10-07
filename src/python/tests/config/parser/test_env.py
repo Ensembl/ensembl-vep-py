@@ -15,6 +15,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from ensembl.vep.config import Config
 from ensembl.vep.config.parser.env import default_env_name, read_environment
 
@@ -41,3 +43,21 @@ class TestEnvironment:
         """Environment values are coerced."""
         types = Config.section_types_for(("corpus",))
         assert read_environment(types, {"ENSEMBL_VEP_CORPUS_FUZZ": "9"}) == {"corpus": {"fuzz": 9}}
+
+    def test_a_value_outside_its_choices_is_an_error_naming_the_option(self) -> None:
+        """Choices are enforced for environment values."""
+        types = Config.section_types_for(("logging",))
+        with pytest.raises(ValueError, match="logging.log_level: 'verbose' is not one of debug, info"):
+            read_environment(types, {"ENSEMBL_VEP_LOGGING_LOG_LEVEL": "verbose"})
+
+    def test_a_bad_enum_name_is_an_error_naming_the_option(self) -> None:
+        """An unknown enum name is a ValueError listing the accepted names, not a KeyError."""
+        types = Config.section_types_for(("execution",))
+        with pytest.raises(ValueError, match="execution.start_method: 'bogus' is not one of auto, "):
+            read_environment(types, {"ENSEMBL_VEP_EXECUTION_START_METHOD": "bogus"})
+
+    def test_a_bad_number_is_an_error_naming_the_option(self) -> None:
+        """A conversion failure names the option."""
+        types = Config.section_types_for(("corpus",))
+        with pytest.raises(ValueError, match="corpus.fuzz:"):
+            read_environment(types, {"ENSEMBL_VEP_CORPUS_FUZZ": "many"})

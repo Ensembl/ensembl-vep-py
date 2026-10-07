@@ -15,12 +15,17 @@
 
 from __future__ import annotations
 
+import logging
 from enum import Enum
 from pathlib import Path
+from typing import ClassVar
 
 import pytest
+from attrs import define, field
 
 from ensembl.vep.config import Config
+from ensembl.vep.config.option_spec import option
+from ensembl.vep.config.sections.base import ConfigSection
 from ensembl.vep.config.sources import (
     ConfigLayer,
     ConfigSource,
@@ -34,6 +39,15 @@ class Colour(Enum):
     """Enum used only by these tests."""
 
     RED = "red"
+
+
+@define(frozen=True, kw_only=True, auto_attribs=True)
+class ToySection(ConfigSection):
+    """Section with a tuple option restricted to a few choices."""
+
+    section_name: ClassVar[str] = "toy"
+
+    picks: tuple[str, ...] = field(default=(), metadata=option("picks", choices=("a", "b")))
 
 
 class TestConfigSource:
@@ -88,6 +102,11 @@ class TestCoercion:
         """Enum names are matched case-insensitively."""
         assert coerce_value(raw, Colour) is Colour.RED
 
+    def test_an_unknown_enum_name_is_a_value_error_listing_the_members(self) -> None:
+        """A bad enum name is a ValueError, not a KeyError."""
+        with pytest.raises(ValueError, match="'green' is not one of red"):
+            coerce_value("green", Colour)
+
     def test_an_unrecognised_type_passes_through(self) -> None:
         """Unknown types pass through."""
         marker = object()
@@ -107,6 +126,48 @@ class TestCoerceLayer:
         """Values are coerced to their declared type."""
         types = Config.section_types_for(("corpus",))
         assert coerce_layer({"corpus": {"fuzz": "7"}}, types) == {"corpus": {"fuzz": 7}}
+
+
+class TestLayerChoices:
+    """Declared choices are enforced on every layer."""
+
+    def test_a_value_outside_the_choices_names_section_and_field(self) -> None:
+        """The message names the option and lists the choices."""
+        types = Config.section_types_for(("logging",))
+        with pytest.raises(ValueError, match="logging.log_level: 'loud' is not one of debug, info,"):
+            coerce_layer({"logging": {"log_level": "loud"}}, types)
+
+    def test_a_value_inside_the_choices_passes(self) -> None:
+        """Permitted values are unchanged."""
+        types = Config.section_types_for(("logging",))
+        assert coerce_layer({"logging": {"log_level": "warning"}}, types) == {
+            "logging": {"log_level": "warning"}
+        }
+
+    def test_a_none_for_an_optional_choice_field_passes(self) -> None:
+        """An unset optional field is not checked."""
+        types = Config.section_types_for(("source",))
+        assert coerce_layer({"source": {"format": ""}}, types) == {"source": {"format": None}}
+
+    def test_every_member_of_a_tuple_is_checked(self) -> None:
+        """A tuple value is checked item by item."""
+        with pytest.raises(ValueError, match="toy.picks: 'c' is not one of a, b"):
+            coerce_layer({"toy": {"picks": "a,c"}}, (ToySection,))
+
+    def test_a_conversion_failure_names_section_and_field(self) -> None:
+        """A bad number names the option."""
+        types = Config.section_types_for(("corpus",))
+        with pytest.raises(ValueError, match="corpus.fuzz: invalid literal"):
+            coerce_layer({"corpus": {"fuzz": "x"}}, types)
+
+    def test_an_unknown_field_in_a_known_section_is_warned_about(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """The dropped key is named in a warning."""
+        types = Config.section_types_for(("corpus",))
+        with caplog.at_level(logging.WARNING, logger="ensembl.vep"):
+            coerce_layer({"corpus": {"nope": 1}}, types)
+        assert "unknown option 'nope' in section 'corpus'" in caplog.text
 
 
 class TestMerge:

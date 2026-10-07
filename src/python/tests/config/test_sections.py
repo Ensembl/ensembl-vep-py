@@ -22,6 +22,7 @@ import pytest
 
 from ensembl.vep.config import AnnotationConfig, Config, ExecutionConfig, LoggingConfig, SourceConfig
 from ensembl.vep.config.option_spec import section_options
+from ensembl.vep.config.parser.common import resolve_option_key
 from ensembl.vep.config.sections import BenchEndToEndConfig, BenchMatrixConfig
 from ensembl.vep.config.sections.base import ConfigSection
 
@@ -53,9 +54,12 @@ class TestSectionBehaviour:
 
         assert SourceConfig(**kwargs).has_features() is expected
 
-    def test_fork_is_the_compatibility_process_count(self) -> None:
-        """The Perl-compatible spelling resolves through the execution section."""
-        assert ExecutionConfig(fork=2).worker_processes == 2
+    def test_fork_is_a_spelling_of_processes_not_a_field(self) -> None:
+        """The Perl-compatible spelling resolves to the one process-count field."""
+        spelling_owner = resolve_option_key("fork", (ExecutionConfig,))
+
+        assert spelling_owner == ("execution", "processes")
+        assert not hasattr(ExecutionConfig(), "fork")
 
     def test_transcript_pool_bytes_zero_is_allowed(self) -> None:
         """A zero byte budget disables pooling rather than being rejected as invalid."""
@@ -100,8 +104,6 @@ class TestSectionBehaviour:
             ),
             (SourceConfig, {"distance": -1}, "distance"),
             (ExecutionConfig, {"processes": 0}, "processes"),
-            (ExecutionConfig, {"fork": 0}, "fork"),
-            (ExecutionConfig, {"processes": 2, "fork": 3}, "processes and fork"),
             (ExecutionConfig, {"threads": 0}, "threads"),
             (ExecutionConfig, {"buffer_size": 0}, "buffer_size"),
             (ExecutionConfig, {"annotation_window": 0}, "annotation_window"),

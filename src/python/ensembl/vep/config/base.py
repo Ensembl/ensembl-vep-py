@@ -128,9 +128,10 @@ class Config:
         values: dict[str, object],
     ) -> ConfigSection:
         """Build one section from its merged values."""
+        options = section_options(section_type)
         known: dict[str, object] = {}
         for name, value in values.items():
-            if name in section_options(section_type):
+            if name in options:
                 known[name] = value
         return section_type(**known)  # type: ignore[call-arg]
 

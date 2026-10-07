@@ -54,6 +54,7 @@ class SampleConfig(ConfigSection):
     enabled: bool = field(default=False, metadata=option("switch it on"))
     no_frills: bool = field(default=False, metadata=option("a negative-sense switch"))
     sizes: tuple[int, ...] = field(default=(1, 2), metadata=option("the sizes"))
+    specs: tuple[str, ...] = field(default=(), metadata=option("whole specs", repeatable=True))
     path: Path | None = field(default=None, metadata=option("where"))
     ratio: float = field(default=0.5, metadata=option("a fraction"))
     mode: str = field(default="a", metadata=option("pick one", choices=("a", "b")))
@@ -128,9 +129,54 @@ class TestTypeDerivation:
         assert parse_args(parser, ["--enabled"], (SampleConfig,)) == {"sample": {"enabled": True}}
         assert parse_args(parser, ["--no-enabled"], (SampleConfig,)) == {"sample": {"enabled": False}}
 
-    def test_a_negative_sense_boolean_is_a_plain_switch(self, parser: argparse.ArgumentParser) -> None:
-        """A negative-sense flag behaves like a plain switch."""
+    def test_a_positive_boolean_takes_the_underscore_negative(self, parser: argparse.ArgumentParser) -> None:
+        """``--no_enabled`` is the canonical negative, in Perl VEP's underscore style."""
+        assert parse_args(parser, ["--no_enabled"], (SampleConfig,)) == {"sample": {"enabled": False}}
+
+    def test_a_negative_sense_boolean_is_a_switch_with_a_counterpart(
+        self, parser: argparse.ArgumentParser
+    ) -> None:
+        """A negative-sense flag keeps its Perl spelling and gains a positive that turns it off."""
         assert parse_args(parser, ["--no_frills"], (SampleConfig,)) == {"sample": {"no_frills": True}}
+        assert parse_args(parser, ["--frills"], (SampleConfig,)) == {"sample": {"no_frills": False}}
+
+    def test_the_last_boolean_spelling_wins(self, parser: argparse.ArgumentParser) -> None:
+        """Giving both senses leaves the later one in force."""
+        parsed = parse_args(parser, ["--no_frills", "--frills", "--enabled", "--no_enabled"], (SampleConfig,))
+
+        assert parsed == {"sample": {"no_frills": False, "enabled": False}}
+
+    def test_zone_map_accepts_every_negative_spelling(self) -> None:
+        """Both ``--no_zone_map`` and the hyphenated ``--no-zone_map`` turn the zone map off."""
+        types = Config.section_types_for(("annotation",))
+        annotation_parser = build_parser("vep x", "", types)
+
+        for spelling in ("--no_zone_map", "--no-zone_map"):
+            parsed = parse_args(annotation_parser, ["--zone_map", spelling], types)
+            assert parsed == {"annotation": {"zone_map": False}}
+
+    def test_help_shows_the_underscore_negative_and_hides_the_counterparts(
+        self, parser: argparse.ArgumentParser
+    ) -> None:
+        """Help lists ``--no_enabled`` but neither ``--no-enabled`` nor the ``--frills`` counterpart."""
+        help_text = parser.format_help()
+
+        assert "--enabled, --no_enabled" in help_text
+        assert "--no-enabled" not in help_text
+        assert "\n  --frills" not in help_text
+        assert "(--frills turns it back on)" in help_text
+
+    def test_a_repeatable_option_keeps_each_occurrence_whole(self, parser: argparse.ArgumentParser) -> None:
+        """Each ``--specs`` is one item; commas inside it are not split."""
+        parsed = parse_args(
+            parser, ["--specs", "a.vcf,ClinVar,vcf", "--specs", "b.bed,Other"], (SampleConfig,)
+        )
+
+        assert parsed == {"sample": {"specs": ("a.vcf,ClinVar,vcf", "b.bed,Other")}}
+
+    def test_an_unrepeatable_tuple_still_splits_on_commas(self, parser: argparse.ArgumentParser) -> None:
+        """Only an option declared repeatable stops comma splitting."""
+        assert parse_args(parser, ["--sizes", "1,2"], (SampleConfig,)) == {"sample": {"sizes": (1, 2)}}
 
     def test_tuples_are_comma_separated(self, parser: argparse.ArgumentParser) -> None:
         """Tuples are comma separated."""
@@ -174,6 +220,27 @@ class TestTypeDerivation:
         """Unknown enum members fail."""
         with pytest.raises(SystemExit):
             parse_args(parser, ["--colour", "green"], (SampleConfig,))
+
+
+class TestSourceShapes:
+    """The Perl-shaped ``--cache`` and ``--custom`` options."""
+
+    def test_cache_is_a_switch_and_dir_cache_takes_the_directory(self) -> None:
+        """``--cache`` takes no value; ``--dir_cache`` carries the path."""
+        config = load(["--cache", "--dir_cache", "/data/vep"], section_names=("source",), environ={})
+
+        assert config.source.cache is True
+        assert config.source.dir_cache == Path("/data/vep")
+
+    def test_custom_given_twice_keeps_each_spec_whole(self) -> None:
+        """Each ``--custom`` is one spec, commas included."""
+        config = load(
+            ["--custom", "a.vcf.gz,ClinVar,vcf,exact", "--custom", "b.bed,Other,bed"],
+            section_names=("source",),
+            environ={},
+        )
+
+        assert config.source.custom == ("a.vcf.gz,ClinVar,vcf,exact", "b.bed,Other,bed")
 
 
 class TestHelp:
