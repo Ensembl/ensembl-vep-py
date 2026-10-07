@@ -80,13 +80,6 @@ class AppendItemAction(argparse.Action):
         setattr(namespace, self.dest, (*collected, values))
 
 
-def opposite_spelling(spelling: str) -> str:
-    """Return the spelling that sets a boolean the other way: ``zone_map`` <-> ``no_zone_map``."""
-    if spelling.startswith("no_"):
-        return spelling.removeprefix("no_")
-    return f"no_{spelling}"
-
-
 def _comma_separated(item_type: Any) -> Any:
     """Return a converter parsing a comma-separated string into a tuple."""
 
@@ -117,6 +110,13 @@ def _enum_converter(enum_type: type[Enum]) -> Any:
 
     convert.__name__ = enum_type.__name__.lower()
     return convert
+
+
+def opposite_spelling(spelling: str) -> str:
+    """Return the spelling that sets a boolean the other way: ``zone_map`` <-> ``no_zone_map``."""
+    if spelling.startswith("no_"):
+        return spelling.removeprefix("no_")
+    return f"no_{spelling}"
 
 
 def destination(section_name: str, field_name: str) -> str:
