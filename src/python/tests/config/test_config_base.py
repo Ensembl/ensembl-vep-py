@@ -82,12 +82,6 @@ class TestConfig:
         for section in Config().sections():
             assert set(mapping[section.section_name]) == set(section_options(type(section)))
 
-    def test_evolve_replaces_one_section_and_leaves_the_rest(self) -> None:
-        """Evolve replaces one section and leaves the rest alone."""
-        config = Config().evolve(corpus=CorpusConfig(fuzz=1))
-        assert config.corpus.fuzz == 1
-        assert config.bench.repeats == Config().bench.repeats
-
     def test_an_unset_origin_reads_as_default(self) -> None:
         """Unset values read as the default source."""
         assert Config().source_of("corpus", "fuzz") is ConfigSource.DEFAULT

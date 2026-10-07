@@ -17,9 +17,8 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-from typing import Any, ClassVar
+from typing import ClassVar
 
-import attrs
 from attrs import define, field, fields
 
 from ensembl.vep.config.option_spec import section_options
@@ -113,9 +112,28 @@ class Config:
     }
     """Map section attribute names to their classes."""
 
+    @staticmethod
+    def _command_section_names(command: str) -> tuple[str, ...]:
+        """Return the section names a registered command reads.
+
+        The registry is imported here rather than at module scope because importing it registers
+        the runners, and every runner module imports this one.
+
+        Raises:
+            ValueError: If no command is registered under the name.
+        """
+
+        # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
+        from ensembl.vep.runner import get_runner
+
+        try:
+            return get_runner(command).sections
+        except KeyError as unknown:
+            raise ValueError(str(unknown).strip("\"'")) from unknown
+
     @classmethod
     def section_types_for(cls, names: tuple[str, ...]) -> tuple[type[ConfigSection], ...]:
-        """Return the section classes for the named attributes."""
+        """Return the section class types for the given section names."""
         section_types: list[type[ConfigSection]] = []
         for name in names:
             section_types.append(cls.section_types[name])
@@ -127,7 +145,7 @@ class Config:
         section_type: type[ConfigSection],
         values: dict[str, object],
     ) -> ConfigSection:
-        """Build one section from its merged values."""
+        """Build one section class from its merged values."""
         options = section_options(section_type)
         known: dict[str, object] = {}
         for name, value in values.items():
@@ -139,7 +157,7 @@ class Config:
     def sources_for(
         cls, layers: tuple[tuple[ConfigSource, ConfigLayer], ...]
     ) -> dict[str, dict[str, ConfigSource]]:
-        """Return the winning source for each option."""
+        """Return the winning source for each option given the configuration layers for different sources."""
         sources: dict[str, dict[str, ConfigSource]] = {}
         for source, layer in layers:
             for section, values in layer.items():
@@ -185,25 +203,6 @@ class Config:
             built[name] = cls.build_section(section_type, coerced.get(section_type.section_name, {}))
         return cls(**built, command=command)  # type: ignore[arg-type]
 
-    @staticmethod
-    def _command_section_names(command: str) -> tuple[str, ...]:
-        """Return the sections a registered command reads.
-
-        The registry is imported here rather than at module scope because importing it registers
-        the runners, and every runner module imports this one.
-
-        Raises:
-            ValueError: If no command is registered under the name.
-        """
-
-        # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
-        from ensembl.vep.runner import get_runner
-
-        try:
-            return get_runner(command).sections
-        except KeyError as unknown:
-            raise ValueError(str(unknown).strip("\"'")) from unknown
-
     def sections(self) -> tuple[ConfigSection, ...]:
         """Return the configured sections in declaration order."""
         sections: list[ConfigSection] = []
@@ -214,14 +213,14 @@ class Config:
         return tuple(sections)
 
     def section(self, name: str) -> ConfigSection:
-        """Return one section by its declared name."""
+        """Return a configured section by its declared name."""
         for section in self.sections():
             if section.section_name == name:
                 return section
         raise KeyError(f"Unknown configuration section '{name}'")
 
     def source_of(self, section: str, field_name: str) -> ConfigSource:
-        """Return the layer that supplied one option."""
+        """Return the winning source for a given section name and field."""
         return self.sources.get(section, {}).get(field_name, ConfigSource.DEFAULT)
 
     def as_mapping(self) -> dict[str, dict[str, object]]:
@@ -234,25 +233,22 @@ class Config:
             mapping[section.section_name] = values
         return mapping
 
-    def evolve(self, **changes: Any) -> Config:
-        """Return a copy with selected sections replaced."""
-        return attrs.evolve(self, **changes)
-
 
 def load(
     argv: list[str] | None = None,
     *,
     command: str = "",
     section_names: tuple[str, ...] = (),
-    parser: argparse.ArgumentParser | None = None,
     config_file: Path | None = None,
-    overrides: ConfigLayer | None = None,
     environ: dict[str, str] | None = None,
+    parser: argparse.ArgumentParser | None = None,
+    overrides: ConfigLayer | None = None,
 ) -> Config:
     """Load configuration from the available layers."""
     section_names = section_names or tuple(Config.section_types)
     section_types = Config.section_types_for(section_names)
 
+    # Read configuration layers in order of increasing precedence: file, environment, command line.
     layers: list[tuple[ConfigSource, ConfigLayer]] = []
     if config_file is not None:
         layers.append((ConfigSource.FILE, read_config_file(config_file, section_types)))
