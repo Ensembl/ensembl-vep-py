@@ -15,7 +15,7 @@
 
 from .feature_source import FeatureSource
 from .file.file_feature_source import FileFeatureSource
-from .sequence_source import SequenceSource
-from .file.fasta.sequence import FastaSequenceSource
+from .file.gff3.transcript import GFF3TranscriptSource
+from .file.gtf.transcript import GTFTranscriptSource
 
-__all__ = ["FeatureSource", "FileFeatureSource", "SequenceSource", "FastaSequenceSource"]
+__all__ = ["FeatureSource", "FileFeatureSource", "GFF3TranscriptSource", "GTFTranscriptSource"]

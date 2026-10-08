@@ -152,37 +152,35 @@ class TestFileFeatureSourceGetAllFeatures:
 
         assert parser.opened is False
 
-    @pytest.mark.parametrize(
-        ("exception", "expected_message"),
-        [
-            (NotImplementedError(), "ConcreteParser does not support parse_file"),
-            (FileNotFoundError(), "Error parsing file dummy.txt: does not exist"),
-        ],
-    )
-    def test_parse_file_errors_are_logged_as_errors(
-        self,
-        exception: Exception,
-        expected_message: str,
-        caplog: pytest.LogCaptureFixture,
-        monkeypatch: pytest.MonkeyPatch,
-    ) -> None:
-        """Test parse errors are logged at error level before exiting."""
+    @staticmethod
+    def _source_that_raises(monkeypatch: pytest.MonkeyPatch, exception: Exception) -> DummyFileFeatureSource:
+        """Return a source whose adaptor fails the whole-file parse with a given error."""
 
         def raise_error(_file_path: str, limit: int | None = None) -> list[int]:
             del limit
             raise exception
 
         monkeypatch.setattr(ConcreteParser, "parse_file", staticmethod(raise_error))
-        source = DummyFileFeatureSource(file_path="dummy.txt", adaptor=ConcreteParser(format="dummy"))
+        return DummyFileFeatureSource(file_path="dummy.txt", adaptor=ConcreteParser(format="dummy"))
 
-        with caplog.at_level("ERROR"):
-            with pytest.raises(SystemExit) as exc_info:
-                source.get_all_features()
+    def test_an_adaptor_that_cannot_parse_a_whole_file_raises(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """The error names the adaptor, which the bare error from the parser does not.
 
-        assert exc_info.value.code == 1
-        assert len(caplog.records) == 1
-        assert caplog.records[0].levelname == "ERROR"
-        assert expected_message in caplog.records[0].message
+        It used to call sys.exit(1), which ended the process from underneath its caller. A library
+        reports the problem; deciding the exit code is the runner's job.
+        """
+        source = self._source_that_raises(monkeypatch, NotImplementedError())
+
+        with pytest.raises(NotImplementedError, match="ConcreteParser does not support parse_file"):
+            source.get_all_features()
+
+    def test_a_missing_file_propagates(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """FileNotFoundError already names the path, so it is passed through untouched rather than
+        being swallowed and turned into an exit."""
+        source = self._source_that_raises(monkeypatch, FileNotFoundError())
+
+        with pytest.raises(FileNotFoundError):
+            source.get_all_features()
 
 
 class TestFileFeatureSourceGetFeaturesByRegion:

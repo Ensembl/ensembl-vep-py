@@ -13,7 +13,7 @@
 # limitations under the License.
 """Common constants."""
 
-from ensembl.vep.common.enums import ClassSOTerm
+from ensembl.vep.common.enums import ExonPhase, Strand, ClassSOTerm
 
 CLASS_SO_TERM_ABBRV_TO_ENUM: dict[str, ClassSOTerm] = {
     "INS": ClassSOTerm.INSERTION,
@@ -35,3 +35,20 @@ CLASS_SO_TERM_ABBRV_TO_ENUM: dict[str, ClassSOTerm] = {
     "INV": ClassSOTerm.INVERSION,
     "BND": ClassSOTerm.CHROMOSOME_BREAKPOINT,
 }
+
+# for . (non-strandedness) we treat it as forward strand
+STRAND_SYMBOL_TO_ENUM = {
+    "+": Strand.FORWARD,
+    "-": Strand.REVERSE,
+    ".": Strand.FORWARD,
+    "?": Strand.UNKNOWN,
+}
+
+GFF_TO_ENSEMBL_PHASE = {
+    0: ExonPhase.ZERO,
+    2: ExonPhase.ONE,
+    1: ExonPhase.TWO,
+}
+"""A CDS row's GFF phase (bases to skip to reach a codon) as an Ensembl exon phase (bases of the
+first codon on what came before), converted as ``Bio::EnsEMBL::VEP::AnnotationSource::File::
+BaseGXF::_convert_phase`` does."""

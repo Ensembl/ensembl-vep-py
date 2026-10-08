@@ -17,6 +17,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from typing import Iterator, Generic, TypeVar
+
 from attr import define, field
 
 from ensembl.vep.caches import SliceCache, WeakSliceCache
@@ -37,14 +38,13 @@ class FeatureSource(ABC, Generic[F]):
 
     @abstractmethod
     def get_all_features(self) -> list[F]:
-        """Return all features from this source."""
+        """Returns all features from this source."""
 
         raise NotImplementedError
 
     @abstractmethod
     def iter_all_features(self) -> Iterator[F]:
         """Lazily yield all features from this source."""
-
         raise NotImplementedError
 
     @abstractmethod
@@ -56,7 +56,7 @@ class FeatureSource(ABC, Generic[F]):
         start: int | None = None,
         end: int | None = None,
     ) -> list[F]:
-        """Return features overlapping the given genomic region.
+        """Returns features overlapping the given genomic region.
 
         Args:
             region (str | None): The region (e.g., "chr1:1000-2000") to get features from.
@@ -67,7 +67,6 @@ class FeatureSource(ABC, Generic[F]):
         Returns:
             list[F]: A list of features overlapping the specified region.
         """
-
         raise NotImplementedError
 
     @abstractmethod

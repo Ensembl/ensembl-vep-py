@@ -14,9 +14,9 @@
 """Abstract base for file-backed feature sources."""
 
 import logging
-import sys
 from abc import abstractmethod
-from typing import Generic, Iterator, TypeVar
+from collections.abc import Iterator
+from typing import Generic, TypeVar
 from attrs import define, field
 
 from ensembl.vep.common import SourceType
@@ -46,16 +46,28 @@ class FileFeatureSource(FeatureSource, Generic[P, F]):
     source_type: SourceType = field(default=SourceType.FILE, init=False)
 
     def get_all_features(self) -> list[F]:
-        """Return all features from the provided file."""
+        """Returns all features from the provided file.
+
+        Returns:
+            list[F]: Every feature the file holds.
+
+        Raises:
+            NotImplementedError: If the adaptor cannot parse a whole file at once. Re-raised with
+                the adaptor named, which the bare error from the parser does not say.
+            FileNotFoundError: If the file does not exist. Allowed to propagate: its message
+                already names the path.
+
+        A library reports what went wrong and lets its caller decide what to do about it. These
+        both used to call ``sys.exit(1)``, which ended the process from underneath any caller --
+        including a test, and including a runner that had a better answer than dying.
+        """
 
         try:
             records = self.adaptor.parse_file(self.file_path)
-        except NotImplementedError:
-            logger.error(f"{type(self.adaptor).__name__} does not support parse_file, exiting")
-            sys.exit(1)
-        except FileNotFoundError:
-            logger.error(f"Error parsing file {self.file_path}: does not exist, exiting")
-            sys.exit(1)
+        except NotImplementedError as unsupported:
+            raise NotImplementedError(
+                f"{type(self.adaptor).__name__} does not support parse_file"
+            ) from unsupported
         return self._records_to_features(records)
 
     def get_features_by_region(
@@ -66,7 +78,7 @@ class FileFeatureSource(FeatureSource, Generic[P, F]):
         start: int | None = None,
         end: int | None = None,
     ) -> list[F]:
-        """Return features overlapping the given genomic region.
+        """Returns features overlapping the given genomic region.
 
         Args:
             region (str | None): The region (e.g., "chr1:1000-2000") to get features from.
@@ -144,7 +156,15 @@ class FileFeatureSource(FeatureSource, Generic[P, F]):
                 yield from self._records_to_features([record])
 
     def close(self) -> None:
-        pass
+        """Release the attached sequence source, if any.
+
+        ``FeatureSource`` owns the ``sequence_source`` field and ``__exit__`` calls ``close()``, but
+        nothing in the chain ever released it -- so a source opened as a context manager leaked its
+        sequence handle. Closing it here is what the field's ownership already implied.
+        """
+
+        if self.sequence_source is not None:
+            self.sequence_source.close()
 
     @abstractmethod
     def _records_to_features(self, records: list) -> list[F]:
