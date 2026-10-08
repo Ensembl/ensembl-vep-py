@@ -95,20 +95,6 @@ def invalidates(*cached_names: str) -> Callable:
     return hook
 
 
-def reverse_complement(sequence: str) -> str:
-    """Return the reverse complement of a nucleotide sequence.
-
-    Args:
-        sequence: The sequence to reverse complement.
-
-    Returns:
-        The reverse complement of the sequence.
-    """
-
-    translation_table = str.maketrans("ACGTNacgtn", "TGCANtgcan")
-    return sequence.translate(translation_table)[::-1]
-
-
 def resets_attrs(*attrs: tuple[str, Any]) -> Callable:
     """
     Returns an attrs on_setattr hook that resets the named attributes to a default value.
