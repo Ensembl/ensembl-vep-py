@@ -103,7 +103,7 @@ close()                      -> None
 
 This implements the `get_all_features`, `get_features_by_region`, `iter_all_features` and `iter_features_by_region` which retrieve records from the file using the concrete `Parser` and delegates constructing the Feature objects to the concrete source. It does this through the `_records_to_features` abstract method, which must be implemented by the concrete source.
 
-### VCFVariationSource
+#### VCFVariationSource
 
 The `VCFVariationSource` class is used to make `Variation` and `StructuralVariation` objects from records in a VCF file.
 `StructuralVariation` objects are used for structural variants that are represented symbolically; small INDELS are represented by `Variation` objects.
@@ -111,19 +111,42 @@ The `VCFVariationSource` class is used to make `Variation` and `StructuralVariat
 The `VCFVariationSource` class inherits from `FileFeatureSource` and implements `_records_to_features`. This creates a list of `Variation` and `StructuralVariation` objects from a list of `VcfRecords` provided by the `VCFParser`.
 
 `_records_to_features` decides whether a record is a `StructuralVariation` object in the following way:
-- If the REF and ALT alleles are not simple strings of base characters (ACGT)
-AND 
-- The record contains the SVTYPE info field
+- If the REF and ALT alleles are not simple strings of base characters (ACGT)  
+AND
+- The record contains the SVTYPE info field  
 OR
-- Any of the ALT alleles match one of the symbolic alleles (`<DEL>`, `<INS>` etc.)
+- Any of the ALT alleles match one of the symbolic alleles (`<DEL>`, `<INS>` etc.)  
 OR
 - Any of the ALT alleles match the breakend notation
+
 Otherwise it creates a `Variation` object
+
+#### Transcript Sources
+
+There are currently sources for creating `Transcript` objects from GFF3/GTF file-backed sources, using the `FileFeatureSource` interface.
+
+#### Common GXF class
+
+The `GXFTranscriptSource` implements the common functionality for the concrete GFF3/GTF sources and `GFF3TranscriptSource` and `GTFTranscriptSource` implement anything that is needed to account for the differences between the two formats. For example, getting the identifier of a record or a parent record. Rows from a GFF3/GTF file are returned as `GFF3/GTFRecord` objects.
+
+`GXFTranscriptSource` implements the `_records_to_features()` function that the `FileFeatureSource.get_all_features()` function requires. It also overrides `iter_all_features()`, `iter_features_by_region()` and `get_features_by_region()` to deal with the specificities of the GFF3/GTF format. This is because multiple rows in a GFF3/GTF file represent a single transcript (the parent gene, the transcripts, its exons and potentially its CDS).
+
+`get_features_by_region()`
+
+This function uses a two-stage process because not all of a transcript's features (e.g. exons) will overlap the requested region and therefore wouldn't be retrieved if we simply query the file by the region.
+- First, it fetches all of the transcript rows that overlap the region to get the complete set of spans that the transcripts overlap. The transcript spans are merged to get a minimal set of spans.
+- Second, it retrieves all of the rows that overlap the minimal spans created by the overlapping transcripts.
+
+![](../img/two-stage-get-transcripts.png)
+
+The main function for building transcripts is `_build_transcripts()`. It takes a set of `GFF3/GTFRecord` objects, groups them by transcript and uses each group of records to create a `Transcript` object. A gene can have multiple transcripts, so the gene records and `Gene` objects created from them are cached to allow reuse as are `Slice` objects.
+
+The `_query_typed_records()`, `get_record_id()` and `get_parent_ids()` are abstract methods that are implemented by the separate `GFF3/GTFTranscriptSource` objects.
 
 ### Sequence Sources
 
 `SequenceSource` is an abstract base class for any source of sequence data (DB, File, Cache etc.). The main method is `get_sequence_by_start_end_strand` which returns sequence from a sequence region for the specified coordinates and strand. Actually retrieving the sequence is delegated to `_fetch_sequence_chunk` which has to be implemented by the inheriting class. It also has a sequence cache, implemented by a `SequenceCache` object.
 
-### FileSequenceSource
+#### FileSequenceSource
 
-The `FileSequenceSource` class inherits from `SequenceSource` and implements `_fetch_sequence_chunk` which uses `FastaParser` to get the seuqnece from a FASTA file.
+The `FileSequenceSource` class inherits from `SequenceSource` and implements `_fetch_sequence_chunk` which uses `FastaParser` to get the sequence from a FASTA file.

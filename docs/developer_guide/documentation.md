@@ -36,7 +36,7 @@ pub struct VcfRecord {
 ```
 produces documentation like this:
 
-![](./vcfrecord-docs-example.png)
+![](../img/vcfrecord-docs-example.png)
 
 ## Coverage reports
 
