@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Iterator
 from attrs import define, field
 import pytest
@@ -76,7 +77,7 @@ class ConcreteParser(Parser[int]):
         return super().records(limit)
 
     @staticmethod
-    def parse_file(file_path: str, limit: int | None = None) -> list[int]:
+    def parse_file(file_path: str | Path, limit: int | None = None) -> list[int]:
         """Parse the entire file and return all records."""
 
         return _RECORDS.copy()

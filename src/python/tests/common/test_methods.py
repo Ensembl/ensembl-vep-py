@@ -13,21 +13,116 @@
 # limitations under the License.
 """Unit tests for common methods."""
 
+from functools import cached_property
 from typing import Any
+
 import pytest
+from attrs import define, field
 
 from ensembl.vep.common import (
-    invalidate,
-    trim_sequences,
-    shift_sequence,
-    Strand,
     ClassSOTerm,
+    Strand,
     infer_variant_so_term,
+    infer_symbolic_variant_so_term,
     format_region_string,
+    parse_region_string,
+    invalidate,
+    invalidates,
+    is_resolved,
+    resets_attrs,
     reverse_complement,
+    shift_sequence,
+    trim_sequences,
 )
 
-from .conftest import Foo, Bar
+
+@define(kw_only=True, auto_attribs=True)
+class _ResolvedProbe:
+    """Small slots-backed fixture for is_resolved tests."""
+
+    start: int
+    compute_calls: int = 0
+
+    @cached_property
+    def _derived(self) -> int:
+        """Cached property used to probe resolved vs unresolved state."""
+        object.__setattr__(self, "compute_calls", self.compute_calls + 1)
+        return self.start + 1
+
+    @property
+    def derived(self) -> int:
+        """Public accessor for _derived."""
+        return self._derived
+
+
+@define(kw_only=True, auto_attribs=True, slots=False)
+class _CacheInvalidationProbe:
+    """Probe cached-property invalidation and attribute reset behavior."""
+
+    start: int = field(on_setattr=invalidates("_length"))
+    end: int = field(on_setattr=resets_attrs(("_minimised", False)))
+    _minimised: bool = field(default=False)
+
+    @cached_property
+    def _length(self) -> int:
+        """Calculate the inclusive length."""
+        return self.end - self.start + 1
+
+    @cached_property
+    def _range(self) -> str:
+        """Calculate the range notation."""
+        return f"{self.start}..{self.end}"
+
+    @property
+    def length(self) -> int:
+        """Return the inclusive length."""
+        return self._length
+
+    @property
+    def minimised(self) -> bool:
+        """Return whether the probe has been minimised."""
+        return self._minimised
+
+    def minimise(self) -> None:
+        """Mark the probe as minimised."""
+        self._minimised = True
+
+    @property
+    def range(self) -> str:
+        """Return the range notation."""
+        return self._range
+
+
+class _InheritedCacheInvalidationProbe(_CacheInvalidationProbe):
+    """Probe cached-property invalidation inherited from a parent class."""
+
+
+class TestIsResolved:
+    """Tests for the is_resolved function."""
+
+    def test_unresolved_does_not_trigger_computation(self) -> None:
+        """is_resolved should report unresolved state without computing the value."""
+
+        probe = _ResolvedProbe(start=3)
+        assert probe.compute_calls == 0
+        assert is_resolved(probe, "_derived") is False
+        assert probe.compute_calls == 0
+
+    def test_resolved_after_first_access(self) -> None:
+        """is_resolved should report resolved state after the cached property is computed."""
+
+        probe = _ResolvedProbe(start=3)
+        assert probe.derived == 4
+        assert probe.compute_calls == 1
+        assert is_resolved(probe, "_derived") is True
+        assert probe.compute_calls == 1
+
+    def test_raises_for_non_descriptor_name(self) -> None:
+        """is_resolved should raise for names that are not descriptors on the class."""
+
+        probe = _ResolvedProbe(start=3)
+        with pytest.raises(AttributeError):
+            is_resolved(probe, "_does_not_exist")
 
 
 class TestCacheInvalidation:
@@ -37,72 +132,70 @@ class TestCacheInvalidation:
         """Tests the invalidates function invalidates the named properties on dependent attributes set."""
 
         # Evaluate cached_property attributes and values on initialization
-        fooObj = Foo(start=1, end=10)
+        probe = _CacheInvalidationProbe(start=1, end=10)
         assert (
-            "_length" not in fooObj.__dict__
+            "_length" not in probe.__dict__
         ), "Protected length attribute was initialized before first attribute call"
         assert (
-            "_range" not in fooObj.__dict__
+            "_range" not in probe.__dict__
         ), "Protected range attribute was initialized before first attribute call"
-        assert fooObj.length == 10, "Unexpected initial length after first attribute call"
-        assert fooObj.range == "1..10", "Unexpected initial range after first attribute call"
+        assert probe.length == 10, "Unexpected initial length after first attribute call"
+        assert probe.range == "1..10", "Unexpected initial range after first attribute call"
+        assert "_length" in probe.__dict__, "Protected length attribute not cached after first attribute call"
+        assert "_range" in probe.__dict__, "Protected range attribute not cached after first attribute call"
         assert (
-            "_length" in fooObj.__dict__
-        ), "Protected length attribute not cached after first attribute call"
-        assert "_range" in fooObj.__dict__, "Protected range attribute not cached after first attribute call"
-        assert (
-            fooObj._length == 10  # pylint: disable=protected-access
+            probe._length == 10  # pylint: disable=protected-access
         ), "Unexpected cached protected length attribute value"
         assert (
-            fooObj._range == "1..10"  # pylint: disable=protected-access
+            probe._range == "1..10"  # pylint: disable=protected-access
         ), "Unexpected cached protected range attribute value"
 
         # Evaluate attributes invalidation through on_setattr
-        fooObj.start = 2
-        assert "_length" not in fooObj.__dict__, "Protected length attribute was not invalidated."
-        assert fooObj.length == 9, "Updated length should be 9"
+        probe.start = 2
+        assert "_length" not in probe.__dict__, "Protected length attribute was not invalidated."
+        assert probe.length == 9, "Updated length should be 9"
         assert (
-            fooObj._length == 9  # pylint: disable=protected-access
+            probe._length == 9  # pylint: disable=protected-access
         ), "Protected length attribute was not reloaded with new value after invalidation"
         assert (
-            fooObj._range == "1..10"  # pylint: disable=protected-access
+            probe._range == "1..10"  # pylint: disable=protected-access
         ), "Unexpected change to protected range attribute through on_setattr"
 
     def test_direct_invalidation(self) -> None:
         """Tests the invalidate function invalidates the named properties directly."""
 
-        fooObj = Foo(start=1, end=10)
-        assert fooObj.length == 10, "Unexpected initial length"
-        assert fooObj.range == "1..10", "Unexpected initial range"
+        probe = _CacheInvalidationProbe(start=1, end=10)
+        assert probe.length == 10, "Unexpected initial length"
+        assert probe.range == "1..10", "Unexpected initial range"
 
-        invalidate(fooObj, "_range")
+        invalidate(probe, "_range")
         assert (
-            "_length" in fooObj.__dict__ and fooObj._length == 10  # pylint: disable=protected-access
+            "_length" in probe.__dict__ and probe._length == 10  # pylint: disable=protected-access
         ), "Protected length attribute should not be affected by range invalidation."
-        assert "_range" not in fooObj.__dict__, "Protected range attribute did not invalidate"
+        assert "_range" not in probe.__dict__, "Protected range attribute did not invalidate"
 
     def test_on_setattr_inheritance(self) -> None:
         """Tests the invalidates function invalidates the named properties
         on dependent attributes set of inherited attributes."""
 
-        barObj = Bar(start=1, end=10)
-        assert barObj.length == 10, "Unexpected initial length value"
-        assert barObj.range == "1..10", "Unexpected initial range value"
+        inherited_probe = _InheritedCacheInvalidationProbe(start=1, end=10)
+        assert inherited_probe.length == 10, "Unexpected initial length value"
+        assert inherited_probe.range == "1..10", "Unexpected initial range value"
         assert (
-            "_length" in barObj.__dict__
+            "_length" in inherited_probe.__dict__
         ), "Protected length attribute not cached after first attribute call"
         assert (
-            barObj._length == 10  # pylint: disable=protected-access
+            inherited_probe._length == 10  # pylint: disable=protected-access
         ), "Unexpected (cached) value in protected length attribute"
-        barObj.start = 2
+        inherited_probe.start = 2
         assert (
-            "_length" not in barObj.__dict__
+            "_length" not in inherited_probe.__dict__
         ), "Protected length attribute did not invalidate on dependent attribute change"
         assert (
-            barObj._length == 9  # pylint: disable=protected-access
+            inherited_probe._length == 9  # pylint: disable=protected-access
         ), "Unexpected new value in protected length attribute after invalidation"
         assert (
-            barObj._range == "1..10"  # pylint: disable=protected-access
+            inherited_probe._range == "1..10"  # pylint: disable=protected-access
         ), "Protected range attribute should not change on invalidation of length"
 
 
@@ -113,48 +206,48 @@ class TestAttributeReset:
         """Tests dependent attribute updates correctly reset the named properties."""
 
         # Evaluate attributes and values on initialization
-        fooObj = Foo(start=1, end=10)
-        assert "_minimised" in fooObj.__dict__, "Protected minimised attribute was not initialized"
+        probe = _CacheInvalidationProbe(start=1, end=10)
+        assert "_minimised" in probe.__dict__, "Protected minimised attribute was not initialized"
         assert (
-            fooObj._minimised is False  # pylint: disable=protected-access
+            probe._minimised is False  # pylint: disable=protected-access
         ), "Unexpected initial minimised value"
 
-        fooObj.minimise()
+        probe.minimise()
         assert (
-            fooObj._minimised is True  # pylint: disable=protected-access
+            probe._minimised is True  # pylint: disable=protected-access
         ), "Minimised attribute not updated on minimise"
 
         # trigger reset and evaluate attributes and values
-        fooObj.end = 20
+        probe.end = 20
         assert (
-            "_minimised" in fooObj.__dict__
+            "_minimised" in probe.__dict__
         ), "Protected minimised attribute was invalidated rather than reset"
         assert (
-            fooObj._minimised is False  # pylint: disable=protected-access
+            probe._minimised is False  # pylint: disable=protected-access
         ), "Minimised attribute did not reset on end update"
 
     def test_on_setattr_inheritance(self) -> None:
         """Tests dependent attribute updates correctly reset the named inherited properties"""
 
         # Evaluate attributes and values on initialization
-        barObj = Bar(start=1, end=10)
-        assert "_minimised" in barObj.__dict__, "Protected minimised attribute was not initialized"
+        inherited_probe = _InheritedCacheInvalidationProbe(start=1, end=10)
+        assert "_minimised" in inherited_probe.__dict__, "Protected minimised attribute was not initialized"
         assert (
-            barObj._minimised is False  # pylint: disable=protected-access
+            inherited_probe._minimised is False  # pylint: disable=protected-access
         ), "Unexpected initial minimised value"
 
-        barObj.minimise()
+        inherited_probe.minimise()
         assert (
-            barObj._minimised is True  # pylint: disable=protected-access
+            inherited_probe._minimised is True  # pylint: disable=protected-access
         ), "Minimised attribute not updated on minimise"
 
         # trigger reset and evaluate attributes and values
-        barObj.end = 20
+        inherited_probe.end = 20
         assert (
-            "_minimised" in barObj.__dict__
+            "_minimised" in inherited_probe.__dict__
         ), "Protected minimised attribute was invalidated rather than reset"
         assert (
-            barObj._minimised is False  # pylint: disable=protected-access
+            inherited_probe._minimised is False  # pylint: disable=protected-access
         ), "Minimised attribute did not reset on end update"
 
 
@@ -345,6 +438,43 @@ class TestShiftSequence:
             shift_sequence("A", post_seq="A", pre_seq=None, start=1, end=1)  # type: ignore[arg-type]
 
 
+class TestParseRegionString:
+    """Tests for the parse_region_string function."""
+
+    @pytest.mark.parametrize(
+        ("region", "expected"),
+        [
+            pytest.param("chr1:10-20", ("chr1", 10, 20), id="name-start-end"),
+            pytest.param("chr1:10", ("chr1", 10, None), id="name-start"),
+            pytest.param("chr1", ("chr1", None, None), id="name-only"),
+            pytest.param("HLA:DRB1:10-20", ("HLA:DRB1", 10, 20), id="name-with-colon"),
+        ],
+    )
+    def test_splits_a_region(self, region: str, expected: tuple[str, int | None, int | None]) -> None:
+        """Returns the sequence-region name with its optional bounds."""
+
+        assert parse_region_string(region) == expected
+
+    def test_round_trips_with_format_region_string(self) -> None:
+        """Parses back what format_region_string builds."""
+
+        assert parse_region_string(format_region_string(seq_region_name="1", start=5, end=9)) == ("1", 5, 9)
+
+    @pytest.mark.parametrize(
+        ("region", "error_match"),
+        [
+            pytest.param("", None, id="empty"),
+            pytest.param("chr1:x-20", None, id="not-a-number"),
+            pytest.param("chr1:0-20", "1-based", id="not-positive"),
+        ],
+    )
+    def test_rejects_an_unparseable_region(self, region: str, error_match: str | None) -> None:
+        """Raises when the region is empty or its coordinates are not integers."""
+
+        with pytest.raises(ValueError, match=error_match):
+            parse_region_string(region)
+
+
 class TestFormatRegionString:
     """Tests for the format_region_string function."""
 
@@ -468,6 +598,95 @@ class TestInferVariantSOTerm:
     def test_empty_allele_string_defaults_to_sequence_alteration(self) -> None:
         """Test that an empty allele string returns the correct (default) ClassSOTerm."""
         assert infer_variant_so_term("", ref_correct=True) == ClassSOTerm.SEQUENCE_ALTERATION
+
+
+class TestInferSymbolicVariantSOTerm:
+    """Tests for the infer_symbolic_variant_so_term function."""
+
+    @pytest.mark.parametrize(
+        "allele_string, expected",
+        [
+            ("<INS>", ClassSOTerm.INSERTION),
+            ("<DEL>", ClassSOTerm.DELETION),
+            ("<INV>", ClassSOTerm.INVERSION),
+            ("<DUP>", ClassSOTerm.DUPLICATION),
+            ("BND", ClassSOTerm.CHROMOSOME_BREAKPOINT),
+        ],
+    )
+    def test_basic_symbolic_types(self, allele_string: str, expected: ClassSOTerm) -> None:
+        """Map basic symbolic types to their SO terms."""
+        assert infer_symbolic_variant_so_term(allele_string) == expected
+
+    @pytest.mark.parametrize(
+        "allele_string, expected",
+        [
+            ("<INS:ME>", ClassSOTerm.MOBILE_ELEMENT_INSERTION),
+            ("<INS:ME:ALU>", ClassSOTerm.ALU_INSERTION),
+            ("<INS:ME:HERV>", ClassSOTerm.HERV_INSERTION),
+            ("<INS:ME:L1>", ClassSOTerm.LINE1_INSERTION),
+            ("<INS:ME:SVA>", ClassSOTerm.SVA_INSERTION),
+            ("<DEL:ME>", ClassSOTerm.MOBILE_ELEMENT_DELETION),
+            ("<DEL:ME:ALU>", ClassSOTerm.ALU_DELETION),
+            ("<DEL:ME:HERV>", ClassSOTerm.HERV_DELETION),
+            ("<DEL:ME:L1>", ClassSOTerm.LINE1_DELETION),
+            ("<DEL:ME:SVA>", ClassSOTerm.SVA_DELETION),
+            ("<INS:ME:OTHER>", ClassSOTerm.MOBILE_ELEMENT_INSERTION),
+        ],
+    )
+    def test_mobile_element_types(self, allele_string: str, expected: ClassSOTerm) -> None:
+        """Map generic and recognized mobile element types."""
+        assert infer_symbolic_variant_so_term(allele_string) == expected
+
+    @pytest.mark.parametrize(
+        "allele_string, expected",
+        [
+            ("<DEL>/<DUP>", ClassSOTerm.COPY_NUMBER_VARIATION),
+            ("<DUP:TANDEM>", ClassSOTerm.TANDEM_DUPLICATION),
+            ("<CNV:TR>", ClassSOTerm.TANDEM_REPEAT),
+            ("<CN0>", ClassSOTerm.DELETION),
+            ("<CN=0>", ClassSOTerm.DELETION),
+            ("<CN2>", ClassSOTerm.DUPLICATION),
+            ("<CN=2>", ClassSOTerm.DUPLICATION),
+            ("<CN1>", ClassSOTerm.COPY_NUMBER_VARIATION),
+            ("<CN0>,<CN2>", ClassSOTerm.COPY_NUMBER_VARIATION),
+            ("<CNV>", ClassSOTerm.COPY_NUMBER_VARIATION),
+        ],
+    )
+    def test_copy_number_and_tandem_types(self, allele_string: str, expected: ClassSOTerm) -> None:
+        """Map copy-number and tandem symbolic types."""
+        assert infer_symbolic_variant_so_term(allele_string) == expected
+
+    @pytest.mark.parametrize(
+        "allele_string",
+        [
+            "N]2:321682]",
+            "[2:321682[N",
+            ".N",
+            "N.",
+        ],
+    )
+    def test_breakend_types(self, allele_string: str) -> None:
+        """Recognize bracket and single-breakend notation."""
+        assert infer_symbolic_variant_so_term(allele_string) == ClassSOTerm.CHROMOSOME_BREAKPOINT
+
+    @pytest.mark.parametrize("allele_string", ["INS/INS", "<INS>,<INS>"])
+    def test_repeated_types_are_normalized(self, allele_string: str) -> None:
+        """Normalize repeated representations of the same symbolic type."""
+        assert infer_symbolic_variant_so_term(allele_string) == ClassSOTerm.INSERTION
+
+    def test_symbolic_allele_takes_precedence_over_svtype(self) -> None:
+        """Retain the more specific subtype from a VCF-compliant ALT allele."""
+        assert infer_symbolic_variant_so_term("<INS:ME:ALU>", svtype="INS") == ClassSOTerm.ALU_INSERTION
+
+    @pytest.mark.parametrize("allele_string", ["", "<CPX>"])
+    def test_svtype_is_used_for_missing_or_non_standard_allele(self, allele_string: str) -> None:
+        """Use INFO/SVTYPE when ALT does not contain a supported VCF symbolic prefix."""
+        assert infer_symbolic_variant_so_term(allele_string, svtype="DEL") == ClassSOTerm.DELETION
+
+    @pytest.mark.parametrize("allele_string", ["", "<CPX>", "TRA"])
+    def test_unsupported_type_returns_none(self, allele_string: str) -> None:
+        """Return None when no supported structural variant type can be inferred."""
+        assert infer_symbolic_variant_so_term(allele_string) is None
 
 
 class TestReverseComplement:

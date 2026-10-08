@@ -336,8 +336,8 @@ fn test_tabix_parser_zero_position(
     ))?;
 
     let mut parser = open_dataset_parser(&dir, &toolchain, dataset, backend)?;
-    match (dataset, backend) {
-        (Dataset::Gff3ZeroPos, Backend::Noodles) => {
+    match dataset {
+        Dataset::Gff3ZeroPos => {
             let err = parser.seek("chr1:1-1").map_err(from_py_error).unwrap_err();
             assert_eq!(err.kind(), io::ErrorKind::Other);
             assert!(
@@ -345,14 +345,8 @@ fn test_tabix_parser_zero_position(
                 "unexpected error: {err}"
             );
         }
-        (Dataset::Gff3ZeroPos, Backend::System) => {
-            assert_query_records(parser, "chr1:1-1", expected_rows(Dataset::Gff3ZeroPos, 0))?
-        }
-        (Dataset::BedZeroPos, Backend::Noodles) => {
+        Dataset::BedZeroPos => {
             assert_query_records(parser, "chr1:1-1", expected_rows(Dataset::BedZeroPos, 0))?
-        }
-        (Dataset::BedZeroPos, Backend::System) => {
-            assert_query_records(parser, "chr1:1-1", expected_rows(Dataset::BedZeroPos, 1))?
         }
         _ => todo!(),
     }
@@ -458,13 +452,8 @@ fn test_tabix_parser_invalid_region(
     };
 
     match backend {
-        Backend::Noodles => {
-            let err = parser.seek(":::invalid:::").unwrap_err();
-            assert!(
-                err.to_string().contains("missing reference sequence name"),
-                "unexpected error: {err}"
-            );
-        }
+        // we expect noodles to return no records for an invalid region, rather than throwing an error
+        Backend::Noodles => assert_query_records(parser, ":::invalid:::", &[])?,
         Backend::System => match parser.seek(":::invalid:::") {
             Ok(found) => assert!(!found),
             Err(err) => assert!(

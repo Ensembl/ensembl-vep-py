@@ -21,6 +21,7 @@ from .fasta import FastaParser, FastaRecord
 from .vcf import VCFParser, VCFRecord
 
 __all__ = [
+    "Parser",
     "TabixParser",
     "GFF3Parser",
     "GFF3Record",

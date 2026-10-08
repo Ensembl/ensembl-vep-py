@@ -23,10 +23,38 @@ from typing import Any, Callable, Literal, TypeVar
 from attrs import Attribute as AttrsAttribute
 
 from ensembl.vep.common.enums import Strand, ClassSOTerm
+from ensembl.vep.common.constants import CLASS_SO_TERM_ABBRV_TO_ENUM
 
 logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
+
+
+def is_resolved(instance: object, name: str) -> bool:
+    """Return whether a slot-backed cached property is already resolved without triggering computation.
+
+    Args:
+        instance (object): Object that owns the cached property.
+        name (str): Protected cached-property name (for example, "_cds").
+
+    Returns:
+        bool: True if the value is already present (seeded or previously computed),
+            False if reading it would still trigger computation.
+
+    Raises:
+        AttributeError: If name is not a descriptor on the instance type hierarchy.
+    """
+    for cls in type(instance).__mro__:
+        descriptor = cls.__dict__.get(name)
+        if descriptor is not None and hasattr(descriptor, "__get__"):
+            try:
+                # Use descriptor.__get__ directly: normal access (including getattr)
+                # would invoke __getattr__ and compute/cache the value on a miss.
+                descriptor.__get__(instance, type(instance))  # pylint: disable=unnecessary-dunder-call
+                return True
+            except AttributeError:
+                return False
+    raise AttributeError(f"{name!r} is not a descriptor on {type(instance).__name__}")
 
 
 def invalidate(instance: object, *invalidate_names: str) -> None:
@@ -49,7 +77,7 @@ def invalidate(instance: object, *invalidate_names: str) -> None:
 
 
 def invalidates(*cached_names: str) -> Callable:
-    """Return an attrs on_setattr hook that clears named cached properties.
+    """Returns an attrs on_setattr hook that clears named cached properties.
 
     Args:
         *cached_names (str): The names of the cached properties to invalidate.
@@ -328,6 +356,43 @@ def shift_sequence(
     return (shift_length, "".join(seq_d), start, end, changed)
 
 
+def parse_region_string(region: str) -> tuple[str, int | None, int | None]:
+    """Split a region string into its sequence-region name and optional bounds.
+
+    The inverse of format_region_string: "1:100-200" -> ("1", 100, 200), "1:100" -> ("1", 100,
+    None), "1" -> ("1", None, None). A name may itself contain ":" (as HLA contigs do), so only
+    the last ":" separates the coordinates, and only when what follows parses as bounds.
+
+    Args:
+        region (str): A region string in the format "seq_region_name[:start[-end]]".
+
+    Returns:
+        tuple[str, int | None, int | None]: The name, start and end.
+
+    Raises:
+        ValueError: If region is empty, or its coordinates are not positive integers.
+    """
+
+    if not region:
+        raise ValueError("region must not be empty")
+
+    name, separator, coordinates = region.rpartition(":")
+    if not separator:
+        return region, None, None
+
+    start_text, _, end_text = coordinates.partition("-")
+    try:
+        start = int(start_text)
+        end = int(end_text) if end_text else None
+    except ValueError as invalid:
+        raise ValueError(f"region coordinates must be integers: {region!r}") from invalid
+
+    if start < 1 or (end is not None and end < 1):
+        raise ValueError("regions are 1-based and must be positive")
+
+    return name, start, end
+
+
 def format_region_string(
     region: str | None = None,
     *,
@@ -433,6 +498,80 @@ def infer_variant_so_term(allele_string: str, ref_correct: bool = False) -> Clas
                 so_term = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
 
     return so_term
+
+
+def infer_symbolic_variant_so_term(allele_string: str, svtype: str | None = None) -> ClassSOTerm | None:
+    """Infer the SO term for a symbolic structural variant.
+
+    This mirrors the symbolic variant normalization performed by Perl VEP's
+    ``get_SO_term``. A VCF-compliant symbolic allele takes precedence over
+    ``svtype`` so that subtype information in values such as
+    ``<INS:ME:ALU>`` is retained. ``svtype`` is used as a fallback for a
+    missing or non-standard allele.
+
+    Args:
+        allele_string: Symbolic alternate allele or breakend string.
+        svtype: Optional structural variant type from VCF INFO/SVTYPE.
+
+    Returns:
+        The inferred structural variant SO term, or ``None`` if the type is
+        unsupported.
+    """
+    raw_type = allele_string.strip()
+    if svtype and not re.match(r"^<?(?:DEL|INS|DUP|INV|CNV|CN=?[0-9]+)", raw_type, flags=re.IGNORECASE):
+        raw_type = svtype.strip()
+
+    # Normalize repeated variants, e.g. INS/INS or <INS>,<INS>.
+    parts = re.split(r"[/,]", raw_type)
+    normalized_parts = [part.strip().strip("<>").upper() for part in parts]
+    if normalized_parts and all(part == normalized_parts[0] for part in normalized_parts):
+        raw_type = parts[0].strip()
+
+    mobile_element_match = re.search(r"(INS|DEL):(ME):?([A-Z0-9]+)?", raw_type, flags=re.IGNORECASE)
+    if mobile_element_match:
+        variant_class = mobile_element_match.group(1).upper()
+        element = (mobile_element_match.group(3) or "ME").upper()
+        element = "LINE1" if element == "L1" else element
+        subtype = element if element in {"ALU", "HERV", "LINE1", "SVA"} else "ME"
+        abbreviation = f"{variant_class}_{subtype}"
+    elif re.search(r"DEL", raw_type, flags=re.IGNORECASE) and re.search(
+        r"DUP", raw_type, flags=re.IGNORECASE
+    ):
+        abbreviation = "CNV"
+    elif re.search(r"DUP:TANDEM", raw_type, flags=re.IGNORECASE):
+        abbreviation = "TDUP"
+    elif re.search(r"CNV:TR", raw_type, flags=re.IGNORECASE):
+        abbreviation = "TREP"
+    elif re.search(r"CN=?[0-9]", raw_type, flags=re.IGNORECASE):
+        abbreviation = "CNV"
+        if re.fullmatch(r"<?CN=?0>?", raw_type, flags=re.IGNORECASE):
+            abbreviation = "DEL"
+        elif re.fullmatch(r"<?CN=?2>?", raw_type, flags=re.IGNORECASE):
+            abbreviation = "DUP"
+    elif re.search(r"CNV", raw_type, flags=re.IGNORECASE):
+        abbreviation = "CNV"
+    elif re.search(r"[\[\]]|^\.|\.$", raw_type):
+        abbreviation = "BND"
+    elif raw_type.startswith("<") or raw_type.endswith(">"):
+        abbreviation = re.sub(r"[<>]", "", raw_type).split(":", maxsplit=1)[0]
+    else:
+        abbreviation = raw_type
+
+    return CLASS_SO_TERM_ABBRV_TO_ENUM.get(abbreviation.upper())
+
+
+def reverse_complement(sequence: str) -> str:
+    """Returns the reverse complement of a nucleotide sequence.
+
+    Args:
+        sequence (str): The sequence to reverse complement.
+
+    Returns:
+        str: The reverse complement of the sequence.
+    """
+
+    translation_table = str.maketrans("ACGTNacgtn", "TGCANtgcan")
+    return sequence.translate(translation_table)[::-1]
 
 
 def setup_logging(level: str = "INFO") -> None:

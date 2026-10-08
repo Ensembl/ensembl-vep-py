@@ -21,7 +21,7 @@ from threading import RLock
 from attrs import define, field
 
 from ensembl.vep.models.sequence import Slice, CoordSystem
-from ensembl.vep.common import Strand, UnsafeSetterMixin, invalidates
+from ensembl.vep.common import Strand, UnsafeSetterMixin, invalidates, reverse_complement
 
 logger = logging.getLogger(__name__)
 
@@ -85,6 +85,9 @@ class Feature(UnsafeSetterMixin):
         """
         Returns the start position in the sequence region.
 
+        If the attached slice is on the reverse strand,
+        seq_region_start corresponds to the feature.end position
+
         Returns:
             The start position in the sequence region,
             or None if the feature has no attached slice.
@@ -93,6 +96,8 @@ class Feature(UnsafeSetterMixin):
             if self.slice is None:
                 logger.warning("Cannot obtain seq_region_start for a feature without attached slice.")
                 return None
+            if self.slice.strand == Strand.REVERSE:
+                return self.slice.end - self.end + 1
             return self.slice.start + self.start - 1
 
     @property
@@ -110,6 +115,9 @@ class Feature(UnsafeSetterMixin):
         """
         Returns the end position in the sequence region.
 
+        If the attached slice is on the reverse strand,
+        seq_region_end corresponds to the feature.start position
+
         Returns:
             The end position in the sequence region, or None if the feature has no attached slice.
         """
@@ -117,6 +125,8 @@ class Feature(UnsafeSetterMixin):
             if self.slice is None:
                 logger.warning("Cannot obtain seq_region_end for a feature without attached slice.")
                 return None
+            if self.slice.strand == Strand.REVERSE:
+                return self.slice.end - self.start + 1
             return self.slice.start + self.end - 1
 
     @property
@@ -158,8 +168,13 @@ class Feature(UnsafeSetterMixin):
         """
         Returns the associated biological sequence.
 
+        Here, ``start``/``end`` are always ascending order in the attached slice and ``strand`` here
+        is the feature's orientation relative to the slice. Therefore when feature's strand disagrees
+        with the slice's strand, the slice sequence must be reverse-complemented before being returned.
+
         Returns:
-            The associated biological sequence, or None if unavailable.
+            str | None: The associated biological sequence, in this feature's own 5'->3'
+                orientation, or None if unavailable.
         """
         with self._lock:
             if self.slice is None:
@@ -167,8 +182,13 @@ class Feature(UnsafeSetterMixin):
                 return None
 
             slice_seq = self.slice.seq
+            if slice_seq is None:
+                return None
 
-            return slice_seq[self.start - 1 : self.end] if slice_seq is not None else None
+            feature_seq = slice_seq[self.start - 1 : self.end]
+            if self.strand == Strand.REVERSE:
+                return reverse_complement(feature_seq)
+            return feature_seq
 
     def __eq__(self, other: object) -> bool:
         """

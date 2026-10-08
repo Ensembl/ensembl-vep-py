@@ -764,7 +764,10 @@ class TestTabixParserIntegration:
         lines: list[str],
         backend: str,
     ) -> None:
-        """Test zero-position query behavior for GFF3 and BED fixtures."""
+        """Test zero-position query behavior for GFF3 and BED fixtures.
+
+        A readable index is always queried in process, so both backends follow noodles here.
+        """
 
         if dataset == "gff3":
             path = _create_tabix_gff3_cli(
@@ -780,18 +783,13 @@ class TestTabixParserIntegration:
             )
         parser = _open_integration_parser(path, backend, htslib_toolchain)
 
-        if backend == "noodles" and dataset == "gff3":
+        if dataset == "gff3":
             with pytest.raises(ValueError):
                 parser.seek("chr1:1-1")
             return
 
-        if dataset == "bed" and backend == "noodles":
-            expected_rows = [BED_ZERO_POS_ROW]
-        else:
-            expected_rows = []
-
-        assert parser.seek("chr1:1-1") is bool(expected_rows)
-        assert parser.records() == expected_rows
+        assert parser.seek("chr1:1-1") is True
+        assert parser.records() == [BED_ZERO_POS_ROW]
 
     @pytest.mark.parametrize(
         ("dataset", "lines"),

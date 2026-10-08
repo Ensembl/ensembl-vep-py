@@ -16,7 +16,7 @@
 from __future__ import annotations
 
 import logging
-from attrs import define
+from attrs import define, field
 
 from ensembl.vep.models.variation.variation_allele import VariationAllele
 
@@ -25,7 +25,14 @@ logger = logging.getLogger(__name__)
 
 @define(kw_only=True, auto_attribs=True)
 class StructuralVariationAllele(VariationAllele):
-    """Represents a specific allele of a structural variation."""
+    """Represents a specific allele of a structural variation.
+
+    Attributes:
+        svlen (int | None):
+            The length of the structural variant
+    """
+
+    svlen: int | None = field(default=None)
 
     def minimise(self, force: bool = False) -> None:
         """Minimises the variation allele by computing the minimal representation of the variant.

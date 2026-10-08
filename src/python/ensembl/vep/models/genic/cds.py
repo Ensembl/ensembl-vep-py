@@ -56,10 +56,15 @@ class CDS(Feature):
     def _nucleotide_length(self) -> int | None:
         """Returns the length of the CDS in nucleotides.
 
+        Prefers the attached transcript's Mapper (position arithmetic) available even when this
+        CDS has no seq of its own. Falls back to len(seq) when there is no transcript/mapper.
+
         Returns:
             int | None: Length in nucleotides, or None if not applicable.
         """
         with self._lock:
+            if self.transcript is not None and self.transcript.cds_length is not None:
+                return self.transcript.cds_length
             return len(self.seq) if self.seq is not None else None
 
     @property

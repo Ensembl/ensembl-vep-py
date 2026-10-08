@@ -66,6 +66,14 @@ class TestTranslationProperties:
         translation.transcript = transcript
         assert translation.transcript == transcript
 
+        assert translation.exon_coding_start is None
+        translation.exon_coding_start = 5
+        assert translation.exon_coding_start == 5
+
+        assert translation.exon_coding_end is None
+        translation.exon_coding_end = 75
+        assert translation.exon_coding_end == 75
+
     def test_length_cached_property(self, translation: Translation) -> None:
         """Test that length cached property is calculated correctly and cached."""
         # Length should be calculated as end - start + 1

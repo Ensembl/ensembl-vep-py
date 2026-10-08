@@ -16,8 +16,8 @@ use crate::{
     parsers::{
         tabix::{self, has_tabix_index},
         utils::{
-            ReaderMode, associated_index_path, noodles_phase_to_u8, noodles_strand_to_string,
-            open_sequential_reader,
+            FeatureTypeFilter, ReaderMode, associated_index_path, noodles_phase_to_u8,
+            noodles_strand_to_string, open_sequential_reader,
         },
     },
     utils::{bytes_to_string, to_py_error},
@@ -86,6 +86,25 @@ impl Gff3Record {
         Ok(dict)
     }
 
+    /// Return the first value for an attribute key, or `None` when the key is absent.
+    ///
+    /// Equivalent to `attributes[key][0]`, but a linear scan of the stored pairs instead of
+    /// building a whole `dict` per call.
+    ///
+    /// Unlike GTF, GFF3 lets a key repeat as separate `key=value` pairs rather than one key
+    /// with a comma-separated array, and noodles-gff keeps each occurrence as its own pair in
+    /// `self.attributes`. The `attributes` getter above builds a `dict` via `set_item`, so a
+    /// repeated key resolves there to its *last* occurrence -- scanning in reverse here matches
+    /// that, instead of silently returning a different value for the same key.
+    fn first_attribute(&self, key: &str) -> Option<&str> {
+        self.attributes
+            .iter()
+            .rev()
+            .find(|(pair_key, _)| pair_key == key)
+            .and_then(|(_, values)| values.first())
+            .map(String::as_str)
+    }
+
     fn __repr__(&self) -> String {
         format!(
             "GFF3Record(seqid={:?}, feature_type={:?}, start={}, end={}, strand_symbol={:?}, phase_value={:?})",
@@ -139,8 +158,18 @@ impl Gff3Reader {
         self.backend.next()
     }
 
+    /// Read the next record whose column-3 feature type is in `filter`, skipping non-matching
+    /// lines before they are parsed into a record.
+    fn next_filtered(&mut self, filter: &FeatureTypeFilter) -> io::Result<Option<Gff3Record>> {
+        self.backend.next_filtered(filter)
+    }
+
     fn seek(&mut self, region: &str) -> io::Result<bool> {
         self.backend.seek(region)
+    }
+
+    fn index_sequence_names(&mut self) -> io::Result<Vec<String>> {
+        self.backend.index_sequence_names()
     }
 
     fn metadata(&mut self) -> io::Result<&Gff3Metadata> {
@@ -207,10 +236,24 @@ impl Backend {
         }
     }
 
+    fn next_filtered(&mut self, filter: &FeatureTypeFilter) -> io::Result<Option<Gff3Record>> {
+        match self {
+            Self::Sequential(reader) => reader.next_filtered(filter),
+            Self::Tabix(reader) => reader.next_filtered(filter),
+        }
+    }
+
     fn seek(&mut self, region: &str) -> io::Result<bool> {
         match self {
             Self::Sequential(reader) => reader.seek(region),
             Self::Tabix(reader) => reader.seek(region),
+        }
+    }
+
+    fn index_sequence_names(&mut self) -> io::Result<Vec<String>> {
+        match self {
+            Self::Sequential(_) => Ok(Vec::new()),
+            Self::Tabix(reader) => reader.index_sequence_names(),
         }
     }
 }
@@ -221,6 +264,8 @@ impl Backend {
 
 struct SequentialBackend {
     reader: gff3::io::Reader<Box<dyn BufRead + Send + Sync>>,
+    /// Reused across calls so each record read does not allocate a fresh `Line` buffer.
+    line: gff3::Line,
 }
 
 impl SequentialBackend {
@@ -230,6 +275,7 @@ impl SequentialBackend {
     {
         Ok(Self {
             reader: open_sequential_gff3_reader(file_path.as_ref())?,
+            line: gff3::Line::default(),
         })
     }
 
@@ -240,7 +286,11 @@ impl SequentialBackend {
     }
 
     fn next(&mut self) -> io::Result<Option<Gff3Record>> {
-        read_next_record(&mut self.reader)
+        read_next_record(&mut self.reader, &mut self.line, None)
+    }
+
+    fn next_filtered(&mut self, filter: &FeatureTypeFilter) -> io::Result<Option<Gff3Record>> {
+        read_next_record(&mut self.reader, &mut self.line, Some(filter))
     }
 }
 
@@ -251,6 +301,8 @@ impl SequentialBackend {
 struct TabixBackend {
     reader: Option<tabix::TabixReader>,
     query_active: bool,
+    /// Reused across calls so each queried line does not allocate a fresh `Line` buffer.
+    line: gff3::Line,
 }
 
 impl TabixBackend {
@@ -261,6 +313,7 @@ impl TabixBackend {
         Ok(Self {
             reader: Some(tabix::TabixReader::open(file_path.as_ref(), tabix_path)?),
             query_active: false,
+            line: gff3::Line::default(),
         })
     }
 
@@ -287,13 +340,42 @@ impl TabixBackend {
                     return Ok(None);
                 };
 
-                if let Some(record) = parse_gff3_line(&line)? {
+                if let Some(record) = parse_gff3_line_into(&line, &mut self.line, None)? {
                     return Ok(Some(record));
                 }
             }
         }
 
         Ok(None)
+    }
+
+    fn next_filtered(&mut self, filter: &FeatureTypeFilter) -> io::Result<Option<Gff3Record>> {
+        if self.query_active {
+            let Some(reader) = self.reader.as_mut() else {
+                return Err(io::Error::other("tabix reader is not initialized"));
+            };
+
+            loop {
+                let Some(line) = reader.next()? else {
+                    self.query_active = false;
+                    return Ok(None);
+                };
+
+                if let Some(record) = parse_gff3_line_into(&line, &mut self.line, Some(filter))? {
+                    return Ok(Some(record));
+                }
+            }
+        }
+
+        Ok(None)
+    }
+
+    /// Reference sequence names declared by the tabix index, or empty when unopened.
+    fn index_sequence_names(&mut self) -> io::Result<Vec<String>> {
+        match self.reader.as_mut() {
+            Some(reader) => reader.reference_names(),
+            None => Ok(Vec::new()),
+        }
     }
 }
 
@@ -366,6 +448,19 @@ impl Gff3Parser {
         self.reader_mode.as_str()
     }
 
+    /// Reference sequence names declared by the tabix index, in index order.
+    ///
+    /// Empty when the file is unopened or read sequentially. Callers can use these names to
+    /// resolve a query contig to the exact spelling the index declares before seeking, instead of
+    /// retrying alternate spellings on a miss.
+    #[getter]
+    fn index_sequence_names(&mut self) -> PyResult<Vec<String>> {
+        match self.reader.as_mut() {
+            Some(reader) => reader.index_sequence_names().map_err(to_py_error),
+            None => Ok(Vec::new()),
+        }
+    }
+
     fn open(&mut self, file_path: &str, mode: Option<String>) -> PyResult<()> {
         let path = PathBuf::from(file_path);
         let reader_mode = ReaderMode::parse(mode.as_deref())?;
@@ -395,12 +490,29 @@ impl Gff3Parser {
         self.reader()?.next().map_err(to_py_error)
     }
 
-    #[pyo3(signature = (limit=10000))]
-    fn records(&mut self, limit: Option<usize>) -> PyResult<Vec<Gff3Record>> {
+    /// Return up to `limit` records, optionally keeping only rows whose column 3 (feature type)
+    /// is in `feature_types` (compared case-insensitively).
+    ///
+    /// The filter is applied on the Rust side before a matching line is parsed into a record or
+    /// converted into a Python object: a non-matching line costs one tab-split byte scan, not a
+    /// full record build.
+    #[pyo3(signature = (limit=10000, feature_types=None))]
+    fn records(
+        &mut self,
+        limit: Option<usize>,
+        feature_types: Option<Vec<String>>,
+    ) -> PyResult<Vec<Gff3Record>> {
+        let filter = feature_types.as_deref().map(FeatureTypeFilter::new);
         let mut records = Vec::new();
 
         while limit.is_none_or(|n| records.len() < n) {
-            match self.next()? {
+            let next = match filter.as_ref() {
+                Some(filter) => self.reader()?.next_filtered(filter),
+                None => self.reader()?.next(),
+            }
+            .map_err(to_py_error)?;
+
+            match next {
                 Some(record) => records.push(record),
                 None => break,
             }
@@ -492,14 +604,24 @@ where
     Ok(metadata)
 }
 
-fn read_next_record<R>(reader: &mut gff3::io::Reader<R>) -> io::Result<Option<Gff3Record>>
+/// Read the next record, reusing a caller-owned `Line` buffer across calls.
+///
+/// Hoisting the buffer out lets a hot loop (one `Line` per `TabixBackend` or
+/// `SequentialBackend`, rather than a fresh one per record) avoid a per-record allocation.
+///
+/// `filter`, when given, is checked against the raw line's column 3 before `line.as_record()` is
+/// called: a non-matching line is skipped without being parsed into a record or converted into a
+/// Python object. `None` keeps today's unfiltered behaviour exactly.
+fn read_next_record<R>(
+    reader: &mut gff3::io::Reader<R>,
+    line: &mut gff3::Line,
+    filter: Option<&FeatureTypeFilter>,
+) -> io::Result<Option<Gff3Record>>
 where
     R: BufRead,
 {
-    let mut line = gff3::Line::default();
-
     loop {
-        if reader.read_line(&mut line)? == 0 {
+        if reader.read_line(line)? == 0 {
             return Ok(None);
         }
 
@@ -515,11 +637,17 @@ where
             continue;
         }
 
+        if let Some(filter) = filter
+            && !filter.matches(line.as_ref().as_ref())
+        {
+            continue;
+        }
+
         let Some(result) = line.as_record() else {
             continue;
         };
 
-        let raw_attributes = raw_attributes(&line);
+        let raw_attributes = raw_attributes(line);
         let record = result?;
 
         return record_to_py(record, raw_attributes).map(Some);
@@ -534,9 +662,10 @@ where
     R: BufRead,
 {
     let mut records = Vec::new();
+    let mut line = gff3::Line::default();
 
     while limit.is_none_or(|n| records.len() < n) {
-        match read_next_record(reader)? {
+        match read_next_record(reader, &mut line, None)? {
             Some(record) => records.push(record),
             None => break,
         }
@@ -550,12 +679,34 @@ fn parse_gff3_bytes(data: &[u8], limit: Option<usize>) -> io::Result<Vec<Gff3Rec
     read_records(&mut reader, limit)
 }
 
-fn parse_gff3_line(line: &str) -> io::Result<Option<Gff3Record>> {
-    let mut data = Vec::with_capacity(line.len() + 1);
-    data.extend_from_slice(line.as_bytes());
-    data.push(b'\n');
+/// Parse one already-dechomped line, reusing a caller-owned `Line` buffer.
+///
+/// `&[u8]` implements `BufRead` directly, so this reads straight from `line`'s bytes: no
+/// intermediate `Vec<u8>` copy and no new `Line` allocation per call, the two costs the
+/// `TabixBackend` hot loop previously paid for every queried row.
+///
+/// `line` is not re-terminated with `\n` before parsing (the earlier `Vec<u8>` copy used to add
+/// one back). `read_next_record`'s inner `read_line` only strips a trailing `\r` when it finds a
+/// trailing `\n` to strip first, so if `line` still carries a residual `\r` -- a doubled `\r`
+/// before the newline `TabixReader` already trimmed, or a final `\r` with no newline at all on
+/// the last line of a file -- that `\r` now passes through into the record, matching what the
+/// sequential reader (`SequentialBackend`, reading `\r`-terminated bytes with no `\n` to strip
+/// against) already does. `test_parse_gff3_line_into_residual_cr_matches_sequential_reader` pins
+/// this parity.
+fn parse_gff3_line_into(
+    line: &str,
+    buffer: &mut gff3::Line,
+    filter: Option<&FeatureTypeFilter>,
+) -> io::Result<Option<Gff3Record>> {
+    let mut reader = gff3::io::Reader::new(line.as_bytes());
+    read_next_record(&mut reader, buffer, filter)
+}
 
-    Ok(parse_gff3_bytes(&data, Some(1))?.pop())
+/// Test-only convenience over [`parse_gff3_line_into`]: production code always has a `TabixBackend`
+/// to own the reused `Line` buffer, so only tests need a one-shot, buffer-allocating variant.
+#[cfg(test)]
+fn parse_gff3_line(line: &str) -> io::Result<Option<Gff3Record>> {
+    parse_gff3_line_into(line, &mut gff3::Line::default(), None)
 }
 
 fn record_to_py(record: gff3::Record<'_>, raw_attributes: String) -> io::Result<Gff3Record> {
@@ -618,7 +769,7 @@ mod tests {
     use crate::{
         parsers::test_utils::{write_bgzf_file, write_gff3_with_tbi},
         test_utils::{create_temp_dir, write_sample_file},
-        utils::from_py_error,
+        utils::{from_py_error, trim_newline},
     };
     use std::{fs, str};
 
@@ -995,11 +1146,13 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
     #[test]
     fn test_read_next_record_reads_records_one_by_one() -> io::Result<()> {
         let mut reader = gff3::io::Reader::new(SAMPLE);
+        let mut line = gff3::Line::default();
 
-        let first = read_next_record(&mut reader)?.expect("expected first record");
+        let first = read_next_record(&mut reader, &mut line, None)?.expect("expected first record");
         assert_first_sample_record(&first);
 
-        let second = read_next_record(&mut reader)?.expect("expected second record");
+        let second =
+            read_next_record(&mut reader, &mut line, None)?.expect("expected second record");
         assert_second_sample_record(&second);
         Ok(())
     }
@@ -1007,10 +1160,11 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
     #[test]
     fn test_read_next_record_returns_none_at_eof() -> io::Result<()> {
         let mut reader = gff3::io::Reader::new(SAMPLE);
-        read_next_record(&mut reader)?; // first record
-        read_next_record(&mut reader)?; // second record
+        let mut line = gff3::Line::default();
+        read_next_record(&mut reader, &mut line, None)?; // first record
+        read_next_record(&mut reader, &mut line, None)?; // second record
 
-        assert_eq!(read_next_record(&mut reader)?, None);
+        assert_eq!(read_next_record(&mut reader, &mut line, None)?, None);
         Ok(())
     }
 
@@ -1018,8 +1172,27 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
     fn test_read_next_record_no_records() -> io::Result<()> {
         let mut reader =
             gff3::io::Reader::new(b"##gff-version 3\n##FASTA\n>chr1\nACGT\n".as_slice());
+        let mut line = gff3::Line::default();
 
-        assert_eq!(read_next_record(&mut reader)?, None);
+        assert_eq!(read_next_record(&mut reader, &mut line, None)?, None);
+        Ok(())
+    }
+
+    /// Reusing one `Line` buffer across calls must not leak a previous record's bytes into the
+    /// next result — the earlier record has already been converted into an owned `Gff3Record`
+    /// before the buffer is reused, so there is nothing to leak, but this pins that invariant.
+    #[test]
+    fn test_read_next_record_reused_buffer_does_not_leak_previous_line() -> io::Result<()> {
+        let mut reader = gff3::io::Reader::new(SAMPLE);
+        let mut line = gff3::Line::default();
+
+        let first = read_next_record(&mut reader, &mut line, None)?.expect("expected first record");
+        let second =
+            read_next_record(&mut reader, &mut line, None)?.expect("expected second record");
+
+        assert_ne!(first.feature_type, second.feature_type);
+        assert_first_sample_record(&first);
+        assert_second_sample_record(&second);
         Ok(())
     }
 
@@ -1260,7 +1433,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         );
         assert!(
             parser
-                .records(None)
+                .records(None, None)
                 .unwrap_err()
                 .to_string()
                 .contains("not open")
@@ -1309,7 +1482,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
         assert_eq!(parser.reader_mode(), "sequential");
 
-        let records = parser.records(None).map_err(from_py_error)?;
+        let records = parser.records(None, None).map_err(from_py_error)?;
         assert_eq!(records.len(), 2);
         assert_first_sample_record(&records[0]);
         assert_second_sample_record(&records[1]);
@@ -1335,10 +1508,199 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         assert_eq!(parser.reader_mode(), "query");
         parser.seek("chr1:10-20").map_err(from_py_error)?;
 
-        let records = parser.records(None).map_err(from_py_error)?;
+        let records = parser.records(None, None).map_err(from_py_error)?;
         assert_eq!(records.len(), 2);
         assert_first_sample_record(&records[0]);
         assert_second_sample_record(&records[1]);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // Gff3Parser:records - feature_types filter
+    // -----------------------------------------------------------------------
+
+    const FILTER_SAMPLE: &[u8] = b"\
+##gff-version 3
+chr1\tensembl\tgene\t1\t100\t.\t+\t.\tID=gene:1
+chr1\tensembl\tmRNA\t1\t100\t.\t+\t.\tID=transcript:1;Parent=gene:1
+chr1\tensembl\texon\t1\t50\t.\t+\t.\tID=exon:1;Parent=transcript:1
+# a comment between records
+chr1\tensembl\tCDS\t1\t50\t.\t+\t0\tParent=transcript:1
+chr1\tensembl\tmrna\t60\t100\t.\t+\t.\tID=transcript:2;Parent=gene:1
+";
+
+    #[test]
+    fn test_gff3_parser_records_feature_types_filter_sequential() -> io::Result<()> {
+        let dir = create_temp_dir("gff3-parser-records-filter-seq")?;
+        let path = write_sample_file(&dir, "sample.gff3", FILTER_SAMPLE)?;
+        let file_path = path.to_string_lossy().into_owned();
+
+        let mut parser =
+            Gff3Parser::new(None, None, Some("sequential".to_string())).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
+
+        // Mixed case in both the file ("mRNA"/"mrna") and the filter ("MRNA") must still match.
+        let records = parser
+            .records(None, Some(vec!["MRNA".to_string()]))
+            .map_err(from_py_error)?;
+
+        assert_eq!(records.len(), 2);
+        assert_eq!(records[0].feature_type, "mRNA");
+        assert_eq!(records[1].feature_type, "mrna");
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_gff3_parser_records_feature_types_filter_query() -> io::Result<()> {
+        let dir = create_temp_dir("gff3-parser-records-filter-query")?;
+        let (gz_path, _tbi_path) = write_gff3_with_tbi(
+            &dir,
+            str::from_utf8(FILTER_SAMPLE)
+                .ok()
+                .map(|s| s.lines().map(str::to_owned).collect()),
+        )?;
+        let file_path = gz_path.to_string_lossy().into_owned();
+
+        let mut parser = Gff3Parser::new(None, None, None).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
+        assert_eq!(parser.reader_mode(), "query");
+        parser.seek("chr1:1-100").map_err(from_py_error)?;
+
+        let records = parser
+            .records(None, Some(vec!["mrna".to_string()]))
+            .map_err(from_py_error)?;
+
+        assert_eq!(records.len(), 2);
+        assert!(
+            records
+                .iter()
+                .all(|record| record.feature_type.eq_ignore_ascii_case("mrna"))
+        );
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_gff3_parser_records_no_filter_matches_unfiltered_records() -> io::Result<()> {
+        let dir = create_temp_dir("gff3-parser-records-no-filter")?;
+        let path = write_sample_file(&dir, "sample.gff3", FILTER_SAMPLE)?;
+        let file_path = path.to_string_lossy().into_owned();
+
+        let mut unfiltered_parser = Gff3Parser::new(None, None, None).map_err(from_py_error)?;
+        unfiltered_parser
+            .open(&file_path, None)
+            .map_err(from_py_error)?;
+        let unfiltered = unfiltered_parser
+            .records(None, None)
+            .map_err(from_py_error)?;
+
+        let mut none_filter_parser = Gff3Parser::new(None, None, None).map_err(from_py_error)?;
+        none_filter_parser
+            .open(&file_path, None)
+            .map_err(from_py_error)?;
+        let explicit_none = none_filter_parser
+            .records(None, None)
+            .map_err(from_py_error)?;
+
+        assert_eq!(unfiltered, explicit_none);
+        assert_eq!(unfiltered.len(), 5);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_gff3_parser_records_feature_types_filter_skips_comments() -> io::Result<()> {
+        let dir = create_temp_dir("gff3-parser-records-filter-comments")?;
+        let path = write_sample_file(&dir, "sample.gff3", FILTER_SAMPLE)?;
+        let file_path = path.to_string_lossy().into_owned();
+
+        let mut parser = Gff3Parser::new(None, None, None).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
+
+        let records = parser
+            .records(None, Some(vec!["CDS".to_string()]))
+            .map_err(from_py_error)?;
+
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].feature_type, "CDS");
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    /// A line with fewer than 3 tab-separated fields has no column 3 to compare against the
+    /// filter, so it is silently skipped rather than reaching the full parser (which would raise
+    /// on it, as the unfiltered case below confirms it still does without a filter active).
+    #[test]
+    fn test_gff3_parser_records_feature_types_filter_skips_short_lines_without_erroring()
+    -> io::Result<()> {
+        let dir = create_temp_dir("gff3-parser-records-filter-short-line")?;
+        let short_line_sample = b"\
+##gff-version 3
+chr1\tensembl
+chr1\tensembl\tCDS\t1\t50\t.\t+\t0\tParent=transcript:1
+";
+        let path = write_sample_file(&dir, "sample.gff3", short_line_sample)?;
+        let file_path = path.to_string_lossy().into_owned();
+
+        let mut parser = Gff3Parser::new(None, None, None).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
+
+        let records = parser
+            .records(None, Some(vec!["CDS".to_string()]))
+            .map_err(from_py_error)?;
+
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].feature_type, "CDS");
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    /// The same short line, unfiltered, still reaches the full parser and errors -- the filter
+    /// changes what happens to a short line only when it is actually applied.
+    #[test]
+    fn test_gff3_parser_records_no_filter_still_errors_on_short_line() -> io::Result<()> {
+        let dir = create_temp_dir("gff3-parser-records-no-filter-short-line")?;
+        let short_line_sample = b"chr1\tensembl\n";
+        let path = write_sample_file(&dir, "sample.gff3", short_line_sample)?;
+        let file_path = path.to_string_lossy().into_owned();
+
+        Python::initialize();
+        let mut parser = Gff3Parser::new(None, None, None).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
+
+        let err = parser.records(None, None).unwrap_err();
+        assert!(
+            err.to_string().contains("unexpected end of file"),
+            "unexpected error: {err}"
+        );
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_gff3_parser_records_feature_types_filter_honours_limit() -> io::Result<()> {
+        let dir = create_temp_dir("gff3-parser-records-filter-limit")?;
+        let path = write_sample_file(&dir, "sample.gff3", FILTER_SAMPLE)?;
+        let file_path = path.to_string_lossy().into_owned();
+
+        let mut parser = Gff3Parser::new(None, None, None).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
+
+        let records = parser
+            .records(Some(1), Some(vec!["mrna".to_string()]))
+            .map_err(from_py_error)?;
+
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].feature_type, "mRNA");
 
         fs::remove_dir_all(dir)?;
         Ok(())
@@ -1416,7 +1778,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
 
         assert_eq!(parser.reader_mode(), "query");
         parser.seek("chr1:10-20").map_err(from_py_error)?;
-        let records = parser.records(None).map_err(from_py_error)?;
+        let records = parser.records(None, None).map_err(from_py_error)?;
         assert_eq!(records.len(), 2);
         assert_first_sample_record(&records[0]);
         assert_second_sample_record(&records[1]);
@@ -1471,7 +1833,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         parser.open(&file_path, None).map_err(from_py_error)?;
         assert_eq!(parser.reader_mode(), "sequential");
 
-        let records = parser.records(None).map_err(from_py_error)?;
+        let records = parser.records(None, None).map_err(from_py_error)?;
         assert_eq!(records.len(), 2);
         assert_first_sample_record(&records[0]);
         assert_second_sample_record(&records[1]);
@@ -1500,7 +1862,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
             .map_err(from_py_error)?;
         assert_eq!(parser.reader_mode(), "sequential");
 
-        let records = parser.records(None).map_err(from_py_error)?;
+        let records = parser.records(None, None).map_err(from_py_error)?;
         assert_eq!(records.len(), 2);
         assert_first_sample_record(&records[0]);
         assert_second_sample_record(&records[1]);
@@ -1581,7 +1943,7 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         );
         assert!(
             parser
-                .records(None)
+                .records(None, None)
                 .unwrap_err()
                 .to_string()
                 .contains("not open")
@@ -1741,7 +2103,9 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
         let (gz_path, _tbi_path) = write_gff3_with_tbi(&dir, None)?;
         let mut backend = TabixBackend::new(&gz_path, "tabix-nonexistent-binary-for-test")?;
 
-        let err = backend.seek(":::invalid:::").unwrap_err();
+        // "chr1:10-" fails region *syntax* parsing (trailing hyphen, no numeric end) -- distinct
+        // from a syntactically valid but unindexed name, which now returns `false` instead.
+        let err = backend.seek("chr1:10-").unwrap_err();
         assert_eq!(err.kind(), io::ErrorKind::InvalidInput);
 
         fs::remove_dir_all(dir)?;
@@ -1861,6 +2225,324 @@ chr1\tensembl\tgene\t10\t20\t.\t.\t.\tID=gene:1
             "GFF3Record(seqid=\"chr1\", feature_type=\"gene\", start=10, end=20, strand_symbol=\"+\", phase_value=None)"
         );
 
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // GFF3Record::first_attribute
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_first_attribute_present_single_valued() -> io::Result<()> {
+        let records = parse_gff3_bytes(SAMPLE, Some(1))?;
+        let record = records.first().expect("expected record");
+
+        assert_eq!(record.first_attribute("ID"), Some("gene:1"));
+        assert_eq!(record.first_attribute("Name"), Some("BRCA2"));
+        Ok(())
+    }
+
+    #[test]
+    fn test_first_attribute_present_multi_valued_returns_first() -> io::Result<()> {
+        let records = parse_gff3_bytes(SAMPLE, Some(1))?;
+        let record = records.first().expect("expected record");
+
+        // "Alias=a,b" — first_attribute returns only the first value, matching
+        // attributes[key][0].
+        assert_eq!(record.first_attribute("Alias"), Some("a"));
+        Ok(())
+    }
+
+    #[test]
+    fn test_first_attribute_missing_key_returns_none() -> io::Result<()> {
+        let records = parse_gff3_bytes(SAMPLE, Some(1))?;
+        let record = records.first().expect("expected record");
+
+        assert_eq!(record.first_attribute("Parent"), None);
+        Ok(())
+    }
+
+    /// Assert `first_attribute` agrees with `attributes[key][0]` from the `dict` getter, for
+    /// every key the record has plus the key under test. This is the oracle the parity tests
+    /// below check against, so it never hardcodes an expected string itself.
+    fn assert_first_attribute_matches_dict(record: &Gff3Record, key: &str) {
+        Python::initialize();
+        Python::attach(|py| {
+            let attributes = record.attributes(py).expect("attributes should build");
+            let expected = attributes
+                .get_item(key)
+                .expect("dict lookup should not error")
+                .map(|values| {
+                    values
+                        .extract::<Vec<String>>()
+                        .expect("attribute values should extract as strings")
+                        .first()
+                        .cloned()
+                        .expect("a present key always has at least one value")
+                });
+
+            assert_eq!(
+                record.first_attribute(key),
+                expected.as_deref(),
+                "first_attribute({key:?}) disagreed with attributes[{key:?}][0]"
+            );
+        });
+    }
+
+    #[test]
+    fn test_first_attribute_duplicate_key_matches_last_occurrence() -> io::Result<()> {
+        // GFF3 lets a key repeat as separate pairs (unlike GTF, which merges repeats into one
+        // array). The `attributes` dict getter overwrites on `set_item`, so the last occurrence
+        // wins there; `first_attribute` must agree rather than returning the first occurrence.
+        let records = parse_gff3_bytes(
+            b"chr1\tensembl\tgene\t10\t20\t.\t+\t.\tID=a;Name=x%3By,z;ID=b\n",
+            Some(1),
+        )?;
+        let record = records.first().expect("expected record");
+
+        assert_eq!(record.first_attribute("ID"), Some("b"));
+        assert_first_attribute_matches_dict(record, "ID");
+        Ok(())
+    }
+
+    #[test]
+    fn test_first_attribute_percent_encoded_value_matches_dict() -> io::Result<()> {
+        let records = parse_gff3_bytes(
+            b"chr1\tensembl\tgene\t10\t20\t.\t+\t.\tName=BRCA%202\n",
+            Some(1),
+        )?;
+        let record = records.first().expect("expected record");
+
+        assert_eq!(record.first_attribute("Name"), Some("BRCA 2"));
+        assert_first_attribute_matches_dict(record, "Name");
+        Ok(())
+    }
+
+    #[test]
+    fn test_first_attribute_empty_value_matches_dict() -> io::Result<()> {
+        let records = parse_gff3_bytes(b"chr1\tensembl\tgene\t10\t20\t.\t+\t.\tNote=\n", Some(1))?;
+        let record = records.first().expect("expected record");
+
+        assert_first_attribute_matches_dict(record, "Note");
+        Ok(())
+    }
+
+    #[test]
+    fn test_first_attribute_empty_array_element_matches_dict() -> io::Result<()> {
+        let records = parse_gff3_bytes(b"chr1\tensembl\tgene\t10\t20\t.\t+\t.\tX=,\n", Some(1))?;
+        let record = records.first().expect("expected record");
+
+        assert_first_attribute_matches_dict(record, "X");
+        Ok(())
+    }
+
+    #[test]
+    fn test_first_attribute_comma_array_matches_dict() -> io::Result<()> {
+        let records = parse_gff3_bytes(SAMPLE, Some(1))?;
+        let record = records.first().expect("expected record");
+
+        // "Alias=a,b" from SAMPLE.
+        assert_first_attribute_matches_dict(record, "Alias");
+        Ok(())
+    }
+
+    #[test]
+    fn test_first_attribute_crlf_line_matches_dict() -> io::Result<()> {
+        let records = parse_gff3_bytes(
+            b"chr1\tensembl\tgene\t10\t20\t.\t+\t.\tID=gene:1\r\n",
+            Some(1),
+        )?;
+        let record = records.first().expect("expected record");
+
+        assert_eq!(record.first_attribute("ID"), Some("gene:1"));
+        assert_first_attribute_matches_dict(record, "ID");
+        Ok(())
+    }
+
+    #[test]
+    fn test_first_attribute_after_skipped_comment_and_directive_lines_matches_dict()
+    -> io::Result<()> {
+        // Comment and directive lines are skipped by `read_next_record` without producing a
+        // record; this pins that skipping them first does not leave stale bytes in the reused
+        // `Line` buffer that could corrupt the next real record's attributes.
+        let records = parse_gff3_bytes(SKIPPED_LINE_SAMPLE, None)?;
+        let record = records.first().expect("expected record");
+
+        assert_eq!(record.first_attribute("ID"), Some("gene:1"));
+        assert_first_attribute_matches_dict(record, "ID");
+        Ok(())
+    }
+
+    #[test]
+    fn test_first_attribute_before_fasta_directive_matches_dict() -> io::Result<()> {
+        // SAMPLE ends with a ##FASTA directive followed by sequence lines; parsing must stop
+        // there without disturbing the attributes of records read beforehand.
+        let records = parse_gff3_bytes(SAMPLE, None)?;
+        let record = records.last().expect("expected record");
+
+        assert_eq!(record.first_attribute("ID"), Some("cds:1"));
+        assert_first_attribute_matches_dict(record, "ID");
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // parse_gff3_line_into — reused buffer parity with parse_gff3_line
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_parse_gff3_line_into_reused_buffer_matches_parse_gff3_line() -> io::Result<()> {
+        let mut buffer = gff3::Line::default();
+
+        let first = parse_gff3_line_into(
+            "chr1\tensembl\tgene\t10\t20\t.\t+\t.\tID=gene:1;Name=BRCA2;Alias=a,b",
+            &mut buffer,
+            None,
+        )?
+        .expect("expected first record");
+        assert_first_sample_record(&first);
+
+        let second = parse_gff3_line_into(
+            "chr1\tensembl\tCDS\t12\t18\t4.5\t-\t2\tID=cds:1;Parent=gene:1",
+            &mut buffer,
+            None,
+        )?
+        .expect("expected second record");
+        assert_second_sample_record(&second);
+
+        Ok(())
+    }
+
+    /// A residual `\r` left behind by `TabixReader`'s single-pass `trim_newline` (a doubled `\r`
+    /// before the real line terminator, or a bare trailing `\r` on a file's last, newline-less
+    /// line) must parse the same way whether the line arrived through the tabix/query path or
+    /// the sequential reader. See the note on `parse_gff3_line_into`.
+    #[test]
+    fn test_parse_gff3_line_into_residual_cr_matches_sequential_reader() -> io::Result<()> {
+        let raw_line = "chr1\tensembl\tgene\t10\t20\t.\t+\t.\tID=gene:1\r\r\n";
+
+        // Tabix/query path: TabixReader::next() would already have run trim_newline over the
+        // raw bytes before handing this string to parse_gff3_line_into.
+        let mut trimmed = raw_line.to_string();
+        trim_newline(&mut trimmed);
+        let mut buffer = gff3::Line::default();
+        let tabix_path_record =
+            parse_gff3_line_into(&trimmed, &mut buffer, None)?.expect("expected record");
+
+        // Sequential path: SequentialBackend reads the same raw bytes directly.
+        let sequential_records = parse_gff3_bytes(raw_line.as_bytes(), None)?;
+        let sequential_record = sequential_records.first().expect("expected record");
+
+        assert_eq!(
+            tabix_path_record.raw_attributes,
+            sequential_record.raw_attributes
+        );
+        assert_eq!(
+            tabix_path_record.first_attribute("ID"),
+            sequential_record.first_attribute("ID")
+        );
+        // Pins the actual (slightly surprising) shared behaviour: with only one `\r` stripped by
+        // either path, the other survives into the attribute value on both.
+        assert_eq!(tabix_path_record.first_attribute("ID"), Some("gene:1\r"));
+
+        Ok(())
+    }
+
+    /// The same parity, for a file's last line ending in a bare `\r` with no `\n` at all.
+    #[test]
+    fn test_parse_gff3_line_into_trailing_cr_without_newline_matches_sequential_reader()
+    -> io::Result<()> {
+        let raw_line = "chr1\tensembl\tgene\t10\t20\t.\t+\t.\tID=gene:1\r";
+
+        let mut trimmed = raw_line.to_string();
+        trim_newline(&mut trimmed);
+        let mut buffer = gff3::Line::default();
+        let tabix_path_record =
+            parse_gff3_line_into(&trimmed, &mut buffer, None)?.expect("expected record");
+
+        let sequential_records = parse_gff3_bytes(raw_line.as_bytes(), None)?;
+        let sequential_record = sequential_records.first().expect("expected record");
+
+        assert_eq!(
+            tabix_path_record.first_attribute("ID"),
+            sequential_record.first_attribute("ID")
+        );
+        assert_eq!(tabix_path_record.first_attribute("ID"), Some("gene:1\r"));
+
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // TabixBackend::index_sequence_names / Gff3Parser::index_sequence_names
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_tabix_backend_index_sequence_names() -> io::Result<()> {
+        let dir = create_temp_dir("gff3-tabix-index-names")?;
+        let (gz_path, _tbi_path) = write_gff3_with_tbi(&dir, None)?;
+        let mut backend = TabixBackend::new(&gz_path, "tabix-nonexistent-binary-for-test")?;
+
+        assert_eq!(
+            backend.index_sequence_names()?,
+            vec!["chr1".to_string(), "chr2".to_string()]
+        );
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_sequential_backend_index_sequence_names_is_empty() -> io::Result<()> {
+        let dir = create_temp_dir("gff3-sequential-index-names")?;
+        let path = write_sample_file(&dir, "sample.gff3", SAMPLE)?;
+
+        let mut reader = Gff3Reader::open(
+            &path,
+            "tabix-nonexistent-binary-for-test",
+            ReaderMode::Sequential,
+        )?;
+        assert!(reader.index_sequence_names()?.is_empty());
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_gff3_parser_index_sequence_names() -> io::Result<()> {
+        let dir = create_temp_dir("gff3-parser-index-names")?;
+        let (gz_path, _tbi_path) = write_gff3_with_tbi(&dir, None)?;
+        let file_path = gz_path.to_string_lossy().into_owned();
+
+        let mut parser = Gff3Parser::new(None, None, None).map_err(from_py_error)?;
+        assert!(
+            parser
+                .index_sequence_names()
+                .map_err(from_py_error)?
+                .is_empty()
+        );
+
+        parser.open(&file_path, None).map_err(from_py_error)?;
+        assert_eq!(
+            parser.index_sequence_names().map_err(from_py_error)?,
+            vec!["chr1".to_string(), "chr2".to_string()]
+        );
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_gff3_parser_seek_unknown_contig_returns_false() -> io::Result<()> {
+        let dir = create_temp_dir("gff3-parser-unknown-contig")?;
+        let (gz_path, _tbi_path) = write_gff3_with_tbi(&dir, None)?;
+        let file_path = gz_path.to_string_lossy().into_owned();
+
+        let mut parser = Gff3Parser::new(None, None, None).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
+
+        assert!(!parser.seek("chrZ:1-100").map_err(from_py_error)?);
+        assert_eq!(parser.next().map_err(from_py_error)?, None);
+
+        fs::remove_dir_all(dir)?;
         Ok(())
     }
 }

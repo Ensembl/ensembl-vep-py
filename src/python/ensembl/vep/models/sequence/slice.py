@@ -15,6 +15,7 @@
 
 from __future__ import annotations
 
+import logging
 from copy import deepcopy
 from functools import cached_property
 from threading import RLock
@@ -22,11 +23,13 @@ from typing import TYPE_CHECKING
 
 from attrs import define, field
 
-from ensembl.vep.common import Strand, UnsafeSetterMixin, invalidates
+from ensembl.vep.common import Strand, UnsafeSetterMixin, invalidates, reverse_complement
 from ensembl.vep.models.sequence.coord_system import CoordSystem
 
 if TYPE_CHECKING:
     from ensembl.vep.sources.sequence_source import SequenceSource
+
+logger = logging.getLogger(__name__)
 
 
 @define(kw_only=True, auto_attribs=True)
@@ -81,6 +84,55 @@ class Slice(UnsafeSetterMixin):
                 self.end,
                 strand=self.strand,
             )
+
+    def subseq(self, start: int, end: int, strand: Strand = Strand.FORWARD) -> str | None:
+        """Return the sequence of a span given in slice-relative coordinates.
+
+        A span inside a linear, source-backed slice is read straight from the source, so a feature
+        on a whole-chromosome slice never materialises the chromosome. Anything else -- a circular
+        slice, whose span may wrap the origin, or a span reaching outside this one -- is cut from
+        ``seq``.
+
+        Args:
+            start (int): Span start relative to the slice, 1-based inclusive.
+            end (int): Span end relative to the slice, 1-based inclusive.
+            strand (Strand): Orientation of the returned sequence relative to the slice.
+
+        Returns:
+            str | None: The span sequence, or None if the slice has no sequence or no strand to
+                measure the span against.
+        """
+
+        if self.strand == Strand.FORWARD:
+            span_start, span_end = self.start + start - 1, self.start + end - 1
+        elif self.strand == Strand.REVERSE:
+            # Relative position 1 is the slice's genomic end, so the span is measured back from it.
+            span_start, span_end = self.end - end + 1, self.end - start + 1
+        else:
+            logger.warning("Cannot obtain subseq for a slice on an unknown strand.")
+            return None
+
+        if (
+            self.sequence_source is not None
+            and not self.is_circular()
+            and 1 <= start <= end <= self.end - self.start + 1
+        ):
+            # Reverse-complemented once if exactly one of the slice and the request is reversed.
+            flipped = (self.strand == Strand.REVERSE) != (strand == Strand.REVERSE)
+            return self.sequence_source.get_sequence_by_start_end_strand(
+                self.seq_region_name,
+                span_start,
+                span_end,
+                strand=Strand.REVERSE if flipped else Strand.FORWARD,
+            )
+
+        slice_seq = self.seq
+        if slice_seq is None:
+            return None
+        span_seq = slice_seq[start - 1 : end]
+        if strand == Strand.REVERSE:
+            return reverse_complement(span_seq)
+        return span_seq
 
     @property
     def seq_region_length(self) -> int | None:

@@ -11,9 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""File-backed feature sources."""
+"""Feature sources — file-backed and database-backed providers of domain Feature objects."""
 
-from .file_feature_source import FileFeatureSource
 from .fasta.sequence import FastaSequenceSource
+from .file_feature_source import FileFeatureSource
 
 __all__ = ["FileFeatureSource", "FastaSequenceSource"]

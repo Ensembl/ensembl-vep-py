@@ -284,7 +284,5 @@ class MyClass:
 
 > **Note:** The use of `RLock` instead of `Lock` to prevent deadlocks when trying to access a cached property from a another cached property.
 
-
 ## Containers
-
-We are using containers where we do not want to implement any behavior for an object, but useful to have a named and grouped representation of the data. They are defined using `@frozen` from `attrs` to create immutable data structures and available in `ensembl.vep.common.(containers)`.
+We are using containers where we do not want to implement any behavior for an object, but it is useful to have a named and grouped representation of the data. They are defined using `@frozen` from `attrs` to create immutable data structures and are available in `ensembl.vep.common.(containers)`.

@@ -22,7 +22,7 @@ import pytest
 from attrs import evolve
 
 from ensembl.vep.common import CoordSystemLevel, Strand
-from ensembl.vep.models.variation import VariationAllele
+from ensembl.vep.models.variation import Variation, VariationAllele
 from ensembl.vep.models.genic import Transcript
 from ensembl.vep.models.overlap import OverlapConsequence, TranscriptVariationAllele
 from ensembl.vep.models.sequence import CoordSystem, Slice
@@ -42,6 +42,19 @@ def genomic_slice(dummy_sequence_source: DummySequenceSource) -> Slice:
         end=13,
         strand=Strand.FORWARD,
         sequence_source=dummy_sequence_source,
+    )
+
+
+@pytest.fixture
+def variation(genomic_slice: Slice) -> Variation:
+    """Returns a Variation object for testing."""
+    return Variation(
+        stable_id="rs123456",
+        start=5,
+        end=5,
+        strand=Strand.FORWARD,
+        slice=genomic_slice,
+        allele_string="A/T",
     )
 
 
@@ -72,6 +85,7 @@ class TestVariationAlleleProperties:
         assert variation_allele.strand == Strand.FORWARD
         assert variation_allele.reference_allele == "A"
         assert variation_allele.alternate_allele == "T"
+        assert variation_allele.variation is None
 
     def test_initialization_without_keywords(self) -> None:
         """Test that initializing without keywords raises error."""
@@ -84,6 +98,12 @@ class TestVariationAlleleProperties:
                 reference_allele="A",
                 alternate_allele="T",
             )
+
+    def test_variation_can_be_assigned(self, variation_allele: VariationAllele, variation: Variation) -> None:
+        """Test that an allele can reference its owning variation."""
+        variation_allele.variation = variation
+
+        assert variation_allele.variation is variation
 
     def test_minimised(self, variation_allele: VariationAllele) -> None:
         """Test the minimised property before and after calling minimise."""

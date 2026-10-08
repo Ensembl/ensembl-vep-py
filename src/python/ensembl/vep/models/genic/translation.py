@@ -46,6 +46,18 @@ class Translation:
             The amino acid sequence of the translation.
         transcript (Transcript | None):
             The transcript to which this translation belongs.
+        exon_coding_start (int | None):
+            The position of the first coding base in the start exon, relative to the start of
+            the exon (1-based).
+        exon_coding_end (int | None):
+            The position of the last coding base in the end exon, relative to the start of the
+            exon (1-based).
+        derived_from_coding_sequence (bool):
+            Whether ``seq`` was computed by ``Transcript._translation`` from this transcript's own
+            ``coding_sequence``, as opposed to seeded from an external source that may curate it
+            differently (for example without a trailing stop, or with selenocysteine edits).
+            ``False`` by default and for every externally seeded translation; set True only at the
+            one place that derives ``seq`` this way (``Transcript._translation``).
     """
 
     start: int = field(on_setattr=invalidates("_length"))
@@ -54,6 +66,9 @@ class Translation:
     version: int | None = field(default=None, init=False)
     seq: str | None = field(default=None, init=False)
     transcript: Transcript | None = field(default=None, init=False)
+    exon_coding_start: int | None = field(default=None)
+    exon_coding_end: int | None = field(default=None)
+    derived_from_coding_sequence: bool = field(default=False, init=False)
     _lock: RLock = field(factory=RLock, init=False, repr=False)
 
     @property
@@ -74,47 +89,3 @@ class Translation:
             int: The length of the feature.
         """
         return self.end - self.start + 1
-
-    @property
-    def exon_coding_start(self) -> int:
-        """
-        Returns the position of the first coding base in the start exon,
-        relative to the start of the exon.
-
-        Returns:
-            The position of the first coding base in the start exon,
-            relative to the start of the exon.
-        """
-        return 1
-
-    @property
-    def exon_coding_end(self) -> int | None:
-        """
-        Returns the position of the last coding base in the end exon,
-        relative to the start of the exon.
-
-        Returns:
-            The position of the last coding base in the end exon,
-            relative to the start of the exon.
-        """
-        return self._exon_coding_end
-
-    @cached_property
-    def _exon_coding_end(self) -> int | None:
-        """
-        Returns the position of the last coding base in the end exon,
-        relative to the start of the exon.
-
-        Returns:
-            The position of the last coding base in the end exon,
-            relative to the start of the exon.
-        """
-        if (
-            self.transcript is None
-            or self.transcript.spliced_exons is None
-            or len(self.transcript.spliced_exons) == 0
-            or self.transcript.spliced_exons[-1].seq is None
-        ):
-            return None
-
-        return len(self.transcript.spliced_exons[-1].seq)

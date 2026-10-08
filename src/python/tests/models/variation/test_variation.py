@@ -107,13 +107,32 @@ class TestVariationProperties:
         """Test Variation initialization without keyword raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = Variation(
-                100, end=100, strand=Strand.FORWARD, slice=None, allele_string="A/T"  # type: ignore[misc]
+                100,
+                end=100,
+                strand=Strand.FORWARD,
+                slice=None,
+                allele_string="A/T",  # type: ignore[misc]
             )
 
     def test_defaults(self, variation: Variation) -> None:
         """Test default values for optional attributes."""
         assert variation.stable_id is None
+        assert variation.uploaded_locus is None
         assert variation.is_somatic is False
+
+    def test_uploaded_locus(self, genomic_slice: Slice) -> None:
+        """Test a Variation retains the originally uploaded locus."""
+        uploaded_locus = Locus(start=5, end=7, allele_string="ATC/A")
+        variation = Variation(
+            start=6,
+            end=7,
+            strand=Strand.FORWARD,
+            slice=genomic_slice,
+            allele_string="TC/-",
+            uploaded_locus=uploaded_locus,
+        )
+
+        assert variation.uploaded_locus == uploaded_locus
 
     def test_variation_alleles_immutable(self, variation: Variation) -> None:
         """Test that variation_alleles cannot be directly set."""
@@ -147,6 +166,7 @@ class TestVariationAlleles:
         alleles = variation.variation_alleles
 
         assert len(alleles) == 1
+        assert alleles[0].variation is variation
         assert alleles[0].reference_allele == "A"
         assert alleles[0].alternate_allele == "T"
 
@@ -158,7 +178,7 @@ class TestVariationAlleles:
         assert alleles[0].alternate_allele == "T"
         assert alleles[1].alternate_allele == "G"
         assert alleles[2].alternate_allele == "C"
-        # All share the same reference
+        # All share the same reference allele
         assert all(a.reference_allele == "A" for a in alleles)
 
     def test_insertion_alleles(self, insertion_variation: Variation) -> None:

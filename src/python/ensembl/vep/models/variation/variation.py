@@ -20,7 +20,7 @@ from threading import RLock
 from typing import Sequence
 from attrs import define, field
 
-from ensembl.vep.common import ClassSOTerm, invalidate, invalidates, infer_variant_so_term
+from ensembl.vep.common import ClassSOTerm, Locus, invalidate, invalidates, infer_variant_so_term
 from ensembl.vep.models import Feature
 from ensembl.vep.models.overlap import OverlapConsequence
 from ensembl.vep.models.variation.variation_allele import VariationAllele
@@ -35,6 +35,8 @@ class Variation(Feature):
             Stable identifier for the variation.
         allele_string (str | None):
             String representation of the alleles.
+        uploaded_locus (Locus | None):
+            Original position and allele string supplied by the variation source.
         variation_alleles (list[VariationAllele] | None):
             List of VariationAllele objects describing the alleles of the variation.
         is_somatic (bool | None):
@@ -50,6 +52,7 @@ class Variation(Feature):
         default=None,
         on_setattr=invalidates("_variation_alleles", "_class_so_term", "_most_severe_consequence"),
     )
+    uploaded_locus: Locus | None = field(default=None)
     is_somatic: bool = field(default=False)
     _lock: RLock = field(factory=RLock, init=False, repr=False)
 
@@ -86,6 +89,7 @@ class Variation(Feature):
                     slice=self.slice,
                     reference_allele=ref,
                     alternate_allele=alt,
+                    variation=self,
                 )
 
                 variation_alleles.append(variation_allele)

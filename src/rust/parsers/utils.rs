@@ -149,6 +149,66 @@ pub(crate) fn parse_region(region: &str) -> io::Result<Region> {
     })
 }
 
+/// Case-insensitive column-3 (feature type) filter, applied to a raw tabix/GFF/GTF line before it
+/// is parsed into a record or converted into a Python object.
+///
+/// `records(feature_types=...)` on the GFF3 and GTF parsers uses this to skip non-matching lines
+/// at the cost of one tab-split byte scan, instead of allocating a full record only to discard it.
+#[derive(Clone, Debug)]
+pub(crate) struct FeatureTypeFilter {
+    lower_case_types: Vec<String>,
+}
+
+impl FeatureTypeFilter {
+    pub(crate) fn new(feature_types: &[String]) -> Self {
+        Self {
+            lower_case_types: feature_types
+                .iter()
+                .map(|t| t.to_ascii_lowercase())
+                .collect(),
+        }
+    }
+
+    /// Return whether the raw line's column-3 feature type is in this filter's set.
+    ///
+    /// Compares case-insensitively without allocating: the field is sliced out of `line` by byte
+    /// offset, and each candidate is compared with `eq_ignore_ascii_case`.
+    pub(crate) fn matches(&self, line: &[u8]) -> bool {
+        // A line with fewer than 3 tab-separated fields has no column 3 to compare: treated as a
+        // non-match (silently skipped) rather than falling through to the full parser, which
+        // would raise on it. Only reachable when a filter is active -- unfiltered parsing still
+        // surfaces such a line as the parse error it always was.
+        let Some(feature_type) = nth_tab_field(line, 2) else {
+            return false;
+        };
+        self.lower_case_types
+            .iter()
+            .any(|candidate| feature_type.eq_ignore_ascii_case(candidate.as_bytes()))
+    }
+}
+
+/// Return the `index`-th tab-delimited field (0-based) of a raw line, if present.
+fn nth_tab_field(line: &[u8], index: usize) -> Option<&[u8]> {
+    let mut field_index = 0;
+    let mut start = 0;
+
+    for (i, &byte) in line.iter().enumerate() {
+        if byte == b'\t' {
+            if field_index == index {
+                return Some(&line[start..i]);
+            }
+            field_index += 1;
+            start = i + 1;
+        }
+    }
+
+    if field_index == index {
+        Some(&line[start..])
+    } else {
+        None
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct SequenceRegion {
     pub(crate) seq_region_name: String,
@@ -464,6 +524,56 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
     fn test_is_bgzf_file_rejects_nonexistent_file() {
         let err = is_bgzf_file(Path::new("nonexistent_file.gz")).unwrap_err();
         assert_eq!(err.kind(), ErrorKind::NotFound);
+    }
+
+    // -----------------------------------------------------------------------
+    // nth_tab_field
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_nth_tab_field_returns_middle_field() {
+        assert_eq!(
+            nth_tab_field(b"chr1\tensembl\tgene\t10\t20", 2),
+            Some(b"gene".as_slice())
+        );
+    }
+
+    #[test]
+    fn test_nth_tab_field_returns_last_field_without_trailing_tab() {
+        assert_eq!(nth_tab_field(b"a\tb\tc", 2), Some(b"c".as_slice()));
+    }
+
+    #[test]
+    fn test_nth_tab_field_missing_field_returns_none() {
+        assert_eq!(nth_tab_field(b"a\tb", 2), None);
+    }
+
+    // -----------------------------------------------------------------------
+    // FeatureTypeFilter
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_feature_type_filter_matches_case_insensitively() {
+        let filter = FeatureTypeFilter::new(&["mRNA".to_string(), "transcript".to_string()]);
+
+        assert!(filter.matches(b"chr1\tensembl\tmRNA\t10\t20\t.\t+\t."));
+        assert!(filter.matches(b"chr1\tensembl\tmrna\t10\t20\t.\t+\t."));
+        assert!(filter.matches(b"chr1\tensembl\tMRNA\t10\t20\t.\t+\t."));
+        assert!(filter.matches(b"chr1\tensembl\tTranscript\t10\t20\t.\t+\t."));
+    }
+
+    #[test]
+    fn test_feature_type_filter_rejects_non_matching_type() {
+        let filter = FeatureTypeFilter::new(&["mRNA".to_string()]);
+
+        assert!(!filter.matches(b"chr1\tensembl\texon\t10\t20\t.\t+\t."));
+    }
+
+    #[test]
+    fn test_feature_type_filter_rejects_line_missing_type_field() {
+        let filter = FeatureTypeFilter::new(&["mRNA".to_string()]);
+
+        assert!(!filter.matches(b"chr1\tensembl"));
     }
 
     // -----------------------------------------------------------------------

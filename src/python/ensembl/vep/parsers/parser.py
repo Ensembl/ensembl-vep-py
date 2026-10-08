@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import TypeVar, Generic
 from attrs import define
 
@@ -52,6 +53,17 @@ class Parser(ABC, Generic[T]):
         """
 
         return {}
+
+    @property
+    def index_sequence_names(self) -> list[str]:
+        """Reference sequence names declared by an index, if the parser exposes one.
+
+        Returns:
+            list[str]: The reference sequence names, or an empty list when the parser has no
+            index or does not expose this information.
+        """
+
+        return []
 
     @abstractmethod
     def open(self, file_path: str, mode: str) -> Parser:
@@ -98,7 +110,7 @@ class Parser(ABC, Generic[T]):
 
     @abstractmethod
     def next(self) -> T | None:
-        """Return the next raw row from the active region query.
+        """Returns the next raw row from the active region query.
 
         Returns:
             T | None: The next raw row, or None if there are no more rows.
@@ -107,7 +119,7 @@ class Parser(ABC, Generic[T]):
         raise NotImplementedError
 
     def records(self, limit: int | None = None) -> list[T]:
-        """Return all records from the active region query.
+        """Returns all records from the active region query.
 
         Args:
             limit (int | None): The maximum number of records to return. If None, return all records.
@@ -156,11 +168,11 @@ class Parser(ABC, Generic[T]):
         raise NotImplementedError
 
     @staticmethod
-    def parse_file(file_path: str, limit: int | None = None) -> list[T]:
+    def parse_file(file_path: str | Path, limit: int | None = None) -> list[T]:
         """Parse a file and return a list of records.
 
         Args:
-            file_path (str): The path to the file to parse.
+            file_path (str | Path): The path to the file to parse.
             limit (int | None): The maximum number of records to return. If None, return all records.
 
         Returns:

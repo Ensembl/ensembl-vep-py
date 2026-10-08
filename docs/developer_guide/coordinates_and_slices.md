@@ -17,8 +17,8 @@ Features positioned on a slice have coordinates and strand values expressed rela
 All positions on a slice or sequence feature use `start` and `end` coordinates, where the condition `start <= end` always holds true.
 
 **Exception:** 
-1. An insertion variants described in Ensembl's default format can have `end = start - 1`.
-2. Circular slice on a bacterial or mitochondrial DNA can have `end < start`.
+1. Insertion variants described in Ensembl's default format can have `end = start - 1`.
+2. A circular slice on a bacterial or mitochondrial DNA can have `end < start`.
 
 We use **1-based inclusive (closed)** coordinates for all positions. This means that the first base of a sequence is at position 1, and both `start` and `end` positions are included in the feature span.
 
@@ -26,3 +26,9 @@ We use **1-based inclusive (closed)** coordinates for all positions. This means 
 As convention in Ensembl, for insertion variants, the `start` and `end` coordinates are defined such that `end = start - 1`. This is because in 1-based inclusive coordinates, length is represented as `end - start + 1`. An insertion has a length of 0, furthermore the adjacent start and end coordinates clearly indicate the position of the insertion between two bases.
 
 This convention is also convenient for calculating pre and post sequence for shifting algorithm. Nonetheless, it can be a source of confusion and errors, so it is important to be aware of this special case when working with insertion variants.
+
+## Removal of Reference Bases
+
+When `Variation` objects are created any anchor bases are removed and the coordinates adjusted accordingly. For example, a deletion represented in VCF as `1   10  CAT C` becomes `AT/-` with `start=11` and `end=12`. An insertion such as `1   10  G   GAT` becomes `-/AT` with `start=11` and `end=10`.
+The same is true for symbolic alleles. e.g. This variant `1   100 G <DEL>`, becomes `-/<DEL>` and `start` is updated to 101.
+
