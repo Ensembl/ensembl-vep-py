@@ -29,6 +29,7 @@ from ensembl.vep.corpus.registry import (
     register_corpus,
 )
 from ensembl.vep.corpus.spec import CorpusSpec
+from ensembl.vep.corpus.synthetic import SyntheticCorpus
 
 __all__ = [
     "Corpus",
@@ -36,6 +37,7 @@ __all__ = [
     "CorpusSpec",
     "NamedOverlap",
     "NamedVariant",
+    "SyntheticCorpus",
     "available_corpora",
     "build_corpus",
     "build_corpus_from_options",
