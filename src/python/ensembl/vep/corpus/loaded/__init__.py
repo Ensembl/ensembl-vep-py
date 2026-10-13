@@ -14,5 +14,6 @@
 """Loaded corpus implementations."""
 
 from .base import CorpusResource, LoadedCorpus
+from .files import load_file_corpus
 
-__all__ = ["CorpusResource", "LoadedCorpus"]
+__all__ = ["CorpusResource", "LoadedCorpus", "load_file_corpus"]
