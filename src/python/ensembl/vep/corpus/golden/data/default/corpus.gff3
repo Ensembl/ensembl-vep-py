@@ -1,0 +1,8 @@
+##gff-version 3
+##sequence-region chrGolden 1 120
+chrGolden	ensembl_vep_golden	gene	20	100	.	+	.	ID=gene:GOLDG1;Name=GOLDG1;biotype=protein_coding
+chrGolden	ensembl_vep_golden	transcript	20	100	.	+	.	ID=transcript:GOLDT1;Name=GOLDT1;Parent=gene:GOLDG1;biotype=protein_coding
+chrGolden	ensembl_vep_golden	exon	20	50	.	+	.	ID=exon:GOLDE1;Parent=transcript:GOLDT1
+chrGolden	ensembl_vep_golden	CDS	25	50	.	+	0	ID=CDS:GOLDP1;Parent=transcript:GOLDT1
+chrGolden	ensembl_vep_golden	exon	70	100	.	+	.	ID=exon:GOLDE2;Parent=transcript:GOLDT1
+chrGolden	ensembl_vep_golden	CDS	70	90	.	+	1	ID=CDS:GOLDP1;Parent=transcript:GOLDT1

@@ -70,6 +70,9 @@ nav:
   - Home: index.md
   - Install: install.md
   - Usage: usage.md
+  - Developer guide:
+    - Conventions: developer_guide.md
+    - Corpus architecture: developer_guide/corpus.md
   - Code of Conduct: code_of_conduct.md
   - Code reference: reference/
   - Coverage report: coverage.md

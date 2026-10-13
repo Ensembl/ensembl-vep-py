@@ -1,0 +1,27 @@
+{
+  "format_version": 1,
+  "spec": {
+    "kind": "golden.file",
+    "parameters": {
+      "dataset": "default"
+    }
+  },
+  "annotator": "consequence.linear",
+  "catalogue": "391e21d435f37278",
+  "terms": {
+    "transcript:GOLDT1::gold_boundary": [
+      "missense_variant",
+      "splice_region_variant"
+    ],
+    "transcript:GOLDT1::gold_coding": [
+      "5_prime_UTR_variant"
+    ],
+    "transcript:GOLDT1::gold_downstream": [
+      "downstream_gene_variant"
+    ],
+    "transcript:GOLDT1::gold_intron": [
+      "splice_polypyrimidine_tract_variant",
+      "intron_variant"
+    ]
+  }
+}

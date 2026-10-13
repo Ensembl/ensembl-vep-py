@@ -1,0 +1,8 @@
+##fileformat=VCFv4.2
+##source=ensembl_vep_golden
+##contig=<ID=chrGolden,length=120>
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+chrGolden	24	gold_coding	A	T	.	.	.
+chrGolden	50	gold_boundary	A	G	.	.	.
+chrGolden	60	gold_intron	A	C	.	.	.
+chrGolden	105	gold_downstream	A	T	.	.	.
