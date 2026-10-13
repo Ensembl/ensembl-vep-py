@@ -99,6 +99,54 @@ class TestLoadedCorpus:
         assert all(transcript.slice is sequence_region for transcript in loaded_corpus.transcripts)
         assert all(allele.slice is sequence_region for _name, allele in loaded_corpus.named_variants)
 
+    def test_resolves_uploaded_transcript_and_vcf_region_names(
+        self,
+        saved_default_corpus: CorpusSpec,
+    ) -> None:
+        """Reconcile uploaded ``chr`` prefixes with the FASTA region identity."""
+        gff3_path = Path(str(saved_default_corpus.parameter("gff3")))
+        gff3_lines = gff3_path.read_text(encoding="utf-8").splitlines()
+        sequence_line = next(line for line in gff3_lines if line.startswith("##sequence-region "))
+        reference_name = sequence_line.split()[1]
+        uploaded_name = f"chr{reference_name}"
+        gff3_path.write_text(
+            "\n".join(
+                (
+                    line.replace(
+                        f"##sequence-region {reference_name} ", f"##sequence-region {uploaded_name} "
+                    )
+                    if line.startswith("##sequence-region ")
+                    else line.replace(f"{reference_name}\t", f"{uploaded_name}\t", 1)
+                )
+                for line in gff3_lines
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        vcf_path = Path(str(saved_default_corpus.parameter("vcf")))
+        vcf_path.write_text(
+            vcf_path.read_text(encoding="utf-8")
+            .replace(
+                f"ID={reference_name},",
+                f"ID={uploaded_name},",
+            )
+            .replace(f"{reference_name}\t", f"{uploaded_name}\t"),
+            encoding="utf-8",
+        )
+
+        with build_corpus(saved_default_corpus) as loaded_corpus:
+            assert [region.seq_region_name for region in loaded_corpus.sequence_regions] == [reference_name]
+            assert loaded_corpus.named_overlaps
+            assert all(
+                transcript.slice is loaded_corpus.sequence_regions[0]
+                for transcript in loaded_corpus.transcripts
+            )
+            assert all(
+                allele.slice is loaded_corpus.sequence_regions[0]
+                for _name, allele in loaded_corpus.named_variants
+            )
+
     def test_vcf_empty_allele_spelling_preserves_variant_classes(
         self,
         saved_default_corpus: CorpusSpec,
