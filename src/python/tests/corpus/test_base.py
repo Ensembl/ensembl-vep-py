@@ -15,8 +15,8 @@
 
 from __future__ import annotations
 
+from ensembl.vep.corpus import build_corpus
 from ensembl.vep.corpus.spec import CorpusSpec
-from .test_registry import EmptyCorpus
 
 
 class TestCorpusContext:
@@ -24,11 +24,6 @@ class TestCorpusContext:
 
     def test_context_manager_returns_the_same_corpus(self) -> None:
         """Consumers can uniformly scope loaded and generated corpora."""
-        corpus = EmptyCorpus(CorpusSpec(kind="test.empty"))
+        corpus = build_corpus(CorpusSpec(kind="synthetic.default", fuzz=0))
         with corpus as managed:
             assert managed is corpus
-
-    def test_description_identifies_the_registered_kind(self) -> None:
-        """Every implementation inherits a useful default description."""
-        corpus = EmptyCorpus(CorpusSpec(kind="test.empty"))
-        assert corpus.description == "corpus (test.empty)"

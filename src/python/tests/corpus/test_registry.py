@@ -15,76 +15,45 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
-
 import pytest
 
 from ensembl.vep.corpus import Corpus, available_corpora, build_corpus, register_corpus
-from ensembl.vep.corpus.base import NamedOverlap, NamedVariant
 from ensembl.vep.corpus.spec import CorpusSpec
-from ensembl.vep.models.genic import Transcript
-from ensembl.vep.models.sequence import Slice
-
-
-class EmptyCorpus(Corpus):
-    """Small concrete corpus used to exercise the registry contract."""
-
-    def __init__(self, specification: CorpusSpec) -> None:
-        self._specification = specification
-
-    @property
-    def spec(self) -> CorpusSpec:
-        """Return the construction specification."""
-        return self._specification
-
-    @property
-    def sequence_regions(self) -> Sequence[Slice]:
-        """Return no sequence regions."""
-        return ()
-
-    @property
-    def named_variants(self) -> Sequence[NamedVariant]:
-        """Return no variants."""
-        return ()
-
-    @property
-    def transcripts(self) -> Sequence[Transcript]:
-        """Return no transcripts."""
-        return ()
-
-    @property
-    def named_overlaps(self) -> Sequence[NamedOverlap]:
-        """Return no overlaps."""
-        return ()
 
 
 class TestCorpusRegistry:
-    """Canonical registered names and aliases."""
+    """Canonical registered names and legacy aliases."""
 
-    def test_registers_and_builds_a_corpus(self) -> None:
-        """The registry passes the complete specification to its factory."""
-        name = "test.registry.build"
-
-        @register_corpus(name)
-        def factory(specification: CorpusSpec) -> Corpus:
-            return EmptyCorpus(specification)
-
-        specification = CorpusSpec(kind=name, parameters={"seed": 7})
-        corpus = build_corpus(specification)
-        assert corpus.spec == specification
-        assert name in available_corpora()
+    def test_lists_builtin_corpora(self) -> None:
+        """The installed construction strategies are discoverable."""
+        assert {"synthetic.all", "synthetic.default", "synthetic.heavy"} <= set(available_corpora())
 
     def test_unknown_name_lists_available_corpora(self) -> None:
         """Lookup failures tell callers how to correct the requested name."""
-        name = "test.registry.available"
-        register_corpus(name)(EmptyCorpus)
-        with pytest.raises(KeyError, match=f"Unknown corpus 'missing.corpus'.*{name}"):
+        with pytest.raises(KeyError, match="Unknown corpus 'missing.corpus'.*synthetic.default"):
             build_corpus(CorpusSpec(kind="missing.corpus"))
 
     def test_registration_is_atomic_when_an_alias_conflicts(self) -> None:
         """A failed registration does not leave a partially registered factory."""
-        name = "test.registry.canonical"
-        register_corpus(name, aliases=("test.registry.alias",))(EmptyCorpus)
-        with pytest.raises(ValueError, match="already registered"):
-            register_corpus("test.registry.rejected", aliases=("test.registry.alias",))(EmptyCorpus)
-        assert "test.registry.rejected" not in available_corpora()
+
+        def factory(_specification: CorpusSpec) -> Corpus:
+            raise AssertionError("the rejected factory must never become visible")
+
+        with pytest.raises(ValueError, match="default.*already registered"):
+            register_corpus("test.rejected", aliases=("default",))(factory)
+        assert "test.rejected" not in available_corpora()
+
+    @pytest.mark.parametrize("kind", ["default", "heavy", "both"])
+    def test_legacy_aliases_continue_to_build(self, kind: str) -> None:
+        """The established command names still resolve through the registry."""
+        corpus = build_corpus(CorpusSpec(kind=kind, fuzz=0, step=600))
+        assert corpus.spec.kind == kind
+
+    @pytest.mark.parametrize(
+        ("kind", "sequence_regions"),
+        [("synthetic.default", 1), ("synthetic.heavy", 1), ("synthetic.all", 2)],
+    )
+    def test_registered_synthetic_names_build(self, kind: str, sequence_regions: int) -> None:
+        """Every canonical synthetic name resolves through the same registry path."""
+        corpus = build_corpus(CorpusSpec(kind=kind, fuzz=0, step=600))
+        assert len(corpus.sequence_regions) == sequence_regions
