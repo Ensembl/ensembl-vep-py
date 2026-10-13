@@ -21,6 +21,7 @@ session-scoped fixtures of the whole test suite, not one subsystem.
 """
 
 from ensembl.vep.corpus.base import Corpus, NamedOverlap, NamedVariant
+from ensembl.vep.corpus.loaded import CorpusResource, LoadedCorpus
 from ensembl.vep.corpus.registry import (
     CorpusOptionsError,
     available_corpora,
@@ -34,7 +35,9 @@ from ensembl.vep.corpus.synthetic import SyntheticCorpus
 __all__ = [
     "Corpus",
     "CorpusOptionsError",
+    "CorpusResource",
     "CorpusSpec",
+    "LoadedCorpus",
     "NamedOverlap",
     "NamedVariant",
     "SyntheticCorpus",
