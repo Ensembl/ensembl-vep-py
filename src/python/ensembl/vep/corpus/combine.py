@@ -15,9 +15,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
-
 from attrs import define, field
+from attrs.validators import instance_of
 
 from ensembl.vep.corpus.base import Corpus, NamedOverlap, NamedVariant
 from ensembl.vep.corpus.spec import CorpusSpec
@@ -26,11 +25,6 @@ from ensembl.vep.models.genic import Transcript
 from ensembl.vep.models.sequence import Slice
 
 __all__ = ["CombinedCorpus", "combine_corpora"]
-
-
-def _corpus_tuple(corpora: Sequence[Corpus]) -> tuple[Corpus, ...]:
-    """Freeze component corpora for stable traversal."""
-    return tuple(corpora)
 
 
 @define(kw_only=True, auto_attribs=True)
@@ -46,7 +40,7 @@ class CombinedCorpus(Corpus):
     """
 
     _spec: CorpusSpec = field(alias="spec")
-    corpora: tuple[Corpus, ...] = field(converter=_corpus_tuple)
+    corpora: tuple[Corpus, ...] = field(validator=instance_of(tuple))
     _sequence_regions: tuple[Slice, ...] = field(init=False)
     _named_variants: tuple[NamedVariant, ...] = field(init=False)
     _transcripts: tuple[Transcript, ...] = field(init=False)
@@ -79,22 +73,22 @@ class CombinedCorpus(Corpus):
         return self._spec
 
     @property
-    def sequence_regions(self) -> Sequence[Slice]:
+    def sequence_regions(self) -> tuple[Slice, ...]:
         """Return every component sequence region."""
         return self._sequence_regions
 
     @property
-    def named_variants(self) -> Sequence[NamedVariant]:
+    def named_variants(self) -> tuple[NamedVariant, ...]:
         """Return every component variant."""
         return self._named_variants
 
     @property
-    def transcripts(self) -> Sequence[Transcript]:
+    def transcripts(self) -> tuple[Transcript, ...]:
         """Return every component transcript."""
         return self._transcripts
 
     @property
-    def named_overlaps(self) -> Sequence[NamedOverlap]:
+    def named_overlaps(self) -> tuple[NamedOverlap, ...]:
         """Return every component transcript overlap."""
         return self._named_overlaps
 
@@ -104,12 +98,12 @@ class CombinedCorpus(Corpus):
             corpus.close()
 
 
-def combine_corpora(specification: CorpusSpec, corpora: Sequence[Corpus]) -> CombinedCorpus:
+def combine_corpora(specification: CorpusSpec, corpora: tuple[Corpus, ...]) -> CombinedCorpus:
     """Return one validated corpus over the supplied component corpora.
 
     Args:
         specification (CorpusSpec): Specification identifying the combined corpus.
-        corpora (Sequence[Corpus]): Components in traversal and cleanup order.
+        corpora (tuple[Corpus, ...]): Components in traversal and cleanup order.
 
     Returns:
         CombinedCorpus: Flattened view of all component corpora.

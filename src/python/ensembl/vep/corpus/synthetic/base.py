@@ -15,9 +15,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Sequence
-
 from attrs import field, frozen
+from attrs.validators import instance_of
 
 from ensembl.vep.corpus.base import Corpus, NamedOverlap, NamedVariant
 from ensembl.vep.corpus.spec import CorpusSpec
@@ -30,25 +29,6 @@ from ensembl.vep.models.variation import VariationAllele
 __all__ = [
     "SyntheticCorpus",
 ]
-
-
-def _transcript_tuple(transcripts: Iterable[Transcript]) -> tuple[Transcript, ...]:
-    """Freeze corpus transcript membership."""
-    return tuple(transcripts)
-
-
-def _named_variant_tuple(
-    named_variants: Iterable[tuple[str, VariationAllele]],
-) -> tuple[tuple[str, VariationAllele], ...]:
-    """Freeze corpus variant membership."""
-    return tuple(named_variants)
-
-
-def _named_overlap_tuple(
-    named_overlaps: Iterable[tuple[str, TranscriptVariationAllele]],
-) -> tuple[tuple[str, TranscriptVariationAllele], ...]:
-    """Freeze corpus overlap membership."""
-    return tuple(named_overlaps)
 
 
 @frozen(kw_only=True, auto_attribs=True)
@@ -68,13 +48,13 @@ class SyntheticCorpus(Corpus):
 
     _synthetic_slice: Slice = field(alias="synthetic_slice")
     _named_variants: tuple[tuple[str, VariationAllele], ...] = field(
-        converter=_named_variant_tuple, alias="named_variants"
+        validator=instance_of(tuple), alias="named_variants"
     )
     _transcripts: tuple[Transcript, ...] = field(
-        factory=tuple, converter=_transcript_tuple, alias="transcripts"
+        factory=tuple, validator=instance_of(tuple), alias="transcripts"
     )
     _named_overlaps: tuple[tuple[str, TranscriptVariationAllele], ...] = field(
-        factory=tuple, converter=_named_overlap_tuple, alias="named_overlaps"
+        factory=tuple, validator=instance_of(tuple), alias="named_overlaps"
     )
     _spec: CorpusSpec = field(factory=lambda: CorpusSpec(kind="synthetic.default"), alias="spec")
 
@@ -98,22 +78,22 @@ class SyntheticCorpus(Corpus):
         return self._synthetic_slice
 
     @property
-    def sequence_regions(self) -> Sequence[Slice]:
+    def sequence_regions(self) -> tuple[Slice, ...]:
         """Return the synthetic sequence region as a one-item sequence."""
         return (self._synthetic_slice,)
 
     @property
-    def named_variants(self) -> Sequence[NamedVariant]:
+    def named_variants(self) -> tuple[NamedVariant, ...]:
         """Return every generated variant."""
         return self._named_variants
 
     @property
-    def transcripts(self) -> Sequence[Transcript]:
+    def transcripts(self) -> tuple[Transcript, ...]:
         """Return every generated transcript."""
         return self._transcripts
 
     @property
-    def named_overlaps(self) -> Sequence[NamedOverlap]:
+    def named_overlaps(self) -> tuple[NamedOverlap, ...]:
         """Return every generated transcript overlap."""
         return self._named_overlaps
 

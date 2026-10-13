@@ -52,6 +52,18 @@ def fixture_saved_default_corpus(tmp_path: Path) -> CorpusSpec:
 class TestLoadedCorpus:
     """A file-backed corpus loaded through the registry."""
 
+    def test_rejects_non_tuple_membership(self, saved_default_corpus: CorpusSpec) -> None:
+        """Require loaders to materialise membership before construction."""
+        with build_corpus(saved_default_corpus) as loaded_corpus:
+            with pytest.raises(TypeError, match="tuple"):
+                LoadedCorpus(
+                    spec=loaded_corpus.spec,
+                    sequence_regions=list(loaded_corpus.sequence_regions),  # type: ignore[arg-type]
+                    named_variants=loaded_corpus.named_variants,
+                    transcripts=loaded_corpus.transcripts,
+                    named_overlaps=loaded_corpus.named_overlaps,
+                )
+
     def test_reloads_variants_transcripts_and_overlaps(
         self,
         saved_default_corpus: CorpusSpec,

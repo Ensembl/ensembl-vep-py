@@ -212,7 +212,7 @@ def build_transcripts(
     return transcripts
 
 
-def build_genome(seed: int = 31) -> tuple[Slice, list[Transcript]]:
+def build_genome(seed: int = 31) -> tuple[Slice, tuple[Transcript, ...]]:
     """Build the two-locus (one per strand), 36-transcript heavy-locus synthetic chromosome.
 
     Mirrors ``socore.data.build_locus_genome``.
@@ -221,7 +221,7 @@ def build_genome(seed: int = 31) -> tuple[Slice, list[Transcript]]:
         seed (int): Random seed, for reproducibility.
 
     Returns:
-        tuple[Slice, list[Transcript]]: The shared chromosome slice (with real, codon-patched
+        tuple[Slice, tuple[Transcript, ...]]: The shared chromosome slice (with real, codon-patched
             sequence) and all 36 transcripts (18 forward-strand, 18 reverse-strand).
     """
     random_generator = random.Random(seed)
@@ -250,7 +250,7 @@ def build_genome(seed: int = 31) -> tuple[Slice, list[Transcript]]:
     reverse_transcripts = build_transcripts(
         synthetic_slice, origin=_REVERSE_ORIGIN, strand=Strand.REVERSE, stable_id_tag="REV"
     )
-    transcripts = forward_transcripts + reverse_transcripts
+    transcripts = tuple(forward_transcripts + reverse_transcripts)
 
     fill_locus_sequence(
         chromosome_chars,
@@ -282,7 +282,7 @@ def build_genome(seed: int = 31) -> tuple[Slice, list[Transcript]]:
 
 def build_variation_alleles(
     synthetic_slice: Slice, step: int = 13, seed: int = 41
-) -> list[tuple[str, VariationAllele]]:
+) -> tuple[tuple[str, VariationAllele], ...]:
     """Build a dense sweep of variants across each locus, so shared exons are hit repeatedly.
 
     Args:
@@ -291,7 +291,7 @@ def build_variation_alleles(
         seed (int): Random seed, for reproducibility.
 
     Returns:
-        list[tuple[str, VariationAllele]]: Named heavy-locus sweep variants.
+        tuple[tuple[str, VariationAllele], ...]: Named heavy-locus sweep variants.
 
     Raises:
         ValueError: If ``step`` is not positive.
@@ -315,7 +315,7 @@ def build_variation_alleles(
                 )
             if sweep_index % 11 == 0:
                 named_variants.append(_insertion(synthetic_slice, position, "A", f"{tag}_ins1_{sweep_index}"))
-    return named_variants
+    return tuple(named_variants)
 
 
 def heavy_corpus(

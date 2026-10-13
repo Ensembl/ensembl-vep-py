@@ -34,15 +34,13 @@ class TestSyntheticCorpus:
                 named_overlaps=corpus.named_overlaps,
             )
 
-    def test_mutable_input_collections_are_frozen(self) -> None:
-        """A caller cannot mutate corpus membership through input lists."""
+    def test_rejects_non_tuple_membership(self) -> None:
+        """Require builders to materialise membership before construction."""
         corpus = default_corpus(fuzz_count=0)
-        rebuilt = SyntheticCorpus(
-            synthetic_slice=corpus.synthetic_slice,
-            named_variants=list(corpus.named_variants),
-            transcripts=list(corpus.transcripts),
-            named_overlaps=list(corpus.named_overlaps),
-        )
-        assert isinstance(rebuilt.named_variants, tuple)
-        assert isinstance(rebuilt.transcripts, tuple)
-        assert isinstance(rebuilt.named_overlaps, tuple)
+        with pytest.raises(TypeError, match="tuple"):
+            SyntheticCorpus(
+                synthetic_slice=corpus.synthetic_slice,
+                named_variants=list(corpus.named_variants),  # type: ignore[arg-type]
+                transcripts=corpus.transcripts,
+                named_overlaps=corpus.named_overlaps,
+            )

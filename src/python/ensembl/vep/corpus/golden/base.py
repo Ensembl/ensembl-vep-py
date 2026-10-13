@@ -15,7 +15,6 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
 from contextlib import AbstractContextManager
 
 from attrs import define, field
@@ -53,22 +52,22 @@ class GoldenCorpus(Corpus):
         return self._spec
 
     @property
-    def sequence_regions(self) -> Sequence[Slice]:
+    def sequence_regions(self) -> tuple[Slice, ...]:
         """Return the wrapped sequence regions."""
         return self.corpus.sequence_regions
 
     @property
-    def named_variants(self) -> Sequence[NamedVariant]:
+    def named_variants(self) -> tuple[NamedVariant, ...]:
         """Return the wrapped variants."""
         return self.corpus.named_variants
 
     @property
-    def transcripts(self) -> Sequence[Transcript]:
+    def transcripts(self) -> tuple[Transcript, ...]:
         """Return the wrapped transcripts."""
         return self.corpus.transcripts
 
     @property
-    def named_overlaps(self) -> Sequence[NamedOverlap]:
+    def named_overlaps(self) -> tuple[NamedOverlap, ...]:
         """Return the wrapped overlaps."""
         return self.corpus.named_overlaps
 
