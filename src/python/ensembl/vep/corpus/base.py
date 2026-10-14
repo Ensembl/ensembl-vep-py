@@ -16,8 +16,6 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections.abc import Sequence
-
 from ensembl.vep.corpus.spec import CorpusSpec
 from ensembl.vep.models.genic import Transcript
 from ensembl.vep.models.overlap import TranscriptVariationAllele
@@ -42,10 +40,10 @@ class Corpus(ABC):
 
     Attributes:
         spec (CorpusSpec): Specification used to construct the corpus.
-        sequence_regions (Sequence[Slice]): Referenced sequence regions in stable order.
-        named_variants (Sequence[NamedVariant]): Stable names paired with variation alleles.
-        transcripts (Sequence[Transcript]): Transcripts in stable order.
-        named_overlaps (Sequence[NamedOverlap]): Named variant-transcript overlaps in stable order.
+        sequence_regions (tuple[Slice, ...]): Referenced sequence regions in stable order.
+        named_variants (tuple[NamedVariant, ...]): Stable names paired with variation alleles.
+        transcripts (tuple[Transcript, ...]): Transcripts in stable order.
+        named_overlaps (tuple[NamedOverlap, ...]): Named overlaps in stable order.
         description (str): Short human-readable corpus description.
     """
 
@@ -56,22 +54,22 @@ class Corpus(ABC):
 
     @property
     @abstractmethod
-    def sequence_regions(self) -> Sequence[Slice]:
+    def sequence_regions(self) -> tuple[Slice, ...]:
         """Return every sequence region referenced by the corpus."""
 
     @property
     @abstractmethod
-    def named_variants(self) -> Sequence[NamedVariant]:
+    def named_variants(self) -> tuple[NamedVariant, ...]:
         """Return every variant in stable corpus order."""
 
     @property
     @abstractmethod
-    def transcripts(self) -> Sequence[Transcript]:
+    def transcripts(self) -> tuple[Transcript, ...]:
         """Return every transcript in stable corpus order."""
 
     @property
     @abstractmethod
-    def named_overlaps(self) -> Sequence[NamedOverlap]:
+    def named_overlaps(self) -> tuple[NamedOverlap, ...]:
         """Return every named transcript overlap in stable corpus order."""
 
     @property
