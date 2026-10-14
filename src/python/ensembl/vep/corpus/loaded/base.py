@@ -15,11 +15,12 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable
 from contextlib import ExitStack
 from typing import Protocol, runtime_checkable
 
 from attrs import define, field
+from attrs.validators import instance_of
 
 from ensembl.vep.corpus.base import Corpus, NamedOverlap, NamedVariant
 from ensembl.vep.corpus.spec import CorpusSpec
@@ -39,54 +40,29 @@ class CorpusResource(Protocol):
         """Release the resource."""
 
 
-def _slice_tuple(values: Iterable[Slice]) -> tuple[Slice, ...]:
-    """Freeze sequence regions in source order."""
-    return tuple(values)
-
-
-def _variant_tuple(values: Iterable[NamedVariant]) -> tuple[NamedVariant, ...]:
-    """Freeze named variants in source order."""
-    return tuple(values)
-
-
-def _transcript_tuple(values: Iterable[Transcript]) -> tuple[Transcript, ...]:
-    """Freeze transcripts in source order."""
-    return tuple(values)
-
-
-def _overlap_tuple(values: Iterable[NamedOverlap]) -> tuple[NamedOverlap, ...]:
-    """Freeze named overlaps in source order."""
-    return tuple(values)
-
-
-def _resource_tuple(values: Iterable[CorpusResource]) -> tuple[CorpusResource, ...]:
-    """Freeze owned resources in acquisition order."""
-    return tuple(values)
-
-
 @define(kw_only=True, auto_attribs=True)
 class LoadedCorpus(Corpus):
     """Hold a validated corpus and any external resources that back it.
 
     Attributes:
         spec (CorpusSpec): Construction specification.
-        sequence_regions (Sequence[Slice]): Referenced sequence regions.
-        named_variants (Sequence[NamedVariant]): Stable variant names and alleles.
-        transcripts (Sequence[Transcript]): Loaded transcripts.
-        named_overlaps (Sequence[NamedOverlap]): Variant-transcript overlaps.
-        resources (Sequence[CorpusResource]): Lazy sources or connections owned by the corpus.
+        sequence_regions (tuple[Slice, ...]): Referenced sequence regions.
+        named_variants (tuple[NamedVariant, ...]): Stable variant names and alleles.
+        transcripts (tuple[Transcript, ...]): Loaded transcripts.
+        named_overlaps (tuple[NamedOverlap, ...]): Variant-transcript overlaps.
+        resources (tuple[CorpusResource, ...]): Sources or connections owned by the corpus.
     """
 
     _spec: CorpusSpec = field(alias="spec")
-    _sequence_regions: tuple[Slice, ...] = field(converter=_slice_tuple, alias="sequence_regions")
-    _named_variants: tuple[NamedVariant, ...] = field(converter=_variant_tuple, alias="named_variants")
-    _transcripts: tuple[Transcript, ...] = field(converter=_transcript_tuple, alias="transcripts")
-    _named_overlaps: tuple[NamedOverlap, ...] = field(converter=_overlap_tuple, alias="named_overlaps")
-    resources: tuple[CorpusResource, ...] = field(factory=tuple, converter=_resource_tuple, repr=False)
+    _sequence_regions: tuple[Slice, ...] = field(validator=instance_of(tuple), alias="sequence_regions")
+    _named_variants: tuple[NamedVariant, ...] = field(validator=instance_of(tuple), alias="named_variants")
+    _transcripts: tuple[Transcript, ...] = field(validator=instance_of(tuple), alias="transcripts")
+    _named_overlaps: tuple[NamedOverlap, ...] = field(validator=instance_of(tuple), alias="named_overlaps")
+    resources: tuple[CorpusResource, ...] = field(factory=tuple, validator=instance_of(tuple), repr=False)
     _closed: bool = field(default=False, init=False, repr=False)
 
     def __attrs_post_init__(self) -> None:
-        """Validate relationships after freezing input collections."""
+        """Validate relationships between the supplied corpus members."""
         validate_corpus(
             self.sequence_regions,
             self.named_variants,
@@ -100,22 +76,22 @@ class LoadedCorpus(Corpus):
         return self._spec
 
     @property
-    def sequence_regions(self) -> Sequence[Slice]:
+    def sequence_regions(self) -> tuple[Slice, ...]:
         """Return every referenced sequence region."""
         return self._sequence_regions
 
     @property
-    def named_variants(self) -> Sequence[NamedVariant]:
+    def named_variants(self) -> tuple[NamedVariant, ...]:
         """Return every named variation allele."""
         return self._named_variants
 
     @property
-    def transcripts(self) -> Sequence[Transcript]:
+    def transcripts(self) -> tuple[Transcript, ...]:
         """Return every loaded transcript."""
         return self._transcripts
 
     @property
-    def named_overlaps(self) -> Sequence[NamedOverlap]:
+    def named_overlaps(self) -> tuple[NamedOverlap, ...]:
         """Return every named transcript overlap."""
         return self._named_overlaps
 
