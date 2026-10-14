@@ -15,6 +15,9 @@
 
 from ensembl.vep.common.enums import ExonPhase, Strand, ClassSOTerm
 
+EMPTY_ALLELE = "-"
+"""VEP's spelling of an empty allele."""
+
 CLASS_SO_TERM_ABBRV_TO_ENUM: dict[str, ClassSOTerm] = {
     "INS": ClassSOTerm.INSERTION,
     "INS_ME": ClassSOTerm.MOBILE_ELEMENT_INSERTION,

@@ -17,10 +17,9 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 
-__all__ = ["EMPTY_ALLELE", "trim_right", "vcf_record_alleles"]
+from ensembl.vep.common.constants import EMPTY_ALLELE
 
-EMPTY_ALLELE = "-"
-"""VEP's spelling of an empty allele."""
+__all__ = ["trim_right", "vcf_record_alleles"]
 
 _BASES = frozenset("ACGTN")
 _PLAIN = frozenset("ACGTN.")
