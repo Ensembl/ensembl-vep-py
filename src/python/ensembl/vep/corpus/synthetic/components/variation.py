@@ -19,6 +19,7 @@ import random
 from collections.abc import Sequence
 
 from ensembl.vep.common import Strand
+from ensembl.vep.common.constants import CANONICAL_DNA_BASES
 from ensembl.vep.corpus.synthetic.components.sequence import random_sequence
 from ensembl.vep.models.genic import Transcript
 from ensembl.vep.models.sequence import Slice
@@ -28,8 +29,6 @@ __all__ = [
     "boundary_variant_alleles",
     "fuzz_variant_alleles",
 ]
-
-_BASES = "ACGT"
 
 
 def _snv(
@@ -48,7 +47,7 @@ def _snv(
     """
     assert synthetic_slice.seq is not None
     reference_base = synthetic_slice.seq[position - 1]
-    alternate_base = random_generator.choice([base for base in _BASES if base != reference_base])
+    alternate_base = random_generator.choice([base for base in CANONICAL_DNA_BASES if base != reference_base])
     return name, VariationAllele(
         start=position,
         end=position,

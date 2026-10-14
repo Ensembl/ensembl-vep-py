@@ -17,9 +17,9 @@ from __future__ import annotations
 
 import random
 
-__all__ = ["fill_locus_sequence", "random_sequence"]
+from ensembl.vep.common.constants import CANONICAL_DNA_BASES
 
-_BASES = "ACGT"
+__all__ = ["fill_locus_sequence", "random_sequence"]
 
 
 def random_sequence(length: int, random_generator: random.Random) -> str:
@@ -32,7 +32,7 @@ def random_sequence(length: int, random_generator: random.Random) -> str:
     Returns:
         str: A random sequence of ``ACGT`` bases.
     """
-    return "".join(random_generator.choice(_BASES) for _ in range(length))
+    return "".join(random_generator.choice(CANONICAL_DNA_BASES) for _ in range(length))
 
 
 def fill_locus_sequence(
