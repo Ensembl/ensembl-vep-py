@@ -49,14 +49,14 @@ class TestFileExporter:
         (tmp_path / CORPUS_FILES[0]).write_text("previous", encoding="utf-8")
 
         with pytest.raises(FileExistsError, match="pass --force to overwrite"):
-            get_exporter("file").export(build_corpus(CorpusSpec(kind="default", fuzz=0)), tmp_path)
+            get_exporter("file").export(build_corpus(CorpusSpec(kind="synthetic.default", fuzz=0)), tmp_path)
 
     def test_force_replaces_an_existing_file_bundle(self, tmp_path: Path) -> None:
         """Force writes every artifact after a previous partial bundle."""
         (tmp_path / CORPUS_FILES[0]).write_text("previous", encoding="utf-8")
 
         manifest = get_exporter("file").export(
-            build_corpus(CorpusSpec(kind="default", fuzz=0)), tmp_path, force=True
+            build_corpus(CorpusSpec(kind="synthetic.default", fuzz=0)), tmp_path, force=True
         )
 
         assert manifest.files == CORPUS_FILES[:-1]
