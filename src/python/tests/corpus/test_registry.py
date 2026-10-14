@@ -22,7 +22,7 @@ from ensembl.vep.corpus.spec import CorpusSpec
 
 
 class TestCorpusRegistry:
-    """Canonical registered names and legacy aliases."""
+    """Canonical registered names."""
 
     def test_lists_builtin_corpora(self) -> None:
         """The installed construction strategies are discoverable."""
@@ -39,15 +39,15 @@ class TestCorpusRegistry:
         def factory(_specification: CorpusSpec) -> Corpus:
             raise AssertionError("the rejected factory must never become visible")
 
-        with pytest.raises(ValueError, match="default.*already registered"):
-            register_corpus("test.rejected", aliases=("default",))(factory)
+        with pytest.raises(ValueError, match="synthetic.default.*already registered"):
+            register_corpus("test.rejected", aliases=("synthetic.default",))(factory)
         assert "test.rejected" not in available_corpora()
 
     @pytest.mark.parametrize("kind", ["default", "heavy", "both"])
-    def test_legacy_aliases_continue_to_build(self, kind: str) -> None:
-        """The established command names still resolve through the registry."""
-        corpus = build_corpus(CorpusSpec(kind=kind, fuzz=0, step=600))
-        assert corpus.spec.kind == kind
+    def test_legacy_aliases_are_not_registered(self, kind: str) -> None:
+        """Only canonical dotted names resolve through the registry."""
+        with pytest.raises(KeyError, match=f"Unknown corpus '{kind}'"):
+            build_corpus(CorpusSpec(kind=kind))
 
     @pytest.mark.parametrize(
         ("kind", "sequence_regions"),

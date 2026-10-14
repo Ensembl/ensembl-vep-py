@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Tests for corpus specifications and synthetic compatibility options."""
+"""Tests for corpus specifications and synthetic parameters."""
 
 from __future__ import annotations
 
@@ -62,18 +62,21 @@ class TestSpec:
         """Anything shaped like the corpus section will do; a missing attribute keeps its default."""
 
         class _Options:
-            kind = "heavy"
+            kind = "synthetic.heavy"
             step = 600
             sweep_seed = 99
 
         spec = CorpusSpec.from_options(_Options())
-        assert (spec.kind, spec.step, spec.sweep_seed) == ("heavy", 600, 99)
+        assert (spec.kind, spec.step, spec.sweep_seed) == ("synthetic.heavy", 600, 99)
         assert spec.fuzz == 4000
 
-    def test_kinds_expands_legacy_synthetic_names(self) -> None:
-        """The compatibility aliases still expose their original members."""
-        assert CorpusSpec(kind="both").kinds == ("default", "heavy")
-        assert CorpusSpec(kind="heavy").kinds == ("heavy",)
+    def test_kinds_expands_combined_synthetic_corpus(self) -> None:
+        """The combined corpus exposes both concrete registered members."""
+        assert CorpusSpec(kind="synthetic.all").kinds == (
+            "synthetic.default",
+            "synthetic.heavy",
+        )
+        assert CorpusSpec(kind="synthetic.heavy").kinds == ("synthetic.heavy",)
 
     def test_registry_owns_corpus_names(self) -> None:
         """A spec accepts any non-empty factory name, including undotted names."""
@@ -97,17 +100,17 @@ class TestSpec:
 
     def test_seeds_are_reported_only_for_built_corpora(self) -> None:
         """A heavy-only spec does not claim boundary or fuzz seeds."""
-        assert set(CorpusSpec(kind="heavy").seeds_by_kind()) == {"heavy"}
-        assert CorpusSpec(kind="both").seeds_by_kind()["default"] == {"genome": 7, "boundary": 11, "fuzz": 23}
+        assert set(CorpusSpec(kind="synthetic.heavy").seeds_by_kind()) == {"synthetic.heavy"}
+        assert CorpusSpec(kind="synthetic.all").seeds_by_kind()["synthetic.default"] == {
+            "genome": 7,
+            "boundary": 11,
+            "fuzz": 23,
+        }
 
     def test_the_parameter_hash_is_stable_and_seed_sensitive(self) -> None:
         """Same parameters, same hash; any seed change, a different one."""
         assert CorpusSpec().parameter_hash() == CorpusSpec().parameter_hash()
         assert CorpusSpec().parameter_hash() != CorpusSpec(fuzz_seed=24).parameter_hash()
-
-    def test_the_legacy_default_parameter_hash_is_preserved(self) -> None:
-        """Existing benchmark baselines remain comparable after the spec generalisation."""
-        assert CorpusSpec().parameter_hash() == "243a78d0956960d1"
 
     def test_non_synthetic_parameters_are_not_polluted_by_generator_defaults(self) -> None:
         """A generic spec carries only the parameters owned by its registered factory."""
@@ -145,7 +148,7 @@ class TestSpec:
 
     def test_a_corpus_preserves_its_spec(self) -> None:
         """The registry passes its specification through to the built corpus."""
-        spec = CorpusSpec(kind="default", fuzz=5, boundary_seed=12)
+        spec = CorpusSpec(kind="synthetic.default", fuzz=5, boundary_seed=12)
         assert build_corpus(spec).spec == spec
 
 
@@ -154,12 +157,12 @@ class TestSeedsReachTheirStreams:
 
     def test_the_default_seeds_change_nothing(self) -> None:
         """Forwarding the default seeds builds what the unseeded generator builds."""
-        seeded = build_corpus(CorpusSpec(kind="default", fuzz=20))
+        seeded = build_corpus(CorpusSpec(kind="synthetic.default", fuzz=20))
         assert _positions(seeded) == [
             (name, overlap.overlapping_feature.start)
             for name, overlap in default_corpus(fuzz_count=20).named_overlaps
         ]
-        heavy = build_corpus(CorpusSpec(kind="heavy", step=600))
+        heavy = build_corpus(CorpusSpec(kind="synthetic.heavy", step=600))
         assert _alternates(heavy) == [
             (name, overlap.overlapping_feature.alternate_allele)
             for name, overlap in heavy_corpus(step=600).named_overlaps
@@ -167,22 +170,24 @@ class TestSeedsReachTheirStreams:
 
     def test_the_genome_seed_changes_the_chromosome(self) -> None:
         """Only the sequence underneath the variants moves."""
-        before = build_corpus(CorpusSpec(kind="default", fuzz=0)).sequence_regions[0].seq
-        after = build_corpus(CorpusSpec(kind="default", fuzz=0, genome_seed=8)).sequence_regions[0].seq
+        before = build_corpus(CorpusSpec(kind="synthetic.default", fuzz=0)).sequence_regions[0].seq
+        after = (
+            build_corpus(CorpusSpec(kind="synthetic.default", fuzz=0, genome_seed=8)).sequence_regions[0].seq
+        )
         assert before != after
 
     def test_the_boundary_seed_changes_the_boundary_alternates(self) -> None:
         """Boundary SNVs draw their alternate base from the boundary stream."""
-        before = build_corpus(CorpusSpec(kind="default", fuzz=0))
-        after = build_corpus(CorpusSpec(kind="default", fuzz=0, boundary_seed=12))
+        before = build_corpus(CorpusSpec(kind="synthetic.default", fuzz=0))
+        after = build_corpus(CorpusSpec(kind="synthetic.default", fuzz=0, boundary_seed=12))
         assert [name for name, _ in _alternates(before)] == [name for name, _ in _alternates(after)]
         assert _alternates(before) != _alternates(after)
         assert before.sequence_regions[0].seq == after.sequence_regions[0].seq
 
     def test_the_fuzz_seed_changes_the_fuzz_positions_only(self) -> None:
         """The boundary variants stay put; the random ones move."""
-        before = _positions(build_corpus(CorpusSpec(kind="default", fuzz=30)))
-        after = _positions(build_corpus(CorpusSpec(kind="default", fuzz=30, fuzz_seed=24)))
+        before = _positions(build_corpus(CorpusSpec(kind="synthetic.default", fuzz=30)))
+        after = _positions(build_corpus(CorpusSpec(kind="synthetic.default", fuzz=30, fuzz_seed=24)))
         boundary_before = [entry for entry in before if not entry[0].startswith("fuzz")]
         boundary_after = [entry for entry in after if not entry[0].startswith("fuzz")]
         assert boundary_before == boundary_after
@@ -192,6 +197,6 @@ class TestSeedsReachTheirStreams:
 
     def test_the_sweep_seed_changes_the_heavy_locus_alternates(self) -> None:
         """The sweep's SNVs draw from the sweep stream, which used to ignore its seed."""
-        before = build_corpus(CorpusSpec(kind="heavy", step=600))
-        after = build_corpus(CorpusSpec(kind="heavy", step=600, sweep_seed=42))
+        before = build_corpus(CorpusSpec(kind="synthetic.heavy", step=600))
+        after = build_corpus(CorpusSpec(kind="synthetic.heavy", step=600, sweep_seed=42))
         assert _alternates(before) != _alternates(after)

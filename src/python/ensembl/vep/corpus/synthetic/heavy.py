@@ -355,7 +355,7 @@ def heavy_corpus(
     )
 
 
-@register_corpus("synthetic.heavy", aliases=("heavy",))
+@register_corpus("synthetic.heavy")
 def _registered_heavy_corpus(specification: CorpusSpec) -> SyntheticCorpus:
     """Build the registered heavy-locus synthetic corpus."""
     return heavy_corpus(

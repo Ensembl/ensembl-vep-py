@@ -265,7 +265,7 @@ def default_corpus(
     )
 
 
-@register_corpus("synthetic.default", aliases=("default",))
+@register_corpus("synthetic.default")
 def _registered_default_corpus(specification: CorpusSpec) -> SyntheticCorpus:
     """Build the registered default synthetic corpus."""
     return default_corpus(

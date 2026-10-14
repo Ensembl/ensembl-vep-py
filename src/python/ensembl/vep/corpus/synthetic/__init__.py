@@ -25,7 +25,7 @@ from ensembl.vep.corpus.synthetic import heavy as _heavy  # noqa: F401
 __all__ = ["SyntheticCorpus"]
 
 
-@register_corpus("synthetic.all", aliases=("both",))
+@register_corpus("synthetic.all")
 def _all_corpora(specification: CorpusSpec) -> CombinedCorpus:
     """Build the default and heavy synthetic corpora as one corpus."""
     default_spec = CorpusSpec(kind="synthetic.default", parameters=specification.parameters)
