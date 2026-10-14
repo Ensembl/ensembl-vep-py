@@ -30,6 +30,15 @@ class TestCombinedCorpus:
         with pytest.raises(ValueError, match="at least one"):
             combine_corpora(CorpusSpec(kind="synthetic.all"), ())
 
+    def test_rejects_non_tuple_components(self) -> None:
+        """Require callers to materialise component membership."""
+        default = build_corpus(CorpusSpec(kind="synthetic.default", fuzz=0))
+        with pytest.raises(TypeError, match="tuple"):
+            combine_corpora(
+                CorpusSpec(kind="synthetic.all", fuzz=0),
+                [default],  # type: ignore[arg-type]
+            )
+
     def test_flattens_components_in_order(self) -> None:
         """The combined view preserves stable member ordering."""
         default = build_corpus(CorpusSpec(kind="synthetic.default", fuzz=0))

@@ -61,7 +61,7 @@ _ENST0004_CDS_FRAME_INDEX = 1
 _ENST0004_CDS_STOP_OFFSET = 51
 
 
-def build_genome(seed: int = 7) -> tuple[Slice, list[Transcript]]:
+def build_genome(seed: int = 7) -> tuple[Slice, tuple[Transcript, ...]]:
     """Build the synthetic chromosome and its four transcripts.
 
     Mirrors ``socore.data.build_genome``: one forward-strand protein-coding transcript, one
@@ -76,7 +76,7 @@ def build_genome(seed: int = 7) -> tuple[Slice, list[Transcript]]:
         seed (int): Random seed, for reproducibility.
 
     Returns:
-        tuple[Slice, list[Transcript]]: The shared chromosome slice (with real, CDS-patched
+        tuple[Slice, tuple[Transcript, ...]]: The shared chromosome slice (with real, CDS-patched
             sequence) and the four transcripts.
     """
     random_generator = random.Random(seed)
@@ -119,7 +119,7 @@ def build_genome(seed: int = 7) -> tuple[Slice, list[Transcript]]:
     )
     nmd_gene.biotype = "nonsense_mediated_decay"
 
-    transcripts = [
+    transcripts = (
         build_transcript(
             stable_id="ENST0001",
             synthetic_slice=synthetic_slice,
@@ -172,7 +172,7 @@ def build_genome(seed: int = 7) -> tuple[Slice, list[Transcript]]:
             ),
             gene=nmd_gene,
         ),
-    ]
+    )
 
     for transcript in transcripts:
         fill_locus_sequence(
@@ -206,7 +206,7 @@ def build_variation_alleles(
     fuzz_count: int = 4000,
     boundary_seed: int = 11,
     fuzz_seed: int = 23,
-) -> list[tuple[str, VariationAllele]]:
+) -> tuple[tuple[str, VariationAllele], ...]:
     """Build named boundary and random alleles for the default corpus.
 
     Args:
@@ -217,10 +217,11 @@ def build_variation_alleles(
         fuzz_seed (int): Random-variant seed.
 
     Returns:
-        list[tuple[str, VariationAllele]]: Boundary variants followed by random variants.
+        tuple[tuple[str, VariationAllele], ...]: Boundary variants followed by random variants.
     """
-    return boundary_variant_alleles(synthetic_slice, transcripts, seed=boundary_seed) + fuzz_variant_alleles(
-        synthetic_slice, fuzz_count, seed=fuzz_seed
+    return tuple(
+        boundary_variant_alleles(synthetic_slice, transcripts, seed=boundary_seed)
+        + fuzz_variant_alleles(synthetic_slice, fuzz_count, seed=fuzz_seed)
     )
 
 
