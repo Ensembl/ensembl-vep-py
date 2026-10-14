@@ -22,8 +22,8 @@ overlap types; changing only the storage backend is not sufficient.
 
 `CorpusSpec` is an open construction value. It contains a registered corpus name and scalar
 factory parameters. The registry resolves the name and leaves interpretation and validation of
-parameters to the selected factory. The original `default`, `heavy`, and `both` names remain
-aliases for registered synthetic corpora.
+parameters to the selected factory. Built-in synthetic corpora use the canonical registered names
+`synthetic.default`, `synthetic.heavy`, and `synthetic.all`.
 
 ```text
 CorpusSpec ──► corpus registry ──► Corpus
