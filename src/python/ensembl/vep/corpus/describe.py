@@ -25,6 +25,7 @@ from collections.abc import Sequence
 from attrs import frozen
 
 from ensembl.vep.common import Strand
+from ensembl.vep.common.constants import EMPTY_ALLELE
 from ensembl.vep.corpus.base import Corpus, NamedOverlap
 from ensembl.vep.models.genic import Transcript
 from ensembl.vep.models.overlap import TranscriptVariationAllele
@@ -59,7 +60,6 @@ TRANSCRIPT_HEADERS = (
 CLASS_HEADERS = ("Class", "Variants")
 OVERLAP_HEADERS = ("Index", "Name", "Feature", "Locus", "Alleles")
 
-EMPTY_ALLELE = "-"
 _ALLELE_DISPLAY_LENGTH = 12
 """Longest allele shown in full. A whole-transcript deletion is thousands of bases, and nobody
 selects one of those by typing it out; ``--name`` is the selector for it."""

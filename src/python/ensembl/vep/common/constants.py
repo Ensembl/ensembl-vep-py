@@ -26,6 +26,9 @@ LEGACY_CORPUS_KINDS = ("default", "heavy", "both")
 CANONICAL_DNA_BASES = "ACGT"
 """Unambiguous DNA bases used when generating synthetic sequence."""
 
+EMPTY_ALLELE = "-"
+"""VEP's spelling of an empty allele."""
+
 CLASS_SO_TERM_ABBRV_TO_ENUM: dict[str, ClassSOTerm] = {
     "INS": ClassSOTerm.INSERTION,
     "INS_ME": ClassSOTerm.MOBILE_ELEMENT_INSERTION,
