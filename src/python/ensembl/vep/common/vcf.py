@@ -52,8 +52,8 @@ def vcf_record_alleles(
     is wrapped in angle brackets.
 
     One deliberate difference: at position 1 there is no preceding base, and Perl takes whatever the
-    slice returns there. The VCF specification pads with the *following* base instead, and so does
-    this.
+    slice returns there. The VCF specification pads with the *following* base instead (VCF v4.5
+    specification, §1.6.1 “Fixed fields”, item 4 “REF”), and so does this.
 
     Args:
         start (int): 1-based start, in VEP's trimmed convention -- an insertion sits before
