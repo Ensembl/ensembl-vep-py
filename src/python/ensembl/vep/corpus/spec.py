@@ -22,8 +22,6 @@ from typing import TypeAlias
 
 from attrs import frozen
 
-from ensembl.vep.common.constants import LEGACY_CORPUS_KINDS
-
 __all__ = ["CorpusParameter", "CorpusSpec"]
 
 CorpusParameter: TypeAlias = str | int | float | bool | None
@@ -39,7 +37,7 @@ _DEFAULT_PARAMETERS: dict[str, CorpusParameter] = {
     "sweep_seed": 41,
 }
 
-_SYNTHETIC_KINDS = (*LEGACY_CORPUS_KINDS, "synthetic.default", "synthetic.heavy", "synthetic.all")
+_SYNTHETIC_KINDS = ("synthetic.default", "synthetic.heavy", "synthetic.all")
 
 
 def _parameter_items(
@@ -92,11 +90,10 @@ class CorpusSpec:
     """Describe a registered corpus construction.
 
     ``parameters`` is deliberately open: each registered factory owns its parameter validation.
-    The legacy synthetic keyword arguments remain accepted while the command configuration moves
-    to registered names and generic parameters.
+    Synthetic convenience arguments remain available alongside generic factory parameters.
 
     Attributes:
-        kind (str): Registered corpus name or compatibility alias.
+        kind (str): Registered corpus name.
         parameters (Mapping[str, CorpusParameter]): Factory-owned construction parameters.
     """
 
@@ -106,7 +103,7 @@ class CorpusSpec:
     def __init__(
         self,
         *,
-        kind: str = "both",
+        kind: str = "synthetic.all",
         parameters: Mapping[str, CorpusParameter] | None = None,
         fuzz: int | None = None,
         step: int | None = None,
@@ -116,13 +113,13 @@ class CorpusSpec:
         heavy_genome_seed: int | None = None,
         sweep_seed: int | None = None,
     ) -> None:
-        """Create a specification, accepting legacy synthetic overrides.
+        """Create a specification, accepting synthetic parameter overrides.
 
-        Explicit legacy arguments replace values from ``parameters``; unspecified synthetic
+        Explicit synthetic arguments replace values from ``parameters``; unspecified synthetic
         parameters retain their defaults.
 
         Args:
-            kind (str): Registered corpus name or compatibility alias.
+            kind (str): Registered corpus name.
             parameters (Mapping[str, CorpusParameter] | None): Factory-owned scalar parameters.
             fuzz (int | None): Default synthetic random-variant count override.
             step (int | None): Heavy synthetic variant spacing override.
@@ -185,7 +182,7 @@ class CorpusSpec:
             TypeError: If configured generic parameters have invalid types.
             ValueError: If generic parameters are malformed or built-in values are invalid.
         """
-        kind = getattr(options, "kind", "both")
+        kind = getattr(options, "kind", "synthetic.all")
         parameters: dict[str, CorpusParameter] = {}
         corpus_directory = getattr(options, "corpus_dir", None)
         if corpus_directory is not None and kind == "loaded.files":
@@ -210,7 +207,7 @@ class CorpusSpec:
         """Build a specification from its JSON-compatible representation.
 
         Args:
-            value (Mapping[str, object]): Mapping produced by ``as_dict`` or a legacy manifest.
+            value (Mapping[str, object]): Mapping produced by ``as_dict``.
 
         Returns:
             CorpusSpec: Decoded construction specification.
@@ -219,7 +216,7 @@ class CorpusSpec:
             TypeError: If the kind or parameters have invalid types.
             ValueError: If decoded built-in parameters are invalid.
         """
-        kind = value.get("kind", "both")
+        kind = value.get("kind", "synthetic.all")
         if not isinstance(kind, str):
             raise TypeError("corpus kind must be a string")
         raw_parameters = value.get("parameters")
@@ -266,7 +263,7 @@ class CorpusSpec:
         return {"kind": self.kind, "parameters": self.parameters}
 
     def _integer_parameter(self, name: str) -> int:
-        """Return a compatibility integer parameter with its type checked."""
+        """Return a synthetic integer parameter with its type checked."""
         value = self.parameters[name]
         if not isinstance(value, int) or isinstance(value, bool):
             raise TypeError(f"corpus parameter {name!r} must be an integer")
@@ -309,32 +306,28 @@ class CorpusSpec:
 
     @property
     def kinds(self) -> tuple[str, ...]:
-        """Return legacy synthetic members represented by the specification."""
-        if self.kind in ("both", "synthetic.all"):
-            return ("default", "heavy")
-        if self.kind in ("default", "synthetic.default"):
-            return ("default",)
-        if self.kind in ("heavy", "synthetic.heavy"):
-            return ("heavy",)
+        """Return the concrete corpus kinds represented by the specification."""
+        if self.kind == "synthetic.all":
+            return ("synthetic.default", "synthetic.heavy")
         return (self.kind,)
 
     def seeds_by_kind(self) -> dict[str, dict[str, int]]:
         """Return synthetic seeds for the selected built-in corpora."""
         seeds: dict[str, dict[str, int]] = {}
-        if "default" in self.kinds:
-            seeds["default"] = {
+        if "synthetic.default" in self.kinds:
+            seeds["synthetic.default"] = {
                 "genome": self.genome_seed,
                 "boundary": self.boundary_seed,
                 "fuzz": self.fuzz_seed,
             }
-        if "heavy" in self.kinds:
-            seeds["heavy"] = {"genome": self.heavy_genome_seed, "sweep": self.sweep_seed}
+        if "synthetic.heavy" in self.kinds:
+            seeds["synthetic.heavy"] = {
+                "genome": self.heavy_genome_seed,
+                "sweep": self.sweep_seed,
+            }
         return seeds
 
     def parameter_hash(self) -> str:
         """Return a short stable digest of the requested construction."""
-        representation = self.as_dict()
-        if self.kind in LEGACY_CORPUS_KINDS:
-            representation = {"kind": self.kind, **self.parameters}
-        payload = json.dumps(representation, sort_keys=True).encode("utf-8")
+        payload = json.dumps(self.as_dict(), sort_keys=True).encode("utf-8")
         return hashlib.sha256(payload).hexdigest()[:16]

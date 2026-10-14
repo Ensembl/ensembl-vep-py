@@ -28,6 +28,12 @@ class TestCorpusSpec:
         specification = CorpusSpec(kind="custom", parameters={"window": 250, "strict": True})
         assert specification.parameters == {"strict": True, "window": 250}
 
+    def test_default_uses_the_canonical_combined_name(self) -> None:
+        """The default specification expands to both canonical synthetic corpora."""
+        specification = CorpusSpec()
+        assert specification.kind == "synthetic.all"
+        assert specification.kinds == ("synthetic.default", "synthetic.heavy")
+
     def test_parameters_are_returned_as_a_copy(self) -> None:
         """Callers cannot mutate a specification through the public mapping."""
         specification = CorpusSpec(kind="custom", parameters={"seed": 7})
