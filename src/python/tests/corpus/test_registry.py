@@ -15,8 +15,6 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
-
 import pytest
 
 from ensembl.vep.corpus import Corpus, available_corpora, build_corpus, register_corpus
@@ -38,22 +36,22 @@ class EmptyCorpus(Corpus):
         return self._specification
 
     @property
-    def sequence_regions(self) -> Sequence[Slice]:
+    def sequence_regions(self) -> tuple[Slice, ...]:
         """Return no sequence regions."""
         return ()
 
     @property
-    def named_variants(self) -> Sequence[NamedVariant]:
+    def named_variants(self) -> tuple[NamedVariant, ...]:
         """Return no variants."""
         return ()
 
     @property
-    def transcripts(self) -> Sequence[Transcript]:
+    def transcripts(self) -> tuple[Transcript, ...]:
         """Return no transcripts."""
         return ()
 
     @property
-    def named_overlaps(self) -> Sequence[NamedOverlap]:
+    def named_overlaps(self) -> tuple[NamedOverlap, ...]:
         """Return no overlaps."""
         return ()
 
