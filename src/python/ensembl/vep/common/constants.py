@@ -35,9 +35,6 @@ VCF_BASES = frozenset("ACGTN")
 VCF_PLAIN_ALLELE_CHARACTERS = frozenset("ACGTN.")
 """Characters accepted in a non-symbolic VCF allele."""
 
-SYNTHETIC_CORPUS_SOURCE = "ensembl_vep_synthetic"
-"""Source label written by synthetic-corpus file exporters."""
-
 CLASS_SO_TERM_ABBRV_TO_ENUM: dict[str, ClassSOTerm] = {
     "INS": ClassSOTerm.INSERTION,
     "INS_ME": ClassSOTerm.MOBILE_ELEMENT_INSERTION,
