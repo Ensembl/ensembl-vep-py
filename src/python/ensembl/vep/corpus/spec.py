@@ -22,10 +22,9 @@ from typing import TypeAlias
 
 from attrs import frozen
 
-__all__ = ["KINDS", "CorpusParameter", "CorpusSpec"]
+from ensembl.vep.common.constants import LEGACY_CORPUS_KINDS
 
-KINDS = ("default", "heavy", "both")
-"""Legacy synthetic corpus aliases retained for command compatibility."""
+__all__ = ["CorpusParameter", "CorpusSpec"]
 
 CorpusParameter: TypeAlias = str | int | float | bool | None
 """A scalar parameter accepted by a registered corpus factory."""
@@ -40,7 +39,7 @@ _DEFAULT_PARAMETERS: dict[str, CorpusParameter] = {
     "sweep_seed": 41,
 }
 
-_SYNTHETIC_KINDS = (*KINDS, "synthetic.default", "synthetic.heavy", "synthetic.all")
+_SYNTHETIC_KINDS = (*LEGACY_CORPUS_KINDS, "synthetic.default", "synthetic.heavy", "synthetic.all")
 
 
 def _parameter_items(
@@ -335,7 +334,7 @@ class CorpusSpec:
     def parameter_hash(self) -> str:
         """Return a short stable digest of the requested construction."""
         representation = self.as_dict()
-        if self.kind in KINDS:
+        if self.kind in LEGACY_CORPUS_KINDS:
             representation = {"kind": self.kind, **self.parameters}
         payload = json.dumps(representation, sort_keys=True).encode("utf-8")
         return hashlib.sha256(payload).hexdigest()[:16]

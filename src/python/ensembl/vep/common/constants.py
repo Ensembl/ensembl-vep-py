@@ -21,6 +21,8 @@ DEFAULT_DISTANCE = 5000
 One home for a value three layers have to agree on: the pairing window the overlap finder expands
 by, the ``is_upstream``/``is_downstream`` facts, and the zone map that prefills them.
 """
+LEGACY_CORPUS_KINDS = ("default", "heavy", "both")
+"""Legacy synthetic corpus names retained for command compatibility."""
 
 CLASS_SO_TERM_ABBRV_TO_ENUM: dict[str, ClassSOTerm] = {
     "INS": ClassSOTerm.INSERTION,
