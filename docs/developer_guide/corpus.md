@@ -127,7 +127,8 @@ format-specific methods.
 - Sequence-region names are unique within a corpus.
 - Named variants are unique and overlap names refer to those variants.
 - Overlap feature and allele objects are the same instances held by the corpus collections.
-- Collection order is stable across construction, description, and export.
+- Corpus constructors accept materialised tuples and expose tuples through the common contract.
+  This fixes membership and order without freezing the biological model objects themselves.
 - A combined corpus preserves stable input order and rejects conflicting names.
 - A corpus that owns external resources is used as a context manager or explicitly closed.
 - Exporters render from `Corpus`; they do not depend on a synthetic or loaded subtype.
