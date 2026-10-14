@@ -17,6 +17,7 @@ from __future__ import annotations
 
 from collections.abc import Iterator, Sequence
 
+from ensembl.vep.common.constants import SYNTHETIC_CORPUS_SOURCE
 from ensembl.vep.common.vcf import vcf_record_alleles
 from ensembl.vep.corpus.base import Corpus
 from ensembl.vep.models.variation import VariationAllele
@@ -24,8 +25,6 @@ from ensembl.vep.models.variation import VariationAllele
 __all__ = ["VCF_NAME", "vcf_alleles", "vcf_lines"]
 
 VCF_NAME = "corpus.vcf"
-
-_SOURCE = "ensembl_vep_synthetic"
 
 
 def distinct_variants(corpus: Corpus) -> list[tuple[str, VariationAllele]]:
@@ -46,7 +45,7 @@ def vcf_alleles(allele: VariationAllele, sequence: str) -> tuple[int, str, str]:
 def vcf_lines(corpora: Sequence[Corpus]) -> Iterator[str]:
     """Yield the VCF records for corpora."""
     yield "##fileformat=VCFv4.2"
-    yield f"##source={_SOURCE}"
+    yield f"##source={SYNTHETIC_CORPUS_SOURCE}"
     for corpus in corpora:
         for sequence_region in corpus.sequence_regions:
             yield f"##contig=<ID={sequence_region.seq_region_name},length={sequence_region.end}>"

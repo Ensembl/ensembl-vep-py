@@ -17,13 +17,9 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 
-from ensembl.vep.common.constants import EMPTY_ALLELE
+from ensembl.vep.common.constants import EMPTY_ALLELE, VCF_BASES, VCF_PLAIN_ALLELE_CHARACTERS
 
 __all__ = ["trim_right", "vcf_record_alleles"]
-
-_BASES = frozenset("ACGTN")
-_PLAIN = frozenset("ACGTN.")
-"""What a plain, non-symbolic allele may contain. ``.`` counts, as it does in ensembl-variation."""
 
 
 def trim_right(alleles: Sequence[str]) -> list[str]:
@@ -42,7 +38,7 @@ def trim_right(alleles: Sequence[str]) -> list[str]:
 
 def _is_bases(allele: str) -> bool:
     """Return whether an allele is empty or plain bases, as opposed to symbolic."""
-    return allele == "" or set(allele) <= _BASES
+    return allele == "" or set(allele) <= VCF_BASES
 
 
 def vcf_record_alleles(
@@ -71,7 +67,7 @@ def vcf_record_alleles(
         tuple[int, list[str]]: The record's position, and its alleles with the reference first.
     """
     cleaned = [allele.replace(EMPTY_ALLELE, "") for allele in alleles]
-    symbolic = any(allele and not set(allele) <= _PLAIN for allele in cleaned)
+    symbolic = any(allele and not set(allele) <= VCF_PLAIN_ALLELE_CHARACTERS for allele in cleaned)
     if not symbolic and len({len(allele) for allele in cleaned}) == 1:
         return start, cleaned
 

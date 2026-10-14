@@ -19,6 +19,7 @@ from collections.abc import Iterator, Sequence
 from urllib.parse import quote
 
 from ensembl.vep.common import Strand
+from ensembl.vep.common.constants import SYNTHETIC_CORPUS_SOURCE
 from ensembl.vep.corpus.base import Corpus
 from ensembl.vep.models.genic import Gene, Transcript
 
@@ -26,7 +27,6 @@ __all__ = ["GFF3_NAME", "escape_attribute_value", "gff3_lines"]
 
 GFF3_NAME = "corpus.gff3"
 
-_SOURCE = "ensembl_vep_synthetic"
 _ATTRIBUTE_SAFE_CHARACTERS = ".:^*$@!+_?-|"
 
 
@@ -75,7 +75,7 @@ def _row(
     return "\t".join(
         (
             seq_region_name,
-            _SOURCE,
+            SYNTHETIC_CORPUS_SOURCE,
             feature_type,
             str(start),
             str(end),
