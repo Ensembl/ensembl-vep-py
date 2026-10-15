@@ -30,7 +30,9 @@ def fasta_lines(corpora: Sequence[Corpus]) -> Iterator[str]:
     """Yield one FASTA record per corpus chromosome, wrapped to a fixed width."""
     for corpus in corpora:
         for sequence_region in corpus.sequence_regions:
-            sequence = sequence_region.seq or ""
+            sequence = sequence_region.seq
+            if not sequence:
+                raise ValueError(f"No sequence for {sequence_region.seq_region_name}")
             yield f">{sequence_region.seq_region_name}"
             for offset in range(0, len(sequence), _LINE_WIDTH):
                 yield sequence[offset : offset + _LINE_WIDTH]

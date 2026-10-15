@@ -17,9 +17,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from ensembl.vep.common import CoordSystemLevel, Strand
 from ensembl.vep.corpus import Corpus
-from ensembl.vep.corpus.exporter.formats.file.fasta import FASTA_NAME
+from ensembl.vep.corpus.exporter.formats.file.fasta import FASTA_NAME, fasta_lines
 from ensembl.vep.corpus.exporter.manifest import CorpusManifest
 from ensembl.vep.models.sequence import CoordSystem, Slice
 from ensembl.vep.parsers.fasta import FastaParser
@@ -52,3 +54,11 @@ class TestFasta:
             sequence_source=FastaSequenceSource(file_path=directory / FASTA_NAME),
         )
         assert restored.seq == original.seq
+
+    def test_exporting_empty_sequence_is_error(self, source: Corpus) -> None:
+        """An empty sequence does not get output."""
+        original = source.sequence_regions[0]
+        with original.unsafe() as unsafe_slice:
+            setattr(unsafe_slice, "_seq", "")
+        with pytest.raises(ValueError, match="No sequence for"):
+            list(fasta_lines([source]))
