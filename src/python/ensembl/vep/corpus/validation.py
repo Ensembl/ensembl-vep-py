@@ -69,6 +69,10 @@ def validate_corpus(
             raise ValueError(f"overlap {name!r} does not refer to its corpus variant allele")
         if id(overlap.feature) not in transcript_identities:
             raise ValueError(f"overlap {name!r} refers to a transcript outside the corpus")
+        if overlap.feature.slice is not overlap.overlapping_feature.slice:
+            raise ValueError(
+                f"overlap {name!r} refers to a transcript and variant on different sequence regions"
+            )
         overlap_identity = (name, id(overlap.feature))
         if overlap_identity in overlap_identities:
             raise ValueError(

@@ -254,12 +254,8 @@ def build_transcript(
     ]
     introns: list[Intron] = []
     for prev_exon, next_exon in zip(spliced_exons, spliced_exons[1:]):
-        first, second = (
-            (next_exon, prev_exon) if strand == Strand.REVERSE else (prev_exon, next_exon)
-        )
-        intron = Intron(
-            start=first.end + 1, end=second.start - 1, strand=strand, slice=synthetic_slice
-        )
+        first, second = (next_exon, prev_exon) if strand == Strand.REVERSE else (prev_exon, next_exon)
+        intron = Intron(start=first.end + 1, end=second.start - 1, strand=strand, slice=synthetic_slice)
         intron.assign_without_hooks(prev_exon=prev_exon, next_exon=next_exon)
         introns.append(intron)
     transcript = Transcript(

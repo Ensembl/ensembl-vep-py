@@ -17,8 +17,11 @@ from __future__ import annotations
 
 import pytest
 
+from ensembl.vep.corpus.combine import combine_corpora
+from ensembl.vep.corpus.spec import CorpusSpec
 from ensembl.vep.corpus.synthetic import SyntheticCorpus
 from ensembl.vep.corpus.synthetic.default import default_corpus
+from ensembl.vep.corpus.synthetic.heavy import heavy_corpus
 from ensembl.vep.corpus.validation import validate_corpus
 from ensembl.vep.models.sequence import Slice
 
@@ -81,6 +84,21 @@ class TestCorpusValidation:
                 synthetic_slice=corpus.synthetic_slice,
                 named_variants=corpus.named_variants,
                 named_overlaps=((overlap_name, overlap),),
+            )
+
+    def test_rejects_an_overlap_feature_with_different_slice_to_feature(self) -> None:
+        """The overlapped allele and transcrfipt can't be on different slices."""
+        corpus_default = default_corpus(fuzz_count=0)
+        corpus_heavy = heavy_corpus()
+        corpus = combine_corpora(CorpusSpec(), (corpus_default, corpus_heavy))
+        sequence_regions = corpus.sequence_regions
+        overlap_name, overlap = corpus.named_overlaps[0]
+        overlap.feature.slice = (
+            sequence_regions[1] if overlap.feature.slice == sequence_regions[0] else sequence_regions[0]
+        )
+        with pytest.raises(ValueError, match="transcript and variant on different sequence regions"):
+            validate_corpus(
+                sequence_regions, corpus.named_variants, corpus.transcripts, corpus.named_overlaps
             )
 
     def test_rejects_duplicate_transcript_membership(self) -> None:
