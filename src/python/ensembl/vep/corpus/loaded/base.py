@@ -63,12 +63,19 @@ class LoadedCorpus(Corpus):
 
     def __attrs_post_init__(self) -> None:
         """Validate relationships between the supplied corpus members."""
-        validate_corpus(
-            self.sequence_regions,
-            self.named_variants,
-            self.transcripts,
-            self.named_overlaps,
-        )
+        try:
+            validate_corpus(
+                self.sequence_regions,
+                self.named_variants,
+                self.transcripts,
+                self.named_overlaps,
+            )
+        except ValueError as validation_error:
+            try:
+                self.close()
+            except (OSError, RuntimeError) as cleanup_error:
+                validation_error.add_note(f"Failed to close corpus resources: {cleanup_error}")
+            raise
 
     @property
     def spec(self) -> CorpusSpec:

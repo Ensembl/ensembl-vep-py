@@ -15,6 +15,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from ensembl.vep.corpus.loaded import LoadedCorpus
 from ensembl.vep.corpus.loaded.base import collect_sequence_regions
 from ensembl.vep.corpus.spec import CorpusSpec
@@ -24,12 +26,15 @@ from ensembl.vep.corpus.synthetic.default import default_corpus
 class Resource:
     """Record how often a loaded resource is closed."""
 
-    def __init__(self) -> None:
+    def __init__(self, close_error: Exception | None = None) -> None:
         self.close_count = 0
+        self.close_error = close_error
 
     def close(self) -> None:
         """Record one release."""
         self.close_count += 1
+        if self.close_error is not None:
+            raise self.close_error
 
 
 def _materialise(resource: Resource) -> LoadedCorpus:
@@ -69,6 +74,20 @@ class TestLoadedCorpus:
         resource = Resource()
         with _materialise(resource):
             assert resource.close_count == 0
+        assert resource.close_count == 1
+
+    def test_failed_construction_closes_resources(self) -> None:
+        """Validation failure releases resources without hiding its original error."""
+        resource = Resource(close_error=RuntimeError("resource cleanup failed"))
+        with pytest.raises(ValueError, match="a corpus must contain at least one sequence region"):
+            LoadedCorpus(
+                spec=CorpusSpec(kind="test.loaded"),
+                sequence_regions=(),
+                named_variants=(),
+                transcripts=(),
+                named_overlaps=(),
+                resources=(resource,),
+            )
         assert resource.close_count == 1
 
     def test_collects_sequence_regions_once_in_encounter_order(self) -> None:
