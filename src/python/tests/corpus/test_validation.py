@@ -92,7 +92,7 @@ class TestCorpusValidation:
         corpus_heavy = heavy_corpus()
         corpus = combine_corpora(CorpusSpec(), (corpus_default, corpus_heavy))
         sequence_regions = corpus.sequence_regions
-        overlap_name, overlap = corpus.named_overlaps[0]
+        _overlap_name, overlap = corpus.named_overlaps[0]
         overlap.feature.slice = (
             sequence_regions[1] if overlap.feature.slice == sequence_regions[0] else sequence_regions[0]
         )

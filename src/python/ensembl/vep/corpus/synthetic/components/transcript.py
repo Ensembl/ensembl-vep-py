@@ -58,6 +58,8 @@ def _genomic_position_at_transcript_offset(
     transcript_offset: int,
 ) -> int:
     """Return the genomic position at a zero-based spliced-transcript offset."""
+    if transcript_offset < 0:
+        raise ValueError("transcript_offset must not be negative")
     exons_in_transcript_order = (
         exons_genomic_ascending if strand == Strand.FORWARD else tuple(reversed(exons_genomic_ascending))
     )
@@ -68,6 +70,9 @@ def _genomic_position_at_transcript_offset(
             return exon_start + remaining if strand == Strand.FORWARD else exon_end - remaining
         remaining -= exon_length
     exon_start, exon_end = exons_in_transcript_order[-1]
+    exon_length = exon_end - exon_start + 1
+    if remaining >= exon_length:
+        raise ValueError("transcript_offset must be within transcript length")
     return exon_start + remaining if strand == Strand.FORWARD else exon_end - remaining
 
 

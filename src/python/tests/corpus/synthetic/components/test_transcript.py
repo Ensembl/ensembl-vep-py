@@ -19,6 +19,7 @@ import pytest
 
 from ensembl.vep.common import CoordSystemLevel, Strand
 from ensembl.vep.corpus.synthetic.components.transcript import (
+    _genomic_position_at_transcript_offset,
     build_cds_genomic_bounds,
     build_transcript,
     build_translation,
@@ -101,6 +102,14 @@ class TestTranscriptComponent:
 
 class TestCdsBounds:
     """Reusable CDS coordinate placement."""
+
+    def test_rejects_offset_outside_transcript(self) -> None:
+        """Check _genomic_position_at_transcript_offset rejects offset outside transcript."""
+        with pytest.raises(ValueError, match="transcript_offset must not be negative"):
+            _genomic_position_at_transcript_offset(((100, 119), (200, 299)), Strand.FORWARD, -10)
+
+        with pytest.raises(ValueError, match="transcript_offset must be within transcript length"):
+            _genomic_position_at_transcript_offset(((100, 119), (200, 299)), Strand.FORWARD, 120)
 
     @pytest.mark.parametrize(
         ("exons", "strand", "expected_start"),
