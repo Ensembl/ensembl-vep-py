@@ -40,6 +40,16 @@ class TestTranscriptComponent:
         starts = [exon.start for exon in reverse.spliced_exons]
         assert starts == sorted(starts, reverse=True)
 
+    def test_reverse_transcript_introns_follow_transcript_order(self) -> None:
+        """Reverse-strand construction reverses genomic exons for transcript traversal."""
+        _sequence_region, transcripts = build_genome()
+        reverse = next(transcript for transcript in transcripts if transcript.strand == Strand.REVERSE)
+        starts = [exon.start for exon in reverse.introns]
+        assert starts == sorted(starts, reverse=True)
+        for index, _exon in enumerate(reverse.spliced_exons[:-1]):
+            assert reverse.introns[index].prev_exon == reverse.spliced_exons[index]
+            assert reverse.introns[index].next_exon == reverse.spliced_exons[index + 1]
+
     def test_build_translation_uses_the_exons_containing_its_boundaries(self) -> None:
         """Build exon-relative offsets when the CDS starts after the first exon."""
         synthetic_slice = Slice(

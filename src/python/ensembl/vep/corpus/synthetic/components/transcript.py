@@ -252,16 +252,16 @@ def build_transcript(
         )
         for exon_index, (exon_start, exon_end) in enumerate(exons_transcript_order)
     ]
-    introns = [
-        Intron(
-            start=exons_genomic_ascending[index][1] + 1,
-            end=exons_genomic_ascending[index + 1][0] - 1,
-            strand=strand,
-            slice=synthetic_slice,
+    introns: list[Intron] = []
+    for prev_exon, next_exon in zip(spliced_exons, spliced_exons[1:]):
+        first, second = (
+            (next_exon, prev_exon) if strand == Strand.REVERSE else (prev_exon, next_exon)
         )
-        for index in range(len(exons_genomic_ascending) - 1)
-        if exons_genomic_ascending[index + 1][0] - exons_genomic_ascending[index][1] > 1
-    ]
+        intron = Intron(
+            start=first.end + 1, end=second.start - 1, strand=strand, slice=synthetic_slice
+        )
+        intron.assign_without_hooks(prev_exon=prev_exon, next_exon=next_exon)
+        introns.append(intron)
     transcript = Transcript(
         start=exons_genomic_ascending[0][0],
         end=exons_genomic_ascending[-1][1],
