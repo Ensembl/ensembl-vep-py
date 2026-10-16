@@ -154,7 +154,7 @@ def _read_toml_tables(
                 continue
             resolved_section, field_name, resolved_value = resolved
             tables.setdefault(resolved_section, {})[field_name] = resolved_value
-    return tables
+    return coerce_layer(tables, section_types)
 
 
 def read_config_file(path: Path, section_types: tuple[type[ConfigSection], ...]) -> ConfigLayer:
@@ -184,4 +184,4 @@ def read_config_file(path: Path, section_types: tuple[type[ConfigSection], ...])
         return read_legacy_config_file(path, section_types)
     if not has_header and not any(isinstance(value, dict) for value in parsed.values()):
         return read_legacy_config_file(path, section_types)
-    return coerce_layer(_read_toml_tables(parsed, section_types, path), section_types)
+    return _read_toml_tables(parsed, section_types, path)
