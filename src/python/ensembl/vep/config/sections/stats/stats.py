@@ -32,7 +32,7 @@ class StatsConfig(ConfigSection):
 
     Attributes:
         output_file (Path | None): Report path, or None for stdout.
-        output_format (str): Report format. Spelled apart from ``--format``, which is the input
+        output_format (str): Report format. Distinct from ``--format``, which is the input
             format of the file it summarises.
         profile (bool): Also collect the fact-level profile. This one genuinely costs -- it wraps
             every fact's compute function -- so it is never on by default.

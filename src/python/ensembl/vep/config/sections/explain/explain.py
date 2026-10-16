@@ -46,7 +46,7 @@ class ExplainConfig(ConfigSection):
         against_input (bool): Diff the derivation against the terms the input file already carries.
         graph (bool): Draw the derivation as a diagram rather than printing it.
         output_format (str | None): The format to render in, or None for the default of the kind asked
-            for. Spelled ``--report_format`` because ``--format`` is the input format.
+            for. Spelled ``--output_format`` because ``--format`` is the input format.
         list_overlaps (bool): List the selectable overlaps and exit.
         graph (str): Derivation graph format, or ``"none"`` for the text explanation only.
         output_file (Path | None): Write the explanation here instead of to stdout.

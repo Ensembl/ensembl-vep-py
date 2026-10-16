@@ -13,7 +13,7 @@
 # limitations under the License.
 """The formats a report can be rendered in, and which of them a request can combine.
 
-One vocabulary for every reporting command, so ``--format`` means the same thing to ``explain``,
+One vocabulary for every reporting command, so ``--output_format`` means the same thing to ``explain``,
 ``catalogue``, ``corpus`` and ``bench``. A report is a table unless ``--graph`` asks for a diagram,
 and a format belongs to one kind or the other: resolution refuses the combinations that cannot be
 drawn rather than quietly rendering something else.

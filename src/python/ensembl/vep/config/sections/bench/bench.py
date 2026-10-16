@@ -40,7 +40,7 @@ class BenchConfig(ConfigSection):
         baseline_file (Path | None): Compare against results previously written here.
         regression_threshold (float): Fractional slowdown against the baseline that counts as a
             regression.
-        format (str): Table format.
+        output_format (str | None): Table format.
     """
 
     section_name: ClassVar[str] = "bench"

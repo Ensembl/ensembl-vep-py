@@ -32,7 +32,7 @@ class CatalogueCostsConfig(ConfigSection):
     """How the measured costs are reported and persisted.
 
     Attributes:
-        format (str): Table format for the comparison.
+        output_format (str | None): Table format for the comparison.
         output_file (Path | None): Write the measured cost table here, or None to only report it.
     """
 

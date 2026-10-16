@@ -34,7 +34,7 @@ class CorpusDescribeConfig(ConfigSection):
     Attributes:
         select (str | None): List only the overlaps of the variant with this name, or None for
             every overlap.
-        format (str): Table format.
+        output_format (str | None): Table format.
         output_file (Path | None): Where to write, or None for stdout.
         annotate (bool): Also run the configured annotator over the corpus and count its consequence
             terms. Off by default, because it turns a listing into an annotation run.
