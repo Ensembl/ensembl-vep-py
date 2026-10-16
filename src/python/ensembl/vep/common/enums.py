@@ -100,6 +100,15 @@ class SourceType(Enum):
     CACHE = "cache"
 
 
+class StartMethod(str, Enum):
+    """Multiprocessing worker start methods."""
+
+    AUTO = "auto"
+    SPAWN = "spawn"
+    FORK = "fork"
+    FORKSERVER = "forkserver"
+
+
 class Readthrough(IntEnum):
     """How far translation may run when a variant destroys the stop codon.
 

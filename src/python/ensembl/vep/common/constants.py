@@ -15,6 +15,13 @@
 
 from ensembl.vep.common.enums import ExonPhase, Strand, ClassSOTerm
 
+DEFAULT_DISTANCE = 5000
+"""Bases either side of a feature that still pair with it, as Perl VEP's ``--distance`` defaults.
+
+One home for a value three layers have to agree on: the pairing window the overlap finder expands
+by, the ``is_upstream``/``is_downstream`` facts, and the zone map that prefills them.
+"""
+
 CLASS_SO_TERM_ABBRV_TO_ENUM: dict[str, ClassSOTerm] = {
     "INS": ClassSOTerm.INSERTION,
     "INS_ME": ClassSOTerm.MOBILE_ELEMENT_INSERTION,
