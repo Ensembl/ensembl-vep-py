@@ -75,6 +75,13 @@ class TestGoldenResolution:
             assert isinstance(golden, GoldenCorpus)
             assert golden.spec == self._spec()
 
+    def test_rejects_non_string_directory_parameter(self) -> None:
+        """Do not treat an invalid directory parameter as the packaged default."""
+        specification = CorpusSpec(kind="golden.file", parameters={"directory": 123})
+
+        with pytest.raises(TypeError, match="directory must be a string"):
+            build_corpus(specification)
+
     def test_missing_directory_is_not_silently_regenerated(self, tmp_path: Path) -> None:
         """Keep missing-data policy outside the reusable corpus loader."""
 

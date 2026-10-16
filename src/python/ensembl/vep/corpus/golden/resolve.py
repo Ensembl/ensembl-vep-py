@@ -137,7 +137,9 @@ def load_golden_corpus(
 def _registered_golden_corpus(specification: CorpusSpec) -> Corpus:
     """Build the registered packaged golden corpus."""
     directory_value = specification.parameter("directory")
-    directory = Path(directory_value) if isinstance(directory_value, str) else None
+    if directory_value is not None and not isinstance(directory_value, str):
+        raise TypeError("golden corpus directory must be a string")
+    directory = Path(directory_value) if directory_value is not None else None
     return load_golden_corpus(
         _identity_spec(specification),
         directory=directory,
