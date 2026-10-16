@@ -50,7 +50,7 @@ class SourceConfig(ConfigSection):
         gtf (Path | None): GTF file of transcripts.
         fasta (Path | None): Reference FASTA, required alongside ``gff``/``gtf`` for sequence.
         synonyms (Path | None): File of sequence-region synonyms, one region per line: a reference
-            name followed by its synonyms, whitespace-separated. Perl VEP's ``--synonyms`` format.
+            name followed by a synonym, whitespace-separated. Perl VEP's ``--synonyms`` format.
         cache (bool): Annotate from a VEP cache, a switch as in Perl VEP; the directory is
             ``dir_cache``. Accepted, not implemented yet.
         dir_cache (Path | None): Directory of the VEP cache.

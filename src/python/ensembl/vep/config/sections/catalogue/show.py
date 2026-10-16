@@ -48,7 +48,7 @@ class CatalogueShowConfig(ConfigSection):
         graph (bool): Draw the subject as a graph. Use ``--output_format`` to set the file format,
             which defaults to svg when ``--graph`` is given.
             Unselected SVG terms are embedded in a linked HTML catalogue.
-        output_format (str | None): Table format. Only meaningful when ``graph`` is not given.
+        output_format (str | None): Output format. If ``--graph`` is given, must be a valid graph format.
         sort (str | None): Row order, or None for the subject's natural order -- catalogue rank for
             terms, cost tier for facts.
         output_file (Path | None): Where to write, or None for stdout.
