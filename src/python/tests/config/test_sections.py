@@ -103,6 +103,7 @@ class TestSectionBehaviour:
                 "mapper_cache_bytes",
             ),
             (SourceConfig, {"distance": -1}, "distance"),
+            (SourceConfig, {"distance": "1,2,3"}, "distance"),
             (ExecutionConfig, {"processes": 0}, "processes"),
             (ExecutionConfig, {"threads": 0}, "threads"),
             (ExecutionConfig, {"buffer_size": 0}, "buffer_size"),

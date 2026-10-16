@@ -42,6 +42,7 @@ input_file\tvariants.vcf
 --fasta "/data/ref genome/GRCh38.fa"
 gff /data/GRCh38.gff3.gz
 format vcf
+synonyms "/data/chr synonyms/chr_synonyms.txt
 
 # --- output ---
 output_file /scratch/run#2/annotated.vcf
@@ -96,6 +97,11 @@ class TestLegacyConfigFiles:
         """Quotes group words and are removed."""
         assert "ref genome" in str(perl_layer["source"]["fasta"])
         assert '"' not in str(perl_layer["source"]["fasta"])
+
+    def test_a_missing_end_quote_is_not_an_error(self, perl_layer: dict) -> None:
+        """Opening quote without closing quote still returns value."""
+        assert "chr synonyms" in str(perl_layer["source"]["synonyms"])
+        assert '"' not in str(perl_layer["source"]["synonyms"])
 
     def test_a_hash_inside_a_value_is_part_of_the_value(self, perl_layer: dict) -> None:
         """Only a line that starts with a hash is a comment."""

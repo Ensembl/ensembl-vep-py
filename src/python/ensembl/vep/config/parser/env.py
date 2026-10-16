@@ -18,6 +18,7 @@ from __future__ import annotations
 import os
 
 from ensembl.vep.config.option_spec import section_options
+from ensembl.vep.config.parser.cli import check_no_flag_collisions
 from ensembl.vep.config.sections.base import ConfigSection
 from ensembl.vep.config.sources import ConfigLayer, coerce_layer
 
@@ -46,6 +47,7 @@ def read_environment(
     Raises:
         ValueError: If a value is not of its declared type or not one of its choices.
     """
+    check_no_flag_collisions(section_types)
     source = os.environ if environ is None else environ
     layer: ConfigLayer = {}
     for section_type in section_types:

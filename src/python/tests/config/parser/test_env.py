@@ -61,3 +61,9 @@ class TestEnvironment:
         types = Config.section_types_for(("corpus",))
         with pytest.raises(ValueError, match="corpus.fuzz:"):
             read_environment(types, {"ENSEMBL_VEP_CORPUS_FUZZ": "many"})
+
+    def test_conflicting_section_types_is_an_error(self) -> None:
+        """Conflicting section types raises error."""
+        types = Config.section_types_for(tuple(Config.section_types))
+        with pytest.raises(ValueError, match="Sections declare colliding flags"):
+            _ = read_environment(types, {"ENSEMBL_VEP_CORPUS_FUZZ": "9"})

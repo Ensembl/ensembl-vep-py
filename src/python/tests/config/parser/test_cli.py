@@ -344,11 +344,6 @@ class TestFlagCollisions:
         """Disjoint sections are accepted."""
         check_no_flag_collisions(Config.section_types_for(("corpus", "logging")))
 
-    def test_building_a_parser_checks_first(self) -> None:
-        """Collisions are checked before argparse runs."""
-        with pytest.raises(ValueError, match="Sections declare colliding flags"):
-            build_parser("vep x", "", Config.section_types_for(("run", "stats")))
-
     def test_every_registered_command_has_a_usable_section_set(self) -> None:
         """Every runner uses a valid section set."""
         runner = pytest.importorskip("ensembl.vep.runner")

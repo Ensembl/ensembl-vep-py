@@ -334,6 +334,7 @@ class TestPrecedence:
         """Passing no argv skips command-line parsing."""
         assert load(None, section_names=("corpus",), environ={}).corpus.fuzz == 4000
 
-    def test_omitting_section_names_loads_every_section(self) -> None:
-        """Omitting section names loads everything."""
-        assert len(load(None, environ={}).sections()) == len(Config.section_types)
+    def test_omitting_section_names_errors_due_to_conflicting_flags(self) -> None:
+        """Omitting section names loads everything, which causes an error from check_no_flag_collisions."""
+        with pytest.raises(ValueError, match="Sections declare colliding flags"):
+            _ = load(None, environ={})

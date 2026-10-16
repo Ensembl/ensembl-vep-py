@@ -23,6 +23,7 @@ from attrs import define, field, fields
 
 from ensembl.vep.config.option_spec import section_options
 from ensembl.vep.config.parser.common import resolve_option
+from ensembl.vep.config.parser.cli import check_no_flag_collisions
 from ensembl.vep.config.parser import build_parser, parse_args, read_config_file, read_environment
 from ensembl.vep.config.sections import (
     AnnotationConfig,
@@ -187,6 +188,7 @@ class Config:
 
         section_names = cls._command_section_names(command)
         section_types = cls.section_types_for(section_names)
+        check_no_flag_collisions(section_types)
 
         given: ConfigLayer = {}
         for key, value in options.items():
@@ -246,6 +248,7 @@ def load(
     """Load configuration from the available layers."""
     section_names = section_names or tuple(Config.section_types)
     section_types = Config.section_types_for(section_names)
+    check_no_flag_collisions(section_types)
 
     # Read configuration layers in order of increasing precedence: file, environment, command line.
     layers: list[tuple[ConfigSource, ConfigLayer]] = []
