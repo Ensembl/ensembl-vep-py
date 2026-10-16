@@ -159,6 +159,49 @@ class TestLoadedCorpus:
                 for _name, allele in loaded_corpus.named_variants
             )
 
+    @pytest.mark.xfail(
+        strict=True,
+        reason="unresolved FASTA contigs currently receive transcript-variant overlaps",
+    )
+    def test_does_not_annotate_variants_on_unresolved_fasta_contig(
+        self,
+        saved_default_corpus: CorpusSpec,
+    ) -> None:
+        """Keep variants on an unknown reference separate from uploaded transcripts."""
+        gff3_path = Path(str(saved_default_corpus.parameter("gff3")))
+        gff3_lines = gff3_path.read_text(encoding="utf-8").splitlines()
+        sequence_line = next(line for line in gff3_lines if line.startswith("##sequence-region "))
+        reference_name = sequence_line.split()[1]
+        missing_reference = "missing_reference"
+        gff3_path.write_text(
+            "\n".join(
+                (
+                    line.replace(
+                        f"##sequence-region {reference_name} ",
+                        f"##sequence-region {missing_reference} ",
+                    )
+                    if line.startswith("##sequence-region ")
+                    else line.replace(f"{reference_name}\t", f"{missing_reference}\t", 1)
+                )
+                for line in gff3_lines
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        vcf_path = Path(str(saved_default_corpus.parameter("vcf")))
+        vcf_path.write_text(
+            vcf_path.read_text(encoding="utf-8")
+            .replace(f"ID={reference_name},", f"ID={missing_reference},")
+            .replace(f"{reference_name}\t", f"{missing_reference}\t"),
+            encoding="utf-8",
+        )
+
+        with build_corpus(saved_default_corpus) as loaded_corpus:
+            assert loaded_corpus.transcripts
+            assert loaded_corpus.named_variants
+            assert not loaded_corpus.named_overlaps
+
     def test_vcf_empty_allele_spelling_preserves_variant_classes(
         self,
         saved_default_corpus: CorpusSpec,
