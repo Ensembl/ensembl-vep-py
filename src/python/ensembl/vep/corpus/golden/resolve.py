@@ -21,7 +21,7 @@ from pathlib import Path
 
 from ensembl.vep.corpus.base import Corpus
 from ensembl.vep.corpus.golden.base import GoldenCorpus
-from ensembl.vep.corpus.golden.terms import GoldenTerms
+from ensembl.vep.corpus.golden.terms import GoldenTerms, overlap_key
 from ensembl.vep.corpus.registry import build_corpus, register_corpus
 from ensembl.vep.corpus.spec import CorpusSpec
 
@@ -49,6 +49,21 @@ def _identity_spec(specification: CorpusSpec) -> CorpusSpec:
         kind="golden.file",
         parameters={"dataset": specification.parameter("dataset", _DEFAULT_DATASET)},
     )
+
+
+def _validate_expected_terms(corpus: Corpus, expected: GoldenTerms) -> None:
+    """Require one expected-term entry for every loaded corpus overlap."""
+    overlap_keys = {overlap_key(name, overlap) for name, overlap in corpus.named_overlaps}
+    term_keys = set(expected.terms)
+    missing_terms = sorted(overlap_keys - term_keys)
+    extra_terms = sorted(term_keys - overlap_keys)
+    if missing_terms or extra_terms:
+        details = []
+        if missing_terms:
+            details.append(f"missing terms for {missing_terms!r}")
+        if extra_terms:
+            details.append(f"terms for unknown overlaps {extra_terms!r}")
+        raise ValueError("golden terms must match loaded corpus overlaps: " + "; ".join(details))
 
 
 def load_golden_corpus(
@@ -103,6 +118,7 @@ def load_golden_corpus(
                 f"golden bundle identifies {expected.spec.as_dict()!r}, "
                 f"not requested {identity_specification.as_dict()!r}"
             )
+        _validate_expected_terms(corpus, expected)
     except Exception:
         if corpus is not None:
             corpus.close()
