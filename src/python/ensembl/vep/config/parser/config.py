@@ -35,7 +35,13 @@ __all__ = ["read_config_file", "read_legacy_config_file"]
 
 logger = logging.getLogger(__name__)
 
-_TABLE_HEADER = re.compile(r"^\s*\[\[?[^\[\]]+\]\]?\s*(#.*)?$", re.MULTILINE)
+_TABLE_HEADER = re.compile(
+    r"""^\s*\[\[?  # Optional whitespace and one or two opening square brackets
+    [^\[\]]+       # One or more non-square bracket characters
+    \]\]?          # One or two closing square brackets
+    \s*(#.*)?$     # Optional whitespace and optional comment until end of line/string""",
+    flags=(re.VERBOSE | re.MULTILINE),
+)
 """A TOML ``[table]`` header line, which no legacy config line can look like."""
 
 _QUOTES = "\"'"
