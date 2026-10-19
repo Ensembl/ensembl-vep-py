@@ -87,7 +87,7 @@ class TestCorpusValidation:
             )
 
     def test_rejects_an_overlap_feature_with_different_slice_to_feature(self) -> None:
-        """The overlapped allele and transcrfipt can't be on different slices."""
+        """The overlapped allele and transcript can't be on different slices."""
         corpus_default = default_corpus(fuzz_count=0)
         corpus_heavy = heavy_corpus()
         corpus = combine_corpora(CorpusSpec(), (corpus_default, corpus_heavy))
