@@ -1,0 +1,34 @@
+---
+myst:
+  html_meta:
+    "description lang=en": |
+      Coverage reports for Python and Rust code.
+html_theme.sidebar_secondary.remove: true
+---
+
+[![Python-Coverage](./img/python-coverage-badge.svg)](#python)
+[![Rust-Coverage](./img/rust-coverage-badge.svg)](#rust)
+
+# Coverage
+
+## Python
+
+<iframe
+    src="coverage/python/htmlcov/index.html"
+    width="100%"
+    height="600px"
+    frameborder="0">
+</iframe>
+
+## Rust
+
+<iframe
+    src="coverage/rust/html/index.html"
+    width="100%"
+    height="500px"
+    frameborder="0">
+</iframe>
+
+## Coverage Trends
+
+We aim to maintain at least 90% code coverage across the project.

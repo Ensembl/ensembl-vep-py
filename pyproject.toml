@@ -72,15 +72,12 @@ cicd = [
     "pytest-dependency",
 ]
 docs = [
-    "mkdocs >= 1.5.3",
-    "mkdocs-autorefs",
-    "mkdocs-gen-files",
-    "mkdocs-literate-nav",
-    "mkdocs-material",
-    "mkdocs-material-extensions",
-    "mkdocs-section-index",
-    "mkdocstrings",
-    "mkdocstrings-python",
+    "ensembl-utils>=1.0.0",
+    "myst-parser>=5.1.0",
+    "pydata-sphinx-theme>=0.20.0",
+    "sphinx>=7",
+    "sphinx-autodoc-typehints>=3.13.2",
+    "sphinx-copybutton>=0.5.2",
 ]
 
 [project.urls]
@@ -88,7 +85,7 @@ Homepage = "https://www.ensembl.org"
 Documentation = "https://ensembl.github.io/ensembl-vep-py"
 Repository = "https://github.com/Ensembl/ensembl-vep-py"
 Issues = "https://github.com/Ensembl/ensembl-vep-py/issues"
-Changelog = "ithub.com/Ensembl/ensembl-vep-py/blob/main/CHANGELOG.md"
+Changelog = "https://github.com/Ensembl/ensembl-vep-py/blob/main/CHANGELOG.md"
 
 [project.scripts]
 vep = "ensembl.vep.cli:main"

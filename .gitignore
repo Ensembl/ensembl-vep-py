@@ -57,6 +57,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+*-coverage-badge.svg
 
 # Translations
 *.mo
@@ -77,6 +78,8 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+docs/reference/
+docs/reports/
 
 # PyBuilder
 .pybuilder/

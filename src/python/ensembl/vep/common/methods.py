@@ -396,7 +396,7 @@ def format_region_string(
         end: End coordinate (1-based).
 
     Returns:
-        A region string in the format "seq_region_name:start-end".
+        :A region string in the format "seq_region_name:start-end".
     """
 
     if region is not None:
@@ -431,7 +431,7 @@ def infer_variant_so_term(allele_string: str, ref_correct: bool = False) -> Clas
         ref_correct: Whether the first allele is known to be the reference.
 
     Returns:
-        ClassSOTerm | None: The SO term string for the variation.
+        The SO term string for the variation.
     """
     # default to sequence_alteration
     so_term = ClassSOTerm.SEQUENCE_ALTERATION
