@@ -48,6 +48,13 @@ def validate_corpus(
             raise ValueError(f"corpus variant {name!r} belongs to another sequence region")
         variants_by_name[name] = allele
 
+    transcript_identities = _validate_transcripts(transcripts, sequence_region_identities)
+    _validate_overlaps(named_overlaps, variants_by_name, transcript_identities)
+
+
+def _validate_transcripts(
+    transcripts: Sequence[Transcript], sequence_region_identities: set[int]
+) -> set[int]:
     transcript_identities: set[int] = set()
     transcript_stable_ids: set[str] = set()
     for transcript in transcripts:
@@ -60,6 +67,12 @@ def validate_corpus(
         transcript_identities.add(id(transcript))
         transcript_stable_ids.add(transcript.stable_id)
 
+    return transcript_identities
+
+
+def _validate_overlaps(
+    named_overlaps: Sequence[NamedOverlap], variants_by_name: dict, transcript_identities: set[int]
+) -> None:
     overlap_identities: set[tuple[str, int]] = set()
     for name, overlap in named_overlaps:
         defined_allele = variants_by_name.get(name)
