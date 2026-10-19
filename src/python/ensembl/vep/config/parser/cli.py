@@ -302,7 +302,6 @@ def build_parser(
     Raises:
         ValueError: If two of the sections declare the same flag.
     """
-    check_no_flag_collisions(section_types)
     parser = argparse.ArgumentParser(
         prog=prog, description=description, formatter_class=argparse.RawDescriptionHelpFormatter
     )

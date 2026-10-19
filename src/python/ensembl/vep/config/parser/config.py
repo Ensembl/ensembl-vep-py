@@ -39,7 +39,7 @@ _TABLE_HEADER = re.compile(
     r"""^\s*\[\[?  # Optional whitespace and one or two opening square brackets
     [^\[\]]+       # One or more non-square bracket characters
     \]\]?          # One or two closing square brackets
-    \s*(#.*)?$     # Optional whitespace and optional comment until end of line/string""",
+    \s*(\#.*)?$    # Optional whitespace and optional comment until end of line/string""",
     flags=(re.VERBOSE | re.MULTILINE),
 )
 """A TOML ``[table]`` header line, which no legacy config line can look like."""
@@ -90,8 +90,8 @@ def read_legacy_config_file(path: Path, section_types: tuple[type[ConfigSection]
 
     A line is a comment only if it starts with ``#``. The key and value are separated by any run of
     whitespace, a leading dash on the key is dropped, and quotes are removed from the value with the
-    spaces inside them kept. The first occurrence of a repeated key wins, except for an option holding
-    a tuple of text (Perl's ``custom`` and ``plugin``), which accumulates one item per line.
+    spaces inside them kept. The first occurrence of a repeated key wins, except for an option
+    declared ``repeatable`` (Perl's ``custom`` and ``plugin``), which accumulates one item per line.
     ``option = value`` is accepted as well.
 
     Args:
