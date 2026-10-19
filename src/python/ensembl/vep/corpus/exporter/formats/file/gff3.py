@@ -109,6 +109,7 @@ def _cds_rows(transcript: Transcript, seq_region_name: str) -> list[tuple[int, s
                     {
                         "ID": _translation_id(transcript),
                         "Parent": _typed_id("transcript", transcript.stable_id),
+                        "protein_id": _translation_id(transcript),
                     },
                     phase=phase,
                 ),

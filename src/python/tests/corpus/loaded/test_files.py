@@ -239,6 +239,25 @@ class TestLoadedCorpus:
         assert "ID=CDS:" in first_gff3
         assert "ID=CDS:;" not in first_gff3
 
+    def test_gff3_translation_ids_are_stable_across_round_trips(
+        self,
+        saved_default_corpus: CorpusSpec,
+        tmp_path: Path,
+    ) -> None:
+        """Check that CDS records are exported and reloaded properly"""
+        first_corpus = build_corpus(saved_default_corpus)
+        first_directory = tmp_path / "first-round-trip"
+        get_exporter("file").export(first_corpus, first_directory)
+
+        second_corpus = build_corpus(_file_spec(first_directory))
+        assert [
+            transcript.translation.stable_id for transcript in first_corpus.transcripts
+                if transcript.biotype != "lincRNA"
+            ] == [
+            transcript.translation.stable_id for transcript in second_corpus.transcripts
+                if transcript.biotype != "lincRNA"
+        ]
+
     def test_close_is_idempotent_and_context_managed(
         self,
         saved_default_corpus: CorpusSpec,
