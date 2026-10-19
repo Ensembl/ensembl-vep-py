@@ -56,7 +56,11 @@ distance 5000,2000
 custom /data/clinvar.vcf.gz,ClinVar,vcf,exact,0,CLNSIG
 custom "/data/my annotations.bed.gz" MyBed bed overlap 0
 
+# --- bench end-to-end ---
+batch_size 512
+
 # options this implementation has not grown yet
+no_clean
 sift b
 symbol
 cache_version 110
@@ -125,6 +129,13 @@ class TestLegacyConfigFiles:
     def test_a_bare_key_is_a_switch(self, perl_layer: dict) -> None:
         """A key with no value reads as true."""
         assert perl_layer["run"]["no_stats"] is True
+
+    def test_no_option_not_recognised(self, perl_config: Path) -> None:
+        """Config files do not currently support the automatic creation of an ``no-`` option
+        with opposite effect for a boolean option."""
+        types = Config.section_types_for(("bench_endtoend",))
+        perl_layer = read_legacy_config_file(perl_config, types)
+        assert "clean" not in perl_layer["bench_endtoend"]
 
     def test_a_hash_line_with_leading_space_is_not_a_comment_but_names_no_option(
         self, tmp_path: Path
@@ -241,6 +252,17 @@ class TestConfigFiles:
         path = tmp_path / "vep.toml"
         path.write_text("[nope]\nx = 1\n[corpus]\nfuzz = 2\n", encoding="utf-8")
         assert read_config_file(path, Config.section_types_for(("corpus",))) == {"corpus": {"fuzz": 2}}
+
+    def test_unknown_toml_no_options_are_ignored(self, tmp_path: Path) -> None:
+        """Unknown ``no-`` prefixed options in TOML files are ignored."""
+        path = tmp_path / "vep.toml"
+        path.write_text(
+            "[bench]\nno_gate = true\n[bench_endtoend]\nbatch_size = 512\nno_clean = true\n", encoding="utf-8"
+        )
+        assert read_config_file(path, Config.section_types_for(("bench", "bench_endtoend"))) == {
+            "bench": {"no_gate": True},
+            "bench_endtoend": {"batch_size": 512},
+        }
 
     def test_a_flat_file_may_use_an_equals_sign(self, tmp_path: Path) -> None:
         """A flat file may use an equals sign."""
