@@ -70,6 +70,8 @@ cicd = [
     "mypy",
     "pylint",
     "pytest-dependency",
+    # Tier 3 validation exercises the optional whole-ruleset SAT solver.
+    "z3-solver",
 ]
 docs = [
     "mkdocs >= 1.5.3",
@@ -81,6 +83,10 @@ docs = [
     "mkdocs-section-index",
     "mkdocstrings",
     "mkdocstrings-python",
+]
+validation = [
+    # Optional Tier 3 whole-ruleset SAT validation for `vep catalogue validate --solver z3`.
+    "z3-solver",
 ]
 
 [project.urls]

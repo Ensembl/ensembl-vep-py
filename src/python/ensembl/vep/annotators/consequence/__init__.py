@@ -11,9 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Consequence annotation contexts and registered facts."""
+"""Consequence annotation contexts, facts, and rules."""
 
 from __future__ import annotations
 
 from .context import *
 from .facts import *
+from .rules import *
