@@ -15,7 +15,7 @@
 
 from .base import GoldenCorpus
 from .resolve import load_golden_corpus
-from .terms import FORMAT_VERSION, GoldenReport, GoldenTerms, overlap_key
+from .terms import FORMAT_VERSION, GoldenReport, GoldenTerms, overlap_key, record_golden
 
 __all__ = [
     "FORMAT_VERSION",
@@ -24,4 +24,5 @@ __all__ = [
     "GoldenTerms",
     "load_golden_corpus",
     "overlap_key",
+    "record_golden",
 ]

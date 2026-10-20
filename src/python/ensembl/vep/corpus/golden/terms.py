@@ -11,22 +11,35 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Pinned consequence terms for a golden corpus.
+"""Frozen expected terms emitted for a corpus and pinned to a file.
 
-The serialised terms are part of the corpus layer. Recording new terms is an annotator concern and
-is intentionally implemented by the consumer-side integration rather than this package.
+Conformance proves every annotator agrees with ``consequence.linear``. It cannot catch all of them
+agreeing on the same wrong answer; a golden file can. It freezes the terms one annotator produced
+for one corpus, together with the corpus spec and the catalogue that produced them, so a later run
+is checked against a fixed expectation rather than only against itself.
+
+Named ``golden`` on purpose: in this repository "oracle" already means the external Perl
+``VariationEffect.pm``, whose whole value is that it is *not* us. This is the opposite thing.
+
+A mismatch is reported three distinct ways, because each calls for a different response. The
+catalogue changed under the file -- regenerate it, deliberately. The file was recorded for another
+corpus -- it is the wrong file. Or the terms moved with neither changed -- a regression.
 """
 
 from __future__ import annotations
 
 import json
 from pathlib import Path
+
 from attrs import field, frozen
 
+from ensembl.vep.annotators.base import Annotator
+from ensembl.vep.annotators.consequence.rules.catalogue import catalogue_digest
+from ensembl.vep.corpus.base import Corpus
 from ensembl.vep.corpus.spec import CorpusSpec
-from ensembl.vep.models.overlap import TranscriptVariationAllele
+from ensembl.vep.models.overlap import OverlapConsequence, TranscriptVariationAllele
 
-__all__ = ["FORMAT_VERSION", "GoldenReport", "GoldenTerms", "overlap_key"]
+__all__ = ["FORMAT_VERSION", "GoldenReport", "GoldenTerms", "overlap_key", "record_golden"]
 
 FORMAT_VERSION = 1
 """Bumped whenever the file layout changes, so an old file is rejected rather than misread."""
@@ -35,14 +48,10 @@ _REPORT_LIMIT = 20
 
 
 def overlap_key(name: str, overlap: TranscriptVariationAllele) -> str:
-    """Return the stable ``feature::variant`` key for an overlap.
+    """Return the key an overlap is filed under: its feature, then its variant's name.
 
-    Args:
-        name (str): Corpus-level variant name.
-        overlap (TranscriptVariationAllele): Transcript overlap to identify.
-
-    Returns:
-        str: Key containing both feature and variant identities.
+    A name identifies the variant, not the overlap -- one variant pairs with every feature in its
+    flank window -- so the feature has to be part of the key.
     """
     return f"{overlap.feature.stable_id}::{name}"
 
@@ -55,7 +64,7 @@ class GoldenTerms:
         spec (CorpusSpec): The corpus the terms were recorded over.
         annotator (str): The annotator that emitted them.
         catalogue (str): Digest of the catalogue they were emitted against.
-        terms (dict[str, tuple[str, ...]]): ``feature::name`` to emitted terms, in order.
+        terms (dict[str, tuple[str, ...]]): ``feature::name`` -> the emitted terms, in order.
     """
 
     spec: CorpusSpec
@@ -64,7 +73,11 @@ class GoldenTerms:
     terms: dict[str, tuple[str, ...]] = field(factory=dict)
 
     def to_json(self) -> str:
-        """Return deterministic file text with one overlap per line."""
+        """Return the file text: a header, then one overlap per line.
+
+        One line per overlap is deliberate. Regenerating after a catalogue change then diffs as
+        exactly the overlaps whose terms moved, which is the review a regeneration needs.
+        """
         header = {
             "format_version": FORMAT_VERSION,
             "spec": self.spec.as_dict(),
@@ -85,16 +98,10 @@ class GoldenTerms:
 
     @classmethod
     def from_json(cls, text: str) -> GoldenTerms:
-        """Read terms from JSON text.
-
-        Args:
-            text (str): Serialised golden terms.
-
-        Returns:
-            GoldenTerms: Deserialised terms.
+        """Read terms back from file text.
 
         Raises:
-            ValueError: If the file uses an unsupported format version.
+            ValueError: If the file was written in a different format version.
         """
         payload = json.loads(text)
         version = payload.get("format_version")
@@ -109,7 +116,7 @@ class GoldenTerms:
         )
 
     def write(self, path: Path) -> None:
-        """Write the terms, creating the destination directory when needed."""
+        """Write the terms to a file, creating its directory if needed."""
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(self.to_json(), encoding="utf-8")
 
@@ -119,18 +126,46 @@ class GoldenTerms:
         return cls.from_json(path.read_text(encoding="utf-8"))
 
 
+def record_golden(
+    corpus: Corpus, annotator: Annotator[OverlapConsequence], annotator_name: str
+) -> GoldenTerms:
+    """Annotate every overlap of a corpus and freeze the terms.
+
+    Args:
+        corpus (Corpus): The corpus to record over.
+        annotator (Annotator[OverlapConsequence]): The annotator whose terms are frozen.
+        annotator_name (str): Its registry name, recorded in the file.
+
+    Returns:
+        GoldenTerms: The frozen terms.
+
+    Raises:
+        ValueError: If two overlaps would be filed under the same key.
+    """
+    named_overlaps = list(corpus.named_overlaps)
+    results = annotator.annotate_feature_overlaps([overlap for _name, overlap in named_overlaps])
+    terms: dict[str, tuple[str, ...]] = {}
+    for (name, overlap), consequences in zip(named_overlaps, results, strict=True):
+        key = overlap_key(name, overlap)
+        if key in terms:
+            raise ValueError(f"two overlaps share the key {key!r}; a golden file needs them unique")
+        terms[key] = tuple(consequence.term for consequence in consequences)
+    return GoldenTerms(spec=corpus.spec, annotator=annotator_name, catalogue=catalogue_digest(), terms=terms)
+
+
 @frozen(kw_only=True, auto_attribs=True)
 class GoldenReport:
-    """Describe how recorded terms differ from golden terms.
+    """How recorded terms differ from golden ones.
 
     Attributes:
-        catalogue_changed (bool): Whether catalogue provenance changed.
-        spec_changed (bool): Whether the recording used another corpus.
-        annotator_changed (bool): Whether another annotator made the recording.
-        missing (tuple[str, ...]): Keys absent from the recording.
-        unexpected (tuple[str, ...]): Keys absent from the golden terms.
-        mismatches (tuple[tuple[str, tuple[str, ...], tuple[str, ...]], ...]): Key, expected
-            terms, and recorded terms for changed overlaps.
+        catalogue_changed (bool): The catalogue is not the one the golden file was recorded against.
+        spec_changed (bool): The corpus is not the one the golden file was recorded over.
+        annotator_changed (bool): A different annotator produced the recording. Informational --
+            checking another strategy against one annotator's golden file is a legitimate use.
+        missing (tuple[str, ...]): Keys the golden file has and the recording does not.
+        unexpected (tuple[str, ...]): Keys the recording has and the golden file does not.
+        mismatches (tuple[tuple[str, tuple[str, ...], tuple[str, ...]], ...]): Key, golden terms,
+            recorded terms, for every overlap whose terms moved.
     """
 
     catalogue_changed: bool = field(default=False)
@@ -160,18 +195,18 @@ class GoldenReport:
 
     @property
     def ok(self) -> bool:
-        """Return whether terms match against the same catalogue and corpus."""
+        """Whether the recording matches, against the same catalogue and corpus."""
         return not (
             self.catalogue_changed or self.spec_changed or self.missing or self.unexpected or self.mismatches
         )
 
     def lines(self, limit: int = _REPORT_LIMIT) -> list[str]:
-        """Return a readable report with at most ``limit`` mismatch examples."""
+        """Return the report as readable lines, the reason first, then at most ``limit`` examples."""
         lines = []
         if self.catalogue_changed:
             lines.append(
                 "the catalogue changed since the golden file was recorded; if that change is intended, "
-                "re-record and review the diff"
+                "re-record with --update_golden and review the diff"
             )
         if self.spec_changed:
             lines.append("the golden file was recorded over a different corpus spec")

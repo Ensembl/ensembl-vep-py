@@ -7,7 +7,7 @@
     }
   },
   "annotator": "consequence.linear",
-  "catalogue": "391e21d435f37278",
+  "catalogue": "9776dd58b04a68a5",
   "terms": {
     "transcript:GOLDT1::gold_boundary": [
       "missense_variant",

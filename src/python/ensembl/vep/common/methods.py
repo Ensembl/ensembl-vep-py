@@ -14,7 +14,6 @@
 """Common functions."""
 
 from collections import deque
-from contextlib import suppress
 import logging
 import os
 import sys
@@ -23,7 +22,7 @@ from typing import Any, Callable, Literal, TypeVar
 from attrs import Attribute as AttrsAttribute
 
 from ensembl.vep.common.enums import Strand, ClassSOTerm
-from ensembl.vep.common.constants import CLASS_SO_TERM_ABBRV_TO_ENUM
+from ensembl.vep.common.constants import CLASS_SO_TERM_ABBRV_TO_ENUM, EMPTY_ALLELE
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +59,11 @@ def is_resolved(instance: object, name: str) -> bool:
 def invalidate(instance: object, *invalidate_names: str) -> None:
     """Clear the named cached properties of a class object when the attributes are set.
 
+    Deleting an unset cached property raises AttributeError almost every time (a freshly built
+    object has nothing cached yet), so this uses ``try/except`` rather than
+    ``contextlib.suppress``: zero-cost when nothing is raised (Python 3.11+), and no context
+    manager allocated per name either way.
+
     Args:
         instance (object): The object whose cached properties should be cleared.
         *invalidate_names (str): The names of the cached properties to invalidate.
@@ -68,12 +72,10 @@ def invalidate(instance: object, *invalidate_names: str) -> None:
         None
     """
     for name in invalidate_names:
-        if not name.startswith("_"):
-            logger.debug(
-                f"Invalidation only works for protected attributes (starting with _), but got '{name}'"
-            )
-        with suppress(AttributeError):
-            object.__delattr__(instance, f"{name}")
+        try:
+            object.__delattr__(instance, name)
+        except AttributeError:
+            pass
 
 
 def invalidates(*cached_names: str) -> Callable:
@@ -85,6 +87,12 @@ def invalidates(*cached_names: str) -> Callable:
     Returns:
         Callable: An attrs on_setattr hook function.
     """
+
+    for name in cached_names:
+        if not name.startswith("_"):
+            logger.debug(
+                f"Invalidation only works for protected attributes (starting with _), but got '{name}'"
+            )
 
     def hook(instance: object, _modified_attr: AttrsAttribute, new_value: T) -> T:
         invalidate(instance, *cached_names)
@@ -196,8 +204,8 @@ def trim_sequences(
         changed = changed or right_changed
 
     if empty_to_dash:
-        ref = ref or "-"
-        alt = alt or "-"
+        ref = ref or EMPTY_ALLELE
+        alt = alt or EMPTY_ALLELE
 
     return (ref, alt, start, end, changed)
 
@@ -451,7 +459,7 @@ def infer_variant_so_term(allele_string: str, ref_correct: bool = False) -> Clas
             ref = alleles[0]
             alts = alleles[1:]
 
-            if ref == "-":
+            if ref == EMPTY_ALLELE:
                 if len(alts) == 1 and re.search(r"DEL", alts[0]):
                     # -/(LARGEDELETION)
                     so_term = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
@@ -471,7 +479,7 @@ def infer_variant_so_term(allele_string: str, ref_correct: bool = False) -> Clas
                     so_term = ClassSOTerm.SUBSTITUTION if same_size else ClassSOTerm.INDEL
 
             elif re.search(r"DEL", ref):
-                if not any(alt != "-" for alt in alts):
+                if not any(alt != EMPTY_ALLELE for alt in alts):
                     # (LARGEDELETION)/-, (2345 BP DELETION)/-
                     so_term = ClassSOTerm.DELETION if ref_correct else ClassSOTerm.INDEL
 
@@ -560,19 +568,37 @@ def reverse_complement(sequence: str) -> str:
     return sequence.translate(translation_table)[::-1]
 
 
-def setup_logging(level: str = "INFO") -> None:
-    """Set up logging configuration.
+def setup_logging(level: str = "INFO", log_file: str | os.PathLike | None = None) -> None:
+    """Set up logging configuration. Call once, from the application entry point.
+
+    Configures the ``ensembl.vep`` logger rather than the root one, so importing this package does
+    not take over an embedding application's logging. Repeated calls replace the handlers rather
+    than stacking them. Propagation is left on: turning it off silently disables pytest's
+    ``caplog`` for the rest of the process.
+
+    Records go to stderr, as in Perl VEP, so a verb that prints its report to stdout stays
+    redirectable.
+
+    The level is also the tracing switch -- a derivation trace is recorded only when the calling
+    strategy's logger is at DEBUG.
 
     Args:
         level (str): The logging level to use (default: "INFO").
+        log_file (str | os.PathLike | None): File to append records to, in addition to stderr, or
+            None for stderr only.
     """
-    output_file = "DUMMY_OUTPUT_FILE"
-    logging.basicConfig(
-        level=getattr(logging, level.upper()),
-        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-        datefmt="%Y-%m-%dT%H:%M:%S",
-        handlers=[
-            logging.StreamHandler(sys.stdout),
-            logging.FileHandler(os.path.join(output_file, "_warnings.txt")),
-        ],
+    package_logger = logging.getLogger("ensembl.vep")
+    package_logger.setLevel(getattr(logging, level.upper()))
+    for handler in list(package_logger.handlers):
+        package_logger.removeHandler(handler)
+        handler.close()
+
+    formatter = logging.Formatter(
+        fmt="%(asctime)s [%(levelname)s] %(name)s: %(message)s", datefmt="%Y-%m-%dT%H:%M:%S"
     )
+    handlers: list[logging.Handler] = [logging.StreamHandler(sys.stderr)]
+    if log_file is not None:
+        handlers.append(logging.FileHandler(log_file))
+    for handler in handlers:
+        handler.setFormatter(formatter)
+        package_logger.addHandler(handler)
