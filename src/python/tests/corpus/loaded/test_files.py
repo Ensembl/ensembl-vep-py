@@ -248,14 +248,25 @@ class TestLoadedCorpus:
         first_corpus = build_corpus(saved_default_corpus)
         first_directory = tmp_path / "first-round-trip"
         get_exporter("file").export(first_corpus, first_directory)
+        first_corpus_coding_translations = [
+            transcript.translation
+            for transcript in first_corpus.transcripts
+            if transcript.biotype != "lincRNA"
+        ]
+        for translation in first_corpus_coding_translations:
+            assert translation is not None
 
         second_corpus = build_corpus(_file_spec(first_directory))
-        assert [
-            transcript.translation.stable_id for transcript in first_corpus.transcripts
-                if transcript.biotype != "lincRNA"
-            ] == [
-            transcript.translation.stable_id for transcript in second_corpus.transcripts
-                if transcript.biotype != "lincRNA"
+        second_corpus_coding_translations = [
+            transcript.translation
+            for transcript in second_corpus.transcripts
+            if transcript.biotype != "lincRNA"
+        ]
+        for translation in second_corpus_coding_translations:
+            assert translation is not None
+
+        assert [translation.stable_id for translation in first_corpus.transcripts] == [
+            translation.stable_id for translation in second_corpus.transcripts
         ]
 
     def test_close_is_idempotent_and_context_managed(
