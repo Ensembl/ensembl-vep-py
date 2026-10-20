@@ -483,3 +483,56 @@ class TestVariationAlleleGetAllFeatureOverlaps:
         # assert overlaps[0] == trancript_variation_allele
 
         # Needs to add __eq__ for TranscriptVariationAllele
+
+
+class TestDisplayName:
+    """The name an allele is identified by."""
+
+    def test_an_allele_with_no_variant_takes_its_locus_name(self, variation_allele: VariationAllele) -> None:
+        """The locus name is the shape a variant selector is parsed from."""
+
+        assert variation_allele.display_name == "1:5:A>T"
+
+    def test_a_single_allele_record_takes_its_plain_identifier(self, variation: Variation) -> None:
+        """One alternate allele needs nothing appended to stay unique."""
+
+        assert variation.variation_alleles[0].display_name == "rs123456"
+
+    def test_a_multi_allelic_record_appends_the_alternate_allele(self, variation: Variation) -> None:
+        """One identifier covers every allele, so each name carries its own alternate."""
+
+        multi_allelic = evolve(variation, allele_string="A/T/G")
+
+        names = [allele.display_name for allele in multi_allelic.variation_alleles]
+
+        assert names == ["rs123456:T", "rs123456:G"]
+
+    def test_a_record_without_an_identifier_falls_back_to_the_locus(self, variation: Variation) -> None:
+        """A locus is unique per allele already, so no counter is needed."""
+
+        unnamed = evolve(variation, stable_id=None)
+
+        assert unnamed.variation_alleles[0].display_name == "1:5:A>T"
+
+    def test_an_empty_allele_is_spelled_as_a_dash(self, genomic_slice: Slice) -> None:
+        """A deletion's empty side is spelled the way a selector spells it."""
+
+        deletion = VariationAllele(
+            start=5,
+            end=5,
+            strand=Strand.FORWARD,
+            slice=genomic_slice,
+            reference_allele="A",
+            alternate_allele="",
+        )
+
+        assert deletion.display_name == "1:5:A>-"
+
+    def test_a_missing_sequence_region_degrades(self) -> None:
+        """An allele with no slice still names itself rather than raising."""
+
+        unplaced = VariationAllele(
+            start=5, end=5, strand=Strand.FORWARD, reference_allele="A", alternate_allele="T"
+        )
+
+        assert unplaced.display_name == "?:5:A>T"

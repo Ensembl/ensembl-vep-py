@@ -25,7 +25,7 @@ from collections.abc import Sequence
 from attrs import frozen
 
 from ensembl.vep.common import Strand
-from ensembl.vep.common.constants import EMPTY_ALLELE
+from ensembl.vep.common.constants import EMPTY_ALLELE, UNKNOWN_VALUE
 from ensembl.vep.corpus.base import Corpus, NamedOverlap
 from ensembl.vep.models.genic import Transcript
 from ensembl.vep.models.overlap import TranscriptVariationAllele
@@ -91,7 +91,7 @@ def describe_variant(allele: VariationAllele) -> tuple[str, str]:
     A long allele is abbreviated with its length, so the listing stays a table; the full selector
     for such a variant is its name.
     """
-    seq_region_name = allele.slice.seq_region_name if allele.slice is not None else "?"
+    seq_region_name = allele.slice.seq_region_name if allele.slice is not None else UNKNOWN_VALUE
     reference_allele = _abbreviate(allele.reference_allele or EMPTY_ALLELE)
     alternate_allele = _abbreviate(allele.alternate_allele or EMPTY_ALLELE)
     return f"{seq_region_name}:{allele.start}", f"{reference_allele}>{alternate_allele}"

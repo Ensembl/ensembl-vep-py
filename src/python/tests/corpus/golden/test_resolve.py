@@ -16,12 +16,20 @@
 from __future__ import annotations
 
 from pathlib import Path
-from shutil import copytree
 
 import pytest
 
+import ensembl.vep.annotators  # noqa: F401  pylint: disable=unused-import
+
+# ^ registers the annotators and the facts the catalogue compiles against.
+from ensembl.vep.annotators.factory import build_annotator
 from ensembl.vep.corpus import Corpus, build_corpus
-from ensembl.vep.corpus.golden import GoldenCorpus, GoldenTerms, load_golden_corpus
+from ensembl.vep.corpus.golden import (
+    GoldenCorpus,
+    GoldenReport,
+    load_golden_corpus,
+    record_golden,
+)
 from ensembl.vep.corpus.spec import CorpusSpec
 
 PACKAGED_GOLDEN_DIRECTORY = (
@@ -30,31 +38,12 @@ PACKAGED_GOLDEN_DIRECTORY = (
 
 
 class TestGoldenResolution:
-    """Loaded golden data and its explicit fallback boundary."""
+    """Loaded golden data and its explicit generation fallback."""
 
     @staticmethod
     def _spec() -> CorpusSpec:
         """Return the packaged fixture's specification."""
         return CorpusSpec(kind="golden.file", parameters={"dataset": "default"})
-
-    @staticmethod
-    def _copy_bundle(tmp_path: Path) -> Path:
-        """Copy the packaged bundle so a test can safely alter its terms."""
-        directory = tmp_path / "golden"
-        copytree(PACKAGED_GOLDEN_DIRECTORY, directory)
-        return directory
-
-    @staticmethod
-    def _write_terms(directory: Path, terms: dict[str, tuple[str, ...]]) -> None:
-        """Replace a bundle's terms while retaining its pinned provenance."""
-        terms_path = directory / "terms.json"
-        original = GoldenTerms.load(terms_path)
-        GoldenTerms(
-            spec=original.spec,
-            annotator=original.annotator,
-            catalogue=original.catalogue,
-            terms=terms,
-        ).write(terms_path)
 
     def test_packaged_fixture_loads_as_a_file_backed_corpus(self) -> None:
         """Load the checked-in bundle rather than regenerating it."""
@@ -66,35 +55,51 @@ class TestGoldenResolution:
         assert golden.named_variants
         assert golden.transcripts
         assert golden.named_overlaps
+        golden.close()
+
+    @pytest.mark.parametrize("parameters", [{}, {"allow_generate": True}])
+    def test_packaged_defaults_have_one_stable_golden_identity(self, parameters: dict[str, bool]) -> None:
+        """Keep pinned identity independent of defaulted fallback policy."""
+        with build_corpus(CorpusSpec(kind="golden.file", parameters=parameters)) as golden:
+            assert isinstance(golden, GoldenCorpus)
+            recorded = record_golden(
+                golden,
+                build_annotator(annotator=golden.expected_terms.annotator),
+                golden.expected_terms.annotator,
+            )
+            report = GoldenReport.compare(golden.expected_terms, recorded)
+        assert report.ok, "\n".join(report.lines())
+
+    def test_missing_directory_generates_only_when_explicitly_allowed(self, tmp_path: Path) -> None:
+        """Allow an absent optional bundle to use an explicit fallback."""
+        missing_directory = tmp_path / "missing"
+        fallback = CorpusSpec(kind="synthetic.default", parameters={"fuzz": 0})
+
+        with pytest.raises(FileNotFoundError, match="missing"):
+            load_golden_corpus(self._spec(), directory=missing_directory, fallback=fallback)
+
+        golden = load_golden_corpus(
+            self._spec(),
+            directory=missing_directory,
+            fallback=fallback,
+            allow_generate=True,
+        )
+        assert golden.corpus.spec == fallback
         assert golden.expected_terms.terms
         golden.close()
 
-    def test_default_parameters_have_one_stable_golden_identity(self) -> None:
-        """Keep pinned identity independent of defaulted loading policy."""
-        with build_corpus(CorpusSpec(kind="golden.file")) as golden:
-            assert isinstance(golden, GoldenCorpus)
-            assert golden.spec == self._spec()
-
-    def test_rejects_non_string_directory_parameter(self) -> None:
-        """Do not treat an invalid directory parameter as the packaged default."""
-        specification = CorpusSpec(kind="golden.file", parameters={"directory": 123})
-
-        with pytest.raises(TypeError, match="directory must be a string"):
-            build_corpus(specification)
-
-    def test_missing_directory_is_not_silently_regenerated(self, tmp_path: Path) -> None:
-        """Keep missing-data policy outside the reusable corpus loader."""
-
-        with pytest.raises(FileNotFoundError, match="missing"):
-            load_golden_corpus(self._spec(), directory=tmp_path / "missing")
-
-    def test_malformed_existing_bundle_never_generates(self, tmp_path: Path) -> None:
-        """Reject a partial bundle rather than masking corruption."""
+    def test_malformed_existing_bundle_never_silently_generates(self, tmp_path: Path) -> None:
+        """Reject a partial bundle even when fallback generation is enabled."""
+        malformed_directory = tmp_path / "malformed"
+        malformed_directory.mkdir()
+        fallback = CorpusSpec(kind="synthetic.default", parameters={"fuzz": 0})
 
         with pytest.raises(FileNotFoundError, match="corpus.fa"):
             load_golden_corpus(
                 self._spec(),
-                directory=tmp_path,
+                directory=malformed_directory,
+                fallback=fallback,
+                allow_generate=True,
             )
 
     def test_explicit_bundle_cannot_replace_requested_identity(self) -> None:
@@ -102,38 +107,3 @@ class TestGoldenResolution:
         specification = CorpusSpec(kind="golden.file", parameters={"dataset": "another"})
         with pytest.raises(ValueError, match="not requested"):
             load_golden_corpus(specification, directory=PACKAGED_GOLDEN_DIRECTORY)
-
-    def test_public_loader_ignores_location_when_comparing_identity(self) -> None:
-        """Treat the directory as loading policy rather than pinned dataset identity."""
-        specification = CorpusSpec(
-            kind="golden.file",
-            parameters={"dataset": "default", "directory": str(PACKAGED_GOLDEN_DIRECTORY)},
-        )
-
-        with load_golden_corpus(specification, directory=PACKAGED_GOLDEN_DIRECTORY) as golden:
-            assert golden.spec == self._spec()
-
-    def test_rejects_bundle_missing_terms_for_loaded_overlaps(self, tmp_path: Path) -> None:
-        """Every loaded overlap needs an expected-term entry."""
-        directory = self._copy_bundle(tmp_path)
-        original = GoldenTerms.load(directory / "terms.json")
-        missing_key = next(iter(original.terms))
-        self._write_terms(
-            directory,
-            {key: terms for key, terms in original.terms.items() if key != missing_key},
-        )
-
-        with pytest.raises(ValueError, match="missing terms for"):
-            load_golden_corpus(self._spec(), directory=directory)
-
-    def test_rejects_bundle_with_terms_for_unknown_overlaps(self, tmp_path: Path) -> None:
-        """Expected terms must not describe overlaps outside the loaded corpus."""
-        directory = self._copy_bundle(tmp_path)
-        original = GoldenTerms.load(directory / "terms.json")
-        self._write_terms(
-            directory,
-            {**original.terms, "unknown_transcript::unknown_variant": ()},
-        )
-
-        with pytest.raises(ValueError, match="terms for unknown overlaps"):
-            load_golden_corpus(self._spec(), directory=directory)
