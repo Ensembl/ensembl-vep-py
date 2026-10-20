@@ -132,6 +132,48 @@ class TestSpec:
             "window": 250,
         }
 
+    def test_generic_mapping_options_preserve_scalar_parameters(self) -> None:
+        """Configuration mappings retain each supported scalar type."""
+        options = type(
+            "Options",
+            (),
+            {
+                "kind": "custom",
+                "parameters": {"text": "value", "integer": 7, "float": 1.5, "flag": True, "empty": None},
+            },
+        )()
+
+        assert CorpusSpec.from_options(options).parameters == {
+            "text": "value",
+            "integer": 7,
+            "float": 1.5,
+            "flag": True,
+            "empty": None,
+        }
+
+    @pytest.mark.parametrize(
+        ("configured", "exception", "message"),
+        [
+            pytest.param({1: "value"}, TypeError, "names must be strings", id="non-string-name"),
+            pytest.param({"value": []}, TypeError, "must be a scalar", id="non-scalar-value"),
+            pytest.param(("missing-separator",), ValueError, "KEY=VALUE", id="malformed-assignment"),
+            pytest.param(("=value",), ValueError, "needs a name", id="empty-name"),
+            pytest.param(("labels=[1, 2]",), ValueError, "must be scalars", id="non-scalar-json"),
+            pytest.param(7, TypeError, "mapping or a sequence", id="unsupported-parameters"),
+        ],
+    )
+    def test_generic_options_reject_invalid_parameters(
+        self,
+        configured: object,
+        exception: type[Exception],
+        message: str,
+    ) -> None:
+        """Reject malformed, non-scalar, and unsupported generic parameter configuration."""
+        options = type("Options", (), {"kind": "custom", "parameters": configured})()
+
+        with pytest.raises(exception, match=message):
+            CorpusSpec.from_options(options)
+
     def test_loaded_bundle_directory_expands_to_standard_file_names(self) -> None:
         """The existing corpus directory option can select a coordinated file bundle."""
 
@@ -145,6 +187,57 @@ class TestSpec:
             "gff3": "bundle/corpus.gff3",
             "vcf": "bundle/corpus.vcf",
         }
+
+    def test_golden_bundle_directory_becomes_a_loader_parameter(self) -> None:
+        """The golden loader receives the configured bundle directory without synthetic defaults."""
+
+        class _Options:
+            kind = "golden.file"
+            corpus_dir = Path("golden-bundle")
+
+        assert CorpusSpec.from_options(_Options()).parameters == {"directory": "golden-bundle"}
+
+    def test_from_dict_supports_legacy_synthetic_parameters(self) -> None:
+        """Older flat representations retain their explicit synthetic overrides."""
+        specification = CorpusSpec.from_dict({"kind": "synthetic.default", "fuzz": 12})
+        assert specification.fuzz == 12
+
+    @pytest.mark.parametrize(
+        ("value", "message"),
+        [
+            pytest.param({"kind": 1}, "kind must be a string", id="non-string-kind"),
+            pytest.param({"parameters": ()}, "parameters must be a mapping", id="non-mapping-parameters"),
+        ],
+    )
+    def test_from_dict_rejects_invalid_structure(self, value: dict[str, object], message: str) -> None:
+        """Deserialised specifications validate their kind and parameter container."""
+        with pytest.raises(TypeError, match=message):
+            CorpusSpec.from_dict(value)
+
+    def test_with_parameters_returns_an_updated_copy(self) -> None:
+        """Replacing parameters leaves the original frozen specification unchanged."""
+        original = CorpusSpec(kind="custom", parameters={"window": 100, "strict": False})
+        updated = original.with_parameters(window=250, strict=True)
+
+        assert original.parameters == {"window": 100, "strict": False}
+        assert updated.parameters == {"window": 250, "strict": True}
+
+    def test_seed_properties_reject_boolean_values(self) -> None:
+        """Seed accessors do not treat booleans as integer seeds."""
+        with pytest.raises(TypeError, match="genome_seed.*integer"):
+            _ = CorpusSpec(genome_seed=True).genome_seed
+
+    @pytest.mark.parametrize(
+        "parameters",
+        [
+            pytest.param({1: "value"}, id="non-string-name"),
+            pytest.param({"value": []}, id="non-scalar-value"),
+        ],
+    )
+    def test_constructor_rejects_invalid_factory_parameters(self, parameters: dict[object, object]) -> None:
+        """Factories can only receive string names and scalar values."""
+        with pytest.raises(TypeError):
+            CorpusSpec(kind="custom", parameters=parameters)  # type: ignore[arg-type]
 
     def test_a_corpus_preserves_its_spec(self) -> None:
         """The registry passes its specification through to the built corpus."""

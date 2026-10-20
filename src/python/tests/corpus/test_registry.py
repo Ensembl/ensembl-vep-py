@@ -17,7 +17,14 @@ from __future__ import annotations
 
 import pytest
 
-from ensembl.vep.corpus import Corpus, available_corpora, build_corpus, register_corpus
+from ensembl.vep.corpus import Corpus
+from ensembl.vep.corpus.registry import (
+    available_corpora,
+    build_corpus,
+    register_corpus,
+    corpus_spec_from_options,
+    build_corpus_from_options,
+)
 from ensembl.vep.corpus.spec import CorpusSpec
 
 
@@ -32,6 +39,30 @@ class TestCorpusRegistry:
         """Lookup failures tell callers how to correct the requested name."""
         with pytest.raises(KeyError, match="Unknown corpus 'missing.corpus'.*synthetic.default"):
             build_corpus(CorpusSpec(kind="missing.corpus"))
+
+    def test_registration_rejects_empty_names(self) -> None:
+        """Names cannot be empty strings."""
+        with pytest.raises(ValueError, match="Corpus registry names must not be empty"):
+            register_corpus("", aliases=("synthetic.default",))
+        with pytest.raises(ValueError, match="Corpus registry names must not be empty"):
+            register_corpus("synthetic.default", aliases=("default", ""))
+
+    def test_registration_rejects_repeated_names(self) -> None:
+        """Names cannot be repeated."""
+
+        def factory(_specification: CorpusSpec) -> Corpus:
+            return build_corpus(CorpusSpec(kind="synthetic.default"))
+
+        with pytest.raises(ValueError, match="Corpus registration repeats a name"):
+            register_corpus("synthetic.default", aliases=("synthetic.default",))(factory)
+
+    def test_registration_of_aliases(self) -> None:
+        """Register a corpus factory under an alias."""
+
+        def factory(_specification: CorpusSpec) -> Corpus:
+            return build_corpus(CorpusSpec(kind="synthetic.default"))
+
+        register_corpus("test", aliases=("test_alias",))(factory)
 
     def test_registration_is_atomic_when_an_alias_conflicts(self) -> None:
         """A failed registration does not leave a partially registered factory."""
@@ -57,3 +88,11 @@ class TestCorpusRegistry:
         """Every canonical synthetic name resolves through the same registry path."""
         corpus = build_corpus(CorpusSpec(kind=kind, fuzz=0, step=600))
         assert len(corpus.sequence_regions) == sequence_regions
+
+    def test_corpus_spec_from_options(self) -> None:
+        """Test creating CorpusSpec from an options dict"""
+        _ = corpus_spec_from_options({"kind": "loaded.files", "corpus_dir": "test"})
+
+    def test_build_corpus_from_options(self) -> None:
+        """Test creating Corpus from an options dict"""
+        _ = build_corpus_from_options({"kind": "synthetic.default", "corpus_dir": "test"})

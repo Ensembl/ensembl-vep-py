@@ -87,3 +87,45 @@ class TestGoldenReport:
         report = GoldenReport.compare(recorded, changed)
         assert report.annotator_changed
         assert report.ok
+
+    def test_lines_describe_provenance_changes(self) -> None:
+        """Explain changes to the catalogue, corpus identity, and annotator."""
+        report = GoldenReport(
+            catalogue_changed=True,
+            spec_changed=True,
+            annotator_changed=True,
+        )
+
+        assert report.lines() == [
+            "the catalogue changed since the golden file was recorded; if that change is intended, "
+            "re-record and review the diff",
+            "the golden file was recorded over a different corpus spec",
+            "note: checking a different annotator than the one that recorded the file",
+        ]
+
+    def test_lines_summarise_missing_and_unexpected_overlaps(self) -> None:
+        """Show counts and at most three overlap-key examples per membership difference."""
+        report = GoldenReport(
+            missing=("missing-1", "missing-2", "missing-3", "missing-4"),
+            unexpected=("unexpected-1", "unexpected-2", "unexpected-3", "unexpected-4"),
+        )
+
+        assert report.lines() == [
+            "4 overlaps missing from the recording, e.g. ['missing-1', 'missing-2', 'missing-3']",
+            "4 overlaps not in the golden file, e.g. ['unexpected-1', 'unexpected-2', 'unexpected-3']",
+        ]
+
+    def test_lines_show_capped_term_mismatch_examples(self) -> None:
+        """Show the mismatch heading, requested examples, and a remainder count."""
+        report = GoldenReport(
+            mismatches=(
+                ("TX1::variant-1", ("missense_variant",), ("frameshift_variant",)),
+                ("TX2::variant-2", ("intron_variant",), ("splice_region_variant",)),
+            ),
+        )
+
+        assert report.lines(limit=1) == [
+            "2 overlaps emit different terms:",
+            "  TX1::variant-1: golden ['missense_variant'] != recorded ['frameshift_variant']",
+            "  ... and 1 more",
+        ]
