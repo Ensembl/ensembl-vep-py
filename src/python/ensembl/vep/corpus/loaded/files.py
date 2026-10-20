@@ -17,10 +17,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from attrs import define
-
 from ensembl.vep.caches import WeakSliceCache
-from ensembl.vep.common import Strand
 from ensembl.vep.corpus.loaded.base import LoadedCorpus, collect_sequence_regions
 from ensembl.vep.corpus.overlap import build_transcript_overlaps
 from ensembl.vep.corpus.registry import register_corpus
@@ -31,41 +28,9 @@ from ensembl.vep.sources.file.fasta.sequence import FastaSequenceSource
 from ensembl.vep.sources.file.gff3.transcript import GFF3TranscriptSource
 from ensembl.vep.sources.file.gtf.transcript import GTFTranscriptSource
 from ensembl.vep.sources.file.vcf.variation import VCFVariationSource
-from ensembl.vep.sources.sequence_source import SequenceSource
 from ensembl.vep.sources.synonym import ChromosomeSynonyms, SequenceRegionResolver
 
 __all__ = ["load_file_corpus"]
-
-
-@define(kw_only=True)
-class _ResolvingSliceCache:
-    """Resolve uploaded names before delegating to the shared slice cache."""
-
-    cache: WeakSliceCache
-    resolver: SequenceRegionResolver
-
-    def get_slice(
-        self,
-        seq_region_name: str,
-        sequence_source: SequenceSource | None = None,
-        *,
-        start: int = 1,
-        end: int | None = None,
-        strand: Strand = Strand.FORWARD,
-    ) -> Slice:
-        """Return a slice using the reference source's canonical region name."""
-        resolved_name = self.resolver.resolve(seq_region_name)
-        return self.cache.get_slice(
-            resolved_name,
-            sequence_source,
-            start=start,
-            end=end,
-            strand=strand,
-        )
-
-    def clear(self) -> None:
-        """Clear the shared cache."""
-        self.cache.clear()
 
 
 def _required_path(specification: CorpusSpec, name: str) -> Path:
@@ -80,14 +45,18 @@ def _required_path(specification: CorpusSpec, name: str) -> Path:
 
 
 def _named_variants(variations: list[Variation]) -> tuple[tuple[str, VariationAllele], ...]:
-    """Name every loaded allele uniquely within its variation."""
+    """Name every loaded allele, by the rule every other reader of a file names them by.
+
+    Sharing the rule is the point: a name taken from a corpus has to select the same allele when
+    ``vep explain`` reads the same VCF. All this adds is collisions, which a corpus cannot have --
+    it files its overlaps under ``(name, feature)`` -- and which a file produces by repeating an
+    identifier across records.
+    """
     named_variants = []
     used_names: set[str] = set()
-    for variation_index, variation in enumerate(variations, start=1):
-        base_name = variation.stable_id or f"variation-{variation_index}"
-        allele_count = len(variation.variation_alleles)
-        for allele_index, allele in enumerate(variation.variation_alleles, start=1):
-            name = base_name if allele_count == 1 else f"{base_name}:{allele_index}"
+    for variation in variations:
+        for allele in variation.variation_alleles:
+            name = allele.display_name
             candidate = name
             suffix = 2
             while candidate in used_names:
@@ -140,9 +109,11 @@ def load_file_corpus(specification: CorpusSpec) -> LoadedCorpus:
     sequence_source = FastaSequenceSource(file_path=fasta_path)
     try:
         slice_cache = WeakSliceCache()
+        synonyms = ChromosomeSynonyms()
+        reference_names = sequence_source.sequence_region_names
         reference_region_resolver = SequenceRegionResolver(
-            source_names=sequence_source.sequence_region_names,
-            synonyms=ChromosomeSynonyms(),
+            source_names=reference_names,
+            synonyms=synonyms,
         )
         transcript_source_class = GFF3TranscriptSource if gff3_value else GTFTranscriptSource
         transcript_source = transcript_source_class(
@@ -154,10 +125,8 @@ def load_file_corpus(specification: CorpusSpec) -> LoadedCorpus:
         variation_source = VCFVariationSource(
             file_path=str(vcf_path),
             sequence_source=sequence_source,
-            slice_cache=_ResolvingSliceCache(
-                cache=slice_cache,
-                resolver=reference_region_resolver,
-            ),
+            slice_cache=slice_cache,
+            sequence_region_resolver=reference_region_resolver,
         )
         transcripts = tuple(transcript_source.iter_all_features())
         variations = list(variation_source.iter_all_features())

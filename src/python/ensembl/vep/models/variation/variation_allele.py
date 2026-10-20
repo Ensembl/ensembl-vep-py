@@ -29,6 +29,7 @@ from ensembl.vep.common import (
     invalidates,
     resets_attrs,
 )
+from ensembl.vep.common.constants import EMPTY_ALLELE, UNKNOWN_VALUE
 from ensembl.vep.models import Feature
 
 if TYPE_CHECKING:
@@ -164,6 +165,33 @@ class VariationAllele(Feature):
             bool: True if the variation allele has been shifted, False otherwise.
         """
         return self._shifted
+
+    @property
+    def _locus_name(self) -> str:
+        """``CHR:POS:REF>ALT`` as variation allele name."""
+        seq_region_name = self.slice.seq_region_name if self.slice is not None else UNKNOWN_VALUE
+        reference_allele = self.reference_allele or EMPTY_ALLELE
+        alternate_allele = self.alternate_allele or EMPTY_ALLELE
+        return f"{seq_region_name}:{self.start}:{reference_allele}>{alternate_allele}"
+
+    @property
+    def display_name(self) -> str:
+        """Return a unique displayable name this allele is identified by.
+
+        The variation stable_id for a multi-allelic record is not unique for each allele. This
+        allele's alternate is appended to make it unique. If there is not stable_id generate
+        the name using locus.
+
+        Returns:
+            str: The variant's identifier, that identifier and this alternate allele, or this
+                allele's locus name.
+        """
+        variation = self.variation
+        if variation is None or not variation.stable_id:
+            return self._locus_name
+        if len(variation.variation_alleles) > 1:
+            return f"{variation.stable_id}:{self.alternate_allele or EMPTY_ALLELE}"
+        return variation.stable_id
 
     def minimise(self, force: bool = False) -> None:
         """Minimises the variation allele by computing the minimal representation of the variant.
