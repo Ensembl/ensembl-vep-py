@@ -46,7 +46,7 @@ def vcf_record_alleles(
 ) -> tuple[int, list[str]]:
     """Return the ``POS`` and the alleles a VCF record spells a short variant with.
 
-    A port of ensembl-variation's ``VariationFeature::to_VCF_record``. Alleles of one length --
+    A port of ensembl-variation's ``VariationFeature::to_VCF_record``. Alleles of length one --
     SNVs and MNVs -- are written as they are. Otherwise the common trailing bases are trimmed, and a
     padding base is added unless every allele already starts with the same base. A symbolic allele
     is wrapped in angle brackets.
