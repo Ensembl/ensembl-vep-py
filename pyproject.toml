@@ -102,6 +102,9 @@ version = {attr = "ensembl.vep.__version__"}
 [tool.setuptools.packages.find]
 where = ["src/python"]
 
+[tool.setuptools.package-data]
+"ensembl.vep.corpus.golden" = ["data/**/*"]
+
 [[tool.setuptools-rust.ext-modules]]
 # Private Rust extension module to be nested into the Python package
 target = "ensembl.vep.ensembl_vep_core"

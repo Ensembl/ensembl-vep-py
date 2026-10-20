@@ -21,6 +21,19 @@ DEFAULT_DISTANCE = 5000
 One home for a value three layers have to agree on: the pairing window the overlap finder expands
 by, the ``is_upstream``/``is_downstream`` facts, and the zone map that prefills them.
 """
+LEGACY_CORPUS_KINDS = ("default", "heavy", "both")
+"""Legacy synthetic corpus names retained for command compatibility."""
+CANONICAL_DNA_BASES = "ACGT"
+"""Unambiguous DNA bases used when generating synthetic sequence."""
+
+EMPTY_ALLELE = "-"
+"""VEP's spelling of an empty allele."""
+
+VCF_BASES = frozenset("ACGTN")
+"""Base characters accepted in a plain VCF allele, including the unknown base ``N``."""
+
+VCF_PLAIN_ALLELE_CHARACTERS = frozenset("ACGTN.")
+"""Characters accepted in a non-symbolic VCF allele."""
 
 CLASS_SO_TERM_ABBRV_TO_ENUM: dict[str, ClassSOTerm] = {
     "INS": ClassSOTerm.INSERTION,

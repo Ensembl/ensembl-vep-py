@@ -1,0 +1,138 @@
+# See the NOTICE file distributed with this work for additional information
+# regarding copyright ownership.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""A corpus materialised from external sources."""
+
+from __future__ import annotations
+
+from collections.abc import Iterable
+from contextlib import ExitStack
+from typing import Protocol, runtime_checkable
+
+from attrs import define, field
+from attrs.validators import instance_of
+
+from ensembl.vep.corpus.base import Corpus, NamedOverlap, NamedVariant
+from ensembl.vep.corpus.spec import CorpusSpec
+from ensembl.vep.corpus.validation import validate_corpus
+from ensembl.vep.models.genic import Transcript
+from ensembl.vep.models.sequence import Slice
+from ensembl.vep.sources.sequence_source import SequenceSource
+
+__all__ = ["CorpusResource", "LoadedCorpus"]
+
+
+@runtime_checkable
+class CorpusResource(Protocol):
+    """A resource retained by a materialised corpus and released with it."""
+
+    def close(self) -> None:
+        """Release the resource."""
+
+
+@define(kw_only=True, auto_attribs=True)
+class LoadedCorpus(Corpus):
+    """Hold a validated corpus and any external resources that back it.
+
+    Attributes:
+        spec (CorpusSpec): Construction specification.
+        sequence_regions (tuple[Slice, ...]): Referenced sequence regions.
+        named_variants (tuple[NamedVariant, ...]): Stable variant names and alleles.
+        transcripts (tuple[Transcript, ...]): Loaded transcripts.
+        named_overlaps (tuple[NamedOverlap, ...]): Variant-transcript overlaps.
+        resources (tuple[CorpusResource, ...]): Sources or connections owned by the corpus.
+    """
+
+    _spec: CorpusSpec = field(alias="spec")
+    _sequence_regions: tuple[Slice, ...] = field(validator=instance_of(tuple), alias="sequence_regions")
+    _named_variants: tuple[NamedVariant, ...] = field(validator=instance_of(tuple), alias="named_variants")
+    _transcripts: tuple[Transcript, ...] = field(validator=instance_of(tuple), alias="transcripts")
+    _named_overlaps: tuple[NamedOverlap, ...] = field(validator=instance_of(tuple), alias="named_overlaps")
+    resources: tuple[CorpusResource, ...] = field(factory=tuple, validator=instance_of(tuple), repr=False)
+    _closed: bool = field(default=False, init=False, repr=False)
+
+    def __attrs_post_init__(self) -> None:
+        """Validate relationships between the supplied corpus members."""
+        try:
+            validate_corpus(
+                self.sequence_regions,
+                self.named_variants,
+                self.transcripts,
+                self.named_overlaps,
+            )
+        except ValueError as validation_error:
+            try:
+                self.close()
+            except (OSError, RuntimeError) as cleanup_error:
+                validation_error.add_note(f"Failed to close corpus resources: {cleanup_error}")
+            raise
+
+    @property
+    def spec(self) -> CorpusSpec:
+        """Return the specification that loaded the corpus."""
+        return self._spec
+
+    @property
+    def sequence_regions(self) -> tuple[Slice, ...]:
+        """Return every referenced sequence region."""
+        return self._sequence_regions
+
+    @property
+    def named_variants(self) -> tuple[NamedVariant, ...]:
+        """Return every named variation allele."""
+        return self._named_variants
+
+    @property
+    def transcripts(self) -> tuple[Transcript, ...]:
+        """Return every loaded transcript."""
+        return self._transcripts
+
+    @property
+    def named_overlaps(self) -> tuple[NamedOverlap, ...]:
+        """Return every named transcript overlap."""
+        return self._named_overlaps
+
+    @property
+    def description(self) -> str:
+        """Return a short loaded-corpus description."""
+        return f"loaded corpus ({self.spec.kind})"
+
+    @property
+    def sequence_source(self) -> SequenceSource | None:
+        """Return the retained sequence source, when this loader uses one."""
+        return next(
+            (resource for resource in self.resources if isinstance(resource, SequenceSource)),
+            None,
+        )
+
+    def close(self) -> None:
+        """Release every owned source or connection once."""
+        if self._closed:
+            return
+        self._closed = True
+        with ExitStack() as resources:
+            for resource in self.resources:
+                resources.callback(resource.close)
+
+
+def collect_sequence_regions(features: Iterable[object]) -> tuple[Slice, ...]:
+    """Return referenced slices once each, preserving encounter order."""
+    sequence_regions = []
+    identities: set[int] = set()
+    for feature in features:
+        sequence_region = getattr(feature, "slice", None)
+        if sequence_region is None or id(sequence_region) in identities:
+            continue
+        identities.add(id(sequence_region))
+        sequence_regions.append(sequence_region)
+    return tuple(sequence_regions)

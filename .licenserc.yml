@@ -22,6 +22,8 @@ header:
     - '.gitignore'
     - 'LICENSE'
     - 'NOTICE'
+    # Corpus reference data use standard formats that do not support comment headers.
+    - 'src/python/ensembl/vep/corpus/golden/data/**/*'
     # symlinks
     - 'tests/database/test_dbconnection'
     - '**/*.lock'
