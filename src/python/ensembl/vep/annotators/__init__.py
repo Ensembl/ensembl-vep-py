@@ -11,10 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Annotator contracts and registry."""
+"""Annotator contracts and built-in registries.
+
+Importing this package registers the built-in consequence and haplo annotators.
+"""
 
 from __future__ import annotations
 
 from .base import *
 from .registry import *
 from .consequence import *
+from .haplo import *
