@@ -34,9 +34,9 @@ if TYPE_CHECKING:
 MAX_READTHROUGH_BASES = 1000
 """Cap on how far ``Readthrough.BEYOND_TRANSCRIPT`` reads past a transcript's own boundary."""
 
-TranscriptPosition = tuple[int | None, int | None]
-"""1-based positions of a variant's 5' and 3' ends on a transcript sequence, None for an end that
-lies off it -- VEP's ``cdna_start``/``cdna_end`` and their CDS and protein counterparts."""
+Position = tuple[int | None, int | None]
+"""1-based positions. Primarily used for a variant's 5' and 3' ends on a transcript sequence, None for an
+end that lies off it"""
 
 
 def _nucleotide_sequence_up_to_stop(nucleotide_sequence: str) -> tuple[str, str]:
@@ -96,12 +96,12 @@ class TranscriptVariationAllele(FeatureOverlap):  # pylint: disable=too-many-pub
             The variation allele that is overlapping.
         is_reference (bool):
             Whether the overlapping variation allele is the reference allele.
-        cdna_position (TranscriptPosition | None):
+        cdna_position (Position | None):
             The variant's position on the spliced transcript, or None if it touches no exon.
-        cds_position (TranscriptPosition | None):
-            The variant's position on the CDS, counted as VEP counts it from a whole first codon, or
-            None if it does not touch the CDS.
-        protein_position (TranscriptPosition | None):
+        cds_position (Position | None):
+            The variant's position on the CDS, counted from a whole first codon, or None if
+            it does not touch the CDS.
+        protein_position (Position | None):
             The residues the variant's two ends fall in, or None if it does not touch the CDS.
         distance_to_transcript (int | None):
             The distance from the variation allele to the transcript,
@@ -148,6 +148,104 @@ class TranscriptVariationAllele(FeatureOverlap):  # pylint: disable=too-many-pub
     exon_number: int | None = field(default=None, init=False)
     intron_number: int | None = field(default=None, init=False)
     _lock: RLock = field(factory=RLock, init=False, repr=False)
+
+    def _position_on(self, mapper: Mapper | None) -> Position | None:
+        """Place the variant's 5' and 3' ends on ``mapper``'s sequence, 1-based.
+
+        An insertion's ends are its two flanking bases. As in VEP, where the Ensembl mapper answers
+        a gap for an end off the sequence, that end is None; a variant covering none of ``mapper``'s
+        spans has no position at all.
+
+        Args:
+            mapper (Mapper | None): The mapper whose sequence to place the variant on.
+
+        Returns:
+            Position | None: The two ends, or None if the variant misses every span.
+        """
+        if mapper is None:
+            return None
+        variant = self.overlapping_feature
+        variant_min, variant_max = min(variant.start, variant.end), max(variant.start, variant.end)
+        if mapper.genomic_span_to_offsets(variant_min, variant_max) is None:
+            return None
+
+        if self.feature.strand == Strand.REVERSE:
+            five_prime_end, three_prime_end = variant_max, variant_min
+        else:
+            five_prime_end, three_prime_end = variant_min, variant_max
+        five_prime_offset = mapper.genomic_to_offset(five_prime_end)
+        three_prime_offset = mapper.genomic_to_offset(three_prime_end)
+        return (
+            None if five_prime_offset is None else five_prime_offset + 1,
+            None if three_prime_offset is None else three_prime_offset + 1,
+        )
+
+    @property
+    def cdna_position(self) -> Position | None:
+        """Public accessor for _cdna_position.
+
+        Returns:
+            Position | None: The variant's position on the spliced transcript, or None if
+                it touches no exon.
+        """
+        return self._cdna_position
+
+    @cached_property
+    def _cdna_position(self) -> Position | None:
+        """Place the variant on the spliced transcript.
+
+        Returns:
+            Position | None: The position, or None if the variant touches no exon.
+        """
+        return self._position_on(self.feature.cdna_mapper)
+
+    @property
+    def cds_position(self) -> Position | None:
+        """Public accessor for _cds_position.
+
+        Returns:
+            Position | None: The variant's position on the CDS, or None if it does not
+                touch the CDS.
+        """
+        return self._cds_position
+
+    @cached_property
+    def _cds_position(self) -> Position | None:
+        """Place the variant on the CDS.
+
+        CDS offsets already start after any ``cds_start_phase`` padding, so a CDS with an
+        incomplete 5' end is counted from a whole first codon, as VEP adds the start exon's phase.
+
+        Returns:
+            Position | None: The position, or None if the variant does not touch the CDS.
+        """
+        return self._position_on(self.feature.cds_mapper)
+
+    @property
+    def protein_position(self) -> Position | None:
+        """Public accessor for _protein_position.
+
+        Returns:
+            Position | None: The residues the variant's two ends fall in, or None if it
+                does not touch the CDS.
+        """
+        return self._protein_position
+
+    @cached_property
+    def _protein_position(self) -> Position | None:
+        """Derive the residue positions from the CDS positions, three bases a residue.
+
+        Returns:
+            Position | None: The residue positions, or None if the variant does not touch
+                the CDS.
+        """
+        cds_position = self.cds_position
+        if cds_position is None:
+            return None
+        residues: list[int | None] = []
+        for position in cds_position:
+            residues.append(None if position is None else (position - 1) // 3 + 1)
+        return residues[0], residues[1]
 
     def _edit_on(self, mapper: Mapper | None) -> SequenceEdit | None:
         """Express the edit caused by this variant in ``mapper``'s offset space.
@@ -212,104 +310,6 @@ class TranscriptVariationAllele(FeatureOverlap):  # pylint: disable=too-many-pub
             SequenceEdit | None: The edit, or None if the variant touches no exon at all.
         """
         return self._edit_on(self.feature.cdna_mapper)
-
-    def _position_on(self, mapper: Mapper | None) -> TranscriptPosition | None:
-        """Place the variant's 5' and 3' ends on ``mapper``'s sequence, 1-based.
-
-        An insertion's ends are its two flanking bases. As in VEP, where the Ensembl mapper answers
-        a gap for an end off the sequence, that end is None; a variant covering none of ``mapper``'s
-        spans has no position at all.
-
-        Args:
-            mapper (Mapper | None): The mapper whose sequence to place the variant on.
-
-        Returns:
-            TranscriptPosition | None: The two ends, or None if the variant misses every span.
-        """
-        if mapper is None:
-            return None
-        variant = self.overlapping_feature
-        variant_min, variant_max = min(variant.start, variant.end), max(variant.start, variant.end)
-        if mapper.genomic_span_to_offsets(variant_min, variant_max) is None:
-            return None
-
-        if self.feature.strand == Strand.REVERSE:
-            five_prime_end, three_prime_end = variant_max, variant_min
-        else:
-            five_prime_end, three_prime_end = variant_min, variant_max
-        five_prime_offset = mapper.genomic_to_offset(five_prime_end)
-        three_prime_offset = mapper.genomic_to_offset(three_prime_end)
-        return (
-            None if five_prime_offset is None else five_prime_offset + 1,
-            None if three_prime_offset is None else three_prime_offset + 1,
-        )
-
-    @property
-    def cdna_position(self) -> TranscriptPosition | None:
-        """Public accessor for _cdna_position.
-
-        Returns:
-            TranscriptPosition | None: The variant's position on the spliced transcript, or None if
-                it touches no exon.
-        """
-        return self._cdna_position
-
-    @cached_property
-    def _cdna_position(self) -> TranscriptPosition | None:
-        """Place the variant on the spliced transcript.
-
-        Returns:
-            TranscriptPosition | None: The position, or None if the variant touches no exon.
-        """
-        return self._position_on(self.feature.cdna_mapper)
-
-    @property
-    def cds_position(self) -> TranscriptPosition | None:
-        """Public accessor for _cds_position.
-
-        Returns:
-            TranscriptPosition | None: The variant's position on the CDS, or None if it does not
-                touch the CDS.
-        """
-        return self._cds_position
-
-    @cached_property
-    def _cds_position(self) -> TranscriptPosition | None:
-        """Place the variant on the CDS.
-
-        CDS offsets already start after any ``cds_start_phase`` padding, so a CDS with an
-        incomplete 5' end is counted from a whole first codon, as VEP adds the start exon's phase.
-
-        Returns:
-            TranscriptPosition | None: The position, or None if the variant does not touch the CDS.
-        """
-        return self._position_on(self.feature.cds_mapper)
-
-    @property
-    def protein_position(self) -> TranscriptPosition | None:
-        """Public accessor for _protein_position.
-
-        Returns:
-            TranscriptPosition | None: The residues the variant's two ends fall in, or None if it
-                does not touch the CDS.
-        """
-        return self._protein_position
-
-    @cached_property
-    def _protein_position(self) -> TranscriptPosition | None:
-        """Derive the residue positions from the CDS positions, three bases a residue.
-
-        Returns:
-            TranscriptPosition | None: The residue positions, or None if the variant does not touch
-                the CDS.
-        """
-        cds_position = self.cds_position
-        if cds_position is None:
-            return None
-        residues: list[int | None] = []
-        for position in cds_position:
-            residues.append(None if position is None else (position - 1) // 3 + 1)
-        return residues[0], residues[1]
 
     @property
     def reference_codon(self) -> str | None:

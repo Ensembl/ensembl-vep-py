@@ -21,11 +21,9 @@ from ensembl.vep.common import CoordSystemLevel, Readthrough, Strand, is_resolve
 from ensembl.vep.common.codons import translate_dna
 from ensembl.vep.models.overlap.transcript_variation_allele import MAX_READTHROUGH_BASES, _edited_boundary
 from ensembl.vep.models.overlap import TranscriptVariationAllele
-from ensembl.vep.models.overlap.transcript_variation_allele import MAX_READTHROUGH_BASES, _edited_boundary
 from ensembl.vep.models.sequence import CoordSystem, Slice
 from ensembl.vep.models.variation import VariationAllele
 from ensembl.vep.models.genic import Exon, Transcript, Translation
-from ensembl.vep.models.sequence import CoordSystem, Slice
 
 CODING_SEQUENCE = "ATG" + "GGG" * 10 + "TAA"  # (M + 10*G + stop), transcript-sense
 
@@ -72,12 +70,12 @@ def _build_forward_transcript(
     _write_sequence_at_position(chars, 30, exon_two_rest)
     _write_sequence_at_position(chars, 55, three_prime_utr)
     _write_sequence_at_position(chars, 75, downstream_extra)
-    slice = DummySlice("".join(chars))
+    genomic_slice = DummySlice("".join(chars))
 
     transcript = Transcript(start=1, end=74, strand=Strand.FORWARD, stable_id="ENST_FWD", slice=slice)
     transcript.spliced_exons = [
-        Exon(start=1, end=20, strand=Strand.FORWARD, stable_id="ENST_FWD_e0", slice=slice),
-        Exon(start=30, end=74, strand=Strand.FORWARD, stable_id="ENST_FWD_e1", slice=slice),
+        Exon(start=1, end=20, strand=Strand.FORWARD, stable_id="ENST_FWD_e0", slice=genomic_slice),
+        Exon(start=30, end=74, strand=Strand.FORWARD, stable_id="ENST_FWD_e1", slice=genomic_slice),
     ]
     transcript.seed_attrs(
         first_coding_exon_index=0, last_coding_exon_index=1, exon_coding_start=10, exon_coding_end=25
@@ -118,14 +116,14 @@ def _build_reverse_transcript(
         exon_two_end - len(exon_two_sequence) + 1,
         reverse_complement(exon_two_sequence),
     )
-    slice = DummySlice("".join(chars))
+    genomic_slice = DummySlice("".join(chars))
 
     transcript = Transcript(
         start=transcript_start,
         end=transcript_end,
         strand=Strand.REVERSE,
         stable_id="ENST_REV",
-        slice=slice,
+        slice=genomic_slice,
     )
     transcript.spliced_exons = [
         Exon(
@@ -133,14 +131,14 @@ def _build_reverse_transcript(
             end=exon_one_end,
             strand=Strand.REVERSE,
             stable_id="ENST_REV_e0",
-            slice=slice,
+            slice=genomic_slice,
         ),
         Exon(
             start=exon_two_start,
             end=exon_two_end,
             strand=Strand.REVERSE,
             stable_id="ENST_REV_e1",
-            slice=slice,
+            slice=genomic_slice,
         ),
     ]
     transcript.seed_attrs(
@@ -529,16 +527,16 @@ class TestFullCdsAllelesReadthrough:
 
     def test_downstream_flanking_sequence_reverse_strand(self) -> None:
         """Test that reverse-strand downstream sequence is reverse-complemented."""
-        slice = DummySlice("ACGTACGTACGTACGTACG" + "N" * 30)
-        transcript = Transcript(start=20, end=30, strand=Strand.REVERSE, stable_id="RT", slice=slice)
+        genomic_slice = DummySlice("ACGTACGTACGTACGTACG" + "N" * 30)
+        transcript = Transcript(start=20, end=30, strand=Strand.REVERSE, stable_id="RT", slice=genomic_slice)
         transcript.spliced_exons = [
-            Exon(start=20, end=30, strand=Strand.REVERSE, stable_id="RT_e0", slice=slice)
+            Exon(start=20, end=30, strand=Strand.REVERSE, stable_id="RT_e0", slice=genomic_slice)
         ]
         variation_allele = _create_variation_allele(transcript, 20, 20, "T", "A")
         tva = _create_transcript_variation_allele(transcript, variation_allele)
 
         flank = tva._downstream_flanking_sequence(10)  # pylint: disable=protected-access
-        assert flank == reverse_complement(slice.seq[9:19])
+        assert flank == reverse_complement(genomic_slice.seq[9:19])
 
     def test_downstream_flanking_sequence_is_empty_past_the_slice(
         self, forward_transcript_with_utr: Transcript
@@ -925,10 +923,10 @@ def _reassign_forward_coding_exons(transcript: Transcript, coding_sequence: str)
     genomic_chars = list("N" * 74)
     _write_sequence_at_position(genomic_chars, 10, coding_sequence[:11])
     _write_sequence_at_position(genomic_chars, 30, coding_sequence[11:])
-    new_slice = DummySlice("".join(genomic_chars))
+    new_genomic_slice = DummySlice("".join(genomic_chars))
     transcript.spliced_exons = [
-        Exon(start=1, end=20, strand=Strand.FORWARD, stable_id="ENST_FWD_e0", slice=new_slice),
-        Exon(start=30, end=74, strand=Strand.FORWARD, stable_id="ENST_FWD_e1", slice=new_slice),
+        Exon(start=1, end=20, strand=Strand.FORWARD, stable_id="ENST_FWD_e0", slice=new_genomic_slice),
+        Exon(start=30, end=74, strand=Strand.FORWARD, stable_id="ENST_FWD_e1", slice=new_genomic_slice),
     ]
     # Reassigning spliced_exons invalidates every seeded coding-boundary slot too (they are all in
     # _CODING_DERIVATIONS), so they must be re-seeded exactly as _build_forward_transcript does.

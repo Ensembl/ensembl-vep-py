@@ -112,19 +112,8 @@ class StartMethod(str, Enum):
 class Readthrough(IntEnum):
     """How far translation may run when a variant destroys the stop codon.
 
-    Opt-in, and ``NONE`` by default: modelling readthrough is a hypothesis about what happens
-    downstream of a lost stop, not an observation, so it is never assumed. See
-    ``TranscriptVariationAllele._full_cds_alleles`` and
-    ``docs/developer_guide/edited_boundaries.md``.
-
-    An ``IntEnum`` because the levels are ordered rather than independent -- each one extends the
-    previous, so ``BEYOND_TRANSCRIPT`` implies ``UTR``. That makes the nonsensical "read past the
-    transcript but not through the UTR" state unrepresentable, and lets call sites test
-    ``>= Readthrough.UTR`` rather than enumerate members.
-
-    Note that raising the level can only ever change the answer for a variant that leaves no
-    in-frame stop inside the coding sequence: when the stop codon survives intact and in frame,
-    translation terminates there whatever the bound is.
+    Opt-in, and ``NONE`` by default. An ``IntEnum`` because the levels are ordered rather
+    than independent, each one extends the previous.
     """
 
     NONE = 0
@@ -132,14 +121,12 @@ class Readthrough(IntEnum):
 
     UTR = 1
     """Continue into the 3' UTR, looking for the next in-frame stop. Stays entirely within the
-    transcript's own spliced sequence -- no new sequence source, nothing read past the annotated
-    transcript."""
+    transcript's own spliced sequence."""
 
     BEYOND_TRANSCRIPT = 2
     """As ``UTR``, and if that still yields no stop, continue into raw genomic sequence past the
-    transcript's own boundary, read directly from the attached slice (bounded -- see
-    ``MAX_READTHROUGH_BASES``). Trusts that the attached slice already covers the flank, the same
-    assumption ``VariationAllele.shift`` makes."""
+    transcript's own boundary, read directly from the attached slice (bounded by 
+    ``MAX_READTHROUGH_BASES``). Trusts that the attached slice already covers the flank."""
 
 
 class CostTier(IntEnum):

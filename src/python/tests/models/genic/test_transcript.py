@@ -418,12 +418,11 @@ class TestTranscriptProperties:  # pylint: disable=too-many-public-methods
         assert transcript.cds_mapper is not None
         mapper_length = transcript.cds_mapper.length
         assert mapper_length is not None
-        # The phased base belongs to the mapped CDS span but is excluded from the CDS sequence.
-        assert cds_length == cds_seq_len == mapper_length - 1
-        assert cds_nucleotide_length == mapper_length
+        # mapper length is one larger than all the other lengths
+        assert cds_length == cds_seq_len == cds_nucleotide_length == mapper_length - 1
 
         cds_protein_length = cds.protein_length if cds else None
-        assert cds_protein_length == mapper_length // 3
+        assert cds_protein_length == cds_length // 3
 
     def test_cds_cdna_coding_start(
         self, transcript: Transcript, translation: Translation, spliced_exons_forward: list[Exon]
