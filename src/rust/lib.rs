@@ -17,6 +17,7 @@ use pyo3::prelude::*;
 // Keep this crate root as PyO3 module registration glue only. Rust logic should
 // live in submodules where it can be tested directly; coverage jobs ignore this
 // file with cargo-llvm-cov --ignore-filename-regex so stable Rust is sufficient.
+pub mod annotators;
 pub mod codons;
 pub mod hello;
 pub mod parsers;
@@ -34,6 +35,8 @@ mod ensembl_vep_core {
     }
 
     #[pymodule_export]
+    use crate::codons::translate_dna_python;
+    #[pymodule_export]
     use crate::hello::sum_as_string;
 
     #[pymodule_export]
@@ -46,5 +49,7 @@ mod ensembl_vep_core {
     };
 
     #[pymodule_export]
-    use crate::codons::translate_dna_python;
+    use crate::annotators::batch_kernels::{
+        batch_contain_span, batch_overlap_any_interval, batch_overlap_span, batch_variant_shapes,
+    };
 }

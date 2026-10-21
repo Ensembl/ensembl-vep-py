@@ -11,10 +11,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Consequence annotation contexts, facts, and rules."""
+"""Consequence annotation facts, rules, and strategies.
+
+The package has three dependency-ordered layers:
+
+* ``facts`` defines cost-tagged properties of a variant-feature overlap.
+* ``rules`` compiles Sequence Ontology terms into Boolean formulas over facts.
+* ``strategies`` provides interchangeable evaluators that produce identical consequences.
+
+Importing this package registers every fact and every ``consequence.*`` annotator as an import
+side effect. ``strategies`` is imported last because it depends on facts and rules.
+"""
 
 from __future__ import annotations
 
-from .context import *
-from .facts import *
-from .rules import *
+from . import facts
+from . import rules
+from . import strategies
