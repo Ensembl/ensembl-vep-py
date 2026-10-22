@@ -83,7 +83,6 @@ class TestCDSProperties:
         transcript = Transcript(stable_id="ENST00000000001", start=1, end=12, strand=Strand.FORWARD)
         # seed cds_genomic_spans so that transcript.cds_length has a different value to len(cds.seq)
         transcript.seed_attrs(cds_genomic_spans=[(1, 12)])
-
         cds.seq = "ATG" * 10
         cds.transcript = transcript
 
