@@ -42,7 +42,7 @@ _DEFAULT_ZONE_MAP_BYTES = 256 * 1024 * 1024
 
 
 def _annotator_names() -> tuple[str, ...]:
-    """Return registered annotator names or the default before strategies are available.
+    """Return registered annotator names.
 
     Resolved lazily so this module never imports ensembl.vep.annotators, which would make the
     configuration layer depend on the domain it configures.
@@ -53,7 +53,7 @@ def _annotator_names() -> tuple[str, ...]:
     # pylint: disable=import-outside-toplevel
     from ensembl.vep.annotators.registry import available_annotators
 
-    return available_annotators() or (DEFAULT_ANNOTATOR,)
+    return available_annotators()
 
 
 @define(frozen=True, kw_only=True, auto_attribs=True)
