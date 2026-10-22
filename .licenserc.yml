@@ -18,6 +18,8 @@ header:
 
   paths-ignore:
     - '**/*.md'
+    # JSON does not support comment headers.
+    - '**/*.json'
     - 'tests/**/test_*/**/*'
     - '.gitignore'
     - 'LICENSE'
