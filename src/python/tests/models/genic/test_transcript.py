@@ -421,11 +421,10 @@ class TestTranscriptProperties:  # pylint: disable=too-many-public-methods
         mapper_length = transcript.cds_mapper.length
         assert mapper_length is not None
         # The phased base belongs to the mapped CDS span but is excluded from the CDS sequence.
-        assert cds_length == cds_seq_len == mapper_length - 1
-        assert cds_nucleotide_length == mapper_length
+        assert cds_length == cds_seq_len == cds_nucleotide_length == mapper_length - 1
 
         cds_protein_length = cds.protein_length if cds else None
-        assert cds_protein_length == mapper_length // 3
+        assert cds_protein_length == cds_length // 3
 
     def test_cds_cdna_coding_start(
         self, transcript: Transcript, translation: Translation, spliced_exons_forward: list[Exon]
@@ -1108,10 +1107,10 @@ class TestPadding:
         assert transcript.coding_sequence == "N" + SINGLE_EXON_CODING_SEQUENCE
         assert transcript.genomic_to_cds_offset(SINGLE_EXON_CDS_START) == 1
 
-    def test_only_the_padded_lengths_count_the_padding(
+    def test_only_mapper_derived_lengths_count_the_padding(
         self, single_exon_transcript: SingleExonTranscript
     ) -> None:
-        """Include padding in mapper-derived lengths but not genomic CDS sequence."""
+        """Exclude padding from lengths that count genomic CDS bases."""
         transcript = single_exon_transcript(ExonPhase.ONE)
         cds = transcript.cds
 
@@ -1119,8 +1118,8 @@ class TestPadding:
         assert transcript.cds_length == len(SINGLE_EXON_CODING_SEQUENCE)
         assert transcript.cds_mapper is not None
         assert transcript.cds_mapper.length == len(SINGLE_EXON_CODING_SEQUENCE) + 1
-        assert cds.nucleotide_length == len(cds.seq) + transcript.cds_start_phase
-        assert len(transcript.coding_sequence or "") == cds.nucleotide_length
+        assert cds.nucleotide_length == len(cds.seq)
+        assert len(transcript.coding_sequence or "") == cds.nucleotide_length + transcript.cds_start_phase
 
     @pytest.mark.parametrize("phase", [None, ExonPhase.ZERO, ExonPhase.UNKNOWN])
     def test_no_phase_is_a_complete_five_prime_end(
