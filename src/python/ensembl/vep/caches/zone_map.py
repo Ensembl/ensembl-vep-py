@@ -126,6 +126,51 @@ not include. It is calibrated against ``tracemalloc`` measurements in the zone-m
 """
 
 
+_FLANK_ONLY_MARGIN = 16
+"""Distance beyond a transcript where only flank facts can hold.
+
+Every non-flank span a zone map records lies within the transcript's own start and end; the margin
+is slack, not a measured bound.
+"""
+
+
+def _flank_windows(
+    transcript: Transcript, upstream_distance: int, downstream_distance: int
+) -> tuple[tuple[str, int, int], ...]:
+    """Return the ``is_upstream`` and ``is_downstream`` genomic windows of a transcript.
+
+    The two distances need not be equal, so each window is measured from the end it belongs to:
+    on the reverse strand the 5' end is the transcript's highest coordinate.
+    """
+
+    before, after = upstream_distance, downstream_distance
+    if transcript.strand == Strand.REVERSE:
+        before, after = after, before
+    lower_flank = (transcript.start - before, transcript.start - 1)
+    upper_flank = (transcript.end + 1, transcript.end + after)
+    if transcript.strand == Strand.FORWARD:
+        return (("is_upstream", *lower_flank), ("is_downstream", *upper_flank))
+    return (("is_upstream", *upper_flank), ("is_downstream", *lower_flank))
+
+
+def _flank_mask(
+    transcript: Transcript,
+    min_position: int,
+    max_position: int,
+    upstream_distance: int,
+    downstream_distance: int,
+) -> int:
+    """Return the zone mask of a span that does not reach the transcript itself."""
+
+    mask = 0
+    for fact_name, flank_start, flank_end in _flank_windows(
+        transcript, upstream_distance, downstream_distance
+    ):
+        if min_position <= flank_end and max_position >= flank_start:
+            mask |= _FACT_BIT[fact_name]
+    return mask
+
+
 def _int64_array(values: Sequence[int]) -> array[int]:
     """Pack zone start positions into a signed 64-bit array."""
     return array("q", values)
@@ -329,51 +374,6 @@ class ZoneMap:
             masks=zone_masks,
             inverted=tuple(inverted),
         )
-
-
-_FLANK_ONLY_MARGIN = 16
-"""Distance beyond a transcript where only flank facts can hold.
-
-Every non-flank span a zone map records lies within the transcript's own start and end; the margin
-is slack, not a measured bound.
-"""
-
-
-def _flank_windows(
-    transcript: Transcript, upstream_distance: int, downstream_distance: int
-) -> tuple[tuple[str, int, int], ...]:
-    """Return the ``is_upstream`` and ``is_downstream`` genomic windows of a transcript.
-
-    The two distances need not be equal, so each window is measured from the end it belongs to:
-    on the reverse strand the 5' end is the transcript's highest coordinate.
-    """
-
-    before, after = upstream_distance, downstream_distance
-    if transcript.strand == Strand.REVERSE:
-        before, after = after, before
-    lower_flank = (transcript.start - before, transcript.start - 1)
-    upper_flank = (transcript.end + 1, transcript.end + after)
-    if transcript.strand == Strand.FORWARD:
-        return (("is_upstream", *lower_flank), ("is_downstream", *upper_flank))
-    return (("is_upstream", *upper_flank), ("is_downstream", *lower_flank))
-
-
-def _flank_mask(
-    transcript: Transcript,
-    min_position: int,
-    max_position: int,
-    upstream_distance: int,
-    downstream_distance: int,
-) -> int:
-    """Return the zone mask of a span that does not reach the transcript itself."""
-
-    mask = 0
-    for fact_name, flank_start, flank_end in _flank_windows(
-        transcript, upstream_distance, downstream_distance
-    ):
-        if min_position <= flank_end and max_position >= flank_start:
-            mask |= _FACT_BIT[fact_name]
-    return mask
 
 
 @define(kw_only=True, auto_attribs=True, eq=False)
