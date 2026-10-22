@@ -11,9 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Annotator contracts and built-in registrations."""
+"""Annotator contracts and registry."""
 
 from __future__ import annotations
 
 from .base import *
+from .registry import *
 from .consequence import *
