@@ -16,10 +16,12 @@
 """Unit tests for Transcript class."""
 
 import logging
+from collections.abc import Callable
 
 import pytest
 
-from ensembl.vep.common.enums import CoordSystemLevel, Strand, ExonPhase
+from ensembl.vep.common.codons import translate_dna
+from ensembl.vep.common.enums import CoordSystemLevel, ExonPhase, Strand
 from ensembl.vep.common.containers import Attribute
 from ensembl.vep.common.methods import invalidate, reverse_complement
 from ensembl.vep.models.genic import Transcript, Exon, Intron, Translation, CDS, UTR
@@ -418,11 +420,12 @@ class TestTranscriptProperties:  # pylint: disable=too-many-public-methods
         assert transcript.cds_mapper is not None
         mapper_length = transcript.cds_mapper.length
         assert mapper_length is not None
-        # mapper length is one larger than all the other lengths
-        assert cds_length == cds_seq_len == cds_nucleotide_length == mapper_length - 1
+        # The phased base belongs to the mapped CDS span but is excluded from the CDS sequence.
+        assert cds_length == cds_seq_len == mapper_length - 1
+        assert cds_nucleotide_length == mapper_length
 
         cds_protein_length = cds.protein_length if cds else None
-        assert cds_protein_length == cds_length // 3
+        assert cds_protein_length == mapper_length // 3
 
     def test_cds_cdna_coding_start(
         self, transcript: Transcript, translation: Translation, spliced_exons_forward: list[Exon]
@@ -1058,3 +1061,82 @@ class TestTranscriptEquality:
     def test_different_type(self, transcript: Transcript, exon: Exon) -> None:
         """A transcript is not equal to another feature type."""
         assert transcript != exon
+
+
+SINGLE_EXON_CODING_SEQUENCE = "ATG" + "GGG" * 10 + "TAA"
+"""The CDS of ``single_exon_transcript``, genomic positions 4 to 39 on the forward strand."""
+
+SINGLE_EXON_CDS_START = 4
+"""Genomic position of the first coding base of ``single_exon_transcript``."""
+
+SingleExonTranscript = Callable[[ExonPhase | None], Transcript]
+"""Build the single-exon transcript, its exon carrying the given phase."""
+
+
+def _build_single_exon_transcript(phase: ExonPhase | None) -> Transcript:
+    """Return a forward transcript of one exon at 1-40, coding from 4 to 39."""
+    genomic_slice = DummySlice("NNN" + SINGLE_EXON_CODING_SEQUENCE + "N", 1)
+    transcript = Transcript(
+        start=1, end=40, strand=Strand.FORWARD, stable_id="ENST_SINGLE", slice=genomic_slice
+    )
+    exon = Exon(start=1, end=40, strand=Strand.FORWARD, stable_id="ENST_SINGLE_e0", slice=genomic_slice)
+    exon.phase = phase
+    transcript.spliced_exons = [exon]
+    transcript.seed_attrs(
+        first_coding_exon_index=0,
+        last_coding_exon_index=0,
+        exon_coding_start=SINGLE_EXON_CDS_START,
+        exon_coding_end=39,
+    )
+    return transcript
+
+
+@pytest.fixture(name="single_exon_transcript")
+def fixture_single_exon_transcript() -> SingleExonTranscript:
+    """Create a single-exon coding transcript with the requested phase."""
+    return _build_single_exon_transcript
+
+
+class TestPadding:
+    """CDS padding used to complete the first codon."""
+
+    def test_one_base_of_padding_for_phase_one(self, single_exon_transcript: SingleExonTranscript) -> None:
+        """Add one base before the CDS for phase one."""
+        transcript = single_exon_transcript(ExonPhase.ONE)
+
+        assert transcript.cds_start_phase == 1
+        assert transcript.coding_sequence == "N" + SINGLE_EXON_CODING_SEQUENCE
+        assert transcript.genomic_to_cds_offset(SINGLE_EXON_CDS_START) == 1
+
+    def test_only_the_padded_lengths_count_the_padding(
+        self, single_exon_transcript: SingleExonTranscript
+    ) -> None:
+        """Include padding in mapper-derived lengths but not genomic CDS sequence."""
+        transcript = single_exon_transcript(ExonPhase.ONE)
+        cds = transcript.cds
+
+        assert cds is not None and cds.seq == SINGLE_EXON_CODING_SEQUENCE
+        assert transcript.cds_length == len(SINGLE_EXON_CODING_SEQUENCE)
+        assert transcript.cds_mapper is not None
+        assert transcript.cds_mapper.length == len(SINGLE_EXON_CODING_SEQUENCE) + 1
+        assert cds.nucleotide_length == len(cds.seq) + transcript.cds_start_phase
+        assert len(transcript.coding_sequence or "") == cds.nucleotide_length
+
+    @pytest.mark.parametrize("phase", [None, ExonPhase.ZERO, ExonPhase.UNKNOWN])
+    def test_no_phase_is_a_complete_five_prime_end(
+        self, single_exon_transcript: SingleExonTranscript, phase: ExonPhase | None
+    ) -> None:
+        """Avoid padding when the phase does not identify an incomplete codon."""
+        transcript = single_exon_transcript(phase)
+
+        assert transcript.cds_start_phase == 0
+        assert transcript.coding_sequence == SINGLE_EXON_CODING_SEQUENCE
+
+    def test_the_translation_reads_the_padded_frame(
+        self, single_exon_transcript: SingleExonTranscript
+    ) -> None:
+        """Translate the partial first codon as unknown in the shifted frame."""
+        transcript = single_exon_transcript(ExonPhase.TWO)
+
+        assert transcript.translated_seq == translate_dna("NN" + SINGLE_EXON_CODING_SEQUENCE)
+        assert transcript.translated_seq is not None and transcript.translated_seq.startswith("X")
