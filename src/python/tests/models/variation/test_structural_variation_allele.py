@@ -55,18 +55,6 @@ def structural_variation(genomic_slice: Slice) -> StructuralVariation:
 
 
 @pytest.fixture
-def structural_variation(genomic_slice: Slice) -> StructuralVariation:
-    """Returns a StructuralVariation object for testing."""
-    return StructuralVariation(
-        start=5,
-        end=150,
-        strand=Strand.FORWARD,
-        slice=genomic_slice,
-        allele_string="-/DEL",
-    )
-
-
-@pytest.fixture
 def structural_variation_allele(genomic_slice: Slice) -> StructuralVariationAllele:
     """Returns a StructuralVariationAllele object for testing."""
     return StructuralVariationAllele(
