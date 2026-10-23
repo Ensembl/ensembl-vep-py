@@ -26,22 +26,7 @@ from ensembl.vep.common.containers import Attribute
 from ensembl.vep.common.methods import invalidate, reverse_complement
 from ensembl.vep.models.genic import Transcript, Exon, Intron, Translation, CDS, UTR
 from ensembl.vep.models.sequence import CoordSystem, Slice
-
-
-class DummySlice(Slice):
-    """Slice with a sequence supplied through the unsafe test hook."""
-
-    def __init__(self, sequence: str, feature_start: int) -> None:
-        padded_sequence = ("N" * (feature_start - 1)) + sequence
-        super().__init__(
-            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
-            seq_region_name="1",
-            start=1,
-            end=len(padded_sequence),
-            strand=Strand.FORWARD,
-        )
-        with self.unsafe() as unsafe_slice:
-            setattr(unsafe_slice, "_seq", padded_sequence)
+from tests.models.conftest import DummySlice
 
 
 @pytest.fixture

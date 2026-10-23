@@ -85,7 +85,7 @@ def _edited_boundary(original_boundary: int, edit_start: int, edit_end: int, len
 
 
 @define(kw_only=True, auto_attribs=True)
-class TranscriptVariationAllele(FeatureOverlap):  # pylint: disable=too-many-public-methods
+class TranscriptVariationAllele(FeatureOverlap):
     """
     Represents the overlap between a transcript and a variation allele.
 

@@ -37,24 +37,10 @@ from ensembl.vep.models.overlap.transcript_variation_allele import (
 )
 from ensembl.vep.models.sequence import CoordSystem, Slice
 from ensembl.vep.models.variation import VariationAllele
+from tests.models.conftest import DummySlice
 
 CODING_SEQUENCE = "ATG" + "GGG" * 10 + "TAA"  # (M + 10*G + stop), transcript-sense
 REFERENCE_PEPTIDE = "M" + "G" * 10 + "*"
-
-
-class DummySlice(Slice):
-    """Slice with a sequence supplied through the unsafe test hook."""
-
-    def __init__(self, sequence: str) -> None:
-        super().__init__(
-            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
-            seq_region_name="chrPin",
-            start=1,
-            end=len(sequence),
-            strand=Strand.FORWARD,
-        )
-        with self.unsafe() as unsafe_slice:
-            setattr(unsafe_slice, "_seq", sequence)
 
 
 def _write_sequence_at_position(chars: list[str], position: int, sequence: str) -> None:
