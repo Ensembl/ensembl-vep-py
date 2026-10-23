@@ -76,12 +76,12 @@ class TestRunTraceFold:
 
     def test_orders_facts_by_what_they_cost(self) -> None:
         """The expensive facts come first: that is what a reader of this table is looking for."""
-        run_trace = RunTrace.fold([_trace(_computed("cheap", 1), _computed("dear", 60))])
-        assert [usage.name for usage in run_trace.fact_usage] == ["dear", "cheap"]
+        run_trace = RunTrace.fold([_trace(_computed("cheap", 1), _computed("expensive", 60))])
+        assert [usage.name for usage in run_trace.fact_usage] == ["expensive", "cheap"]
 
     def test_tier_reach_names_the_declared_tiers(self) -> None:
         """Tier reach says how far up the cost tiers the run actually went."""
-        run_trace = RunTrace.fold([_trace(_computed("cheap", 0), _computed("dear", 60))])
+        run_trace = RunTrace.fold([_trace(_computed("cheap", 0), _computed("expensive", 60))])
         assert dict(run_trace.tier_reach) == {"FREE": 1, "SEQUENCE": 1}
 
     def test_folding_nothing_gives_an_empty_view(self) -> None:

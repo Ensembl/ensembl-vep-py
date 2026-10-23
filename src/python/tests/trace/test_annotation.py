@@ -28,6 +28,7 @@ def sample_trace() -> AnnotationTrace:
     return AnnotationTrace(
         fact_events=(
             FactEvent(name="overlap_feature", value=True, cost=1, origin=FactOrigin.COMPUTED, reads=3),
+            FactEvent(name="contain_feature", value=True, cost=1, origin=FactOrigin.COMPUTED, reads=2),
             FactEvent(name="overlap_exon", value=True, cost=0, origin=FactOrigin.PREFILLED, reads=1),
             FactEvent(name="_codon_alleles", value=("ATG", "ACG"), cost=0, origin=FactOrigin.CACHED, reads=2),
             FactEvent(
@@ -56,7 +57,7 @@ class TestTraceTotals:
 
     def test_computed_cost_counts_only_computed_facts(self, sample_trace: AnnotationTrace) -> None:
         """Only a COMPUTED fact charged anything."""
-        assert sample_trace.computed_cost == 1
+        assert sample_trace.computed_cost == 2
 
     def test_avoided_cost_counts_forced_false_facts(self, sample_trace: AnnotationTrace) -> None:
         """A forced-False fact carries the cost it did not charge."""
@@ -65,7 +66,7 @@ class TestTraceTotals:
     def test_events_by_origin_selects_in_trace_order(self, sample_trace: AnnotationTrace) -> None:
         """Selecting one origin preserves the order the derivation materialised facts in."""
         names = [event.name for event in sample_trace.events_by_origin(FactOrigin.COMPUTED)]
-        assert names == ["overlap_feature"]
+        assert names == ["overlap_feature", "contain_feature"]
 
     def test_an_empty_trace_has_no_cost(self) -> None:
         """Every field defaults to empty, so an unfilled trace still answers."""
@@ -129,7 +130,7 @@ class TestFormatExplanation:
     def test_rendering_reports_read_counts(self, sample_trace: AnnotationTrace) -> None:
         """Read counts are what replaces the old per-lookup memo-hit events."""
         rendered = sample_trace.format_explanation()
-        assert "6 reads" in rendered
+        assert "8 reads" in rendered
         assert "x3" in rendered
 
     def test_rendering_reports_avoided_cost(self, sample_trace: AnnotationTrace) -> None:
