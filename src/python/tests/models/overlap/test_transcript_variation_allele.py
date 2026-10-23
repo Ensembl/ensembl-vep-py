@@ -15,33 +15,32 @@
 # pylint: disable=redefined-outer-name
 """Unit tests for TranscriptVariationAllele class."""
 
+from collections.abc import Callable
+
 import pytest
 
-from ensembl.vep.common import CoordSystemLevel, Readthrough, Strand, is_resolved, reverse_complement
+from ensembl.vep.common import (
+    CoordSystemLevel,
+    ExonPhase,
+    Readthrough,
+    Strand,
+    is_resolved,
+    reverse_complement,
+)
 from ensembl.vep.common.codons import translate_dna
 from ensembl.vep.models.genic import Exon, Transcript, Translation
 from ensembl.vep.models.overlap import TranscriptVariationAllele
-from ensembl.vep.models.overlap.transcript_variation_allele import MAX_READTHROUGH_BASES, _edited_boundary
+from ensembl.vep.models.overlap.transcript_variation_allele import (
+    MAX_READTHROUGH_BASES,
+    Position as TranscriptPosition,
+    _edited_boundary,
+)
 from ensembl.vep.models.sequence import CoordSystem, Slice
 from ensembl.vep.models.variation import VariationAllele
+from tests.models.conftest import DummySlice
 
 CODING_SEQUENCE = "ATG" + "GGG" * 10 + "TAA"  # (M + 10*G + stop), transcript-sense
 REFERENCE_PEPTIDE = "M" + "G" * 10 + "*"
-
-
-class DummySlice(Slice):
-    """Slice with a sequence supplied through the unsafe test hook."""
-
-    def __init__(self, sequence: str) -> None:
-        super().__init__(
-            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
-            seq_region_name="chrPin",
-            start=1,
-            end=len(sequence),
-            strand=Strand.FORWARD,
-        )
-        with self.unsafe() as unsafe_slice:
-            setattr(unsafe_slice, "_seq", sequence)
 
 
 def _write_sequence_at_position(chars: list[str], position: int, sequence: str) -> None:
@@ -205,6 +204,40 @@ def transcript_variation_allele(
     return _transcript_variation_allele(transcript, variation_allele)
 
 
+SINGLE_EXON_CODING_SEQUENCE = "ATG" + "GGG" * 10 + "TAA"
+"""The CDS of ``single_exon_transcript``, genomic positions 4 to 39 on the forward strand."""
+
+SINGLE_EXON_CDS_START = 4
+"""Genomic position of the first coding base of ``single_exon_transcript``."""
+
+SingleExonTranscript = Callable[[ExonPhase | None], Transcript]
+"""Builds the single-exon transcript, its exon carrying the given phase."""
+
+
+def _build_single_exon_transcript(phase: ExonPhase | None) -> Transcript:
+    """Return a forward transcript of one exon at 1-40, coding from 4 to 39."""
+    genomic_slice = DummySlice("NNN" + SINGLE_EXON_CODING_SEQUENCE + "N")
+    transcript = Transcript(
+        start=1, end=40, strand=Strand.FORWARD, stable_id="ENST_SINGLE", slice=genomic_slice
+    )
+    exon = Exon(start=1, end=40, strand=Strand.FORWARD, stable_id="ENST_SINGLE_e0", slice=genomic_slice)
+    exon.phase = phase
+    transcript.spliced_exons = [exon]
+    transcript.seed_attrs(
+        first_coding_exon_index=0,
+        last_coding_exon_index=0,
+        exon_coding_start=SINGLE_EXON_CDS_START,
+        exon_coding_end=39,
+    )
+    return transcript
+
+
+@pytest.fixture(name="single_exon_transcript")
+def fixture_single_exon_transcript() -> SingleExonTranscript:
+    """A builder for the single-exon coding transcript, given its exon's phase."""
+    return _build_single_exon_transcript
+
+
 class TestTranscriptVariationAlleleInitialization:
     """Test TranscriptVariationAllele initialization."""
 
@@ -250,17 +283,17 @@ class TestCodonAlleles:
             "alternate_peptide",
         ),
         [
-            pytest.param(14, 14, "G", "A", "GGG", "GAG", "G", "E", id="missense_snv"),
-            pytest.param(11, 11, "T", "A", "ATG", "AAG", "M", "K", id="start_codon_snv"),
-            pytest.param(14, 15, "GG", "AC", "GGG", "GAC", "G", "D", id="mnv"),
-            pytest.param(30, 30, "G", "A", "GGG", "GGA", "G", "G", id="snv_in_codon_split_across_exons"),
-            pytest.param(15, 17, "GGG", "-", "GGGGGG", "GGG", "GG", "G", id="inframe_deletion"),
-            pytest.param(15, 14, "-", "GGG", "GGG", "GGGGGG", "G", "GG", id="inframe_insertion"),
-            pytest.param(15, 15, "G", "-", "GGG", "GG", "G", "X", id="frameshift_deletion"),
-            pytest.param(15, 14, "-", "AA", "GGG", "GGAAG", "G", "GX", id="frameshift_insertion"),
-            pytest.param(15, 17, "GGG", "A", "GGGGGG", "GGAG", "GG", "GX", id="delins"),
-            pytest.param(8, 11, "NNAT", "-", "ATG", "G", "M", "X", id="deletion_from_utr_into_start_codon"),
-            pytest.param(19, 22, "GGNN", "-", "GGG", "G", "G", "X", id="deletion_from_exon_into_intron"),
+            pytest.param(14, 14, "G", "A", "gGg", "gAg", "G", "E", id="missense_snv"),
+            pytest.param(11, 11, "T", "A", "aTg", "aAg", "M", "K", id="start_codon_snv"),
+            pytest.param(14, 15, "GG", "AC", "gGG", "gAC", "G", "D", id="mnv"),
+            pytest.param(30, 30, "G", "A", "ggG", "ggA", "G", "G", id="snv_in_codon_split_across_exons"),
+            pytest.param(15, 17, "GGG", "-", "ggGGGg", "ggg", "GG", "G", id="inframe_deletion"),
+            pytest.param(15, 14, "-", "GGG", "ggg", "ggGGGg", "G", "GG", id="inframe_insertion"),
+            pytest.param(15, 15, "G", "-", "ggG", "gg", "G", "X", id="frameshift_deletion"),
+            pytest.param(15, 14, "-", "AA", "ggg", "ggAAg", "G", "GX", id="frameshift_insertion"),
+            pytest.param(15, 17, "GGG", "A", "ggGGGg", "ggAg", "GG", "GX", id="delins"),
+            pytest.param(8, 11, "NNAT", "-", "ATg", "g", "M", "X", id="deletion_from_utr_into_start_codon"),
+            pytest.param(19, 22, "GGNN", "-", "GGg", "g", "G", "X", id="deletion_from_exon_into_intron"),
         ],
     )
     def test_codon_alleles(
@@ -275,7 +308,11 @@ class TestCodonAlleles:
         reference_peptide: str,
         alternate_peptide: str,
     ) -> None:
-        """Test that codon and peptide alleles cover every codon the variant touches."""
+        """Test that codon and peptide alleles cover every codon the variant touches.
+
+        Codons carry VEP's display casing -- lower case but for the allele's own bases -- so the
+        expectations below are cased, while the peptides are translated from the bases alone.
+        """
         variation_allele = _variation_allele(transcript, start, end, reference, alternate)
         transcript_variation_allele = _transcript_variation_allele(transcript, variation_allele)
 
@@ -296,10 +333,10 @@ class TestCodonAlleles:
             "alternate_peptide",
         ),
         [
-            pytest.param(65, 65, "T", "A", "ATG", "TTG", "M", "L", id="start_codon_first_base_snv"),
-            pytest.param(63, 63, "C", "T", "ATG", "ATA", "M", "I", id="start_codon_last_base_snv"),
+            pytest.param(65, 65, "T", "A", "Atg", "Ttg", "M", "L", id="start_codon_first_base_snv"),
+            pytest.param(63, 63, "C", "T", "atG", "atA", "M", "I", id="start_codon_last_base_snv"),
             pytest.param(60, 62, "CCC", "-", "GGG", "", "G", "", id="inframe_deletion"),
-            pytest.param(62, 61, "-", "AAA", "GGG", "GTTTGG", "G", "VW", id="inframe_insertion"),
+            pytest.param(62, 61, "-", "AAA", "ggg", "gTTTgg", "G", "VW", id="inframe_insertion"),
         ],
     )
     def test_codon_alleles_reverse_strand(
@@ -328,8 +365,8 @@ class TestCodonAlleles:
         variation_allele = _variation_allele(transcript, 52, 52, "T", "A")
         transcript_variation_allele = _transcript_variation_allele(transcript, variation_allele)
 
-        assert transcript_variation_allele.reference_codon == "TAA"
-        assert transcript_variation_allele.alternate_codon == "AAA"
+        assert transcript_variation_allele.reference_codon == "Taa"
+        assert transcript_variation_allele.alternate_codon == "Aaa"
         assert transcript_variation_allele.reference_peptide == "*"
         assert transcript_variation_allele.alternate_peptide == "K"
 
@@ -980,3 +1017,203 @@ class TestFullCdsAllelesInvalidation:
         assert transcript.translated_seq == stale_translated_seq
         assert after.reference_cds == new_coding_sequence
         assert after.reference_cds_peptide == stale_translated_seq
+
+
+def _codon_window_overlap(
+    single_exon_transcript: SingleExonTranscript, offset: int, end_offset: int, reference: str, alternate: str
+) -> TranscriptVariationAllele:
+    """Return a variant spanning CDS offsets ``offset`` to ``end_offset`` of the single-exon transcript."""
+    transcript = single_exon_transcript(None)
+    variation_allele = VariationAllele(
+        start=SINGLE_EXON_CDS_START + offset,
+        end=SINGLE_EXON_CDS_START + end_offset,
+        strand=Strand.FORWARD,
+        slice=transcript.slice,
+        reference_allele=reference,
+        alternate_allele=alternate,
+    )
+    return TranscriptVariationAllele(feature=transcript, overlapping_feature=variation_allele)
+
+
+class TestDisplayCase:
+    """VEP's ``display_codon``: lower case but for each allele's own bases."""
+
+    @pytest.mark.parametrize(
+        ("offset", "end_offset", "reference", "alternate", "expected"),
+        [
+            pytest.param(4, 4, "G", "A", ("gGg", "gAg"), id="snv"),
+            pytest.param(3, 4, "GG", "CA", ("GGg", "CAg"), id="two_base_substitution"),
+            pytest.param(3, 5, "GGG", "-", ("GGG", ""), id="whole_codon_deletion"),
+            pytest.param(4, 4, "G", "-", ("gGg", "gg"), id="frameshift_deletion"),
+            pytest.param(4, 3, "-", "TTT", ("ggg", "gTTTgg"), id="insertion_inside_a_codon"),
+            pytest.param(3, 2, "-", "TTT", ("", "TTT"), id="insertion_between_codons"),
+        ],
+    )
+    def test_each_allele_is_upper_case_in_its_own_codon(
+        self,
+        single_exon_transcript: SingleExonTranscript,
+        offset: int,
+        end_offset: int,
+        reference: str,
+        alternate: str,
+        expected: tuple[str, str],
+    ) -> None:
+        """A deleted base is upper case on the reference side and simply absent on the other."""
+        overlap = _codon_window_overlap(single_exon_transcript, offset, end_offset, reference, alternate)
+
+        assert (overlap.reference_codon, overlap.alternate_codon) == expected
+
+    def test_an_insertion_between_codons_has_no_reference_window(
+        self, single_exon_transcript: SingleExonTranscript
+    ) -> None:
+        """VEP's window closes before it opens there, leaving the inserted bases on their own."""
+        overlap = _codon_window_overlap(single_exon_transcript, 3, 2, "-", "TTT")
+
+        assert (overlap.reference_codon, overlap.alternate_codon) == ("", "TTT")
+        assert (overlap.reference_peptide, overlap.alternate_peptide) == ("", "F")
+
+    def test_peptides_are_translated_from_the_bases_alone(
+        self, single_exon_transcript: SingleExonTranscript
+    ) -> None:
+        """Case is presentation only: ``gGg`` is still glycine."""
+        overlap = _codon_window_overlap(single_exon_transcript, 4, 4, "G", "A")
+
+        assert (overlap.reference_peptide, overlap.alternate_peptide) == ("G", "E")
+
+
+def _positions_transcript(strand: Strand, phase: ExonPhase | None = None) -> Transcript:
+    """Return a two-exon transcript, exons at 1-20 and 31-60, 3 bases of UTR at each end.
+
+    Forward it codes 4-20 and 31-57; reverse, 57-31 and 20-4. ``phase`` goes on the first coding
+    exon.
+    """
+    genomic_slice = Slice(
+        coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+        seq_region_name="chrPositions",
+        start=1,
+        end=100,
+        strand=Strand.FORWARD,
+    )
+    low_exon = Exon(start=1, end=20, strand=strand, stable_id="ENST_POS_low", slice=genomic_slice)
+    high_exon = Exon(start=31, end=60, strand=strand, stable_id="ENST_POS_high", slice=genomic_slice)
+    exons = [low_exon, high_exon] if strand == Strand.FORWARD else [high_exon, low_exon]
+    exons[0].phase = phase
+    transcript = Transcript(start=1, end=60, strand=strand, stable_id="ENST_POS", slice=genomic_slice)
+    transcript.spliced_exons = exons
+    transcript.seed_attrs(
+        first_coding_exon_index=0, last_coding_exon_index=1, exon_coding_start=4, exon_coding_end=17
+    )
+    return transcript
+
+
+def _positions_overlap(transcript: Transcript, start: int, end: int) -> TranscriptVariationAllele:
+    """Return a variant over ``start``..``end``; ``end == start - 1`` is an insertion."""
+    length = end - start + 1
+    variation_allele = VariationAllele(
+        start=start,
+        end=end,
+        strand=Strand.FORWARD,
+        slice=transcript.slice,
+        reference_allele="A" * length if length else "-",
+        alternate_allele="T" * length if length else "TT",
+    )
+    return TranscriptVariationAllele(feature=transcript, overlapping_feature=variation_allele)
+
+
+def _single_exon_snv(
+    transcript: Transcript, position: int, reference: str, alternate: str
+) -> TranscriptVariationAllele:
+    """Return an SNV at ``position`` over ``transcript``."""
+    variation_allele = VariationAllele(
+        start=position,
+        end=position,
+        strand=Strand.FORWARD,
+        slice=transcript.slice,
+        reference_allele=reference,
+        alternate_allele=alternate,
+    )
+    return TranscriptVariationAllele(feature=transcript, overlapping_feature=variation_allele)
+
+
+class TestPadding:
+    """Codons, the full CDS and the positions of an overlap, in the padded frame."""
+
+    def test_codons_are_read_in_the_padded_frame(self, single_exon_transcript: SingleExonTranscript) -> None:
+        """The start codon's third base opens codon 1 once the frame shifts by one."""
+        overlap = _single_exon_snv(single_exon_transcript(ExonPhase.ONE), SINGLE_EXON_CDS_START + 2, "G", "A")
+
+        assert (overlap.reference_codon, overlap.alternate_codon) == ("Ggg", "Agg")
+        assert (overlap.reference_peptide, overlap.alternate_peptide) == ("G", "R")
+
+    def test_the_full_cds_carries_the_same_padding(
+        self, single_exon_transcript: SingleExonTranscript
+    ) -> None:
+        """Reference and alternate CDS stay aligned with the codon window."""
+        overlap = _single_exon_snv(single_exon_transcript(ExonPhase.TWO), SINGLE_EXON_CDS_START + 5, "G", "A")
+
+        assert overlap.reference_cds == "NN" + SINGLE_EXON_CODING_SEQUENCE
+        assert overlap.alternate_cds is not None
+        assert overlap.alternate_cds.startswith("NN")
+        assert len(overlap.alternate_cds) == len(overlap.reference_cds)
+        assert overlap.reference_cds_peptide == translate_dna("NN" + SINGLE_EXON_CODING_SEQUENCE)
+
+    def test_the_start_phase_shifts_cds_and_protein_positions(self) -> None:
+        """Phase 1: one padding base before the CDS, so its first base is CDS position 2."""
+        overlap = _positions_overlap(_positions_transcript(Strand.FORWARD, ExonPhase.ONE), 6, 6)
+
+        assert overlap.cdna_position == (6, 6)
+        assert overlap.cds_position == (4, 4)
+        assert overlap.protein_position == (2, 2)
+
+
+class TestPositions:
+    """An overlap's cDNA, CDS and protein positions, and how they are written.
+
+    The 5' end comes first whichever strand the transcript is on, a sequence the variant misses
+    gives no position at all, and one end off the sequence gives None there -- which the output
+    writes as ``?``.
+    """
+
+    @pytest.mark.parametrize(
+        ("start", "end", "cdna", "cds", "protein"),
+        [
+            pytest.param(10, 10, (10, 10), (7, 7), (3, 3), id="first_exon_snv"),
+            pytest.param(35, 35, (25, 25), (22, 22), (8, 8), id="second_exon_snv"),
+            pytest.param(18, 33, (18, 23), (15, 20), (5, 7), id="deletion_over_the_intron"),
+            pytest.param(25, 33, (None, 23), (None, 20), (None, 7), id="five_prime_end_in_the_intron"),
+            pytest.param(11, 10, (10, 11), (7, 8), (3, 3), id="insertion"),
+            pytest.param(2, 2, (2, 2), None, None, id="five_prime_utr"),
+            pytest.param(25, 25, None, None, None, id="intronic"),
+        ],
+    )
+    def test_each_end_is_placed_or_marked_missing(
+        self,
+        start: int,
+        end: int,
+        cdna: TranscriptPosition | None,
+        cds: TranscriptPosition | None,
+        protein: TranscriptPosition | None,
+    ) -> None:
+        """A sequence the variant misses gives no position; one end off it gives None there."""
+        overlap = _positions_overlap(_positions_transcript(Strand.FORWARD), start, end)
+
+        assert overlap.cdna_position == cdna
+        assert overlap.cds_position == cds
+        assert overlap.protein_position == protein
+
+    @pytest.mark.parametrize(
+        ("start", "end", "cdna", "cds"),
+        [
+            pytest.param(57, 57, (4, 4), (1, 1), id="first_coding_base"),
+            pytest.param(55, 57, (4, 6), (1, 3), id="start_codon_deletion"),
+            pytest.param(18, 33, (28, 33), (25, 30), id="deletion_over_the_intron"),
+        ],
+    )
+    def test_positions_count_from_the_high_end(
+        self, start: int, end: int, cdna: TranscriptPosition, cds: TranscriptPosition
+    ) -> None:
+        """The 5' end comes first whichever strand the transcript is on."""
+        overlap = _positions_overlap(_positions_transcript(Strand.REVERSE), start, end)
+
+        assert overlap.cdna_position == cdna
+        assert overlap.cds_position == cds
