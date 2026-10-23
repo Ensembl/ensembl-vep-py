@@ -75,11 +75,7 @@ class AnnotationTrace:
     @property
     def avoided_cost(self) -> int:
         """Return the declared cost avoided through ``requires`` propagation."""
-        avoided = 0
-        for event in self.fact_events:
-            if event.origin is FactOrigin.FORCED_FALSE:
-                avoided += event.cost
-        return avoided
+        return sum(event.cost for event in self.fact_events if event.origin is FactOrigin.FORCED_FALSE)
 
     def format_explanation(self) -> str:
         """Return this trace as a human-readable derivation.
