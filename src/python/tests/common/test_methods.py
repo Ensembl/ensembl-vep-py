@@ -199,6 +199,49 @@ class TestCacheInvalidation:
         ), "Protected range attribute should not change on invalidation of length"
 
 
+class TestInvalidateDebugCheck:
+    """Tests for where the protected-name naming check lives.
+
+    ``invalidate`` does no name validation itself -- it deletes whatever it is given and swallows
+    AttributeError if there is nothing to delete. The "should start with _" check lives in
+    ``invalidates()``, once, when it builds the hook.
+    """
+
+    def test_invalidate_deletes_whatever_name_it_is_given(self) -> None:
+        """invalidate() does not special-case a public name: it deletes it if present."""
+
+        probe = _CacheInvalidationProbe(start=1, end=10)
+
+        invalidate(probe, "end")
+
+        with pytest.raises(AttributeError):
+            _ = probe.end  # pylint: disable=pointless-statement
+
+    def test_invalidate_does_not_raise_for_an_unresolved_name(self) -> None:
+        """invalidate() no-ops for a cached property that was never computed."""
+
+        probe = _CacheInvalidationProbe(start=1, end=10)
+
+        invalidate(probe, "_length")
+
+        assert "_length" not in probe.__dict__
+
+    def test_invalidates_warns_once_at_hook_creation_for_a_public_name(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """invalidates() logs when it is called, not each time the built hook runs."""
+
+        with caplog.at_level("DEBUG", logger="ensembl.vep"):
+            hook = invalidates("not_protected")
+        assert any("not_protected" in record.message for record in caplog.records)
+
+        caplog.clear()
+        with caplog.at_level("DEBUG", logger="ensembl.vep"):
+            hook(_CacheInvalidationProbe(start=1, end=10), None, 5)
+
+        assert caplog.records == []
+
+
 class TestAttributeReset:
     """Tests for the attribute reset functions."""
 
@@ -461,18 +504,20 @@ class TestParseRegionString:
         assert parse_region_string(format_region_string(seq_region_name="1", start=5, end=9)) == ("1", 5, 9)
 
     @pytest.mark.parametrize(
-        ("region", "error_match"),
-        [
-            pytest.param("", None, id="empty"),
-            pytest.param("chr1:x-20", None, id="not-a-number"),
-            pytest.param("chr1:0-20", "1-based", id="not-positive"),
-        ],
+        "region",
+        [pytest.param("", id="empty"), pytest.param("chr1:x-20", id="not-a-number")],
     )
-    def test_rejects_an_unparseable_region(self, region: str, error_match: str | None) -> None:
+    def test_rejects_an_unparseable_region(self, region: str) -> None:
         """Raises when the region is empty or its coordinates are not integers."""
 
-        with pytest.raises(ValueError, match=error_match):
+        with pytest.raises(ValueError):
             parse_region_string(region)
+
+    def test_rejects_non_positive_coordinates(self) -> None:
+        """Raises because regions are 1-based."""
+
+        with pytest.raises(ValueError, match="1-based"):
+            parse_region_string("chr1:0-20")
 
 
 class TestFormatRegionString:
