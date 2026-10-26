@@ -15,11 +15,17 @@
 
 from __future__ import annotations
 
-from attrs import define
+from attrs import define, field
 
 from ensembl.vep.models import Feature
 
 
 @define(kw_only=True, auto_attribs=True)
 class CustomFeature(Feature):
-    """CustomFeature class (to be implemented)."""
+    """Represent one record retrieved from a custom annotation track.
+
+    Attributes:
+        record (dict[str, object]): Source-native fields for this feature.
+    """
+
+    record: dict[str, object] = field(factory=dict)

@@ -114,10 +114,6 @@ class Readthrough(IntEnum):
 
     Opt-in, and ``NONE`` by default. An ``IntEnum`` because the levels are ordered rather
     than independent, each one extends the previous.
-
-    Note that raising the level can only ever change the answer for a variant that leaves no
-    in-frame stop inside the coding sequence: when the stop codon survives intact and in frame,
-    translation terminates there whatever the bound is.
     """
 
     NONE = 0
@@ -131,3 +127,43 @@ class Readthrough(IntEnum):
     """As ``UTR``, and if that still yields no stop, continue into raw genomic sequence past the
     transcript's own boundary, read directly from the attached slice (bounded by 
     ``MAX_READTHROUGH_BASES``). Trusts that the attached slice already covers the flank."""
+
+
+class CostTier(IntEnum):
+    """The declared cost tiers a fact can be registered with, cheapest first.
+
+    An ``IntEnum`` rather than a plain ``int`` alias, so a tier is both a real integer (comparable,
+    summable, sortable) and a self-naming, enumerable value: ``CostTier.MAPPING.name`` instead of
+    a hand-maintained ``{20: "MAPPING"}`` lookup, and ``list(CostTier)`` for anything that wants
+    every tier without duplicating this declaration.
+
+    The numbers are relative in magnitude and not absolute. The declared relative magnitudes do
+    not match measured wall-clock time. Treat the tier ordering as load-bearing and the numeric
+    ratios as illustrative only.
+    """
+
+    FREE = 0
+    """Arithmetic on the variant alone."""
+    BOUNDS = 1
+    """Comparing against a single bound (e.g. transcript start/end)."""
+    INTERVAL = 5
+    """Scanning exon/intron interval lists."""
+    MAPPING = 20
+    """Genomic -> CDS coordinate mapping."""
+    SEQUENCE = 60
+    """Extracting sequence, splicing in the alt allele, translating."""
+    TRANSCRIPT_SEQUENCE = 200
+    """Rebuilding or translating the whole CDS or cDNA, not just the touched codon window."""
+
+    @classmethod
+    def label(cls, cost: int) -> str:
+        """Return the name of the tier ``cost`` belongs to, or the number itself.
+
+        A declared cost is a member, so this is ``cost.name``. The measured-cost override
+        (``data/fact_costs.json``, opt-in) sets arbitrary profiled integers that match no tier, so
+        the numeric fallback is the normal case there rather than an error.
+        """
+        try:
+            return cls(cost).name
+        except ValueError:
+            return str(cost)

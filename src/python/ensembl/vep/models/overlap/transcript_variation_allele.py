@@ -21,6 +21,7 @@ from threading import RLock
 from attr import define, field
 
 from ensembl.vep.common import Readthrough, SequenceEdit, Strand, invalidates, reverse_complement
+from ensembl.vep.common.constants import EMPTY_ALLELE
 from ensembl.vep.common.codons import translate_dna
 from ensembl.vep.models.overlap.feature_overlap import FeatureOverlap
 
@@ -32,6 +33,10 @@ if TYPE_CHECKING:
 
 MAX_READTHROUGH_BASES = 1000
 """Cap on how far ``Readthrough.BEYOND_TRANSCRIPT`` reads past a transcript's own boundary."""
+
+Position = tuple[int | None, int | None]
+"""1-based positions. Primarily used for a variant's 5' and 3' ends on a transcript sequence, None for an
+end that lies off it"""
 
 
 def _nucleotide_sequence_up_to_stop(nucleotide_sequence: str) -> tuple[str, str]:
@@ -91,12 +96,13 @@ class TranscriptVariationAllele(FeatureOverlap):
             The variation allele that is overlapping.
         is_reference (bool):
             Whether the overlapping variation allele is the reference allele.
-        cdna_locus (Locus):
-            The locus of the variation allele on the cDNA sequence of the transcript.
-        cds_locus (Locus | None):
-            The locus of the variation allele on the CDS sequence of the transcript.
-        protein_locus (Locus | None):
-            The locus of the variation allele on the protein sequence of the transcript.
+        cdna_position (Position | None):
+            The variant's position on the spliced transcript, or None if it touches no exon.
+        cds_position (Position | None):
+            The variant's position on the CDS, counted from a whole first codon, or None if
+            it does not touch the CDS.
+        protein_position (Position | None):
+            The residues the variant's two ends fall in, or None if it does not touch the CDS.
         distance_to_transcript (int | None):
             The distance from the variation allele to the transcript,
             or None if the variation allele overlaps the transcript.
@@ -109,9 +115,11 @@ class TranscriptVariationAllele(FeatureOverlap):
         reference_codon (str | None):
             The reference allele's whole-codon window in the CDS (transcript-sense), covering
             every codon touched by the variant, or None if the variant does not overlap the CDS.
+            Cased for display as VEP writes it: lower case but for the allele's own bases.
         alternate_codon (str | None):
             The alternate allele's whole-codon window in the CDS (transcript-sense), i.e.
-            reference_codon with the variant allele spliced in, or None if not applicable.
+            reference_codon with the variant allele spliced in, or None if not applicable. Cased
+            the same way, so a deletion's is all lower case.
         reference_peptide (str | None):
             The amino acid translation of reference_codon, or None if not applicable.
         alternate_peptide (str | None):
@@ -136,15 +144,108 @@ class TranscriptVariationAllele(FeatureOverlap):
     readthrough: Readthrough = field(
         default=Readthrough.NONE, on_setattr=invalidates("_full_cds_alleles", "_full_peptide_alleles")
     )
-    cdna_locus: Locus = field(init=False, on_setattr=invalidates("_hgvs_transcript"))
-    cds_locus: Locus | None = field(
-        default=None, init=False, on_setattr=invalidates("_hgvs_transcript", "_hgvs_protein")
-    )
-    protein_locus: Locus | None = field(default=None, init=False, on_setattr=invalidates("_hgvs_protein"))
     distance_to_transcript: int | None = field(default=None, init=False)
     exon_number: int | None = field(default=None, init=False)
     intron_number: int | None = field(default=None, init=False)
     _lock: RLock = field(factory=RLock, init=False, repr=False)
+
+    def _position_on(self, mapper: Mapper | None) -> Position | None:
+        """Place the variant's 5' and 3' ends on ``mapper``'s sequence, 1-based.
+
+        An insertion's ends are its two flanking bases. As in VEP, where the Ensembl mapper answers
+        a gap for an end off the sequence, that end is None; a variant covering none of ``mapper``'s
+        spans has no position at all.
+
+        Args:
+            mapper (Mapper | None): The mapper whose sequence to place the variant on.
+
+        Returns:
+            Position | None: The two ends, or None if the variant misses every span.
+        """
+        if mapper is None:
+            return None
+        variant = self.overlapping_feature
+        variant_min, variant_max = min(variant.start, variant.end), max(variant.start, variant.end)
+        if mapper.genomic_span_to_offsets(variant_min, variant_max) is None:
+            return None
+
+        if self.feature.strand == Strand.REVERSE:
+            five_prime_end, three_prime_end = variant_max, variant_min
+        else:
+            five_prime_end, three_prime_end = variant_min, variant_max
+        five_prime_offset = mapper.genomic_to_offset(five_prime_end)
+        three_prime_offset = mapper.genomic_to_offset(three_prime_end)
+        return (
+            None if five_prime_offset is None else five_prime_offset + 1,
+            None if three_prime_offset is None else three_prime_offset + 1,
+        )
+
+    @property
+    def cdna_position(self) -> Position | None:
+        """Public accessor for _cdna_position.
+
+        Returns:
+            Position | None: The variant's position on the spliced transcript, or None if
+                it touches no exon.
+        """
+        return self._cdna_position
+
+    @cached_property
+    def _cdna_position(self) -> Position | None:
+        """Place the variant on the spliced transcript.
+
+        Returns:
+            Position | None: The position, or None if the variant touches no exon.
+        """
+        return self._position_on(self.feature.cdna_mapper)
+
+    @property
+    def cds_position(self) -> Position | None:
+        """Public accessor for _cds_position.
+
+        Returns:
+            Position | None: The variant's position on the CDS, or None if it does not
+                touch the CDS.
+        """
+        return self._cds_position
+
+    @cached_property
+    def _cds_position(self) -> Position | None:
+        """Place the variant on the CDS.
+
+        CDS offsets already start after any ``cds_start_phase`` padding, so a CDS with an
+        incomplete 5' end is counted from a whole first codon, as VEP adds the start exon's phase.
+
+        Returns:
+            Position | None: The position, or None if the variant does not touch the CDS.
+        """
+        return self._position_on(self.feature.cds_mapper)
+
+    @property
+    def protein_position(self) -> Position | None:
+        """Public accessor for _protein_position.
+
+        Returns:
+            Position | None: The residues the variant's two ends fall in, or None if it
+                does not touch the CDS.
+        """
+        return self._protein_position
+
+    @cached_property
+    def _protein_position(self) -> Position | None:
+        """Derive the residue positions from the CDS positions, three bases a residue.
+
+        Returns:
+            Position | None: The residue positions, or None if the variant does not touch
+                the CDS.
+        """
+        cds_position = self.cds_position
+        if cds_position is None:
+            return None
+        residues: list[int | None] = []
+        for position in cds_position:
+            residues.append(None if position is None else (position - 1) // 3 + 1)
+        return residues[0], residues[1]
 
     def _edit_on(self, mapper: Mapper | None) -> SequenceEdit | None:
         """Express the edit caused by this variant in ``mapper``'s offset space.
@@ -171,8 +272,8 @@ class TranscriptVariationAllele(FeatureOverlap):
                 return None
             low_offset, high_offset = footprint
 
-            alternate_allele = (variant.alternate_allele or "").replace("-", "")
-            reference_allele_length = len((variant.reference_allele or "").replace("-", ""))
+            alternate_allele = (variant.alternate_allele or "").replace(EMPTY_ALLELE, "")
+            reference_allele_length = len((variant.reference_allele or "").replace(EMPTY_ALLELE, ""))
             transcript_sense_alternate = (
                 alternate_allele
                 if self.feature.strand == Strand.FORWARD
@@ -237,6 +338,13 @@ class TranscriptVariationAllele(FeatureOverlap):
         """Returns (reference_codon, alternate_codon), the whole-codon window around the variant,
         in transcript-sense, with the variant allele spliced in for the alternate half.
 
+        An insertion that falls between two codons has an empty reference window and the inserted
+        bases as its alternate one, as VEP's does.
+
+        Each is lower case but for its own allele's bases, which are upper case: VEP's
+        ``display_codon``. An empty allele (the reference side of an insertion, the alternate side
+        of a deletion) leaves its codon all lower case. Anything computing on a codon upper-cases it
+        first.
         Returns:
             tuple[str, str] | None: (reference_codon, alternate_codon), or None if the variant
                 does not overlap the CDS.
@@ -256,13 +364,18 @@ class TranscriptVariationAllele(FeatureOverlap):
             if coding_sequence is None:
                 return None
 
+            if edit.start == edit.end and edit.start % 3 == 0:
+                # An insertion between two codons: VEP's window runs from the residue after the
+                # insertion point back to the one before it, which is empty, leaving the inserted
+                # bases alone on the alternate side (``TranscriptVariationAllele::codon``).
+                return "", edit.replacement.upper()
+
             codon_start, codon_end = window
-            reference_codon = coding_sequence[codon_start:codon_end]
-            alternate_codon = (
-                coding_sequence[codon_start : edit.start]
-                + edit.replacement
-                + coding_sequence[edit.end : codon_end]
-            )
+            leading_bases = coding_sequence[codon_start : edit.start].lower()
+            trailing_bases = coding_sequence[edit.end : codon_end].lower()
+            reference_bases = coding_sequence[edit.start : edit.end].upper()
+            reference_codon = leading_bases + reference_bases + trailing_bases
+            alternate_codon = leading_bases + edit.replacement.upper() + trailing_bases
             return reference_codon, alternate_codon
 
     @property
@@ -297,7 +410,7 @@ class TranscriptVariationAllele(FeatureOverlap):
         if codons is None:
             return None
         reference_codon, alternate_codon = codons
-        return translate_dna(reference_codon), translate_dna(alternate_codon)
+        return translate_dna(reference_codon.upper()), translate_dna(alternate_codon.upper())
 
     @property
     def cds_length_change(self) -> int | None:
@@ -499,7 +612,7 @@ class TranscriptVariationAllele(FeatureOverlap):
         that case via ``Translation.derived_from_coding_sequence``. A hypothetical future source
         could instead seed a curated peptide (for example, one edited for selenocysteine or without
         a trailing stop), which the stop facts compare positionally against this CDS -- so reuse is
-        guarded to the cases where that cannot have happened: the transcript's CDS is built and
+        guarded to the cases where that cannot have happened: the transcript's coding sequence
         matches ``reference_cds`` in length, and its translation is either unset, has no seq of its
         own, or is marked as derived from this same coding sequence.
 
@@ -516,9 +629,8 @@ class TranscriptVariationAllele(FeatureOverlap):
             str: The reference CDS peptide.
         """
         transcript = self.feature
-        cds = transcript.cds
-        cds_length = transcript.cds_length
-        if cds is None or cds.seq is None or cds_length is None or len(cds.seq) != cds_length:
+        coding_sequence = transcript.coding_sequence
+        if coding_sequence is None or len(coding_sequence) != len(reference_cds):
             return translate_dna(reference_cds)
 
         translation = transcript.translation

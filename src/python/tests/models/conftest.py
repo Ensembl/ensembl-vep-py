@@ -17,6 +17,8 @@
 from attrs import define, field
 import pytest
 
+from ensembl.vep.common.enums import CoordSystemLevel, Strand
+from ensembl.vep.models.sequence import CoordSystem, Slice
 from ensembl.vep.sources.sequence_source import SequenceSource
 
 
@@ -48,3 +50,19 @@ class DummySequenceSource(SequenceSource):
 def dummy_sequence_source() -> DummySequenceSource:
     """Create an empty in-memory sequence source."""
     return DummySequenceSource()
+
+
+class DummySlice(Slice):
+    """Slice with a sequence supplied through the unsafe test hook."""
+
+    def __init__(self, sequence: str, feature_start: int = 1) -> None:
+        padded_sequence = ("N" * (feature_start - 1)) + sequence
+        super().__init__(
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+            seq_region_name="1",
+            start=1,
+            end=len(padded_sequence),
+            strand=Strand.FORWARD,
+        )
+        with self.unsafe() as unsafe_slice:
+            setattr(unsafe_slice, "_seq", padded_sequence)
