@@ -29,6 +29,9 @@ CANONICAL_DNA_BASES = "ACGT"
 EMPTY_ALLELE = "-"
 """VEP's spelling of an empty allele."""
 
+UNKNOWN_VALUE = "?"
+"""Placeholder printed where a label's field is not available."""
+
 VCF_BASES = frozenset("ACGTN")
 """Base characters accepted in a plain VCF allele, including the unknown base ``N``."""
 
