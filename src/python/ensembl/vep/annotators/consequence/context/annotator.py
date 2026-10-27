@@ -84,14 +84,14 @@ class AnnotatorContext:
 
         Order is load-bearing and not arbitrary:
 
-        0. **Readthrough level first.** It changes what the sequence tier will compute, and
            assigning it invalidates the overlap's cached CDS alleles -- so it has to land before
+        1. **Readthrough level first.** It changes what the sequence tier will compute, and
            anything reads them, for the same reason the codon cache has to land before the
            sequence tier are evaluated.
-        1. **Zone map next.** It prefills the positional tier, including ``overlap_feature`` and
+        2. **Zone map second.** It prefills the positional tier, including ``overlap_feature`` and
            ``overlap_exon``, which is exactly what the codon cache's gate reads next, so running
            it first makes that gate free rather than evaluated.
-        2. **Codon cache second, and still before any rule is evaluated.** Injecting once the
+        3. **Codon cache third, and still before any rule is evaluated.** Injecting once the
            sequence tier has already been reached is too late: the evaluation cost has been charged
            and the cache saves nothing.
 
