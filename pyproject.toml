@@ -104,6 +104,7 @@ where = ["src/python"]
 
 [tool.setuptools.package-data]
 "ensembl.vep.corpus.golden" = ["data/**/*"]
+"ensembl.vep.annotators.consequence" = ["data/*.json"]
 
 [[tool.setuptools-rust.ext-modules]]
 # Private Rust extension module to be nested into the Python package

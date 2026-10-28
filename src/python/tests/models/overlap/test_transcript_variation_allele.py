@@ -19,6 +19,8 @@ from collections.abc import Callable
 
 import pytest
 
+from ensembl.vep.annotators.consequence.context.fact import FactContext
+from ensembl.vep.annotators.consequence.facts.base import get_fact
 from ensembl.vep.common import (
     CoordSystemLevel,
     ExonPhase,
@@ -1079,6 +1081,12 @@ class TestDisplayCase:
         overlap = _codon_window_overlap(single_exon_transcript, 4, 4, "G", "A")
 
         assert (overlap.reference_peptide, overlap.alternate_peptide) == ("G", "E")
+
+    def test_the_codon_fact_is_upper_case(self, single_exon_transcript: SingleExonTranscript) -> None:
+        """Upper-case displayed codons before comparing bases in the fact layer."""
+        overlap = _codon_window_overlap(single_exon_transcript, 4, 4, "G", "A")
+
+        assert get_fact(FactContext(overlap=overlap), "_codon_alleles") == ("GGG", "GAG")
 
 
 def _positions_transcript(strand: Strand, phase: ExonPhase | None = None) -> Transcript:
