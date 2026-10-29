@@ -389,10 +389,10 @@ class FactAssignmentSpace:
     def satisfies(self, expression: Expr) -> bool:
         """Return whether an expression has a consistent assignment over ``support``.
 
-        This is the existential counterpart to ``_enumerate_valid_assignments``. It propagates the
-        declared implications and axioms while assigning only atoms that are still needed to settle
-        the expression. The remaining atoms can then be False, so a settled True expression has a
-        consistent full extension without enumerating every irrelevant combination.
+        This searches different combinations of values of atoms making up an expression to check
+        whether given the logical constraints of the expression, it is possible for the expression
+        to be satisfied. It is just checking if it is possible for the expression to be satisfied,
+        so it stops as soon as it finds a valid set of assignments.
 
         Args:
             expression (Expr): The expression whose satisfiability is being checked.
