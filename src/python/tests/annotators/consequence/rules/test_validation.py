@@ -103,7 +103,7 @@ class TestTier1StructuralChecks:
         assert not StructuralChecks.subsumption_cycles(FactRuleSet(rules=(rule_a, rule_b)))
 
     def test_catalogue_when_presence_matches_excluded_terms_exactly(self) -> None:
-        """Catalogue when presence matches excluded terms exactly."""
+        """``missing_when_terms`` matches excluded terms exactly on current catalogue."""
         assert not StructuralChecks.missing_when_terms()
 
     def test_so_parent_drift_report_runs_and_returns_strings(self, transcript_ruleset: FactRuleSet) -> None:
