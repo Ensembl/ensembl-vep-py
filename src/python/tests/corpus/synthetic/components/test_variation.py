@@ -38,7 +38,7 @@ class TestVariantComponents:
         assert len(signature) == 655
         assert (
             hashlib.sha256(encoded).hexdigest()
-            == "7b0662d7adee7623ce148a37ea08c7af6f300693c0b696cbc6e95960573c0ed8"
+            == "7456b0db368fecba14b3ead2caaada23bec272dd25c4b1e7ac92475afc652c2c"
         )
 
     def test_fuzz_count_must_not_be_negative(self) -> None:

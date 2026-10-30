@@ -97,6 +97,7 @@ def intron_offsets_to_genomic_span(
     ``from_donor`` is True, else from its 3' end (acceptor). The donor is ``intron.start`` on the
     forward strand and ``intron.end`` on the reverse strand (the intron's 5' end in transcript
     sense is the high genomic coordinate there).
+    Positions are clipped to the start and end of the intron so that they are never outside an intron.
     """
     if strand == Strand.FORWARD:
         five_prime_pos, three_prime_pos, step = intron.start, intron.end, 1
@@ -106,7 +107,12 @@ def intron_offsets_to_genomic_span(
     direction = step if from_donor else -step
     position_a = anchor + direction * (low - 1)
     position_b = anchor + direction * (high - 1)
-    return (position_a, position_b) if position_a <= position_b else (position_b, position_a)
+    if position_a > position_b:
+        (position_a, position_b) = (position_b, position_a)
+    # clip to intron
+    position_a = max(position_a, intron.start)
+    position_b = min(position_b, intron.end)
+    return (position_a, position_b)
 
 
 def intron_offset_hit(
