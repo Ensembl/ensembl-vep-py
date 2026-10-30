@@ -289,8 +289,8 @@ class ZoneMap:
             # Genomic, strand-agnostic windows -- no strand resolution needed, unlike every
             # offset-based span below. See overlap_intron_boundary's own docstring (position.py) for
             # the known coverage gap relative to overlap_polypyrimidine_tract/overlap_splice_region.
-            add("overlap_intron_boundary", intron.start - 4, intron.start + 8)
-            add("overlap_intron_boundary", intron.end - 8, intron.end + 4)
+            add("overlap_intron_boundary", intron.start - 3, intron.start + 7)
+            add("overlap_intron_boundary", intron.end - 7, intron.end + 3)
             strand = transcript.strand
             add("overlap_donor_site", *intron_offsets_to_genomic_span(intron, strand, 1, 2, True))
             add("overlap_acceptor_site", *intron_offsets_to_genomic_span(intron, strand, 1, 2, False))
