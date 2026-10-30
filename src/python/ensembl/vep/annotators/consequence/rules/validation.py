@@ -58,8 +58,8 @@ __all__ = [
 class StructuralChecks:
     """Run validation checks that require no formula evaluation.
 
-    Grouped rather than left as loose functions because they share one subject -- the declared
-    shape of a rule set -- and because ``ruleset_problems`` folds the others in.
+    Grouped rather than left as loose functions because they share one subject - the declared
+    shape of a rule set.
     """
 
     @classmethod
