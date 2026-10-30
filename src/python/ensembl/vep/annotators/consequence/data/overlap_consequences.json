@@ -1,0 +1,1163 @@
+{
+    "schema_version": 5,
+    "source": {
+        "vep": "Bio::EnsEMBL::Variation::Utils::Constants::OVERLAP_CONSEQUENCES",
+        "ontology": "Sequence Ontology"
+    },
+    "consequences": [
+        {
+            "term": "transcript_ablation",
+            "accession": "SO:0001893",
+            "rank": 1,
+            "tier": 1,
+            "impact": "HIGH",
+            "so_supported_parents": [
+                "SO:0001060"
+            ],
+            "when": {
+                "all": [
+                    "is_structural",
+                    "is_transcript",
+                    "contain_feature",
+                    "is_structural_deletion"
+                ]
+            },
+            "subsumes": [
+                "coding_sequence_variant",
+                "coding_transcript_variant",
+                "intron_variant",
+                "non_coding_transcript_variant",
+                "non_coding_transcript_exon_variant",
+                "5_prime_UTR_variant",
+                "3_prime_UTR_variant"
+            ]
+        },
+        {
+            "term": "splice_acceptor_variant",
+            "accession": "SO:0001574",
+            "rank": 2,
+            "tier": 3,
+            "impact": "HIGH",
+            "so_supported_parents": [
+                "SO:0001060",
+                "SO:0001627"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_intron_boundary",
+                    "overlap_acceptor_site"
+                ]
+            },
+            "subsumes": [
+                "splice_region_variant",
+                "coding_transcript_variant",
+                "stop_gained",
+                "stop_lost",
+                "stop_retained_variant",
+                "start_lost",
+                "start_retained_variant",
+                "frameshift_variant",
+                "missense_variant",
+                "synonymous_variant",
+                "inframe_deletion",
+                "inframe_insertion"
+            ]
+        },
+        {
+            "term": "splice_donor_variant",
+            "accession": "SO:0001575",
+            "rank": 3,
+            "tier": 3,
+            "impact": "HIGH",
+            "so_supported_parents": [
+                "SO:0001060",
+                "SO:0001627"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_intron_boundary",
+                    "overlap_donor_site"
+                ]
+            },
+            "subsumes": [
+                "splice_region_variant",
+                "coding_transcript_variant",
+                "stop_gained",
+                "stop_lost",
+                "stop_retained_variant",
+                "start_lost",
+                "start_retained_variant",
+                "frameshift_variant",
+                "missense_variant",
+                "synonymous_variant",
+                "inframe_deletion",
+                "inframe_insertion"
+            ]
+        },
+        {
+            "term": "stop_gained",
+            "accession": "SO:0001587",
+            "rank": 4,
+            "tier": 3,
+            "impact": "HIGH",
+            "so_supported_parents": [
+                "SO:0001906",
+                "SO:0001818"
+            ],
+            "when": {
+                "all": [
+                    {
+                        "not": "is_structural"
+                    },
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_cds",
+                    {
+                        "any": [
+                            {
+                                "all": [
+                                    {
+                                        "not": "peptide_has_X"
+                                    },
+                                    "alt_peptide_has_ter",
+                                    {
+                                        "not": "ref_peptide_has_ter"
+                                    }
+                                ]
+                            },
+                            {
+                                "all": [
+                                    "peptide_has_X",
+                                    "cds_stop_gain"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "subsumes": [
+                "coding_sequence_variant",
+                "protein_altering_variant",
+                "coding_transcript_variant",
+                "missense_variant"
+            ]
+        },
+        {
+            "term": "frameshift_variant",
+            "accession": "SO:0001589",
+            "rank": 5,
+            "tier": 3,
+            "impact": "HIGH",
+            "so_supported_parents": [
+                "SO:0001818"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_cds",
+                    {
+                        "any": [
+                            {
+                                "all": [
+                                    {
+                                        "not": "is_structural"
+                                    },
+                                    "is_short_indel",
+                                    {
+                                        "not": "ref_peptide_startswith_ter"
+                                    },
+                                    {
+                                        "not": "cds_length_change_inframe"
+                                    }
+                                ]
+                            },
+                            {
+                                "all": [
+                                    "is_structural",
+                                    "cds_length_change_inframe"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "subsumes": [
+                "protein_altering_variant",
+                "coding_sequence_variant",
+                "coding_transcript_variant"
+            ]
+        },
+        {
+            "term": "stop_lost",
+            "accession": "SO:0001578",
+            "rank": 6,
+            "tier": 3,
+            "impact": "HIGH",
+            "so_supported_parents": [
+                "SO:0001580",
+                "SO:0001907",
+                "SO:0001818"
+            ],
+            "when": {
+                "all": [
+                    {
+                        "not": "is_structural"
+                    },
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_cds",
+                    {
+                        "any": [
+                            {
+                                "all": [
+                                    {
+                                        "not": "peptide_has_X"
+                                    },
+                                    {
+                                        "not": "alt_peptide_has_ter"
+                                    },
+                                    "ref_peptide_has_ter"
+                                ]
+                            },
+                            {
+                                "all": [
+                                    "peptide_has_X",
+                                    "cds_stop_lost"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "subsumes": [
+                "coding_sequence_variant",
+                "protein_altering_variant",
+                "coding_transcript_variant",
+                "missense_variant",
+                "stop_gained"
+            ]
+        },
+        {
+            "term": "start_lost",
+            "accession": "SO:0002012",
+            "rank": 7,
+            "tier": 3,
+            "impact": "HIGH",
+            "so_supported_parents": [
+                "SO:0001580",
+                "SO:0001818"
+            ],
+            "when": {
+                "all": [
+                    {
+                        "not": "is_structural"
+                    },
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_cds",
+                    "overlap_start_codon",
+                    {
+                        "any": [
+                            {
+                                "all": [
+                                    {
+                                        "not": "peptide_has_X"
+                                    },
+                                    {
+                                        "not": "insertion_before_start"
+                                    },
+                                    {
+                                        "not": "insertion_after_start"
+                                    },
+                                    {
+                                        "all": [
+                                            "peptide_changed",
+                                            "peptide_same_length"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "all": [
+                                    "peptide_has_X",
+                                    "cds_start_lost"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "subsumes": [
+                "coding_transcript_variant",
+                "coding_sequence_variant",
+                "protein_altering_variant",
+                "missense_variant",
+                "inframe_insertion"
+            ]
+        },
+        {
+            "term": "transcript_amplification",
+            "accession": "SO:0001889",
+            "rank": 8,
+            "tier": 1,
+            "impact": "HIGH",
+            "so_supported_parents": [
+                "SO:0001060"
+            ],
+            "when": {
+                "all": [
+                    "is_structural",
+                    "is_transcript",
+                    "contain_feature",
+                    "is_structural_insertion"
+                ]
+            },
+            "subsumes": [
+                "coding_sequence_variant",
+                "coding_transcript_variant",
+                "intron_variant",
+                "non_coding_transcript_variant",
+                "non_coding_transcript_exon_variant",
+                "5_prime_UTR_variant",
+                "3_prime_UTR_variant"
+            ]
+        },
+        {
+            "term": "feature_elongation",
+            "accession": "SO:0001907",
+            "rank": 9,
+            "tier": 3,
+            "impact": "HIGH",
+            "so_supported_parents": [
+                "SO:0001060"
+            ],
+            "when": {
+                "all": [
+                    "is_structural",
+                    {
+                        "any": [
+                            {
+                                "not": "is_transcript"
+                            },
+                            "overlap_exon"
+                        ]
+                    },
+                    "within_feature",
+                    "is_structural_insertion"
+                ]
+            }
+        },
+        {
+            "term": "feature_truncation",
+            "accession": "SO:0001906",
+            "rank": 10,
+            "tier": 3,
+            "impact": "HIGH",
+            "so_supported_parents": [
+                "SO:0001060"
+            ],
+            "when": {
+                "all": [
+                    "is_structural",
+                    {
+                        "any": [
+                            {
+                                "all": [
+                                    "is_chromosomal_breakpoint",
+                                    "overlap_feature"
+                                ]
+                            },
+                            {
+                                "all": [
+                                    {
+                                        "any": [
+                                            {
+                                                "not": "is_transcript"
+                                            },
+                                            "overlap_exon"
+                                        ]
+                                    },
+                                    "overlap_feature",
+                                    "is_structural_deletion"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "term": "inframe_insertion",
+            "accession": "SO:0001821",
+            "rank": 11,
+            "tier": 3,
+            "impact": "MODERATE",
+            "so_supported_parents": [
+                "SO:0001818",
+                "SO:0001907"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_cds",
+                    "is_insertion",
+                    {
+                        "any": [
+                            {
+                                "all": [
+                                    {
+                                        "not": "is_structural"
+                                    },
+                                    {
+                                        "not": {
+                                            "all": [
+                                                "overlap_start_codon",
+                                                "insertion_before_start"
+                                            ]
+                                        }
+                                    },
+                                    "alt_peptide_matches_ref_edge",
+                                    "cds_length_change_inframe"
+                                ]
+                            },
+                            {
+                                "all": [
+                                    "is_structural",
+                                    "cds_length_change_inframe"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "subsumes": [
+                "coding_sequence_variant",
+                "protein_altering_variant",
+                "coding_transcript_variant"
+            ]
+        },
+        {
+            "term": "inframe_deletion",
+            "accession": "SO:0001822",
+            "rank": 12,
+            "tier": 3,
+            "impact": "MODERATE",
+            "so_supported_parents": [
+                "SO:0001818",
+                "SO:0001906"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_cds",
+                    "is_deletion",
+                    {
+                        "any": [
+                            {
+                                "all": [
+                                    {
+                                        "not": "is_structural"
+                                    },
+                                    "alt_matches_ref_codon_edge",
+                                    "cds_length_change_inframe"
+                                ]
+                            },
+                            {
+                                "all": [
+                                    "is_structural",
+                                    "cds_length_change_inframe"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "subsumes": [
+                "coding_sequence_variant",
+                "protein_altering_variant",
+                "coding_transcript_variant"
+            ]
+        },
+        {
+            "term": "missense_variant",
+            "accession": "SO:0001583",
+            "rank": 13,
+            "tier": 3,
+            "impact": "MODERATE",
+            "so_supported_parents": [
+                "SO:0001818"
+            ],
+            "when": {
+                "all": [
+                    {
+                        "not": "is_structural"
+                    },
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_cds",
+                    {
+                        "not": "peptide_has_X"
+                    },
+                    "peptide_changed",
+                    "peptide_same_length"
+                ]
+            },
+            "subsumes": [
+                "coding_sequence_variant",
+                "protein_altering_variant",
+                "coding_transcript_variant"
+            ]
+        },
+        {
+            "term": "protein_altering_variant",
+            "accession": "SO:0001818",
+            "rank": 14,
+            "tier": 3,
+            "impact": "MODERATE",
+            "so_supported_parents": [
+                "SO:0001580"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_cds",
+                    "peptide_changed"
+                ]
+            },
+            "subsumes": [
+                "coding_sequence_variant",
+                "coding_transcript_variant"
+            ]
+        },
+        {
+            "term": "splice_donor_5th_base_variant",
+            "accession": "SO:0001787",
+            "rank": 15,
+            "tier": 3,
+            "impact": "LOW",
+            "so_supported_parents": [
+                "SO:0001060",
+                "SO:0001627"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_intron_boundary",
+                    "overlap_donor_5th_base"
+                ]
+            },
+            "subsumes": [
+                "splice_region_variant",
+                "splice_donor_region_variant"
+            ]
+        },
+        {
+            "term": "splice_region_variant",
+            "accession": "SO:0001630",
+            "rank": 16,
+            "tier": 3,
+            "impact": "LOW",
+            "so_supported_parents": [
+                "SO:0001060"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_intron_boundary",
+                    "overlap_splice_region"
+                ]
+            }
+        },
+        {
+            "term": "splice_donor_region_variant",
+            "accession": "SO:0002170",
+            "rank": 17,
+            "tier": 3,
+            "impact": "LOW",
+            "so_supported_parents": [
+                "SO:0001630"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_intron_boundary",
+                    "overlap_donor_region"
+                ]
+            },
+            "subsumes": [
+                "splice_region_variant"
+            ]
+        },
+        {
+            "term": "splice_polypyrimidine_tract_variant",
+            "accession": "SO:0002169",
+            "rank": 18,
+            "tier": 3,
+            "impact": "LOW",
+            "so_supported_parents": [
+                "SO:0001060"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_intron",
+                    "overlap_polypyrimidine_tract"
+                ]
+            }
+        },
+        {
+            "term": "incomplete_terminal_codon_variant",
+            "accession": "SO:0001626",
+            "rank": 19,
+            "tier": 3,
+            "impact": "LOW",
+            "so_supported_parents": [
+                "SO:0001580",
+                "SO:0001818"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_cds",
+                    "partial_last_codon"
+                ]
+            },
+            "subsumes": [
+                "coding_sequence_variant",
+                "coding_transcript_variant",
+                "frameshift_variant",
+                "inframe_insertion",
+                "inframe_deletion",
+                "synonymous_variant"
+            ]
+        },
+        {
+            "term": "start_retained_variant",
+            "accession": "SO:0002019",
+            "rank": 20,
+            "tier": 3,
+            "impact": "LOW",
+            "so_supported_parents": [
+                "SO:0001580",
+                "SO:0001819"
+            ],
+            "when": {
+                "all": [
+                    {
+                        "not": "is_structural"
+                    },
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_cds",
+                    "overlap_start_codon",
+                    {
+                        "any": [
+                            {
+                                "all": [
+                                    {
+                                        "not": "peptide_has_X"
+                                    },
+                                    {
+                                        "any": [
+                                            "insertion_before_start",
+                                            "insertion_after_start",
+                                            {
+                                                "all": [
+                                                    {
+                                                        "not": "peptide_changed"
+                                                    },
+                                                    "peptide_same_length"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "all": [
+                                    "peptide_has_X",
+                                    {
+                                        "not": "cds_start_lost"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "subsumes": [
+                "synonymous_variant",
+                "coding_sequence_variant",
+                "coding_transcript_variant"
+            ]
+        },
+        {
+            "term": "stop_retained_variant",
+            "accession": "SO:0001567",
+            "rank": 21,
+            "tier": 3,
+            "impact": "LOW",
+            "so_supported_parents": [
+                "SO:0001580",
+                "SO:0001819"
+            ],
+            "when": {
+                "all": [
+                    {
+                        "not": "is_structural"
+                    },
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_cds",
+                    "overlap_stop_codon",
+                    {
+                        "not": "cds_start_lost"
+                    },
+                    {
+                        "any": [
+                            {
+                                "all": [
+                                    {
+                                        "not": "peptide_has_X"
+                                    },
+                                    "ref_peptide_is_ter",
+                                    "alt_peptide_is_ter"
+                                ]
+                            },
+                            {
+                                "all": [
+                                    "peptide_has_X",
+                                    {
+                                        "not": "cds_stop_lost"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "subsumes": [
+                "synonymous_variant",
+                "frameshift_variant",
+                "missense_variant",
+                "stop_gained",
+                "coding_sequence_variant",
+                "coding_transcript_variant"
+            ]
+        },
+        {
+            "term": "synonymous_variant",
+            "accession": "SO:0001819",
+            "rank": 22,
+            "tier": 3,
+            "impact": "LOW",
+            "so_supported_parents": [
+                "SO:0001580"
+            ],
+            "when": {
+                "all": [
+                    {
+                        "not": "is_structural"
+                    },
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_cds",
+                    {
+                        "not": "peptide_has_X"
+                    },
+                    {
+                        "not": "peptide_changed"
+                    },
+                    "peptide_same_length"
+                ]
+            },
+            "subsumes": [
+                "coding_sequence_variant",
+                "coding_transcript_variant"
+            ]
+        },
+        {
+            "term": "coding_sequence_variant",
+            "accession": "SO:0001580",
+            "rank": 23,
+            "tier": 3,
+            "impact": "MODIFIER",
+            "so_supported_parents": [
+                "SO:0001060",
+                "SO:0001968"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_cds"
+                ]
+            },
+            "subsumes": [
+                "coding_transcript_variant"
+            ]
+        },
+        {
+            "term": "mature_miRNA_variant",
+            "accession": "SO:0001620",
+            "rank": 24,
+            "tier": 2,
+            "impact": "MODIFIER",
+            "so_supported_parents": [
+                "SO:0001619"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    "biotype_miRNA",
+                    "overlap_exon"
+                ]
+            }
+        },
+        {
+            "term": "5_prime_UTR_variant",
+            "accession": "SO:0001623",
+            "rank": 25,
+            "tier": 3,
+            "impact": "MODIFIER",
+            "so_supported_parents": [
+                "SO:0001060",
+                "SO:0001968"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_five_prime_utr"
+                ]
+            },
+            "subsumes": [
+                "coding_transcript_variant"
+            ]
+        },
+        {
+            "term": "3_prime_UTR_variant",
+            "accession": "SO:0001624",
+            "rank": 26,
+            "tier": 3,
+            "impact": "MODIFIER",
+            "so_supported_parents": [
+                "SO:0001060",
+                "SO:0001968"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_three_prime_utr"
+                ]
+            },
+            "subsumes": [
+                "coding_transcript_variant"
+            ]
+        },
+        {
+            "term": "non_coding_transcript_exon_variant",
+            "accession": "SO:0001792",
+            "rank": 27,
+            "tier": 3,
+            "impact": "MODIFIER",
+            "so_supported_parents": [
+                "SO:0001619",
+                "SO:0001060"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    {
+                        "not": "biotype_protein_coding"
+                    },
+                    {
+                        "not": "has_translation"
+                    },
+                    {
+                        "any": [
+                            {
+                                "not": "biotype_miRNA"
+                            },
+                            {
+                                "not": "overlap_exon"
+                            }
+                        ]
+                    },
+                    "overlap_exon"
+                ]
+            },
+            "subsumes": [
+                "non_coding_transcript_variant"
+            ]
+        },
+        {
+            "term": "intron_variant",
+            "accession": "SO:0001627",
+            "rank": 28,
+            "tier": 3,
+            "impact": "MODIFIER",
+            "so_supported_parents": [
+                "SO:0001060"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    "overlap_intron_interior"
+                ]
+            },
+            "subsumes": [
+                "coding_transcript_variant"
+            ]
+        },
+        {
+            "term": "NMD_transcript_variant",
+            "accession": "SO:0001621",
+            "rank": 29,
+            "tier": 3,
+            "impact": "MODIFIER",
+            "so_supported_parents": [
+                "SO:0001060"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    "biotype_nmd"
+                ]
+            }
+        },
+        {
+            "term": "non_coding_transcript_variant",
+            "accession": "SO:0001619",
+            "rank": 30,
+            "tier": 3,
+            "impact": "MODIFIER",
+            "so_supported_parents": [
+                "SO:0001060"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    {
+                        "not": "biotype_protein_coding"
+                    },
+                    {
+                        "not": "has_translation"
+                    },
+                    {
+                        "any": [
+                            {
+                                "not": "biotype_miRNA"
+                            },
+                            {
+                                "not": "overlap_exon"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "term": "coding_transcript_variant",
+            "accession": "SO:0001968",
+            "rank": 31,
+            "tier": 3,
+            "impact": "MODIFIER",
+            "so_supported_parents": [
+                "SO:0001060"
+            ],
+            "when": {
+                "all": [
+                    "is_transcript",
+                    "overlap_feature",
+                    "biotype_protein_coding"
+                ]
+            }
+        },
+        {
+            "term": "upstream_gene_variant",
+            "accession": "SO:0001631",
+            "rank": 32,
+            "tier": 3,
+            "impact": "MODIFIER",
+            "so_supported_parents": [
+                "SO:0001628"
+            ],
+            "when": {
+                "all": [
+                    "is_upstream"
+                ]
+            }
+        },
+        {
+            "term": "downstream_gene_variant",
+            "accession": "SO:0001632",
+            "rank": 33,
+            "tier": 3,
+            "impact": "MODIFIER",
+            "so_supported_parents": [
+                "SO:0001628"
+            ],
+            "when": {
+                "all": [
+                    "is_downstream"
+                ]
+            }
+        },
+        {
+            "term": "TFBS_ablation",
+            "accession": "SO:0001895",
+            "rank": 34,
+            "tier": 2,
+            "impact": "MODERATE",
+            "so_supported_parents": [
+                "SO:0001894"
+            ],
+            "when": {
+                "all": [
+                    "is_structural",
+                    "is_motif",
+                    "contain_feature",
+                    "is_structural_deletion"
+                ]
+            },
+            "subsumes": [
+                "TF_binding_site_variant"
+            ]
+        },
+        {
+            "term": "TFBS_amplification",
+            "accession": "SO:0001892",
+            "rank": 35,
+            "tier": 2,
+            "impact": "MODIFIER",
+            "so_supported_parents": [
+                "SO:0001891"
+            ],
+            "when": {
+                "all": [
+                    "is_structural",
+                    "is_motif",
+                    "contain_feature",
+                    "is_structural_insertion"
+                ]
+            },
+            "subsumes": [
+                "TF_binding_site_variant"
+            ]
+        },
+        {
+            "term": "TF_binding_site_variant",
+            "accession": "SO:0001782",
+            "rank": 36,
+            "tier": 2,
+            "impact": "MODIFIER",
+            "so_supported_parents": [
+                "SO:0001566"
+            ],
+            "when": {
+                "all": [
+                    "is_motif",
+                    "overlap_feature"
+                ]
+            },
+            "notes": "VEP's within_motif_feature (VariationEffect.pm) delegates straight to within_feature, whose body is a plain overlap() of the variant span against the feature span -- despite the name, it is not a containment test. That is overlap_feature here. Restriction to motif features comes from exclude_kind, mirroring VEP's own feature_class dispatch in Constants.pm rather than an isa test inside the predicate."
+        },
+        {
+            "term": "regulatory_region_ablation",
+            "accession": "SO:0001894",
+            "rank": 37,
+            "tier": 2,
+            "impact": "MODIFIER",
+            "so_supported_parents": [
+                "SO:0001060"
+            ],
+            "when": {
+                "all": [
+                    "is_structural",
+                    "is_regulatory",
+                    "contain_feature",
+                    "is_structural_deletion"
+                ]
+            },
+            "subsumes": [
+                "regulatory_region_variant"
+            ]
+        },
+        {
+            "term": "regulatory_region_amplification",
+            "accession": "SO:0001891",
+            "rank": 38,
+            "tier": 2,
+            "impact": "MODIFIER",
+            "so_supported_parents": [
+                "SO:0001060"
+            ],
+            "when": {
+                "all": [
+                    "is_structural",
+                    "is_regulatory",
+                    "contain_feature",
+                    "is_structural_insertion"
+                ]
+            },
+            "subsumes": [
+                "regulatory_region_variant"
+            ]
+        },
+        {
+            "term": "regulatory_region_variant",
+            "accession": "SO:0001566",
+            "rank": 39,
+            "tier": 2,
+            "impact": "MODIFIER",
+            "so_supported_parents": [
+                "SO:0001060"
+            ],
+            "when": {
+                "all": [
+                    "is_regulatory",
+                    "overlap_feature"
+                ]
+            }
+        },
+        {
+            "term": "intergenic_variant",
+            "accession": "SO:0001628",
+            "rank": 40,
+            "tier": 4,
+            "impact": "MODIFIER",
+            "is_default": true,
+            "so_supported_parents": [
+                "SO:0001060"
+            ]
+        },
+        {
+            "term": "sequence_variant",
+            "accession": "SO:0001060",
+            "rank": 41,
+            "tier": 4,
+            "impact": "MODIFIER",
+            "so_supported_parents": []
+        }
+    ]
+}
