@@ -47,7 +47,8 @@ __all__ = [
 _CHROMOSOME_NAME = "chrSynthetic"
 _CHROMOSOME_LENGTH = 60000
 
-_ENST0001_EXONS: tuple[tuple[int, int], ...] = ((1000, 1200), (2000, 2200), (3000, 3300))
+_ENST0001_EXONS: tuple[tuple[int, int], ...] = ((1000, 1200), (2000, 2200), (2210, 2510))
+"""This transcript has a short intron (9 bp) to test performance of intron facts on short introns."""
 _ENST0002_EXONS: tuple[tuple[int, int], ...] = ((10000, 10300), (11000, 11200), (12000, 12150))
 _ENST0003_EXONS: tuple[tuple[int, int], ...] = ((20000, 20200), (21000, 21300))
 _ENST0004_EXONS: tuple[tuple[int, int], ...] = ((30000, 30200), (31000, 31250))

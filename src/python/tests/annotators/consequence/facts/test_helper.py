@@ -17,10 +17,12 @@
 
 from __future__ import annotations
 
+import pytest
+
 from ensembl.vep.annotators.consequence.context.fact import FactContext
-from ensembl.vep.annotators.consequence.facts.helper import variant_class_so_term
+from ensembl.vep.annotators.consequence.facts.helper import intron_offsets_to_genomic_span, variant_class_so_term
 from ensembl.vep.common import ClassSOTerm, Strand
-from ensembl.vep.models.genic import Transcript
+from ensembl.vep.models.genic import Transcript, Intron
 from ensembl.vep.models.overlap import TranscriptVariationAllele
 from ensembl.vep.models.variation import (
     StructuralVariation,
@@ -39,6 +41,45 @@ def _create_fact_context(
         overlapping_feature=variation_allele,
     )
     return FactContext(overlap=transcript_variation_allele)
+
+
+class TestIntronOffsetsToGenomicSpan:
+    """Test for the intron_offsets_to_genomic_span helper."""
+
+    @pytest.mark.parametrize(
+        ("intron_start", "intron_end", "low_offset", "high_offset", "from_donor", "expected"),
+        [
+            pytest.param(101, 200, 1, 2, True, (101, 102), id="splice_donor"),
+            pytest.param(101, 200, 1, 2, False, (199, 200), id="splice_acceptor"),
+            pytest.param(101, 110, 3, 17, True, (103, 110), id="clipped to intron edges"),
+            pytest.param(101, 110, 3, 17, False, (101, 108), id="polypyr clipped to intron edges"),
+        ],
+    )
+    def test_correct_offsets(self, intron_start: int, intron_end: int, low_offset: int, high_offset:int, from_donor: bool, expected: tuple[int, int]) -> None:
+        """Check that 1-based offsets produce the correct genomic positions."""
+        # create an intron
+        intron = Intron(start=intron_start, end=intron_end, strand=Strand.FORWARD)
+
+        # test offsets return correct positions
+        assert intron_offsets_to_genomic_span(intron, Strand.FORWARD, low_offset, high_offset, from_donor)
+
+
+    @pytest.mark.parametrize(
+        ("intron_start", "intron_end", "low_offset", "high_offset", "from_donor", "expected"),
+        [
+            pytest.param(101, 200, 1, 2, True, (199, 200), id="splice_donor"),
+            pytest.param(101, 200, 1, 2, False, (101, 102), id="splice_acceptor"),
+            pytest.param(101, 110, 3, 17, True, (101, 108), id="clipped to intron edges"),
+            pytest.param(101, 110, 3, 17, False, (103, 110), id="polypyr clipped to intron edges"),
+        ],
+    )
+    def test_correct_offsets_reverse_strand(self, intron_start: int, intron_end: int, low_offset: int, high_offset:int, from_donor: bool, expected: tuple[int, int]) -> None:
+        """Check that 1-based offsets produce the correct genomic positions."""
+        # create an intron
+        intron = Intron(start=intron_start, end=intron_end, strand=Strand.REVERSE)
+
+        # test offsets return correct positions
+        assert intron_offsets_to_genomic_span(intron, Strand.REVERSE, low_offset, high_offset, from_donor)
 
 
 class TestCodonWindowHelper:
