@@ -43,7 +43,6 @@ class ExplainConfig(ConfigSection):
             the first.
         transcript (str | None): Transcript stable id, to disambiguate when several overlap.
         compare (tuple[str, ...]): Two annotator names to diff against each other.
-        against_input (bool): Diff the derivation against the terms the input file already carries.
         list_overlaps (bool): List the selectable overlaps and exit.
         graph (bool): Draw the derivation as a diagram rather than printing it.
         output_format (str | None): The format to render in, or None for the default of the kind asked
@@ -68,10 +67,6 @@ class ExplainConfig(ConfigSection):
     transcript: str | None = field(default=None, metadata=option("transcript stable id", metavar="STABLE_ID"))
     compare: tuple[str, ...] = field(
         default=(), metadata=option("two annotators to diff", metavar="NAME,NAME")
-    )
-    against_input: bool = field(
-        default=False,
-        metadata=option("diff the derivation against the annotation already in the input file"),
     )
     list_overlaps: bool = field(
         default=False,
