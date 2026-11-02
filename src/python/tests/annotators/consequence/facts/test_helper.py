@@ -20,7 +20,10 @@ from __future__ import annotations
 import pytest
 
 from ensembl.vep.annotators.consequence.context.fact import FactContext
-from ensembl.vep.annotators.consequence.facts.helper import intron_offsets_to_genomic_span, variant_class_so_term
+from ensembl.vep.annotators.consequence.facts.helper import (
+    intron_offsets_to_genomic_span,
+    variant_class_so_term,
+)
 from ensembl.vep.common import ClassSOTerm, Strand
 from ensembl.vep.models.genic import Transcript, Intron
 from ensembl.vep.models.overlap import TranscriptVariationAllele
@@ -55,14 +58,24 @@ class TestIntronOffsetsToGenomicSpan:
             pytest.param(101, 110, 3, 17, False, (101, 108), id="polypyr clipped to intron edges"),
         ],
     )
-    def test_correct_offsets(self, intron_start: int, intron_end: int, low_offset: int, high_offset:int, from_donor: bool, expected: tuple[int, int]) -> None:
+    def test_correct_positions_returned(
+        self,
+        intron_start: int,
+        intron_end: int,
+        low_offset: int,
+        high_offset: int,
+        from_donor: bool,
+        expected: tuple[int, int],
+    ) -> None:
         """Check that 1-based offsets produce the correct genomic positions."""
         # create an intron
         intron = Intron(start=intron_start, end=intron_end, strand=Strand.FORWARD)
 
         # test offsets return correct positions
-        assert intron_offsets_to_genomic_span(intron, Strand.FORWARD, low_offset, high_offset, from_donor)
-
+        assert (
+            intron_offsets_to_genomic_span(intron, Strand.FORWARD, low_offset, high_offset, from_donor)
+            == expected
+        )
 
     @pytest.mark.parametrize(
         ("intron_start", "intron_end", "low_offset", "high_offset", "from_donor", "expected"),
@@ -73,13 +86,24 @@ class TestIntronOffsetsToGenomicSpan:
             pytest.param(101, 110, 3, 17, False, (103, 110), id="polypyr clipped to intron edges"),
         ],
     )
-    def test_correct_offsets_reverse_strand(self, intron_start: int, intron_end: int, low_offset: int, high_offset:int, from_donor: bool, expected: tuple[int, int]) -> None:
+    def test_correct_positions_returned_reverse_strand(
+        self,
+        intron_start: int,
+        intron_end: int,
+        low_offset: int,
+        high_offset: int,
+        from_donor: bool,
+        expected: tuple[int, int],
+    ) -> None:
         """Check that 1-based offsets produce the correct genomic positions."""
         # create an intron
         intron = Intron(start=intron_start, end=intron_end, strand=Strand.REVERSE)
 
         # test offsets return correct positions
-        assert intron_offsets_to_genomic_span(intron, Strand.REVERSE, low_offset, high_offset, from_donor)
+        assert (
+            intron_offsets_to_genomic_span(intron, Strand.REVERSE, low_offset, high_offset, from_donor)
+            == expected
+        )
 
 
 class TestCodonWindowHelper:

@@ -108,7 +108,7 @@ def intron_offsets_to_genomic_span(
     position_a = anchor + direction * (low - 1)
     position_b = anchor + direction * (high - 1)
     if position_a > position_b:
-        (position_a, position_b) = (position_b, position_a)
+        position_a, position_b = (position_b, position_a)
     # clip to intron
     position_a = max(position_a, intron.start)
     position_b = min(position_b, intron.end)
