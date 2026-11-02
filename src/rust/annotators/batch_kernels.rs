@@ -72,8 +72,10 @@ pub fn batch_variant_shapes(
         ));
     }
     Ok((
+        // Mirrors facts/kind.py is_snv: both alleles exactly one base. A multi-base
+        // substitution of equal length (AC/GT) is not an SNV.
         pack(count, |i| {
-            reference_lengths[i] == alternate_lengths[i] && reference_lengths[i] > 0
+            reference_lengths[i] == 1 && alternate_lengths[i] == 1
         }),
         pack(count, |i| alternate_lengths[i] > reference_lengths[i]),
         pack(count, |i| reference_lengths[i] > alternate_lengths[i]),
@@ -197,17 +199,35 @@ mod tests {
 
     #[test]
     fn variant_shapes_match_the_python_definitions() {
-        // (ref, alt): SNV, insertion, deletion, and an out-of-frame deletion.
-        let reference_lengths = vec![1, 0, 3, 2];
-        let alternate_lengths = vec![1, 4, 0, 0];
+        // (ref, alt): SNV, insertion, deletion, an out-of-frame deletion and a 2 bp MNV.
+        let reference_lengths = vec![1, 0, 3, 2, 2];
+        let alternate_lengths = vec![1, 4, 0, 0, 2];
         let (snv, increases, decreases, inframe) =
             batch_variant_shapes(reference_lengths, alternate_lengths).unwrap();
 
-        assert!(bit(&snv, 0) && !bit(&snv, 1) && !bit(&snv, 2));
-        assert!(!bit(&increases, 0) && bit(&increases, 1) && !bit(&increases, 2));
-        assert!(!bit(&decreases, 0) && !bit(&decreases, 1) && bit(&decreases, 2));
+        assert!(bit(&snv, 0) && !bit(&snv, 1) && !bit(&snv, 2) && !bit(&snv, 3) && !bit(&snv, 4));
+        assert!(
+            !bit(&increases, 0)
+                && bit(&increases, 1)
+                && !bit(&increases, 2)
+                && !bit(&increases, 3)
+                && !bit(&increases, 4)
+        );
+        assert!(
+            !bit(&decreases, 0)
+                && !bit(&decreases, 1)
+                && bit(&decreases, 2)
+                && bit(&decreases, 3)
+                && !bit(&decreases, 4)
+        );
         // 0 diff and -3 diff are in frame; +4 and -2 are not.
-        assert!(bit(&inframe, 0) && !bit(&inframe, 1) && bit(&inframe, 2) && !bit(&inframe, 3));
+        assert!(
+            bit(&inframe, 0)
+                && !bit(&inframe, 1)
+                && bit(&inframe, 2)
+                && !bit(&inframe, 3)
+                && bit(&inframe, 4)
+        );
     }
 
     #[test]
