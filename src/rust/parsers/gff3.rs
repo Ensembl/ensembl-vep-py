@@ -81,8 +81,9 @@ impl Gff3Record {
     /// Equivalent to `attributes[key][0]`, but a linear scan of the stored pairs instead of
     /// building a whole `dict` per call.
     ///
-    /// Unlike GTF, GFF3 lets a key repeat as separate `key=value` pairs rather than one key
-    /// with a comma-separated array, and noodles-gff keeps each occurrence as its own pair in
+    /// GFF3 allows for one key with a comma-separated array for multiple values
+    /// 
+    /// For repeated keys, noodles-gff keeps each occurrence as its own pair in
     /// `self.attributes`. The `attributes` getter above builds a `dict` via `set_item`, so a
     /// repeated key resolves there to its *last* occurrence -- scanning in reverse here matches
     /// that, instead of silently returning a different value for the same key.
