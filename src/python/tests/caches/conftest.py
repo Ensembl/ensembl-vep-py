@@ -30,14 +30,14 @@ _TEST_FUZZ_COUNT = 300
 
 
 @pytest.fixture(scope="session")
-def synthetic_genome() -> tuple[Slice, tuple[Transcript, ...]]:
+def synthetic_genome() -> tuple[Slice, list[Transcript]]:
     """Create the synthetic chromosome slice and transcripts."""
     return build_genome()
 
 
 @pytest.fixture(scope="session")
 def synthetic_transcripts_by_stable_id(
-    synthetic_genome: tuple[Slice, tuple[Transcript, ...]],
+    synthetic_genome: tuple[Slice, list[Transcript]],
 ) -> dict[str, Transcript]:
     """Create synthetic transcripts keyed by stable ID."""
     _, transcripts = synthetic_genome
