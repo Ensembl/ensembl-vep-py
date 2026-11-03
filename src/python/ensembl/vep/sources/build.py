@@ -224,6 +224,8 @@ def build_input_source(
         raise ValueError("annotating needs variants: give --input_file")
 
     source_format = detect_input_format(config.input_file, config.format)
+    # source_format can't be anything other than vcf at the moment
+    # keep as a guard
     if source_format != "vcf":
         raise ValueError(f"no reader for input format {source_format!r} yet")
     return PicklableVCFVariationSource(
