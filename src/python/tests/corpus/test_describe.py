@@ -15,11 +15,18 @@
 
 from __future__ import annotations
 
+from collections import defaultdict
+
 import pytest
 
+import ensembl.vep.annotators  # noqa: F401  pylint: disable=unused-import
+
+# ^ keeps the annotators-before-caches import order.
 from ensembl.vep.corpus.describe import CorpusDescription, describe_variant, variant_class
 from ensembl.vep.corpus.synthetic import SyntheticCorpus
 from ensembl.vep.corpus.synthetic.default import default_corpus
+from ensembl.vep.models.overlap import TranscriptVariationAllele
+from ensembl.vep.explain.selection import FeatureSelector, VariantSelector
 
 
 @pytest.fixture(name="corpus", scope="module")
@@ -32,6 +39,20 @@ def fixture_corpus() -> SyntheticCorpus:
 def fixture_description(corpus: SyntheticCorpus) -> CorpusDescription:
     """The whole description, built once."""
     return CorpusDescription.build(corpus, batch_size=100)
+
+
+def _select(corpus: SyntheticCorpus, *, variant: str, feature: str) -> tuple[str, TranscriptVariationAllele]:
+    """Return the one corpus overlap a ``--variant`` and ``--transcript`` pair names.
+
+    The same two filters ``vep explain`` applies, so a locus this module prints is checked to be
+    selectable the way a caller would select it.
+    """
+    selector = VariantSelector.parse(variant)
+    wanted_feature = FeatureSelector.parse(feature)
+    for name, overlap in corpus.named_overlaps:
+        if selector.matches(overlap.overlapping_feature) and wanted_feature.matches(overlap.feature):
+            return name, overlap
+    raise LookupError(f"no overlap matching {variant!r} for feature {feature!r}")
 
 
 class TestShape:
@@ -121,6 +142,27 @@ class TestOverlapListing:
         names = [name for name, _overlap in corpus.named_overlaps]
         assert [entry.name for entry in description.overlaps] == names
         assert [entry.index for entry in description.overlaps] == list(range(len(names)))
+
+    def test_a_listed_variant_selector_selects_that_overlap(
+        self, corpus: SyntheticCorpus, description: CorpusDescription
+    ) -> None:
+        """Locus and alleles, as printed, are what --variant plus --transcript takes."""
+        # One locus and allele pair can carry more than one name: a 9 bp intron puts
+        # donor+8 and acceptor-2 on the same base, so the selector is asked to return an
+        # overlap of that variant, not a particular name for it.
+        names_at = defaultdict(set)
+        for entry in description.overlaps:
+            names_at[(entry.locus, entry.alleles, entry.feature)].add(entry.name)
+
+        checked = 0
+        for entry in description.overlaps[:40]:
+            if "..." in entry.alleles:
+                continue
+            name, overlap = _select(corpus, variant=f"{entry.locus}:{entry.alleles}", feature=entry.feature)
+            assert name in names_at[(entry.locus, entry.alleles, entry.feature)]
+            assert overlap.feature.stable_id == entry.feature
+            checked += 1
+        assert checked
 
     def test_select_keeps_one_variants_overlaps(self, corpus: SyntheticCorpus) -> None:
         """Narrowing by name keeps every overlap of that variant and nothing else."""
