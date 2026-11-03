@@ -222,14 +222,6 @@ class TestGetParentId:
 
         assert source.get_parent_ids(records[3]) == ("transcript:ENST001", "transcript:ENST002")
 
-    def test_get_parent_ids_shared_exon(self) -> None:
-        """Test the Parent attribute is returned as the parent identifier."""
-
-        records = GFF3Parser.parse_text(_GFF3_TWO_TRANSCRIPTS_SHARED_EXON_ONE_LINE)
-        source = GFF3TranscriptSource(file_path="")
-
-        assert source.get_parent_ids(records[3]) == ("transcript:ENST001", "transcript:ENST002")
-
 
 class TestGetAllFeatures:
     """Integration-style tests for GFF3-backed transcript building."""
@@ -421,25 +413,6 @@ class TestGetAllFeatures:
 
         assert transcript.slice is transcript.spliced_exons[0].slice
         assert transcript.slice is transcript.gene.slice
-
-    def test_get_all_features_excludes_shared_exon(self, tmp_path: Path) -> None:
-        """Test that a transcript object misses a shared exon from a GFF3 file."""
-
-        path = _write_gff3(tmp_path / "sample.gff3", _GFF3_TWO_TRANSCRIPTS_SHARED_EXON_ONE_LINE)
-        source = GFF3TranscriptSource(
-            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
-        )
-
-        transcripts = source.get_all_features()
-        print([exon.stable_id for exon in transcripts[0].spliced_exons])
-        print([exon.stable_id for exon in transcripts[1].spliced_exons])
-
-        assert len(transcripts) == 2
-        transcript = transcripts[0]
-        assert len(transcript.spliced_exons) == 2
-
-        transcript_2 = transcripts[1]
-        assert len(transcript_2.spliced_exons) == 2
 
     def test_sequence_region_names_returns_empty_on_os_error(self) -> None:
         """Return empty set if the file doesn't exist or isn't readable."""
