@@ -11,14 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Benchmarks for class descriptors.
+"""Benchmark cached-property invalidation strategies.
 
-This is used to evaluate different strategies for invalidating cached properties when their dependencies change.
-The benchmarks include:
-- {calss}: A class that does not invalidate the cached property when its dependencies change.
-- {class}Invalidates: A class that uses `invalidates` on_setattr hook to clear the cached property when
-    its dependencies change.
-The classes here are different class used in `cached_property.py`.
+Each pair compares a cached-property implementation with and without an attrs ``on_setattr``
+hook that clears the cached value when ``x`` changes.
 
 Result:
     WithSetAttr           : init                    212.0 ns/call  443.3 ns/call
@@ -37,58 +33,59 @@ Result:
     WithCachedPropertyMangling: trivial get              48.9 ns/call   49.5 ns/call
     WithCachedPropertyMangling: invalidation              8.4 ns/call  526.8 ns/call
 
-The first result is for the classes without invalidation, and the second result is for the classes with invalidation.
-In all cases, the invalidation adds a significant overhead to the get operation, 50-70x increase. Furthermore, it also
-increased object initialization time by 2x.
-
-Therefore, it makes invalidation undesirable. Invalidation should be used only with core attributes and updating core
-attributes should be discouraged.
-
-The object initialization is also a problem. WithCachedPropertyMangling is still the better option than WithSetAttr as
-both is increasing 2x.
+The first number is measured without invalidation and the second with invalidation. Invalidation
+increases assignment and construction cost, so it is best reserved for mutable core attributes
+whose derived values must remain coherent.
 """
 
-import timeit
+from __future__ import annotations
+
 import functools
 import statistics
-from attr import define, field
+import timeit
+from collections.abc import Callable
+from typing import Any
+
+from attrs import define, field
 
 
 class MyCachedProperty(functools.cached_property):
-    def __set__(self, obj, value):
+    """Cached property that refuses direct assignment."""
+
+    def __set__(self, obj: object, value: object) -> None:
+        """Refuse assignment to the derived value."""
         raise AttributeError(
             f"'{self.attrname}' is a cached property — assign to its dependencies, not to it directly"
         )
 
 
-def invalidates(*cached_names):
-    """
-    Returns an attrs on_setattr hook that clears the named
-    cached_property entries whenever this field is set.
-    """
+def invalidates(*cached_names: str) -> Callable[[Any, Any, Any], Any]:
+    """Return an attrs hook that clears named cached properties."""
 
-    def hook(instance, attrib, new_value):
+    def hook(instance: Any, _attribute: Any, new_value: Any) -> Any:
         try:
             for name in cached_names:
                 delattr(instance, name)
-        except AttributeError:
-            raise NotImplementedError("Feature is not implemented yet.")
-
-        # cannot be used with __slots__
-        # d = instance.__dict__
-        # for name in cached_names:
-        #     d.pop(name, None)  # Fast, no exception if not present
+        except AttributeError as error:
+            raise NotImplementedError("Feature is not implemented yet.") from error
 
         return new_value  # attrs requires the hook to return the value
 
     return hook
 
 
-@define
+@define(kw_only=True, auto_attribs=True)
 class WithSetAttr:
+    """Protect a cached value without invalidating it.
+
+    Attributes:
+        x (int): Input used by the derived value.
+    """
+
     x: int = field(default=1000)
 
-    def __setattr__(self, name, value):
+    def __setattr__(self, name: str, value: object) -> None:
+        """Refuse assignment to cached values."""
         if name in ("value", "tvalue"):
             raise AttributeError(
                 f"'{name}' is a cached property — assign to its dependencies, not to it directly"
@@ -96,15 +93,23 @@ class WithSetAttr:
         super().__setattr__(name, value)
 
     @functools.cached_property
-    def tvalue(self):
+    def tvalue(self) -> int:
+        """Return the trivial derived value."""
         return self.x * 2  # trivial compute
 
 
-@define
+@define(kw_only=True, auto_attribs=True)
 class WithSetAttrInvalidates:
+    """Protect and invalidate a cached value through ``__setattr__``.
+
+    Attributes:
+        x (int): Input used by the derived value.
+    """
+
     x: int = field(default=1000)
 
-    def __setattr__(self, name, value):
+    def __setattr__(self, name: str, value: object) -> None:
+        """Refuse assignment to cached values and invalidate them on change."""
         if name in ("value", "tvalue"):
             raise AttributeError(
                 f"'{name}' is a cached property — assign to its dependencies, not to it directly"
@@ -112,128 +117,193 @@ class WithSetAttrInvalidates:
         if name == "x":
             try:
                 delattr(self, "tvalue")
-            except AttributeError:
-                raise NotImplementedError("Feature is not implemented yet.")
+            except AttributeError as error:
+                raise NotImplementedError("Feature is not implemented yet.") from error
         super().__setattr__(name, value)
 
     @functools.cached_property
-    def tvalue(self):
+    def tvalue(self) -> int:
+        """Return the trivial derived value."""
         return self.x * 2  # trivial compute
 
 
-@define
+@define(kw_only=True, auto_attribs=True)
 class WithProperty:
+    """Expose uncached read-only properties.
+
+    Attributes:
+        x (int): Input used by the derived values.
+    """
+
     x: int = field(default=1000)
 
     @property
-    def value(self):
+    def value(self) -> int:
+        """Return the expensive derived value."""
         return sum(range(self.x))
 
     @property
-    def tvalue(self):
+    def tvalue(self) -> int:
+        """Return the trivial derived value."""
         return self.x * 2  # trivial compute
 
 
-@define
+@define(kw_only=True, auto_attribs=True)
 class WithPropertyInvalidates:
+    """Expose read-only properties with an unused invalidation hook.
+
+    Attributes:
+        x (int): Input used by the derived values.
+    """
+
     x: int = field(default=1000, on_setattr=invalidates("tvalue"))
 
     @property
-    def value(self):
+    def value(self) -> int:
+        """Return the expensive derived value."""
         return sum(range(self.x))
 
     @property
-    def tvalue(self):
+    def tvalue(self) -> int:
+        """Return the trivial derived value."""
         return self.x * 2  # trivial compute
 
 
-@define
+@define(kw_only=True, auto_attribs=True)
 class WithCachedProperty:
+    """Expose cached properties without invalidation.
+
+    Attributes:
+        x (int): Input used by the derived values.
+    """
+
     x: int = field(default=1000)
 
     @functools.cached_property
-    def value(self):
+    def value(self) -> int:
+        """Return the expensive derived value."""
         return sum(range(self.x))
 
     @functools.cached_property
-    def tvalue(self):
+    def tvalue(self) -> int:
+        """Return the trivial derived value."""
         return self.x * 2  # trivial compute
 
 
-@define
+@define(kw_only=True, auto_attribs=True)
 class WithCachedPropertyInvalidates:
+    """Invalidate a standard cached property when ``x`` changes.
+
+    Attributes:
+        x (int): Input used by the derived values.
+    """
+
     x: int = field(default=1000, on_setattr=invalidates("tvalue"))
 
     @functools.cached_property
-    def value(self):
+    def value(self) -> int:
+        """Return the expensive derived value."""
         return sum(range(self.x))
 
     @functools.cached_property
-    def tvalue(self):
+    def tvalue(self) -> int:
+        """Return the trivial derived value."""
         return self.x * 2  # trivial compute
 
 
-@define
+@define(kw_only=True, auto_attribs=True)
 class WithManualCache:
+    """Expose protected cached values without invalidation.
+
+    Attributes:
+        x (int): Input used by the derived values.
+    """
+
     x: int = field(default=1000)
 
     @MyCachedProperty
-    def value(self):
+    def value(self) -> int:
+        """Return the expensive derived value."""
         return sum(range(self.x))
 
     @MyCachedProperty
-    def tvalue(self):
+    def tvalue(self) -> int:
+        """Return the trivial derived value."""
         return self.x * 2  # trivial compute
 
 
-@define
+@define(kw_only=True, auto_attribs=True)
 class WithManualCacheInvalidates:
+    """Invalidate a protected cached property when ``x`` changes.
+
+    Attributes:
+        x (int): Input used by the derived values.
+    """
+
     x: int = field(default=1000, on_setattr=invalidates("tvalue"))
 
     @MyCachedProperty
-    def value(self):
+    def value(self) -> int:
+        """Return the expensive derived value."""
         return sum(range(self.x))
 
     @MyCachedProperty
-    def tvalue(self):
+    def tvalue(self) -> int:
+        """Return the trivial derived value."""
         return self.x * 2  # trivial compute
 
 
-@define
+@define(kw_only=True, auto_attribs=True)
 class WithCachedPropertyMangling:
+    """Hide standard cached properties behind read-only properties.
+
+    Attributes:
+        x (int): Input used by the derived values.
+    """
+
     x: int = field(default=1000)
 
     @property
-    def value(self):
-        self.__value
+    def value(self) -> int:
+        """Return the expensive derived value."""
+        return self.__value
 
     @functools.cached_property
-    def __value(self):
+    def __value(self) -> int:
         return sum(range(self.x))
 
     @property
-    def tvalue(self):
-        self.__tvalue
+    def tvalue(self) -> int:
+        """Return the trivial derived value."""
+        return self.__tvalue
 
     @functools.cached_property
-    def __tvalue(self):
+    def __tvalue(self) -> int:
         return self.x * 2  # trivial compute
 
 
-@define
+@define(kw_only=True, auto_attribs=True)
 class WithCachedPropertyManglingInvalidates:
+    """Invalidate a hidden cached property when ``x`` changes.
+
+    Attributes:
+        x (int): Input used by the derived value.
+    """
+
     x: int = field(default=1000, on_setattr=invalidates("__tvalue"))
 
     @property
-    def tvalue(self):
-        self.__tvalue
+    def tvalue(self) -> int:
+        """Return the trivial derived value."""
+        return self.__tvalue
 
     @functools.cached_property
-    def __tvalue(self):
+    def __tvalue(self) -> int:
         return self.x * 2  # trivial compute
 
 
-def bench(cls1, cls2, n=1_000_000):
+def bench(cls1: type[Any], cls2: type[Any], n: int = 1_000_000) -> None:
+    """Compare construction, reads, and assignment for two classes."""
     obj1 = cls1()  # warm up
     obj2 = cls2()  # warm up
     times1 = timeit.repeat("cls1()", globals={"cls1": cls1}, number=n, repeat=5)
@@ -263,8 +333,14 @@ def bench(cls1, cls2, n=1_000_000):
     )
 
 
-bench(WithSetAttr, WithSetAttrInvalidates)
-bench(WithProperty, WithPropertyInvalidates)
-bench(WithCachedProperty, WithCachedPropertyInvalidates)
-bench(WithManualCache, WithManualCacheInvalidates)
-bench(WithCachedPropertyMangling, WithCachedPropertyManglingInvalidates)
+def main() -> None:
+    """Run every invalidation benchmark pair."""
+    bench(WithSetAttr, WithSetAttrInvalidates)
+    bench(WithProperty, WithPropertyInvalidates)
+    bench(WithCachedProperty, WithCachedPropertyInvalidates)
+    bench(WithManualCache, WithManualCacheInvalidates)
+    bench(WithCachedPropertyMangling, WithCachedPropertyManglingInvalidates)
+
+
+if __name__ == "__main__":
+    main()

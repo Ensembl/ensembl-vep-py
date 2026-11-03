@@ -11,14 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Benchmarks for class descriptors.
+"""Benchmark cached-property implementations.
 
-This is used to evaluate different strategies for implementing cached properties. The benchmarks include:
-- `WithSetAttr`: A class that uses `__setattr__` to prevent direct assignment to the `functools.cached_property` attributes.
-- `WithProperty`: A class that uses a regular `@property` without a setter to prevent direct assignment but no caching.
-- `WithCachedProperty`: A class that uses `functools.cached_property` to cache but no prohibition on direct assignment.
-- `WithManualCache`: A class that uses a custom desciptor from `functools.cached_property` but uses __set__ to prevent direct assignment.
-- `WithCachedPropertyMangling`: A class that uses `functools.cached_property` with name mangling to make the cached value less accessible.
+The benchmark compares a read-only property, the standard cached-property descriptor, a data
+descriptor that refuses assignment, explicit ``__setattr__`` protection, and a name-mangled
+cached property.
 
 Result:
     WithSetAttr           : init                    216.7 ns/call
@@ -37,36 +34,41 @@ Result:
     WithCachedPropertyMangling: get                      37.0 ns/call
     WithCachedPropertyMangling: trivial get              39.6 ns/call
 
-As expected, WithProperty is very slow on get due to no caching. WithCachedProperty and WithCachedPropertyMangling
-are much faster due to caching, there is a small overhead in WithCachedPropertyMangling due to calling the property
-method to access the cached value, but it is still very fast. WithSetAttr is also fast on get, but object
-initialization is slow because of __setattr__ being called on object initialization. WithManualCache is slower than
-WithCachedProperty due to the overhead of the __set__ method in the custom descriptor, it make the attribute a
-data descriptor instead of a non-data descriptor, which means the descriptor's __get__ method will be called on every
-access, and not directly from the instance's __dict__ after the first access.
-
-WithCachedPropertyMangling seems to be the best option in terms of performance and safety, it is almost as
-fast as WithCachedProperty but with the added benefit of making the cached value less accessible and preventing
-direct assignment.
+The uncached property makes the expensive read much slower. Name mangling adds a small property
+call to a standard cached-property read, while ``__setattr__`` protection increases construction
+cost. The custom data descriptor is slower because its ``__get__`` method remains on every access.
 """
 
-import timeit
+from __future__ import annotations
+
 import functools
 import statistics
+import timeit
+from typing import Any
 
 
 class MyCachedProperty(functools.cached_property):
-    def __set__(self, obj, value):
+    """Cached property that refuses direct assignment."""
+
+    def __set__(self, obj: object, value: object) -> None:
+        """Refuse assignment to the derived value."""
         raise AttributeError(
             f"'{self.attrname}' is a cached property — assign to its dependencies, not to it directly"
         )
 
 
 class WithSetAttr:
-    def __init__(self):
+    """Protect cached values through ``__setattr__``.
+
+    Attributes:
+        x (int): Input used by the derived values.
+    """
+
+    def __init__(self) -> None:
         self.x = 1000
 
-    def __setattr__(self, name, value):
+    def __setattr__(self, name: str, value: object) -> None:
+        """Refuse assignment to either cached value."""
         if name in ("value", "tvalue"):
             raise AttributeError(
                 f"'{name}' is a cached property — assign to its dependencies, not to it directly"
@@ -74,75 +76,110 @@ class WithSetAttr:
         super().__setattr__(name, value)
 
     @functools.cached_property
-    def value(self):
+    def value(self) -> int:
+        """Return the expensive derived value."""
         return sum(range(self.x))
 
     @functools.cached_property
-    def tvalue(self):
+    def tvalue(self) -> int:
+        """Return the trivial derived value."""
         return self.x * 2  # trivial compute
 
 
 class WithProperty:
-    def __init__(self):
+    """Expose uncached read-only properties.
+
+    Attributes:
+        x (int): Input used by the derived values.
+    """
+
+    def __init__(self) -> None:
         self.x = 1000
 
     @property
-    def value(self):
+    def value(self) -> int:
+        """Return the expensive derived value."""
         return sum(range(self.x))
 
     @property
-    def tvalue(self):
+    def tvalue(self) -> int:
+        """Return the trivial derived value."""
         return self.x * 2  # trivial compute
 
 
 class WithCachedProperty:
-    def __init__(self):
+    """Expose assignable standard cached properties.
+
+    Attributes:
+        x (int): Input used by the derived values.
+    """
+
+    def __init__(self) -> None:
         self.x = 1000
 
     @functools.cached_property
-    def value(self):
+    def value(self) -> int:
+        """Return the expensive derived value."""
         return sum(range(self.x))
 
     @functools.cached_property
-    def tvalue(self):
+    def tvalue(self) -> int:
+        """Return the trivial derived value."""
         return self.x * 2  # trivial compute
 
 
 class WithManualCache:
-    def __init__(self):
+    """Expose cached values through a data descriptor.
+
+    Attributes:
+        x (int): Input used by the derived values.
+    """
+
+    def __init__(self) -> None:
         self.x = 1000
 
     @MyCachedProperty
-    def value(self):
+    def value(self) -> int:
+        """Return the expensive derived value."""
         return sum(range(self.x))
 
     @MyCachedProperty
-    def tvalue(self):
+    def tvalue(self) -> int:
+        """Return the trivial derived value."""
         return self.x * 2  # trivial compute
 
 
 class WithCachedPropertyMangling:
-    def __init__(self):
+    """Hide standard cached properties behind read-only properties.
+
+    Attributes:
+        x (int): Input used by the derived values.
+    """
+
+    def __init__(self) -> None:
         self.x = 1000
 
     @property
-    def value(self):
+    def value(self) -> int:
+        """Return the expensive derived value."""
         return self.__value
 
     @functools.cached_property
-    def __value(self):
+    def __value(self) -> int:
         return sum(range(self.x))
 
     @property
-    def tvalue(self):
+    def tvalue(self) -> int:
+        """Return the trivial derived value."""
         return self.__tvalue
 
     @functools.cached_property
-    def __tvalue(self):
+    def __tvalue(self) -> int:
         return self.x * 2  # trivial compute
 
 
-def bench(cls, n=10_000_000):
+def bench(cls: type[Any], n: int = 10_000_000) -> None:
+    """Benchmark construction and derived-value reads for one class."""
     obj = cls()  # warm up
     times = timeit.repeat("cls()", globals={"cls": cls}, number=n, repeat=5)
     mean_ns = statistics.mean(times) / n * 1e9
@@ -159,8 +196,14 @@ def bench(cls, n=10_000_000):
     print(f"{cls.__name__:22}:", f"{'trivial get':22}", f"{mean_ns:6.1f} ns/call")
 
 
-bench(WithSetAttr)
-bench(WithProperty)
-bench(WithCachedProperty)
-bench(WithManualCache)
-bench(WithCachedPropertyMangling)
+def main() -> None:
+    """Run every cached-property benchmark."""
+    bench(WithSetAttr)
+    bench(WithProperty)
+    bench(WithCachedProperty)
+    bench(WithManualCache)
+    bench(WithCachedPropertyMangling)
+
+
+if __name__ == "__main__":
+    main()
