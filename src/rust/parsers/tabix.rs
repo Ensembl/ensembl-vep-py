@@ -394,8 +394,10 @@ impl<I: BinningIndex> NoodlesBackend<I> {
             .map(QueryHeader::from)
             .ok_or_else(|| io::Error::new(ErrorKind::InvalidInput, "missing index header"))?;
 
-        // A reference sequence absent from the index has no rows; treating that as "no data"
-        // lets callers fall back cleanly instead of catching a broad exception.
+        // A reference sequence absent from the index has no rows -- not an error. A GFF/GTF file
+        // routinely covers only a subset of the contigs a caller might ask about (patches, an
+        // alt-contig-only panel); treating that as "no data" lets callers fall back cleanly
+        // instead of catching a broad exception.
         let Some(reference_sequence_id) = self.reference_sequence_id(&region) else {
             return Ok(());
         };
@@ -834,6 +836,41 @@ pub fn has_tabix_index(file_path: &Path) -> bool {
         || associated_index_path(file_path, "csi").exists()
 }
 
+/// Return the record count declared by the file's CSI or tabix index.
+///
+/// Reads only the index, so the count costs one small read however large the data file is.
+/// `None` when there is no index, it cannot be read, or it carries no record counts, which an
+/// index written without the pseudo-bin does; a missing count must not read as zero.
+pub fn index_record_count(file_path: &Path) -> Option<u64> {
+    let csi_path = associated_index_path(file_path, "csi");
+    if csi_path.exists() {
+        return csi::fs::read(csi_path).ok().and_then(declared_count);
+    }
+
+    let tbi_path = associated_index_path(file_path, "tbi");
+    if tbi_path.exists() {
+        return tabix::fs::read(tbi_path).ok().and_then(declared_count);
+    }
+
+    None
+}
+
+/// Sum the per-reference record counts an index's pseudo-bin metadata holds.
+fn declared_count<I: BinningIndex>(index: I) -> Option<u64> {
+    let unplaced = index.unplaced_unmapped_record_count();
+    let mut total = unplaced.unwrap_or(0);
+    let mut declared = unplaced.is_some();
+
+    for reference_sequence in index.reference_sequences() {
+        if let Some(metadata) = reference_sequence.metadata() {
+            total += metadata.mapped_record_count() + metadata.unmapped_record_count();
+            declared = true;
+        }
+    }
+
+    declared.then_some(total)
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -919,6 +956,54 @@ mod tests {
         )?;
 
         assert!(!has_tabix_index(&path));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // index_record_count
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_index_record_count_sums_the_declared_counts() -> io::Result<()> {
+        let dir = create_temp_dir("tabix-index-record-count")?;
+        let (gz_path, _tbi_path) = write_gff3_with_tbi(&dir, None)?;
+
+        // Five records across two reference sequences, as the index's metadata declares them.
+        assert_eq!(index_record_count(&gz_path), Some(5));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_index_record_count_without_declared_counts_is_none() -> io::Result<()> {
+        let dir = create_temp_dir("tabix-index-record-count-no-metadata")?;
+        let path = write_bgzf_file(
+            &dir,
+            vec!["chr1\t.\tgene\t1\t100\t.\t+\t.\tID=gene1".to_string()],
+            None,
+        )?;
+        csi::fs::write(associated_index_path(&path, "csi"), &csi::Index::default())?;
+
+        // An index carrying no record counts does not mean the file holds none.
+        assert_eq!(index_record_count(&path), None);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_index_record_count_without_an_index_is_none() -> io::Result<()> {
+        let dir = create_temp_dir("tabix-index-record-count-unindexed")?;
+        let path = write_bgzf_file(
+            &dir,
+            vec!["chr1\t.\tgene\t1\t100\t.\t+\t.\tID=gene1".to_string()],
+            None,
+        )?;
+
+        assert_eq!(index_record_count(&path), None);
 
         fs::remove_dir_all(dir)?;
         Ok(())

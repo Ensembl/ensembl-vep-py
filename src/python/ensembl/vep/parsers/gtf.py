@@ -57,7 +57,7 @@ class GTFParser(Parser[GTFRecord]):
 
     @property
     def metadata(self) -> dict:
-        """Public accessor for the _metadata.
+        """Return parsed file metadata.
 
         Returns:
             dict: The metadata dictionary.
@@ -77,21 +77,19 @@ class GTFParser(Parser[GTFRecord]):
 
     @property
     def reader_mode(self) -> str:
-        """Returns the configured reader mode."""
+        """Return the configured reader mode."""
 
         return self._parser.reader_mode
 
     @property
     def index_sequence_names(self) -> list[str]:
-        """Reference sequence names declared by the tabix index, in index order.
+        """Return reference sequence names declared by the tabix index.
 
-        Empty when the file is unopened or read sequentially.
+        Empty when the file is unopened, read sequentially, or falls back to the system
+        ``tabix`` executable.
 
         Returns:
             list[str]: The reference sequence names the index declares.
-
-        Raises:
-            RuntimeError: If the system ``tabix`` executable fails to list the names.
         """
 
         return self._parser.index_sequence_names
@@ -142,7 +140,7 @@ class GTFParser(Parser[GTFRecord]):
         )
 
     def next(self) -> GTFRecord | None:
-        """Returns the next GTF record, or None at EOF.
+        """Return the next GTF record, or ``None`` at EOF.
 
         Returns:
             GTFRecord | None: The next GTF record,
@@ -154,7 +152,7 @@ class GTFParser(Parser[GTFRecord]):
     def records(
         self, limit: int | None = 10000, feature_types: Iterable[str] | None = None
     ) -> list[GTFRecord]:
-        """Returns records from the current stream position.
+        """Return records from the current stream position.
 
         Args:
             limit (int | None): The maximum number of records to return. Default is 10000.
@@ -168,6 +166,21 @@ class GTFParser(Parser[GTFRecord]):
         """
 
         return self._parser.records(limit, None if feature_types is None else list(feature_types))
+
+    def raw_lines(self, limit: int | None = 10000) -> list[str]:
+        """Return record lines from the current stream position without line endings.
+
+        The same stream as ``records``, read one step earlier: each line is returned before
+        anything parses it, for a caller that wants the input's own text rather than a record.
+
+        Args:
+            limit (int | None): The maximum number of lines to return. Default is 10000.
+
+        Returns:
+            list[str]: The record lines, in input order.
+        """
+
+        return self._parser.raw_lines(limit)
 
     def _clear_metadata_cache(self) -> None:
         try:
