@@ -13,61 +13,81 @@
 # limitations under the License.
 
 # pylint: disable=redefined-outer-name
-"""Unit tests for FeatureSource."""
+"""Tests for feature sources."""
 
-from typing import Iterator
+from __future__ import annotations
+
+from collections.abc import Iterator
 import pytest
 from attrs import define, field
 
 from ensembl.vep.caches import SliceCache, WeakSliceCache
-from ensembl.vep.common import SourceType
+from ensembl.vep.common import SourceType, Strand
 from ensembl.vep.sources.sequence_source import SequenceSource
 from ensembl.vep.models import Feature
 from ensembl.vep.sources.feature_source import FeatureSource
 
 
 @define(kw_only=True, auto_attribs=True)
-class ConcreteFeatureSource(FeatureSource):
-    """Concrete feature source used to test interface helpers."""
+class ConcreteFeatureSource(FeatureSource[int, Feature]):
+    """Concrete feature source holding one record per position, used to test the interface.
 
+    Only the record half is implemented, which is the point: the feature getters come from the
+    interface composing these with ``records_to_features``.
+    """
+
+    records: list[int] = field(factory=list)
+    region_records: list[int] = field(factory=list)
     closed: bool = field(default=False)
     sequence_source: SequenceSource | None = field(default=None)  # ignore[assignment]
 
-    def get_all_features(self) -> list[Feature]:
-        return []
+    def get_all_records(self) -> list[int]:
+        """Return every record."""
+        return list(self.records)
 
-    def iter_all_features(self) -> Iterator[Feature]:
-        return iter([])
+    def iter_all_records(self) -> Iterator[int]:
+        """Yield every record."""
+        return iter(self.records)
 
-    def get_features_by_region(
+    def get_records_by_region(
         self,
         region: str | None = None,
         *,
         seq_region_name: str | None = None,
         start: int | None = None,
         end: int | None = None,
-    ) -> list[Feature]:
-        return []
+        **kwargs: object,
+    ) -> list[int]:
+        """Return the records this double was given for a region."""
+        del region, seq_region_name, start, end, kwargs
+        return list(self.region_records)
 
-    def iter_features_by_region(
+    def iter_records_by_region(
         self,
         region: str | None = None,
         *,
         seq_region_name: str | None = None,
         start: int | None = None,
         end: int | None = None,
-    ) -> Iterator[Feature]:
-        return iter([])
+        **kwargs: object,
+    ) -> Iterator[int]:
+        """Yield the records this double was given for a region."""
+        del region, seq_region_name, start, end, kwargs
+        return iter(self.region_records)
+
+    def records_to_features(self, records: list[int]) -> list[Feature]:
+        """Return one single-base feature per record."""
+        return [Feature(start=value, end=value, strand=Strand.FORWARD, slice=None) for value in records]
 
     def close(self) -> None:
         self.closed = True
 
 
 class TestFeatureSourceInitialization:
-    """Test FeatureSource initialization."""
+    """FeatureSource initialization."""
 
     def test_abstract_feature_source_cannot_be_instantiated(self) -> None:
-        """Test FeatureSource cannot be instantiated directly."""
+        """FeatureSource cannot be instantiated directly."""
 
         with pytest.raises(TypeError, match="abstract class"):
             FeatureSource(  # type: ignore[abstract]  # pylint: disable=abstract-class-instantiated
@@ -75,21 +95,21 @@ class TestFeatureSourceInitialization:
             )
 
     def test_concrete_feature_source_sets_source_type(self) -> None:
-        """Test concrete feature source sets the source_type correctly."""
+        """Concrete feature source sets the source_type correctly."""
 
         feature_source = ConcreteFeatureSource(source_type=SourceType.FILE)
 
         assert feature_source.source_type == SourceType.FILE
 
     def test_concrete_feature_source_has_default_slice_cache(self) -> None:
-        """Test feature sources receive a slice cache by default."""
+        """Feature sources receive a slice cache by default."""
 
         feature_source = ConcreteFeatureSource(source_type=SourceType.FILE)
 
         assert isinstance(feature_source.slice_cache, SliceCache)
 
     def test_concrete_feature_source_accepts_shared_slice_cache(self) -> None:
-        """Test a slice cache can be injected and shared between feature sources."""
+        """A slice cache can be injected and shared between feature sources."""
 
         slice_cache = WeakSliceCache()
         first = ConcreteFeatureSource(source_type=SourceType.FILE, slice_cache=slice_cache)
@@ -98,9 +118,17 @@ class TestFeatureSourceInitialization:
         assert first.slice_cache is slice_cache
         assert second.slice_cache is slice_cache
 
+    def test_a_source_declares_no_record_count_by_default(self) -> None:
+        """A count is optional metadata a source answers only when its format carries one."""
+
+        feature_source = ConcreteFeatureSource(source_type=SourceType.FILE)
+
+        assert feature_source.record_count() is None
+        assert feature_source.record_count(scan=True) is None
+
 
 class TestFeatureSourceContextManager:
-    """Test for FeatureSource context manager."""
+    """FeatureSource context manager."""
 
     @pytest.fixture
     def source(self) -> ConcreteFeatureSource:
@@ -109,15 +137,48 @@ class TestFeatureSourceContextManager:
         return ConcreteFeatureSource(source_type=SourceType.FILE)
 
     def test_enter_returns_self(self, source: ConcreteFeatureSource) -> None:
-        """Test __enter__ returns the source instance itself."""
+        """__enter__ returns the source instance itself."""
 
         with source as s:
             assert s is source
 
     def test_exit_calls_close(self, source: ConcreteFeatureSource) -> None:
-        """Test __exit__ calls close on normal exit."""
+        """__exit__ calls close on normal exit."""
 
         with source:
             pass
 
         assert source.closed is True
+
+
+class TestFeatureGettersComposeTheRecordHalf:
+    """What a source gets for free once it can answer in records."""
+
+    def test_every_record_becomes_a_feature(self) -> None:
+        """``get_all_features`` is every record converted."""
+
+        feature_source = ConcreteFeatureSource(source_type=SourceType.FILE, records=[1, 2, 3])
+
+        assert [feature.start for feature in feature_source.get_all_features()] == [1, 2, 3]
+
+    def test_streaming_converts_one_record_at_a_time(self) -> None:
+        """``iter_all_features`` yields without reading the whole file first."""
+
+        feature_source = ConcreteFeatureSource(source_type=SourceType.FILE, records=[4, 5])
+
+        assert [feature.start for feature in feature_source.iter_all_features()] == [4, 5]
+
+    def test_a_region_query_converts_only_its_records(self) -> None:
+        """Both region getters answer from ``get_records_by_region`` and nothing else."""
+
+        feature_source = ConcreteFeatureSource(
+            source_type=SourceType.FILE,
+            records=[1, 2, 3],
+            region_records=[7],
+        )
+
+        found = feature_source.get_features_by_region("1:7-7")
+        streamed = feature_source.iter_features_by_region("1:7-7")
+
+        assert [feature.start for feature in found] == [7]
+        assert [feature.start for feature in streamed] == [7]

@@ -11,10 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Abstract base for file-backed feature sources."""
+"""The file-backed feature source contract."""
+
+from __future__ import annotations
 
 import logging
-from abc import abstractmethod
 from collections.abc import Iterator
 from typing import Generic, TypeVar
 from attrs import define, field
@@ -26,30 +27,30 @@ from ensembl.vep.parsers import Parser
 from ensembl.vep.sources.feature_source import FeatureSource
 
 P = TypeVar("P", bound=Parser)
+R = TypeVar("R")
 F = TypeVar("F", bound=Feature)
 logger = logging.getLogger(__name__)
 
 
 @define(kw_only=True, auto_attribs=True)
-class FileFeatureSource(FeatureSource, Generic[P, F]):
-    """Abstract base for file-backed feature sources.
+class FileFeatureSource(FeatureSource[R, F], Generic[P, R, F]):
+    """Feature source backed by a parser-readable file.
 
-    P: Parser/adaptor type (e.g. GFF3Parser)
-    F: Output Feature type (e.g. Transcript, Variation)
-
-    Concrete subclasses implement `_records_to_features` to handle
-    format-specific record parsing and model construction.
+    Attributes:
+        file_path (str): Path to the feature file.
+        adaptor (P): Parser for the file's record type.
+        source_type (SourceType): File source marker.
     """
 
     file_path: str
     adaptor: P
     source_type: SourceType = field(default=SourceType.FILE, init=False)
 
-    def get_all_features(self) -> list[F]:
-        """Returns all features from the provided file.
+    def get_all_records(self) -> list[R]:
+        """Return every unconverted record in the source file.
 
         Returns:
-            list[F]: Every feature the file holds.
+            list[R]: Every record in the file.
 
         Raises:
             NotImplementedError: If the adaptor cannot parse a whole file at once. Re-raised with
@@ -63,97 +64,87 @@ class FileFeatureSource(FeatureSource, Generic[P, F]):
         """
 
         try:
-            records = self.adaptor.parse_file(self.file_path)
+            return self.adaptor.parse_file(self.file_path)
         except NotImplementedError as unsupported:
             raise NotImplementedError(
                 f"{type(self.adaptor).__name__} does not support parse_file"
             ) from unsupported
-        return self._records_to_features(records)
 
-    def get_features_by_region(
-        self,
-        region: str | None = None,
-        *,
-        seq_region_name: str | None = None,
-        start: int | None = None,
-        end: int | None = None,
-    ) -> list[F]:
-        """Returns features overlapping the given genomic region.
-
-        Args:
-            region (str | None): The region (e.g., "chr1:1000-2000") to get features from.
-            seq_region_name (str | None): The name of the sequence region (e.g., "chr1").
-            start (int | None): The start position of the region.
-            end (int | None): The end position of the region.
-
-        Returns:
-            list[F]: A list of features overlapping the specified region.
-        """
-
-        try:
-            region = format_region_string(region, seq_region_name=seq_region_name, start=start, end=end)
-        except ValueError:
-            logger.debug(
-                f"Cannot parse region: region={region}, "
-                f"seq_region_name={seq_region_name}, start={start}, end={end}"
-            )
-            return []
-
-        with self.adaptor.open(self.file_path, mode="query") as adaptor:
-            if not adaptor.seek(region):
-                return []
-            records = adaptor.records(limit=None)
-
-        return self._records_to_features(records)
-
-    def iter_all_features(self) -> Iterator[F]:
-        """Lazily yield all features from the provided file.
-
-        Converts and yields each record as soon as it comes off the parser,
-        rather than buffering the whole file. This default is only correct
-        for formats where one record maps to one (or more) complete features
-        (e.g. VCF); formats that need to assemble several records into one
-        feature (e.g. GFF3) must override this.
-        """
+    def iter_all_records(self) -> Iterator[R]:
+        """Yield every unconverted record in the source file."""
 
         with self.adaptor.open(self.file_path, mode="sequential") as adaptor:
             while (record := adaptor.next()) is not None:
-                yield from self._records_to_features([record])
+                yield record
 
-    def iter_features_by_region(
+    def get_records_by_region(
         self,
         region: str | None = None,
         *,
         seq_region_name: str | None = None,
         start: int | None = None,
         end: int | None = None,
-    ) -> Iterator[F]:
-        """Lazily yield features overlapping the given genomic region.
+        **kwargs: object,
+    ) -> list[R]:
+        """Return unconverted records from an indexed region query.
 
         Args:
-            region (str | None): The region (e.g., "chr1:1000-2000") to get features from.
+            region (str | None): The region (e.g., "chr1:1000-2000") to read.
             seq_region_name (str | None): The name of the sequence region (e.g., "chr1").
             start (int | None): The start position of the region.
             end (int | None): The end position of the region.
+            **kwargs (object): Unused here; a format whose query takes more accepts it.
 
         Returns:
-            Iterator[F]: An iterator over features overlapping the specified region.
+            list[R]: The records the query read, empty when the region is unreadable.
         """
 
+        del kwargs
         try:
-            region = format_region_string(region, seq_region_name=seq_region_name, start=start, end=end)
+            query_region = format_region_string(region, seq_region_name=seq_region_name, start=start, end=end)
         except ValueError:
-            logger.debug(
-                f"Cannot parse region: region={region}, "
-                f"seq_region_name={seq_region_name}, start={start}, end={end}"
-            )
+            logger.debug("Cannot parse region: %s %s:%s-%s", region, seq_region_name, start, end)
+            return []
+
+        with self.adaptor.open(self.file_path, mode="query") as adaptor:
+            if not adaptor.seek(query_region):
+                return []
+            return adaptor.records(limit=None)
+
+    def iter_records_by_region(
+        self,
+        region: str | None = None,
+        *,
+        seq_region_name: str | None = None,
+        start: int | None = None,
+        end: int | None = None,
+        **kwargs: object,
+    ) -> Iterator[R]:
+        """Yield unconverted records from an indexed region query.
+
+        Args:
+            region (str | None): The region (e.g., "chr1:1000-2000") to read.
+            seq_region_name (str | None): The name of the sequence region (e.g., "chr1").
+            start (int | None): The start position of the region.
+            end (int | None): The end position of the region.
+            **kwargs (object): Unused here; a format whose query takes more accepts it.
+
+        Returns:
+            Iterator[R]: The records the query reads, in file order.
+        """
+
+        del kwargs
+        try:
+            query_region = format_region_string(region, seq_region_name=seq_region_name, start=start, end=end)
+        except ValueError:
+            logger.debug("Cannot parse region: %s %s:%s-%s", region, seq_region_name, start, end)
             return
 
         with self.adaptor.open(self.file_path, mode="query") as adaptor:
-            if not adaptor.seek(region):
+            if not adaptor.seek(query_region):
                 return
             while (record := adaptor.next()) is not None:
-                yield from self._records_to_features([record])
+                yield record
 
     def close(self) -> None:
         """Release the attached sequence source, if any.
@@ -165,9 +156,3 @@ class FileFeatureSource(FeatureSource, Generic[P, F]):
 
         if self.sequence_source is not None:
             self.sequence_source.close()
-
-    @abstractmethod
-    def _records_to_features(self, records: list) -> list[F]:
-        """Convert format-specific raw records to domain Feature objects."""
-
-        raise NotImplementedError

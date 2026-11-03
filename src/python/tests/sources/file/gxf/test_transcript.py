@@ -11,7 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Unit tests for the shared GXF transcript source."""
+"""Tests for the shared GXF transcript source."""
+
+from __future__ import annotations
 
 from pathlib import Path
 import subprocess
@@ -22,15 +24,14 @@ from attrs import define, field
 import pytest
 
 from ensembl.vep.caches.feature_pool import TranscriptPool
-from ensembl.vep.common import CoordSystemLevel, Strand, is_resolved
+from ensembl.vep.common import Strand, is_resolved
 from ensembl.vep.models.genic import Exon, Gene, Translation
 from ensembl.vep.models.genic.transcript import _CODING_DERIVATIONS, Transcript
-from ensembl.vep.models.sequence.coord_system import CoordSystem
-from ensembl.vep.parsers import GFF3Parser, GFF3Record
-from ensembl.vep.sources.sequence_source import SequenceSource
-from ensembl.vep.sources.file.gff3.transcript import GFF3TranscriptSource
 from ensembl.vep.models.sequence import Slice
-from ensembl.vep.sources.file.gxf.transcript import GXFTranscriptSource, _GXFRecord, _GXFTranscriptGroup
+from ensembl.vep.parsers import GFF3Parser, GFF3Record
+from ensembl.vep.sources.file.gff3.transcript import GFF3TranscriptSource
+from ensembl.vep.sources.file.gxf.transcript import GXFTranscriptSource, _GXFTranscriptGroup
+from ensembl.vep.sources.sequence_source import SequenceSource
 from ensembl.vep.sources.synonym import SequenceRegionResolver
 
 
@@ -70,42 +71,49 @@ chr1\tensembl\tmRNA\t1000\t5000\t.\t+\t.\tID=transcript:ENST001
 """
 
 
-def _filter_records_by_feature_type(
-    records: list[GFF3Record],
-    feature_types: frozenset[str] | None,
-) -> list[GFF3Record]:
-    """Mirror the parser-side feature type filter used by indexed stage-one queries."""
-
-    if feature_types is None:
-        return records
-    return [record for record in records if record.feature_type.lower() in feature_types]
-
-
-@define(auto_attribs=True)
 class DummySequenceSource(SequenceSource):
-    """Minimal sequence source fixture for slice-length assertions."""
+    """Minimal sequence source fixture for slice-length assertions.
 
-    lengths: dict[str, int]
-    sequences: dict[str, str] = field(factory=dict)
-    closed: bool = field(default=False, init=False)
+    Attributes:
+        lengths (dict[str, int]): Sequence-region lengths by name.
+        sequences (dict[str, str]): Optional sequence strings by region name.
+        closed (bool): Whether the source has been closed.
+    """
 
-    def get_sequence_by_start_end_strand(  # pylint: disable=unused-argument
-        self, seq_region_name: str, start: int, end: int, *, strand: Strand = Strand.FORWARD
-    ) -> str | None:
-        """Return the whole stored sequence, ignoring the requested span."""
+    def __init__(self, lengths: dict[str, int], sequences: dict[str, str] | None = None) -> None:
+        super().__init__()
+        self.lengths = lengths
+        self.sequences = sequences or {}
+        self.closed = False
+
+    def get_sequence_by_start_end_strand(
+        self,
+        seq_region_name: str,
+        start: int,
+        end: int,
+        *,
+        strand: Strand = Strand.FORWARD,
+    ) -> str | None:  # pragma: no cover - helper
+        """Return the configured sequence for a region."""
+        del start, end, strand
         return self.sequences.get(seq_region_name)
+
+    def get_seq_region_length(self, seq_region_name: str) -> int | None:
+        """Return the configured length for a region."""
+        return self.lengths.get(seq_region_name)
+
+    def _fetch_sequence_chunk(self, seq_region_name: str, start: int, end: int) -> str:
+        """Return a configured sequence chunk."""
+        del start, end
+        return self.sequences.get(seq_region_name, "")
+
+    def _get_seq_region_length(self, seq_region_name: str) -> int | None:
+        """Return the configured length for a region."""
+        return self.lengths.get(seq_region_name)
 
     def close(self) -> None:
         """Record that the source was closed."""
         self.closed = True
-
-    def _fetch_sequence_chunk(self, seq_region_name: str, start: int, end: int) -> str:
-        """Return Ns; spans are served by ``get_sequence_by_start_end_strand``."""
-        return "N" * (end - start + 1)
-
-    def _get_seq_region_length(self, seq_region_name: str) -> int | None:
-        """Return the configured length for a sequence region."""
-        return self.lengths.get(seq_region_name)
 
 
 @define(kw_only=True, auto_attribs=True)
@@ -117,11 +125,11 @@ class DummyGXFTranscriptSource(GXFTranscriptSource[GFF3Parser]):
     )
     adaptor: GFF3Parser = field(init=False, factory=GFF3Parser)
 
-    def get_record_id(self, record: _GXFRecord) -> str | None:
-        """Return the GFF3 ``ID`` or GTF ``transcript_id``."""
+    def get_record_id(self, record: GFF3Record) -> str | None:
+        """Return the record identifier."""
         return record.attributes.get("ID", (None,))[0] or record.attributes.get("transcript_id", (None,))[0]
 
-    def get_parent_ids(self, record: _GXFRecord) -> tuple[str, ...]:
+    def get_parent_ids(self, record: GFF3Record) -> tuple[str, ...]:
         """Return the GFF3 ``Parent`` or GTF ``gene_id``."""
         gff_parent_ids = record.attributes.get("Parent")
         if gff_parent_ids is not None:
@@ -134,15 +142,28 @@ class DummyGXFTranscriptSource(GXFTranscriptSource[GFF3Parser]):
         return []
 
     def iter_all_features(self) -> Iterator[Transcript]:  # pragma: no cover - fixture helper
-        """Yield nothing."""
+        """Yield no features from the test double."""
+        return iter(())
+
+    def iter_features_by_region(
+        self,
+        region: str | None = None,
+        *,
+        seq_region_name: str | None = None,
+        start: int | None = None,
+        end: int | None = None,
+        **kwargs: object,
+    ) -> Iterator[Transcript]:  # pragma: no cover
+        """Yield no features from the test double."""
+        del region, seq_region_name, start, end, kwargs
         return iter(())
 
 
 class TestGroupRecords:
-    """Tests for the shared record-grouping helper."""
+    """The shared record-grouping helper."""
 
     def test_group_records_uses_shared_grouping(self) -> None:
-        """Test grouping delegates to the shared per-transcript grouping logic."""
+        """Grouping delegates to the shared per-transcript grouping logic."""
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
         source = DummyGXFTranscriptSource(file_path="")
@@ -189,10 +210,11 @@ class TestCompleteRegionFeatures:
             *,
             feature_types: frozenset[str] | None = None,
         ) -> list[GFF3Record]:
+            del feature_types
             calls.append((start, end))
             if (start, end) == (1500, 1600):
-                return _filter_records_by_feature_type(records[:4], feature_types)
-            return _filter_records_by_feature_type(records, feature_types)
+                return records[:4]
+            return records
 
         monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
 
@@ -202,40 +224,6 @@ class TestCompleteRegionFeatures:
         assert len(transcripts[0].spliced_exons) == 2
         assert transcripts[0].translation is not None
         assert calls == [(1500, 1600), (1000, 5000)]
-
-    def test_overlapping_candidate_spans_are_merged_for_stage_two_query(
-        self,
-        monkeypatch: pytest.MonkeyPatch,
-    ) -> None:
-        """Overlapping candidate transcript spans are reloaded with one combined full-span query."""
-        records = GFF3Parser.parse_text(_GFF3_TWO_TRANSCRIPTS)
-        source = DummyGXFTranscriptSource(
-            file_path="",
-            sequence_source=DummySequenceSource({"chr1": 9000}),
-        )
-        stage_two_calls: list[tuple[int | None, int | None]] = []
-
-        def records_for_region(
-            _source: DummyGXFTranscriptSource,
-            _region: str,
-            start: int | None,
-            end: int | None,
-            *,
-            feature_types: frozenset[str] | None = None,
-        ) -> list[GFF3Record]:
-            if feature_types is None:
-                stage_two_calls.append((start, end))
-            return _filter_records_by_feature_type(records, feature_types)
-
-        monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
-
-        transcripts = source.get_features_by_region(seq_region_name="chr1", start=1500, end=1600)
-
-        assert [transcript.stable_id for transcript in transcripts] == [
-            "transcript:ENST001",
-            "transcript:ENST002",
-        ]
-        assert stage_two_calls == [(1000, 5000)]
 
     def test_stage_one_query_is_filtered_to_transcript_feature_types(
         self,
@@ -258,7 +246,7 @@ class TestCompleteRegionFeatures:
             feature_types: frozenset[str] | None = None,
         ) -> list[GFF3Record]:
             calls.append(((start, end), feature_types))
-            return _filter_records_by_feature_type(records, feature_types)
+            return records
 
         monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
 
@@ -316,7 +304,7 @@ class TestCompleteRegionFeatures:
             _end: int,
             *,
             feature_types: frozenset[str] | None = None,
-        ) -> list[GFF3Record]:
+        ) -> list[Any]:
             del feature_types
             calls.append(sequence_region)
             return [object()] if sequence_region == "1" else []
@@ -347,7 +335,7 @@ class TestCompleteRegionFeatures:
             _end: int,
             *,
             feature_types: frozenset[str] | None = None,
-        ) -> list[GFF3Record]:
+        ) -> list[Any]:
             del feature_types
             calls.append(sequence_region)
             return [object()] if sequence_region == "2" else []
@@ -360,7 +348,7 @@ class TestCompleteRegionFeatures:
         assert len(records) == 1
 
     def test_group_records_with_multiple_transcripts(self) -> None:
-        """Test multiple transcripts are grouped into separate groups."""
+        """Multiple transcripts are grouped into separate groups."""
 
         records = GFF3Parser.parse_text(_GFF3_TWO_TRANSCRIPTS)
         source = DummyGXFTranscriptSource(file_path="")
@@ -372,7 +360,7 @@ class TestCompleteRegionFeatures:
         assert isinstance(groups[1], _GXFTranscriptGroup)
 
     def test_group_records_without_gene_or_cds(self) -> None:
-        """Test a transcript with no gene or CDS records is still grouped."""
+        """A transcript with no gene or CDS records is still grouped."""
 
         records = GFF3Parser.parse_text(_GFF3_NO_GENE_OR_CDS)
         source = DummyGXFTranscriptSource(file_path="")
@@ -381,6 +369,40 @@ class TestCompleteRegionFeatures:
 
         assert len(groups) == 1
         assert isinstance(groups[0], _GXFTranscriptGroup)
+
+    def test_overlapping_candidate_spans_are_merged_for_stage_two_query(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """Overlapping candidate transcript spans are reloaded with one combined full-span query."""
+        records = GFF3Parser.parse_text(_GFF3_TWO_TRANSCRIPTS)
+        source = DummyGXFTranscriptSource(
+            file_path="",
+            sequence_source=DummySequenceSource({"chr1": 9000}),
+        )
+        stage_two_calls: list[tuple[int | None, int | None]] = []
+
+        def records_for_region(
+            _source: DummyGXFTranscriptSource,
+            _region: str,
+            start: int | None,
+            end: int | None,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
+            if feature_types is None:
+                stage_two_calls.append((start, end))
+            return _filter_records_by_feature_type(records, feature_types)
+
+        monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
+
+        transcripts = source.get_features_by_region(seq_region_name="chr1", start=1500, end=1600)
+
+        assert [transcript.stable_id for transcript in transcripts] == [
+            "transcript:ENST001",
+            "transcript:ENST002",
+        ]
+        assert stage_two_calls == [(1000, 5000)]
 
     def test_stage_one_transcript_row_with_no_id_is_skipped(
         self,
@@ -411,10 +433,10 @@ class TestCompleteRegionFeatures:
 
 
 class TestResolveGeneRecord:
-    """Tests for resolving a transcript group's gene record."""
+    """Resolving a transcript group's gene record."""
 
     def test_returns_group_gene_record_when_present(self) -> None:
-        """Test the group's own gene record is preferred when present."""
+        """The group's own gene record is preferred when present."""
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
         source = DummyGXFTranscriptSource(file_path="")
@@ -425,7 +447,7 @@ class TestResolveGeneRecord:
         assert gene_record is group.gene_record
 
     def test_falls_back_to_previously_seen_gene_records(self) -> None:
-        """Test a gene seen earlier in the stream is resolved via the parent id."""
+        """A gene seen earlier in the stream is resolved via the parent id."""
 
         records = GFF3Parser.parse_text(_GFF3_NO_GENE_OR_CDS)
         source = DummyGXFTranscriptSource(file_path="")
@@ -439,7 +461,7 @@ class TestResolveGeneRecord:
         assert gene_record is records[0]
 
     def test_returns_none_when_gene_record_cannot_be_found(self) -> None:
-        """Test None is returned when no gene record is known for the parent id."""
+        """None is returned when no gene record is known for the parent id."""
 
         records = GFF3Parser.parse_text(_GFF3_NO_GENE_OR_CDS)
         source = DummyGXFTranscriptSource(file_path="")
@@ -451,37 +473,41 @@ class TestResolveGeneRecord:
 
 
 class TestResolveGene:
-    """Tests for attaching a Gene to a Transcript."""
+    """Attaching a Gene to a Transcript."""
 
     def test_no_op_when_gene_record_is_none(self) -> None:
-        """Test nothing is attached when there is no gene record."""
+        """Nothing is attached when there is no gene record."""
 
         records = GFF3Parser.parse_text(_GFF3_NO_GENE_OR_CDS)
-        source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
+        source = DummyGXFTranscriptSource(file_path="")
         group = source._group_records(records)[0]  # pylint: disable=protected-access
-        transcript = source._build_transcript_from_record_group(group)  # pylint: disable=protected-access
+        transcript = source._build_transcript_from_record_group(group, {})  # pylint: disable=protected-access
 
-        source._resolve_gene(None, None, transcript, {})  # pylint: disable=protected-access
+        source._resolve_gene(None, None, transcript, {}, {})  # pylint: disable=protected-access
 
         assert transcript.gene is None
 
     def test_reuses_cached_gene_for_repeated_gene_id(self) -> None:
-        """Test the same Gene instance is reused across transcripts sharing a gene id."""
+        """The same Gene instance is reused across transcripts sharing a gene id."""
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
-        source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
+        source = DummyGXFTranscriptSource(file_path="")
         group = source._group_records(records)[0]  # pylint: disable=protected-access
-        # slice_cache: dict[str, Slice] = {}
+        slice_cache: dict[str, Slice] = {}
         gene_cache: dict[str, Gene] = {}
 
-        # pylint: disable-next=protected-access
-        transcript_1 = source._build_transcript_from_record_group(group)
-        # pylint: disable-next=protected-access
-        transcript_2 = source._build_transcript_from_record_group(group)
-        # pylint: disable-next=protected-access
-        source._resolve_gene(group.gene_record, group.gene_id, transcript_1, gene_cache)
-        # pylint: disable-next=protected-access
-        source._resolve_gene(group.gene_record, group.gene_id, transcript_2, gene_cache)
+        transcript_1 = source._build_transcript_from_record_group(  # pylint: disable=protected-access
+            group, slice_cache
+        )
+        transcript_2 = source._build_transcript_from_record_group(  # pylint: disable=protected-access
+            group, slice_cache
+        )
+        source._resolve_gene(  # pylint: disable=protected-access
+            group.gene_record, group.gene_id, transcript_1, gene_cache, slice_cache
+        )
+        source._resolve_gene(  # pylint: disable=protected-access
+            group.gene_record, group.gene_id, transcript_2, gene_cache, slice_cache
+        )
 
         assert transcript_1.gene is transcript_2.gene
         assert transcript_1.gene is not None
@@ -489,10 +515,10 @@ class TestResolveGene:
 
 
 class TestBuildTranscriptFromRecordGroup:
-    """Tests for assembling a Transcript from one grouped record block."""
+    """Assembling a Transcript from one grouped record block."""
 
     def test_build_transcript_from_group_builds_full_graph(self) -> None:
-        """Test a full transcript graph is assembled from grouped records."""
+        """A full transcript graph is assembled from grouped records."""
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
         source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
@@ -505,7 +531,7 @@ class TestBuildTranscriptFromRecordGroup:
             cds_records=[records[3], records[5]],
         )
 
-        transcript = source._build_transcript_from_record_group(group)  # pylint: disable=protected-access
+        transcript = source._build_transcript_from_record_group(group, {})  # pylint: disable=protected-access
 
         assert transcript.stable_id == "transcript:ENST001"
         assert transcript.slice is not None
@@ -519,45 +545,45 @@ class TestBuildTranscriptFromRecordGroup:
         assert transcript.translation.end == 3901
 
     def test_build_transcript_without_cds_records_has_no_translation(self) -> None:
-        """Test a transcript with no CDS records has no translation."""
+        """A transcript with no CDS records has no translation."""
 
         records = GFF3Parser.parse_text(_GFF3_NO_GENE_OR_CDS)
-        source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
+        source = DummyGXFTranscriptSource(file_path="")
         group = source._group_records(records)[0]  # pylint: disable=protected-access
 
-        transcript = source._build_transcript_from_record_group(group)  # pylint: disable=protected-access
+        transcript = source._build_transcript_from_record_group(group, {})  # pylint: disable=protected-access
 
         assert transcript.translation is None
 
     def test_exons_and_transcript_share_slice_instance(self) -> None:
-        """Test the transcript and its exons share the same Slice instance."""
+        """The transcript and its exons share the same Slice instance."""
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
-        source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
+        source = DummyGXFTranscriptSource(file_path="")
         group = source._group_records(records)[0]  # pylint: disable=protected-access
 
-        transcript = source._build_transcript_from_record_group(group)  # pylint: disable=protected-access
+        transcript = source._build_transcript_from_record_group(group, {})  # pylint: disable=protected-access
 
         assert transcript.slice is transcript.spliced_exons[0].slice
         assert transcript.slice is transcript.spliced_exons[1].slice
 
 
 class TestBuildTranslation:
-    """Tests for building a Translation from CDS records."""
+    """Building a Translation from CDS records."""
 
     @staticmethod
     def _transcript() -> Transcript:
         """The transcript the offsets are relative to, built the way the source builds it."""
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
-        source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
+        source = DummyGXFTranscriptSource(file_path="")
         group = source._group_records(records)[0]  # pylint: disable=protected-access
-        return source._build_transcript_from_record_group(group)  # pylint: disable=protected-access
+        return source._build_transcript_from_record_group(group, {})  # pylint: disable=protected-access
 
     def test_returns_none_for_empty_cds_records(self) -> None:
-        """Test no translation is built when there are no CDS records."""
+        """No translation is built when there are no CDS records."""
 
-        source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
+        source = DummyGXFTranscriptSource(file_path="")
 
         # pylint: disable-next=protected-access
         assert source._build_translation([], self._transcript()) is None
@@ -573,7 +599,7 @@ class TestBuildTranslation:
         """
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
-        source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
+        source = DummyGXFTranscriptSource(file_path="")
         cds_records = [records[3], records[5]]
 
         # pylint: disable-next=protected-access
@@ -584,11 +610,77 @@ class TestBuildTranslation:
         assert translation.end == 3901
 
 
+class TestGetOrBuildSlice:
+    """The shared, cached Slice builder."""
+
+    def test_get_or_build_slice_uses_sequence_source_length(self) -> None:
+        """The built slice uses the sequence source's region length."""
+
+        source = DummyGXFTranscriptSource(
+            file_path="", sequence_source=DummySequenceSource({"chr1": 42}, {"chr1": "ACGT"})
+        )
+
+        slice_cache: dict[str, Slice] = {}
+        seq_slice = source._get_or_build_slice("chr1", slice_cache)  # pylint: disable=protected-access
+
+        assert seq_slice.end == 42
+        assert seq_slice.seq_region_length == 42
+        assert seq_slice.seq == "ACGT"
+
+    def test_get_or_build_slice_without_sequence_source_uses_placeholder_end(self) -> None:
+        """The built slice falls back to a placeholder end without a sequence source."""
+
+        source = DummyGXFTranscriptSource(file_path="")
+
+        seq_slice = source._get_or_build_slice("chr1", {})  # pylint: disable=protected-access
+
+        assert seq_slice.start == 1
+        assert seq_slice.seq_region_length is None
+        assert seq_slice.end == 2**31 - 1
+
+    def test_get_or_build_slice_reuses_cached_instance(self) -> None:
+        """The same Slice instance is returned for the same region."""
+
+        source = DummyGXFTranscriptSource(file_path="")
+        slice_cache: dict[str, Slice] = {}
+
+        first = source._get_or_build_slice("chr1", slice_cache)  # pylint: disable=protected-access
+        second = source._get_or_build_slice("chr1", slice_cache)  # pylint: disable=protected-access
+
+        assert first is second
+
+    def test_get_or_build_slice_different_regions_get_different_instances(self) -> None:
+        """Different regions produce distinct Slice instances."""
+
+        source = DummyGXFTranscriptSource(file_path="")
+        slice_cache: dict[str, Slice] = {}
+
+        chr1_slice = source._get_or_build_slice("chr1", slice_cache)  # pylint: disable=protected-access
+        chr2_slice = source._get_or_build_slice("chr2", slice_cache)  # pylint: disable=protected-access
+
+        assert chr1_slice is not chr2_slice
+        assert chr1_slice.seq_region_name == "chr1"
+        assert chr2_slice.seq_region_name == "chr2"
+
+    def test_get_or_build_slice_resolves_raw_gxf_name_to_reference_name(self) -> None:
+        """Build transcript models on the same canonical slice as uploaded variants."""
+        source = DummyGXFTranscriptSource(
+            file_path="",
+            sequence_source=DummySequenceSource({"chr1": 42}),
+            reference_region_resolver=SequenceRegionResolver(source_names=frozenset({"chr1"})),
+        )
+
+        seq_slice = source._get_or_build_slice("1", {})  # pylint: disable=protected-access
+
+        assert seq_slice.seq_region_name == "chr1"
+        assert seq_slice.end == 42
+
+
 class TestFirstAttr:
-    """Tests for the shared attribute lookup helper."""
+    """The shared attribute lookup helper."""
 
     def test_returns_first_value_for_known_key(self) -> None:
-        """Test the first attribute value is returned for a known key."""
+        """The first attribute value is returned for a known key."""
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
         first_attr = DummyGXFTranscriptSource._first_attr  # pylint: disable=protected-access
@@ -596,7 +688,7 @@ class TestFirstAttr:
         assert first_attr(records[0], "Name") == "BRCA1"
 
     def test_returns_none_for_missing_key(self) -> None:
-        """Test None is returned when the attribute key is absent."""
+        """None is returned when the attribute key is absent."""
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
         first_attr = DummyGXFTranscriptSource._first_attr  # pylint: disable=protected-access
@@ -604,7 +696,7 @@ class TestFirstAttr:
         assert first_attr(records[0], "missing") is None
 
     def test_returns_first_value_for_multi_valued_key(self) -> None:
-        """Test only the first value is returned for a multi-valued key."""
+        """Only the first value is returned for a multi-valued key."""
 
         records = GFF3Parser.parse_text("chr1\tensembl\tgene\t1\t10\t.\t+\t.\tAlias=a,b,c\n")
         first_attr = DummyGXFTranscriptSource._first_attr  # pylint: disable=protected-access
@@ -612,11 +704,11 @@ class TestFirstAttr:
         assert first_attr(records[0], "Alias") == "a"
 
     def test_works_against_a_plain_python_implementation(self) -> None:
-        """Test ``_first_attr`` delegates correctly to any ``_GXFRecord``, not only the Rust type."""
+        """``_first_attr`` delegates correctly to any ``GXFRecord``, not only the Rust type."""
 
         @define(kw_only=True, auto_attribs=True)
         class PlainRecord:
-            """A minimal ``_GXFRecord`` implementing ``first_attribute`` in plain Python."""
+            """A minimal ``GXFRecord`` implementing ``first_attribute`` in plain Python."""
 
             feature_type: str = "gene"
             seqid: str = "chr1"
@@ -649,16 +741,9 @@ class TestBuilderFastPath:
         source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
         group = source._group_records(records)[0]  # pylint: disable=protected-access
 
-        fast = source._build_transcript_from_record_group(group)  # pylint: disable=protected-access
+        fast = source._build_transcript_from_record_group(group, {})  # pylint: disable=protected-access
 
-        reference_slice = Slice(
-            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME, default=True),
-            seq_region_name="chr1",
-            start=1,
-            end=9000,
-            strand=Strand.FORWARD,
-            sequence_source=DummySequenceSource({"chr1": 9000}),
-        )
+        reference_slice = source._get_or_build_slice("chr1", {})  # pylint: disable=protected-access
         reference = Transcript(
             stable_id="transcript:ENST001", start=1000, end=5000, strand=Strand.FORWARD, slice=reference_slice
         )
@@ -703,7 +788,7 @@ class TestBuilderFastPath:
         source = DummyGXFTranscriptSource(file_path="", sequence_source=DummySequenceSource({"chr1": 9000}))
         group = source._group_records(records)[0]  # pylint: disable=protected-access
 
-        transcript = source._build_transcript_from_record_group(group)  # pylint: disable=protected-access
+        transcript = source._build_transcript_from_record_group(group, {})  # pylint: disable=protected-access
 
         for name in _CODING_DERIVATIONS:
             assert not is_resolved(transcript, name), f"{name} was resolved as a side effect of building"
@@ -724,9 +809,9 @@ class TestCandidateFiltering:
         # pylint: disable-next=protected-access
         original_build = GXFTranscriptSource._build_transcript_from_record_group
 
-        def counting_build(self, group):  # type: ignore[no-untyped-def]
+        def counting_build(self, group, slice_cache):  # type: ignore[no-untyped-def]
             build_calls.append(group.transcript_id)
-            return original_build(self, group)
+            return original_build(self, group, slice_cache)
 
         monkeypatch.setattr(DummyGXFTranscriptSource, "_build_transcript_from_record_group", counting_build)
 
@@ -791,7 +876,7 @@ class TestWholeRegionQuery:
     """A region without coordinates queries the whole sequence region."""
 
     def test_region_without_bounds_queries_the_whole_region(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        """Test stage 1 passes no bounds through, so the query covers the contig."""
+        """Stage 1 passes no bounds through, so the query covers the contig."""
 
         queried: list[tuple[str, int | None, int | None]] = []
 
@@ -814,27 +899,16 @@ class TestWholeRegionQuery:
         assert queried == [("chr1", None, None)]
 
 
-class TestStreamingIteration:
-    """Streaming transcript assembly from sequential parser records."""
+def _records_matching(records: list[GFF3Record], feature_types: frozenset[str] | None) -> list[GFF3Record]:
+    """Return what a typed region query reads, as the parser's own type filter would.
 
-    def test_parentless_transcript_streams_as_its_own_gene_block(self, tmp_path: Path) -> None:
-        """A transcript row without Parent still forms a streamable synthetic block."""
-        path = tmp_path / "parentless.gff3"
-        path.write_text(
-            "##gff-version 3\n"
-            "chr1\tensembl\tmRNA\t1000\t2000\t.\t+\t.\tID=transcript:ORPHAN\n"
-            "chr1\tensembl\texon\t1000\t2000\t.\t+\t.\tID=exon:ORPHAN;Parent=transcript:ORPHAN\n"
-        )
-        source = GFF3TranscriptSource(
-            file_path=str(path),
-            sequence_source=DummySequenceSource({"chr1": 9000}),
-        )
-
-        transcripts = list(source.iter_all_features())
-
-        assert [transcript.stable_id for transcript in transcripts] == ["transcript:ORPHAN"]
-        assert transcripts[0].gene is None
-        assert [(exon.start, exon.end) for exon in transcripts[0].spliced_exons] == [(1000, 2000)]
+    Stage one of ``get_features_by_region`` asks for transcript rows only, and relies on the
+    parser to drop every other type before a record is built. A fake that returned exon and CDS
+    rows there would make them transcript candidates, which no real source does.
+    """
+    if feature_types is None:
+        return records
+    return [record for record in records if record.feature_type.lower() in feature_types]
 
 
 class TestTranscriptPoolReuse:
@@ -858,7 +932,7 @@ class TestTranscriptPoolReuse:
             *,
             feature_types: frozenset[str] | None = None,
         ) -> list[GFF3Record]:
-            return _filter_records_by_feature_type(records, feature_types)
+            return _records_matching(records, feature_types)
 
         monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
 
@@ -875,7 +949,7 @@ class TestTranscriptPoolReuse:
         ) -> list[GFF3Record]:
             if feature_types is None:
                 raise AssertionError("stage 2 must not run on a pool hit")
-            return _filter_records_by_feature_type(records, feature_types)
+            return _records_matching(records, feature_types)
 
         monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", stage_two_forbidden)
 
@@ -896,7 +970,7 @@ class TestTranscriptPoolReuse:
         monkeypatch.setattr(
             DummyGXFTranscriptSource,
             "_records_for_region",
-            lambda _source, _region, start, end, *, feature_types=None: _filter_records_by_feature_type(
+            lambda _source, _region, start, end, *, feature_types=None: _records_matching(
                 records, feature_types
             ),
         )
@@ -905,6 +979,134 @@ class TestTranscriptPoolReuse:
 
         assert pool.miss_count == 1
         assert pool.get(("chr1", transcript.stable_id, transcript.start, transcript.end)) is transcript
+
+    def test_disabled_pool_behaves_like_no_pool(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """``max_bytes <= 0`` disables reuse even when a pool instance is configured."""
+        records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
+        pool = TranscriptPool(max_bytes=0)
+        source = DummyGXFTranscriptSource(
+            file_path="",
+            sequence_source=DummySequenceSource({"chr1": 9000}),
+            transcript_pool=pool,
+        )
+        stage_two_calls: list[tuple[int, int]] = []
+
+        def records_for_region(
+            _source: DummyGXFTranscriptSource,
+            _region: str,
+            start: int,
+            end: int,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
+            if feature_types is None:
+                stage_two_calls.append((start, end))
+            return _records_matching(records, feature_types)
+
+        monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
+
+        source.get_features_by_region(seq_region_name="chr1", start=1500, end=1600)
+        source.get_features_by_region(seq_region_name="chr1", start=1500, end=1600)
+
+        assert stage_two_calls == [(1000, 5000), (1000, 5000)]
+        assert len(pool) == 0
+
+    def test_duplicate_candidate_id_falls_back_to_non_pooled_path(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """A transcript id repeated at a different span in stage 1 disables pooling for that call.
+
+        The second row must have a *different* span from the first -- the same row turning up
+        twice (a collateral re-fetch, not a duplicate) must never disable the pool; see
+        ``TestWideTranscriptIsNotMistakenForADuplicate``.
+        """
+        records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
+        (other_span_record,) = GFF3Parser.parse_text(
+            "chr1\tensembl\tmRNA\t2000\t6000\t.\t+\t.\tID=transcript:ENST001;Parent=gene:ENSG001\n"
+        )
+        duplicated = [records[0], records[1], other_span_record, records[2], records[3]]
+        pool = TranscriptPool()
+        source = DummyGXFTranscriptSource(
+            file_path="",
+            sequence_source=DummySequenceSource({"chr1": 9000}),
+            transcript_pool=pool,
+        )
+
+        def records_for_region(
+            _source: DummyGXFTranscriptSource,
+            _region: str,
+            start: int,
+            end: int,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
+            del feature_types
+            if (start, end) == (1500, 1600):
+                return duplicated
+            return records
+
+        monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
+
+        transcripts = source.get_features_by_region(seq_region_name="chr1", start=1500, end=1600)
+
+        assert [transcript.stable_id for transcript in transcripts] == ["transcript:ENST001"]
+        assert len(pool) == 0
+
+    def test_result_order_matches_stage_one_regardless_of_build_order(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Combining a pool hit and a fresh build still returns stage-1 (file) order.
+
+        This is the hard CSQ-order invariant: the result must not depend on whether a candidate
+        came from the pool or was just built, nor on the order records were grouped in.
+        """
+        records = GFF3Parser.parse_text(_GFF3_TWO_TRANSCRIPTS)
+        pool = TranscriptPool()
+        source = DummyGXFTranscriptSource(
+            file_path="",
+            sequence_source=DummySequenceSource({"chr1": 9000}),
+        )
+        groups = source._group_records(records)  # pylint: disable=protected-access
+        enst002_group = next(group for group in groups if group.transcript_id == "transcript:ENST002")
+        enst002 = source._build_transcript_from_record_group(  # pylint: disable=protected-access
+            enst002_group, {}
+        )
+        pool.put(("chr1", "transcript:ENST002", enst002.start, enst002.end), enst002)
+        source.transcript_pool = pool
+
+        def records_for_region(
+            _source: DummyGXFTranscriptSource,
+            _region: str,
+            start: int,
+            end: int,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
+            # A real tabix query only returns records overlapping the queried span; ENST002 is
+            # pooled and so must never legitimately turn up when only ENST001's span is queried.
+            del feature_types
+            return [record for record in records if record.start <= end and record.end >= start]
+
+        monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
+
+        transcripts = source.get_features_by_region(seq_region_name="chr1", start=1000, end=5000)
+
+        assert [transcript.stable_id for transcript in transcripts] == [
+            "transcript:ENST001",
+            "transcript:ENST002",
+        ]
+        assert transcripts[1] is enst002
+
+    def test_first_pooled_id_in_records_record_with_no_id_is_skipped(self) -> None:
+        """Test that a record with no id gets skipped when checking pool for duplicate ids
+        with different spans."""
+        records = GFF3Parser.parse_text("chr1\tensembl\tmRNA\t1000\t2000\t.\t+\t.\tParent=gene:ENSG001")
+        source = DummyGXFTranscriptSource(
+            file_path="",
+            sequence_source=DummySequenceSource({"chr1": 9000}),
+        )
+        # pylint: disable-next=protected-access
+        assert source._first_pooled_id_in_records(records, {}) is None
 
     def test_pooled_conflicting_span_falls_back_to_unpooled_rebuild(
         self, monkeypatch: pytest.MonkeyPatch
@@ -959,133 +1161,6 @@ class TestTranscriptPoolReuse:
         assert len(pool) == 0
         assert fallback_calls == [("chr1", candidates)]
 
-    def test_disabled_pool_behaves_like_no_pool(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        """``max_bytes <= 0`` disables reuse even when a pool instance is configured."""
-        records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
-        pool = TranscriptPool(max_bytes=0)
-        source = DummyGXFTranscriptSource(
-            file_path="",
-            sequence_source=DummySequenceSource({"chr1": 9000}),
-            transcript_pool=pool,
-        )
-        stage_two_calls: list[tuple[int, int]] = []
-
-        def records_for_region(
-            _source: DummyGXFTranscriptSource,
-            _region: str,
-            start: int,
-            end: int,
-            *,
-            feature_types: frozenset[str] | None = None,
-        ) -> list[GFF3Record]:
-            if feature_types is None:
-                stage_two_calls.append((start, end))
-            return _filter_records_by_feature_type(records, feature_types)
-
-        monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
-
-        source.get_features_by_region(seq_region_name="chr1", start=1500, end=1600)
-        source.get_features_by_region(seq_region_name="chr1", start=1500, end=1600)
-
-        assert stage_two_calls == [(1000, 5000), (1000, 5000)]
-        assert len(pool) == 0
-
-    def test_duplicate_candidate_id_falls_back_to_non_pooled_path(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
-        """A transcript id repeated at a different span in stage 1 disables pooling for that call.
-
-        The second row must have a *different* span from the first -- the same row turning up
-        twice (a collateral re-fetch, not a duplicate) must never disable the pool; see
-        ``TestWideTranscriptIsNotMistakenForADuplicate``.
-        """
-        records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
-        (other_span_record,) = GFF3Parser.parse_text(
-            "chr1\tensembl\tmRNA\t2000\t6000\t.\t+\t.\tID=transcript:ENST001;Parent=gene:ENSG001\n"
-        )
-        duplicated = [records[0], records[1], other_span_record, records[2], records[3]]
-        pool = TranscriptPool()
-        source = DummyGXFTranscriptSource(
-            file_path="",
-            sequence_source=DummySequenceSource({"chr1": 9000}),
-            transcript_pool=pool,
-        )
-
-        def records_for_region(
-            _source: DummyGXFTranscriptSource,
-            _region: str,
-            start: int,
-            end: int,
-            *,
-            feature_types: frozenset[str] | None = None,
-        ) -> list[GFF3Record]:
-            if (start, end) == (1500, 1600):
-                return _filter_records_by_feature_type(duplicated, feature_types)
-            return _filter_records_by_feature_type(records, feature_types)
-
-        monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
-
-        transcripts = source.get_features_by_region(seq_region_name="chr1", start=1500, end=1600)
-
-        assert [transcript.stable_id for transcript in transcripts] == ["transcript:ENST001"]
-        assert len(pool) == 0
-
-    def test_result_order_matches_stage_one_regardless_of_build_order(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
-        """Combining a pool hit and a fresh build still returns stage-1 (file) order.
-
-        This is the hard CSQ-order invariant: the result must not depend on whether a candidate
-        came from the pool or was just built, nor on the order records were grouped in.
-        """
-        records = GFF3Parser.parse_text(_GFF3_TWO_TRANSCRIPTS)
-        pool = TranscriptPool()
-        source = DummyGXFTranscriptSource(
-            file_path="",
-            sequence_source=DummySequenceSource({"chr1": 9000}),
-        )
-        groups = source._group_records(records)  # pylint: disable=protected-access
-        enst002_group = next(group for group in groups if group.transcript_id == "transcript:ENST002")
-        enst002 = source._build_transcript_from_record_group(  # pylint: disable=protected-access
-            enst002_group
-        )
-        pool.put(("chr1", "transcript:ENST002", enst002.start, enst002.end), enst002)
-        source.transcript_pool = pool
-
-        def records_for_region(
-            _source: DummyGXFTranscriptSource,
-            _region: str,
-            start: int,
-            end: int,
-            *,
-            feature_types: frozenset[str] | None = None,
-        ) -> list[GFF3Record]:
-            # A real tabix query only returns records overlapping the queried span; ENST002 is
-            # pooled and so must never legitimately turn up when only ENST001's span is queried.
-            overlapping = [record for record in records if record.start <= end and record.end >= start]
-            return _filter_records_by_feature_type(overlapping, feature_types)
-
-        monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
-
-        transcripts = source.get_features_by_region(seq_region_name="chr1", start=1000, end=5000)
-
-        assert [transcript.stable_id for transcript in transcripts] == [
-            "transcript:ENST001",
-            "transcript:ENST002",
-        ]
-        assert transcripts[1] is enst002
-
-    def test_first_pooled_id_in_records_record_with_no_id_is_skipped(self) -> None:
-        """Test that a record with no id gets skipped when checking pool for duplicate ids
-        with different spans."""
-        records = GFF3Parser.parse_text("chr1\tensembl\tmRNA\t1000\t2000\t.\t+\t.\tParent=gene:ENSG001")
-        source = DummyGXFTranscriptSource(
-            file_path="",
-            sequence_source=DummySequenceSource({"chr1": 9000}),
-        )
-        # pylint: disable-next=protected-access
-        assert source._first_pooled_id_in_records(records, {}) is None
-
 
 class TestDuplicateTranscriptIdDisablesPool:
     """A repeated transcript id makes pool-on diverge from pool-off unless pooling is disabled.
@@ -1136,16 +1211,12 @@ chr1\tt\texon\t5000\t8000\t.\t+\t.\tParent=transcript:X
         self, indexed_duplicate_id_path: Path
     ) -> None:
         """Pool-on and pool-off must describe the second window identically."""
-        baseline_source = GFF3TranscriptSource(
-            file_path=str(indexed_duplicate_id_path), sequence_source=DummySequenceSource({"chr1": 9000})
-        )
+        baseline_source = GFF3TranscriptSource(file_path=str(indexed_duplicate_id_path))
         baseline = self._query_both_windows(baseline_source)
         baseline_source.close()
 
         pooled_source = GFF3TranscriptSource(
-            file_path=str(indexed_duplicate_id_path),
-            transcript_pool=TranscriptPool(),
-            sequence_source=DummySequenceSource({"chr1": 9000}),
+            file_path=str(indexed_duplicate_id_path), transcript_pool=TranscriptPool()
         )
         pooled = self._query_both_windows(pooled_source)
         pooled_source.close()
@@ -1158,11 +1229,7 @@ chr1\tt\texon\t5000\t8000\t.\t+\t.\tParent=transcript:X
     ) -> None:
         """The pool is cleared and marked poisoned, with exactly one warning logged."""
         pool = TranscriptPool()
-        source = GFF3TranscriptSource(
-            file_path=str(indexed_duplicate_id_path),
-            transcript_pool=pool,
-            sequence_source=DummySequenceSource({"chr1": 9000}),
-        )
+        source = GFF3TranscriptSource(file_path=str(indexed_duplicate_id_path), transcript_pool=pool)
 
         with caplog.at_level("WARNING"):
             self._query_both_windows(source)
@@ -1219,11 +1286,7 @@ chr1\tt\texon\t8900\t9000\t.\t+\t.\tParent=transcript:B
     ) -> None:
         """Querying A and B after WIDE is already pooled must not poison the pool."""
         pool = TranscriptPool()
-        source = GFF3TranscriptSource(
-            file_path=str(indexed_wide_transcript_path),
-            transcript_pool=pool,
-            sequence_source=DummySequenceSource({"chr1": 9000}),
-        )
+        source = GFF3TranscriptSource(file_path=str(indexed_wide_transcript_path), transcript_pool=pool)
 
         # Pools WIDE alone: this window touches only its middle, not A or B.
         first = source.get_features_by_region(seq_region_name="chr1", start=4000, end=5000)
@@ -1245,3 +1308,83 @@ chr1\tt\texon\t8900\t9000\t.\t+\t.\tParent=transcript:B
         assert not source._pool_poisoned  # pylint: disable=protected-access
         assert pool.hit_count == 1
         assert not [record for record in caplog.records if "repeated transcript id" in record.message]
+
+
+class TestRegionRecords:
+    """The public record query, which the source interface requires of every format."""
+
+    def test_reads_the_records_one_region_holds(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Answer in records, passing a format-specific option through to the query."""
+        records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
+        source = DummyGXFTranscriptSource(file_path="")
+        calls: list[tuple[tuple[int | None, int | None], frozenset[str] | None]] = []
+
+        def records_for_region(
+            _source: DummyGXFTranscriptSource,
+            _region: str,
+            start: int | None = None,
+            end: int | None = None,
+            *,
+            feature_types: frozenset[str] | None = None,
+        ) -> list[GFF3Record]:
+            calls.append(((start, end), feature_types))
+            return records
+
+        monkeypatch.setattr(DummyGXFTranscriptSource, "_records_for_region", records_for_region)
+
+        found = source.get_records_by_region(
+            seq_region_name="chr1",
+            start=1500,
+            end=1600,
+            feature_types=frozenset({"mrna"}),
+        )
+
+        assert found == records
+        assert calls == [((1500, 1600), frozenset({"mrna"}))]
+
+    def test_an_unreadable_region_reads_nothing(self) -> None:
+        """A region nothing can be made of is not an error, it is no records."""
+        source = DummyGXFTranscriptSource(file_path="")
+
+        assert source.get_records_by_region() == []
+
+    def test_an_unknown_query_option_is_refused(self) -> None:
+        """A misspelled option is named rather than silently ignored."""
+        source = DummyGXFTranscriptSource(file_path="")
+
+        with pytest.raises(TypeError, match="unexpected query options: fuzzy"):
+            source.get_records_by_region(seq_region_name="chr1", fuzzy=True)
+
+
+def _filter_records_by_feature_type(
+    records: list[GFF3Record],
+    feature_types: frozenset[str] | None,
+) -> list[GFF3Record]:
+    """Mirror the parser-side feature type filter used by indexed stage-one queries."""
+
+    if feature_types is None:
+        return records
+    return [record for record in records if record.feature_type.lower() in feature_types]
+
+
+class TestStreamingIteration:
+    """Sequential streaming of whole gene blocks."""
+
+    def test_parentless_transcript_streams_as_its_own_gene_block(self, tmp_path: Path) -> None:
+        """A transcript row without Parent still forms a streamable synthetic block."""
+        path = tmp_path / "parentless.gff3"
+        path.write_text(
+            "##gff-version 3\n"
+            "chr1\tensembl\tmRNA\t1000\t2000\t.\t+\t.\tID=transcript:ORPHAN\n"
+            "chr1\tensembl\texon\t1000\t2000\t.\t+\t.\tID=exon:ORPHAN;Parent=transcript:ORPHAN\n"
+        )
+        source = GFF3TranscriptSource(
+            file_path=str(path),
+            sequence_source=DummySequenceSource({"chr1": 9000}),
+        )
+
+        transcripts = list(source.iter_all_features())
+
+        assert [transcript.stable_id for transcript in transcripts] == ["transcript:ORPHAN"]
+        assert transcripts[0].gene is None
+        assert [(exon.start, exon.end) for exon in transcripts[0].spliced_exons] == [(1000, 2000)]

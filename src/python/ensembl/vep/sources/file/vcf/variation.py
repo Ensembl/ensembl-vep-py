@@ -11,14 +11,23 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""VCF-back Variation feature source"""
+"""VCF-backed variation feature sources.
+
+Two of them, differing only in what a record is: ``VCFVariationSource`` reads parsed records, and
+``PicklableVCFVariationSource`` reads the input's own lines, which is what an annotation run needs
+because a record it hands a worker has to pickle.
+"""
+
+from __future__ import annotations
 
 import logging
 import re
+from collections.abc import Iterator, Sequence
+
 from attrs import define, field
 
 from ensembl.vep.common.constants import EMPTY_ALLELE
-from ensembl.vep.common import Locus, Strand
+from ensembl.vep.common import Locus, Strand, format_region_string
 from ensembl.vep.models.sequence import Slice
 from ensembl.vep.models.variation.variation import Variation
 from ensembl.vep.models.variation.structural_variation import StructuralVariation, StructuralVariationAllele
@@ -39,9 +48,21 @@ BREAKEND_REGEX = re.compile(
 SYMBOLIC_ALLELES = ("DEL", "INS", "DUP", "INV", "CNV")
 SVTYPES = ("BND", *SYMBOLIC_ALLELES)
 
+_MINIMAL_HEADER = "##fileformat=VCFv4.3\n#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n"
+"""Header lines are parsed against when the input's own header cannot be read."""
+
+_FIXED_COLUMN_COUNT = 8
+"""How many columns every VCF record has before its optional FORMAT and sample columns."""
+
+_RAW_LINE_READ_SIZE = 5000
+"""How many record lines one read from the parser hands back.
+
+An I/O step rather than a batch: how many records are annotated together is decided by whoever
+drives the source, from the execution configuration."""
+
 
 @define(kw_only=True, auto_attribs=True)
-class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
+class VCFVariationSource(FileFeatureSource[VCFParser, VCFRecord, Variation]):
     """Variation source backed by a VCF file.
 
     Attributes:
@@ -51,11 +72,20 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
     adaptor: VCFParser = field(init=False, factory=VCFParser)
     sequence_region_resolver: SequenceRegionResolver | None = field(default=None)
 
-    def records_to_features(self, records: list[VCFRecord]) -> list[Variation]:
-        """Convert already-read VCF records into variation models."""
-        return self._records_to_features(records)
+    def record_count(self, *, scan: bool = False) -> int | None:
+        """Return how many records the input holds, or None when nothing declares it.
 
-    def _records_to_features(self, records: list[VCFRecord]) -> list[Variation]:
+        Args:
+            scan (bool): Whether to count by reading the whole input when it has no index.
+                    Default is False.
+
+        Returns:
+            int | None: The record count, or None when the input has no index and ``scan`` is
+                    False.
+        """
+        return VCFParser.record_count(self.file_path, scan=scan)
+
+    def records_to_features(self, records: list[VCFRecord]) -> list[Variation]:
         """Convert VCFRecords into Variation or StructuralVariation objects.
 
         Args:
@@ -108,6 +138,7 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
                     ),
                     allele_string=allele_string,
                     uploaded_locus=Locus(
+                        seq_region_name=record.chrom,
                         start=record.pos,
                         end=uploaded_end,
                         allele_string=uploaded_allele_string,
@@ -151,6 +182,7 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
                 slice=seq_region_slice,
                 allele_string="/".join([record.reference, *record.alt]),
                 uploaded_locus=Locus(
+                    seq_region_name=record.chrom,
                     start=record.pos,
                     end=end,
                     allele_string="/".join([record.reference, *record.alt]),
@@ -471,3 +503,185 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
         changed = True
 
         return (ref, alt, start, end, changed)
+
+
+@define(kw_only=True, auto_attribs=True)
+class PicklableVCFVariationSource(VCFVariationSource):
+    """VCF variation source whose records are the input's own lines.
+
+    An annotation run reads in one process and builds models in another: the process driving the
+    run reads records and the worker annotating them turns records into variations. A record has
+    to pickle to make that crossing, which the Rust parser's ``VCFRecord`` does not, and output
+    has to echo the input's own text back, which a record built from a line can no longer give.
+    The line is both, so this source's record is a line -- narrowing the record type its parent
+    reads, and leaving everything about building models from them the same.
+
+    Nothing here batches. ``iter_all_records`` yields one record at a time and whoever drives the
+    source groups them (``workflow.executor.PayloadIterator``), which is what lets a format say
+    what a record is without also deciding how many of them cross a process boundary at once.
+    """
+
+    _header_text: str | None = field(default=None, init=False, repr=False)
+
+    def header_lines(self) -> list[str]:
+        """Return the input's leading header lines, without line endings."""
+        with VCFParser(file_path=self.file_path, mode="sequential") as parser:
+            return list(parser.metadata["header"])
+
+    def get_all_records(self) -> list[str]:
+        """Return every record line in the input, in input order."""
+        return list(self.iter_all_records())
+
+    def iter_all_records(self) -> Iterator[str]:
+        """Yield each record's line, as the input spells it, without its line ending.
+
+        Yields:
+            Iterator[str]: Each record's line, in input order.
+
+        Raises:
+            ValueError: If a line holds fewer than the eight fixed VCF columns.
+        """
+        with VCFParser(file_path=self.file_path, mode="sequential") as parser:
+            while lines := parser.raw_lines(_RAW_LINE_READ_SIZE):
+                for line in lines:
+                    yield self._validated(line)
+
+    def get_records_by_region(
+        self,
+        region: str | None = None,
+        *,
+        seq_region_name: str | None = None,
+        start: int | None = None,
+        end: int | None = None,
+        **kwargs: object,
+    ) -> list[str]:
+        """Return the record lines an indexed region query reads.
+
+        Args:
+            region (str | None): The region (e.g., "chr1:1000-2000") to read.
+            seq_region_name (str | None): The name of the sequence region (e.g., "chr1").
+            start (int | None): The start position of the region.
+            end (int | None): The end position of the region.
+            **kwargs (object): Unused here; a format whose query takes more accepts it.
+
+        Returns:
+            list[str]: The record lines the query read, empty when the region names none.
+        """
+        del kwargs
+        return list(self._iter_region_lines(region, seq_region_name, start, end, read_size=None))
+
+    def iter_records_by_region(
+        self,
+        region: str | None = None,
+        *,
+        seq_region_name: str | None = None,
+        start: int | None = None,
+        end: int | None = None,
+        **kwargs: object,
+    ) -> Iterator[str]:
+        """Yield the record lines an indexed region query reads.
+
+        Args:
+            region (str | None): The region (e.g., "chr1:1000-2000") to read.
+            seq_region_name (str | None): The name of the sequence region (e.g., "chr1").
+            start (int | None): The start position of the region.
+            end (int | None): The end position of the region.
+            **kwargs (object): Unused here; a format whose query takes more accepts it.
+
+        Returns:
+            Iterator[str]: The record lines the query reads, in file order.
+        """
+        del kwargs
+        return self._iter_region_lines(region, seq_region_name, start, end, read_size=_RAW_LINE_READ_SIZE)
+
+    def records_to_features(self, records: Sequence[str]) -> list[Variation]:
+        """Return the variations a set of record lines describes, in input order.
+
+        A record is a line alone, so the file's own header is read back here: what a line means
+        can depend on an INFO or contig declaration that only the header holds.
+
+        Args:
+            records (Sequence[str]): The record lines to parse and build models from.
+
+        Returns:
+            list[Variation]: The variations the lines describe.
+        """
+        return super().records_to_features(VCFParser.parse_text(self._parsed_header() + "\n".join(records)))
+
+    @staticmethod
+    def region_of(record: str) -> str:
+        """Return the sequence region a record names.
+
+        Args:
+            record (str): The record line to read.
+
+        Returns:
+            str: Its sequence-region name, taken from the line's first field rather than from all
+                of them: this is read once per record in the process driving a run, and the whole
+                line is split again only for the records output echoes.
+        """
+        return record.partition("\t")[0]
+
+    @staticmethod
+    def record_columns(record: str) -> tuple[str, ...]:
+        """Return a record's own columns, which output echoes back as the input gave them.
+
+        Args:
+            record (str): The record line to split.
+
+        Returns:
+            tuple[str, ...]: Its columns, in input order.
+        """
+        return tuple(record.split("\t"))
+
+    def _iter_region_lines(
+        self,
+        region: str | None,
+        seq_region_name: str | None,
+        start: int | None,
+        end: int | None,
+        *,
+        read_size: int | None,
+    ) -> Iterator[str]:
+        """Yield the record lines of one region query, reading ``read_size`` lines at a time."""
+        try:
+            query_region = format_region_string(region, seq_region_name=seq_region_name, start=start, end=end)
+        except ValueError:
+            logger.debug("Cannot parse region: %s %s:%s-%s", region, seq_region_name, start, end)
+            return
+        with VCFParser(file_path=self.file_path, mode="query") as parser:
+            if not parser.seek(query_region):
+                return
+            while lines := parser.raw_lines(read_size):
+                for line in lines:
+                    yield self._validated(line)
+
+    def _parsed_header(self) -> str:
+        """Return the header text records are parsed against, read from the file once per source."""
+        if self._header_text is None:
+            try:
+                headers = self.header_lines()
+            # A header the parser rejects arrives as a ValueError, a missing file as an OSError.
+            except (OSError, ValueError):
+                headers = []
+            self._header_text = "\n".join(headers) + "\n" if headers else _MINIMAL_HEADER
+        return self._header_text
+
+    @staticmethod
+    def _validated(line: str) -> str:
+        """Return a record line, refusing one that cannot hold a record.
+
+        Args:
+            line (str): The record line to check.
+
+        Returns:
+            str: The line itself.
+
+        Raises:
+            ValueError: If the line holds fewer than the eight fixed VCF columns. Counted rather
+                than split: nothing here needs the fields, and the parser splits the line again
+                anyway.
+        """
+        if line.count("\t") < _FIXED_COLUMN_COUNT - 1:
+            raise ValueError("a VCF record must contain at least eight columns")
+        return line

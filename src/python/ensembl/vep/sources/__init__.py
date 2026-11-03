@@ -11,11 +11,29 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Feature sources — file-backed and database-backed providers of domain Feature objects."""
+"""File-backed and database-backed feature sources."""
 
-from .feature_source import FeatureSource
-from .file.file_feature_source import FileFeatureSource
-from .file.gff3.transcript import GFF3TranscriptSource
-from .file.gtf.transcript import GTFTranscriptSource
+from __future__ import annotations
 
-__all__ = ["FeatureSource", "FileFeatureSource", "GFF3TranscriptSource", "GTFTranscriptSource"]
+from ensembl.vep.sources.feature_source import FeatureSource
+from ensembl.vep.sources.file.fasta.sequence import FastaSequenceSource, UNKNOWN_REGION_LENGTH
+from ensembl.vep.sources.file.file_feature_source import FileFeatureSource
+from ensembl.vep.sources.file.gff3.transcript import GFF3TranscriptSource
+from ensembl.vep.sources.file.gtf.transcript import GTFTranscriptSource
+from ensembl.vep.sources.file.vcf.variation import PicklableVCFVariationSource, VCFVariationSource
+from ensembl.vep.sources.sequence_source import SequenceSource
+from .synonym import ChromosomeSynonyms, SequenceRegionResolver
+
+__all__ = [
+    "ChromosomeSynonyms",
+    "FeatureSource",
+    "FileFeatureSource",
+    "FastaSequenceSource",
+    "GFF3TranscriptSource",
+    "GTFTranscriptSource",
+    "PicklableVCFVariationSource",
+    "SequenceSource",
+    "SequenceRegionResolver",
+    "UNKNOWN_REGION_LENGTH",
+    "VCFVariationSource",
+]

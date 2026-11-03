@@ -11,9 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Unit tests for the VCFVariationSource class."""
+"""Tests for the VCF variation source."""
 
+from __future__ import annotations
+
+import gzip
 import logging
+import pickle
+import shutil
+import subprocess
+from pathlib import Path
+
 import pytest
 
 from ensembl.vep.ensembl_vep_core import VCFRecord  # noqa: F401,F403 pylint: disable=E0401,E0611
@@ -22,10 +30,32 @@ from ensembl.vep.common.enums import Strand
 from ensembl.vep.models.variation.variation import Variation
 from ensembl.vep.models.variation.structural_variation import StructuralVariation
 from ensembl.vep.parsers.vcf import VCFParser
-from ensembl.vep.sources.file.vcf.variation import VCFVariationSource
+from ensembl.vep.sources.feature_source import FeatureSource
+from ensembl.vep.sources.file.vcf.variation import PicklableVCFVariationSource, VCFVariationSource
 from tests.models.conftest import DummySequenceSource
 
 logger = logging.getLogger(__name__)
+
+
+def _write_bgzip(path: Path, data: str) -> None:
+    """Write ``data`` to ``path`` with BGZF compression, skipping the test without ``bgzip``."""
+
+    bgzip = shutil.which("bgzip")
+    if bgzip is None:
+        pytest.skip("requires bgzip")
+    subprocess.run([bgzip, "-c"], input=data.encode("utf-8"), stdout=path.open("wb"), check=True)
+
+
+def _write_indexed_vcf(directory: Path, data: str) -> Path:
+    """Write ``data`` as a bgzipped, tabix-indexed VCF, skipping the test without ``tabix``."""
+
+    tabix = shutil.which("tabix")
+    if tabix is None:
+        pytest.skip("requires tabix")
+    path = directory / "indexed.vcf.gz"
+    _write_bgzip(path, data)
+    subprocess.run([tabix, "-f", "-p", "vcf", str(path)], check=True)
+    return path
 
 
 HEADER_LINES = [
@@ -109,7 +139,7 @@ def sv_vcf_records_fixture(text: str = SV_SAMPLE) -> list[VCFRecord]:
 
 
 def assert_first_variation_object(var: Variation) -> None:
-    """Test the variation object of CHR1_VAR_ROW1"""
+    """The variation object of CHR1_VAR_ROW1"""
     assert isinstance(var, Variation)
     assert var.start == 10
     assert var.end == 10
@@ -119,7 +149,7 @@ def assert_first_variation_object(var: Variation) -> None:
 
 
 def assert_first_structural_variation_object(var: StructuralVariation) -> None:
-    """Test the variation object of CHR1_VAR_ROW1"""
+    """The variation object of CHR1_VAR_ROW1"""
     assert var.start == 50
     assert var.end == 80
     assert var.allele_string == "A/<DEL>"
@@ -128,16 +158,16 @@ def assert_first_structural_variation_object(var: StructuralVariation) -> None:
 
 
 class TestVCFVariationSourceInitialization:
-    """Test VCFVariationSource initialization."""
+    """VCFVariationSource initialization."""
 
     def test_initialization_without_keywords(self) -> None:
-        """Test VCFVariationSource initialization without keywords raises error."""
+        """VCFVariationSource initialization without keywords raises error."""
 
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = VCFVariationSource(DummySequenceSource(), file_path="sample.vcf")  # type: ignore[misc]
 
     def test_initialization_sets_core_attributes(self) -> None:
-        """Test VCFVariationSource stores source and parser attributes."""
+        """VCFVariationSource stores source and parser attributes."""
 
         source = VCFVariationSource(sequence_source=DummySequenceSource(), file_path="sample.vcf")
 
@@ -149,10 +179,10 @@ class TestVCFVariationSourceInitialization:
 
 
 class TestVCFVariationSourceMethods:
-    """Test the VCFVariationSource methods."""
+    """The VCFVariationSource methods."""
 
     def test_stable_id_from_vcf_record(self, vcf_records: list[VCFRecord]) -> None:
-        """Test _stable_id_from_vcf_record method."""
+        """_stable_id_from_vcf_record method."""
         assert (
             VCFVariationSource._stable_id_from_vcf_record(vcf_records[0])  # pylint: disable=protected-access
             == "rs1;id4"
@@ -169,7 +199,7 @@ class TestVCFVariationSourceMethods:
     def test_end_and_svlen_for_sva_from_vcf_record(
         self, sv_vcf_records: list[VCFRecord], caplog: pytest.LogCaptureFixture
     ) -> None:
-        """Test _end_and_svlen_for_sva_from_vcf_record method."""
+        """_end_and_svlen_for_sva_from_vcf_record method."""
         source = VCFVariationSource(sequence_source=DummySequenceSource(), file_path="sample.vcf")
 
         # test for incorrect allele_index
@@ -232,7 +262,7 @@ class TestVCFVariationSourceMethods:
         )
 
     def test_negative_svlen_is_treated_as_positive(self) -> None:
-        """Test negative SVLEN values produce positive lengths and forward coordinates."""
+        """Negative SVLEN values produce positive lengths and forward coordinates."""
         record = create_vcf_records_for_testing(
             "\n".join([*HEADER_LINES, CHR1_SV_DEL_NEGATIVE_SVLEN]) + "\n"
         )[0]
@@ -250,7 +280,7 @@ class TestVCFVariationSourceMethods:
         assert allele.svlen == 50
 
     def test_int_info_value(self, sv_vcf_records: list[VCFRecord]) -> None:
-        """Test _int_info_value method."""
+        """_int_info_value method."""
 
         source = VCFVariationSource(sequence_source=DummySequenceSource(), file_path="sample.vcf")
 
@@ -259,7 +289,7 @@ class TestVCFVariationSourceMethods:
         assert source._int_info_value(sv_vcf_records[3], "SVLEN") is None  # pylint: disable=protected-access
 
     def test_is_bases_only(self, vcf_records: list[VCFRecord], sv_vcf_records: list[VCFRecord]) -> None:
-        """Test _is_bases_only method."""
+        """_is_bases_only method."""
         source = VCFVariationSource(sequence_source=DummySequenceSource(), file_path="sample.vcf")
 
         for record in vcf_records:
@@ -269,7 +299,7 @@ class TestVCFVariationSourceMethods:
             assert not source._is_bases_only(record)  # pylint: disable=protected-access
 
     def test_has_svtype(self, vcf_records: list[VCFRecord], sv_vcf_records: list[VCFRecord]) -> None:
-        """Test _has_svtype method."""
+        """_has_svtype method."""
         source = VCFVariationSource(sequence_source=DummySequenceSource(), file_path="sample.vcf")
 
         for record in vcf_records:
@@ -279,7 +309,7 @@ class TestVCFVariationSourceMethods:
         assert not source._has_svtype(sv_vcf_records[1])  # pylint: disable=protected-access
 
     def test_is_symbolic(self, vcf_records: list[VCFRecord], sv_vcf_records: list[VCFRecord]) -> None:
-        """Test _is_symbolic method."""
+        """_is_symbolic method."""
         source = VCFVariationSource(sequence_source=DummySequenceSource(), file_path="sample.vcf")
 
         for record in vcf_records:
@@ -291,7 +321,7 @@ class TestVCFVariationSourceMethods:
             assert not source._is_symbolic(record)  # pylint: disable=protected-access
 
     def test_is_breakend(self, vcf_records: list[VCFRecord]) -> None:
-        """Test _is_breakend method."""
+        """_is_breakend method."""
         SV_LINES = (
             "\n".join(
                 [*HEADER_LINES, CHR1_SV_DEL_SVTYPE, CHR1_SV_BND1, CHR1_SV_BND2, CHR1_SV_BND3, CHR1_SV_BND4]
@@ -313,7 +343,7 @@ class TestVCFVariationSourceMethods:
         assert source._is_breakend(sv_vcf_records[4])  # pylint: disable=protected-access
 
     def test_is_symbolic_insertion(self) -> None:
-        """Test _is_symbolic_insertion method."""
+        """_is_symbolic_insertion method."""
         source = VCFVariationSource(sequence_source=DummySequenceSource(), file_path="sample.vcf")
 
         assert source._is_symbolic_insertion("INS")  # pylint: disable=protected-access
@@ -323,7 +353,7 @@ class TestVCFVariationSourceMethods:
     def test_is_structural_variation_record(
         self, vcf_records: list[VCFRecord], sv_vcf_records: list[VCFRecord]
     ) -> None:
-        """Test _is_structural_variation_record method."""
+        """_is_structural_variation_record method."""
         source = VCFVariationSource(sequence_source=DummySequenceSource(), file_path="sample.vcf")
 
         for record in vcf_records:
@@ -333,7 +363,7 @@ class TestVCFVariationSourceMethods:
             assert source._is_structural_variation_record(record)  # pylint: disable=protected-access
 
     def test_remove_anchor_bases(self, caplog: pytest.LogCaptureFixture) -> None:
-        """Test _remove_anchor_bases method."""
+        """_remove_anchor_bases method."""
         source = VCFVariationSource(sequence_source=DummySequenceSource(), file_path="sample.vcf")
 
         assert source._remove_anchor_bases(  # pylint: disable=protected-access
@@ -359,7 +389,7 @@ class TestVCFVariationSourceMethods:
         assert "Strand is unknown, cannot remove anchor bases with confidence" in caplog.text
 
     def test_remove_anchor_bases_symbolic_allele(self, caplog: pytest.LogCaptureFixture) -> None:
-        """Test _remove_anchor_bases_symbolic_allele method."""
+        """_remove_anchor_bases_symbolic_allele method."""
         source = VCFVariationSource(sequence_source=DummySequenceSource(), file_path="sample.vcf")
 
         # test for unknown strand warning
@@ -410,10 +440,10 @@ class TestVCFVariationSourceMethods:
 
 
 class TestVCFVariationSourceRecordsToFeatures:
-    """Tests functions for creating Variation/StructuralVariation objects."""
+    """Variation and structural-variation construction."""
 
     def test_records_to_variation(self, vcf_records: list[VCFRecord]) -> None:
-        """Test _records_to_variation method."""
+        """_records_to_variation method."""
 
         seq_source = create_sequence_source_for_testing()
         vcf_var_source = VCFVariationSource(
@@ -434,15 +464,19 @@ class TestVCFVariationSourceRecordsToFeatures:
         assert var_feats[1].start == 21
         assert var_feats[1].end == 22
         assert var_feats[1].allele_string == "AT/-"
-        assert var_feats[1].uploaded_locus == Locus(start=20, end=22, allele_string="GAT/G")
+        assert var_feats[1].uploaded_locus == Locus(
+            seq_region_name="chr1", start=20, end=22, allele_string="GAT/G"
+        )
 
         assert var_feats[2].start == 101
         assert var_feats[2].end == 100
         assert var_feats[2].allele_string == "-/AT"
-        assert var_feats[2].uploaded_locus == Locus(start=100, end=100, allele_string="C/CAT")
+        assert var_feats[2].uploaded_locus == Locus(
+            seq_region_name="chr2", start=100, end=100, allele_string="C/CAT"
+        )
 
     def test_create_sv_allele_from_record(self, sv_vcf_records: list[VCFRecord]) -> None:
-        """Test _create_sv_allele_from_record method."""
+        """_create_sv_allele_from_record method."""
         vcf_var_source = VCFVariationSource(
             sequence_source=create_sequence_source_for_testing(),
             file_path="sample.vcf",
@@ -454,7 +488,7 @@ class TestVCFVariationSourceRecordsToFeatures:
         assert sva.start == 51
 
     def test_records_to_structural_variation(self, sv_vcf_records: list[VCFRecord]) -> None:
-        """Test _records_to_structural_variation method."""
+        """_records_to_structural_variation method."""
         vcf_var_source = VCFVariationSource(
             sequence_source=create_sequence_source_for_testing(),
             file_path="sample.vcf",
@@ -470,18 +504,178 @@ class TestVCFVariationSourceRecordsToFeatures:
         vcf_records: list[VCFRecord],
         sv_vcf_records: list[VCFRecord],
     ) -> None:
-        """Test _records_to_features method."""
+        """_records_to_features method."""
         vcf_var_source = VCFVariationSource(
             sequence_source=create_sequence_source_for_testing(),
             file_path="sample.vcf",
         )
 
-        var_feats = vcf_var_source._records_to_features(  # pylint: disable=protected-access
-            [*vcf_records, *sv_vcf_records]
-        )
+        var_feats = vcf_var_source.records_to_features([*vcf_records, *sv_vcf_records])
 
         assert len(var_feats) == 12
         assert_first_variation_object(var_feats[0])
 
         assert isinstance(var_feats[3], StructuralVariation)
         assert_first_structural_variation_object(var_feats[3])
+
+
+class TestVCFVariationSourceReading:
+    """What the source reports about an input before anything is built from it."""
+
+    def test_reads_records_through_the_source_interface(self) -> None:
+        """Answer in records, which is what the feature getters are composed from."""
+
+        source = VCFVariationSource(file_path="sample.vcf")
+
+        assert isinstance(source, FeatureSource)
+
+    def test_counts_records(self, tmp_path: Path) -> None:
+        """Report what the input holds without building a model."""
+
+        path = tmp_path / "sample.vcf"
+        path.write_text(SAMPLE, encoding="utf-8")
+        source = VCFVariationSource(file_path=str(path))
+
+        assert source.record_count(scan=True) == 3
+
+    def test_an_unindexed_input_declares_no_record_count(self, tmp_path: Path) -> None:
+        """Leave the count unknown rather than reading a whole input to size a progress bar."""
+
+        path = tmp_path / "sample.vcf"
+        path.write_text(SAMPLE, encoding="utf-8")
+        source = VCFVariationSource(file_path=str(path))
+
+        assert source.record_count() is None
+
+
+class TestPicklableVCFVariationSource:
+    """A source whose records are the input's own lines, which a worker process can be handed."""
+
+    def test_a_record_is_the_line_the_input_spells_it_with(self, tmp_path: Path) -> None:
+        """Carry each line verbatim: the parser normalises, and output must not."""
+
+        path = tmp_path / "sample.vcf"
+        path.write_text(SAMPLE, encoding="utf-8")
+        source = PicklableVCFVariationSource(file_path=str(path))
+
+        assert list(source.iter_all_records()) == [CHR1_VAR_ROW1, CHR1_VAR_ROW2, CHR2_VAR_ROW1]
+        assert source.get_all_records() == [CHR1_VAR_ROW1, CHR1_VAR_ROW2, CHR2_VAR_ROW1]
+
+    def test_a_record_pickles(self, tmp_path: Path) -> None:
+        """What crosses to a worker has to survive pickling, which a parsed record does not."""
+
+        path = tmp_path / "sample.vcf"
+        path.write_text(SAMPLE, encoding="utf-8")
+        source = PicklableVCFVariationSource(file_path=str(path))
+
+        records = tuple(source.iter_all_records())
+
+        assert pickle.loads(pickle.dumps(records)) == records
+
+    def test_reads_the_input_headers(self, tmp_path: Path) -> None:
+        """Pass the input's own header lines through, for output to write back."""
+
+        path = tmp_path / "sample.vcf"
+        path.write_text(SAMPLE, encoding="utf-8")
+        source = PicklableVCFVariationSource(file_path=str(path))
+
+        assert source.header_lines() == HEADER_LINES
+
+    def test_names_a_record_region_and_columns(self) -> None:
+        """Place a record for batching, and split it only where output needs the fields."""
+
+        source = PicklableVCFVariationSource(file_path="sample.vcf")
+
+        assert source.region_of(CHR1_VAR_ROW1) == "chr1"
+        assert source.record_columns(CHR1_VAR_ROW1)[:5] == ("chr1", "10", "rs1;id4", "A", "C")
+
+    @pytest.mark.parametrize("compression", ["gzip", "bgzip"], ids=["gzip", "bgzip"])
+    def test_reads_a_compressed_input(self, compression: str, tmp_path: Path) -> None:
+        """Treat compression as transport rather than record content, however it was written."""
+
+        path = tmp_path / "sample.vcf.gz"
+        if compression == "gzip":
+            with gzip.open(path, "wt", encoding="utf-8", newline="") as handle:
+                handle.write(SAMPLE)
+        else:
+            _write_bgzip(path, SAMPLE)
+        source = PicklableVCFVariationSource(file_path=str(path))
+
+        assert source.header_lines() == HEADER_LINES
+        assert list(source.iter_all_records()) == [CHR1_VAR_ROW1, CHR1_VAR_ROW2, CHR2_VAR_ROW1]
+
+    def test_reads_records_from_a_region_query(self, tmp_path: Path) -> None:
+        """An indexed input answers a region in lines too, which is what explaining one reads."""
+
+        path = _write_indexed_vcf(tmp_path, SAMPLE)
+        source = PicklableVCFVariationSource(file_path=str(path))
+
+        assert source.get_records_by_region(seq_region_name="chr1", start=1, end=15) == [CHR1_VAR_ROW1]
+        assert list(source.iter_records_by_region(seq_region_name="chr2")) == [CHR2_VAR_ROW1]
+
+    def test_a_region_naming_nothing_reads_nothing(self, tmp_path: Path) -> None:
+        """A query that names no region is answered with no records rather than the whole input."""
+
+        path = _write_indexed_vcf(tmp_path, SAMPLE)
+        source = PicklableVCFVariationSource(file_path=str(path))
+
+        assert not source.get_records_by_region()
+        assert not list(source.iter_records_by_region())
+        assert not source.get_records_by_region(seq_region_name="chr9")
+
+    def test_rejects_a_short_vcf_row(self, tmp_path: Path) -> None:
+        """Reject data that cannot be reconstructed as a VCF record."""
+
+        path = tmp_path / "short.vcf"
+        path.write_text("\n".join([*HEADER_LINES, "chr1\t10"]) + "\n", encoding="utf-8")
+        source = PicklableVCFVariationSource(file_path=str(path))
+
+        with pytest.raises(ValueError, match="at least eight"):
+            list(source.iter_all_records())
+
+    def test_builds_variations_from_records(self, tmp_path: Path) -> None:
+        """Turn a set of record lines back into models, in input order."""
+
+        path = tmp_path / "sample.vcf"
+        path.write_text(SAMPLE, encoding="utf-8")
+        source = PicklableVCFVariationSource(
+            file_path=str(path),
+            sequence_source=create_sequence_source_for_testing(),
+        )
+        records = source.get_all_records()[:2]
+
+        variations = source.records_to_features(records)
+
+        assert [variation.start for variation in variations] == [10, 21]
+        assert_first_variation_object(variations[0])
+
+    def test_builds_variations_one_record_at_a_time(self, tmp_path: Path) -> None:
+        """The feature getters compose, so a record of this source reaches them as a line."""
+
+        path = tmp_path / "sample.vcf"
+        path.write_text(SAMPLE, encoding="utf-8")
+        source = PicklableVCFVariationSource(
+            file_path=str(path),
+            sequence_source=create_sequence_source_for_testing(),
+        )
+
+        variations = list(source.iter_all_features())
+
+        assert [variation.start for variation in variations] == [10, 21, 101]
+
+    def test_parses_records_against_a_minimal_header_when_the_input_is_gone(self) -> None:
+        """A plain record still parses when no header can be read for it.
+
+        The fallback header declares the eight fixed VCF columns and nothing else, so it carries
+        a record that names no sample.
+        """
+
+        source = PicklableVCFVariationSource(
+            file_path="missing.vcf",
+            sequence_source=create_sequence_source_for_testing(),
+        )
+        records = ["\t".join(CHR1_VAR_ROW1.split("\t")[:8])]
+
+        variations = source.records_to_features(records)
+
+        assert_first_variation_object(variations[0])
