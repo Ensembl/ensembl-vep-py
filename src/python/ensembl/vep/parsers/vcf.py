@@ -56,7 +56,7 @@ class VCFParser(Parser[VCFRecord]):
 
     @property
     def metadata(self) -> dict:
-        """Public accessor for the _metadata.
+        """Return parsed file metadata.
 
         Returns:
             dict: The metadata dictionary.
@@ -70,7 +70,7 @@ class VCFParser(Parser[VCFRecord]):
 
         Returns:
             dict: A dictionary with keys "file_format", "info", "filter", "format", "alt", "contig",
-                "samples" and "other"
+                "samples", "other" and "header" (the file's header lines verbatim)
         """
 
         return dict(self._parser.metadata)
@@ -128,7 +128,7 @@ class VCFParser(Parser[VCFRecord]):
         )
 
     def next(self) -> VCFRecord | None:
-        """Return the next VCF record, or None at EOF.
+        """Return the next VCF record, or ``None`` at EOF.
 
         Returns:
             VCFRecord | None: The next VCF record,
@@ -149,6 +149,21 @@ class VCFParser(Parser[VCFRecord]):
 
         return self._parser.records(limit)
 
+    def raw_lines(self, limit: int | None = 10000) -> list[str]:
+        """Return record lines from the current stream position without line endings.
+
+        The same stream as ``records``, read one step earlier: each line is returned before
+        anything parses it, for a caller that wants the input's own text rather than a record.
+
+        Args:
+            limit (int | None): The maximum number of lines to return. Default is 10000.
+
+        Returns:
+            list[str]: The record lines, in input order.
+        """
+
+        return self._parser.raw_lines(limit)
+
     def _clear_metadata_cache(self) -> None:
         try:
             del self._metadata
@@ -168,6 +183,26 @@ class VCFParser(Parser[VCFRecord]):
         """
 
         return _RustVCFParser.parse_text(data, limit)
+
+    @staticmethod
+    def record_count(file_path: str | Path, scan: bool = False) -> int | None:
+        """Return the declared VCF record count, if available.
+
+        The count comes from the file's index, which answers in one small read. Without an index
+        there is no count unless ``scan`` is set, which reads the whole file; on an input of a
+        billion lines that pass dominates a run, so a caller that only wants the count for
+        progress reporting leaves it off and does without.
+
+        Args:
+            file_path (str | Path): The path to the VCF file to count.
+            scan (bool): Whether to count by reading the file when no index declares it.
+                    Default is False.
+
+        Returns:
+            int | None: The record count, or None when no index declares it and ``scan`` is False.
+        """
+
+        return _RustVCFParser.record_count(str(file_path), scan)
 
     @staticmethod
     def parse_file(file_path: str | Path, limit: int | None = None) -> list[VCFRecord]:

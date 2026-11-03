@@ -73,7 +73,7 @@ class FastaParser(Parser[FastaRecord]):
 
     @property
     def reader_mode(self) -> str:
-        """Return the configured reader mode."""
+        """Returns the configured reader mode."""
 
         return self._parser.reader_mode
 
@@ -122,7 +122,7 @@ class FastaParser(Parser[FastaRecord]):
         )
 
     def next(self) -> FastaRecord | None:
-        """Return the next FASTA record, or None at EOF.
+        """Returns the next FASTA record, or None at EOF.
 
         Returns:
             FastaRecord | None: The next FASTA record, or None if there are no more records.
@@ -131,7 +131,7 @@ class FastaParser(Parser[FastaRecord]):
         return self._parser.next()
 
     def records(self, limit: int | None = 10000) -> list[FastaRecord]:
-        """Return records from the current stream position.
+        """Returns records from the current stream position.
 
         Args:
             limit (int | None): The maximum number of records to return. Default is 10000.

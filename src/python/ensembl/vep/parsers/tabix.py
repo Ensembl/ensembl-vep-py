@@ -121,7 +121,7 @@ class TabixParser(Parser[str]):
         )
 
     def next(self) -> str | None:
-        """Return the next raw row from the active region query.
+        """Returns the next raw row from the active region query.
 
         Returns:
             str | None: The next raw row from the active region query, or None if there are no more rows.
@@ -130,7 +130,7 @@ class TabixParser(Parser[str]):
         return self._parser.next()
 
     def records(self, limit: int | None = None) -> list[str]:
-        """Return raw rows from the active region query.
+        """Returns raw rows from the active region query.
 
         Args:
             limit (int | None): The maximum number of records to return. If None, return all records.

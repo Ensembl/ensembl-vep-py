@@ -14,10 +14,10 @@
 
 use crate::{
     parsers::{
-        tabix::{self, has_tabix_index},
-        utils::{ReaderMode, associated_index_path, open_sequential_reader},
+        tabix::{self, has_tabix_index, index_record_count},
+        utils::{ReaderMode, associated_index_path, count_data_lines, open_sequential_reader},
     },
-    utils::{bytes_to_string, to_py_error},
+    utils::{bytes_to_string, to_py_error, trim_newline},
 };
 use noodles_vcf::{
     self as vcf,
@@ -137,6 +137,10 @@ pub struct VcfMetadata {
     pub samples: Vec<String>,
     #[pyo3(get)]
     pub other: HashMap<String, Vec<String>>,
+    /// The file's header lines verbatim, kept because a parsed header cannot be written back out
+    /// as the input spelled it and VCF output re-emits the input's own header.
+    #[pyo3(get)]
+    pub header: Vec<String>,
 }
 
 #[pymethods]
@@ -164,6 +168,7 @@ impl VcfMetadata {
             "contig".to_string(),
             "samples".to_string(),
             "other".to_string(),
+            "header".to_string(),
         ]
     }
 
@@ -182,6 +187,7 @@ impl VcfMetadata {
             "contig" => Ok(self.contig.clone().into_pyobject(py)?.into_any().unbind()),
             "samples" => Ok(self.samples.clone().into_pyobject(py)?.into_any().unbind()),
             "other" => Ok(self.other.clone().into_pyobject(py)?.into_any().unbind()),
+            "header" => Ok(self.header.clone().into_pyobject(py)?.into_any().unbind()),
             _ => Err(PyRuntimeError::new_err(format!(
                 "unknown VCF metadata key {key:?}"
             ))),
@@ -197,6 +203,7 @@ impl VcfMetadata {
             && self.contig.is_empty()
             && self.samples.is_empty()
             && self.other.is_empty()
+            && self.header.is_empty()
     }
 }
 
@@ -205,6 +212,7 @@ impl VcfMetadata {
 // ---------------------------------------------------------------------------
 
 pub struct VcfReader {
+    file_path: PathBuf,
     backend: Backend,
     mode: ReaderMode,
     metadata: Option<VcfMetadata>,
@@ -215,6 +223,7 @@ impl VcfReader {
         let (backend, mode) = Backend::open(file_path, tabix_path, mode)?;
 
         Ok(Self {
+            file_path: file_path.to_path_buf(),
             backend,
             mode,
             metadata: None,
@@ -223,6 +232,11 @@ impl VcfReader {
 
     fn next(&mut self) -> io::Result<Option<VcfRecord>> {
         self.backend.next()
+    }
+
+    /// Read the next record's line without parsing it.
+    fn next_line(&mut self) -> io::Result<Option<String>> {
+        self.backend.next_line()
     }
 
     fn seek(&mut self, region: &str) -> io::Result<bool> {
@@ -235,7 +249,12 @@ impl VcfReader {
                 Backend::Sequential(reader) => &reader.header,
                 Backend::Tabix(reader) => &reader.header,
             };
-            self.metadata = Some(header_to_metadata(header));
+            let mut metadata = header_to_metadata(header);
+            // A second pass over the header region, as `Gff3Reader::metadata` does: the parsed
+            // header cannot be written back out verbatim, and reading the raw lines here keeps
+            // the record path untouched.
+            metadata.header = read_vcf_header_lines(&self.file_path)?;
+            self.metadata = Some(metadata);
         }
 
         Ok(self
@@ -303,6 +322,13 @@ impl Backend {
         }
     }
 
+    fn next_line(&mut self) -> io::Result<Option<String>> {
+        match self {
+            Self::Sequential(reader) => reader.next_line(),
+            Self::Tabix(reader) => reader.next_line(),
+        }
+    }
+
     fn seek(&mut self, region: &str) -> io::Result<bool> {
         match self {
             Self::Sequential(reader) => reader.seek(region),
@@ -318,6 +344,10 @@ impl Backend {
 struct SequentialBackend {
     reader: vcf::io::Reader<Box<dyn BufRead + Send + Sync>>,
     header: vcf::Header,
+    /// Reused across calls so each record read does not allocate a fresh `RecordBuf`.
+    record: variant::RecordBuf,
+    /// Reused across calls so each raw line read does not allocate a fresh `String`.
+    line: String,
 }
 
 impl SequentialBackend {
@@ -327,7 +357,12 @@ impl SequentialBackend {
     {
         let (reader, header) = get_header_from_file(file_path.as_ref())?;
 
-        Ok(Self { reader, header })
+        Ok(Self {
+            reader,
+            header,
+            record: variant::RecordBuf::default(),
+            line: String::new(),
+        })
     }
 
     fn seek(&mut self, _region: &str) -> io::Result<bool> {
@@ -337,7 +372,11 @@ impl SequentialBackend {
     }
 
     fn next(&mut self) -> io::Result<Option<VcfRecord>> {
-        read_next_record(&mut self.reader, &self.header)
+        read_next_record(&mut self.reader, &self.header, &mut self.record)
+    }
+
+    fn next_line(&mut self) -> io::Result<Option<String>> {
+        read_next_line(self.reader.get_mut(), &mut self.line)
     }
 }
 
@@ -349,6 +388,8 @@ struct TabixBackend {
     reader: Option<tabix::TabixReader>,
     header: vcf::Header,
     query_active: bool,
+    /// Reused across calls so each queried line does not allocate a fresh `RecordBuf`.
+    record: variant::RecordBuf,
 }
 
 impl TabixBackend {
@@ -363,6 +404,7 @@ impl TabixBackend {
             reader: Some(tabix::TabixReader::open(file_path.as_ref(), tabix_path)?),
             header,
             query_active: false,
+            record: variant::RecordBuf::default(),
         })
     }
 
@@ -389,10 +431,27 @@ impl TabixBackend {
                     return Ok(None);
                 };
 
-                if let Some(record) = parse_vcf_line(&line, &self.header)? {
+                if let Some(record) = parse_vcf_line_into(&line, &self.header, &mut self.record)? {
                     return Ok(Some(record));
                 }
             }
+        }
+
+        Ok(None)
+    }
+
+    fn next_line(&mut self) -> io::Result<Option<String>> {
+        if self.query_active {
+            let Some(reader) = self.reader.as_mut() else {
+                return Err(io::Error::other("tabix reader is not initialized"));
+            };
+
+            let line = reader.next()?;
+            if line.is_none() {
+                self.query_active = false;
+            }
+
+            return Ok(line);
         }
 
         Ok(None)
@@ -498,6 +557,24 @@ impl VcfParser {
         Ok(records)
     }
 
+    /// Return up to `limit` record lines, each without its line ending and otherwise verbatim.
+    ///
+    /// The same stream as `records`, read one step earlier: a line is returned before anything
+    /// parses it, for a caller that wants the input's own text rather than a record.
+    #[pyo3(signature = (limit=10000))]
+    fn raw_lines(&mut self, limit: Option<usize>) -> PyResult<Vec<String>> {
+        let mut lines = Vec::new();
+
+        while limit.is_none_or(|n| lines.len() < n) {
+            match self.reader()?.next_line().map_err(to_py_error)? {
+                Some(line) => lines.push(line),
+                None => break,
+            }
+        }
+
+        Ok(lines)
+    }
+
     #[staticmethod]
     #[pyo3(signature = (data, limit=None))]
     fn parse_text(data: &str, limit: Option<usize>) -> PyResult<Vec<VcfRecord>> {
@@ -511,6 +588,34 @@ impl VcfParser {
             get_header_from_file(Path::new(file_path)).map_err(to_py_error)?;
 
         read_records(&mut reader, &header, limit).map_err(to_py_error)
+    }
+
+    /// Return how many records a VCF file holds, or None when nothing declares it.
+    ///
+    /// The count comes from the file's index, which answers in one small read. Without an index
+    /// there is no count unless `scan` is set, which reads the whole file: an input of a billion
+    /// lines makes that pass the slowest part of a run, so a caller that only wants it for
+    /// progress reporting leaves it off and does without the count.
+    ///
+    /// A static method, like `parse_file`: the count neither depends on the mode a reader was
+    /// opened in nor disturbs a stream being read.
+    ///
+    /// Args:
+    ///     file_path: The VCF file to count.
+    ///     scan: Whether to count by reading the file when no index declares it.
+    #[staticmethod]
+    #[pyo3(signature = (file_path, scan=false))]
+    fn record_count(file_path: &str, scan: bool) -> PyResult<Option<u64>> {
+        let file_path = Path::new(file_path);
+        if let Some(count) = index_record_count(file_path) {
+            return Ok(Some(count));
+        }
+
+        if scan {
+            return count_data_lines(file_path).map(Some).map_err(to_py_error);
+        }
+
+        Ok(None)
     }
 }
 
@@ -526,18 +631,47 @@ impl VcfParser {
 // Helpers: Noodles VCF decoder
 // ---------------------------------------------------------------------------
 
+/// Read the next record, reusing a caller-owned `RecordBuf` across calls.
+///
+/// Hoisting the buffer out lets a hot loop (one `RecordBuf` per backend, rather than a fresh one
+/// per record) avoid a per-record allocation; noodles' own `RecordBufs` iterator reuses one the
+/// same way, and `read_record_buf` clears every field it fills.
 fn read_next_record<R>(
     reader: &mut vcf::io::Reader<R>,
     header: &vcf::Header,
+    record: &mut variant::RecordBuf,
 ) -> io::Result<Option<VcfRecord>>
 where
     R: BufRead,
 {
-    let mut record = variant::RecordBuf::default();
-
-    match reader.read_record_buf(header, &mut record)? {
+    match reader.read_record_buf(header, record)? {
         0 => Ok(None),
         _ => record_to_py(record).map(Some),
+    }
+}
+
+/// Read the next record's line into a caller-owned `String`, skipping blank and header lines.
+///
+/// The buffer is reused across calls, so a hot loop pays one allocation for the line it returns
+/// rather than two.
+fn read_next_line<R>(reader: &mut R, line: &mut String) -> io::Result<Option<String>>
+where
+    R: BufRead,
+{
+    loop {
+        line.clear();
+
+        if reader.read_line(line)? == 0 {
+            return Ok(None);
+        }
+
+        trim_newline(line);
+
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+
+        return Ok(Some(line.clone()));
     }
 }
 
@@ -550,9 +684,10 @@ where
     R: BufRead,
 {
     let mut records = Vec::new();
+    let mut record = variant::RecordBuf::default();
 
     while limit.is_none_or(|n| records.len() < n) {
-        match read_next_record(reader, header)? {
+        match read_next_record(reader, header, &mut record)? {
             Some(record) => records.push(record),
             None => break,
         }
@@ -566,13 +701,32 @@ fn parse_vcf_bytes(data: &[u8], limit: Option<usize>) -> io::Result<Vec<VcfRecor
     read_records(&mut reader, &header, limit)
 }
 
-fn parse_vcf_line(line: &str, header: &vcf::Header) -> io::Result<Option<VcfRecord>> {
-    let mut data = Vec::with_capacity(line.len() + 1);
-    data.extend_from_slice(line.as_bytes());
-    data.push(b'\n');
+/// Parse one already-dechomped line, reusing a caller-owned `RecordBuf`.
+///
+/// `&[u8]` implements `BufRead` directly, so this reads straight from `line`'s bytes: no
+/// intermediate `Vec<u8>` copy and no new `RecordBuf` per call, the two costs the `TabixBackend`
+/// hot loop previously paid for every queried row.
+///
+/// `line` is not re-terminated with `\n` before parsing (the earlier `Vec<u8>` copy used to add
+/// one back). noodles only strips a trailing `\r` when it finds a trailing `\n` to strip first, so
+/// a residual `\r` -- a doubled `\r` before the newline `TabixReader` already trimmed, or a final
+/// `\r` with no newline at all on the last line of a file -- now passes through into the record,
+/// matching what the sequential reader already does. `parse_gff3_line_into` made the same trade;
+/// `test_parse_vcf_line_into_residual_cr_matches_sequential_reader` pins it.
+fn parse_vcf_line_into(
+    line: &str,
+    header: &vcf::Header,
+    record: &mut variant::RecordBuf,
+) -> io::Result<Option<VcfRecord>> {
+    let mut vcf_reader = vcf::io::Reader::new(line.as_bytes());
+    read_next_record(&mut vcf_reader, header, record)
+}
 
-    let mut vcf_reader = vcf::io::Reader::new(data.as_slice());
-    read_next_record(&mut vcf_reader, header)
+/// Test-only convenience over [`parse_vcf_line_into`]: production code always has a backend to
+/// own the reused `RecordBuf`, so only tests need a one-shot, buffer-allocating variant.
+#[cfg(test)]
+fn parse_vcf_line(line: &str, header: &vcf::Header) -> io::Result<Option<VcfRecord>> {
+    parse_vcf_line_into(line, header, &mut variant::RecordBuf::default())
 }
 
 fn has_header_prefix<R: BufRead>(reader: &mut R) -> io::Result<bool> {
@@ -596,6 +750,25 @@ fn get_header_from_file(
     let prefixed_reader = io::Cursor::new(first_line.into_bytes()).chain(reader);
 
     Ok((vcf::io::Reader::new(Box::new(prefixed_reader)), header))
+}
+
+/// Return the file's leading header lines, without their line endings.
+fn read_vcf_header_lines(file_path: &Path) -> io::Result<Vec<String>> {
+    let mut reader = open_sequential_reader(file_path)?;
+    let mut header_lines = Vec::new();
+
+    while has_header_prefix(&mut reader)? {
+        let mut line = String::new();
+
+        if reader.read_line(&mut line)? == 0 {
+            break;
+        }
+
+        trim_newline(&mut line);
+        header_lines.push(line);
+    }
+
+    Ok(header_lines)
 }
 
 fn get_header_from_bytes(data: &[u8]) -> io::Result<(vcf::io::Reader<&[u8]>, vcf::Header)> {
@@ -645,7 +818,7 @@ fn header_from_first_data_line(line: &str) -> vcf::Header {
     builder.build()
 }
 
-fn record_to_py(record: variant::RecordBuf) -> io::Result<VcfRecord> {
+fn record_to_py(record: &variant::RecordBuf) -> io::Result<VcfRecord> {
     let id = record.ids().as_ref().iter().cloned().collect();
     let alt = record.alternate_bases().as_ref().to_vec();
     let filter = record.filters().as_ref().iter().cloned().collect();
@@ -780,6 +953,8 @@ fn header_to_metadata(header: &vcf::Header) -> VcfMetadata {
             .iter()
             .map(|(id, collection)| (id.to_string(), collection_to_strings(collection)))
             .collect(),
+        // Filled by the caller: the raw lines come from the file, not from the parsed header.
+        header: Vec::new(),
     }
 }
 
@@ -920,6 +1095,7 @@ fn format_number_to_string(number: vcf::header::record::value::map::format::Numb
 mod tests {
     use super::*;
     use crate::{
+        parsers::test_utils::write_vcf_with_tbi,
         test_utils::{create_temp_dir, write_sample_file},
         utils::from_py_error,
     };
@@ -1371,6 +1547,68 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         Ok(())
     }
 
+    #[test]
+    fn test_read_vcf_header_lines_returns_the_header_verbatim() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-raw-header")?;
+        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
+
+        let header_lines = read_vcf_header_lines(&path)?;
+
+        assert_eq!(header_lines.len(), 5);
+        assert_eq!(header_lines[0], "##fileformat=VCFv4.3");
+        assert!(header_lines[4].starts_with("#CHROM\tPOS"));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_read_vcf_header_lines_without_a_header_is_empty() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-raw-header-none")?;
+        let path = write_sample_file(&dir, "sample.vcf", NO_HEADER_SAMPLE)?;
+
+        assert!(read_vcf_header_lines(&path)?.is_empty());
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // read_next_line
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_read_next_line_returns_record_lines_without_line_endings() -> io::Result<()> {
+        let mut source =
+            &b"chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\r\n\nchr2\t20\t.\tG\tT\t.\t.\t.\n"[..];
+        let mut line = String::new();
+
+        assert_eq!(
+            read_next_line(&mut source, &mut line)?,
+            Some("chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2".to_string())
+        );
+        assert_eq!(
+            read_next_line(&mut source, &mut line)?,
+            Some("chr2\t20\t.\tG\tT\t.\t.\t.".to_string())
+        );
+        assert_eq!(read_next_line(&mut source, &mut line)?, None);
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_read_next_line_skips_header_lines() -> io::Result<()> {
+        let mut source = &b"##fileformat=VCFv4.3\nchr1\t10\t.\tA\tC\t.\t.\t.\n"[..];
+        let mut line = String::new();
+
+        assert_eq!(
+            read_next_line(&mut source, &mut line)?,
+            Some("chr1\t10\t.\tA\tC\t.\t.\t.".to_string())
+        );
+
+        Ok(())
+    }
+
     // -----------------------------------------------------------------------
     // parse_vcf_line
     // -----------------------------------------------------------------------
@@ -1434,6 +1672,67 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
         )
         .unwrap_err();
         assert_eq!(err.kind(), io::ErrorKind::InvalidData);
+        Ok(())
+    }
+
+    #[test]
+    fn test_parse_vcf_line_into_reused_buffer_leaves_no_stale_fields() -> io::Result<()> {
+        let header = create_test_header()?;
+        let mut buffer = variant::RecordBuf::default();
+
+        let first = parse_vcf_line_into(SAMPLE_VCF_LINE, &header, &mut buffer)?
+            .expect("expected first record");
+        assert_eq!(first.id, vec!["rs1".to_string()]);
+        assert_eq!(first.filter, vec!["PASS".to_string()]);
+        assert_eq!(first.qual, Some(13.0));
+
+        // Every field the first line set is missing from the second, so a reused buffer that
+        // kept any of them would show up here.
+        let second = parse_vcf_line_into(
+            "chr2\t20\t.\tG\tT\t.\t.\t.\tGT\t0/1\t1/1",
+            &header,
+            &mut buffer,
+        )?
+        .expect("expected second record");
+        assert_eq!(second.chrom, "chr2");
+        assert!(second.id.is_empty());
+        assert!(second.filter.is_empty());
+        assert_eq!(second.qual, None);
+        assert_eq!(second.info.keys().count(), 0);
+
+        Ok(())
+    }
+
+    /// A residual `\r` left behind by `TabixReader`'s single-pass `trim_newline` (a doubled `\r`
+    /// before the real line terminator, or a bare trailing `\r` on a file's last, newline-less
+    /// line) must parse the same way whether the line arrived through the tabix/query path or
+    /// the sequential reader. See the note on `parse_vcf_line_into`.
+    #[test]
+    fn test_parse_vcf_line_into_residual_cr_matches_sequential_reader() -> io::Result<()> {
+        let header = create_test_header()?;
+        let raw_line = "chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1\r\r\n";
+
+        // Tabix/query path: TabixReader::next() would already have run trim_newline over the
+        // raw bytes before handing this string to parse_vcf_line_into.
+        let mut trimmed = raw_line.to_string();
+        trim_newline(&mut trimmed);
+        let mut buffer = variant::RecordBuf::default();
+        let tabix_path_result = parse_vcf_line_into(&trimmed, &header, &mut buffer);
+
+        // Sequential path: SequentialBackend reads the same raw bytes directly.
+        let mut reader = vcf::io::Reader::new(raw_line.as_bytes());
+        let sequential_result =
+            read_next_record(&mut reader, &header, &mut variant::RecordBuf::default());
+
+        // Compared as outcomes rather than records: the surviving `\r` lands in the line's last
+        // field on both paths, which here is a sample genotype that rejects it. What matters is
+        // that neither path treats the line differently from the other.
+        assert_eq!(
+            format!("{tabix_path_result:?}"),
+            format!("{sequential_result:?}")
+        );
+        assert!(tabix_path_result.is_err());
+
         Ok(())
     }
 
@@ -1592,6 +1891,116 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
 
         let err = parser.next().unwrap_err();
         assert!(err.to_string().contains("not open"));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_vcf_parser_record_count_reads_the_index() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-parser-record-count-indexed")?;
+        let (path, _tbi_path) = write_vcf_with_tbi(&dir, None)?;
+
+        let counted = VcfParser::record_count(path.to_str().expect("utf-8 path"), false)?;
+
+        assert_eq!(counted, Some(3));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_vcf_parser_record_count_without_an_index_is_none() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-parser-record-count-unindexed")?;
+        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
+        let file_path = path.to_str().expect("utf-8 path");
+
+        // Reading the file is what `scan` asks for; without it an unindexed input has no count.
+        assert_eq!(VcfParser::record_count(file_path, false)?, None);
+        assert_eq!(VcfParser::record_count(file_path, true)?, Some(3));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_vcf_parser_record_count_scan_reports_a_missing_file() -> io::Result<()> {
+        Python::initialize();
+
+        let err = VcfParser::record_count("nonexistent.vcf", true).unwrap_err();
+
+        assert!(from_py_error(err).to_string().contains("No such file"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_vcf_parser_raw_lines_returns_record_lines() -> io::Result<()> {
+        Python::initialize();
+        let dir = create_temp_dir("ensembl-vep-vcf-parser-raw-lines")?;
+        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
+        let mut parser = VcfParser::new(
+            Some(path.to_str().expect("utf-8 path").to_string()),
+            None,
+            Some("sequential".to_string()),
+        )?;
+
+        assert_eq!(parser.raw_lines(Some(1))?, vec![QUERY_ROW_1.to_string()]);
+        assert_eq!(
+            parser.raw_lines(None)?,
+            vec![QUERY_ROW_2.to_string(), QUERY_ROW_3.to_string()]
+        );
+        assert!(parser.raw_lines(None)?.is_empty());
+
+        parser.close();
+        let err = parser.raw_lines(None).unwrap_err();
+        assert!(err.to_string().contains("not open"));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_vcf_parser_raw_lines_without_a_header_returns_every_line() -> io::Result<()> {
+        Python::initialize();
+        let dir = create_temp_dir("ensembl-vep-vcf-parser-raw-lines-no-header")?;
+        let path = write_sample_file(&dir, "sample.vcf", NO_HEADER_SAMPLE)?;
+        let mut parser = VcfParser::new(
+            Some(path.to_str().expect("utf-8 path").to_string()),
+            None,
+            Some("sequential".to_string()),
+        )?;
+
+        assert_eq!(parser.raw_lines(None)?.len(), 3);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn test_vcf_parser_query_mode_raw_lines() -> io::Result<()> {
+        Python::initialize();
+        let dir = create_temp_dir("ensembl-vep-vcf-parser-query-raw-lines")?;
+        let path = write_sample_file(&dir, "sample.vcf.gz", SAMPLE)?;
+        let tbi_path = PathBuf::from(format!("{}.tbi", path.display()));
+        fs::write(&tbi_path, b"")?;
+        let tabix = write_query_tabix(&dir)?;
+        let mut parser = VcfParser::new(
+            Some(path.to_str().expect("utf-8 path").to_string()),
+            Some(tabix.to_str().expect("utf-8 path").to_string()),
+            Some("auto".to_string()),
+        )?;
+
+        // No query is active until a seek, so there is nothing to read yet.
+        assert!(parser.raw_lines(None)?.is_empty());
+
+        assert!(parser.seek("chr1:10-20")?);
+        assert_eq!(
+            parser.raw_lines(None)?,
+            vec![QUERY_ROW_1.to_string(), QUERY_ROW_2.to_string()]
+        );
+        assert!(parser.raw_lines(None)?.is_empty());
 
         fs::remove_dir_all(dir)?;
         Ok(())
@@ -1787,6 +2196,22 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
     }
 
     #[test]
+    fn test_vcf_reader_metadata_includes_the_header() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-vcf-reader-metadata-raw-header")?;
+        let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
+        let mut reader = VcfReader::open(&path, "tabix", ReaderMode::Sequential)?;
+
+        let metadata = reader.metadata()?;
+
+        assert_eq!(metadata.header.len(), 5);
+        assert_eq!(metadata.header[0], "##fileformat=VCFv4.3");
+        assert!(metadata.header[4].starts_with("#CHROM\tPOS"));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
     fn test_vcf_reader_metadata_is_cached() -> io::Result<()> {
         let dir = create_temp_dir("ensembl-vep-vcf-reader-metadata-cache")?;
         let path = write_sample_file(&dir, "sample.vcf", SAMPLE)?;
@@ -1858,10 +2283,11 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
             )]),
             samples: vec!["sample0".to_string(), "sample1".to_string()],
             other: HashMap::from([("fileDate".to_string(), vec!["20260714".to_string()])]),
+            header: vec!["##fileformat=VCFv4.3".to_string()],
         };
 
         assert!(!metadata.is_empty());
-        assert_eq!(metadata.__len__(), 8);
+        assert_eq!(metadata.__len__(), 9);
         assert_eq!(
             metadata.keys(),
             vec![
@@ -1873,6 +2299,7 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
                 "contig".to_string(),
                 "samples".to_string(),
                 "other".to_string(),
+                "header".to_string(),
             ]
         );
         assert_eq!(metadata.file_format, "VCFv4.3");
@@ -1915,6 +2342,7 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
             )]),
             samples: vec!["sample0".to_string(), "sample1".to_string()],
             other: HashMap::from([("fileDate".to_string(), vec!["20260714".to_string()])]),
+            header: vec!["##fileformat=VCFv4.3".to_string()],
         };
 
         Python::initialize();
@@ -1939,6 +2367,14 @@ chr1\t10\trs1\tA\tC\t13\tPASS\tNS=2\tGT\t0/1\t1/1
                     .bind(py)
                     .extract::<HashMap<String, Vec<String>>>()?,
                 HashMap::from([("fileDate".to_string(), vec!["20260714".to_string()],)])
+            );
+
+            assert_eq!(
+                metadata
+                    .__getitem__(py, "header".to_string())?
+                    .bind(py)
+                    .extract::<Vec<String>>()?,
+                vec!["##fileformat=VCFv4.3".to_string()]
             );
 
             let info = metadata

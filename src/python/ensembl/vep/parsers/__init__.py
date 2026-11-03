@@ -31,4 +31,5 @@ __all__ = [
     "FastaRecord",
     "VCFParser",
     "VCFRecord",
+    "Parser",
 ]

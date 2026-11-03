@@ -11,7 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Unit tests for the GFF3 parser interface."""
+"""Tests for the GFF3 parser interface."""
+
+from __future__ import annotations
 
 from pathlib import Path
 import subprocess
@@ -106,16 +108,16 @@ def _assert_gene_record(record: GFF3Record) -> None:
 
 
 class TestGFF3ParserInitialization:
-    """Test GFF3Parser initialization."""
+    """GFF3Parser initialization."""
 
     def test_initialization_without_keywords(self) -> None:
-        """Test GFF3Parser initialization without keywords raises error."""
+        """GFF3Parser initialization without keywords raises error."""
 
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = GFF3Parser("annotations.gff3")  # type: ignore[misc]
 
     def test_initialization_sets_core_attributes(self) -> None:
-        """Test GFF3Parser sets parser attributes."""
+        """GFF3Parser sets parser attributes."""
 
         parser = GFF3Parser()
 
@@ -126,7 +128,7 @@ class TestGFF3ParserInitialization:
         assert parser.reader_mode == "auto"
 
     def test_initialization_with_file_path_opens_parser(self, tmp_path: Path) -> None:
-        """Test file_path initialization opens the parser."""
+        """File_path initialization opens the parser."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
         parser = GFF3Parser(file_path=path)
@@ -134,7 +136,7 @@ class TestGFF3ParserInitialization:
         _assert_gene_record(parser.next())
 
     def test_mode_is_frozen(self) -> None:
-        """Test attribute mode is settable on object creation and them immutable"""
+        """Attribute mode is settable on object creation and them immutable"""
         parser = GFF3Parser(mode="sequential")
 
         assert parser.mode == "sequential", "mode attribute set incorrectly"
@@ -145,10 +147,10 @@ class TestGFF3ParserInitialization:
 
 
 class TestGFF3ParserMetadata:
-    """Tests for GFF3Parser.metadata."""
+    """GFF3Parser.metadata."""
 
     def test_metadata_returns_header_lines_and_directives(self, tmp_path: Path) -> None:
-        """Test metadata returns raw header lines and directive values."""
+        """Metadata returns raw header lines and directive values."""
 
         path = _write_gff3(tmp_path / "sample.gff3", SAMPLE_WITH_COMMENT)
         parser = GFF3Parser(file_path=path, mode="sequential")
@@ -156,7 +158,7 @@ class TestGFF3ParserMetadata:
         assert parser.metadata == {"header": HEADER_LINES, "gff-version": "3"}
 
     def test_metadata_is_cached(self, tmp_path: Path) -> None:
-        """Test metadata is cached after first access."""
+        """Metadata is cached after first access."""
 
         path = _write_gff3(tmp_path / "sample.gff3", SAMPLE_WITH_COMMENT)
         parser = GFF3Parser(file_path=path, mode="sequential")
@@ -166,7 +168,7 @@ class TestGFF3ParserMetadata:
         assert parser.metadata == metadata
 
     def test_open_refreshes_metadata_cache(self, tmp_path: Path) -> None:
-        """Test open clears cached metadata for the previous file."""
+        """Open clears cached metadata for the previous file."""
 
         first_path = _write_gff3(
             tmp_path / "first.gff3",
@@ -183,7 +185,7 @@ class TestGFF3ParserMetadata:
         assert parser.metadata == {"header": ["##gff-version 4"], "gff-version": "4"}
 
     def test_metadata_returns_empty_dictionary_after_close(self, tmp_path: Path) -> None:
-        """Test metadata is empty when the parser is closed."""
+        """Metadata is empty when the parser is closed."""
 
         path = _write_gff3(tmp_path / "sample.gff3", SAMPLE_WITH_COMMENT)
         parser = GFF3Parser(file_path=path, mode="sequential")
@@ -195,7 +197,7 @@ class TestGFF3ParserMetadata:
         assert not parser.metadata
 
     def test_metadata_does_not_consume_sequential_stream(self, tmp_path: Path) -> None:
-        """Test metadata reads do not advance the active sequential stream."""
+        """Metadata reads do not advance the active sequential stream."""
 
         path = _write_gff3(tmp_path / "sample.gff3", SAMPLE_WITH_COMMENT)
         parser = GFF3Parser(file_path=path, mode="sequential")
@@ -207,7 +209,7 @@ class TestGFF3ParserMetadata:
         assert record.feature_type == "CDS"
 
     def test_metadata_in_query_mode_reads_source_headers(self, tmp_path: Path) -> None:
-        """Test query-mode metadata is read from the GFF3 source file."""
+        """Query-mode metadata is read from the GFF3 source file."""
 
         path = _write_query_gff3(tmp_path / "sample.gff3.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -218,10 +220,10 @@ class TestGFF3ParserMetadata:
 
 
 class TestGFF3ParserOpenClose:
-    """Tests for GFF3Parser open and close."""
+    """GFF3Parser open and close."""
 
     def test_open_returns_parser(self, tmp_path: Path) -> None:
-        """Test open returns the parser instance."""
+        """Open returns the parser instance."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
         parser = GFF3Parser(mode="sequential")
@@ -230,7 +232,7 @@ class TestGFF3ParserOpenClose:
         _assert_gene_record(parser.next())
 
     def test_open_overrides_mode(self, tmp_path: Path) -> None:
-        """Test open overrides the parser mode."""
+        """Open overrides the parser mode."""
 
         path = _write_query_gff3(tmp_path / "sample.gff3.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -241,7 +243,7 @@ class TestGFF3ParserOpenClose:
         assert parser.reader_mode == "sequential"
 
     def test_open_auto_query_then_auto_seq_changes_mode(self, tmp_path: Path) -> None:
-        """Test open overrides the parser mode."""
+        """Open overrides the parser mode."""
 
         path = _write_query_gff3(tmp_path / "sample.gff3.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -256,7 +258,7 @@ class TestGFF3ParserOpenClose:
         assert parser.reader_mode == "sequential"
 
     def test_close_closes_backend_reader(self, tmp_path: Path) -> None:
-        """Test close prevents subsequent backend reads."""
+        """Close prevents subsequent backend reads."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
         parser = GFF3Parser(file_path=path, mode="sequential")
@@ -267,7 +269,7 @@ class TestGFF3ParserOpenClose:
             parser.next()
 
     def test_context_manager_closes_parser(self, tmp_path: Path) -> None:
-        """Test context manager returns and closes the parser."""
+        """Context manager returns and closes the parser."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
 
@@ -279,10 +281,10 @@ class TestGFF3ParserOpenClose:
 
 
 class TestGFF3ParserSeek:
-    """Tests for GFF3Parser.seek."""
+    """GFF3Parser.seek."""
 
     def test_gff3_parser_seek_primes_next(self, tmp_path: Path) -> None:
-        """Test seek returns availability and next streams parsed records."""
+        """Seek returns availability and next streams parsed records."""
 
         path = _write_query_gff3(tmp_path / "sample.gff3.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -294,7 +296,7 @@ class TestGFF3ParserSeek:
         assert parser.next() is None
 
     def test_gff3_parser_seek_accepts_region_string(self, tmp_path: Path) -> None:
-        """Test seek accepts an explicit region string."""
+        """Seek accepts an explicit region string."""
 
         path = _write_query_gff3(tmp_path / "sample.gff3.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -304,7 +306,7 @@ class TestGFF3ParserSeek:
         assert [record.seqid for record in parser.records()] == ["chr2"]
 
     def test_gff3_parser_seek_accepts_whole_sequence(self, tmp_path: Path) -> None:
-        """Test seek accepts a seq_region_name-only region."""
+        """Seek accepts a seq_region_name-only region."""
 
         path = _write_query_gff3(tmp_path / "sample.gff3.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -314,7 +316,7 @@ class TestGFF3ParserSeek:
         assert [record.feature_type for record in parser.records()] == ["gene", "exon"]
 
     def test_gff3_parser_seek_empty_region(self, tmp_path: Path) -> None:
-        """Test seek returns false when no records are available."""
+        """Seek returns false when no records are available."""
 
         path = _write_query_gff3(tmp_path / "sample.gff3.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -333,7 +335,7 @@ class TestGFF3ParserSeek:
         ],
     )
     def test_gff3_parser_seek_rejects_invalid_region_arguments(self, kwargs: dict[str, object]) -> None:
-        """Test seek rejects invalid region inputs before querying the backend."""
+        """Seek rejects invalid region inputs before querying the backend."""
 
         parser = GFF3Parser()
 
@@ -341,7 +343,7 @@ class TestGFF3ParserSeek:
             parser.seek(**kwargs)  # type: ignore[arg-type]
 
     def test_sequential_mode_rejects_seek(self, tmp_path: Path) -> None:
-        """Test sequential reader mode keeps seek disabled."""
+        """Sequential reader mode keeps seek disabled."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
         parser = GFF3Parser(file_path=path, mode="sequential")
@@ -351,10 +353,10 @@ class TestGFF3ParserSeek:
 
 
 class TestGFF3ParserRecords:
-    """Tests for GFF3Parser.records."""
+    """GFF3Parser.records."""
 
     def test_records_returns_remaining_records(self, tmp_path: Path) -> None:
-        """Test records returns all remaining records from the stream."""
+        """Records returns all remaining records from the stream."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
         parser = GFF3Parser(file_path=path, mode="sequential")
@@ -364,7 +366,7 @@ class TestGFF3ParserRecords:
         assert [record.feature_type for record in parser.records()] == ["CDS"]
 
     def test_records_respects_limit(self, tmp_path: Path) -> None:
-        """Test records stops once the limit is reached."""
+        """Records stops once the limit is reached."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
         parser = GFF3Parser(file_path=path, mode="sequential")
@@ -373,7 +375,7 @@ class TestGFF3ParserRecords:
         assert [record.feature_type for record in parser.records()] == ["CDS"]
 
     def test_records_zero_limit_does_not_consume_record(self, tmp_path: Path) -> None:
-        """Test zero limit leaves the next record available."""
+        """Zero limit leaves the next record available."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
         parser = GFF3Parser(file_path=path, mode="sequential")
@@ -382,18 +384,47 @@ class TestGFF3ParserRecords:
         _assert_gene_record(parser.next())
 
 
+class TestGFF3ParserRawLines:
+    """GFF3Parser.raw_lines."""
+
+    def test_raw_lines_returns_record_lines_verbatim(self, tmp_path: Path) -> None:
+        """Raw_lines skips directives and stops at the FASTA section."""
+
+        path = _write_gff3(tmp_path / "sample.gff3")
+        parser = GFF3Parser(file_path=path, mode="sequential")
+
+        assert parser.raw_lines() == [CHR1_GENE_ROW, CHR1_CDS_ROW]
+
+    def test_raw_lines_respects_limit(self, tmp_path: Path) -> None:
+        """Raw_lines stops once the limit is reached."""
+
+        path = _write_gff3(tmp_path / "sample.gff3")
+        parser = GFF3Parser(file_path=path, mode="sequential")
+
+        assert parser.raw_lines(limit=1) == [CHR1_GENE_ROW]
+        assert parser.raw_lines() == [CHR1_CDS_ROW]
+
+    def test_raw_lines_skips_comment_lines(self, tmp_path: Path) -> None:
+        """A comment between the header and the records is not returned."""
+
+        path = _write_gff3(tmp_path / "sample.gff3", SAMPLE_WITH_COMMENT)
+        parser = GFF3Parser(file_path=path, mode="sequential")
+
+        assert parser.raw_lines() == [CHR1_GENE_ROW, CHR1_CDS_ROW]
+
+
 class TestGFF3ParserIteration:
-    """Tests for GFF3Parser iteration."""
+    """GFF3Parser iteration."""
 
     def test_parser_is_its_own_iterator(self) -> None:
-        """Test iter returns the parser instance."""
+        """Iter returns the parser instance."""
 
         parser = GFF3Parser()
 
         assert iter(parser) is parser
 
     def test_iteration_streams_records(self, tmp_path: Path) -> None:
-        """Test iteration streams records from the parser."""
+        """Iteration streams records from the parser."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
         parser = GFF3Parser(file_path=path, mode="sequential")
@@ -401,7 +432,7 @@ class TestGFF3ParserIteration:
         assert [record.feature_type for record in parser] == ["gene", "CDS"]
 
     def test_iteration_raises_stop_iteration(self, tmp_path: Path) -> None:
-        """Test iteration raises StopIteration when no more records are available."""
+        """Iteration raises StopIteration when no more records are available."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
         parser = GFF3Parser(file_path=path, mode="sequential")
@@ -412,10 +443,10 @@ class TestGFF3ParserIteration:
 
 
 class TestGFF3ParserParsingTextAndFiles:
-    """Tests for GFF3Parser parse helpers."""
+    """GFF3Parser parse helpers."""
 
     def test_parse_text_returns_interface_records(self) -> None:
-        """Test parse_text exposes GFF3 rows as parser-interface records."""
+        """Parse_text exposes GFF3 rows as parser-interface records."""
 
         records = GFF3Parser.parse_text(SAMPLE)
 
@@ -425,7 +456,7 @@ class TestGFF3ParserParsingTextAndFiles:
         assert records[1].phase_value == 2
 
     def test_parse_text_respects_limit(self) -> None:
-        """Test parse_text stops once the limit is reached."""
+        """Parse_text stops once the limit is reached."""
 
         records = GFF3Parser.parse_text(SAMPLE, limit=1)
 
@@ -433,7 +464,7 @@ class TestGFF3ParserParsingTextAndFiles:
         _assert_gene_record(records[0])
 
     def test_parse_file_returns_interface_records(self, tmp_path: Path) -> None:
-        """Test parse_file exposes GFF3 rows as parser-interface records."""
+        """Parse_file exposes GFF3 rows as parser-interface records."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
         records = GFF3Parser.parse_file(path)
@@ -442,7 +473,7 @@ class TestGFF3ParserParsingTextAndFiles:
         _assert_gene_record(records[0])
 
     def test_parse_file_respects_limit(self, tmp_path: Path) -> None:
-        """Test parse_text stops once the limit is reached."""
+        """Parse_text stops once the limit is reached."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
         records = GFF3Parser.parse_file(path, limit=1)
@@ -452,24 +483,24 @@ class TestGFF3ParserParsingTextAndFiles:
 
 
 class TestGFF3RecordFirstAttribute:
-    """Tests for GFF3Record.first_attribute."""
+    """GFF3Record.first_attribute."""
 
     def test_returns_first_value_for_known_key(self) -> None:
-        """Test the first attribute value is returned for a single-valued key."""
+        """The first attribute value is returned for a single-valued key."""
 
         record = GFF3Parser.parse_text(SAMPLE, limit=1)[0]
 
         assert record.first_attribute("ID") == "gene:1"
 
     def test_returns_first_value_for_multi_valued_key(self) -> None:
-        """Test only the first value is returned for a multi-valued key."""
+        """Only the first value is returned for a multi-valued key."""
 
         record = GFF3Parser.parse_text(SAMPLE, limit=1)[0]
 
         assert record.first_attribute("Alias") == "a"
 
     def test_returns_none_for_missing_key(self) -> None:
-        """Test None is returned when the attribute key is absent."""
+        """None is returned when the attribute key is absent."""
 
         record = GFF3Parser.parse_text(SAMPLE, limit=1)[0]
 
@@ -477,15 +508,15 @@ class TestGFF3RecordFirstAttribute:
 
 
 class TestGFF3ParserIndexSequenceNames:
-    """Tests for GFF3Parser.index_sequence_names."""
+    """GFF3Parser.index_sequence_names."""
 
     def test_unopened_parser_has_no_index_sequence_names(self) -> None:
-        """Test an unopened parser reports no index sequence names."""
+        """An unopened parser reports no index sequence names."""
 
         assert GFF3Parser().index_sequence_names == []
 
     def test_sequential_reader_has_no_index_sequence_names(self, tmp_path: Path) -> None:
-        """Test a sequentially-read file reports no index sequence names."""
+        """A sequentially-read file reports no index sequence names."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
         parser = GFF3Parser(file_path=path, mode="sequential")
@@ -538,7 +569,7 @@ class TestGFF3ParserIndexIntegration:
     def test_index_sequence_names_matches_real_index(
         self, tmp_path: Path, htslib_toolchain: HtslibToolchain
     ) -> None:
-        """Test index_sequence_names reports the real index's declared contigs, in order."""
+        """Index_sequence_names reports the real index's declared contigs, in order."""
 
         path = _create_tabix_gff3_cli(tmp_path / "sample.gff3.gz", htslib_toolchain)
         parser = GFF3Parser(file_path=str(path), tabix_path="tabix-nonexistent-binary-for-test")
@@ -548,7 +579,7 @@ class TestGFF3ParserIndexIntegration:
     def test_seek_unknown_contig_returns_false_not_raises(
         self, tmp_path: Path, htslib_toolchain: HtslibToolchain
     ) -> None:
-        """Test seeking a contig absent from a real index returns False instead of raising."""
+        """Seeking a contig absent from a real index returns False instead of raising."""
 
         path = _create_tabix_gff3_cli(tmp_path / "sample.gff3.gz", htslib_toolchain)
         parser = GFF3Parser(file_path=str(path), tabix_path="tabix-nonexistent-binary-for-test")
