@@ -16,6 +16,8 @@
 Containers are for collection data (generally without any behavior).
 """
 
+from __future__ import annotations
+
 from attrs import frozen
 
 
@@ -23,7 +25,8 @@ from attrs import frozen
 class Locus:
     """Container for a genomic position and (optionally) alleles.
 
-    Args:
+    Attributes:
+        seq_region_name (str | None): Name of the sequence region.
         start (int): Start position of the locus.
         end (int): End position of the locus.
         allele_string (str | None): String representation of the alleles.
@@ -31,6 +34,7 @@ class Locus:
             where allele could be either reference or alternate.
     """
 
+    seq_region_name: str | None = None
     start: int
     end: int
     allele_string: str | None = None
@@ -40,7 +44,7 @@ class Locus:
 class Attribute:
     """Container for an attribute of a feature.
 
-    Args:
+    Attributes:
         name (str): Name of the attribute.
         value (str): Value of the attribute.
         code (str | None): Code of the attribute.
@@ -57,7 +61,7 @@ class Attribute:
 class ExternalDB:
     """Container for external database information.
 
-    Args:
+    Attributes:
         id (str): Unique identifier for the external database.
         name (str): Name of the external database.
         description (str | None): Description of the external database.
@@ -76,7 +80,7 @@ class ExternalDB:
 class ExternalReference:
     """Container for external reference information.
 
-    Args:
+    Attributes:
         accession_id (str): Accession ID of the external reference.
         name (str): Name of the external reference.
         description (str | None): Description of the external reference.
@@ -97,7 +101,7 @@ class ExternalReference:
 class PredictionResult:
     """Container for a prediction result of a program.
 
-    Args:
+    Attributes:
         plugin_name (str): Name of the plugin that generated this prediction.
         consequence (str): Consequence term predicted by the plugin.
         score (float | None): Score associated with the prediction, if applicable.
@@ -125,7 +129,7 @@ class SequenceEdit:
     Offsets are relative to whatever ``Mapper`` produced them, for example, same variant yields a
     different ``SequenceEdit`` against a CDS mapper than against a cDNA mapper.
 
-    Args:
+    Attributes:
         footprint (tuple[int, int]): ``(low, high)`` inclusive offsets the variant covers.
         start (int): Start of the half-open range to replace.
         end (int): End of that range, exclusive. Equal to ``start`` for a pure insertion.
