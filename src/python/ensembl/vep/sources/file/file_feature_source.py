@@ -96,7 +96,7 @@ class FileFeatureSource(FeatureSource[R, F], Generic[P, R, F]):
             **kwargs (object): Unused here; a format whose query takes more accepts it.
 
         Returns:
-            list[R]: The records the query read, empty when the region is unreadable.
+            list[R]: The records the query reads, empty when the region is unreadable.
         """
 
         del kwargs

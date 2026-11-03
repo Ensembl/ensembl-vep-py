@@ -372,6 +372,7 @@ class GXFTranscriptSource(FileFeatureSource[P, GXFRecord, Transcript], ABC, Gene
 
         complete_records: list[GXFRecord] = []
         for span_start, span_end in self._merged_spans(candidates.values()):
+            # stage 2: the transcript rows that overlap the merged spans
             complete_records.extend(self._records_for_region(seq_region_name, span_start, span_end))
         return self._build_transcripts(
             complete_records, gene_records={}, gene_cache={}, slice_cache={}, candidate_ids=candidates
@@ -404,6 +405,7 @@ class GXFTranscriptSource(FileFeatureSource[P, GXFRecord, Transcript], ABC, Gene
 
         complete_records: list[GXFRecord] = []
         for span_start, span_end in self._merged_spans(missing.values()):
+            # stage 2: the transcript rows not in the pool that overlap the merged spans
             complete_records.extend(self._records_for_region(seq_region_name, span_start, span_end))
 
         resurfaced_id = self._first_pooled_id_in_records(complete_records, pooled)
