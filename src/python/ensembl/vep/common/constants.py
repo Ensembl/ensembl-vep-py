@@ -15,6 +15,20 @@
 
 from ensembl.vep.common.enums import ExonPhase, Strand, ClassSOTerm
 
+__all__ = [
+    "DEFAULT_DISTANCE",
+    "INPUT_FORMAT_EXTENSIONS",
+    "COMPRESSION_SUFFIXES",
+    "CANONICAL_DNA_BASES",
+    "EMPTY_ALLELE",
+    "UNKNOWN_VALUE",
+    "VCF_BASES",
+    "VCF_PLAIN_ALLELE_CHARACTERS",
+    "CLASS_SO_TERM_ABBRV_TO_ENUM",
+    "STRAND_SYMBOL_TO_ENUM",
+    "GFF_TO_ENSEMBL_PHASE",
+]
+
 DEFAULT_DISTANCE = 5000
 """Bases either side of a feature that still pair with it, as Perl VEP's ``--distance`` defaults.
 
