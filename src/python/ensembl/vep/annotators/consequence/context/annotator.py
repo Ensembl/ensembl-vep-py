@@ -84,8 +84,8 @@ class AnnotatorContext:
 
         Order is load-bearing and not arbitrary:
 
-           assigning it invalidates the overlap's cached CDS alleles -- so it has to land before
         1. **Readthrough level first.** It changes what the sequence tier will compute, and
+           assigning it invalidates the overlap's cached CDS alleles -- so it has to land before
            anything reads them, for the same reason the codon cache has to land before the
            sequence tier are evaluated.
         2. **Zone map second.** It prefills the positional tier, including ``overlap_feature`` and
