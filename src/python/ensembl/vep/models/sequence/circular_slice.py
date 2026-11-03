@@ -77,7 +77,7 @@ class CircularSlice(Slice):
             return sequence
 
     def _sequence_spans(self, seq_region_length: int) -> list[tuple[int, int]]:
-        """Return linear spans that cover the circular slice.
+        """Returns linear spans that cover the circular slice.
 
         Args:
             seq_region_length (int): The length of the circular sequence region.
