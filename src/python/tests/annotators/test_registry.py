@@ -44,11 +44,12 @@ class _StringAnnotator(Annotator[str]):
 
 
 class TestAvailableAnnotators:
-    """Names exposed before concrete strategies are registered."""
+    """Built-in annotator names."""
 
-    def test_registry_starts_empty(self) -> None:
-        """Expose no names before a strategy is registered."""
-        assert not available_annotators()
+    def test_includes_the_built_ins(self) -> None:
+        """Register consequence and haplotype strategies on package import."""
+        assert "consequence.linear" in available_annotators()
+        assert "haplo.linear" in available_annotators()
 
 
 class TestLookup:

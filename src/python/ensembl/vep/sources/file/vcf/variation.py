@@ -17,12 +17,14 @@ import logging
 import re
 from attrs import define, field
 
+from ensembl.vep.common.constants import EMPTY_ALLELE
 from ensembl.vep.common import Locus, Strand
 from ensembl.vep.models.sequence import Slice
 from ensembl.vep.models.variation.variation import Variation
 from ensembl.vep.models.variation.structural_variation import StructuralVariation, StructuralVariationAllele
 from ensembl.vep.parsers.vcf import VCFParser
 from ensembl.vep.sources.file.file_feature_source import FileFeatureSource
+from ensembl.vep.sources.synonym import SequenceRegionResolver
 from ensembl.vep.ensembl_vep_core import VCFRecord  # noqa: F401,F403 pylint: disable=E0401,E0611
 
 logger = logging.getLogger(__name__)
@@ -47,6 +49,11 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
     """
 
     adaptor: VCFParser = field(init=False, factory=VCFParser)
+    sequence_region_resolver: SequenceRegionResolver | None = field(default=None)
+
+    def records_to_features(self, records: list[VCFRecord]) -> list[Variation]:
+        """Convert already-read VCF records into variation models."""
+        return self._records_to_features(records)
 
     def _records_to_features(self, records: list[VCFRecord]) -> list[Variation]:
         """Convert VCFRecords into Variation or StructuralVariation objects.
@@ -96,7 +103,7 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
                     end=end,
                     strand=Strand.FORWARD,
                     slice=self.slice_cache.get_slice(
-                        record.chrom,
+                        self._sequence_region_name(record.chrom),
                         self.sequence_source,
                     ),
                     allele_string=allele_string,
@@ -122,7 +129,7 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
         structural_variations: list[StructuralVariation] = []
         for record in records:
             seq_region_slice = self.slice_cache.get_slice(
-                record.chrom,
+                self._sequence_region_name(record.chrom),
                 self.sequence_source,
             )
 
@@ -157,6 +164,13 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
             structural_variations.append(structural_variation)
 
         return structural_variations
+
+    def _sequence_region_name(self, uploaded_name: str) -> str:
+        """Return the source name used to construct a variation slice."""
+
+        if self.sequence_region_resolver is None:
+            return uploaded_name
+        return self.sequence_region_resolver.resolve(uploaded_name)
 
     def _create_sv_allele_from_record(
         self, record: VCFRecord, *, allele_index: int, seq_region_slice: Slice | None
@@ -406,8 +420,8 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
                 start += 1
             changed = True
 
-        new_ref = alleles[0] or "-"
-        new_alts = [allele or "-" for allele in alleles[1:]]
+        new_ref = alleles[0] or EMPTY_ALLELE
+        new_alts = [allele or EMPTY_ALLELE for allele in alleles[1:]]
         new_alt: str | list[str] = new_alts[0] if alt_is_string else new_alts
         return (new_ref, new_alt, start, end, changed)
 
@@ -445,7 +459,7 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
             )
             return (ref, alt, start, end, changed)
 
-        if ref == "-":
+        if ref == EMPTY_ALLELE:
             logger.warning("Allele is already trimmed. Returning untrimmed alleles.")
             return (ref, alt, start, end, changed)
 
@@ -453,7 +467,7 @@ class VCFVariationSource(FileFeatureSource[VCFParser, Variation]):
             end -= len(ref)
         else:
             start += len(ref)
-        ref = "-"
+        ref = EMPTY_ALLELE
         changed = True
 
         return (ref, alt, start, end, changed)

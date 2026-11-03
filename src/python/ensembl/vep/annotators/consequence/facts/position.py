@@ -177,8 +177,8 @@ def overlap_intron_boundary(fact_context: FactContext[TranscriptVariationAllele]
     """Return whether the variant overlaps an intron boundary window."""
     variant_min, variant_max = variant_genomic_span(fact_context)
     return any(
-        genomic_overlap(variant_min, variant_max, intron.start - 4, intron.start + 8)
-        or genomic_overlap(variant_min, variant_max, intron.end - 8, intron.end + 4)
+        genomic_overlap(variant_min, variant_max, intron.start - 3, intron.start + 7)
+        or genomic_overlap(variant_min, variant_max, intron.end - 7, intron.end + 3)
         for intron in fact_context.overlap.feature.introns
     )
 
