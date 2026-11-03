@@ -25,6 +25,7 @@ from ensembl.vep.annotators.consequence.facts.base import get_fact
 from ensembl.vep.annotators.consequence.context.annotator import AnnotatorContext
 from ensembl.vep.annotators.consequence.context.fact import FactContext
 from ensembl.vep.common import Strand
+from ensembl.vep.corpus.synthetic.components.transcript import build_cds_genomic_bounds, build_transcript
 from ensembl.vep.models.genic import Exon, Intron, Transcript
 from ensembl.vep.models.overlap import TranscriptVariationAllele
 from ensembl.vep.models.variation import VariationAllele
@@ -650,6 +651,42 @@ class TestWithinFeatureFacts:
         assert get_fact(context, "overlap_intron_boundary") is False
         for fact_name in _SPLICE_FACTS:
             assert get_fact(context, fact_name) is False, fact_name
+
+    def test_splice_facts_are_clipped_to_the_intron_span(
+        self, synthetic_transcripts_by_stable_id: dict[str, Transcript]
+    ) -> None:
+        """For very short introns some of the intron facts need clipping to the intron span."""
+        # create a transcript with a small intron
+        _ENST0005_EXONS: tuple[tuple[int, int], ...] = ((35000, 35100), (35111, 35200))
+        synthetic_slice = synthetic_transcripts_by_stable_id["ENST0001"].slice
+        assert synthetic_slice is not None
+        transcript = build_transcript(
+            stable_id="ENST0005",
+            synthetic_slice=synthetic_slice,
+            strand=Strand.FORWARD,
+            exons_genomic_ascending=_ENST0005_EXONS,
+            cds_genomic_bounds=build_cds_genomic_bounds(
+                _ENST0005_EXONS,
+                strand=Strand.FORWARD,
+                frame_index=1,
+                start_offset=50,
+                stop_offset=40,
+            ),
+            gene=None,
+            biotype="protein_coding",
+        )
+
+        intron = transcript.introns[0]
+        context_in_intron = _context_at(transcript, start=intron.start + 5, end=intron.start + 6)
+
+        assert get_fact(context_in_intron, "overlap_intron") is True
+        assert get_fact(context_in_intron, "overlap_polypyrimidine_tract") is True
+
+        context_in_polypyr_space_outside_intron = _context_at(
+            transcript, start=intron.start - 2, end=intron.start - 1
+        )
+        assert get_fact(context_in_polypyr_space_outside_intron, "overlap_intron") is False
+        assert get_fact(context_in_polypyr_space_outside_intron, "overlap_polypyrimidine_tract") is False
 
 
 class TestWithinCodingRegionFacts:

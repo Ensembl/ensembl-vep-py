@@ -36,7 +36,7 @@ from ensembl.vep.models.variation import VariationAllele
 EXPECTED_TERMS_BY_OVERLAP_KEY: dict[str, list[str]] = {
     # -- forward-strand protein-coding transcript (ENST0001) --
     "ENST0001::ENST0001_start_codon_pos1050": ["start_lost"],
-    "ENST0001::ENST0001_stop_codon_pos2407": ["stop_lost"],
+    "ENST0001::ENST0001_stop_codon_pos3197": ["stop_lost"],
     "ENST0001::ENST0001_cds3_del1": ["frameshift_variant"],
     "ENST0001::ENST0001_cds3_del3": ["inframe_deletion"],
     "ENST0001::ENST0001_intron0_donor+1": ["splice_donor_variant"],
