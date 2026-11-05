@@ -111,12 +111,12 @@ class IntervalTree(Generic[FeatureT]):
         self._add_features_to_intervals(self.features, start_index=0)
 
     def __getstate__(self) -> dict[str, Any]:
-        """Return the tree's state without the lock, which no lock can be pickled through."""
+        """Return the tree's state without the lock, because the lock cannot be pickled."""
 
         return {"features": self.features, "_intervals": self._intervals}
 
     def __setstate__(self, state: dict[str, Any]) -> None:
-        """Restore the tree with a lock of its own."""
+        """Restore the tree with a new lock of its own."""
 
         object.__setattr__(self, "features", state["features"])
         object.__setattr__(self, "_intervals", state["_intervals"])

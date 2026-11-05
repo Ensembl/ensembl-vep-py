@@ -37,7 +37,7 @@ class SequenceCache(Protocol):
         end: int,
         loader: SequenceSpanLoader,
     ) -> str | None:
-        """Returns sequence for a span.
+        """Return sequence for a span.
 
         Args:
             seq_region_name (str): The sequence region name.
@@ -75,18 +75,18 @@ class SequenceBinnedLRUCache:
 
     @property
     def chunk_size(self) -> int:
-        """Returns the cache chunk size."""
+        """Return the cache chunk size."""
 
         return 1 << self.chunk_power
 
     @property
     def max_span(self) -> int:
-        """Returns the largest sequence that can be stored in the cache."""
+        """Return the largest sequence that can be stored in the cache."""
 
         return self.chunk_size * self.max_chunks
 
     def chunk_start(self, position: int) -> int:
-        """Returns the start coordinate of the chunk containing the given position.
+        """Return the start coordinate of the chunk containing the given position.
 
         Position is 1-based inclusive. The returned chunk start is also 1-based inclusive.
 
@@ -106,7 +106,7 @@ class SequenceBinnedLRUCache:
         end: int,
         loader: SequenceSpanLoader,
     ) -> str | None:
-        """Returns sequence for a span using binned chunk caching when useful.
+        """Return sequence for a span using binned chunk caching when useful.
 
         Args:
             seq_region_name (str): The sequence region name.
@@ -166,7 +166,7 @@ class SequenceBinnedLRUCache:
         return chunk
 
     def _get_or_load(self, key: tuple[str, int], loader: Callable[[], str]) -> str:
-        """Returns a cached chunk or populate it by calling loader.
+        """Return a cached chunk or populate it by calling loader.
 
         Args:
             key (tuple[str, int]): Cache key made of sequence region name and chunk start.
