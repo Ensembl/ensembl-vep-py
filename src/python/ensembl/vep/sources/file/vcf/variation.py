@@ -595,7 +595,7 @@ class PicklableVCFVariationSource(VCFVariationSource):
         return self._iter_region_lines(region, seq_region_name, start, end, read_size=_RAW_LINE_READ_SIZE)
 
     def records_to_features(self, records: Sequence[str]) -> list[Variation]:
-        """Return the variations a set of record lines describes, in input order.
+        """Return the variations for a set of record lines, in input order.
 
         A record is a line alone, so the file's own header is read back here: what a line means
         can depend on an INFO or contig declaration that only the header holds.
@@ -662,7 +662,11 @@ class PicklableVCFVariationSource(VCFVariationSource):
             try:
                 headers = self.header_lines()
             # A header the parser rejects arrives as a ValueError, a missing file as an OSError.
-            except (OSError, ValueError):
+            except (OSError, ValueError) as error:
+                logger.warning(
+                    f"Could not read the VCF header of {self.file_path} ({error});"
+                    "parsing records against a minimal header"
+                )
                 headers = []
             self._header_text = "\n".join(headers) + "\n" if headers else _MINIMAL_HEADER
         return self._header_text

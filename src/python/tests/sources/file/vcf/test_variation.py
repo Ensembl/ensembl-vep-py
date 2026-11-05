@@ -663,7 +663,9 @@ class TestPicklableVCFVariationSource:
 
         assert [variation.start for variation in variations] == [10, 21, 101]
 
-    def test_parses_records_against_a_minimal_header_when_the_input_is_gone(self) -> None:
+    def test_parses_records_against_a_minimal_header_when_the_input_is_gone(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """A plain record still parses when no header can be read for it.
 
         The fallback header declares the eight fixed VCF columns and nothing else, so it carries
@@ -676,6 +678,9 @@ class TestPicklableVCFVariationSource:
         )
         records = ["\t".join(CHR1_VAR_ROW1.split("\t")[:8])]
 
-        variations = source.records_to_features(records)
+        # first check a warning is generated
+        with caplog.at_level(logging.WARNING):
+            variations = source.records_to_features(records)
+            assert "Could not read the VCF header" in caplog.text, "Incorrect warning on missing header"
 
         assert_first_variation_object(variations[0])
