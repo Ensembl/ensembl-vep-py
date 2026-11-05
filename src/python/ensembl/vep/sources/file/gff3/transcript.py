@@ -66,14 +66,14 @@ class GFF3TranscriptSource(GXFTranscriptSource[GFF3Parser]):
         return _id
 
     def get_parent_ids(self, record: GFF3Record) -> tuple[str, ...]:
-        """Return the GFF3 parent identifier, if present.
+        """Return the GFF3 parent identifiers, if present.
 
         Args:
             record: The parser record to inspect.
 
         Returns:
-            tuple[str, ...]: A tuple of parent identifiers, or empty tuple when the record has no
-            parent.
+            tuple[str, ...]: A tuple of parent identifiers, or an empty tuple when the record has
+            no parent.
         """
 
-        return record.attributes.get("Parent", ())
+        return tuple(record.attribute_values("Parent"))

@@ -15,14 +15,38 @@
 
 from ensembl.vep.common.enums import ExonPhase, Strand, ClassSOTerm
 
+__all__ = [
+    "DEFAULT_DISTANCE",
+    "INPUT_FORMAT_EXTENSIONS",
+    "COMPRESSION_SUFFIXES",
+    "CANONICAL_DNA_BASES",
+    "EMPTY_ALLELE",
+    "UNKNOWN_VALUE",
+    "VCF_BASES",
+    "VCF_PLAIN_ALLELE_CHARACTERS",
+    "CLASS_SO_TERM_ABBRV_TO_ENUM",
+    "STRAND_SYMBOL_TO_ENUM",
+    "GFF_TO_ENSEMBL_PHASE",
+]
+
 DEFAULT_DISTANCE = 5000
 """Bases either side of a feature that still pair with it, as Perl VEP's ``--distance`` defaults.
 
 One home for a value three layers have to agree on: the pairing window the overlap finder expands
 by, the ``is_upstream``/``is_downstream`` facts, and the zone map that prefills them.
 """
-LEGACY_CORPUS_KINDS = ("default", "heavy", "both")
-"""Legacy synthetic corpus names retained for command compatibility."""
+INPUT_FORMAT_EXTENSIONS = {
+    "vcf": (".vcf", ".bcf"),
+}
+"""The input formats a run reads, and the file extensions each one owns.
+
+Here rather than beside the sources because ``--format`` offers these names and the configuration
+package cannot import the sources, which import it.
+"""
+
+COMPRESSION_SUFFIXES = (".gz", ".bgz", ".bz2", ".zst")
+"""Suffixes that name how a file is compressed rather than what it holds."""
+
 CANONICAL_DNA_BASES = "ACGT"
 """Unambiguous DNA bases used when generating synthetic sequence."""
 

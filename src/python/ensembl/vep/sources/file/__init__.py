@@ -15,6 +15,7 @@
 
 from .fasta.sequence import FastaSequenceSource
 from .file_feature_source import FileFeatureSource
+
 from .gff3.transcript import GFF3TranscriptSource
 from .gtf.transcript import GTFTranscriptSource
 

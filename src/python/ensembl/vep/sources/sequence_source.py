@@ -32,8 +32,23 @@ class SequenceSource(ABC):
     _seq_region_lengths: dict[str, int] = field(factory=dict, init=False, repr=False)
     _lock: RLock = field(factory=RLock, init=False, repr=False)
 
+    @property
+    def sequence_region_names(self) -> frozenset[str]:
+        """Return the sequence-region names this source declares.
+
+        These are the reference spelling of a run: every model slice is built in it, and this
+        source is asked for sequence by it. A source that can list its regions up front -- a
+        FASTA's index, a table of them -- overrides this; the rest declare none, which leaves
+        every uploaded name resolving to itself.
+
+        Returns:
+            frozenset[str]: The declared names, empty when the source lists none.
+        """
+
+        return frozenset()
+
     def get_seq_region_length(self, seq_region_name: str) -> int | None:
-        """Returns the length of a sequence region, caching when available.
+        """Return the length of a sequence region, caching when available.
 
         Args:
             seq_region_name (str): The sequence region name.
@@ -63,7 +78,7 @@ class SequenceSource(ABC):
         *,
         strand: Strand = Strand.FORWARD,
     ) -> str | None:
-        """Returns sequence from a sequence region for the specified coordinates and strand.
+        """Return sequence from a sequence region for the specified coordinates and strand.
 
         Args:
             seq_region_name (str): The sequence region name.

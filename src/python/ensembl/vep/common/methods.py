@@ -13,6 +13,8 @@
 # limitations under the License.
 """Common functions."""
 
+from __future__ import annotations
+
 from collections import deque
 import logging
 import os
@@ -79,7 +81,7 @@ def invalidate(instance: object, *invalidate_names: str) -> None:
 
 
 def invalidates(*cached_names: str) -> Callable:
-    """Returns an attrs on_setattr hook that clears named cached properties.
+    """Return an attrs ``on_setattr`` hook that clears named cached properties.
 
     Args:
         *cached_names (str): The names of the cached properties to invalidate.
@@ -104,8 +106,7 @@ def invalidates(*cached_names: str) -> Callable:
 
 
 def resets_attrs(*attrs: tuple[str, Any]) -> Callable:
-    """
-    Returns an attrs on_setattr hook that resets the named attributes to a default value.
+    """Return an attrs ``on_setattr`` hook that resets named attributes.
 
     Args:
         *attrs: list of tuples (name, default_value) where
@@ -430,6 +431,23 @@ def format_region_string(
     return f"{seq_region_name}:{start}-{end}"
 
 
+def format_coords(start: int | None, end: int | None) -> str:
+    """Return a coordinate range the way VEP prints one.
+
+    A single position when start and end agree, the lower bound first when they are reversed (an
+    insertion's ``end`` is ``start - 1``), and ``?`` for a missing bound.
+    """
+    if start is None:
+        return "-" if end is None else f"?-{end}"
+    if end is None:
+        return f"{start}-?"
+    if start > end:
+        return f"{end}-{start}"
+    if start == end:
+        return str(start)
+    return f"{start}-{end}"
+
+
 def infer_variant_so_term(allele_string: str, ref_correct: bool = False) -> ClassSOTerm | None:
     """
     Return the SO term for the class of the variation.
@@ -555,7 +573,7 @@ def infer_symbolic_variant_so_term(allele_string: str, svtype: str | None = None
 
 
 def reverse_complement(sequence: str) -> str:
-    """Returns the reverse complement of a nucleotide sequence.
+    """Return the reverse complement of a nucleotide sequence.
 
     Args:
         sequence (str): The sequence to reverse complement.
