@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+import logging
 
 import pytest
 
@@ -184,6 +185,24 @@ class TestBuildAnnotator:
         assert annotator.annotator_context is context
         assert annotator.batch_size == 128
         assert annotator.early_subsumption_skip is True
+
+    def test_warns_about_unsupported_annotator_options(
+        self, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """Typos in annotator-specific configuration are reported instead of silently ignored."""
+        monkeypatch.setitem(
+            registry_module._ANNOTATOR_REGISTRY,  # pylint: disable=protected-access
+            "test.context_only",
+            _ContextOnlyAnnotator,
+        )
+
+        with caplog.at_level(logging.WARNING, logger=factory_module.__name__):
+            annotator = build_annotator(annotator="test.context_only", mispelled_option=True)
+
+        assert isinstance(annotator, _ContextOnlyAnnotator)
+        assert [record.getMessage() for record in caplog.records] == [
+            "Ignoring unsupported option 'mispelled_option' for annotator 'test.context_only'"
+        ]
 
     def test_build_annotator_forwards_fact_cost_override(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """The option reaches the context builder when no shared context is supplied."""

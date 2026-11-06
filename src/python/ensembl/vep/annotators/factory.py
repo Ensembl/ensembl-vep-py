@@ -16,12 +16,13 @@
 Registered strategies accept different keyword arguments, so construction derives supported
 options from each factory signature instead of maintaining a duplicate table. That is what lets a
 caller spread a whole configuration section over ``build_annotator``: the options the chosen
-strategy declares reach it, and the rest are dropped.
+strategy declares reach it, and the rest are warned about and dropped.
 """
 
 from __future__ import annotations
 
 import inspect
+import logging
 from typing import Any
 
 from ensembl.vep.annotators.base import Annotator
@@ -35,6 +36,8 @@ from ensembl.vep.common import DEFAULT_DISTANCE, Readthrough
 from ensembl.vep.models.overlap import OverlapConsequence
 
 __all__ = ["build_annotator", "build_annotator_context"]
+
+logger = logging.getLogger(__name__)
 
 
 def build_annotator_context(
@@ -128,7 +131,8 @@ def build_annotator(
         annotator_context (AnnotatorContext | None): A context to share across annotators, or None
             to build one from the cache arguments.
         **options: Further options for the chosen strategy, such as the ones another annotation
-            kind declares. Each is passed on only if that strategy's factory accepts it.
+            kind declares. Each is passed on only if that strategy's factory accepts it; unsupported
+            options are logged as warnings.
 
     Returns:
         Annotator[OverlapConsequence]: The annotator instance.
@@ -155,6 +159,8 @@ def build_annotator(
         "early_subsumption_skip": early_subsumption_skip,
     }
     accepted = inspect.signature(annotator_factory(annotator)).parameters
+    for name in sorted(set(options).difference(accepted)):
+        logger.warning(f"Ignoring unsupported option {name!r} for annotator {annotator!r}")
     return get_annotator(
         annotator,
         **{name: value for name, value in candidate_kwargs.items() if name in accepted},
