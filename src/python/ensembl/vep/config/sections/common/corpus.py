@@ -22,13 +22,21 @@ from attrs import define, field
 
 from ensembl.vep.config.option_spec import option
 from ensembl.vep.config.sections.base import ConfigSection
-from ensembl.vep.corpus.registry import available_corpora
 
 __all__ = ["CorpusConfig"]
 
 
 def _corpus_kinds() -> tuple[str, ...]:
-    """Return canonical registered corpus names."""
+    """Return registered corpus names.
+
+    Resolved lazily so this module never imports ensembl.vep.corpus.
+
+    Returns:
+        tuple[str, ...]: Every registered corpus name, sorted.
+    """
+    # pylint: disable=import-outside-toplevel
+    from ensembl.vep.corpus.registry import available_corpora
+
     return available_corpora()
 
 

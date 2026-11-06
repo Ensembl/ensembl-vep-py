@@ -21,9 +21,22 @@ from attrs import define, field
 
 from ensembl.vep.config.option_spec import option
 from ensembl.vep.config.sections.base import ConfigSection
-from ensembl.vep.corpus.exporter import available_exporters
 
 __all__ = ["CorpusSaveConfig"]
+
+
+def _exporter_names() -> tuple[str, ...]:
+    """Return registered exporter names.
+
+    Resolved lazily so this module never imports ensembl.vep.exporter.
+
+    Returns:
+        tuple[str, ...]: Every registered corpus name, sorted.
+    """
+    # pylint: disable=import-outside-toplevel
+    from ensembl.vep.corpus.exporter.registry import available_exporters
+
+    return available_exporters()
 
 
 @define(frozen=True, kw_only=True, auto_attribs=True)
@@ -38,6 +51,6 @@ class CorpusSaveConfig(ConfigSection):
     section_name: ClassVar[str] = "corpus_save"
 
     exporter: str = field(
-        default="file", metadata=option("registered corpus exporter", choices=available_exporters)
+        default="file", metadata=option("registered corpus exporter", choices=_exporter_names)
     )
     force: bool = field(default=False, metadata=option("overwrite an existing saved corpus"))

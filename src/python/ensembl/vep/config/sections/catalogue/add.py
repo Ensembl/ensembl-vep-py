@@ -19,7 +19,6 @@ from typing import ClassVar
 
 from attrs import define, field
 
-from ensembl.vep.common import ConsequenceImpact
 from ensembl.vep.config.option_spec import option
 from ensembl.vep.config.sections.base import ConfigSection
 
@@ -27,7 +26,14 @@ __all__ = ["CatalogueAddConfig"]
 
 
 def _impact_names() -> tuple[str, ...]:
-    """Return the impact buckets a term may be assigned."""
+    """Return the impact buckets a term may be assigned.
+
+    Resolved lazily so this module never imports ``ensembl.vep.common``,
+    which loads ``ensembl_vep_core``.
+    """
+    # pylint: disable=import-outside-toplevel
+    from ensembl.vep.common import ConsequenceImpact
+
     return tuple(impact.value for impact in ConsequenceImpact)
 
 
