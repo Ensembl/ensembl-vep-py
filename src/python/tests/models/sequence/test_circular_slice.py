@@ -233,3 +233,25 @@ class TestCircularSliceEquality:
             strand=Strand.FORWARD,
         )
         assert circular_slice != slice2
+
+
+class TestCircularSliceSubseq:
+    """Test slice-relative span sequence on a circular slice."""
+
+    def test_subseq_is_cut_from_assembled_sequence(self, dummy_sequence_source: DummySequenceSource) -> None:
+        """Test a circular slice cuts from its assembled sequence, so an origin-crossing span holds."""
+        dummy_sequence_source.data = {"MT": "ACGTACGTAC"}
+        circular = CircularSlice(
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+            seq_region_name="MT",
+            start=2,
+            end=5,
+            strand=Strand.FORWARD,
+            sequence_source=dummy_sequence_source,
+        )
+
+        span = circular.subseq(2, 3)
+
+        assert circular.seq is not None
+        assert span == circular.seq[1:3]
+        assert dummy_sequence_source.calls == [("MT", 2, 5)]
