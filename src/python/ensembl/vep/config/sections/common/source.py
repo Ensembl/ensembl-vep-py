@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Where variants and features are read from."""
+"""Variant and annotation source configuration."""
 
 from __future__ import annotations
 
@@ -21,11 +21,16 @@ from typing import ClassVar
 
 from attrs import define, field
 
-from ensembl.vep.common.constants import DEFAULT_DISTANCE
+from ensembl.vep.common.constants import DEFAULT_DISTANCE, INPUT_FORMAT_EXTENSIONS
 from ensembl.vep.config.option_spec import option
 from ensembl.vep.config.sections.base import ConfigSection
 
 __all__ = ["SourceConfig"]
+
+
+def _input_formats() -> tuple[str, ...]:
+    """Return the input formats a run can read."""
+    return tuple(sorted(INPUT_FORMAT_EXTENSIONS))
 
 
 def _as_distances(value: int | str | Iterable[int]) -> tuple[int, ...]:
@@ -40,7 +45,7 @@ def _as_distances(value: int | str | Iterable[int]) -> tuple[int, ...]:
 
 @define(frozen=True, kw_only=True, auto_attribs=True)
 class SourceConfig(ConfigSection):
-    """Input variants and the annotation sources to overlap them with.
+    """Input variant and annotation source configuration.
 
     Attributes:
         input_file (Path | None): Variant input, or None to use a synthetic corpus instead.
@@ -71,7 +76,7 @@ class SourceConfig(ConfigSection):
         metadata=option(
             "input format, inferred from the file extension when omitted",
             synonyms=("input_format",),
-            choices=("vcf",),
+            choices=_input_formats(),
         ),
     )
     gff: Path | None = field(default=None, metadata=option("GFF3 file of transcripts"))
@@ -103,13 +108,13 @@ class SourceConfig(ConfigSection):
 
     @property
     def upstream_distance(self) -> int:
-        """Bases before a feature's 5' end that still pair with it."""
+        """Return bases before a feature's 5' end that still pair with it."""
 
         return self.distance[0]
 
     @property
     def downstream_distance(self) -> int:
-        """Bases past a feature's 3' end that still pair with it, the upstream value when unset."""
+        """Return bases past a feature's 3' end that still pair with it."""
 
         return self.distance[-1]
 
@@ -122,7 +127,7 @@ class SourceConfig(ConfigSection):
             raise ValueError("distance must be zero or greater")
 
     def has_features(self) -> bool:
-        """Returns whether a transcript source has been configured.
+        """Return whether a transcript source has been configured.
 
         Returns:
             bool: True if either ``gff`` or ``gtf`` is set.

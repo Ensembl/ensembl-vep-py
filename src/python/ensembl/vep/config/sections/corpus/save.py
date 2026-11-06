@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Options for writing a synthetic corpus to disk."""
+"""Options for exporting a registered corpus to disk."""
 
 from __future__ import annotations
 
@@ -25,14 +25,32 @@ from ensembl.vep.config.sections.base import ConfigSection
 __all__ = ["CorpusSaveConfig"]
 
 
+def _exporter_names() -> tuple[str, ...]:
+    """Return registered exporter names.
+
+    Resolved lazily so this module never imports ensembl.vep.exporter.
+
+    Returns:
+        tuple[str, ...]: Every registered corpus name, sorted.
+    """
+    # pylint: disable=import-outside-toplevel
+    from ensembl.vep.corpus.exporter.registry import available_exporters
+
+    return available_exporters()
+
+
 @define(frozen=True, kw_only=True, auto_attribs=True)
 class CorpusSaveConfig(ConfigSection):
-    """Permission to replace a corpus already on disk. The destination is ``corpus.corpus_dir``.
+    """How to export a corpus. The destination is ``corpus.corpus_dir``.
 
     Attributes:
+        exporter (str): Registered corpus exporter to use.
         force (bool): Overwrite the corpus files if the directory already holds them.
     """
 
     section_name: ClassVar[str] = "corpus_save"
 
+    exporter: str = field(
+        default="file", metadata=option("registered corpus exporter", choices=_exporter_names)
+    )
     force: bool = field(default=False, metadata=option("overwrite an existing saved corpus"))

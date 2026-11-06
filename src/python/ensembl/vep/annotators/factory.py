@@ -14,12 +14,16 @@
 """Build annotators and run-scoped context from plain values.
 
 Registered strategies accept different keyword arguments, so construction derives supported
-options from each factory signature instead of maintaining a duplicate table.
+options from each factory signature instead of maintaining a duplicate table. That is what lets a
+caller spread a whole configuration section over ``build_annotator``: the options the chosen
+strategy declares reach it, and the rest are warned about and dropped.
 """
 
 from __future__ import annotations
 
 import inspect
+import logging
+from typing import Any
 
 from ensembl.vep.annotators.base import Annotator
 from ensembl.vep.annotators.consequence.context.annotator import AnnotatorContext
@@ -32,6 +36,8 @@ from ensembl.vep.common import DEFAULT_DISTANCE, Readthrough
 from ensembl.vep.models.overlap import OverlapConsequence
 
 __all__ = ["build_annotator", "build_annotator_context"]
+
+logger = logging.getLogger(__name__)
 
 
 def build_annotator_context(
@@ -104,6 +110,7 @@ def build_annotator(
     upstream_distance: int = DEFAULT_DISTANCE,
     downstream_distance: int = DEFAULT_DISTANCE,
     annotator_context: AnnotatorContext | None = None,
+    **options: Any,
 ) -> Annotator[OverlapConsequence]:
     """Return a configured annotator, with its caches attached.
 
@@ -123,6 +130,9 @@ def build_annotator(
         downstream_distance (int): Bases past a feature's 3' end that still count as downstream.
         annotator_context (AnnotatorContext | None): A context to share across annotators, or None
             to build one from the cache arguments.
+        **options: Further options for the chosen strategy, such as the ones another annotation
+            kind declares. Each is passed on only if that strategy's factory accepts it; unsupported
+            options are logged as warnings.
 
     Returns:
         Annotator[OverlapConsequence]: The annotator instance.
@@ -143,11 +153,14 @@ def build_annotator(
         downstream_distance=downstream_distance,
     )
     candidate_kwargs = {
+        **options,
         "annotator_context": context,
         "batch_size": batch_size,
         "early_subsumption_skip": early_subsumption_skip,
     }
     accepted = inspect.signature(annotator_factory(annotator)).parameters
+    for name in sorted(set(options).difference(accepted)):
+        logger.warning(f"Ignoring unsupported option {name!r} for annotator {annotator!r}")
     return get_annotator(
         annotator,
         **{name: value for name, value in candidate_kwargs.items() if name in accepted},
