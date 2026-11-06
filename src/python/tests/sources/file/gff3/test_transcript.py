@@ -799,7 +799,9 @@ class TestUnindexedContigQuery:
         """Test querying a contig the index does not declare returns no transcripts."""
 
         path = _create_tabix_gff3_cli(tmp_path / "sample.gff3.gz", htslib_toolchain)
-        source = GFF3TranscriptSource(file_path=str(path))
+        source = GFF3TranscriptSource(
+            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
+        )
 
         transcripts = source.get_features_by_region(seq_region_name="chrZ", start=1, end=100)
 

@@ -1158,12 +1158,16 @@ chr1\tt\texon\t5000\t8000\t.\t+\t.\tParent=transcript:X
         self, indexed_duplicate_id_path: Path
     ) -> None:
         """Pool-on and pool-off must describe the second window identically."""
-        baseline_source = GFF3TranscriptSource(file_path=str(indexed_duplicate_id_path))
+        baseline_source = GFF3TranscriptSource(
+            file_path=str(indexed_duplicate_id_path), sequence_source=DummySequenceSource({"chr1": 9000})
+        )
         baseline = self._query_both_windows(baseline_source)
         baseline_source.close()
 
         pooled_source = GFF3TranscriptSource(
-            file_path=str(indexed_duplicate_id_path), transcript_pool=TranscriptPool()
+            file_path=str(indexed_duplicate_id_path),
+            transcript_pool=TranscriptPool(),
+            sequence_source=DummySequenceSource({"chr1": 9000}),
         )
         pooled = self._query_both_windows(pooled_source)
         pooled_source.close()
@@ -1176,7 +1180,11 @@ chr1\tt\texon\t5000\t8000\t.\t+\t.\tParent=transcript:X
     ) -> None:
         """The pool is cleared and marked poisoned, with exactly one warning logged."""
         pool = TranscriptPool()
-        source = GFF3TranscriptSource(file_path=str(indexed_duplicate_id_path), transcript_pool=pool)
+        source = GFF3TranscriptSource(
+            file_path=str(indexed_duplicate_id_path),
+            transcript_pool=pool,
+            sequence_source=DummySequenceSource({"chr1": 9000}),
+        )
 
         with caplog.at_level("WARNING"):
             self._query_both_windows(source)
@@ -1233,7 +1241,11 @@ chr1\tt\texon\t8900\t9000\t.\t+\t.\tParent=transcript:B
     ) -> None:
         """Querying A and B after WIDE is already pooled must not poison the pool."""
         pool = TranscriptPool()
-        source = GFF3TranscriptSource(file_path=str(indexed_wide_transcript_path), transcript_pool=pool)
+        source = GFF3TranscriptSource(
+            file_path=str(indexed_wide_transcript_path),
+            transcript_pool=pool,
+            sequence_source=DummySequenceSource({"chr1": 9000}),
+        )
 
         # Pools WIDE alone: this window touches only its middle, not A or B.
         first = source.get_features_by_region(seq_region_name="chr1", start=4000, end=5000)
