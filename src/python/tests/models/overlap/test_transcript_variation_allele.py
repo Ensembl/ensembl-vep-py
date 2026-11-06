@@ -41,6 +41,7 @@ from ensembl.vep.models.overlap.transcript_variation_allele import (
 )
 from ensembl.vep.models.sequence import CoordSystem, Slice
 from ensembl.vep.models.variation import VariationAllele
+from ensembl.vep.output.factory.base import AnnotatedVariantFactory
 
 CODING_SEQUENCE = "ATG" + "GGG" * 10 + "TAA"  # (M + 10*G + stop), transcript-sense
 REFERENCE_PEPTIDE = "M" + "G" * 10 + "*"
@@ -1241,3 +1242,35 @@ class TestPositions:
 
         assert overlap.cdna_position == cdna
         assert overlap.cds_position == cds
+
+    @pytest.mark.parametrize(
+        ("start", "end", "expected"),
+        [
+            pytest.param(
+                18,
+                33,
+                {"cDNA_position": "18-23", "CDS_position": "15-20", "Protein_position": "5-7"},
+                id="range",
+            ),
+            pytest.param(
+                25,
+                33,
+                {"cDNA_position": "?-23", "CDS_position": "?-20", "Protein_position": "?-7"},
+                id="open_ended",
+            ),
+            pytest.param(2, 2, {"cDNA_position": "2"}, id="utr_only"),
+            pytest.param(25, 25, {}, id="intronic"),
+        ],
+    )
+    def test_positions_are_written_as_vep_formats_them(
+        self, start: int, end: int, expected: dict[str, str]
+    ) -> None:
+        """Only the sequences the variant touches get a column; a missing end prints as ``?``."""
+        transcript = _positions_transcript(Strand.FORWARD)
+        transcript.seed_attrs(translation=None)
+        output_hash: dict[str, object] = {}
+
+        # pylint: disable-next=protected-access
+        AnnotatedVariantFactory._position_fields(output_hash, _positions_overlap(transcript, start, end))
+
+        assert output_hash == expected
