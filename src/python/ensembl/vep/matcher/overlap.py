@@ -17,7 +17,6 @@ from __future__ import annotations
 
 from attrs import define
 
-from ensembl.vep.caches.interval_tree import Interval
 from ensembl.vep.common.enums import Strand
 from ensembl.vep.matcher.base import InsertionMatchPolicy, IntervalLike
 
@@ -38,23 +37,20 @@ class OverlapMatcher:
     insertion_policy: InsertionMatchPolicy = InsertionMatchPolicy.CONTAINED
 
     def matches(self, left: IntervalLike, right: IntervalLike) -> bool:
-        """Return whether two intervals are associated."""
+        """Return whether two inclusive intervals meet; an insertion is start == end + 1."""
 
-        left_interval = Interval(start=left.start, end=left.end)
-        right_interval = Interval(start=right.start, end=right.end)
-
-        if left_interval.is_insertion and right_interval.is_insertion:
-            return left_interval.start == right_interval.start
-        if left_interval.is_insertion:
-            return self._insertion_matches(left_interval, right_interval, right)
-        if right_interval.is_insertion:
-            return self._insertion_matches(right_interval, left_interval, left)
-        return left_interval.start <= right_interval.end and left_interval.end >= right_interval.start
+        if left.start == left.end + 1 and right.start == right.end + 1:
+            return left.start == right.start
+        if left.start == left.end + 1:
+            return self._insertion_matches(left, right, right)
+        if right.start == right.end + 1:
+            return self._insertion_matches(right, left, left)
+        return left.start <= right.end and left.end >= right.start
 
     def _insertion_matches(
         self,
-        insertion: Interval,
-        feature_interval: Interval,
+        insertion: IntervalLike,
+        feature_interval: IntervalLike,
         feature: IntervalLike,
     ) -> bool:
         """Return whether an insertion point associates with a feature."""
@@ -67,8 +63,8 @@ class OverlapMatcher:
 
     @staticmethod
     def _three_prime_flank_matches(
-        insertion: Interval,
-        feature_interval: Interval,
+        insertion: IntervalLike,
+        feature_interval: IntervalLike,
         feature: IntervalLike,
     ) -> bool:
         """Return whether an insertion's feature-relative 3-prime flank is covered."""
