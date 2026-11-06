@@ -11,99 +11,44 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Benchmarking for IntervalTree implementation.
+"""Compare Python, Rust, and augmented-list interval indexes."""
 
-Compare between pure [Python](https://pypi.org/project/intervaltree/) and
-[Python/Rust](https://pypi.org/project/intervaltree-rs/) implementations.
-
-Benchmarking IntervalTree creation and overlap calc:
-Starting, 11/09/2026 14:45:08
-Number of variants in tree = 100
-Number of iterations = 100
-Time = 11/09/2026 14:45:08
-PyIntTree             : tree setup             295.56 µs/call
-PyIntTree             : tree setup (tuples)    201.57 µs/call
-PyIntTree             : overlap calc           34.50 µs/call
-RustIntTree           : tree setup             14.16 µs/call
-RustIntTree           : tree setup (tuples)    11.71 µs/call
-RustIntTree           : overlap calc           0.89 µs/call
-AIListTree            : tree setup             3.24 µs/call
-AIListTree            : tree setup (tuples)    5.09 µs/call
-AIListTree            : overlap calc           1.22 µs/call
-Number of variants in tree = 1000
-Number of iterations = 100
-Time = 11/09/2026 14:45:08
-PyIntTree             : tree setup             4101.01 µs/call
-PyIntTree             : tree setup (tuples)    2546.56 µs/call
-PyIntTree             : overlap calc           460.71 µs/call
-RustIntTree           : tree setup             158.02 µs/call
-RustIntTree           : tree setup (tuples)    139.21 µs/call
-RustIntTree           : overlap calc           5.95 µs/call
-AIListTree            : tree setup             37.54 µs/call
-AIListTree            : tree setup (tuples)    46.99 µs/call
-AIListTree            : overlap calc           7.25 µs/call
-Number of variants in tree = 5000
-Number of iterations = 100
-Time = 11/09/2026 14:45:12
-PyIntTree             : tree setup             24389.37 µs/call
-PyIntTree             : tree setup (tuples)    14970.75 µs/call
-PyIntTree             : overlap calc           3384.66 µs/call
-RustIntTree           : tree setup             943.86 µs/call
-RustIntTree           : tree setup (tuples)    849.89 µs/call
-RustIntTree           : overlap calc           30.50 µs/call
-AIListTree            : tree setup             191.37 µs/call
-AIListTree            : tree setup (tuples)    226.50 µs/call
-AIListTree            : overlap calc           34.14 µs/call
-Number of variants in tree = 10000
-Number of iterations = 100
-Time = 11/09/2026 14:45:35
-PyIntTree             : tree setup             53297.66 µs/call
-PyIntTree             : tree setup (tuples)    32499.23 µs/call
-PyIntTree             : overlap calc           7432.09 µs/call
-RustIntTree           : tree setup             2174.56 µs/call
-RustIntTree           : tree setup (tuples)    1912.12 µs/call
-RustIntTree           : overlap calc           60.05 µs/call
-AIListTree            : tree setup             381.28 µs/call
-AIListTree            : tree setup (tuples)    463.74 µs/call
-AIListTree            : overlap calc           66.86 µs/call
-Number of variants in tree = 100000
-Number of iterations = 100
-Time = 11/09/2026 14:46:24
-PyIntTree             : tree setup             697918.62 µs/call
-PyIntTree             : tree setup (tuples)    412278.55 µs/call
-PyIntTree             : overlap calc           103290.67 µs/call
-RustIntTree           : tree setup             38056.94 µs/call
-RustIntTree           : tree setup (tuples)    36977.56 µs/call
-RustIntTree           : overlap calc           813.60 µs/call
-AIListTree            : tree setup             4301.66 µs/call
-AIListTree            : tree setup (tuples)    5990.68 µs/call
-AIListTree            : overlap calc           695.09 µs/call
-Finished, 11/09/2026 14:57:23
-"""
+from __future__ import annotations
 
 import argparse
 import random
-import statistics
-import sys
 import timeit
+from collections.abc import Sequence
 from datetime import datetime
 from operator import attrgetter
+from typing import Any
 
 import numpy as np
 
-import intervaltree
-import intervaltree_rs
+import intervaltree  # pylint: disable=import-error
+import intervaltree_rs  # pylint: disable=import-error
 from ailist import AIList
 
-from ensembl.vep.common import Strand
+from ensembl.vep.common import CoordSystemLevel, Strand
+from ensembl.vep.models.sequence import CoordSystem, Slice
 from ensembl.vep.models.variation.variation import Variation
-from tests.buffers.conftest import genomic_slice
+
+
+def genomic_slice(seq_region_name: str = "1", seq_region_end: int = 250_000_000) -> Slice:
+    """Create a Slice instance for the benchmark variants."""
+    return Slice(
+        coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+        seq_region_name=seq_region_name,
+        start=1,
+        end=seq_region_end,
+        strand=Strand.FORWARD,
+    )
 
 
 def create_variation_objects(
     length: int, seq_region_name: str = "1", var_region_end: int = 500_000
 ) -> list[Variation]:
-    """Function to create a set of variation objects for checking intreval tree."""
+    """Create variation objects for exercising an interval index."""
     random.seed(82736401937474632)
     var_ends = random.sample(range(1, var_region_end), k=length)
     var_lengths = random.choices([1, 2, 100], cum_weights=[80, 95, 100], k=length)
@@ -139,9 +84,10 @@ _TEST_VARIANTS = [
 _TEST_RANGES = [(11, 15)]
 
 
-def assert_overlapping_variants(var_list, range):
+def assert_overlapping_variants(var_list: Sequence[Variation], query_range: tuple[int, int]) -> bool:
+    """Return whether the query found the expected variation objects."""
     var_list = sorted(var_list, key=attrgetter("start", "end"))
-    if range == (11, 15):
+    if query_range == (11, 15):
         try:
             assert var_list == _TEST_VARIANTS[2:12]
         except AssertionError:
@@ -149,7 +95,8 @@ def assert_overlapping_variants(var_list, range):
     return True
 
 
-def check_overlap_correctness(args):
+def check_overlap_correctness() -> None:
+    """Report whether each interval implementation finds the expected overlaps."""
     py_tree = intervaltree.IntervalTree()
     for var in _TEST_VARIANTS:
         py_tree.add(intervaltree.Interval(var.start, var.end + 1, var))
@@ -188,35 +135,45 @@ def check_overlap_correctness(args):
 
 
 class PyIntTree:
-    def __init__(self, num_vars: int = 100):
+    """Benchmark fixture for the Python ``intervaltree`` package.
+
+    Attributes:
+        num_vars (int): Number of generated variations.
+        variants (list[Variation]): Generated variations to index.
+    """
+
+    def __init__(self, num_vars: int = 100) -> None:
+        """Create a fixture containing ``num_vars`` variations."""
         self.num_vars = num_vars
         self.variants = create_variation_objects(num_vars)
-        self.tree = None
-        self.overlaps = None
+        self.tree: Any = None
+        self.overlaps: Any = None
+        self.query_start = 0
+        self.query_end = 0
 
     def intervaltree_create(self) -> None:
-        # create test annotation and stream into tree
+        """Build an interval tree by adding one variation at a time."""
         tree = intervaltree.IntervalTree()
         for var in self.variants:
             tree.add(intervaltree.Interval(var.start, var.end + 1, var))
         self.tree = tree
 
     def intervaltree_create_from_tuples(self) -> None:
-        # create test annotation and stream into tree
+        """Build an interval tree from coordinate tuples."""
         self.tree = intervaltree.IntervalTree.from_tuples(
             [(var.start, var.end + 1, var) for var in self.variants]
         )
 
-    def intervaltree_overlap(self, start=99_100, end=200_000) -> None:
-        # test look ups
+    def intervaltree_overlap(self, start: int = 99_100, end: int = 200_000) -> None:
+        """Query the interval tree for overlapping variations."""
         self.query_start = start
         self.query_end = end
         self.overlaps = self.tree.overlap(start, end + 1)
         # assert len(overlaps) == 1005, "Incorrect number of overlaps"
 
     def check_overlap_correctness(self) -> None:
-        # test look ups
-        for left, right, var in sorted(self.overlaps):
+        """Report variations that do not overlap the recorded query."""
+        for _left, _right, var in sorted(self.overlaps):
             overlaps = (
                 (var.start >= self.query_start and var.start <= self.query_end)
                 or (var.end >= self.query_start and var.end <= self.query_end)
@@ -227,35 +184,45 @@ class PyIntTree:
 
 
 class RustIntTree:
-    def __init__(self, num_vars: int = 100):
+    """Benchmark fixture for the Rust-backed ``intervaltree_rs`` package.
+
+    Attributes:
+        num_vars (int): Number of generated variations.
+        variants (list[Variation]): Generated variations to index.
+    """
+
+    def __init__(self, num_vars: int = 100) -> None:
+        """Create a fixture containing ``num_vars`` variations."""
         self.num_vars = num_vars
         self.variants = create_variation_objects(num_vars)
-        self.tree = None
-        self.overlaps = None
+        self.tree: Any = None
+        self.overlaps: Any = None
+        self.query_start = 0
+        self.query_end = 0
 
-    def intervaltree_create(self) -> intervaltree_rs.IntervalTree:
-        # create test annotation and stream into tree
+    def intervaltree_create(self) -> None:
+        """Build an interval tree by adding one variation at a time."""
         tree = intervaltree_rs.IntervalTree()
         for var in self.variants:
             tree.insert((var.start, var.end + 1, var))
         self.tree = tree
 
     def intervaltree_create_from_tuples(self) -> None:
-        # create test annotation and stream into tree
+        """Build an interval tree from coordinate tuples."""
         self.tree = intervaltree_rs.IntervalTree.from_tuples(
             [(var.start, var.end + 1, var) for var in self.variants]
         )
 
-    def intervaltree_overlap(self, start=99_100, end=200_000) -> None:
-        # test look ups
+    def intervaltree_overlap(self, start: int = 99_100, end: int = 200_000) -> None:
+        """Query the interval tree for overlapping variations."""
         self.query_start = start
         self.query_end = end
         self.overlaps = self.tree.search(start + 1, end, inclusive=True)
         # assert len(overlaps) == 1005, "Incorrect number of overlaps"
 
     def check_overlap_correctness(self) -> None:
-        # test look ups
-        for left, right, var in sorted(self.overlaps):
+        """Report variations that do not overlap the recorded query."""
+        for _left, _right, var in sorted(self.overlaps):
             overlaps = (
                 (var.start >= self.query_start and var.start <= self.query_end)
                 or (var.end >= self.query_start and var.end <= self.query_end)
@@ -266,39 +233,50 @@ class RustIntTree:
 
 
 class AIListTree:
-    def __init__(self, num_vars: int = 100):
+    """Benchmark fixture for an augmented interval list.
+
+    Attributes:
+        num_vars (int): Number of generated variations.
+        variants (list[Variation]): Generated variations to index.
+    """
+
+    def __init__(self, num_vars: int = 100) -> None:
+        """Create a fixture containing ``num_vars`` variations."""
         self.num_vars = num_vars
         self.variants = create_variation_objects(num_vars)
-        self.tree = None
-        self.overlaps = None
+        self.tree: Any = None
+        self.overlaps: Any = None
+        self.query_start = 0
+        self.query_end = 0
 
-    def intervaltree_create(self) -> AIList:
-        # create test annotation and stream into tree
+    def intervaltree_create(self) -> None:
+        """Build an augmented interval list one variation at a time."""
         tree = AIList()
         for i, var in enumerate(self.variants):
             tree.add(var.start, var.end + 1, i)
         self.tree = tree
 
     def intervaltree_create_from_tuples(self) -> None:
-        # create test annotation and stream into tree
+        """Build an augmented interval list from coordinate arrays."""
         starts = np.asarray([var.start for var in self.variants])
         ends = np.asarray([var.end for var in self.variants])
         index = np.arange(len(self.variants))
         tree = AIList()
         self.tree = tree.from_array(starts, ends, index)
 
-    def intervaltree_overlap(self, start=99_100, end=200_000) -> None:
-        # test look ups
+    def intervaltree_overlap(self, start: int = 99_100, end: int = 200_000) -> None:
+        """Query the augmented interval list for overlapping variations."""
         self.query_start = start
         self.query_end = end
         self.overlaps = [self.variants[idx] for idx in self.tree.intersect_ids(start, end + 1)]
         # assert len(overlaps) == 1005, "Incorrect number of overlaps"
 
-    def nearest(self, start=99_100, end=200_000) -> None:
-        closest = self.tree.closest(start=start, end=end + 1, k=1)
+    def nearest(self, start: int = 99_100, end: int = 200_000) -> None:
+        """Query the nearest indexed variation."""
+        self.tree.closest(start=start, end=end + 1, k=1)
 
     def check_overlap_correctness(self) -> None:
-        # test look ups
+        """Report variations that do not overlap the recorded query."""
         for idx in self.overlaps:
             var = self.variants[idx]
             overlaps = (
@@ -310,7 +288,12 @@ class AIListTree:
                 print(f"Overlap error: {self.query_start}-{self.query_end}, {var}")
 
 
-def bench(cls, num_vars, n=10_000_000):
+def bench(
+    cls: type[PyIntTree] | type[RustIntTree] | type[AIListTree],
+    num_vars: int,
+    n: int = 10_000_000,
+) -> tuple[object, str, str, str, str, str, str]:
+    """Benchmark construction and queries for one interval-index class."""
     obj = cls(num_vars)
     times = timeit.repeat("obj.intervaltree_create()", number=n, repeat=5, globals={"obj": obj})
     min_setup_s = min(times) / n * 1e6
@@ -359,7 +342,8 @@ def bench(cls, num_vars, n=10_000_000):
     )
 
 
-def write_out_memory_stats(snapshot, class_name, args):
+def write_out_memory_stats(snapshot: Any, class_name: str, args: argparse.Namespace) -> None:
+    """Write line-level memory statistics for one implementation."""
     stats = snapshot.statistics("lineno")
     with open(f"{args.memory_file}-{class_name}.txt", mode="w") as mem_fh:
         print(f"Memory use: {class_name}", file=mem_fh)
@@ -367,10 +351,11 @@ def write_out_memory_stats(snapshot, class_name, args):
             print(f"{stat}", file=mem_fh)
 
 
-def main(args):
+def main(args: argparse.Namespace) -> None:
+    """Run the configured interval-index benchmarks."""
     print("Benchmarking IntervalTree creation and overlap calc:")
     now = datetime.now()
-    print(f"Starting, {now.strftime("%d/%m/%Y %H:%M:%S")}")
+    print(f"Starting, {now.strftime('%d/%m/%Y %H:%M:%S')}")
 
     with open(args.output_file, mode="w") as out_fh:
         print(
@@ -389,18 +374,18 @@ def main(args):
         for num_vars in args.num_vars:
             print(f"Number of variants in tree = {num_vars}\nNumber of iterations = {args.times}")
             now = datetime.now()
-            print(f"Time = {now.strftime("%d/%m/%Y %H:%M:%S")}")
-            py_tree, *results = bench(PyIntTree, num_vars, n=args.times)
+            print(f"Time = {now.strftime('%d/%m/%Y %H:%M:%S')}")
+            _py_tree, *results = bench(PyIntTree, num_vars, n=args.times)
             print("\t".join(results), file=out_fh)
 
-            rust_tree, *results = bench(RustIntTree, num_vars, n=args.times)
+            _rust_tree, *results = bench(RustIntTree, num_vars, n=args.times)
             print("\t".join(results), file=out_fh)
 
-            ai_list, *results = bench(AIListTree, num_vars, n=args.times)
+            _ai_list, *results = bench(AIListTree, num_vars, n=args.times)
             print("\t".join(results), file=out_fh)
 
     now = datetime.now()
-    print(f"Finished, {now.strftime("%d/%m/%Y %H:%M:%S")}")
+    print(f"Finished, {now.strftime('%d/%m/%Y %H:%M:%S')}")
 
 
 if __name__ == "__main__":
@@ -434,6 +419,6 @@ if __name__ == "__main__":
     if params.debug > 0:
         print(params)
     if params.correctness_check:
-        check_overlap_correctness(params)
+        check_overlap_correctness()
     else:
         main(params)
