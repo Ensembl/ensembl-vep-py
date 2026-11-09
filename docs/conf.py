@@ -41,6 +41,14 @@ configure(
     autodoc_default_options={"member-order": "alphabetical"},
 )
 
+# Use the VEP tool icon from https://www.ensembl.org/tools/vep rather than the shared Ensembl mark.
+# The local CSS adapts the dark artwork for the dark navigation bar.
+html_logo = "_static/vep-icon.svg"
+html_favicon = "_static/vep-icon.svg"
+html_theme_options["logo"]["text"] = ""
+html_static_path = ["_static"]
+html_css_files.append("vep.css")
+
 # The entry-points table lives on the CLI reference landing page, which `make clidoc` generates with the
 # table markers in place.
 entrypoints_target_file = "reference/cli/index.md"

@@ -2,8 +2,7 @@
 myst:
   html_meta:
     "description lang=en": |
-      Documentation for users who wish to install and use
-      the Ensembl Python Utils.
+      Documentation for users who wish to install and use Ensembl VEP.
 ---
 
 # User Guide
@@ -12,7 +11,7 @@ myst:
 :caption: Get started
 
 install
-usage
+quickstart
 ```
 
 ```{toctree}

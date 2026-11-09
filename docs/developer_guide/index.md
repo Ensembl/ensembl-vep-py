@@ -11,6 +11,7 @@ Conventions and architectural notes for contributing to `ensembl-vep-py`. Per-me
 ```{toctree}
 :maxdepth: 3
 
+setup
 style_conventions
 writing_classes
 coordinates_and_slices

@@ -22,7 +22,7 @@ install-uv:
 	curl -LsSf https://astral.sh/uv/install.sh | sh
 
 install-cargo:
-	curl https://sh.rustup.rs -sSf | sh
+	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 install-package:
 	uv pip install -e .

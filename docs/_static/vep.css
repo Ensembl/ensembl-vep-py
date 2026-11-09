@@ -1,0 +1,7 @@
+/* Render the dark VEP tool artwork in white and at a navbar-friendly size. */
+.bd-header .navbar-brand .logo__image {
+    filter: brightness(0) invert(1);
+    height: 2.25rem;
+    max-height: 2.25rem;
+    width: 2.25rem;
+}
