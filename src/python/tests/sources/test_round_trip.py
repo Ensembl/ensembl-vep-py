@@ -41,7 +41,7 @@ from ensembl.vep.annotators.registry import get_annotator
 from ensembl.vep.common import Strand
 from ensembl.vep.corpus import build_corpus
 from ensembl.vep.corpus.exporter import get_exporter
-from ensembl.vep.corpus.exporter.formats.file.fasta import FASTA_NAME
+from ensembl.vep.corpus.exporter.formats.file.fasta import FASTA_NAME, fasta_lines
 from ensembl.vep.corpus.exporter.formats.file.gff3 import GFF3_NAME, gff3_lines
 from ensembl.vep.corpus.exporter.formats.file.vcf import VCF_NAME
 from ensembl.vep.corpus.spec import CorpusSpec
@@ -52,6 +52,7 @@ from ensembl.vep.sources.file.gtf.transcript import GTFTranscriptSource
 from ensembl.vep.config import Config
 from ensembl.vep.explain.selection import NamedOverlap, OverlapSelection
 from ensembl.vep.sources.synonym import SequenceRegionResolver
+from ensembl.vep.sources.file.fasta.sequence import FastaSequenceSource
 
 REFERENCE_ANNOTATOR = "consequence.linear"
 """The reference strategy. Every other strategy is already checked against it by conformance."""
@@ -114,6 +115,15 @@ def _terms(named: Sequence[NamedOverlap]) -> dict[tuple[str, str], tuple[str, ..
 def fixture_generated() -> tuple[NamedOverlap, ...]:
     """The corpus the round trip starts from: small, but every boundary overlap is in it."""
     return tuple(build_corpus(CorpusSpec(kind="synthetic.default", fuzz=0)).named_overlaps)
+
+
+@pytest.fixture(name="fasta_path")
+def fixture_fasta_path(tmp_path: Path) -> Path:
+    """Copy the synthetic corpus FASTA to a temporary path for transcript sources."""
+    fasta_path = tmp_path / FASTA_NAME
+    corpus = build_corpus(CorpusSpec(kind="synthetic.default", fuzz=0))
+    fasta_path.write_text("\n".join(fasta_lines((corpus,))) + "\n")
+    return fasta_path
 
 
 @pytest.fixture(name="restored", scope="module")
@@ -281,11 +291,15 @@ class TestIndexedMatchesSequentialGFF3:
         return gz_path
 
     @pytest.mark.integration
-    def test_indexed_matches_sequential_over_several_windows(self, indexed_gff3_path: Path) -> None:
+    def test_indexed_matches_sequential_over_several_windows(
+        self, indexed_gff3_path: Path, fasta_path: Path
+    ) -> None:
         """Compare ``get_features_by_region`` against ``iter_all_features`` over several
         windows: a single-transcript hit, a multi-transcript window, and an intergenic gap."""
 
-        sequential_source = GFF3TranscriptSource(file_path=str(indexed_gff3_path))
+        sequential_source = GFF3TranscriptSource(
+            file_path=str(indexed_gff3_path), sequence_source=FastaSequenceSource(file_path=fasta_path)
+        )
         sequential_transcripts = list(sequential_source.iter_all_features())
         assert len(sequential_transcripts) >= 3, "the default corpus should have several transcripts"
         by_seq_region: dict[str, list[Transcript]] = {}
@@ -298,6 +312,7 @@ class TestIndexedMatchesSequentialGFF3:
         # this fixture's index.
         indexed_source = GFF3TranscriptSource(
             file_path=str(indexed_gff3_path),
+            sequence_source=FastaSequenceSource(file_path=fasta_path),
             source_region_resolver=SequenceRegionResolver(source_names=frozenset(by_seq_region)),
         )
 
@@ -387,16 +402,21 @@ class TestIndexedMatchesSequentialGTF:
         return gz_path
 
     @pytest.mark.integration
-    def test_indexed_matches_sequential_over_several_windows(self, indexed_gtf_path: Path) -> None:
+    def test_indexed_matches_sequential_over_several_windows(
+        self, indexed_gtf_path: Path, fasta_path: Path
+    ) -> None:
         """Compare the indexed and sequential paths over the fixture's three regions and a gap."""
 
-        sequential_source = GTFTranscriptSource(file_path=str(indexed_gtf_path))
+        sequential_source = GTFTranscriptSource(
+            file_path=str(indexed_gtf_path), sequence_source=FastaSequenceSource(file_path=fasta_path)
+        )
         sequential_transcripts = list(sequential_source.iter_all_features())
         sequential_by_id = {transcript.stable_id: transcript for transcript in sequential_transcripts}
         assert len(sequential_transcripts) == 4
 
         indexed_source = GTFTranscriptSource(
             file_path=str(indexed_gtf_path),
+            sequence_source=FastaSequenceSource(file_path=fasta_path),
             source_region_resolver=SequenceRegionResolver(source_names=frozenset({"chr1"})),
         )
 
@@ -440,6 +460,8 @@ chr1\tensembl\texon\t9000\t9500\t.\t-\t.\tID=exon:ED;Parent=transcript:TD
 chr1\tensembl\tCDS\t9101\t9400\t.\t-\t0\tParent=transcript:TD;protein_id=PROT_D
 """
 
+_SEQUENCE = ">chr1\n" + "N" * 10_000
+
 
 class TestFixedExpectations:
     """Independently hand-computed values for a few grouping edge cases.
@@ -456,8 +478,12 @@ class TestFixedExpectations:
         directory = tmp_path_factory.mktemp("fixed_expectations")
         gff3_path = directory / "fixture.gff3"
         gff3_path.write_text(_GFF3_FIXED_EXPECTATIONS_FIXTURE)
+        fasta_path = directory / "fixture.fa"
+        fasta_path.write_text(_SEQUENCE)
 
-        source = GFF3TranscriptSource(file_path=str(gff3_path))
+        source = GFF3TranscriptSource(
+            file_path=str(gff3_path), sequence_source=FastaSequenceSource(file_path=fasta_path)
+        )
         transcripts = source.get_all_features()
         source.close()
         return {transcript.stable_id: transcript for transcript in transcripts}
