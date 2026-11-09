@@ -9,7 +9,7 @@ html_theme.sidebar_secondary.remove: true
 [![Python-Coverage](./img/python-coverage-badge.svg)](#python)
 [![Rust-Coverage](./img/rust-coverage-badge.svg)](#rust)
 
-# Coverage
+# Coverage Report
 
 ## Python
 

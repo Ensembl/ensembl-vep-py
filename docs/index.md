@@ -20,16 +20,6 @@ Ensembl VEP (Variant Effect Predictor) predicts the functional effects of genomi
 user_guide/index
 ```
 
-## Code Reference
-
-Functions reference.
-
-```{toctree}
-:maxdepth: 2
-
-reference/ensembl.vep
-```
-
 ## Coverage
 
 Coverage report of the unit tests for this library.
@@ -46,6 +36,16 @@ coverage_report
 :maxdepth: 3
 
 developer_guide/index
+```
+
+## Code Reference
+
+Functions reference.
+
+```{toctree}
+:maxdepth: 2
+
+Reference <reference/ensembl.vep>
 ```
 
 ## License

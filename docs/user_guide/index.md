@@ -14,3 +14,17 @@ myst:
 install
 usage
 ```
+
+```{toctree}
+:caption: Tutorials
+
+tutorials/install_vep
+```
+
+```{toctree}
+:caption: Help
+
+faq
+troubleshooting
+contact
+```
