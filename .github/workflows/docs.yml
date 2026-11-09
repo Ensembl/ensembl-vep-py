@@ -67,7 +67,7 @@ jobs:
             cp "docs/_build/html/_static/switcher.json" "gh-pages/switcher.json"
           fi
           uv run update_docs_switcher \
-            --base-url "https://ensembl.github.io/ensembl-vep" \
+            --base-url "https://ensembl.github.io/ensembl-vep-py" \
             --version "${{ inputs.tag }}" \
             "gh-pages/switcher.json"
 
