@@ -38,14 +38,14 @@ coverage_report
 developer_guide/index
 ```
 
-## Code Reference
+## Reference
 
-Functions reference.
+Command-line and API reference.
 
 ```{toctree}
 :maxdepth: 2
 
-Reference <reference/ensembl.vep>
+reference
 ```
 
 ## License

@@ -40,3 +40,7 @@ configure(
     typehints_use_rtype=True,
     autodoc_default_options={"member-order": "alphabetical"},
 )
+
+# The entry-points table lives on the CLI reference landing page, which `make clidoc` generates with the
+# table markers in place.
+entrypoints_target_file = "reference/cli/index.md"

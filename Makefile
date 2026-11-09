@@ -74,7 +74,7 @@ checks-rust: format-rust lint-rust test-rust
 
 checks-all: checks-rust format-py-check lint-py type-check test-py-int
 
-.PHONY: apidoc docs docs-clean
+.PHONY: coverage apidoc clidoc docs docs-clean
 
 coverage:
 	mkdir -p docs/reports/coverage/{python,rust}
@@ -94,7 +94,10 @@ apidoc:
 	--no-toc --implicit-namespaces --templatedir docs/_templates/apidoc src/python/ensembl/vep/ensembl_vep_core.cpython-312-darwin.so
 	rm -f docs/reference/ensembl.rst
 
-docs: apidoc
+clidoc:
+	uv run python docs/_scripts/clidoc.py docs/reference/cli
+
+docs: apidoc clidoc
 	uv run sphinx-build -b html docs/ docs/_build/html
 
 docs-clean:
