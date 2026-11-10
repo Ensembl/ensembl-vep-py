@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 340" width="1000" height="340" role="img" aria-label="Facts are evaluated by rules, and pruning removes subsumed terms before the terms are reported">
+<title>Facts are evaluated by rules, and pruning removes subsumed terms before the terms are reported</title>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1e1e1e"/></marker></defs>
+<rect width="1000" height="340" fill="#ffffff"/>
+<rect x="15" y="15" width="250" height="310" rx="10" fill="#e7f5ff" stroke="#adb5bd" stroke-width="1" stroke-dasharray="6 4"/>
+<text x="29" y="37" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" fill="#495057">Facts: what is true</text>
+<rect x="285" y="15" width="400" height="310" rx="10" fill="#f8f9fa" stroke="#adb5bd" stroke-width="1" stroke-dasharray="6 4"/>
+<text x="299" y="37" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" fill="#495057">Rules: which terms follow</text>
+<rect x="705" y="15" width="280" height="310" rx="10" fill="#fff9db" stroke="#adb5bd" stroke-width="1" stroke-dasharray="6 4"/>
+<text x="719" y="37" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" fill="#495057">Result</text>
+<rect x="40" y="60" width="200" height="46" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="140.0" y="88.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">overlap_cds</text>
+<rect x="40" y="120" width="200" height="46" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="140.0" y="148.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">peptide_changed</text>
+<rect x="40" y="180" width="200" height="46" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="140.0" y="208.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">peptide_same_length</text>
+<rect x="310" y="60" width="350" height="46" rx="8" fill="#d0bfff" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="485.0" y="88.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">missense_variant</text>
+<rect x="310" y="130" width="350" height="46" rx="8" fill="#d0bfff" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="485.0" y="158.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">protein_altering_variant</text>
+<rect x="310" y="200" width="350" height="46" rx="8" fill="#d0bfff" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="485.0" y="228.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">coding_sequence_variant</text>
+<text x="485" y="278" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" text-anchor="middle" fill="#495057">each rule is a formula over facts, and lists</text>
+<text x="485" y="296" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" text-anchor="middle" fill="#495057">the more general terms it subsumes</text>
+<rect x="730" y="100" width="230" height="64" rx="8" fill="#e9ecef" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="845.0" y="127.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">prune</text>
+<text x="845.0" y="147.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">drop subsumed terms</text>
+<rect x="730" y="220" width="230" height="46" rx="8" fill="#ffc9c9" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="845.0" y="248.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">missense_variant</text>
+<path d="M 240 83.0 L 275 83 L 275 83 L 310 83.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 240 143.0 L 275 143 L 275 83 L 310 83.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 240 203.0 L 275 203 L 275 83 L 310 83.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 660 83.0 L 695 83.0 L 695 132 L 730 132.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 660 153.0 L 695 153.0 L 695 132 L 730 132.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 660 223.0 L 695 223.0 L 695 132 L 730 132.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 845.0 164 L 845.0 220" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+</svg>

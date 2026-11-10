@@ -188,8 +188,8 @@ All PRs must:
 ## 📊 Code Coverage
 
 Coverage reports are automatically generated and posted to PRs. Maintain:
-- **Rust**: ≥90% line coverage
-- **Python**: ≥90% line coverage
+- **Rust**: ≥95% line coverage
+- **Python**: ≥95% line coverage
 
 Rust coverage is generated with stable Rust through `cargo llvm-cov`. The crate
 root `src/rust/lib.rs` is intentionally limited to PyO3 module registration glue

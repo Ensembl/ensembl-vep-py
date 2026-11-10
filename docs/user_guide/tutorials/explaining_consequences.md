@@ -152,4 +152,5 @@ no rule-verdict divergence among the rules both traces recorded
 
 ## Next steps
 
+- [Consequence annotation](../../concepts/consequence_annotation.md) explains facts, rules and annotators in more detail.
 - The [`vep explain` reference](../../auto/reference/cli/explain.md) lists every option, including `--output_format` for text, SVG, Graphviz `dot` and Mermaid output.
