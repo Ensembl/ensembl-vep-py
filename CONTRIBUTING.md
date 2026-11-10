@@ -240,7 +240,7 @@ New plugins should:
 - Untested code
 - Breaking changes without migration path
 - Deprecated bioinformatics formats without justification
-- Performance regressions
+- Performance regressions (speed and conformance tests)
 
 ## 🌍 Community Guidelines
 
@@ -248,15 +248,10 @@ New plugins should:
 - Focus on code, not people
 - Scientific accuracy > performance
 
-## 💬 Support (TBD)
-
-- Bugs: [Issues](https://github.com/ensembl-vep-py/issues)
-- Features: [Discussions → Ideas](https://github.com/ensembl-vep-py/discussions/categories/ideas)
-
 ## 🎉 Thank You!
 
 Your contributions help researchers worldwide analyze genomic variants faster and more accurately. Welcome aboard! 🚀
 
 ---
 
-*Last updated: July 2026*
+*Last updated: November 2026*

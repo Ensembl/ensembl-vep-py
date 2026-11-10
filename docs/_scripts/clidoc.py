@@ -16,7 +16,7 @@
 
 The CLI counterpart of ``sphinx-apidoc``: run it before ``sphinx-build`` (``make clidoc``) and it
 writes one Markdown page per command group, a page for the options several groups share, and an
-index, into the output directory (``docs/reference/cli`` by default).
+index, into the output directory (``docs/auto/reference/cli`` by default).
 
 Every option row comes from the same ``argparse`` parser ``vep`` builds at run time, so flags,
 synonyms and metavars match ``vep <command> -h``. Defaults, environment variable names and
@@ -366,7 +366,7 @@ def main(argv: list[str] | None = None) -> None:
     """Write the CLI reference pages."""
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument(
-        "output_dir", nargs="?", type=Path, default=Path("docs/reference/cli"), help="where to write"
+        "output_dir", nargs="?", type=Path, default=Path("docs/auto/reference/cli"), help="where to write"
     )
     args = parser.parse_args(argv)
     os.environ["COLUMNS"] = USAGE_WIDTH  # argparse wraps usage lines to the terminal width

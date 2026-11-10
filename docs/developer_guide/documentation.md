@@ -38,6 +38,19 @@ produces documentation like this:
 
 ![](../img/vcfrecord-docs-example.png)
 
+## Generated pages
+
+Some pages are generated from the source code before Sphinx runs. Every generated page is written under `docs/auto/`, which is ignored by git and removed by `make docs-clean`; hand-written pages never go there.
+
+| Make target | Generates | From |
+|---|---|---|
+| `apidoc` | `docs/auto/reference/api/` | `sphinx-apidoc` over the Python packages |
+| `clidoc` | `docs/auto/reference/cli/` | `docs/_scripts/clidoc.py`, from the registered commands and their option declarations |
+| `termdoc` | `docs/auto/reference/consequence_terms.md`, `docs/auto/static/catalogue/` | `docs/_scripts/termdoc.py`, from the rows and graphs `vep catalogue show` prints |
+| `explaindoc` | `docs/auto/static/explain/` | `docs/_scripts/explaindoc.py`, which runs `vep explain --graph` on the example data for the [Explaining a consequence call](../user_guide/tutorials/explaining_consequences.md) tutorial |
+
+`make docs` runs all four before building the site. The hand-written [Reference](../reference/index.md) page links the generated pages into the site navigation. Files under `docs/auto/static/` are copied into the site's `_static` directory as they are.
+
 ## Coverage reports
 
 This project uses both Python and Rust, so there are two separate coverage reports. These are generated, along with the coverage badges, using the `coverage` target in the Makefile of this repository.

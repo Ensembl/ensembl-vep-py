@@ -6,15 +6,15 @@ myst:
 html_theme.sidebar_secondary.remove: true
 ---
 
-[![Python-Coverage](./img/python-coverage-badge.svg)](#python)
-[![Rust-Coverage](./img/rust-coverage-badge.svg)](#rust)
+[![Python-Coverage](../img/python-coverage-badge.svg)](#python)
+[![Rust-Coverage](../img/rust-coverage-badge.svg)](#rust)
 
 # Coverage Report
 
 ## Python
 
 <iframe
-    src="coverage/python/htmlcov/index.html"
+    src="../coverage/python/htmlcov/index.html"
     width="100%"
     height="600px"
     frameborder="0">
@@ -23,7 +23,7 @@ html_theme.sidebar_secondary.remove: true
 ## Rust
 
 <iframe
-    src="coverage/rust/html/index.html"
+    src="../coverage/rust/html/index.html"
     width="100%"
     height="500px"
     frameborder="0">

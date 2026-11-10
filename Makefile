@@ -74,7 +74,7 @@ checks-rust: format-rust lint-rust test-rust
 
 checks-all: checks-rust format-py-check lint-py type-check test-py-int
 
-.PHONY: coverage apidoc clidoc docs docs-clean
+.PHONY: coverage apidoc clidoc termdoc explaindoc docs docs-clean
 
 coverage:
 	mkdir -p docs/reports/coverage/{python,rust}
@@ -89,16 +89,23 @@ coverage:
 	cp docs/reports/coverage/rust/coverage-badge.svg docs/img/rust-coverage-badge.svg
 	rm docs/reports/coverage/python/coverage.xml docs/reports/coverage/rust/coverage.xml
 
+# Every generated page goes under docs/auto/, which docs-clean removes and git ignores.
 apidoc:
-	uv run sphinx-apidoc -o docs/reference/ src/python/ensembl --force --module-first \
+	uv run sphinx-apidoc -o docs/auto/reference/api/ src/python/ensembl --force --module-first \
 	--no-toc --implicit-namespaces --templatedir docs/_templates/apidoc src/python/ensembl/vep/ensembl_vep_core.cpython-312-darwin.so
-	rm -f docs/reference/ensembl.rst
+	rm -f docs/auto/reference/api/ensembl.rst
 
 clidoc:
-	uv run python docs/_scripts/clidoc.py docs/reference/cli
+	uv run python docs/_scripts/clidoc.py docs/auto/reference/cli
 
-docs: apidoc clidoc
+termdoc:
+	uv run python docs/_scripts/termdoc.py docs/auto/reference/consequence_terms.md --static_dir docs/auto/static/catalogue
+
+explaindoc:
+	uv run python docs/_scripts/explaindoc.py docs/auto/static/explain
+
+docs: apidoc clidoc termdoc explaindoc
 	uv run sphinx-build -b html docs/ docs/_build/html
 
 docs-clean:
-	rm -rf docs/_build docs/reference docs/reports
+	rm -rf docs/_build docs/auto docs/reports
