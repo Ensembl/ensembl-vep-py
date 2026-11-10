@@ -50,6 +50,19 @@ class TestShape:
         names = [name for name, _allele in source.named_variants]
         assert [variation.stable_id for variation in variations] == names
 
+    def test_each_variation_names_the_region_it_was_read_from(
+        self, source: Corpus, variations: list[Variation]
+    ) -> None:
+        """A corpus is the input here, so its own region name is the uploaded one a summary counts."""
+        expected: list[str] = []
+        for _name, allele in source.named_variants:
+            assert allele.slice is not None
+            expected.append(allele.slice.seq_region_name)
+
+        uploaded = [variation.uploaded_locus for variation in variations]
+
+        assert [locus.seq_region_name for locus in uploaded if locus is not None] == expected
+
     def test_every_overlap_is_attached_to_its_variant(
         self, source: Corpus, variations: list[Variation]
     ) -> None:

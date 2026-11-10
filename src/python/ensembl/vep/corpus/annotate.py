@@ -24,6 +24,7 @@ from __future__ import annotations
 from collections.abc import Iterator, Sequence
 
 from ensembl.vep.annotators.base import Annotator
+from ensembl.vep.common import Locus
 from ensembl.vep.corpus.base import Corpus
 from ensembl.vep.models.overlap import OverlapConsequence, TranscriptVariationAllele
 from ensembl.vep.models.variation import Variation, VariationAllele
@@ -37,13 +38,22 @@ def variation_for(name: str, allele: VariationAllele) -> Variation:
     An empty allele stays an empty string, the corpus's own spelling, so the rebuilt allele is the
     same allele the corpus overlap was annotated against.
     """
+    allele_string = f"{allele.reference_allele or ''}/{allele.alternate_allele or ''}"
     return Variation(
         start=allele.start,
         end=allele.end,
         strand=allele.strand,
         slice=allele.slice,
         stable_id=name,
-        allele_string=f"{allele.reference_allele or ''}/{allele.alternate_allele or ''}",
+        allele_string=allele_string,
+        # A corpus is the input in the commands that read one, so its own slice name is the
+        # uploaded name -- the one a summary counts by.
+        uploaded_locus=Locus(
+            seq_region_name=allele.slice.seq_region_name if allele.slice is not None else None,
+            start=allele.start,
+            end=allele.end,
+            allele_string=allele_string,
+        ),
     )
 
 

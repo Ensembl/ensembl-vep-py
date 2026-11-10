@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Synthetic corpus generation options."""
+"""Registered corpus selection and construction options."""
 
 from __future__ import annotations
 
@@ -25,22 +25,33 @@ from ensembl.vep.config.sections.base import ConfigSection
 
 __all__ = ["CorpusConfig"]
 
-CORPUS_KINDS = ("default", "heavy", "both")
+
+def _corpus_kinds() -> tuple[str, ...]:
+    """Return registered corpus names.
+
+    Resolved lazily so this module never imports ensembl.vep.corpus.
+
+    Returns:
+        tuple[str, ...]: Every registered corpus name, sorted.
+    """
+    # pylint: disable=import-outside-toplevel
+    from ensembl.vep.corpus.registry import available_corpora
+
+    return available_corpora()
 
 
 @define(frozen=True, kw_only=True, auto_attribs=True)
 class CorpusConfig(ConfigSection):
-    """Which synthetic corpus to build, and how.
+    """Which registered corpus to build, and how.
 
     Consumed by ensembl.vep.corpus. Seeds are per stream rather than one global seed because the
     generator draws the chromosome sequence, the boundary variants and the fuzz variants from
     independent ``random.Random`` instances.
 
     Attributes:
-        kind (str): ``"default"`` for the four-transcript boundary+fuzz corpus, ``"heavy"`` for the
-            36-transcript exon-sharing locus, ``"both"`` for the two together. They exercise
-            different things -- only the heavy locus shares exons between transcripts -- so a
-            whole-catalogue check wants both.
+        kind (str): Registered corpus name.
+        parameters (tuple[str, ...]): Repeatable factory-owned ``KEY=VALUE`` parameters. JSON
+            scalar values are decoded; other values remain strings.
         fuzz (int): Number of random variants to add to the default corpus.
         step (int): Position increment for the heavy-locus variant sweep.
         genome_seed (int): Seed for the default corpus's chromosome sequence and transcript layout.
@@ -54,7 +65,18 @@ class CorpusConfig(ConfigSection):
 
     section_name: ClassVar[str] = "corpus"
 
-    kind: str = field(default="both", metadata=option("synthetic corpus to use", choices=CORPUS_KINDS))
+    kind: str = field(
+        default="synthetic.all", metadata=option("registered corpus to use", choices=_corpus_kinds)
+    )
+    parameters: tuple[str, ...] = field(
+        factory=tuple,
+        metadata=option(
+            "factory parameter as KEY=VALUE (repeatable)",
+            flag="corpus_parameter",
+            metavar="KEY=VALUE",
+            repeatable=True,
+        ),
+    )
     fuzz: int = field(default=4000, metadata=option("fuzz variant count", metavar="N"))
     step: int = field(default=13, metadata=option("heavy-locus variant sweep step", metavar="N"))
     genome_seed: int = field(default=7, metadata=option("seed for the synthetic genome"))

@@ -11,7 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Unit tests for the VCF parser interface."""
+"""Tests for the VCF parser interface."""
+
+from __future__ import annotations
 
 from pathlib import Path
 from attr import exceptions as attr_ex
@@ -114,16 +116,16 @@ def _assert_second_vcf_record(record: VCFRecord) -> None:
 
 
 class TestVCFParserInitialization:
-    """Test VCFParser initialization."""
+    """VCFParser initialization."""
 
     def test_initialization_without_keywords(self) -> None:
-        """Test VCFParser initialization without keywords raises error."""
+        """VCFParser initialization without keywords raises error."""
 
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = VCFParser("annotations.vcf")  # type: ignore[misc]
 
     def test_initialization_sets_core_attributes(self) -> None:
-        """Test VCFParser sets parser attributes."""
+        """VCFParser sets parser attributes."""
 
         parser = VCFParser()
 
@@ -134,7 +136,7 @@ class TestVCFParserInitialization:
         assert parser.reader_mode == "auto"
 
     def test_initialization_with_file_path_opens_parser(self, tmp_path: Path) -> None:
-        """Test file_path initialization opens the parser."""
+        """File_path initialization opens the parser."""
 
         path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
         parser = VCFParser(file_path=path)
@@ -142,7 +144,7 @@ class TestVCFParserInitialization:
         _assert_first_vcf_record(record)
 
     def test_mode_is_frozen(self) -> None:
-        """Test attribute mode is settable on object creation and them immutable"""
+        """Attribute mode is settable on object creation and them immutable"""
         parser = VCFParser(mode="sequential")
 
         assert parser.mode == "sequential", "mode attribute set incorrectly"
@@ -153,7 +155,7 @@ class TestVCFParserInitialization:
 
 
 class TestVCFParserMetadata:
-    """Tests for VCFParser.metadata."""
+    """VCFParser.metadata."""
 
     @pytest.fixture
     def sample_metadata(self) -> dict:
@@ -183,10 +185,11 @@ class TestVCFParserMetadata:
             "contig": {},
             "samples": ["sample0", "sample1"],
             "other": {},
+            "header": HEADER_LINES,
         }
 
     def test_metadata_returns_header_info(self, tmp_path: Path, sample_metadata: dict) -> None:
-        """Test metadata returns header lines."""
+        """Metadata returns header lines."""
 
         path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
         parser = VCFParser(file_path=path, mode="sequential")
@@ -194,7 +197,7 @@ class TestVCFParserMetadata:
         assert parser.metadata == sample_metadata
 
     def test_metadata_is_cached(self, tmp_path: Path) -> None:
-        """Test metadata is cached after first access."""
+        """Metadata is cached after first access."""
 
         path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
         parser = VCFParser(file_path=path, mode="sequential")
@@ -204,7 +207,7 @@ class TestVCFParserMetadata:
         assert parser.metadata == metadata
 
     def test_open_refreshes_metadata_cache(self, tmp_path: Path, sample_metadata: dict) -> None:
-        """Test open clears cached metadata for the previous file."""
+        """Open clears cached metadata for the previous file."""
 
         first_path = _write_vcf(tmp_path / "sample-1.vcf", SAMPLE)
 
@@ -222,7 +225,7 @@ class TestVCFParserMetadata:
     def test_metadata_returns_empty_dictionary_after_close(
         self, tmp_path: Path, sample_metadata: dict
     ) -> None:
-        """Test metadata is empty when the parser is closed."""
+        """Metadata is empty when the parser is closed."""
 
         path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
         parser = VCFParser(file_path=path, mode="sequential")
@@ -233,7 +236,7 @@ class TestVCFParserMetadata:
         assert not parser.metadata
 
     def test_metadata_does_not_consume_sequential_stream(self, tmp_path: Path, sample_metadata: dict) -> None:
-        """Test metadata reads do not advance the active sequential stream."""
+        """Metadata reads do not advance the active sequential stream."""
 
         path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
         parser = VCFParser(file_path=path, mode="sequential")
@@ -245,7 +248,7 @@ class TestVCFParserMetadata:
         _assert_second_vcf_record(record)
 
     def test_metadata_in_query_mode_reads_source_headers(self, tmp_path: Path, sample_metadata: dict) -> None:
-        """Test query-mode metadata is read from the VCF source file."""
+        """Query-mode metadata is read from the VCF source file."""
 
         path = _write_query_vcf(tmp_path / "sample.vcf.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -256,10 +259,10 @@ class TestVCFParserMetadata:
 
 
 class TestVCFParserOpenClose:
-    """Tests for VCFParser open and close."""
+    """VCFParser open and close."""
 
     def test_open_returns_parser(self, tmp_path: Path) -> None:
-        """Test open returns the parser instance."""
+        """Open returns the parser instance."""
 
         path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
         parser = VCFParser(mode="sequential")
@@ -268,7 +271,7 @@ class TestVCFParserOpenClose:
         _assert_first_vcf_record(parser.next())
 
     def test_open_overrides_mode(self, tmp_path: Path) -> None:
-        """Test open overrides the parser mode."""
+        """Open overrides the parser mode."""
 
         path = _write_query_vcf(tmp_path / "sample.vcf.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -279,7 +282,7 @@ class TestVCFParserOpenClose:
         assert parser.reader_mode == "sequential"
 
     def test_open_auto_query_then_auto_seq_changes_mode(self, tmp_path: Path) -> None:
-        """Test open overrides the parser mode."""
+        """Open overrides the parser mode."""
 
         path = _write_query_vcf(tmp_path / "sample.vcf.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -294,7 +297,7 @@ class TestVCFParserOpenClose:
         assert parser.reader_mode == "sequential"
 
     def test_close_closes_backend_reader(self, tmp_path: Path) -> None:
-        """Test close prevents subsequent backend reads."""
+        """Close prevents subsequent backend reads."""
 
         path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
         parser = VCFParser(file_path=path, mode="sequential")
@@ -305,7 +308,7 @@ class TestVCFParserOpenClose:
             parser.next()
 
     def test_context_manager_closes_parser(self, tmp_path: Path) -> None:
-        """Test context manager returns and closes the parser."""
+        """Context manager returns and closes the parser."""
 
         path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
 
@@ -317,10 +320,10 @@ class TestVCFParserOpenClose:
 
 
 class TestVCFParserSeek:
-    """Tests for VCFParser.seek."""
+    """VCFParser.seek."""
 
     def test_vcf_parser_seek_primes_next(self, tmp_path: Path) -> None:
-        """Test seek returns availability and next streams parsed records."""
+        """Seek returns availability and next streams parsed records."""
 
         path = _write_query_vcf(tmp_path / "sample.vcf.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -331,7 +334,7 @@ class TestVCFParserSeek:
         assert parser.next() is None
 
     def test_vcf_parser_seek_accepts_region_string(self, tmp_path: Path) -> None:
-        """Test seek accepts an explicit region string."""
+        """Seek accepts an explicit region string."""
 
         path = _write_query_vcf(tmp_path / "sample.vcf.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -341,7 +344,7 @@ class TestVCFParserSeek:
         assert [record.chrom for record in parser.records()] == ["chr2"]
 
     def test_vcf_parser_seek_accepts_whole_sequence(self, tmp_path: Path) -> None:
-        """Test seek accepts a seq_region_name-only region."""
+        """Seek accepts a seq_region_name-only region."""
 
         path = _write_query_vcf(tmp_path / "sample.vcf.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -351,7 +354,7 @@ class TestVCFParserSeek:
         assert [record.reference for record in parser.records()] == ["A", "G"]
 
     def test_vcf_parser_seek_empty_region(self, tmp_path: Path) -> None:
-        """Test seek returns false when no records are available."""
+        """Seek returns false when no records are available."""
 
         path = _write_query_vcf(tmp_path / "sample.vcf.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -370,7 +373,7 @@ class TestVCFParserSeek:
         ],
     )
     def test_vcf_parser_seek_rejects_invalid_region_arguments(self, kwargs: dict[str, object]) -> None:
-        """Test seek rejects invalid region inputs before querying the backend."""
+        """Seek rejects invalid region inputs before querying the backend."""
 
         parser = VCFParser()
 
@@ -378,7 +381,7 @@ class TestVCFParserSeek:
             parser.seek(**kwargs)  # type: ignore[arg-type]
 
     def test_sequential_mode_rejects_seek(self, tmp_path: Path) -> None:
-        """Test sequential reader mode keeps seek disabled."""
+        """Sequential reader mode keeps seek disabled."""
 
         path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
         parser = VCFParser(file_path=path, mode="sequential")
@@ -388,10 +391,10 @@ class TestVCFParserSeek:
 
 
 class TestVCFParserRecords:
-    """Tests for VCFParser.records."""
+    """VCFParser.records."""
 
     def test_records_returns_remaining_records(self, tmp_path: Path) -> None:
-        """Test records returns all remaining records from the stream."""
+        """Records returns all remaining records from the stream."""
 
         path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
         parser = VCFParser(file_path=path, mode="sequential")
@@ -401,7 +404,7 @@ class TestVCFParserRecords:
         assert [record.chrom for record in parser.records()] == ["chr1", "chr2"]
 
     def test_records_respects_limit(self, tmp_path: Path) -> None:
-        """Test records stops once the limit is reached."""
+        """Records stops once the limit is reached."""
 
         path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
         parser = VCFParser(file_path=path, mode="sequential")
@@ -410,7 +413,7 @@ class TestVCFParserRecords:
         assert [record.reference for record in parser.records()] == ["G", "C"]
 
     def test_records_zero_limit_does_not_consume_record(self, tmp_path: Path) -> None:
-        """Test zero limit leaves the next record available."""
+        """Zero limit leaves the next record available."""
 
         path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
         parser = VCFParser(file_path=path, mode="sequential")
@@ -419,18 +422,79 @@ class TestVCFParserRecords:
         _assert_first_vcf_record(parser.next())
 
 
+class TestVCFParserRawLines:
+    """VCFParser.raw_lines."""
+
+    def test_raw_lines_returns_record_lines_verbatim(self, tmp_path: Path) -> None:
+        """Raw_lines returns each record's line without its line ending."""
+
+        path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
+        parser = VCFParser(file_path=path, mode="sequential")
+
+        assert parser.raw_lines() == [CHR1_VAR_ROW1, CHR1_VAR_ROW2, CHR2_VAR_ROW1]
+
+    def test_raw_lines_respects_limit(self, tmp_path: Path) -> None:
+        """Raw_lines stops once the limit is reached."""
+
+        path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
+        parser = VCFParser(file_path=path, mode="sequential")
+
+        assert parser.raw_lines(limit=1) == [CHR1_VAR_ROW1]
+        assert parser.raw_lines() == [CHR1_VAR_ROW2, CHR2_VAR_ROW1]
+
+    def test_raw_lines_shares_the_record_stream(self, tmp_path: Path) -> None:
+        """A line already read as a record is not returned again."""
+
+        path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
+        parser = VCFParser(file_path=path, mode="sequential")
+
+        _assert_first_vcf_record(parser.next())
+
+        assert parser.raw_lines() == [CHR1_VAR_ROW2, CHR2_VAR_ROW1]
+
+
+class TestVCFParserRecordCount:
+    """VCFParser.record_count."""
+
+    def test_an_unindexed_file_declares_no_count(self, tmp_path: Path) -> None:
+        """A file with no index is counted only when asked to be."""
+
+        path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
+
+        assert VCFParser.record_count(path) is None
+        assert VCFParser.record_count(path, scan=True) == 3
+
+    def test_an_unreadable_index_declares_no_count(self, tmp_path: Path) -> None:
+        """An index that cannot be read leaves the count unknown rather than raising."""
+
+        path = _write_query_vcf(tmp_path / "sample.vcf", SAMPLE)
+
+        assert VCFParser.record_count(path) is None
+
+    def test_a_scan_does_not_disturb_an_open_stream(self, tmp_path: Path) -> None:
+        """Counting is independent of a parser reading the same file."""
+
+        path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
+        parser = VCFParser(file_path=path, mode="sequential")
+
+        _assert_first_vcf_record(parser.next())
+        assert VCFParser.record_count(path, scan=True) == 3
+
+        _assert_second_vcf_record(parser.next())
+
+
 class TestVCFParserIteration:
-    """Tests for VCFParser iteration."""
+    """VCFParser iteration."""
 
     def test_parser_is_its_own_iterator(self) -> None:
-        """Test iter returns the parser instance."""
+        """Iter returns the parser instance."""
 
         parser = VCFParser()
 
         assert iter(parser) is parser
 
     def test_iteration_streams_records(self, tmp_path: Path) -> None:
-        """Test iteration streams records from the parser."""
+        """Iteration streams records from the parser."""
 
         path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
         parser = VCFParser(file_path=path, mode="sequential")
@@ -438,7 +502,7 @@ class TestVCFParserIteration:
         assert [record.reference for record in parser] == ["A", "G", "C"]
 
     def test_iteration_raises_stop_iteration(self, tmp_path: Path) -> None:
-        """Test iteration raises StopIteration when no more records are available."""
+        """Iteration raises StopIteration when no more records are available."""
 
         path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
         parser = VCFParser(file_path=path, mode="sequential")
@@ -449,10 +513,10 @@ class TestVCFParserIteration:
 
 
 class TestVCFParserParsingTextAndFiles:
-    """Tests for VCFParser parse helpers."""
+    """VCFParser parse helpers."""
 
     def test_parse_text_returns_interface_records(self) -> None:
-        """Test parse_text exposes VCF rows as parser-interface records."""
+        """Parse_text exposes VCF rows as parser-interface records."""
 
         records = VCFParser.parse_text(SAMPLE)
 
@@ -461,7 +525,7 @@ class TestVCFParserParsingTextAndFiles:
         _assert_second_vcf_record(records[1])
 
     def test_parse_text_respects_limit(self) -> None:
-        """Test parse_text stops once the limit is reached."""
+        """Parse_text stops once the limit is reached."""
 
         records = VCFParser.parse_text(SAMPLE, limit=1)
 
@@ -469,7 +533,7 @@ class TestVCFParserParsingTextAndFiles:
         _assert_first_vcf_record(records[0])
 
     def test_parse_file_returns_interface_records(self, tmp_path: Path) -> None:
-        """Test parse_file exposes VCF rows as parser-interface records."""
+        """Parse_file exposes VCF rows as parser-interface records."""
 
         path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
         records = VCFParser.parse_file(path)
@@ -478,7 +542,7 @@ class TestVCFParserParsingTextAndFiles:
         _assert_first_vcf_record(records[0])
 
     def test_parse_file_respects_limit(self, tmp_path: Path) -> None:
-        """Test parse_text stops once the limit is reached."""
+        """Parse_text stops once the limit is reached."""
 
         path = _write_vcf(tmp_path / "sample.vcf", SAMPLE)
         records = VCFParser.parse_file(path, limit=1)

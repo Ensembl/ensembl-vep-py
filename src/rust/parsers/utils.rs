@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use flate2::read::MultiGzDecoder;
 use noodles_bgzf as bgzf;
 use noodles_core::Region;
 use noodles_gff::feature::record::{Phase, Strand};
@@ -48,6 +49,17 @@ impl ReaderMode {
             Self::Sequential => "sequential",
             Self::Query => "query",
         }
+    }
+}
+
+pub(crate) fn is_gzip_file(file_path: &Path) -> io::Result<bool> {
+    const GZIP_MAGIC: [u8; 2] = [0x1f, 0x8b];
+
+    let mut magic = [0; GZIP_MAGIC.len()];
+    match File::open(file_path)?.read_exact(&mut magic) {
+        Ok(()) => Ok(magic == GZIP_MAGIC),
+        Err(e) if e.kind() == ErrorKind::UnexpectedEof => Ok(false),
+        Err(e) => Err(e),
     }
 }
 
@@ -113,9 +125,38 @@ pub fn open_sequential_reader(file_path: &Path) -> io::Result<Box<dyn BufRead + 
 
     if is_bgzf_file(file_path)? {
         Ok(Box::new(bgzf::io::Reader::new(file)))
+    } else if is_gzip_file(file_path)? {
+        // A file written by `gzip` rather than `bgzip` cannot be indexed or queried, but read
+        // start to finish it is the same input, and inputs arrive spelled both ways.
+        Ok(Box::new(BufReader::new(MultiGzDecoder::new(file))))
     } else {
         Ok(Box::new(BufReader::new(file)))
     }
+}
+
+/// Count the data lines of a line-based file, skipping blank and `#`-prefixed ones.
+///
+/// Reads the whole file, so it is the fallback for an input with no index: bytes only, with no
+/// UTF-8 validation and no record built, which is all the count needs.
+pub fn count_data_lines(file_path: &Path) -> io::Result<u64> {
+    let mut reader = open_sequential_reader(file_path)?;
+    let mut line = Vec::new();
+    let mut count = 0;
+
+    loop {
+        line.clear();
+        if reader.read_until(b'\n', &mut line)? == 0 {
+            break;
+        }
+
+        let trimmed = line.strip_suffix(b"\n").unwrap_or(&line);
+        let trimmed = trimmed.strip_suffix(b"\r").unwrap_or(trimmed);
+        if !trimmed.is_empty() && !trimmed.starts_with(b"#") {
+            count += 1;
+        }
+    }
+
+    Ok(count)
 }
 
 pub fn associated_index_path(src: &Path, extension: &str) -> PathBuf {
@@ -282,7 +323,7 @@ pub(crate) fn parse_sequence_region(region: &str) -> io::Result<SequenceRegion> 
 mod tests {
     use super::*;
     use crate::{
-        parsers::test_utils::write_bgzf_file,
+        parsers::test_utils::{write_bgzf_file, write_gzip_file},
         test_utils::{create_temp_dir, write_sample_file},
     };
     use noodles_core::Position;
@@ -524,6 +565,108 @@ chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1
     fn test_is_bgzf_file_rejects_nonexistent_file() {
         let err = is_bgzf_file(Path::new("nonexistent_file.gz")).unwrap_err();
         assert_eq!(err.kind(), ErrorKind::NotFound);
+    }
+
+    // -----------------------------------------------------------------------
+    // count_data_lines
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_count_data_lines_skips_blank_and_comment_lines() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-count-data-lines")?;
+        let path = write_sample_file(
+            &dir,
+            "sample.gff3",
+            b"##gff-version 3\n\
+              \n\
+              chr1\tsource\tgene\t1\t10\t.\t+\t.\tID=gene1\r\n\
+              #a comment\n\
+              chr2\tsource\tgene\t1\t10\t.\t+\t.\tID=gene2\n",
+        )?;
+
+        assert_eq!(count_data_lines(&path)?, 2);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_count_data_lines_counts_an_unterminated_last_line() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-count-data-lines-unterminated")?;
+        let path = write_sample_file(&dir, "sample.gff3", b"chr1\tsource\tgene\t1\t10")?;
+
+        assert_eq!(count_data_lines(&path)?, 1);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_count_data_lines_reads_plain_gzip() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-count-data-lines-gzip")?;
+        let path = write_gzip_file(&dir, sample_lines(), "sample.gff3.gz")?;
+
+        assert_eq!(count_data_lines(&path)?, 1);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_count_data_lines_reads_bgzf() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-count-data-lines-bgzf")?;
+        let path = write_bgzf_file(&dir, sample_lines(), Some("sample.gff3.gz"))?;
+
+        assert_eq!(count_data_lines(&path)?, 1);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // is_gzip_file / open_sequential_reader
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_is_gzip_file_detects_plain_gzip() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-is-gzip")?;
+        let gzip_path = write_gzip_file(&dir, sample_lines(), "sample.gff3.gz")?;
+        let bgzf_path = write_bgzf_file(&dir, sample_lines(), Some("bgzf.gff3.gz"))?;
+        let plain_path = write_sample_file(&dir, "sample.gff3", SAMPLE)?;
+
+        assert!(is_gzip_file(&gzip_path)?);
+        // BGZF is gzip too, which is why the BGZF check comes first.
+        assert!(is_gzip_file(&bgzf_path)?);
+        assert!(!is_bgzf_file(&gzip_path)?);
+        assert!(!is_gzip_file(&plain_path)?);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_is_gzip_file_handles_a_file_shorter_than_the_magic() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-is-gzip-short")?;
+        let path = write_sample_file(&dir, "short", b"#")?;
+
+        assert!(!is_gzip_file(&path)?);
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_open_sequential_reader_decompresses_plain_gzip() -> io::Result<()> {
+        let dir = create_temp_dir("ensembl-vep-open-sequential-gzip")?;
+        let path = write_gzip_file(&dir, sample_lines(), "sample.gff3.gz")?;
+
+        let mut line = String::new();
+        open_sequential_reader(&path)?.read_line(&mut line)?;
+
+        assert_eq!(line, "##gff-version 3\n");
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
     }
 
     // -----------------------------------------------------------------------

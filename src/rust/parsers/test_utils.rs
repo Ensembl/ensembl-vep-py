@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use flate2::{Compression, write::GzEncoder};
 use noodles_bgzf as bgzf;
 use noodles_core::Position;
 use noodles_csi::binning_index::index::{
@@ -48,6 +49,24 @@ fn parse_gff3_record(line: &str) -> io::Result<Option<IndexedRecord<'_>>> {
 
     let start = parse_position(fields[3], "bad start")?;
     let end = parse_position(fields[4], "bad end")?;
+
+    Ok(Some(IndexedRecord {
+        chrom: fields[0],
+        start,
+        end,
+    }))
+}
+
+fn parse_vcf_record(line: &str) -> io::Result<Option<IndexedRecord<'_>>> {
+    let fields: Vec<&str> = line.splitn(5, '\t').collect();
+    if fields.len() < 4 {
+        return Ok(None);
+    }
+
+    let start = parse_position(fields[1], "bad start")?;
+    let end = start
+        .checked_add(fields[3].len() - 1)
+        .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "bad end"))?;
 
     Ok(Some(IndexedRecord {
         chrom: fields[0],
@@ -93,6 +112,21 @@ pub(crate) fn write_bgzf_file(
     let path = dir.join(file_name);
     let file = File::create(&path)?;
     let mut writer = bgzf::io::Writer::new(file);
+    for line in lines {
+        writer.write_all(line.as_bytes())?;
+        writer.write_all(b"\n")?;
+    }
+    writer.finish()?;
+    Ok(path)
+}
+
+pub(crate) fn write_gzip_file(
+    dir: &Path,
+    lines: Vec<String>,
+    file_name: &str,
+) -> io::Result<PathBuf> {
+    let path = dir.join(file_name);
+    let mut writer = GzEncoder::new(File::create(&path)?, Compression::default());
     for line in lines {
         writer.write_all(line.as_bytes())?;
         writer.write_all(b"\n")?;
@@ -221,6 +255,28 @@ pub(crate) fn write_gtf_with_tbi(
         "test.gtf.gz",
         header,
         parse_gff3_record,
+    )
+}
+
+pub(crate) fn write_vcf_with_tbi(
+    dir: &Path,
+    lines: Option<Vec<String>>,
+) -> io::Result<(PathBuf, PathBuf)> {
+    let default_lines = vec![
+        "##fileformat=VCFv4.3".to_string(),
+        "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO".to_string(),
+        "chr1\t10\trs1\tA\tC\t13\tPASS\t.".to_string(),
+        "chr1\t20\trs2\tG\tT\t.\tPASS\t.".to_string(),
+        "chr2\t100\trs3\tC\tA\t.\tPASS\t.".to_string(),
+    ];
+    let header = HeaderBuilder::vcf().build();
+
+    write_indexed_tabix_file(
+        dir,
+        lines.unwrap_or(default_lines),
+        "test.vcf.gz",
+        header,
+        parse_vcf_record,
     )
 }
 

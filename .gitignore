@@ -3,6 +3,7 @@
 
 # IDE temp files
 .codex
+.claude
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -14,7 +15,9 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
+# Anchored: an unanchored build/ also hides any package directory named build, such as
+# workflow/build/.
+/build/
 develop-eggs/
 dist/
 downloads/
@@ -143,3 +146,8 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# Ensembl VEP output files
+variant_effect_output.txt
+variant_effect_output.txt_summary.html
+variant_effect_output.txt_warnings.txt

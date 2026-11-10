@@ -11,7 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Unit tests for the GTF parser interface."""
+"""Tests for the GTF parser interface."""
+
+from __future__ import annotations
 
 from pathlib import Path
 import subprocess
@@ -115,16 +117,16 @@ def _assert_gene_record(record: GTFRecord) -> None:
 
 
 class TestGTFParserInitialization:
-    """Test GTFParser initialization."""
+    """GTFParser initialization."""
 
     def test_initialization_without_keywords(self) -> None:
-        """Test GTFParser initialization without keywords raises error."""
+        """GTFParser initialization without keywords raises error."""
 
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = GTFParser("annotations.gtf")  # type: ignore[misc]
 
     def test_initialization_sets_core_attributes(self) -> None:
-        """Test GTFParser sets parser attributes."""
+        """GTFParser sets parser attributes."""
 
         parser = GTFParser()
 
@@ -135,7 +137,7 @@ class TestGTFParserInitialization:
         assert parser.reader_mode == "auto"
 
     def test_initialization_with_file_path_opens_parser(self, tmp_path: Path) -> None:
-        """Test file_path initialization opens the parser."""
+        """File_path initialization opens the parser."""
 
         path = _write_gtf(tmp_path / "sample.gtf")
         parser = GTFParser(file_path=path)
@@ -143,7 +145,7 @@ class TestGTFParserInitialization:
         _assert_gene_record(parser.next())
 
     def test_mode_is_frozen(self) -> None:
-        """Test attribute mode is settable on object creation and them immutable"""
+        """Attribute mode is settable on object creation and them immutable"""
         parser = GTFParser(mode="sequential")
 
         assert parser.mode == "sequential", "mode attribute set incorrectly"
@@ -154,10 +156,10 @@ class TestGTFParserInitialization:
 
 
 class TestGTFParserMetadata:
-    """Tests for GTFParser.metadata."""
+    """GTFParser.metadata."""
 
     def test_metadata_returns_header_lines(self, tmp_path: Path) -> None:
-        """Test metadata returns raw header lines."""
+        """Metadata returns raw header lines."""
 
         path = _write_gtf(tmp_path / "sample.gtf", SAMPLE_WITH_COMMENT)
         parser = GTFParser(file_path=path, mode="sequential")
@@ -165,7 +167,7 @@ class TestGTFParserMetadata:
         assert parser.metadata == {"header": HEADER_LINES}
 
     def test_metadata_is_cached(self, tmp_path: Path) -> None:
-        """Test metadata is cached after first access."""
+        """Metadata is cached after first access."""
 
         path = _write_gtf(tmp_path / "sample.gtf", SAMPLE_WITH_COMMENT)
         parser = GTFParser(file_path=path, mode="sequential")
@@ -175,7 +177,7 @@ class TestGTFParserMetadata:
         assert parser.metadata == metadata
 
     def test_open_refreshes_metadata_cache(self, tmp_path: Path) -> None:
-        """Test open clears cached metadata for the previous file."""
+        """Open clears cached metadata for the previous file."""
 
         first_path = _write_gtf(
             tmp_path / "first.gtf",
@@ -198,7 +200,7 @@ class TestGTFParserMetadata:
         assert parser.metadata == {"header": ["#!genome-version GRCh38"]}
 
     def test_metadata_returns_empty_dictionary_after_close(self, tmp_path: Path) -> None:
-        """Test metadata is empty when the parser is closed."""
+        """Metadata is empty when the parser is closed."""
 
         path = _write_gtf(tmp_path / "sample.gtf", SAMPLE_WITH_COMMENT)
         parser = GTFParser(file_path=path, mode="sequential")
@@ -210,7 +212,7 @@ class TestGTFParserMetadata:
         assert not parser.metadata
 
     def test_metadata_does_not_consume_sequential_stream(self, tmp_path: Path) -> None:
-        """Test metadata reads do not advance the active sequential stream."""
+        """Metadata reads do not advance the active sequential stream."""
 
         path = _write_gtf(tmp_path / "sample.gtf", SAMPLE_WITH_COMMENT)
         parser = GTFParser(file_path=path, mode="sequential")
@@ -222,7 +224,7 @@ class TestGTFParserMetadata:
         assert record.feature_type == "transcript"
 
     def test_metadata_in_query_mode_reads_source_headers(self, tmp_path: Path) -> None:
-        """Test query-mode metadata is read from the GTF source file."""
+        """Query-mode metadata is read from the GTF source file."""
 
         path = _write_query_gtf(tmp_path / "sample.gtf.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -233,10 +235,10 @@ class TestGTFParserMetadata:
 
 
 class TestGTFParserOpenClose:
-    """Tests for GTFParser open and close."""
+    """GTFParser open and close."""
 
     def test_open_returns_parser(self, tmp_path: Path) -> None:
-        """Test open returns the parser instance."""
+        """Open returns the parser instance."""
 
         path = _write_gtf(tmp_path / "sample.gtf")
         parser = GTFParser(mode="sequential")
@@ -245,7 +247,7 @@ class TestGTFParserOpenClose:
         _assert_gene_record(parser.next())
 
     def test_open_overrides_mode(self, tmp_path: Path) -> None:
-        """Test open overrides the parser mode."""
+        """Open overrides the parser mode."""
 
         path = _write_query_gtf(tmp_path / "sample.gtf.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -256,7 +258,7 @@ class TestGTFParserOpenClose:
         assert parser.reader_mode == "sequential"
 
     def test_open_auto_query_then_auto_seq_changes_mode(self, tmp_path: Path) -> None:
-        """Test open overrides the parser mode."""
+        """Open overrides the parser mode."""
 
         path = _write_query_gtf(tmp_path / "sample.gtf.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -271,7 +273,7 @@ class TestGTFParserOpenClose:
         assert parser.reader_mode == "sequential"
 
     def test_close_closes_backend_reader(self, tmp_path: Path) -> None:
-        """Test close prevents subsequent backend reads."""
+        """Close prevents subsequent backend reads."""
 
         path = _write_gtf(tmp_path / "sample.gtf")
         parser = GTFParser(file_path=path, mode="sequential")
@@ -282,7 +284,7 @@ class TestGTFParserOpenClose:
             parser.next()
 
     def test_context_manager_closes_parser(self, tmp_path: Path) -> None:
-        """Test context manager returns and closes the parser."""
+        """Context manager returns and closes the parser."""
 
         path = _write_gtf(tmp_path / "sample.gtf")
 
@@ -294,10 +296,10 @@ class TestGTFParserOpenClose:
 
 
 class TestGTFParserSeek:
-    """Tests for GTFParser.seek."""
+    """GTFParser.seek."""
 
     def test_gtf_parser_seek_primes_next(self, tmp_path: Path) -> None:
-        """Test seek returns availability and next streams parsed records."""
+        """Seek returns availability and next streams parsed records."""
 
         path = _write_query_gtf(tmp_path / "sample.gtf.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -309,7 +311,7 @@ class TestGTFParserSeek:
         assert parser.next() is None
 
     def test_gtf_parser_seek_accepts_region_string(self, tmp_path: Path) -> None:
-        """Test seek accepts an explicit region string."""
+        """Seek accepts an explicit region string."""
 
         path = _write_query_gtf(tmp_path / "sample.gtf.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -319,7 +321,7 @@ class TestGTFParserSeek:
         assert [record.seqid for record in parser.records()] == ["chr2"]
 
     def test_gtf_parser_seek_accepts_whole_sequence(self, tmp_path: Path) -> None:
-        """Test seek accepts a seq_region_name-only region."""
+        """Seek accepts a seq_region_name-only region."""
 
         path = _write_query_gtf(tmp_path / "sample.gtf.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -329,7 +331,7 @@ class TestGTFParserSeek:
         assert [record.feature_type for record in parser.records()] == ["gene", "transcript", "exon"]
 
     def test_gtf_parser_seek_empty_region(self, tmp_path: Path) -> None:
-        """Test seek returns false when no records are available."""
+        """Seek returns false when no records are available."""
 
         path = _write_query_gtf(tmp_path / "sample.gtf.gz")
         tabix = _write_query_mock_tabix(tmp_path)
@@ -348,7 +350,7 @@ class TestGTFParserSeek:
         ],
     )
     def test_gtf_parser_seek_rejects_invalid_region_arguments(self, kwargs: dict[str, object]) -> None:
-        """Test seek rejects invalid region inputs before querying the backend."""
+        """Seek rejects invalid region inputs before querying the backend."""
 
         parser = GTFParser()
 
@@ -356,7 +358,7 @@ class TestGTFParserSeek:
             parser.seek(**kwargs)  # type: ignore[arg-type]
 
     def test_sequential_mode_rejects_seek(self, tmp_path: Path) -> None:
-        """Test sequential reader mode keeps seek disabled."""
+        """Sequential reader mode keeps seek disabled."""
 
         path = _write_gtf(tmp_path / "sample.gtf")
         parser = GTFParser(file_path=path, mode="sequential")
@@ -366,10 +368,10 @@ class TestGTFParserSeek:
 
 
 class TestGTFParserRecords:
-    """Tests for GTFParser.records."""
+    """GTFParser.records."""
 
     def test_records_returns_remaining_records(self, tmp_path: Path) -> None:
-        """Test records returns all remaining records from the stream."""
+        """Records returns all remaining records from the stream."""
 
         path = _write_gtf(tmp_path / "sample.gtf")
         parser = GTFParser(file_path=path, mode="sequential")
@@ -379,7 +381,7 @@ class TestGTFParserRecords:
         assert [record.feature_type for record in parser.records()] == ["transcript", "CDS"]
 
     def test_records_respects_limit(self, tmp_path: Path) -> None:
-        """Test records stops once the limit is reached."""
+        """Records stops once the limit is reached."""
 
         path = _write_gtf(tmp_path / "sample.gtf")
         parser = GTFParser(file_path=path, mode="sequential")
@@ -388,7 +390,7 @@ class TestGTFParserRecords:
         assert [record.feature_type for record in parser.records()] == ["transcript", "CDS"]
 
     def test_records_zero_limit_does_not_consume_record(self, tmp_path: Path) -> None:
-        """Test zero limit leaves the next record available."""
+        """Zero limit leaves the next record available."""
 
         path = _write_gtf(tmp_path / "sample.gtf")
         parser = GTFParser(file_path=path, mode="sequential")
@@ -397,18 +399,47 @@ class TestGTFParserRecords:
         _assert_gene_record(parser.next())
 
 
+class TestGTFParserRawLines:
+    """GTFParser.raw_lines."""
+
+    def test_raw_lines_returns_record_lines_verbatim(self, tmp_path: Path) -> None:
+        """Raw_lines returns each record's line without its line ending."""
+
+        path = _write_gtf(tmp_path / "sample.gtf")
+        parser = GTFParser(file_path=path, mode="sequential")
+
+        assert parser.raw_lines() == [CHR1_GENE_ROW, CHR1_TRANSCRIPT_ROW, CHR1_CDS_ROW]
+
+    def test_raw_lines_respects_limit(self, tmp_path: Path) -> None:
+        """Raw_lines stops once the limit is reached."""
+
+        path = _write_gtf(tmp_path / "sample.gtf")
+        parser = GTFParser(file_path=path, mode="sequential")
+
+        assert parser.raw_lines(limit=1) == [CHR1_GENE_ROW]
+        assert parser.raw_lines() == [CHR1_TRANSCRIPT_ROW, CHR1_CDS_ROW]
+
+    def test_raw_lines_skips_comment_lines(self, tmp_path: Path) -> None:
+        """A comment between the header and the records is not returned."""
+
+        path = _write_gtf(tmp_path / "sample.gtf", SAMPLE_WITH_COMMENT)
+        parser = GTFParser(file_path=path, mode="sequential")
+
+        assert parser.raw_lines() == [CHR1_GENE_ROW, CHR1_TRANSCRIPT_ROW, CHR1_EXON_ROW]
+
+
 class TestGTFParserIteration:
-    """Tests for GTFParser iteration."""
+    """GTFParser iteration."""
 
     def test_parser_is_its_own_iterator(self) -> None:
-        """Test iter returns the parser instance."""
+        """Iter returns the parser instance."""
 
         parser = GTFParser()
 
         assert iter(parser) is parser
 
     def test_iteration_streams_records(self, tmp_path: Path) -> None:
-        """Test iteration streams records from the parser."""
+        """Iteration streams records from the parser."""
 
         path = _write_gtf(tmp_path / "sample.gtf")
         parser = GTFParser(file_path=path, mode="sequential")
@@ -416,7 +447,7 @@ class TestGTFParserIteration:
         assert [record.feature_type for record in parser] == ["gene", "transcript", "CDS"]
 
     def test_iteration_raises_stop_iteration(self, tmp_path: Path) -> None:
-        """Test iteration raises StopIteration when no more records are available."""
+        """Iteration raises StopIteration when no more records are available."""
 
         path = _write_gtf(tmp_path / "sample.gtf")
         parser = GTFParser(file_path=path, mode="sequential")
@@ -427,10 +458,10 @@ class TestGTFParserIteration:
 
 
 class TestGTFParserParsingTextAndFiles:
-    """Tests for GTFParser parse helpers."""
+    """GTFParser parse helpers."""
 
     def test_parse_text_returns_interface_records(self) -> None:
-        """Test parse_text exposes GTF rows as parser-interface records."""
+        """Parse_text exposes GTF rows as parser-interface records."""
 
         records = GTFParser.parse_text(SAMPLE)
 
@@ -440,7 +471,7 @@ class TestGTFParserParsingTextAndFiles:
         assert records[2].phase_value == 0  # check phase of CDS record
 
     def test_parse_text_respects_limit(self) -> None:
-        """Test parse_text stops once the limit is reached."""
+        """Parse_text stops once the limit is reached."""
 
         records = GTFParser.parse_text(SAMPLE, limit=1)
 
@@ -448,7 +479,7 @@ class TestGTFParserParsingTextAndFiles:
         _assert_gene_record(records[0])
 
     def test_parse_file_returns_interface_records(self, tmp_path: Path) -> None:
-        """Test parse_file exposes GTF rows as parser-interface records."""
+        """Parse_file exposes GTF rows as parser-interface records."""
 
         path = _write_gtf(tmp_path / "sample.gtf")
         records = GTFParser.parse_file(path)
@@ -459,7 +490,7 @@ class TestGTFParserParsingTextAndFiles:
         assert records[2].phase_value == 0  # check phase of CDS record
 
     def test_parse_file_respects_limit(self, tmp_path: Path) -> None:
-        """Test parse_text stops once the limit is reached."""
+        """Parse_text stops once the limit is reached."""
 
         path = _write_gtf(tmp_path / "sample.gtf")
         records = GTFParser.parse_file(path, limit=1)
@@ -469,17 +500,17 @@ class TestGTFParserParsingTextAndFiles:
 
 
 class TestGTFRecordFirstAttribute:
-    """Tests for GTFRecord.first_attribute."""
+    """GTFRecord.first_attribute."""
 
     def test_returns_first_value_for_known_key(self) -> None:
-        """Test the first attribute value is returned for a single-valued key."""
+        """The first attribute value is returned for a single-valued key."""
 
         record = GTFParser.parse_text(SAMPLE, limit=1)[0]
 
         assert record.first_attribute("gene_id") == "gene:1"
 
     def test_returns_none_for_missing_key(self) -> None:
-        """Test None is returned when the attribute key is absent."""
+        """None is returned when the attribute key is absent."""
 
         record = GTFParser.parse_text(SAMPLE, limit=1)[0]
 
@@ -487,15 +518,15 @@ class TestGTFRecordFirstAttribute:
 
 
 class TestGTFParserIndexSequenceNames:
-    """Tests for GTFParser.index_sequence_names."""
+    """GTFParser.index_sequence_names."""
 
     def test_unopened_parser_has_no_index_sequence_names(self) -> None:
-        """Test an unopened parser reports no index sequence names."""
+        """An unopened parser reports no index sequence names."""
 
         assert GTFParser().index_sequence_names == []
 
     def test_sequential_reader_has_no_index_sequence_names(self, tmp_path: Path) -> None:
-        """Test a sequentially-read file reports no index sequence names."""
+        """A sequentially-read file reports no index sequence names."""
 
         path = _write_gtf(tmp_path / "sample.gtf")
         parser = GTFParser(file_path=path, mode="sequential")
@@ -550,7 +581,7 @@ class TestGTFParserIndexIntegration:
     def test_index_sequence_names_matches_real_index(
         self, tmp_path: Path, htslib_toolchain: HtslibToolchain
     ) -> None:
-        """Test index_sequence_names reports the real index's declared contigs, in order."""
+        """Index_sequence_names reports the real index's declared contigs, in order."""
 
         path = _create_tabix_gtf_cli(tmp_path / "sample.gtf.gz", htslib_toolchain)
         parser = GTFParser(file_path=str(path), tabix_path="tabix-nonexistent-binary-for-test")
@@ -560,7 +591,7 @@ class TestGTFParserIndexIntegration:
     def test_seek_unknown_contig_returns_false_not_raises(
         self, tmp_path: Path, htslib_toolchain: HtslibToolchain
     ) -> None:
-        """Test seeking a contig absent from a real index returns False instead of raising."""
+        """Seeking a contig absent from a real index returns False instead of raising."""
 
         path = _create_tabix_gtf_cli(tmp_path / "sample.gtf.gz", htslib_toolchain)
         parser = GTFParser(file_path=str(path), tabix_path="tabix-nonexistent-binary-for-test")

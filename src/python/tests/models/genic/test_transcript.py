@@ -26,6 +26,8 @@ from ensembl.vep.common.containers import Attribute
 from ensembl.vep.common.methods import invalidate, reverse_complement
 from ensembl.vep.models.genic import Transcript, Exon, Intron, Translation, CDS, UTR
 from ensembl.vep.models.sequence import CoordSystem, Slice
+from ensembl.vep.corpus.synthetic.default import build_genome as build_default_genome
+from ensembl.vep.corpus.synthetic.heavy import build_genome as build_heavy_genome
 from tests.models.conftest import DummySlice
 
 
@@ -1045,6 +1047,214 @@ class TestTranscriptEquality:
     def test_different_type(self, transcript: Transcript, exon: Exon) -> None:
         """A transcript is not equal to another feature type."""
         assert transcript != exon
+
+
+class TestCdsAndTranslatedSeqEquivalence:
+    """``cds.seq`` and ``translated_seq`` must agree with a plain slice-and-translate of
+    ``spliced_seq``.
+
+    Stage 2's TVA reuse (``models/overlap/transcript_variation_allele.py``) leans on this
+    invariant instead of re-slicing/re-translating ``spliced_seq`` per overlap: ``cds.seq`` should
+    equal ``spliced_seq[cdna_coding_start-1 : +cds_length]``, and ``translated_seq`` should equal
+    ``translate_dna`` of that same slice, for every coding transcript regardless of shape.
+    """
+
+    @staticmethod
+    def _assert_cds_and_translated_seq_agree(transcript: Transcript) -> None:
+        cds_length = transcript.cds_length
+        cdna_coding_start = transcript.cdna_coding_start
+        spliced_seq = transcript.spliced_seq
+        if not cds_length or cdna_coding_start is None or spliced_seq is None:
+            return
+        start0 = cdna_coding_start - 1
+        expected_cds = spliced_seq[start0 : start0 + cds_length]
+
+        cds = transcript.cds
+        assert cds is not None and cds.seq is not None, transcript.stable_id
+        assert cds.seq == expected_cds, transcript.stable_id
+        assert transcript.translated_seq == translate_dna(expected_cds), transcript.stable_id
+
+    def test_n_filled_exon(self) -> None:
+        """The middle exon has no sequence of its own; ``cds.seq`` and ``spliced_seq`` N-fill it
+        the same way, so the invariant survives a coding exon with no real sequence."""
+        exon_one_seq, exon_three_seq = "ATGGGA", "CCCTAA"
+        slice_ = DummySlice(exon_one_seq + "N" * 9 + exon_three_seq, feature_start=1)
+        transcript = Transcript(start=1, end=21, strand=Strand.FORWARD, stable_id="ENST_NFILL", slice=slice_)
+        transcript.spliced_exons = [
+            Exon(start=1, end=6, strand=Strand.FORWARD, stable_id="ENST_NFILL_e0", slice=slice_),
+            Exon(start=10, end=12, strand=Strand.FORWARD, stable_id="ENST_NFILL_e1"),  # no slice
+            Exon(start=16, end=21, strand=Strand.FORWARD, stable_id="ENST_NFILL_e2", slice=slice_),
+        ]
+        transcript.seed_attrs(
+            first_coding_exon_index=0, last_coding_exon_index=2, exon_coding_start=1, exon_coding_end=6
+        )
+        self._assert_cds_and_translated_seq_agree(transcript)
+
+    def test_partial_last_codon(self) -> None:
+        """A CDS whose length is not a multiple of three (a ``cds_end_NF``-style partial CDS)."""
+        genomic_sequence = "ATGGGANNNCCCT"  # 13 bases: 4 whole codons plus a dangling base
+        slice_ = DummySlice(genomic_sequence, feature_start=1)
+        transcript = Transcript(
+            start=1, end=len(genomic_sequence), strand=Strand.FORWARD, stable_id="ENST_PARTIAL", slice=slice_
+        )
+        transcript.spliced_exons = [
+            Exon(start=1, end=13, strand=Strand.FORWARD, stable_id="ENST_PARTIAL_e0", slice=slice_),
+        ]
+        transcript.seed_attrs(
+            first_coding_exon_index=0, last_coding_exon_index=0, exon_coding_start=1, exon_coding_end=13
+        )
+        assert transcript.cds_length == 13
+        self._assert_cds_and_translated_seq_agree(transcript)
+
+    def test_reverse_strand(self) -> None:
+        """The invariant holds on the reverse strand, where transcript 5'->3' order runs against
+        descending genomic coordinates.
+
+        Exon A ("ATGGGA", transcript-sense 5' end) sits at the *higher* genomic range (10-15);
+        exon B ("CCCTAA", transcript-sense 3' end) sits at the *lower* range (1-6), with a 3-base
+        intronic gap between them. The underlying (forward-strand) slice holds each exon's own
+        reverse complement at its genomic position.
+        """
+        exon_a_cds, exon_b_cds = "ATGGGA", "CCCTAA"
+        chars = list("N" * 15)
+        chars[0:6] = list(reverse_complement(exon_b_cds))
+        chars[9:15] = list(reverse_complement(exon_a_cds))
+        slice_ = DummySlice("".join(chars), feature_start=1)
+
+        transcript = Transcript(start=1, end=15, strand=Strand.REVERSE, stable_id="ENST_REV", slice=slice_)
+        transcript.spliced_exons = [
+            Exon(start=10, end=15, strand=Strand.REVERSE, stable_id="ENST_REV_e0", slice=slice_),  # exon A
+            Exon(start=1, end=6, strand=Strand.REVERSE, stable_id="ENST_REV_e1", slice=slice_),  # exon B
+        ]
+        transcript.seed_attrs(
+            first_coding_exon_index=0, last_coding_exon_index=1, exon_coding_start=1, exon_coding_end=6
+        )
+        assert transcript.spliced_exons[0].seq == exon_a_cds
+        assert transcript.spliced_exons[1].seq == exon_b_cds
+        self._assert_cds_and_translated_seq_agree(transcript)
+
+    def test_single_exon_cds(self) -> None:
+        """A CDS entirely within one exon."""
+        genomic_sequence = "ATGGGACCCTAA"
+        slice_ = DummySlice(genomic_sequence, feature_start=1)
+        transcript = Transcript(
+            start=1, end=len(genomic_sequence), strand=Strand.FORWARD, stable_id="ENST_SINGLE", slice=slice_
+        )
+        transcript.spliced_exons = [
+            Exon(start=1, end=12, strand=Strand.FORWARD, stable_id="ENST_SINGLE_e0", slice=slice_),
+        ]
+        transcript.seed_attrs(
+            first_coding_exon_index=0, last_coding_exon_index=0, exon_coding_start=1, exon_coding_end=12
+        )
+        self._assert_cds_and_translated_seq_agree(transcript)
+
+    def test_cds_starting_at_exon_offset_one(self) -> None:
+        """The CDS begins on the very first base of its first coding exon (no 5' UTR in it)."""
+        genomic_sequence = "ATGGGACCCTAA"
+        slice_ = DummySlice(genomic_sequence, feature_start=1)
+        transcript = Transcript(
+            start=1, end=len(genomic_sequence), strand=Strand.FORWARD, stable_id="ENST_OFFSET1", slice=slice_
+        )
+        transcript.spliced_exons = [
+            Exon(start=1, end=12, strand=Strand.FORWARD, stable_id="ENST_OFFSET1_e0", slice=slice_),
+        ]
+        transcript.seed_attrs(
+            first_coding_exon_index=0, last_coding_exon_index=0, exon_coding_start=1, exon_coding_end=12
+        )
+        assert transcript.cdna_coding_start == 1
+        self._assert_cds_and_translated_seq_agree(transcript)
+
+    def test_single_exon_cds_with_utr_on_both_sides_forward(self) -> None:
+        """Regression test: the first coding exon is also the last, with UTR flanking the CDS on
+        both sides within that one exon (``exon_coding_start > 1``).
+
+        Before the fix, the last-coding-exon slice (``[:exon_coding_end]``) was taken from the
+        string the first-coding-exon slice had already trimmed to ``[exon_coding_start - 1:]``,
+        so ``exon_coding_end`` landed ``exon_coding_start - 1`` bases too far right -- keeping
+        that many extra 3' UTR bases as if they were CDS.
+        """
+        five_prime_utr, cds_sequence, three_prime_utr = "CCC", "ATGGGACCCTAA", "GGGGG"
+        genomic_sequence = five_prime_utr + cds_sequence + three_prime_utr
+        slice_ = DummySlice(genomic_sequence, feature_start=1)
+        transcript = Transcript(
+            start=1,
+            end=len(genomic_sequence),
+            strand=Strand.FORWARD,
+            stable_id="ENST_SINGLE_UTR",
+            slice=slice_,
+        )
+        transcript.spliced_exons = [
+            Exon(
+                start=1,
+                end=len(genomic_sequence),
+                strand=Strand.FORWARD,
+                stable_id="ENST_SINGLE_UTR_e0",
+                slice=slice_,
+            ),
+        ]
+        transcript.seed_attrs(
+            first_coding_exon_index=0,
+            last_coding_exon_index=0,
+            exon_coding_start=len(five_prime_utr) + 1,
+            exon_coding_end=len(five_prime_utr) + len(cds_sequence),
+        )
+
+        assert transcript.cds is not None
+        assert transcript.cds.seq == cds_sequence
+        assert transcript.cds_length == len(cds_sequence)
+        self._assert_cds_and_translated_seq_agree(transcript)
+
+    def test_single_exon_cds_with_utr_on_both_sides_reverse(self) -> None:
+        """The reverse-strand mirror of the forward regression test above."""
+        five_prime_utr, cds_sequence, three_prime_utr = "CCC", "ATGGGACCCTAA", "GGGGG"
+        transcript_sense_sequence = five_prime_utr + cds_sequence + three_prime_utr
+        slice_ = DummySlice(reverse_complement(transcript_sense_sequence), feature_start=1)
+        transcript = Transcript(
+            start=1,
+            end=len(transcript_sense_sequence),
+            strand=Strand.REVERSE,
+            stable_id="ENST_SINGLE_UTR_REV",
+            slice=slice_,
+        )
+        transcript.spliced_exons = [
+            Exon(
+                start=1,
+                end=len(transcript_sense_sequence),
+                strand=Strand.REVERSE,
+                stable_id="ENST_SINGLE_UTR_REV_e0",
+                slice=slice_,
+            ),
+        ]
+        transcript.seed_attrs(
+            first_coding_exon_index=0,
+            last_coding_exon_index=0,
+            exon_coding_start=len(five_prime_utr) + 1,
+            exon_coding_end=len(five_prime_utr) + len(cds_sequence),
+        )
+
+        assert transcript.spliced_exons[0].seq == transcript_sense_sequence
+        assert transcript.cds is not None
+        assert transcript.cds.seq == cds_sequence
+        assert transcript.cds_length == len(cds_sequence)
+        self._assert_cds_and_translated_seq_agree(transcript)
+
+    @pytest.mark.parametrize(
+        ("genome_builder", "corpus_label"),
+        [
+            pytest.param(build_default_genome, "synthetic", id="synthetic"),
+            pytest.param(build_heavy_genome, "heavy_locus", id="heavy_locus"),
+        ],
+    )
+    def test_every_coding_transcript_in_the_corpus_agrees(
+        self, genome_builder: Callable[[], tuple[Slice, list[Transcript]]], corpus_label: str
+    ) -> None:
+        """The invariant holds for every coding transcript in the synthetic and heavy-locus
+        corpora, not just hand-built fixtures."""
+        _, transcripts = genome_builder()
+        coding_transcripts = [transcript for transcript in transcripts if transcript.cds_length]
+        assert coding_transcripts, f"expected at least one coding transcript in the {corpus_label} corpus"
+        for transcript in coding_transcripts:
+            self._assert_cds_and_translated_seq_agree(transcript)
 
 
 SINGLE_EXON_CODING_SEQUENCE = "ATG" + "GGG" * 10 + "TAA"

@@ -13,7 +13,9 @@
 # limitations under the License.
 
 # pylint: disable=redefined-outer-name
-"""Unit tests for TranscriptVariationAllele class."""
+"""Tests for transcript variation alleles."""
+
+from __future__ import annotations
 
 from collections.abc import Callable
 
@@ -34,15 +36,30 @@ from ensembl.vep.models.genic import Exon, Transcript, Translation
 from ensembl.vep.models.overlap import TranscriptVariationAllele
 from ensembl.vep.models.overlap.transcript_variation_allele import (
     MAX_READTHROUGH_BASES,
-    Position as TranscriptPosition,
+    Position,
     _edited_boundary,
 )
 from ensembl.vep.models.sequence import CoordSystem, Slice
 from ensembl.vep.models.variation import VariationAllele
-from tests.models.conftest import DummySlice
+from ensembl.vep.output.factory.base import AnnotatedVariantFactory
 
 CODING_SEQUENCE = "ATG" + "GGG" * 10 + "TAA"  # (M + 10*G + stop), transcript-sense
 REFERENCE_PEPTIDE = "M" + "G" * 10 + "*"
+
+
+class DummySlice(Slice):
+    """Slice with a sequence supplied through the unsafe test hook."""
+
+    def __init__(self, sequence: str) -> None:
+        super().__init__(
+            coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
+            seq_region_name="chrPin",
+            start=1,
+            end=len(sequence),
+            strand=Strand.FORWARD,
+        )
+        with self.unsafe() as unsafe_slice:
+            setattr(unsafe_slice, "_seq", sequence)
 
 
 def _write_sequence_at_position(chars: list[str], position: int, sequence: str) -> None:
@@ -213,7 +230,7 @@ SINGLE_EXON_CDS_START = 4
 """Genomic position of the first coding base of ``single_exon_transcript``."""
 
 SingleExonTranscript = Callable[[ExonPhase | None], Transcript]
-"""Builds the single-exon transcript, its exon carrying the given phase."""
+"""Build the single-exon transcript with the given phase."""
 
 
 def _build_single_exon_transcript(phase: ExonPhase | None) -> Transcript:
@@ -241,18 +258,18 @@ def fixture_single_exon_transcript() -> SingleExonTranscript:
 
 
 class TestTranscriptVariationAlleleInitialization:
-    """Test TranscriptVariationAllele initialization."""
+    """TranscriptVariationAllele initialization."""
 
     def test_initialization_without_keywords(
         self, transcript: Transcript, variation_allele: VariationAllele
     ) -> None:
-        """Test that initializing without keywords raises error."""
+        """Initializing without keywords raises error."""
         with pytest.raises(TypeError, match="takes 1 positional argument"):
             _ = TranscriptVariationAllele(transcript, variation_allele)  # type: ignore[misc]
 
 
 class TestTranscriptVariationAlleleProperties:
-    """Test TranscriptVariationAllele properties."""
+    """TranscriptVariationAllele properties."""
 
     def test_core_properties(
         self,
@@ -260,18 +277,18 @@ class TestTranscriptVariationAlleleProperties:
         transcript: Transcript,
         variation_allele: VariationAllele,
     ) -> None:
-        """Test that feature and overlapping_feature are set correctly."""
+        """Feature and overlapping_feature are set correctly."""
         assert transcript_variation_allele.feature == transcript
         assert transcript_variation_allele.overlapping_feature == variation_allele
 
     def test_default_properties(self, transcript_variation_allele: TranscriptVariationAllele) -> None:
-        """Test that default properties are set correctly."""
+        """Default properties are set correctly."""
         assert transcript_variation_allele.is_reference is False
         assert transcript_variation_allele.readthrough == Readthrough.NONE
 
 
 class TestCodonAlleles:
-    """Test codon and peptide window alleles."""
+    """Codon and peptide window alleles."""
 
     @pytest.mark.parametrize(
         (
@@ -310,7 +327,7 @@ class TestCodonAlleles:
         reference_peptide: str,
         alternate_peptide: str,
     ) -> None:
-        """Test that codon and peptide alleles cover every codon the variant touches.
+        """Codon and peptide alleles cover every codon the variant touches.
 
         Codons carry VEP's display casing -- lower case but for the allele's own bases -- so the
         expectations below are cased, while the peptides are translated from the bases alone.
@@ -353,7 +370,7 @@ class TestCodonAlleles:
         reference_peptide: str,
         alternate_peptide: str,
     ) -> None:
-        """Test that reverse-strand codon alleles are transcript-sense."""
+        """Reverse-strand codon alleles are transcript-sense."""
         variation_allele = _variation_allele(reverse_transcript, start, end, reference, alternate)
         transcript_variation_allele = _transcript_variation_allele(reverse_transcript, variation_allele)
 
@@ -363,7 +380,7 @@ class TestCodonAlleles:
         assert transcript_variation_allele.alternate_peptide == alternate_peptide
 
     def test_codon_alleles_include_the_whole_stop_codon(self, transcript: Transcript) -> None:
-        """Test that a stop-codon SNV's codon window covers all three stop-codon bases."""
+        """A stop-codon SNV's codon window covers all three stop-codon bases."""
         variation_allele = _variation_allele(transcript, 52, 52, "T", "A")
         transcript_variation_allele = _transcript_variation_allele(transcript, variation_allele)
 
@@ -383,7 +400,7 @@ class TestCodonAlleles:
     def test_codon_alleles_are_none_outside_cds(
         self, transcript: Transcript, start: int, end: int, reference: str, alternate: str
     ) -> None:
-        """Test that a variant outside the CDS has no codon or peptide alleles."""
+        """A variant outside the CDS has no codon or peptide alleles."""
         variation_allele = _variation_allele(transcript, start, end, reference, alternate)
         transcript_variation_allele = _transcript_variation_allele(transcript, variation_allele)
 
@@ -393,7 +410,7 @@ class TestCodonAlleles:
         assert transcript_variation_allele.alternate_peptide is None
 
     def test_codon_alleles_are_none_without_spliced_exons(self, transcript_without_exons: Transcript) -> None:
-        """Test that a transcript without exons has no codon or peptide alleles."""
+        """A transcript without exons has no codon or peptide alleles."""
         variation_allele = _variation_allele(transcript_without_exons, 5, 5, "N", "A")
         transcript_variation_allele = _transcript_variation_allele(transcript_without_exons, variation_allele)
 
@@ -402,7 +419,7 @@ class TestCodonAlleles:
 
 
 class TestCdsLengthChange:
-    """Test the net coding length change of a variant."""
+    """The net coding length change of a variant."""
 
     @pytest.mark.parametrize(
         ("start", "end", "reference", "alternate", "cds_length_change"),
@@ -429,7 +446,7 @@ class TestCdsLengthChange:
         alternate: str,
         cds_length_change: int,
     ) -> None:
-        """Test that the length change counts only the coding bases the variant edits."""
+        """The length change counts only the coding bases the variant edits."""
         variation_allele = _variation_allele(transcript, start, end, reference, alternate)
         transcript_variation_allele = _transcript_variation_allele(transcript, variation_allele)
 
@@ -453,7 +470,7 @@ class TestCdsLengthChange:
         alternate: str,
         cds_length_change: int,
     ) -> None:
-        """Test that the length change is strand-independent."""
+        """The length change is strand-independent."""
         variation_allele = _variation_allele(reverse_transcript, start, end, reference, alternate)
         transcript_variation_allele = _transcript_variation_allele(reverse_transcript, variation_allele)
 
@@ -470,7 +487,7 @@ class TestCdsLengthChange:
     def test_cds_length_change_is_none_outside_cds(
         self, transcript: Transcript, start: int, end: int, reference: str, alternate: str
     ) -> None:
-        """Test that a variant outside the CDS has no coding length change."""
+        """A variant outside the CDS has no coding length change."""
         variation_allele = _variation_allele(transcript, start, end, reference, alternate)
         transcript_variation_allele = _transcript_variation_allele(transcript, variation_allele)
 
@@ -479,14 +496,14 @@ class TestCdsLengthChange:
     def test_cds_length_change_is_none_without_spliced_exons(
         self, transcript_without_exons: Transcript
     ) -> None:
-        """Test that a transcript without exons has no coding length change."""
+        """A transcript without exons has no coding length change."""
         variation_allele = _variation_allele(transcript_without_exons, 5, 5, "N", "A")
         transcript_variation_allele = _transcript_variation_allele(transcript_without_exons, variation_allele)
 
         assert transcript_variation_allele.cds_length_change is None
 
     def test_cds_length_change_excludes_cdna_only_bases(self, transcript: Transcript) -> None:
-        """Test that a deletion across the CDS start counts coding bases, not cDNA bases."""
+        """A deletion across the CDS start counts coding bases, not cDNA bases."""
         variation_allele = _variation_allele(transcript, 8, 12, "NNATG", "-")
         transcript_variation_allele = _transcript_variation_allele(transcript, variation_allele)
         cdna_edit = transcript_variation_allele._cdna_edit  # pylint: disable=protected-access
@@ -497,10 +514,10 @@ class TestCdsLengthChange:
 
 
 class TestSequenceEditGeometry:
-    """Test CDS and cDNA edit geometry."""
+    """CDS and cDNA edit geometry."""
 
     def test_cds_and_cdna_edit_footprints_differ_at_cds_start(self, transcript: Transcript) -> None:
-        """Test that a variant across the CDS start has distinct CDS and cDNA footprints."""
+        """A variant across the CDS start has distinct CDS and cDNA footprints."""
         # The 5' UTR is genomic 1-9 and the CDS starts at 10, so this removes 2 UTR and 3 CDS bases.
         variation_allele = _variation_allele(transcript, 8, 12, "NNATG", "-")
         transcript_variation_allele = _transcript_variation_allele(transcript, variation_allele)
@@ -525,15 +542,15 @@ class TestSequenceEditGeometry:
     def test_edited_boundary(
         self, original_boundary: int, edit_start: int, edit_end: int, length_change: int, expected: int
     ) -> None:
-        """Test that a boundary is kept, shifted, or anchored to the edit start."""
+        """A boundary is kept, shifted, or anchored to the edit start."""
         assert _edited_boundary(original_boundary, edit_start, edit_end, length_change) == expected
 
 
 class TestFullCdsAlleles:
-    """Test reference and alternate CDS and peptide properties."""
+    """Reference and alternate CDS and peptide properties."""
 
     def test_reference_cds_and_peptide(self, transcript: Transcript) -> None:
-        """Test that a forward transcript exposes its unedited CDS and peptide."""
+        """A forward transcript exposes its unedited CDS and peptide."""
         variation_allele = _variation_allele(transcript, 5, 5, "N", "A")
         transcript_variation_allele = _transcript_variation_allele(transcript, variation_allele)
 
@@ -553,7 +570,7 @@ class TestFullCdsAlleles:
     def test_alternate_cds_is_unchanged_by_non_coding_variant(
         self, transcript: Transcript, start: int, end: int, reference: str, alternate: str
     ) -> None:
-        """Test that a variant outside the CDS leaves the alternate CDS and peptide unchanged."""
+        """A variant outside the CDS leaves the alternate CDS and peptide unchanged."""
         variation_allele = _variation_allele(transcript, start, end, reference, alternate)
         transcript_variation_allele = _transcript_variation_allele(transcript, variation_allele)
 
@@ -561,7 +578,7 @@ class TestFullCdsAlleles:
         assert transcript_variation_allele.alternate_cds_peptide == REFERENCE_PEPTIDE
 
     def test_alternate_cds_is_unchanged_by_variant_outside_transcript(self) -> None:
-        """Test that a variant beyond the transcript leaves the alternate CDS unchanged."""
+        """A variant beyond the transcript leaves the alternate CDS unchanged."""
         transcript = _forward_transcript(genome_length=120)
         variation_allele = _variation_allele(transcript, 100, 100, "N", "A")
         transcript_variation_allele = _transcript_variation_allele(transcript, variation_allele)
@@ -578,7 +595,7 @@ class TestFullCdsAlleles:
     def test_alternate_cds_peptide_loses_start_methionine(
         self, transcript: Transcript, start: int, end: int, reference: str, alternate: str
     ) -> None:
-        """Test that deleting start-codon bases removes the start methionine."""
+        """Deleting start-codon bases removes the start methionine."""
         variation_allele = _variation_allele(transcript, start, end, reference, alternate)
         transcript_variation_allele = _transcript_variation_allele(transcript, variation_allele)
 
@@ -586,7 +603,7 @@ class TestFullCdsAlleles:
         assert not transcript_variation_allele.alternate_cds_peptide.startswith("M")
 
     def test_alternate_cds_peptide_keeps_start_methionine(self, transcript: Transcript) -> None:
-        """Test that an edit preserving the start codon retains the start methionine."""
+        """An edit preserving the start codon retains the start methionine."""
         variation_allele = _variation_allele(transcript, 11, 10, "A", "AT")
         transcript_variation_allele = _transcript_variation_allele(transcript, variation_allele)
 
@@ -594,7 +611,7 @@ class TestFullCdsAlleles:
         assert transcript_variation_allele.alternate_cds_peptide.startswith("M")
 
     def test_alternate_cds_anchors_at_start_codon_delins(self, transcript: Transcript) -> None:
-        """Test that a delins across the start codon anchors the alternate CDS at the edit start."""
+        """A delins across the start codon anchors the alternate CDS at the edit start."""
         assert transcript.spliced_seq is not None
         # Replace 2 bases of 5' UTR and the first ATG base; keep the untouched CDS remainder.
         expected_alternate_cds = "G" * 10 + transcript.spliced_seq[10:45]
@@ -606,7 +623,7 @@ class TestFullCdsAlleles:
         assert not transcript_variation_allele.alternate_cds_peptide.startswith("M")
 
     def test_alternate_cds_peptide_loses_stop_codon(self, transcript_with_utr: Transcript) -> None:
-        """Test that a stop-codon SNV stays bounded by the annotated CDS end."""
+        """A stop-codon SNV stays bounded by the annotated CDS end."""
         variation_allele = _variation_allele(transcript_with_utr, 52, 52, "T", "A")
         transcript_variation_allele = _transcript_variation_allele(transcript_with_utr, variation_allele)
 
@@ -623,7 +640,7 @@ class TestFullCdsAlleles:
     def test_alternate_cds_truncates_at_stop_codon_edit(
         self, transcript_with_utr: Transcript, start: int, end: int, reference: str, alternate: str
     ) -> None:
-        """Test that an edit across the stop codon excludes sequence beyond the CDS end."""
+        """An edit across the stop codon excludes sequence beyond the CDS end."""
         assert transcript_with_utr.spliced_seq is not None
         expected_alternate_cds = transcript_with_utr.spliced_seq[9:42]  # ATG and the poly-G run
         variation_allele = _variation_allele(transcript_with_utr, start, end, reference, alternate)
@@ -633,7 +650,7 @@ class TestFullCdsAlleles:
         assert transcript_variation_allele.alternate_cds_peptide == "M" + "G" * 10
 
     def test_alternate_cds_is_empty_after_whole_cds_deletion(self, transcript_with_utr: Transcript) -> None:
-        """Test that deleting the complete CDS produces an empty alternate CDS."""
+        """Deleting the complete CDS produces an empty alternate CDS."""
         variation_allele = _variation_allele(transcript_with_utr, 10, 54, CODING_SEQUENCE, "-")
         transcript_variation_allele = _transcript_variation_allele(transcript_with_utr, variation_allele)
 
@@ -643,7 +660,7 @@ class TestFullCdsAlleles:
     def test_alternate_cds_peptide_gains_residue_after_inframe_insertion(
         self, transcript_with_utr: Transcript
     ) -> None:
-        """Test that an inframe CDS insertion adds a residue to the alternate peptide."""
+        """An inframe CDS insertion adds a residue to the alternate peptide."""
         variation_allele = _variation_allele(transcript_with_utr, 15, 14, "-", "GGG")
         transcript_variation_allele = _transcript_variation_allele(transcript_with_utr, variation_allele)
 
@@ -652,7 +669,7 @@ class TestFullCdsAlleles:
     def test_alternate_cds_peptide_is_unchanged_by_reverse_strand_utr_snv(
         self, reverse_transcript: Transcript
     ) -> None:
-        """Test that a reverse-strand 5' UTR SNV leaves the peptide unchanged."""
+        """A reverse-strand 5' UTR SNV leaves the peptide unchanged."""
         variation_allele = _variation_allele(reverse_transcript, 72, 72, "N", "A")
         transcript_variation_allele = _transcript_variation_allele(reverse_transcript, variation_allele)
 
@@ -661,7 +678,7 @@ class TestFullCdsAlleles:
     def test_alternate_cds_peptide_loses_start_methionine_on_reverse_strand(
         self, reverse_transcript: Transcript
     ) -> None:
-        """Test that a reverse-strand deletion across the start codon removes the start methionine."""
+        """A reverse-strand deletion across the start codon removes the start methionine."""
         variation_allele = _variation_allele(reverse_transcript, 64, 67, "NNNN", "-")
         transcript_variation_allele = _transcript_variation_allele(reverse_transcript, variation_allele)
 
@@ -669,7 +686,7 @@ class TestFullCdsAlleles:
         assert not transcript_variation_allele.alternate_cds_peptide.startswith("M")
 
     def test_cds_alleles_are_none_without_spliced_exons(self, transcript_without_exons: Transcript) -> None:
-        """Test that a transcript without exons has no reference or alternate CDS."""
+        """A transcript without exons has no reference or alternate CDS."""
         variation_allele = _variation_allele(transcript_without_exons, 5, 5, "N", "A")
         transcript_variation_allele = _transcript_variation_allele(transcript_without_exons, variation_allele)
 
@@ -680,7 +697,7 @@ class TestFullCdsAlleles:
 
 
 class TestFullCdsAllelesReadthrough:
-    """Test CDS and peptide properties across readthrough levels."""
+    """CDS and peptide properties across readthrough levels."""
 
     @pytest.mark.parametrize(
         ("start", "end", "reference", "alternate"),
@@ -693,7 +710,7 @@ class TestFullCdsAllelesReadthrough:
     def test_alternate_cds_is_readthrough_invariant_when_stop_codon_survives(
         self, readthrough_transcript: Transcript, start: int, end: int, reference: str, alternate: str
     ) -> None:
-        """Test that readthrough levels have no effect when the stop codon survives."""
+        """Readthrough levels have no effect when the stop codon survives."""
         variation_allele = _variation_allele(readthrough_transcript, start, end, reference, alternate)
         alternate_cds_by_level = {
             _transcript_variation_allele(
@@ -707,7 +724,7 @@ class TestFullCdsAllelesReadthrough:
     def test_utr_readthrough_finds_stop_codon_in_three_prime_utr(
         self, readthrough_transcript: Transcript
     ) -> None:
-        """Test that UTR readthrough extends the alternate CDS to the next in-frame stop codon."""
+        """UTR readthrough extends the alternate CDS to the next in-frame stop codon."""
         variation_allele = _variation_allele(readthrough_transcript, 52, 52, "T", "A")
         default = _transcript_variation_allele(readthrough_transcript, variation_allele)
         readthrough = _transcript_variation_allele(
@@ -720,7 +737,7 @@ class TestFullCdsAllelesReadthrough:
         assert readthrough.alternate_cds == default.alternate_cds + "TAA"
 
     def test_utr_readthrough_stops_at_transcript_end(self) -> None:
-        """Test that UTR readthrough does not read past the spliced transcript."""
+        """UTR readthrough does not read past the spliced transcript."""
         transcript = _forward_transcript(three_prime_utr="N" * 20, downstream_extra="N" + "TAA" + "AAAA")
         variation_allele = _variation_allele(transcript, 52, 52, "T", "A")
         readthrough = _transcript_variation_allele(transcript, variation_allele, readthrough=Readthrough.UTR)
@@ -731,7 +748,7 @@ class TestFullCdsAllelesReadthrough:
         assert "*" not in readthrough.alternate_cds_peptide
 
     def test_beyond_transcript_readthrough_reads_downstream_flanking_sequence(self) -> None:
-        """Test that beyond-transcript readthrough finds a stop codon in downstream sequence."""
+        """Beyond-transcript readthrough finds a stop codon in downstream sequence."""
         transcript = _forward_transcript(three_prime_utr="N" * 20, downstream_extra="N" + "TAA" + "AAAA")
         variation_allele = _variation_allele(transcript, 52, 52, "T", "A")
         beyond = _transcript_variation_allele(
@@ -744,7 +761,7 @@ class TestFullCdsAllelesReadthrough:
         assert beyond.alternate_cds_peptide.endswith("*")
 
     def test_beyond_transcript_readthrough_when_downstream_flanking_sequence_not_available(self) -> None:
-        """Test that beyond-transcript readthrough finds a stop codon in downstream sequence."""
+        """Beyond-transcript readthrough finds a stop codon in downstream sequence."""
         transcript = _forward_transcript()
         variation_allele = _variation_allele(transcript, 52, 52, "T", "A")
         beyond = _transcript_variation_allele(
@@ -757,7 +774,7 @@ class TestFullCdsAllelesReadthrough:
         assert beyond.alternate_cds_peptide.endswith("X")
 
     def test_beyond_transcript_readthrough_is_bounded(self, long_readthrough_transcript: Transcript) -> None:
-        """Test that beyond-transcript readthrough is limited to the maximum distance."""
+        """Beyond-transcript readthrough is limited to the maximum distance."""
         variation_allele = _variation_allele(long_readthrough_transcript, 52, 52, "T", "A")
         beyond = _transcript_variation_allele(
             long_readthrough_transcript, variation_allele, readthrough=Readthrough.BEYOND_TRANSCRIPT
@@ -769,7 +786,7 @@ class TestFullCdsAllelesReadthrough:
         assert "*" not in beyond.alternate_cds_peptide
 
     def test_reference_cds_is_readthrough_invariant(self, readthrough_transcript: Transcript) -> None:
-        """Test that the reference CDS is unchanged by the readthrough level."""
+        """The reference CDS is unchanged by the readthrough level."""
         variation_allele = _variation_allele(readthrough_transcript, 52, 52, "T", "A")
         reference_cds_by_level = {
             _transcript_variation_allele(
@@ -783,7 +800,7 @@ class TestFullCdsAllelesReadthrough:
     def test_cds_peptides_translate_cds_at_non_default_readthrough(
         self, readthrough_transcript: Transcript
     ) -> None:
-        """Test that nucleotide and peptide accessors use the same readthrough level."""
+        """Nucleotide and peptide accessors use the same readthrough level."""
         variation_allele = _variation_allele(readthrough_transcript, 52, 52, "T", "A")
         transcript_variation_allele = _transcript_variation_allele(
             readthrough_transcript, variation_allele, readthrough=Readthrough.UTR
@@ -801,7 +818,7 @@ class TestFullCdsAllelesReadthrough:
     def test_readthrough_reassignment_invalidates_cached_alleles(
         self, readthrough_transcript: Transcript
     ) -> None:
-        """Test that reassigning readthrough invalidates cached allele sequences."""
+        """Reassigning readthrough invalidates cached allele sequences."""
         variation_allele = _variation_allele(readthrough_transcript, 52, 52, "T", "A")
         transcript_variation_allele = _transcript_variation_allele(readthrough_transcript, variation_allele)
 
@@ -810,7 +827,7 @@ class TestFullCdsAllelesReadthrough:
         assert transcript_variation_allele.alternate_cds_peptide == "M" + "G" * 10 + "K*"
 
     def test_downstream_flanking_sequence_is_reverse_complemented_on_reverse_strand(self) -> None:
-        """Test that reverse-strand downstream sequence is reverse-complemented."""
+        """Reverse-strand downstream sequence is reverse-complemented."""
         genomic_slice = DummySlice("ACGTACGTACGTACGTACG" + "N" * 30)
         transcript = Transcript(
             start=20, end=30, strand=Strand.REVERSE, stable_id="ENST_REV", slice=genomic_slice
@@ -829,7 +846,7 @@ class TestFullCdsAllelesReadthrough:
     def test_downstream_flanking_sequence_is_empty_when_length_is_zero(
         self, transcript_with_utr: Transcript
     ) -> None:
-        """Test that missing downstream slice sequence returns an empty string."""
+        """Missing downstream slice sequence returns an empty string."""
         variation_allele = _variation_allele(transcript_with_utr, 52, 52, "T", "A")
         transcript_variation_allele = _transcript_variation_allele(transcript_with_utr, variation_allele)
         # pylint: disable-next=protected-access
@@ -837,7 +854,7 @@ class TestFullCdsAllelesReadthrough:
         assert flank == ""
 
     def test_downstream_flanking_sequence_is_empty_when_slice_is_none(self) -> None:
-        """Test that a transcript with no slice returns empty string"""
+        """A transcript with no slice returns empty string"""
         # create a transcript with no slice
         transcript = Transcript(start=1, end=74, strand=Strand.FORWARD, stable_id="ENST_FWD")
         transcript.spliced_exons = _forward_exons(None)
@@ -849,7 +866,7 @@ class TestFullCdsAllelesReadthrough:
         assert flank == ""
 
     def test_downstream_flanking_sequence_is_empty_when_slice_seq_is_none(self) -> None:
-        """Test that a transcript with no slice sequence returns empty string"""
+        """A transcript with no slice sequence returns empty string"""
         # create a slice with no sequence source
         slice_no_seq = Slice(
             coord_system=CoordSystem(name="chromosome", level=CoordSystemLevel.CHROMOSOME),
@@ -871,7 +888,7 @@ class TestFullCdsAllelesReadthrough:
         assert flank == ""
 
     def test_downstream_flanking_sequence_is_empty_past_slice(self, transcript_with_utr: Transcript) -> None:
-        """Test that missing downstream slice sequence returns an empty string."""
+        """Missing downstream slice sequence returns an empty string."""
         variation_allele = _variation_allele(transcript_with_utr, 52, 52, "T", "A")
         transcript_variation_allele = _transcript_variation_allele(transcript_with_utr, variation_allele)
         # pylint: disable-next=protected-access
@@ -882,7 +899,7 @@ class TestFullCdsAllelesReadthrough:
     def test_downstream_flanking_sequence_reverse_transcript_is_empty_past_slice(
         self, reverse_transcript: Transcript
     ) -> None:
-        """Test that missing downstream slice sequence returns an empty string with
+        """Missing downstream slice sequence returns an empty string with
         a transcript on the reverse strand."""
         variation_allele = _variation_allele(reverse_transcript, 52, 52, "T", "A")
         transcript_variation_allele = _transcript_variation_allele(reverse_transcript, variation_allele)
@@ -893,12 +910,12 @@ class TestFullCdsAllelesReadthrough:
 
 
 class TestReferenceCdsPeptideReuse:
-    """Test reuse of the transcript's own sequences for the reference CDS and peptide."""
+    """Reuse of the transcript's own sequences for the reference CDS and peptide."""
 
     def test_reference_cds_peptide_reuses_translated_seq_before_translation_resolves(
         self, transcript: Transcript
     ) -> None:
-        """Test that the reference peptide is the transcript's translated sequence."""
+        """The reference peptide is the transcript's translated sequence."""
         assert not is_resolved(transcript, "_translation")
         variation_allele = _variation_allele(transcript, 5, 5, "N", "A")
         transcript_variation_allele = _transcript_variation_allele(transcript, variation_allele)
@@ -912,7 +929,7 @@ class TestReferenceCdsPeptideReuse:
     def test_reference_cds_peptide_reuses_translated_seq_for_seeded_translation_without_seq(
         self, transcript: Transcript
     ) -> None:
-        """Test that a seeded translation without its own sequence, as GFF/GTF builds, is reused."""
+        """A seeded translation without its own sequence, as GFF/GTF builds, is reused."""
         derived_translation = transcript.translation
         assert derived_translation is not None
         seeded_translation = Translation(
@@ -936,7 +953,7 @@ class TestReferenceCdsPeptideReuse:
         )
 
     def test_reference_cds_peptide_retranslates_seeded_curated_peptide(self, transcript: Transcript) -> None:
-        """Test that a seeded curated peptide is not trusted as the reference peptide."""
+        """A seeded curated peptide is not trusted as the reference peptide."""
         curated_translation = Translation(start=1, end=36, stable_id="ENSP_CURATED")
         curated_translation.seq = "CURATED_PEPTIDE_STRING"
         transcript.seed_attrs(translation=curated_translation)
@@ -948,7 +965,7 @@ class TestReferenceCdsPeptideReuse:
         assert transcript_variation_allele.reference_cds_peptide == REFERENCE_PEPTIDE
 
     def test_reference_cds_alleles_ignore_cds_seq_of_wrong_length(self, transcript: Transcript) -> None:
-        """Test that a cached CDS sequence disagreeing with ``cds_length`` is not reused."""
+        """A cached CDS sequence disagreeing with ``cds_length`` is not reused."""
         cds = transcript.cds
         assert cds is not None and cds.seq is not None
         cds.seq = cds.seq[:-3]
@@ -960,7 +977,7 @@ class TestReferenceCdsPeptideReuse:
         assert transcript_variation_allele.reference_cds_peptide == REFERENCE_PEPTIDE
 
     def test_reference_cds_reuses_cds_seq(self, transcript: Transcript) -> None:
-        """Test that the reference CDS is the transcript's own ``cds.seq`` object."""
+        """The reference CDS is the transcript's own ``cds.seq`` object."""
         cds = transcript.cds
         assert cds is not None and cds.seq is not None
         variation_allele = _variation_allele(transcript, 5, 5, "N", "A")
@@ -971,7 +988,7 @@ class TestReferenceCdsPeptideReuse:
     def test_reference_cds_peptide_reuse_is_independent_of_resolution_order(
         self, transcript: Transcript
     ) -> None:
-        """Test that a later overlap reuses a translation resolved by an earlier one."""
+        """A later overlap reuses a translation resolved by an earlier one."""
         first_variation_allele = _variation_allele(transcript, 5, 5, "N", "A")
         first_overlap = _transcript_variation_allele(transcript, first_variation_allele)
         assert first_overlap.reference_cds_peptide == REFERENCE_PEPTIDE
@@ -985,10 +1002,10 @@ class TestReferenceCdsPeptideReuse:
 
 
 class TestFullCdsAllelesInvalidation:
-    """Test full CDS alleles after the transcript's exons are reassigned."""
+    """Full CDS alleles after the transcript's exons are reassigned."""
 
     def test_reference_cds_alleles_follow_reassigned_exons(self) -> None:
-        """Test that a fresh overlap sees the new CDS when the translation was never resolved."""
+        """A fresh overlap sees the new CDS when the translation was never resolved."""
         transcript = _forward_transcript()
         variation_allele = _variation_allele(transcript, 5, 5, "N", "A")
         before = _transcript_variation_allele(transcript, variation_allele)
@@ -1003,7 +1020,7 @@ class TestFullCdsAllelesInvalidation:
         assert after.reference_cds_peptide == transcript.translated_seq == translate_dna(new_coding_sequence)
 
     def test_reference_cds_peptide_is_stale_once_translation_resolved(self) -> None:
-        """Test that a resolved translation survives an exon reassignment, while the CDS does not."""
+        """A resolved translation survives an exon reassignment, while the CDS does not."""
         # Known trade-off: _translation is not in Transcript._CODING_DERIVATIONS, so translated_seq
         # itself is already stale. Production never reassigns spliced_exons after build.
         transcript = _forward_transcript()
@@ -1083,7 +1100,7 @@ class TestDisplayCase:
         assert (overlap.reference_peptide, overlap.alternate_peptide) == ("G", "E")
 
     def test_the_codon_fact_is_upper_case(self, single_exon_transcript: SingleExonTranscript) -> None:
-        """Upper-case displayed codons before comparing bases in the fact layer."""
+        """Facts compare bases, so the fact layer upper-cases the displayed codons first."""
         overlap = _codon_window_overlap(single_exon_transcript, 4, 4, "G", "A")
 
         assert get_fact(FactContext(overlap=overlap), "_codon_alleles") == ("GGG", "GAG")
@@ -1198,9 +1215,9 @@ class TestPositions:
         self,
         start: int,
         end: int,
-        cdna: TranscriptPosition | None,
-        cds: TranscriptPosition | None,
-        protein: TranscriptPosition | None,
+        cdna: Position | None,
+        cds: Position | None,
+        protein: Position | None,
     ) -> None:
         """A sequence the variant misses gives no position; one end off it gives None there."""
         overlap = _positions_overlap(_positions_transcript(Strand.FORWARD), start, end)
@@ -1218,10 +1235,42 @@ class TestPositions:
         ],
     )
     def test_positions_count_from_the_high_end(
-        self, start: int, end: int, cdna: TranscriptPosition, cds: TranscriptPosition
+        self, start: int, end: int, cdna: Position, cds: Position
     ) -> None:
         """The 5' end comes first whichever strand the transcript is on."""
         overlap = _positions_overlap(_positions_transcript(Strand.REVERSE), start, end)
 
         assert overlap.cdna_position == cdna
         assert overlap.cds_position == cds
+
+    @pytest.mark.parametrize(
+        ("start", "end", "expected"),
+        [
+            pytest.param(
+                18,
+                33,
+                {"cDNA_position": "18-23", "CDS_position": "15-20", "Protein_position": "5-7"},
+                id="range",
+            ),
+            pytest.param(
+                25,
+                33,
+                {"cDNA_position": "?-23", "CDS_position": "?-20", "Protein_position": "?-7"},
+                id="open_ended",
+            ),
+            pytest.param(2, 2, {"cDNA_position": "2"}, id="utr_only"),
+            pytest.param(25, 25, {}, id="intronic"),
+        ],
+    )
+    def test_positions_are_written_as_vep_formats_them(
+        self, start: int, end: int, expected: dict[str, str]
+    ) -> None:
+        """Only the sequences the variant touches get a column; a missing end prints as ``?``."""
+        transcript = _positions_transcript(Strand.FORWARD)
+        transcript.seed_attrs(translation=None)
+        output_hash: dict[str, object] = {}
+
+        # pylint: disable-next=protected-access
+        AnnotatedVariantFactory._position_fields(output_hash, _positions_overlap(transcript, start, end))
+
+        assert output_hash == expected

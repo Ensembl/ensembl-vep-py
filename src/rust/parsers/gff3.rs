@@ -81,8 +81,9 @@ impl Gff3Record {
     /// Equivalent to `attributes[key][0]`, but a linear scan of the stored pairs instead of
     /// building a whole `dict` per call.
     ///
-    /// Unlike GTF, GFF3 lets a key repeat as separate `key=value` pairs rather than one key
-    /// with a comma-separated array, and noodles-gff keeps each occurrence as its own pair in
+    /// GFF3 allows for one key with a comma-separated array for multiple values.
+    ///
+    /// For repeated keys, noodles-gff keeps each occurrence as its own pair in
     /// `self.attributes`. The `attributes` getter above builds a `dict` via `set_item`, so a
     /// repeated key resolves there to its *last* occurrence -- scanning in reverse here matches
     /// that, instead of silently returning a different value for the same key.
@@ -93,6 +94,20 @@ impl Gff3Record {
             .find(|(pair_key, _)| pair_key == key)
             .and_then(|(_, values)| values.first())
             .map(String::as_str)
+    }
+
+    /// Return every value for an attribute key, or an empty vector when the key is absent.
+    ///
+    /// Equivalent to `attributes.get(key, ())`, but a linear scan of the stored pairs instead of
+    /// building a whole `dict` per call. A repeated key resolves to its last occurrence, as
+    /// `attributes` and `first_attribute` do.
+    fn attribute_values(&self, key: &str) -> Vec<&str> {
+        self.attributes
+            .iter()
+            .rev()
+            .find(|(pair_key, _)| pair_key == key)
+            .map(|(_, values)| values.iter().map(String::as_str).collect())
+            .unwrap_or_default()
     }
 
     fn __repr__(&self) -> String {
@@ -152,6 +167,11 @@ impl Gff3Reader {
     /// lines before they are parsed into a record.
     fn next_filtered(&mut self, filter: &FeatureTypeFilter) -> io::Result<Option<Gff3Record>> {
         self.backend.next_filtered(filter)
+    }
+
+    /// Read the next record's line without parsing it.
+    fn next_line(&mut self) -> io::Result<Option<String>> {
+        self.backend.next_line()
     }
 
     fn seek(&mut self, region: &str) -> io::Result<bool> {
@@ -233,6 +253,13 @@ impl Backend {
         }
     }
 
+    fn next_line(&mut self) -> io::Result<Option<String>> {
+        match self {
+            Self::Sequential(reader) => reader.next_line(),
+            Self::Tabix(reader) => reader.next_line(),
+        }
+    }
+
     fn seek(&mut self, region: &str) -> io::Result<bool> {
         match self {
             Self::Sequential(reader) => reader.seek(region),
@@ -281,6 +308,10 @@ impl SequentialBackend {
 
     fn next_filtered(&mut self, filter: &FeatureTypeFilter) -> io::Result<Option<Gff3Record>> {
         read_next_record(&mut self.reader, &mut self.line, Some(filter))
+    }
+
+    fn next_line(&mut self) -> io::Result<Option<String>> {
+        read_next_line(&mut self.reader, &mut self.line)
     }
 }
 
@@ -355,6 +386,23 @@ impl TabixBackend {
                     return Ok(Some(record));
                 }
             }
+        }
+
+        Ok(None)
+    }
+
+    fn next_line(&mut self) -> io::Result<Option<String>> {
+        if self.query_active {
+            let Some(reader) = self.reader.as_mut() else {
+                return Err(io::Error::other("tabix reader is not initialized"));
+            };
+
+            let line = reader.next()?;
+            if line.is_none() {
+                self.query_active = false;
+            }
+
+            return Ok(line);
         }
 
         Ok(None)
@@ -511,6 +559,25 @@ impl Gff3Parser {
         Ok(records)
     }
 
+    /// Return up to `limit` record lines, each without its line ending and otherwise verbatim.
+    ///
+    /// The same stream as `records`, read one step earlier: a line is returned before anything
+    /// parses it, for a caller that wants the input's own text rather than a record. Comment,
+    /// directive and blank lines are skipped, as they are when reading records.
+    #[pyo3(signature = (limit=10000))]
+    fn raw_lines(&mut self, limit: Option<usize>) -> PyResult<Vec<String>> {
+        let mut lines = Vec::new();
+
+        while limit.is_none_or(|n| lines.len() < n) {
+            match self.reader()?.next_line().map_err(to_py_error)? {
+                Some(line) => lines.push(line),
+                None => break,
+            }
+        }
+
+        Ok(lines)
+    }
+
     #[staticmethod]
     #[pyo3(signature = (data, limit=None))]
     fn parse_text(data: &str, limit: Option<usize>) -> PyResult<Vec<Gff3Record>> {
@@ -641,6 +708,42 @@ where
         let record = result?;
 
         return record_to_py(record, raw_attributes).map(Some);
+    }
+}
+
+/// Read the next record's line, reusing the caller-owned `Line` buffer `read_next_record` uses.
+///
+/// Skips exactly what `read_next_record` skips -- blank, comment and directive lines -- and stops
+/// at a `##FASTA` directive, so the lines returned are the lines records are read from.
+fn read_next_line<R>(
+    reader: &mut gff3::io::Reader<R>,
+    line: &mut gff3::Line,
+) -> io::Result<Option<String>>
+where
+    R: BufRead,
+{
+    loop {
+        if reader.read_line(line)? == 0 {
+            return Ok(None);
+        }
+
+        if line.as_ref().is_empty() {
+            continue;
+        }
+
+        if let Some(directive) = line.as_directive() {
+            if directive.key() == "FASTA" {
+                return Ok(None);
+            }
+
+            continue;
+        }
+
+        if line.as_record().is_none() {
+            continue;
+        }
+
+        return Ok(Some(bytes_to_string(line.as_ref().as_ref())));
     }
 }
 
@@ -1726,6 +1829,88 @@ chr1\tensembl\tCDS\t1\t50\t.\t+\t0\tParent=transcript:1
     }
 
     // -----------------------------------------------------------------------
+    // Gff3Parser:raw_lines
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_gff3_parser_raw_lines_returns_record_lines_sequential() -> io::Result<()> {
+        let dir = create_temp_dir("gff3-parser-raw-lines-seq")?;
+        let path = write_sample_file(&dir, "sample.gff3", FILTER_SAMPLE)?;
+        let file_path = path.to_string_lossy().into_owned();
+
+        let mut parser =
+            Gff3Parser::new(None, None, Some("sequential".to_string())).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
+
+        let first = parser.raw_lines(Some(1)).map_err(from_py_error)?;
+        assert_eq!(
+            first,
+            vec!["chr1\tensembl\tgene\t1\t100\t.\t+\t.\tID=gene:1".to_string()]
+        );
+
+        // The directive line before the records and the comment between them are skipped, as
+        // they are when reading records.
+        let rest = parser.raw_lines(None).map_err(from_py_error)?;
+        assert_eq!(rest.len(), 4);
+        assert!(rest.iter().all(|line| line.starts_with("chr1\tensembl\t")));
+        assert!(parser.raw_lines(None).map_err(from_py_error)?.is_empty());
+
+        parser.close();
+        let err = parser.raw_lines(None).unwrap_err();
+        assert!(err.to_string().contains("not open"));
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_gff3_parser_raw_lines_stops_at_the_fasta_directive() -> io::Result<()> {
+        let dir = create_temp_dir("gff3-parser-raw-lines-fasta")?;
+        let path = write_sample_file(&dir, "sample.gff3", SAMPLE)?;
+        let file_path = path.to_string_lossy().into_owned();
+
+        let mut parser =
+            Gff3Parser::new(None, None, Some("sequential".to_string())).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
+
+        let lines = parser.raw_lines(None).map_err(from_py_error)?;
+
+        assert_eq!(lines, sample_lines()[1..3].to_vec());
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_gff3_parser_raw_lines_query() -> io::Result<()> {
+        let dir = create_temp_dir("gff3-parser-raw-lines-query")?;
+        let (gz_path, _tbi_path) = write_gff3_with_tbi(
+            &dir,
+            str::from_utf8(FILTER_SAMPLE)
+                .ok()
+                .map(|s| s.lines().map(str::to_owned).collect()),
+        )?;
+        let file_path = gz_path.to_string_lossy().into_owned();
+
+        let mut parser = Gff3Parser::new(None, None, None).map_err(from_py_error)?;
+        parser.open(&file_path, None).map_err(from_py_error)?;
+        assert_eq!(parser.reader_mode(), "query");
+
+        // No query is active until a seek, so there is nothing to read yet.
+        assert!(parser.raw_lines(None).map_err(from_py_error)?.is_empty());
+
+        parser.seek("chr1:1-100").map_err(from_py_error)?;
+        let lines = parser.raw_lines(None).map_err(from_py_error)?;
+
+        assert_eq!(lines.len(), 5);
+        assert!(lines.iter().all(|line| line.starts_with("chr1\tensembl\t")));
+        assert!(parser.raw_lines(None).map_err(from_py_error)?.is_empty());
+
+        fs::remove_dir_all(dir)?;
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
     // Gff3Parser:open - explicit query mode
     // -----------------------------------------------------------------------
 
@@ -2215,6 +2400,43 @@ chr1\tensembl\tCDS\t1\t50\t.\t+\t0\tParent=transcript:1
             "GFF3Record(seqid=\"chr1\", feature_type=\"gene\", start=10, end=20, strand_symbol=\"+\", phase_value=None)"
         );
 
+        Ok(())
+    }
+
+    // -----------------------------------------------------------------------
+    // GFF3Record::attribute_values
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn test_attribute_values_returns_every_value_of_a_comma_array() -> io::Result<()> {
+        let records = parse_gff3_bytes(SAMPLE, Some(1))?;
+        let record = records.first().expect("expected record");
+
+        // "Alias=a,b" is one key with two values, which is how a GFF3 row names two parents.
+        assert_eq!(record.attribute_values("Alias"), vec!["a", "b"]);
+        assert_eq!(record.attribute_values("ID"), vec!["gene:1"]);
+        Ok(())
+    }
+
+    #[test]
+    fn test_attribute_values_missing_key_is_empty() -> io::Result<()> {
+        let records = parse_gff3_bytes(SAMPLE, Some(1))?;
+        let record = records.first().expect("expected record");
+
+        assert!(record.attribute_values("Parent").is_empty());
+        Ok(())
+    }
+
+    #[test]
+    fn test_attribute_values_duplicate_key_matches_last_occurrence() -> io::Result<()> {
+        let records = parse_gff3_bytes(
+            b"chr1\tensembl\tgene\t10\t20\t.\t+\t.\tID=a;ID=b\n",
+            Some(1),
+        )?;
+        let record = records.first().expect("expected record");
+
+        // The `attributes` dict resolves a repeated key to its last occurrence; this agrees.
+        assert_eq!(record.attribute_values("ID"), vec!["b"]);
         Ok(())
     }
 

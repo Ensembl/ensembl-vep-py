@@ -52,13 +52,15 @@ class TestFeatureOverlapInitialization:
 class TestFeatureOverlapProperties:
     """Test FeatureOverlap properties."""
 
-    def test_core_properties(self, feature_overlap: FeatureOverlap) -> None:
+    def test_core_properties(
+        self, feature_overlap: FeatureOverlap, feature: Feature, overlapping_feature: Feature
+    ) -> None:
         """Test that feature and overlapping_feature properties are set correctly."""
-        assert feature_overlap.feature == feature_overlap.feature
-        assert feature_overlap.overlapping_feature == feature_overlap.overlapping_feature
+        assert feature_overlap.feature == feature
+        assert feature_overlap.overlapping_feature == overlapping_feature
 
     def test_most_severe_consequence(self, feature_overlap: FeatureOverlap) -> None:
-        """Test that most_severe_consequence property can be accessed."""
+        """Test that the lowest rank is the most severe, whatever order they were added in."""
         assert feature_overlap.most_severe_consequence is None
 
         feature_overlap.overlap_consequences += [
@@ -67,9 +69,9 @@ class TestFeatureOverlapProperties:
         assert feature_overlap.most_severe_consequence == feature_overlap.overlap_consequences[0]
 
         feature_overlap.overlap_consequences += [
-            OverlapConsequence(term="synonymous_variant", accession="SO:0001819", rank=1)
+            OverlapConsequence(term="stop_gained", accession="SO:0001587", rank=1)
         ]
-        assert feature_overlap.most_severe_consequence == feature_overlap.overlap_consequences[0]
+        assert feature_overlap.most_severe_consequence == feature_overlap.overlap_consequences[1]
 
         # We cannot do feature_overlap.overlap_consequences.append()
         # as it would not trigger on_setattr, workaround?

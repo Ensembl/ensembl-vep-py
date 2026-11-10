@@ -74,17 +74,17 @@ class GTFTranscriptSource(GXFTranscriptSource[GTFParser]):
         return _id
 
     def get_parent_ids(self, record: GTFRecord) -> tuple[str, ...]:
-        """Return the GTF parent identifier for a record, if one exists.
+        """Return the GTF parent identifiers for a record, if any exist.
 
         Args:
             record: The record to inspect.
 
         Returns:
-            tuple[str, ...]: A tuple of parent identifiers, or an empty tuple when the record has no
-            parent feature.
+            tuple[str, ...]: A tuple of parent identifiers, or an empty tuple when the record has
+            no parent feature.
         """
 
         parent_feature_type = self._PARENTS.get(record.feature_type.lower())
         if parent_feature_type is None:
             return ()
-        return record.attributes.get(f"{parent_feature_type}_id", ())
+        return tuple(record.attribute_values(f"{parent_feature_type}_id"))

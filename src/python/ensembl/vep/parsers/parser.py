@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import TypeVar, Generic
+from typing import Generic, Self, TypeVar
 from attrs import define
 
 T = TypeVar("T")
@@ -36,7 +36,7 @@ class Parser(ABC, Generic[T]):
 
     @property
     def metadata(self) -> dict:
-        """Public accessor for the _metadata.
+        """Return parsed file metadata.
 
         Returns:
             dict: The metadata dictionary.
@@ -56,7 +56,7 @@ class Parser(ABC, Generic[T]):
 
     @property
     def index_sequence_names(self) -> list[str]:
-        """Reference sequence names declared by an index, if the parser exposes one.
+        """Return reference sequence names declared by the index.
 
         Returns:
             list[str]: The reference sequence names, or an empty list when the parser has no
@@ -110,7 +110,7 @@ class Parser(ABC, Generic[T]):
 
     @abstractmethod
     def next(self) -> T | None:
-        """Returns the next raw row from the active region query.
+        """Return the next raw row from the active region query.
 
         Returns:
             T | None: The next raw row, or None if there are no more rows.
@@ -119,7 +119,7 @@ class Parser(ABC, Generic[T]):
         raise NotImplementedError
 
     def records(self, limit: int | None = None) -> list[T]:
-        """Returns all records from the active region query.
+        """Return all records from the active region query.
 
         Args:
             limit (int | None): The maximum number of records to return. If None, return all records.
@@ -147,7 +147,7 @@ class Parser(ABC, Generic[T]):
 
         return record
 
-    def __enter__(self) -> Parser:
+    def __enter__(self) -> Self:
         return self
 
     def __exit__(self, *exc_info: object) -> None:

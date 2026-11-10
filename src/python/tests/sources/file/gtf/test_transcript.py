@@ -16,37 +16,44 @@
 import os
 from pathlib import Path
 
-from attrs import define, field
 import pytest
 
 from ensembl.vep.common import ExonPhase, Strand
 from ensembl.vep.parsers import GTFParser
 from ensembl.vep.models.genic import Transcript
-from ensembl.vep.sources.sequence_source import SequenceSource
 from ensembl.vep.sources.file.gtf.transcript import GTFTranscriptSource
+from ensembl.vep.sources.sequence_source import SequenceSource
 
 
-@define(auto_attribs=True)
 class DummySequenceSource(SequenceSource):
     """Minimal sequence source fixture for slice-length assertions."""
 
-    lengths: dict[str, int]
-    sequences: dict[str, str] = field(factory=dict)
-    closed: bool = field(default=False, init=False)
+    def __init__(self, lengths: dict[str, int], sequences: dict[str, str] | None = None) -> None:
+        """Initialisation method."""
+        super().__init__()
+        self.lengths = lengths
+        self.sequences = sequences or {}
+        self.closed = False
 
-    def get_sequence_by_start_end_strand(  # pylint: disable=unused-argument
+    def get_sequence_by_start_end_strand(
         self, seq_region_name: str, start: int, end: int, *, strand: Strand = Strand.FORWARD
-    ) -> str | None:
-        """Return the whole stored sequence, ignoring the requested span."""
+    ) -> str | None:  # pragma: no cover - helper
+        """Return the configured sequence for a region."""
+        del start, end, strand
         return self.sequences.get(seq_region_name)
 
+    def get_seq_region_length(self, seq_region_name: str) -> int | None:
+        """Return length of sequence for a seq region name."""
+        return self.lengths.get(seq_region_name)
+
     def close(self) -> None:
-        """Record that the source was closed."""
+        """Method for tracking ``close``."""
         self.closed = True
 
     def _fetch_sequence_chunk(self, seq_region_name: str, start: int, end: int) -> str:
-        """Return Ns; spans are served by ``get_sequence_by_start_end_strand``."""
-        return "N" * (end - start + 1)
+        """Return a configured sequence chunk."""
+        del start, end
+        return self.sequences.get(seq_region_name, "")
 
     def _get_seq_region_length(self, seq_region_name: str) -> int | None:
         """Return the configured length for a sequence region."""
@@ -83,12 +90,12 @@ chr1\tensembl\texon\t1000\t2000\t.\t+\t.\tgene_id "gene:1"; transcript_id "trans
 chr1\tensembl\tCDS\t1000\t1900\t.\t+\t1\tgene_id "gene:1"; transcript_id "transcript:1";
 """
 
-_GTF_NO_TRANSCRIPT_ID = """\
-chr1\tensembl\ttranscript\t1000\t2000\t.\t+\t.\tgene_id "gene:1";
-"""
-
 _GTF_NO_PARENT_ID = """\
 chr1\tensembl\ttranscript\t1000\t2000\t.\t+\t.\ttranscript_id "transcript:1";
+"""
+
+_GTF_NO_TRANSCRIPT_ID = """\
+chr1\tensembl\ttranscript\t1000\t2000\t.\t+\t.\tgene_id "gene:1";
 """
 
 HEADER_LINES = ["#!genome-version test"]
@@ -181,9 +188,17 @@ class TestGetParentId:
         assert source.get_parent_ids(records[1]) == ("gene:1",)
 
     def test_get_parent_ids_returns_empty_tuple_for_gene_records(self) -> None:
-        """Test () is returned for a feature type with no configured parent."""
+        """Test an empty tuple is returned for a feature type with no configured parent."""
 
         records = GTFParser.parse_text(_GTF_ONE_TRANSCRIPT)
+        source = GTFTranscriptSource(file_path="")
+
+        assert not source.get_parent_ids(records[0])
+
+    def test_get_parent_ids_returns_empty_tuple_when_the_parent_id_is_absent(self) -> None:
+        """Test an empty tuple is returned when the parent feature's id attribute is missing."""
+
+        records = GTFParser.parse_text(_GTF_NO_PARENT_ID)
         source = GTFTranscriptSource(file_path="")
 
         assert not source.get_parent_ids(records[0])
@@ -385,9 +400,7 @@ class TestGetFeaturesByRegion:
 
         path = _write_query_gtf(tmp_path / "sample.gtf.gz", "\n".join(HEADER_LINES) + "\n")
         _write_query_mock_tabix(tmp_path, monkeypatch)
-        source = GTFTranscriptSource(
-            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
-        )
+        source = GTFTranscriptSource(file_path=str(path))
 
         transcripts = source.get_features_by_region(seq_region_name="chr3", start=1, end=10)
 
@@ -417,9 +430,7 @@ class TestIterFeaturesByRegion:
         """A region the file does not carry yields nothing rather than everything."""
 
         path = _write_gtf(tmp_path / "sample.gtf", _GTF_TWO_TRANSCRIPTS)
-        source = GTFTranscriptSource(
-            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
-        )
+        source = GTFTranscriptSource(file_path=str(path))
 
         assert not list(source.iter_features_by_region(seq_region_name="chr9", start=1, end=100))
 

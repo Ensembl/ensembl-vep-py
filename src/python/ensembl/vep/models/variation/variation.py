@@ -36,7 +36,9 @@ class Variation(Feature):
         allele_string (str | None):
             String representation of the alleles.
         uploaded_locus (Locus | None):
-            Original position and allele string supplied by the variation source.
+            Original region name, position and allele string supplied by the variation source.
+            Its ``seq_region_name`` is what output reports and what a run summary counts by; the
+            slice names the same region as the annotation sources spell it.
         variation_alleles (list[VariationAllele] | None):
             List of VariationAllele objects describing the alleles of the variation.
         is_somatic (bool | None):
@@ -144,11 +146,11 @@ class Variation(Feature):
         return infer_variant_so_term(self.allele_string or "", ref_correct=True)
 
     def minimise_alleles(self) -> None:
-        """Minimises all alleles."""
+        """Minimise all alleles."""
         for variation_allele in self.variation_alleles or []:
             variation_allele.minimise()
 
     def shift_alleles(self) -> None:
-        """Shifts all alleles."""
+        """Shift all alleles."""
         for variation_allele in self.variation_alleles or []:
             variation_allele.shift()

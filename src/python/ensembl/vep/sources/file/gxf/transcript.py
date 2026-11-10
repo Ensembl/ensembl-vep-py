@@ -66,7 +66,7 @@ _ORDERED_FILE_ASSUMPTION_MESSAGE = (
 P = TypeVar("P", bound=Parser)
 
 
-class _GXFRecord(Protocol):
+class GXFRecord(Protocol):
     """Minimal parser record interface shared by GFF3 and GTF records.
 
     Attributes:
@@ -90,35 +90,38 @@ class _GXFRecord(Protocol):
     def first_attribute(self, key: str) -> str | None:
         """Return the first attribute value for a key, or None when absent."""
 
+    def attribute_values(self, key: str) -> list[str]:
+        """Return every attribute value for a key, empty when absent."""
+
 
 @define(kw_only=True, auto_attribs=True)
 class _GXFTranscriptGroup:
     """Grouped parser records describing one transcript.
 
     ``transcript_id`` and ``gene_id`` are resolved once, while grouping, from the same
-    ``get_record_id``/``get_parent_id`` calls that route records into this group in the first
+    ``get_record_id``/``get_parent_ids`` calls that route records into this group in the first
     place. Carrying them here is what lets the builder stop recomputing them per transcript.
 
     Attributes:
         transcript_id (str): Stable identifier of the transcript record.
         gene_id (str | None): Parent gene identifier declared by the transcript record, if any --
             not necessarily the id of ``gene_record``, which may be absent even when this is set.
-        transcript_record (_GXFRecord): Primary transcript record for the group.
-        gene_record (_GXFRecord | None): Associated gene record, if one was present in the input.
-        exon_records (list[_GXFRecord]): Exon records attached to the transcript.
-        cds_records (list[_GXFRecord]): Coding records attached to the transcript.
+        transcript_record (GXFRecord): Primary transcript record for the group.
+        gene_record (GXFRecord | None): Associated gene record, if one was present in the input.
+        exon_records (list[GXFRecord]): Exon records attached to the transcript.
+        cds_records (list[GXFRecord]): Coding records attached to the transcript.
     """
 
     transcript_id: str
     gene_id: str | None
-    transcript_record: _GXFRecord
-    gene_record: _GXFRecord | None
-    exon_records: list[_GXFRecord]
-    cds_records: list[_GXFRecord]
+    transcript_record: GXFRecord
+    gene_record: GXFRecord | None
+    exon_records: list[GXFRecord]
+    cds_records: list[GXFRecord]
 
 
 @define(kw_only=True, auto_attribs=True)
-class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
+class GXFTranscriptSource(FileFeatureSource[P, GXFRecord, Transcript], ABC, Generic[P]):
     """Transcript source backed by GFF3 or GTF file.
 
     Attributes:
@@ -174,6 +177,91 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
                     header_names.add(fields[1])
         return index_names | header_names
 
+    def get_records_by_region(
+        self,
+        region: str | None = None,
+        *,
+        seq_region_name: str | None = None,
+        start: int | None = None,
+        end: int | None = None,
+        **kwargs: object,
+    ) -> list[GXFRecord]:
+        """Return the records an indexed query over one region reads, assembling nothing.
+
+        Unlike the file-backed default this resolves the region into the file's own spelling, and
+        falls back to ``chr`` prefix variants when the name the index declares finds nothing --
+        which happens for an unindexed GXF with no ``##sequence-region`` directive.
+
+        Args:
+            region (str | None): The region (e.g., "chr1:1000-2000") to read.
+            seq_region_name (str | None): The name of the sequence region, in reference spelling.
+            start (int | None): Inclusive query start.
+            end (int | None): Inclusive query end.
+            **kwargs (object): ``feature_types``, a frozenset of record types to keep. Matching
+                happens on the Rust side, before a non-matching line is parsed into a record.
+
+        Returns:
+            list[GXFRecord]: The records the query read, empty when the region is unreadable.
+        """
+        feature_types = cast("frozenset[str] | None", kwargs.pop("feature_types", None))
+        if kwargs:
+            raise TypeError(f"unexpected query options: {', '.join(sorted(kwargs))}")
+        try:
+            query_region = format_region_string(region, seq_region_name=seq_region_name, start=start, end=end)
+            region_name, region_start, region_end = parse_region_string(query_region)
+        except ValueError:
+            logger.debug("Cannot parse region: %s %s:%s-%s", region, seq_region_name, start, end)
+            return []
+        return self._records_for_region(region_name, region_start, region_end, feature_types=feature_types)
+
+    def get_features_by_region(
+        self,
+        region: str | None = None,
+        *,
+        seq_region_name: str | None = None,
+        start: int | None = None,
+        end: int | None = None,
+    ) -> list[Transcript]:
+        """Return complete transcripts whose spans meet one query region.
+
+        Two queries, because one is not enough: stage 1 finds the transcript rows overlapping the
+        region, stage 2 queries the full span of each candidate not already pooled, so exons and
+        coding records outside the region are kept. Results are in stage-1 (file) order whether a
+        transcript came from the pool or was just built, which is what fixes CSQ order.
+
+        A region without coordinates queries the whole sequence region, and so assembles every
+        transcript on it.
+        """
+        try:
+            query_region = format_region_string(region, seq_region_name=seq_region_name, start=start, end=end)
+            region_name, region_start, region_end = parse_region_string(query_region)
+        except ValueError:
+            logger.debug("Cannot parse region: %s %s:%s-%s", region, seq_region_name, start, end)
+            return []
+
+        records = self._records_for_region(
+            region_name, region_start, region_end, feature_types=self.transcript_feature_types
+        )  # stage 1: the transcript rows meeting the region, before their spans are known
+        candidates: dict[str, tuple[int, int]] = {}
+        has_duplicate_candidate = False
+        for record in records:
+            transcript_id = self.get_record_id(record)
+            if transcript_id is None:
+                continue
+            previous_span = candidates.get(transcript_id)
+            span = (record.start, record.end)
+            if previous_span is not None and previous_span != span:
+                has_duplicate_candidate = True
+                self._disable_pool_for_duplicate_id(transcript_id)
+            candidates[transcript_id] = span
+        if not candidates:
+            return []
+
+        pool = None if self._pool_poisoned else self.transcript_pool
+        if pool is None or pool.max_bytes <= 0 or has_duplicate_candidate:
+            return self._build_candidates(region_name, candidates)
+        return self._build_candidates_with_pool(region_name, candidates, pool)
+
     def iter_all_features(self) -> Iterator[Transcript]:
         """Yield transcripts by streaming the file sequentially.
 
@@ -183,45 +271,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
 
         logger.info(_ORDERED_FILE_ASSUMPTION_MESSAGE)
 
-        with self.adaptor.open(self.file_path, mode="sequential") as adaptor:
-            yield from self._iter_features_from_adaptor(cast(P, adaptor))
-
-    def iter_features_by_regions(
-        self,
-        intervals_by_region: Mapping[str, Sequence[tuple[int, int]]],
-    ) -> Iterator[Transcript]:
-        """Yield only transcripts intersecting reference-space query intervals.
-
-        This source's own method, not part of the ``FeatureSource`` contract: a format whose record
-        already carries a whole feature answers each region on its own, and gains nothing from the
-        batch. Here one pass serves every requested interval, so a whole input buffer costs one
-        read of the file rather than one per region.
-
-        The record predicate runs before transcript, exon, CDS, and gene models are built, which
-        keeps the unindexed fallback bounded by the current payload rather than the source size.
-
-        Args:
-            intervals_by_region (Mapping[str, Sequence[tuple[int, int]]]): 1-based inclusive
-                ``(start, end)`` intervals, keyed by sequence-region name.
-
-        Returns:
-            Iterator[Transcript]: Transcripts intersecting any requested interval.
-        """
-
-        logger.info(_ORDERED_FILE_ASSUMPTION_MESSAGE)
-
-        def overlaps_requested_interval(record: _GXFRecord) -> bool:
-            sequence_region = record.seqid
-            if self.reference_region_resolver is not None:
-                sequence_region = self.reference_region_resolver.resolve(sequence_region)
-            intervals = intervals_by_region.get(sequence_region, ())
-            return any(record.start <= end and record.end >= start for start, end in intervals)
-
-        with self.adaptor.open(self.file_path, mode="sequential") as adaptor:
-            yield from self._iter_features_from_adaptor(
-                cast(P, adaptor),
-                transcript_predicate=overlaps_requested_interval,
-            )
+        yield from self._iter_features_from_records(self.iter_all_records())
 
     def iter_features_by_region(
         self,
@@ -258,53 +308,60 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         interval = (region_start or 1, region_end or _PLACEHOLDER_SEQ_REGION_END)
         yield from self.iter_features_by_regions({region_name: [interval]})
 
-    def get_features_by_region(
+    def iter_features_by_regions(
         self,
-        region: str | None = None,
-        *,
-        seq_region_name: str | None = None,
-        start: int | None = None,
-        end: int | None = None,
-    ) -> list[Transcript]:
-        """Return complete transcripts whose spans meet one query region.
+        intervals_by_region: Mapping[str, Sequence[tuple[int, int]]],
+    ) -> Iterator[Transcript]:
+        """Yield only transcripts intersecting reference-space query intervals.
 
-        Two queries, because one is not enough: stage 1 finds the transcript rows overlapping the
-        region, stage 2 queries the full span of each candidate not already pooled, so exons and
-        coding records outside the region are kept. Results are in stage-1 (file) order whether a
-        transcript came from the pool or was just built, which is what fixes CSQ order.
+        This source's own method, not part of the ``FeatureSource`` contract: a format whose record
+        already carries a whole feature answers each region on its own, and gains nothing from the
+        batch. Here one pass serves every requested interval, so a whole input buffer costs one
+        read of the file rather than one per region.
 
-        A region without coordinates queries the whole sequence region, and so assembles every
-        transcript on it.
+        The record predicate runs before transcript, exon, CDS, and gene models are built, which
+        keeps the unindexed fallback bounded by the current payload rather than the source size.
+
+        Args:
+            intervals_by_region (Mapping[str, Sequence[tuple[int, int]]]): 1-based inclusive
+                ``(start, end)`` intervals, keyed by sequence-region name.
+
+        Returns:
+            Iterator[Transcript]: Transcripts intersecting any requested interval.
         """
-        try:
-            query_region = format_region_string(region, seq_region_name=seq_region_name, start=start, end=end)
-            region_name, region_start, region_end = parse_region_string(query_region)
-        except ValueError:
-            logger.debug("Cannot parse region: %s %s:%s-%s", region, seq_region_name, start, end)
-            return []
 
-        records = self._records_for_region(
-            region_name, region_start, region_end, feature_types=self.transcript_feature_types
+        logger.info(_ORDERED_FILE_ASSUMPTION_MESSAGE)
+
+        def overlaps_requested_interval(record: GXFRecord) -> bool:
+            sequence_region = record.seqid
+            if self.reference_region_resolver is not None:
+                sequence_region = self.reference_region_resolver.resolve(sequence_region)
+            intervals = intervals_by_region.get(sequence_region, ())
+            return any(record.start <= end and record.end >= start for start, end in intervals)
+
+        yield from self._iter_features_from_records(
+            self.iter_all_records(),
+            transcript_predicate=overlaps_requested_interval,
         )
-        candidates: dict[str, tuple[int, int]] = {}
-        has_duplicate_candidate = False
-        for record in records:
-            transcript_id = self.get_record_id(record)
-            if transcript_id is None:
-                continue
-            previous_span = candidates.get(transcript_id)
-            span = (record.start, record.end)
-            if previous_span is not None and previous_span != span:
-                has_duplicate_candidate = True
-                self._disable_pool_for_duplicate_id(transcript_id)
-            candidates[transcript_id] = span
-        if not candidates:
-            return []
 
-        pool = None if self._pool_poisoned else self.transcript_pool
-        if pool is None or pool.max_bytes <= 0 or has_duplicate_candidate:
-            return self._build_candidates(region_name, candidates)
-        return self._build_candidates_with_pool(region_name, candidates, pool)
+    def records_to_features(self, records: list[GXFRecord]) -> list[Transcript]:
+        """Convert a batch of records into transcripts, with a fresh gene and slice context.
+
+        The records must be **complete and contiguous**: every exon, CDS and gene row of each
+        transcript present, in file order. One transcript is many records, so a partial set builds
+        partial models rather than failing -- which is why the region and streaming getters are
+        overridden instead of composing this one record at a time.
+
+        Fresh dictionaries are passed every time: ``_build_transcripts`` defaults to shared
+        mutable dictionaries, which would carry genes and slices over from one call to the next.
+
+        Args:
+            records (list[GXFRecord]): The records to convert, in file order.
+
+        Returns:
+            list[Transcript]: The transcripts they describe.
+        """
+        return self._build_transcripts(records, gene_records={}, gene_cache={})
 
     def _build_candidates(
         self,
@@ -313,8 +370,9 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
     ) -> list[Transcript]:
         """Query every candidate's span and build all of them, without the pool."""
 
-        complete_records: list[_GXFRecord] = []
+        complete_records: list[GXFRecord] = []
         for span_start, span_end in self._merged_spans(candidates.values()):
+            # stage 2: the transcript rows that overlap the merged spans
             complete_records.extend(self._records_for_region(seq_region_name, span_start, span_end))
         return self._build_transcripts(
             complete_records, gene_records={}, gene_cache={}, candidate_ids=candidates
@@ -345,8 +403,9 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         if not missing:
             return [pooled[transcript_id] for transcript_id in candidates if transcript_id in pooled]
 
-        complete_records: list[_GXFRecord] = []
+        complete_records: list[GXFRecord] = []
         for span_start, span_end in self._merged_spans(missing.values()):
+            # stage 2: the transcript rows not in the pool that overlap the merged spans
             complete_records.extend(self._records_for_region(seq_region_name, span_start, span_end))
 
         resurfaced_id = self._first_pooled_id_in_records(complete_records, pooled)
@@ -369,7 +428,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         return [combined[transcript_id] for transcript_id in candidates if transcript_id in combined]
 
     def _first_pooled_id_in_records(
-        self, records: Iterable[_GXFRecord], pooled: Mapping[str, Transcript]
+        self, records: Iterable[GXFRecord], pooled: Mapping[str, Transcript]
     ) -> str | None:
         """Return the first transcript id in ``records`` whose span differs from its pooled model."""
         for record in records:
@@ -403,8 +462,8 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         end: int | None = None,
         *,
         feature_types: frozenset[str] | None = None,
-    ) -> list[_GXFRecord]:
-        """Return raw records from an indexed query, without assembling incomplete models."""
+    ) -> list[GXFRecord]:
+        """Return raw records for one already-parsed region, resolving its name as the file spells it."""
         source_name = seq_region_name
         if self.source_region_resolver is not None:
             source_name = self.source_region_resolver.resolve(seq_region_name)
@@ -416,9 +475,9 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         if records or source_name_is_declared:
             return records
 
-        # If no records are found using the source name declared in the index file or header,
-        # try common fallback names (chr prefix variations). This can happen for an un-indexed
-        # GFF/GTF file that doesn't have the ##sequence-region directive.
+        # If no records were found using the source name declared in index file or header,
+        # try common fallback names (chr prefix variations). It can happen for an un-indexed
+        # GFF/GTF file not having the ##sequence-region directive.
         fallback_names = [seq_region_name]
         fallback_names.append(
             seq_region_name[3:] if seq_region_name[:3].lower() == "chr" else f"chr{seq_region_name}"
@@ -438,7 +497,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         end: int | None = None,
         *,
         feature_types: frozenset[str] | None = None,
-    ) -> list[_GXFRecord]:
+    ) -> list[GXFRecord]:
         """Read raw records using one source-specific sequence-region name.
 
         Args:
@@ -458,7 +517,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         region: str,
         *,
         feature_types: frozenset[str] | None = None,
-    ) -> list[_GXFRecord]:
+    ) -> list[GXFRecord]:
         """Seek the persistent query parser to a region and read its records.
 
         Implemented per format because only the GFF3 and GTF parsers accept ``feature_types``;
@@ -466,7 +525,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         the call type-checks there without narrowing ``self.adaptor`` here.
 
         Returns:
-            list[_GXFRecord]: The records the query returned, empty when it matched nothing.
+            list[GXFRecord]: The records the query returned, empty when it matched nothing.
         """
 
         raise NotImplementedError
@@ -508,38 +567,32 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
             merged[-1] = (previous_start, max(previous_end, end))
         return merged
 
-    def _records_to_features(self, records: list) -> list[Transcript]:
-        """Convert a batch of records into transcripts, with a fresh gene and slice context.
-
-        The abstract conversion ``FileFeatureSource`` requires, and what its ``get_all_features``
-        calls. Fresh dictionaries are passed every time: ``_build_transcripts`` defaults to shared
-        mutable dictionaries, which would carry genes and slices over from one call to the next.
-        """
-        return self._build_transcripts(records, gene_records={}, gene_cache={})
-
-    def _iter_features_from_adaptor(
+    def _iter_features_from_records(
         self,
-        adaptor: P,
+        records: Iterator[GXFRecord],
         *,
-        transcript_predicate: Callable[[_GXFRecord], bool] | None = None,
+        transcript_predicate: Callable[[GXFRecord], bool] | None = None,
     ) -> Iterator[Transcript]:
-        """Yield transcripts from an open parser, buffering records into blocks.
+        """Yield transcripts from an ordered record stream, buffering it into blocks.
 
-        Buffers one contiguous gene block from the parser, then converts its grouped records into
-        Transcript objects.
+        Buffers one contiguous gene block, then converts its grouped records into Transcript
+        objects. One record is never enough, which is why this exists rather than the per-record
+        conversion ``FeatureSource`` composes by default.
 
         Args:
-            adaptor: An open parser positioned at the records to stream.
+            records (Iterator[GXFRecord]): The records to stream, in file order.
+            transcript_predicate (Callable[[GXFRecord], bool] | None): Keeps only the transcripts
+                whose own record matches, applied before any model is built.
 
         Returns:
-            Iterator[Transcript]: Transcripts built from buffered GFF3 records.
+            Iterator[Transcript]: Transcripts built from buffered GXF records.
         """
 
         gene_cache: dict[str, Gene] = {}
-        buffer: list[_GXFRecord] = []
+        buffer: list[GXFRecord] = []
         current_gene_key: str | None = None
 
-        while (record := adaptor.next()) is not None:
+        for record in records:
             gene_key = self._stream_gene_key(record)
             if gene_key is not None and current_gene_key not in (None, gene_key):
                 yield from self._stream_buffer_features(
@@ -562,10 +615,10 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
 
     def _stream_buffer_features(
         self,
-        records: list[_GXFRecord],
+        records: list[GXFRecord],
         *,
         gene_cache: dict[str, Gene],
-        transcript_predicate: Callable[[_GXFRecord], bool] | None,
+        transcript_predicate: Callable[[GXFRecord], bool] | None,
     ) -> list[Transcript]:
         """Build requested transcripts from one gene-sized streamed record block."""
 
@@ -577,7 +630,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
             gene_cache=gene_cache,
         )
 
-    def _stream_gene_key(self, record: _GXFRecord) -> str | None:
+    def _stream_gene_key(self, record: GXFRecord) -> str | None:
         """Return the gene-sized streaming block key for one ordered record."""
 
         explicit_gene_id = self._first_attr(record, "gene_id")
@@ -594,7 +647,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         return None
 
     @abstractmethod
-    def get_record_id(self, record: _GXFRecord) -> str | None:
+    def get_record_id(self, record: GXFRecord) -> str | None:
         """Return the stable identifier for a GFF3/GTF record.
 
         Args:
@@ -608,32 +661,36 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         raise NotImplementedError
 
     @abstractmethod
-    def get_parent_ids(self, record: _GXFRecord) -> tuple[str, ...]:
+    def get_parent_ids(self, record: GXFRecord) -> tuple[str, ...]:
         """Return the parent identifiers for a GFF3/GTF record, if they exist.
+
+        Plural because one GFF3 row may name several parents: an exon shared by two transcripts
+        arrives as a single record with ``Parent=transcript:1,transcript:2``, and taking only the
+        first would drop it from every transcript but one.
 
         Args:
             record: The record to inspect.
 
         Returns:
-            tuple[str, ...]: A tuple of parent identifiers, or an empty tuple when the record has no
-            parent.
+            tuple[str, ...]: A tuple of parent identifiers, or an empty tuple when the record has
+            no parent.
         """
 
         raise NotImplementedError
 
     def _build_transcripts(
         self,
-        records: list[_GXFRecord],
+        records: list[GXFRecord],
         *,
-        gene_records: dict[str, _GXFRecord] | None = None,
+        gene_records: dict[str, GXFRecord] | None = None,
         gene_cache: dict[str, Gene] | None = None,
         candidate_ids: Mapping[str, tuple[int, int]] | None = None,
     ) -> list[Transcript]:
         """Convert buffered records into Transcript objects while reusing caches.
 
         Args:
-            records (list[_GXFRecord]): Buffered records that belong to one streaming chunk.
-            gene_records (dict[str, _GXFRecord]): Previously seen gene records keyed by gene id.
+            records (list[GXFRecord]): Buffered records that belong to one streaming chunk.
+            gene_records (dict[str, GXFRecord]): Previously seen gene records keyed by gene id.
             gene_cache (dict[str, Gene]): Previously built Gene objects keyed by gene id.
             candidate_ids (Mapping[str, tuple[int, int]] | None): When given, only transcripts
                 whose id is a key of this mapping are built; every other transcript is dropped
@@ -656,7 +713,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         self,
         groups: list[_GXFTranscriptGroup],
         *,
-        gene_records: dict[str, _GXFRecord] | None = None,
+        gene_records: dict[str, GXFRecord] | None = None,
         gene_cache: dict[str, Gene] | None = None,
     ) -> list[Transcript]:
         """Build already-grouped transcripts while reusing gene and slice models."""
@@ -673,7 +730,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
 
     def _group_records(
         self,
-        records: Iterable[_GXFRecord],
+        records: Iterable[GXFRecord],
         *,
         candidate_ids: Mapping[str, tuple[int, int]] | None = None,
     ) -> list[_GXFTranscriptGroup]:
@@ -685,7 +742,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         is built.
 
         Args:
-            records (Iterable[_GXFRecord]): The buffered records to group.
+            records (Iterable[GXFRecord]): The buffered records to group.
             candidate_ids (Mapping[str, tuple[int, int]] | None): When given, only transcripts
                 whose id is a key of this mapping are grouped; every other transcript's records are
                 still scanned (a record's transcript is not known until the whole pass completes),
@@ -697,10 +754,10 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
             record, in the order transcripts were first seen.
         """
 
-        gene_map: dict[str, _GXFRecord] = {}
-        transcript_map: dict[str, tuple[_GXFRecord, str | None]] = {}
-        exon_map: dict[str, list[_GXFRecord]] = defaultdict(list)
-        cds_map: dict[str, list[_GXFRecord]] = defaultdict(list)
+        gene_map: dict[str, GXFRecord] = {}
+        transcript_map: dict[str, tuple[GXFRecord, str | None]] = {}
+        exon_map: dict[str, list[GXFRecord]] = defaultdict(list)
+        cds_map: dict[str, list[GXFRecord]] = defaultdict(list)
 
         for record in records:
             feature_type = record.feature_type.lower()
@@ -725,12 +782,10 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
                     previous_gene_id = previous[1] if previous is not None else None
                     transcript_map[record_id] = (record, parent_id or previous_gene_id)
             elif feature_type in self.exon_feature_types:
-                parent_ids = self.get_parent_ids(record)
-                for parent_id in parent_ids:
+                for parent_id in self.get_parent_ids(record):
                     exon_map[parent_id].append(record)
             elif feature_type in self.coding_feature_types:
-                parent_ids = self.get_parent_ids(record)
-                for parent_id in parent_ids:
+                for parent_id in self.get_parent_ids(record):
                     cds_map[parent_id].append(record)
 
         return [
@@ -749,16 +804,16 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
     def _resolve_gene_record(
         self,
         group: _GXFTranscriptGroup,
-        gene_records: dict[str, _GXFRecord] | None = None,
-    ) -> _GXFRecord | None:
+        gene_records: dict[str, GXFRecord] | None = None,
+    ) -> GXFRecord | None:
         """Return the gene record for a grouped transcript, if one exists.
 
         Args:
             group (_GXFTranscriptGroup): The grouped transcript records.
-            gene_records (dict[str, _GXFRecord]): Previously seen gene records keyed by gene id.
+            gene_records (dict[str, GXFRecord]): Previously seen gene records keyed by gene id.
 
         Returns:
-            _GXFRecord | None: The gene record for the grouped transcript, or None if not found.
+            GXFRecord | None: The gene record for the grouped transcript, or None if not found.
         """
 
         gene_records = {} if gene_records is None else gene_records
@@ -771,7 +826,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
 
     def _resolve_gene(
         self,
-        gene_record: _GXFRecord | None,
+        gene_record: GXFRecord | None,
         gene_id: str | None,
         transcript: Transcript,
         gene_cache: dict[str, Gene] | None = None,
@@ -779,7 +834,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         """Attach a Gene to a Transcript, reusing cached Gene objects when possible.
 
         Args:
-            gene_record (_GXFRecord | None): The gene record to convert, if present.
+            gene_record (GXFRecord | None): The gene record to convert, if present.
             gene_id (str | None): The gene's own identifier, already resolved by the caller
                 (``_GXFTranscriptGroup.gene_id`` for the common in-group case) rather than
                 recomputed from ``gene_record``.
@@ -816,11 +871,10 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
 
         transcript_record = group.transcript_record
         strand = STRAND_SYMBOL_TO_ENUM.get(transcript_record.strand_symbol, Strand.UNKNOWN)
-        # Resolve seq region name from GXFRecord to reference name to fecth a Slice from the cache
-        sequence_region = transcript_record.seqid
+        seq_region_name = transcript_record.seqid
         if self.reference_region_resolver is not None:
-            sequence_region = self.reference_region_resolver.resolve(sequence_region)
-        genomic_slice = self.slice_cache.get_slice(sequence_region, self.sequence_source)
+            seq_region_name = self.reference_region_resolver.resolve(seq_region_name)
+        genomic_slice = self.slice_cache.get_slice(seq_region_name, self.sequence_source)
 
         transcript = Transcript(
             stable_id=group.transcript_id,
@@ -852,8 +906,8 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
 
     def _build_exons(
         self,
-        exon_records: list[_GXFRecord],
-        cds_records: list[_GXFRecord],
+        exon_records: list[GXFRecord],
+        cds_records: list[GXFRecord],
         strand: Strand,
         genomic_slice: Slice,
     ) -> list[Exon]:
@@ -894,7 +948,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         return exons
 
     @staticmethod
-    def _exon_phase(exon_record: _GXFRecord, ordered_cds_records: list[_GXFRecord]) -> ExonPhase:
+    def _exon_phase(exon_record: GXFRecord, ordered_cds_records: list[GXFRecord]) -> ExonPhase:
         """Return the Ensembl phase of the first CDS row starting inside an exon, else unknown."""
         for cds_record in ordered_cds_records:
             if exon_record.start <= cds_record.start <= exon_record.end:
@@ -903,7 +957,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
                 return GFF_TO_ENSEMBL_PHASE.get(cds_record.phase_value, ExonPhase.UNKNOWN)
         return ExonPhase.UNKNOWN
 
-    def _build_translation(self, cds_records: list[_GXFRecord], transcript: Transcript) -> Translation | None:
+    def _build_translation(self, cds_records: list[GXFRecord], transcript: Transcript) -> Translation | None:
         """Construct a Translation from CDS records.
 
         ``Translation.start`` and ``end`` are offsets from the start of the transcript, not genomic
@@ -933,10 +987,12 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         else:
             start = transcript.end - cds_end + 1
             end = transcript.end - cds_start + 1
-        stable_id = self._first_attr(cds_records[0], "protein_id") or ""
+        stable_id = (
+            self._first_attr(cds_records[0], "protein_id") or self._first_attr(cds_records[0], "ID") or ""
+        )
         return Translation(start=start, end=end, stable_id=stable_id)
 
-    def _build_gene(self, gene_record: _GXFRecord) -> Gene:
+    def _build_gene(self, gene_record: GXFRecord) -> Gene:
         """Construct a Gene object from a grouped gene record.
 
         Args:
@@ -948,18 +1004,16 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
 
         strand = STRAND_SYMBOL_TO_ENUM.get(gene_record.strand_symbol, Strand.UNKNOWN)
         stable_id = self.get_record_id(gene_record) or ""
-
-        # Resolve seq region name from GXFRecord to reference name to fecth a Slice from the cache
-        sequence_region = gene_record.seqid
+        seq_region_name = gene_record.seqid
         if self.reference_region_resolver is not None:
-            sequence_region = self.reference_region_resolver.resolve(sequence_region)
+            seq_region_name = self.reference_region_resolver.resolve(seq_region_name)
 
         gene = Gene(
             stable_id=stable_id,
             start=gene_record.start,
             end=gene_record.end,
             strand=strand,
-            slice=self.slice_cache.get_slice(sequence_region, self.sequence_source),
+            slice=self.slice_cache.get_slice(seq_region_name, self.sequence_source),
         )
         name = self._first_attr(gene_record, "Name") or self._first_attr(gene_record, "gene_name")
         biotype = self._first_attr(gene_record, "biotype") or self._first_attr(gene_record, "gene_biotype")
@@ -968,7 +1022,7 @@ class GXFTranscriptSource(FileFeatureSource[P, Transcript], ABC, Generic[P]):
         return gene
 
     @staticmethod
-    def _first_attr(record: _GXFRecord, key: str) -> str | None:
+    def _first_attr(record: GXFRecord, key: str) -> str | None:
         """Return the first attribute value for a key, if present.
 
         Uses the ``first_attribute`` pymethod -- a linear scan of the stored attribute pairs --

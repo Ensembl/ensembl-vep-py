@@ -53,7 +53,7 @@ class FastaParser(Parser[FastaRecord]):
 
     @property
     def metadata(self) -> dict:
-        """Public accessor for the _metadata.
+        """Return parsed file metadata.
 
         Returns:
             dict: The metadata dictionary.

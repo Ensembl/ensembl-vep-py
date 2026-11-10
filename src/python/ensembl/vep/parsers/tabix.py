@@ -54,7 +54,7 @@ class TabixParser(Parser[str]):
 
     @property
     def metadata(self) -> dict:
-        """Public accessor for the _metadata.
+        """Return parsed file metadata.
 
         Returns:
             dict: The metadata dictionary.

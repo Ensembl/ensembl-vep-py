@@ -18,39 +18,46 @@ from pathlib import Path
 import subprocess
 from typing import Protocol
 
-from attrs import define, field
 import pytest
 
 from ensembl.vep.common import ExonPhase, Strand
 from ensembl.vep.parsers import GFF3Parser
 from ensembl.vep.models.genic import Transcript
-from ensembl.vep.sources.sequence_source import SequenceSource
 from ensembl.vep.sources.file.gff3.transcript import GFF3TranscriptSource
 from ensembl.vep.sources.file.gxf.transcript import _GXFTranscriptGroup
+from ensembl.vep.sources.sequence_source import SequenceSource
 from ensembl.vep.sources.synonym import ChromosomeSynonyms, SequenceRegionResolver
 
 
-@define(auto_attribs=True)
 class DummySequenceSource(SequenceSource):
     """Minimal sequence source fixture for slice-length assertions."""
 
-    lengths: dict[str, int]
-    sequences: dict[str, str] = field(factory=dict)
-    closed: bool = field(default=False, init=False)
+    def __init__(self, lengths: dict[str, int], sequences: dict[str, str] | None = None) -> None:
+        """Initialisation method."""
+        super().__init__()
+        self.lengths = lengths
+        self.sequences = sequences or {}
+        self.closed = False
 
-    def get_sequence_by_start_end_strand(  # pylint: disable=unused-argument
+    def get_sequence_by_start_end_strand(
         self, seq_region_name: str, start: int, end: int, *, strand: Strand = Strand.FORWARD
-    ) -> str | None:
-        """Return the whole stored sequence, ignoring the requested span."""
+    ) -> str | None:  # pragma: no cover - helper
+        """Return the configured sequence for a region."""
+        del start, end, strand
         return self.sequences.get(seq_region_name)
 
+    def get_seq_region_length(self, seq_region_name: str) -> int | None:
+        """Return length of sequence for a seq region name."""
+        return self.lengths.get(seq_region_name)
+
     def close(self) -> None:
-        """Record that the source was closed."""
+        """Method for tracking ``close``."""
         self.closed = True
 
     def _fetch_sequence_chunk(self, seq_region_name: str, start: int, end: int) -> str:
-        """Return Ns; spans are served by ``get_sequence_by_start_end_strand``."""
-        return "N" * (end - start + 1)
+        """Return a configured sequence chunk."""
+        del start, end
+        return self.sequences.get(seq_region_name, "")
 
     def _get_seq_region_length(self, seq_region_name: str) -> int | None:
         """Return the configured length for a sequence region."""
@@ -106,6 +113,7 @@ HEADER_LINES = ["##gff-version 3"]
 CHR1_TRANSCRIPT_ROW = "chr1\tensembl\tmRNA\t1000\t2000\t.\t+\t.\tID=transcript:ENST001;Parent=gene:ENSG001"
 CHR1_EXON_ROW = "chr1\tensembl\texon\t1000\t2000\t.\t+\t.\tID=exon:ENSE001;Parent=transcript:ENST001"
 CHR2_TRANSCRIPT_ROW = "chr2\tensembl\tmRNA\t100\t200\t.\t+\t.\tID=transcript:ENST002;Parent=gene:ENSG002"
+
 
 _GFF3_TWO_TRANSCRIPTS_SHARED_EXON_ONE_LINE = """\
 chr1\tensembl\tgene\t1000\t5000\t.\t+\t.\tID=gene:ENSG001;Name=BRCA1
@@ -208,15 +216,15 @@ class TestGetParentId:
         assert source.get_parent_ids(records[1]) == ("gene:ENSG001",)
 
     def test_get_parent_ids_returns_empty_tuple_when_absent(self) -> None:
-        """Test None is returned when the record has no Parent attribute."""
+        """Test an empty tuple is returned when the record has no Parent attribute."""
 
         records = GFF3Parser.parse_text(_GFF3_ONE_TRANSCRIPT)
         source = GFF3TranscriptSource(file_path="")
 
         assert not source.get_parent_ids(records[0])
 
-    def test_get_parent_ids_shared_exon(self) -> None:
-        """Test the Parent attribute is returned as the parent identifier."""
+    def test_get_parent_ids_returns_every_parent_of_a_shared_exon(self) -> None:
+        """Test one exon row naming two transcripts reports both of them."""
 
         records = GFF3Parser.parse_text(_GFF3_TWO_TRANSCRIPTS_SHARED_EXON_ONE_LINE)
         source = GFF3TranscriptSource(file_path="")
@@ -253,8 +261,8 @@ class TestGetAllFeatures:
         assert transcript.translation.end == 3901
         assert transcript.translation.stable_id == "ENSP001"
 
-    def test_get_all_features_excludes_shared_exon(self, tmp_path: Path) -> None:
-        """Test that a transcript object misses a shared exon from a GFF3 file."""
+    def test_get_all_features_gives_a_shared_exon_to_both_transcripts(self, tmp_path: Path) -> None:
+        """Test an exon row naming two transcripts is built into each of them."""
 
         path = _write_gff3(tmp_path / "sample.gff3", _GFF3_TWO_TRANSCRIPTS_SHARED_EXON_ONE_LINE)
         source = GFF3TranscriptSource(
@@ -262,15 +270,10 @@ class TestGetAllFeatures:
         )
 
         transcripts = source.get_all_features()
-        print([exon.stable_id for exon in transcripts[0].spliced_exons])
-        print([exon.stable_id for exon in transcripts[1].spliced_exons])
 
         assert len(transcripts) == 2
-        transcript = transcripts[0]
-        assert len(transcript.spliced_exons) == 2
-
-        transcript_2 = transcripts[1]
-        assert len(transcript_2.spliced_exons) == 2
+        exon_ids = [[exon.stable_id for exon in transcript.spliced_exons] for transcript in transcripts]
+        assert exon_ids == [["exon:ENSE001", "exon:ENSE003"], ["exon:ENSE001", "exon:ENSE002"]]
 
     def test_sequence_region_names_come_from_gff_directives(self, tmp_path: Path) -> None:
         """Expose declared query names without scanning feature records."""
@@ -280,9 +283,7 @@ class TestGetAllFeatures:
             "##sequence-region 1 1 5000\n"
             "##sequence-region MT 1 100\n" + _GFF3_ONE_TRANSCRIPT.replace("chr1", "1"),
         )
-        source = GFF3TranscriptSource(
-            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
-        )
+        source = GFF3TranscriptSource(file_path=str(path))
 
         assert source.sequence_region_names == frozenset({"1", "MT"})
 
@@ -299,9 +300,7 @@ class TestGetAllFeatures:
             "##gff-version 3\n##sequence-region 1 1 5000\n" + _GFF3_ONE_TRANSCRIPT.replace("chr1", "1"),
         )
         monkeypatch.setattr(GFF3Parser, "index_sequence_names", property(lambda _self: ["1", "2"]))
-        source = GFF3TranscriptSource(
-            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
-        )
+        source = GFF3TranscriptSource(file_path=str(path))
 
         assert source.sequence_region_names == frozenset({"1", "2"})
 
@@ -320,19 +319,9 @@ class TestGetAllFeatures:
             + _GFF3_ONE_TRANSCRIPT.replace("chr1", "1"),
         )
         monkeypatch.setattr(GFF3Parser, "index_sequence_names", property(lambda _self: ["1"]))
-        source = GFF3TranscriptSource(
-            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
-        )
+        source = GFF3TranscriptSource(file_path=str(path))
 
         assert source.sequence_region_names == frozenset({"1", "MT"})
-
-    def test_sequence_region_names_returns_empty_on_os_error(self) -> None:
-        """Return empty set if the file doesn't exist or isn't readable."""
-        source = GFF3TranscriptSource(
-            file_path="non-existent-file", sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
-        )
-
-        assert not source.sequence_region_names
 
     def test_get_all_features_returns_one_transcript_per_group(self, tmp_path: Path) -> None:
         """Test that multiple transcripts are built from a GFF3 file with multiple transcript groups."""
@@ -451,6 +440,14 @@ class TestGetAllFeatures:
         assert transcript.slice is transcript.spliced_exons[0].slice
         assert transcript.gene is not None
         assert transcript.slice is transcript.gene.slice
+
+    def test_sequence_region_names_returns_empty_on_os_error(self) -> None:
+        """Return empty set if the file doesn't exist or isn't readable."""
+        source = GFF3TranscriptSource(
+            file_path="non-existent-file", sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
+        )
+
+        assert not source.sequence_region_names
 
 
 class TestIterAllFeatures:
@@ -584,9 +581,7 @@ class TestGetFeaturesByRegion:
 
         path = _write_query_gff3(tmp_path / "sample.gff3.gz", "\n".join(HEADER_LINES) + "\n")
         _write_query_mock_tabix(tmp_path, monkeypatch)
-        source = GFF3TranscriptSource(
-            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
-        )
+        source = GFF3TranscriptSource(file_path=str(path))
 
         transcripts = source.get_features_by_region(seq_region_name="chr3", start=1, end=10)
 
@@ -690,9 +685,7 @@ class TestIterFeaturesByRegion:
         """A region the file does not carry yields nothing rather than everything."""
 
         path = _write_gff3(tmp_path / "sample.gff3")
-        source = GFF3TranscriptSource(
-            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
-        )
+        source = GFF3TranscriptSource(file_path=str(path))
 
         assert not list(source.iter_features_by_region(seq_region_name="chr9", start=1, end=100))
 
@@ -713,13 +706,13 @@ class TestIterFeaturesByRegion:
 
     def test_iter_features_by_regions_with_resolver(self, tmp_path: Path) -> None:
         """Test using a reference_region_resolver to convert contig to chr names."""
-        _GFF3_CONTIG_NAMES = """\
+        _GFF3_CHR_ACCESSIONS = """\
 NC_000001.11\tensembl\tgene\t1000\t5000\t.\t+\t.\tID=gene:ENSG001;Name=BRCA1;biotype=protein_coding
 NC_000001.11\tensembl\tmRNA\t1000\t5000\t.\t+\t.\tID=transcript:ENST001;Parent=gene:ENSG001
 NC_000001.11\tensembl\texon\t1000\t5000\t.\t+\t.\tID=exon:ENSE001;Parent=transcript:ENST001
 NC_000001.11\tensembl\tCDS\t1100\t4900\t.\t+\t0\tID=cds:ENSP001;Parent=transcript:ENST001;protein_id=ENSP001
 """
-        path = _write_gff3(tmp_path / "sample.gff3", data=_GFF3_CONTIG_NAMES)
+        path = _write_gff3(tmp_path / "sample.gff3", data=_GFF3_CHR_ACCESSIONS)
 
         chr_synonyms = ChromosomeSynonyms(
             by_name={
@@ -731,10 +724,15 @@ NC_000001.11\tensembl\tCDS\t1100\t4900\t.\t+\t0\tID=cds:ENSP001;Parent=transcrip
             source_names=frozenset({"chr1"}),
             synonyms=chr_synonyms,
         )
+        accession_resolver = SequenceRegionResolver(
+            source_names=frozenset({"NC_000001.11"}),
+            synonyms=chr_synonyms,
+        )
         source = GFF3TranscriptSource(
             file_path=str(path),
             sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000}),
             reference_region_resolver=chr_resolver,
+            source_region_resolver=accession_resolver,
         )
 
         (transcript,) = list(source.iter_features_by_region(seq_region_name="chr1", start=2000, end=4000))
@@ -819,8 +817,6 @@ class TestUnindexedContigQuery:
         """Test the resolver source names come from the real index, not file headers."""
 
         path = _create_tabix_gff3_cli(tmp_path / "sample.gff3.gz", htslib_toolchain)
-        source = GFF3TranscriptSource(
-            file_path=str(path), sequence_source=DummySequenceSource({"chr1": 9000, "chr2": 8000})
-        )
+        source = GFF3TranscriptSource(file_path=str(path))
 
         assert source.sequence_region_names == frozenset({"chr1"})

@@ -21,7 +21,7 @@ from threading import RLock
 from attrs import define, field
 
 from ensembl.vep.models.sequence import Slice, CoordSystem
-from ensembl.vep.common import Strand, UnsafeSetterMixin, invalidates, reverse_complement
+from ensembl.vep.common import Strand, UnsafeSetterMixin, invalidates
 
 logger = logging.getLogger(__name__)
 
@@ -181,14 +181,7 @@ class Feature(UnsafeSetterMixin):
                 logger.warning("Cannot obtain seq for a feature without attached slice.")
                 return None
 
-            slice_seq = self.slice.seq
-            if slice_seq is None:
-                return None
-
-            feature_seq = slice_seq[self.start - 1 : self.end]
-            if self.strand == Strand.REVERSE:
-                return reverse_complement(feature_seq)
-            return feature_seq
+            return self.slice.subseq(self.start, self.end, self.strand)
 
     def __eq__(self, other: object) -> bool:
         """
