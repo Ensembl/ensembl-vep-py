@@ -11,11 +11,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Unit tests for hello_world module"""
+"""Input buffering."""
 
-from ensembl.vep.cli import hello
+from __future__ import annotations
 
+from .base import Buffer
+from .input_buffer import FixedSizeInputBuffer, InputBuffer
+from .registry import available_buffers, buffer_factory, get_buffer, register_buffer
 
-def test_hello_success() -> None:
-    """Test `hello_world.hello()` function"""
-    assert hello("world!") == "Hello world!"
+__all__ = [
+    "Buffer",
+    "FixedSizeInputBuffer",
+    "InputBuffer",
+    "available_buffers",
+    "buffer_factory",
+    "get_buffer",
+    "register_buffer",
+]
