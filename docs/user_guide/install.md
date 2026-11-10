@@ -16,7 +16,29 @@ uv installs Python 3.12 when it is not already available. Rust and Cargo are req
 
 ## PyPI
 
-> **_NOTE:_** The package is not available from PyPI yet. When it is published, it will be installable with `pip install ensembl-vep`.
+Ensembl VEP is published on PyPI as [`ensembl-vep`](https://pypi.org/project/ensembl-vep) and requires Python 3.12 or later. Install it into a virtual environment with pip:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install ensembl-vep
+```
+
+Or, using uv (recommended):
+
+```bash
+uv venv
+source .venv/bin/activate
+uv pip install ensembl-vep
+```
+
+If no pre-built wheel is available for your platform, the package is built from its source distribution, which needs a Rust toolchain as described in [Pre-requisites](#pre-requisites).
+
+Check that the command is available:
+
+```bash
+vep --help
+```
 
 ## Source
 

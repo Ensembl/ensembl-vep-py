@@ -46,9 +46,15 @@ configure(
 html_logo = "_static/vep-icon.svg"
 html_favicon = "_static/vep-icon.svg"
 html_theme_options["logo"]["text"] = ""
-html_static_path = ["_static"]
+html_static_path = ["_static", "auto/static"]
 html_css_files.append("vep.css")
 
 # The entry-points table lives on the CLI reference landing page, which `make clidoc` generates with the
 # table markers in place.
-entrypoints_target_file = "reference/cli/index.md"
+entrypoints_target_file = "auto/reference/cli/index.md"
+
+# The coverage report lives in the Developer Guide. The shared configuration hides both sidebars for it by
+# its old top-level name, so give the embedded reports the full page width under the new name too.
+COVERAGE_PAGE = "developer_guide/coverage_report"
+html_sidebars[COVERAGE_PAGE] = []
+html_theme_options["secondary_sidebar_items"][COVERAGE_PAGE] = []
