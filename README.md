@@ -16,25 +16,29 @@ Full documentation is available at: https://ensembl.github.io/ensembl-vep-py/
 
 ## Installation
 
-### Requirements
-
-- Python 3.12 or higher
-- Rust 1.95.0 or higher (TBD - not strictly tested)
-- Dependencies listed in `pyproject.toml` and `Cargo.toml`
-
-### Using pip (TBD - after PyPI release)
+### From PyPI
 
 ```bash
 pip install ensembl-vep
 ```
 
-### Using uv (recommended)  (TBD - after PyPI release)
+Or alternatively, using uv (recommended)
 
 ```bash
 uv pip install ensembl-vep
 ```
 
-### Development Installation
+### Using source 
+
+#### Requirements
+
+- Git
+- uv (https://github.com/Ensembl/uv)    
+- a Rust toolchain, including Cargo.
+
+uv installs Python 3.12 when it is not already available. Rust and Cargo are required because the source distribution includes a native Rust extension.
+
+#### Download and install
 
 1. clone the repository
     ```bash
@@ -42,37 +46,33 @@ uv pip install ensembl-vep
     cd ensembl-vep-py
     ```
 
-2. Create a branch against remote main branch
+2. Create virtual environment
     ```bash
-    git checkout -b feature/some_feature origin/main
+    uv venv --python 3.12
+    source .venv/bin/activate
     ```
 
-3. Install the package in editable mode
+3. Install the package
     ```bash
-    uv pip install -e .
+    uv pip install .
     ```
 
-See more details in the [Contributing Guide](CONTRIBUTING.md) guide.
+For more details, see the [Download and install](https://ensembl.github.io/ensembl-vep-py/latest/user_guide/install.html) page of the documentation.
 
 ## Quick Start
 
 ### Basic Usage
 
-```python
-from ensembl_vep import hello
-
-print(hello("world!"))
-```
-
-### Command-Line Interface
+Run Ensembl VEP with the example VCF, GTF and FASTA files:
 
 ```bash
-vep world!
+vep run \
+  --input_file examples/homo_sapiens/homo_sapiens_GRCh38.vcf \
+  --gtf examples/homo_sapiens/genes.gtf.bgz \
+  --fasta examples/homo_sapiens/unmasked.fa.bgz \
+  --output_file quickstart_output.vcf \
+  --stats_file quickstart_summary.html
 ```
-
-## Configuration
-
-### Cache Files (TBD)
 
 ## Testing
 
@@ -94,7 +94,7 @@ the project can use stable Rust without nightly-only coverage attributes.
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
-## Citation (TBD)
+## Citation
 
 If you use this software, please cite:
 
@@ -103,13 +103,10 @@ The Ensembl Variant Effect Predictor.
 *Genome Biology* Jun 6;17(1):122. (2016)  
 doi:[10.1186/s13059-016-0974-4](https://doi.org/10.1186/s13059-016-0974-4)
 
-## Support (TBD)
+## Support
 
-- Bugs: [Issues](https://github.com/ensembl-vep-py/issues)
-- Features: [Discussions → Ideas](https://github.com/ensembl-vep-py/discussions/categories/ideas)
+- Report bugs or request features: [Issues](https://github.com/ensembl-vep-py/issues)
 
 ## Changelog (TBD)
 
 See [CHANGELOG.md](CHANGELOG.md) for version history and updates.
-
-## Acknowledgments (TBD)
