@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" width="1000" height="400" role="img" aria-label="How a run moves input records through worker processes and back to the output in order">
+<title>How a run moves input records through worker processes and back to the output in order</title>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1e1e1e"/></marker></defs>
+<rect width="1000" height="400" fill="#ffffff"/>
+<rect x="15" y="15" width="970" height="140" rx="10" fill="#fff9db" stroke="#adb5bd" stroke-width="1" stroke-dasharray="6 4"/>
+<text x="29" y="37" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" fill="#495057">Parent process</text>
+<rect x="15" y="235" width="970" height="150" rx="10" fill="#e7f5ff" stroke="#adb5bd" stroke-width="1" stroke-dasharray="6 4"/>
+<text x="29" y="257" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" fill="#495057">Worker process (one or more)</text>
+<rect x="40" y="60" width="200" height="64" rx="8" fill="#b2f2bb" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="140.0" y="87.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">input source</text>
+<text x="140.0" y="107.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">reads raw records</text>
+<rect x="290" y="60" width="200" height="64" rx="8" fill="#ffec99" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="390.0" y="87.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">PayloadIterator</text>
+<text x="390.0" y="107.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">groups records</text>
+<rect x="540" y="60" width="200" height="64" rx="8" fill="#ffec99" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="640.0" y="87.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">Executor</text>
+<text x="640.0" y="107.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">serial or processes</text>
+<rect x="790" y="60" width="175" height="64" rx="8" fill="#ffc9c9" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="877.5" y="87.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">writer or stream</text>
+<text x="877.5" y="107.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">input order</text>
+<rect x="40" y="285" width="200" height="64" rx="8" fill="#b2f2bb" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="140.0" y="312.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">records to models</text>
+<text x="140.0" y="332.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">rebuild variants</text>
+<rect x="290" y="285" width="200" height="64" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="390.0" y="312.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">input buffer</text>
+<text x="390.0" y="332.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">interval index</text>
+<rect x="540" y="285" width="200" height="64" rx="8" fill="#d0bfff" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="640.0" y="312.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">workflow tracks</text>
+<text x="640.0" y="332.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">find and annotate</text>
+<rect x="790" y="285" width="175" height="64" rx="8" fill="#ffc9c9" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="877.5" y="312.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">AnnotatedVariant</text>
+<text x="877.5" y="332.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">detached snapshot</text>
+<path d="M 240 92.0 L 290 92.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 490 92.0 L 540 92.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 640.0 124 L 640 190 L 140 190 L 140.0 285" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="390" y="182" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" text-anchor="middle" fill="#495057">payload of raw records</text>
+<path d="M 240 317.0 L 290 317.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 490 317.0 L 540 317.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 740 317.0 L 790 317.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 877.5 285 L 877.5 124" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="930" y="205" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" text-anchor="middle" fill="#495057">numbered results</text>
+</svg>

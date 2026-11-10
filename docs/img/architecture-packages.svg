@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 470" width="980" height="470" role="img" aria-label="Ensembl VEP annotation packages and how they depend on each other">
+<title>Ensembl VEP annotation packages and how they depend on each other</title>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1e1e1e"/></marker></defs>
+<rect width="980" height="470" fill="#ffffff"/>
+<rect x="400" y="24" width="180" height="60" rx="8" fill="#ffec99" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="490.0" y="49.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">runner</text>
+<text x="490.0" y="69.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">runs a command</text>
+<rect x="700" y="24" width="230" height="60" rx="8" fill="#ffc9c9" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="815.0" y="49.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">output/factory</text>
+<text x="815.0" y="69.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">snapshots and writers</text>
+<rect x="50" y="140" width="230" height="60" rx="8" fill="#ffec99" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="165.0" y="165.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">workflow/build</text>
+<text x="165.0" y="185.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">configuration to tracks</text>
+<rect x="400" y="140" width="180" height="60" rx="8" fill="#ffec99" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="490.0" y="165.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">workflow</text>
+<text x="490.0" y="185.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">ordered tracks</text>
+<rect x="250" y="260" width="190" height="60" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="345.0" y="285.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">overlaps</text>
+<text x="345.0" y="305.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">find variant-feature pairs</text>
+<rect x="600" y="260" width="190" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="695.0" y="285.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">annotators</text>
+<text x="695.0" y="305.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">interpret overlaps</text>
+<rect x="25" y="385" width="170" height="60" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="110.0" y="410.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">buffer</text>
+<text x="110.0" y="430.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">indexed input batch</text>
+<rect x="215" y="385" width="170" height="60" rx="8" fill="#b2f2bb" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="300.0" y="410.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">sources</text>
+<text x="300.0" y="430.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">read features</text>
+<rect x="405" y="385" width="170" height="60" rx="8" fill="#b2f2bb" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="490.0" y="410.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">caches</text>
+<text x="490.0" y="430.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">reuse lookups</text>
+<rect x="595" y="385" width="170" height="60" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="680.0" y="410.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">matcher</text>
+<text x="680.0" y="430.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">coordinate rules</text>
+<rect x="785" y="385" width="170" height="60" rx="8" fill="#b2f2bb" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="870.0" y="410.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">models</text>
+<text x="870.0" y="430.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">typed overlaps</text>
+<path d="M 580 54.0 L 700 54.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 400 54.0 L 165 54 L 165.0 140" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 280 170.0 L 400 170.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 490.0 84 L 490.0 140" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 460 200 L 460 230 L 345 230 L 345.0 260" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 520 200 L 520 230 L 695 230 L 695.0 260" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 345 320 L 345 352 L 110.0 352 L 110.0 385" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 345 320 L 345 352 L 300.0 352 L 300.0 385" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 345 320 L 345 352 L 490.0 352 L 490.0 385" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 345 320 L 345 352 L 680.0 352 L 680.0 385" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 695 320 L 695 352 L 870 352 L 870.0 385" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+</svg>
