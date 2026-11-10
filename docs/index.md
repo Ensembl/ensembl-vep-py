@@ -20,6 +20,16 @@ Ensembl VEP (Variant Effect Predictor) predicts the functional effects of genomi
 user_guide/index
 ```
 
+## Concepts
+
+How Ensembl VEP represents genomic positions, reads its inputs, assembles its configuration and decides consequences.
+
+```{toctree}
+:maxdepth: 2
+
+concepts/index
+```
+
 ## Developer Guide
 
 ```{toctree}

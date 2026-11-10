@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 330" width="1000" height="330" role="img" aria-label="A corpus specification resolves to synthetic, loaded or golden corpora used by tests, tools and exporters">
+<title>A corpus specification resolves to synthetic, loaded or golden corpora used by tests, tools and exporters</title>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1e1e1e"/></marker></defs>
+<rect width="1000" height="330" fill="#ffffff"/>
+<rect x="20" y="135" width="150" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="95.0" y="160.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">CorpusSpec</text>
+<text x="95.0" y="180.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">name + parameters</text>
+<rect x="215" y="135" width="150" height="60" rx="8" fill="#ffec99" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="290.0" y="160.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">registry</text>
+<text x="290.0" y="180.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">resolves the name</text>
+<rect x="415" y="30" width="180" height="60" rx="8" fill="#b2f2bb" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="505.0" y="55.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">synthetic.*</text>
+<text x="505.0" y="75.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">generated</text>
+<rect x="415" y="135" width="180" height="60" rx="8" fill="#b2f2bb" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="505.0" y="160.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">loaded.files</text>
+<text x="505.0" y="180.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">FASTA, GFF3/GTF, VCF</text>
+<rect x="415" y="240" width="180" height="60" rx="8" fill="#b2f2bb" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="505.0" y="265.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">golden.file</text>
+<text x="505.0" y="285.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">pinned expected terms</text>
+<rect x="645" y="135" width="120" height="60" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="705.0" y="160.0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">Corpus</text>
+<text x="705.0" y="180.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">one contract</text>
+<rect x="810" y="60" width="170" height="60" rx="8" fill="#ffc9c9" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="895.0" y="85.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">consumers</text>
+<text x="895.0" y="105.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">tests, explain, bench</text>
+<rect x="810" y="210" width="170" height="60" rx="8" fill="#ffc9c9" stroke="#1e1e1e" stroke-width="1.5"/>
+<text x="895.0" y="235.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="#1e1e1e">exporters</text>
+<text x="895.0" y="255.0" font-family="Nunito, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#495057">file bundle</text>
+<path d="M 170 165.0 L 215 165.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 365 165.0 L 390 165 L 390 60.0 L 415 60.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 365 165.0 L 390 165 L 390 165.0 L 415 165.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 365 165.0 L 390 165 L 390 270.0 L 415 270.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 595 60.0 L 620 60.0 L 620 165 L 645 165.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 595 165.0 L 620 165.0 L 620 165 L 645 165.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 595 270.0 L 620 270.0 L 620 165 L 645 165.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 765 165.0 L 790 165 L 790 90 L 810 90.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 765 165.0 L 790 165 L 790 240 L 810 240.0" fill="none" stroke="#1e1e1e" stroke-width="1.5" marker-end="url(#arrow)"/>
+</svg>
