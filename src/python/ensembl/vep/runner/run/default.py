@@ -279,7 +279,7 @@ class Runner:
             Iterator[AnnotatedVariant]: Each annotated variant, in input order.
         """
         # `record_count` should be never be called with `scan=True`: if the input does not declare a count
-        # it would cost a whole extra pass over it, which is not worth it for progress reporting. 
+        # it would cost a whole extra pass over it, which is not worth it for progress reporting.
         # Without a count, one the bar is drawn unsized.
         variant_total = self.input_source.record_count() if show_progress else None
         try:
