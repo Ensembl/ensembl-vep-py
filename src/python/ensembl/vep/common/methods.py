@@ -579,7 +579,7 @@ def reverse_complement(sequence: str) -> str:
         sequence (str): The sequence to reverse complement.
 
     Returns:
-        str: The reverse complement of the sequence.
+        The reverse complement of the sequence.
     """
 
     translation_table = str.maketrans("ACGTNacgtn", "TGCANtgcan")

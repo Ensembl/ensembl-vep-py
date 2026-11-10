@@ -183,8 +183,8 @@ def declared_vs_measured(measured_self_nanoseconds: dict[str, float]) -> list[tu
     """Return one row per fact comparing its declared tier against what was measured.
 
     Returns:
-        list[tuple[str, str, float, int]]: ``(fact name, declared tier label, measured ns, measured
-            cost in BOUNDS units)``, ordered by declared cost then name.
+        ``(fact name, declared tier label, measured ns, measured cost in BOUNDS units)``,
+            ordered by declared cost then name.
     """
     cost_table = normalised_cost_table(measured_self_nanoseconds)
     rows = []
