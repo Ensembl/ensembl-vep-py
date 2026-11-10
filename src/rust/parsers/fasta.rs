@@ -33,15 +33,20 @@ use std::{
 // FASTA record
 // ---------------------------------------------------------------------------
 
+/// Represents a sequence record in a FASTA file.
 #[pyclass(name = "FastaRecord")]
 #[derive(Clone, Debug, PartialEq)]
 pub struct FastaRecord {
+    /// str: Name of the seq region
     #[pyo3(get)]
     pub seqid: String,
+    /// int: Start coordinate of the sequence
     #[pyo3(get)]
     pub start: usize,
+    /// int: End coordinate of the sequence
     #[pyo3(get)]
     pub end: usize,
+    /// str: Sequence of the seq region
     #[pyo3(get)]
     pub sequence: String,
 }
