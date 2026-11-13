@@ -39,6 +39,7 @@ type AttributePairs = Vec<(String, Vec<String>)>;
 // GTFRecord - represents a GTF record
 // ---------------------------------------------------------------------------
 
+/// Represents a record from one line of a GTF file.
 #[pyclass(name = "GTFRecord")]
 #[derive(Clone, Debug, PartialEq)]
 pub struct GtfRecord {

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 name: 'Deploy documentation'
-run-name: ${{ github.actor }} triggered mkdocs generation
+run-name: ${{ github.actor }} triggered Sphinx docs generation
 
 on:
   workflow_dispatch:

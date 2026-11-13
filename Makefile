@@ -89,7 +89,7 @@ coverage:
 	cp docs/reports/coverage/rust/coverage-badge.svg docs/img/rust-coverage-badge.svg
 	rm docs/reports/coverage/python/coverage.xml docs/reports/coverage/rust/coverage.xml
 
-apidoc:
+apidoc: install-package
 	uv run sphinx-apidoc -o docs/reference/ src/python/ensembl --force --module-first \
 	--no-toc --implicit-namespaces --templatedir docs/_templates/apidoc src/python/ensembl/vep/ensembl_vep_core.cpython-312-darwin.so
 	rm -f docs/reference/ensembl.rst

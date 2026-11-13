@@ -16,7 +16,7 @@ Features positioned on a slice have coordinates and strand values expressed rela
 
 All positions on a slice or sequence feature use `start` and `end` coordinates, where the condition `start <= end` always holds true.
 
-**Exception:** 
+**Exceptions:**
 1. An insertion variants described in Ensembl's default format can have `end = start - 1`.
 2. Circular slice on a bacterial or mitochondrial DNA can have `end < start`.
 

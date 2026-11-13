@@ -21,23 +21,24 @@ parse_text(data, limit=None) -> list[T]
 parse_file(file_path, limit=None) -> list[T]
 ```
 
-`GFF3Parser` is the worked example: a thin Python `attrs` class wrapping the compiled Rust `ensembl_vep_core` extension. The facade exists so callers depend on a stable, documented Python contract rather than the Rust binding directly — `open()` returns the parser itself and supports the context-manager protocol (`with parser.open(path) as p: ...`), so the underlying file handle is always closed even if an exception is raised mid-read.
+The `GFF3Parser` class is an example: a thin Python `attrs` class wrapping the compiled Rust `ensembl_vep_core` extension. The facade exists so callers depend on a stable, documented Python contract rather than the Rust binding directly — `open()` returns the parser itself and supports the context-manager protocol (`with parser.open(path) as p: ...`), so the underlying file handle is always closed even if an exception is raised mid-read.
 
 ## FeatureSource hierarchy
 
-`ensembl.vep.sources` mirrors the parser layer one level up — instead of raw records, it produces domain `Feature` objects (`Transcript`, `Variation`, etc.):
+`ensembl.vep.sources` mirrors the parser layer one level up — it can produce either `Record` or domain `Feature` objects (`Transcript`, `Variation`, etc.):
 
 ```
 FeatureSource (abstract root)
-│   get_all_features()            -> list[Feature]
-│   iter_all_features()           -> Iterator[Feature]
-│   get_features_by_region(...)   -> list[Feature]
-│   iter_features_by_region(...)  -> Iterator[Feature]
+|   get_all_records()            -> list[Record]
+|   iter_all_records()           -> list[Record]
+│   get_records_by_region(...)   -> list[Record]
+│   iter_records_by_region(...)  -> Iterator[Record]
+|   records_to_features(...)     -> list[Record]:
 │   close()
 │   __enter__ / __exit__ (delegates to close())
 │
 ├── FileFeatureSource[P, F]   (file-backed; P = parser type, F = feature type)
-│   └── concrete sources implement `_records_to_features(records) -> list[F]`
+│   └── concrete sources implement `records_to_features(records) -> list[F]`
 │       e.g. GFF3TranscriptSource[GFF3Parser, Transcript]
 │
 └── DBSource[D, F]     (DB-backed; D = DB adaptor type, F = feature type)
@@ -45,16 +46,17 @@ FeatureSource (abstract root)
 ```
 
 A concrete source only ever implements that one conversion hook — `FileSource`/`DBSource` already provide the four read methods, `close()`, and context-manager support on top of it.
+The `records` methods allow a source to be pickled, which is required for using multi-processing.
 
 ## Streaming vs. eager
 
-`FileSource`'s default `iter_all_features`/`iter_features_by_region` convert and yield each record as soon as it comes off `next()`, rather than buffering the whole file first:
+`FileSource`'s default `iter_all_records`/`iter_records_by_region` yield each record as soon as it comes off `next()`, rather than buffering the whole file first:
 
 ```python
-def iter_all_features(self) -> Iterator[F]:
+def iter_all_records(self) -> Iterator[R]:
     with self.adaptor.open(self.file_path, mode="sequential") as adaptor:
-        while (rec := adaptor.next()) is not None:
-            yield from self._records_to_features([rec])
+        while (record := adaptor.next()) is not None:
+            yield record
 ```
 
 This default is correct whenever one raw record maps to one (or more) complete features — e.g. one VCF line is one Variation. It is **not** correct for formats where a feature is assembled from several records, which is exactly the GFF3 case: a `Transcript` needs its own record plus all of its child `exon`/`CDS` records, and possibly a parent `gene` record.
@@ -92,25 +94,28 @@ The `FastaParser` class is able to read both plain/bgzipped FASTA files as well 
 `FeatureSource` is an interface for any source that produces features. Inheriting classes must implement the following methods:
 
 ```python
-get_all_features()           -> list[F]
-get_features_by_region(...)  -> list[F]
-iter_all_features()          -> Iterator[F]
-iter_features_by_region(...) -> Iterator[F]
+get_all_records()            -> list[Record]
+iter_all_records()           -> Iterator[Record]
+get_records_by_region(...)   -> list[Record]
+iter_records_by_region(...)  -> Iterator[Record]
+records_to_features(...)     -> list[Feature]
 close()                      -> None
 ```
 
+The methods `get_all_features`, `iter_all_features`, `get_features_by_region` and `iter_features_by_region`, use `records_to_features` and the corresponding `*records*` method to produce `Features`.
+
 ### FileFeatureSource
 
-This implements the `get_all_features`, `get_features_by_region`, `iter_all_features` and `iter_features_by_region` which retrieve records from the file using the concrete `Parser` and delegates constructing the Feature objects to the concrete source. It does this through the `_records_to_features` abstract method, which must be implemented by the concrete source.
+This implements the `get_all_records`, `get_records_by_region`, `iter_all_records` and `iter_records_by_region` which retrieve records from the file using the concrete `Parser` and delegates constructing the Feature objects to the concrete source by making `records_to_features` an abstract method.
 
 #### VCFVariationSource
 
 The `VCFVariationSource` class is used to make `Variation` and `StructuralVariation` objects from records in a VCF file.
 `StructuralVariation` objects are used for structural variants that are represented symbolically; small INDELS are represented by `Variation` objects.
 
-The `VCFVariationSource` class inherits from `FileFeatureSource` and implements `_records_to_features`. This creates a list of `Variation` and `StructuralVariation` objects from a list of `VcfRecords` provided by the `VCFParser`.
+The `VCFVariationSource` class inherits from `FileFeatureSource` and implements `records_to_features`. This creates a list of `Variation` and `StructuralVariation` objects from a list of `VcfRecords` provided by the `VCFParser`.
 
-`_records_to_features` decides whether a record is a `StructuralVariation` object in the following way:
+`records_to_features` decides whether a record is a `StructuralVariation` object in the following way:
 - If the REF and ALT alleles are not simple strings of base characters (ACGT)  
 AND
 - The record contains the SVTYPE info field  
@@ -121,17 +126,23 @@ OR
 
 Otherwise it creates a `Variation` object
 
+##### PicklableVCFVariationSource
+
+`PicklableVCFVariationSource` is a subclass of `VCFVariationSource`, that uses raw lines as it's records, which allows it to be pickled. This is required because the records a read by the run process and the records are turned into variations by the worker in a separate process. To be passed from one process to another, objects must be able to be pickled.
+
 #### Transcript Sources
 
 There are currently sources for creating `Transcript` objects from GFF3/GTF file-backed sources, using the `FileFeatureSource` interface.
 
-#### Common GXF class
+##### Common GXF class
 
 The `GXFTranscriptSource` implements the common functionality for the concrete GFF3/GTF sources and `GFF3TranscriptSource` and `GTFTranscriptSource` implement anything that is needed to account for the differences between the two formats. For example, getting the identifier of a record or a parent record. Rows from a GFF3/GTF file are returned as `GFF3/GTFRecord` objects.
 
-`GXFTranscriptSource` implements the `_records_to_features()` function that the `FileFeatureSource.get_all_features()` function requires. It also overrides `iter_all_features()`, `iter_features_by_region()` and `get_features_by_region()` to deal with the specificities of the GFF3/GTF format. This is because multiple rows in a GFF3/GTF file represent a single transcript (the parent gene, the transcripts, its exons and potentially its CDS).
+`GXFTranscriptSource` implements the `records_to_features()` method. It overrides `FileFeatureSource`'s `get_records_by_region` method in order to be able to filter by feature type.
 
-`get_features_by_region()`
+It also overrides `iter_all_features()`, `iter_features_by_region()` and `get_features_by_region()` to deal with the specificities of the GFF3/GTF format. This is because multiple rows in a GFF3/GTF file represent a single transcript (the parent gene, the transcripts, its exons and potentially its CDS).
+
+**get_features_by_region()**
 
 This function uses a two-stage process because not all of a transcript's features (e.g. exons) will overlap the requested region and therefore wouldn't be retrieved if we simply query the file by the region.
 - First, it fetches all of the transcript rows that overlap the region to get the complete set of spans that the transcripts overlap. The transcript spans are merged to get a minimal set of spans.

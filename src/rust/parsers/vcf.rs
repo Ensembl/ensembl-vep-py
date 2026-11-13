@@ -54,7 +54,7 @@ use std::{
 // VCFRecord - represents a VCF record
 // ---------------------------------------------------------------------------
 
-///    Represents a record in a VCF file
+/// Represents a record in a VCF file
 #[pyclass(name = "VCFRecord")]
 #[derive(Clone, Debug, PartialEq)]
 pub struct VcfRecord {
@@ -128,6 +128,7 @@ impl VcfRecord {
 // VCFMetadata - holds VCF metadata
 // ---------------------------------------------------------------------------
 
+/// Represents the metadata from a VCF file
 #[pyclass(name = "VCFMetadata", mapping)]
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct VcfMetadata {

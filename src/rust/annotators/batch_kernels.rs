@@ -57,9 +57,33 @@ fn intervals_overlap(range_start: i64, range_end: i64, other_start: i64, other_e
     range_start <= other_end && range_end >= other_start
 }
 
-/// Four variant shape facts from two length arrays, in one crossing.
+/// Return four variant shape facts from two length arrays, in one crossing.
 ///
-/// Returns `(is_snv, is_short_insertion, is_short_deletion, length_change_inframe)`.
+/// Args
+/// ----
+/// reference_lengths list[int, ...]: Lengths of reference alleles.
+/// alternate_lengths list[int, ...]: Lengths of alternate alleles.
+///
+/// Returns
+/// -------
+/// tuple(bytes, bytes, bytes, bytes)
+///    bitmaps representing the facts ``(is_snv, is_short_insertion, is_short_deletion, length_change_inframe)``.
+///
+/// Raises
+/// ------
+/// ValueError
+///   If the lengths of the two allele list are not the same length.
+///
+/// Example
+/// -------
+///
+/// .. code-block:: python
+///
+///   from ensembl.vep.ensembl_vep_core import batch_variant_shapes
+///   reference_lengths = [1, 0, 3, 2, 2]
+///   alternate_lengths = [1, 4, 0, 0, 2]
+///   shape_masks = batch_variant_shapes(reference_lengths, alternate_lengths)
+///
 #[pyfunction]
 pub fn batch_variant_shapes(
     reference_lengths: Vec<i64>,
