@@ -22,8 +22,15 @@ Use the transcript file and the reference sequence of the same assembly as your 
 
 All three files can be plain text or compressed with `bgzip`. They can be read without an index, but a run is much faster when they are indexed, because Ensembl VEP can then read only the regions around your variants instead of scanning each file:
 
-- **GFF3 and GTF:** sort the file, compress it with `bgzip` and index it with `tabix`. A transcript file read without an index must keep all the records of a gene together.
-- **FASTA:** index the file with `samtools faidx`. A plain FASTA file needs a `.fai` index; a `bgzip` compressed FASTA file needs both a `.fai` and a `.gzi` index.
+- **GFF3 and GTF:** sort the file, compress it with `bgzip` and index it with `tabix`. A transcript file read without an index must keep all the records of a gene together. e.g.
+```bash
+(grep "^#" genes.gff; grep -v "^#" genes.gff | sort -t$'\t' -k1,1 -k4,4n) | bgzip > genes.gff.bgz
+tabix -p gff gene.gff.gz
+```
+- **FASTA:** index the file with `samtools faidx`. A plain FASTA file needs a `.fai` index; a `bgzip` compressed FASTA file needs both a `.fai` and a `.gzi` index. e.g.
+```bash
+samtools faidx genome.fa.bgz
+```
 
 The example data in `examples/homo_sapiens` is compressed and indexed this way.
 
@@ -46,13 +53,13 @@ The output always reports a variant on the sequence region named in your input f
 
 ## Upstream and downstream distance
 
-A variant near a transcript but outside it is reported as `upstream_gene_variant` or `downstream_gene_variant` when it lies within the distance set by `--distance`. Give one value for both directions, or two comma-separated values for upstream and downstream:
+A variant near a transcript, but outside it, is reported as `upstream_gene_variant` or `downstream_gene_variant` when it lies within the distance set by `--distance`. Give one value for both directions, or two comma-separated values for upstream and downstream:
 
 ```bash
 vep run --config vep.toml --distance 5000,2000
 ```
 
-See the {ref}`source options <cli-section-source>` for the default.
+See the {ref}`source options <cli-section-source>` section for the default.
 
 ## Sources that are not available yet
 

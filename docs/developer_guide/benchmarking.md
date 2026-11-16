@@ -13,7 +13,7 @@ Before anything is timed, every configuration is run once and its output compare
 `vep bench matrix` times the annotators over overlaps that are already built, in the current process. No VCF is read, no transcript is loaded from a file and no output is written:
 
 ```bash
-vep bench matrix --kind synthetic.heavy --strategies consequence.linear,consequence.columnar-staged --caches none,zonemap
+vep bench matrix --kind synthetic.heavy --strategies consequence.linear,consequence.columnar-staged --caches none,zonemap,zonemap+codon
 ```
 
 It crosses each strategy in `--strategies` with each cache set in `--caches`, building fresh caches for every combination, because the caches are independent of the strategy. A cache set is `none`, or `zonemap`, `codon` and `mapper` joined with `+`, such as `zonemap+codon`. Alongside wall-clock time it reports the weighted number of fact computations per overlap, which depends only on the strategy and not on the language or machine it runs on.
