@@ -365,8 +365,8 @@ def load_fact_cost_overrides_from_package() -> dict[str, int]:
     """Read the checked-in measured fact-cost table, if any, without applying it.
 
     Returns:
-        dict[str, int]: The ``{fact_name: cost_units}`` table from ``annotators/data/
-            fact_costs.json``, or an empty dict if that resource does not exist.
+        dict[str, int]: The ``{fact_name: cost_units}`` table from
+            ``annotators/data/fact_costs.json``, or an empty dict if that resource does not exist.
     """
     resource = files("ensembl.vep.annotators.consequence").joinpath(FACT_COST_OVERRIDE_RESOURCE)
     if not resource.is_file():

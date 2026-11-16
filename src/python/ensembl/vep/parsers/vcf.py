@@ -33,7 +33,7 @@ class VCFParser(Parser[VCFRecord]):
     """Parser facade for VCF files.
 
     Attributes:
-        format (str): The format of the file being parsed.
+        format: The format of the file being parsed.
         file_path (str | Path | None): The path to the file being parsed.
         tabix_path (str): The path to the tabix executable.
         mode (str): The reader mode, either "auto", "query" or "sequential".

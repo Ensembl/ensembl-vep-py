@@ -20,6 +20,10 @@ header:
     - '**/*.md'
     # JSON does not support comment headers.
     - '**/*.json'
+    - '**/*.svg'
+    # example data
+    - '**/*.vcf'
+    - '**/*.fai'
     - 'tests/**/test_*/**/*'
     - '.gitignore'
     - 'LICENSE'
