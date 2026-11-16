@@ -27,6 +27,17 @@ on:
         description: Release tag to deploy
         required: true
         type: string
+  workflow_call:
+    inputs:
+      python-version:
+        description: Python version
+        default: '3.12'
+        required: false
+        type: string
+      tag:
+        description: Release tag to deploy
+        required: true
+        type: string
 
 jobs:
   docs:

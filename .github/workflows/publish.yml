@@ -30,6 +30,8 @@ jobs:
   mkdocs:
     name: Deploy documentation to GitHub Pages
     uses: ./.github/workflows/docs.yml
+    permissions:
+      contents: write
     with:
       python-version: "3.12"
       tag: ${{ github.event.release.tag_name }}
@@ -39,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/ensembl-vep-py
+      url: https://pypi.org/p/ensembl-vep
     permissions:
       id-token: write
 
