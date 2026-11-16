@@ -13,4 +13,4 @@
 # limitations under the License.
 """Ensembl Python project template library"""
 
-__version__ = "0.1"
+__version__ = "0.1.0a1"
