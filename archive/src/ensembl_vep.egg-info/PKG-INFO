@@ -1,0 +1,169 @@
+Metadata-Version: 2.4
+Name: ensembl-vep
+Version: 0.1
+Summary: Ensembl VEP (Variant Effect Predictor) predicts the functional effects of genomic variants.
+Author-email: Ensembl <dev@ensembl.org>
+License-Expression: Apache-2.0
+Project-URL: Homepage, https://www.ensembl.org
+Project-URL: Documentation, https://ensembl.github.io/ensembl-vep-py
+Project-URL: Repository, https://github.com/Ensembl/ensembl-vep-py
+Project-URL: Issues, https://github.com/Ensembl/ensembl-vep-py/issues
+Project-URL: Changelog, https://github.com/Ensembl/ensembl-vep-py/blob/main/CHANGELOG.md
+Keywords: ensembl,ensembl-vep,bioinformatics,annotation,variants,python
+Classifier: Development Status :: 3 - Alpha
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Science/Research
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Classifier: Topic :: Scientific/Engineering :: Bio-Informatics
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+License-File: LICENSE
+License-File: NOTICE
+Requires-Dist: ailist>=2.2.2
+Requires-Dist: attrs>=24.1.0
+Provides-Extra: build
+Requires-Dist: build; extra == "build"
+Requires-Dist: setuptools; extra == "build"
+Requires-Dist: setuptools-rust; extra == "build"
+Requires-Dist: setuptools-scm; extra == "build"
+Requires-Dist: wheel; extra == "build"
+Provides-Extra: cicd
+Requires-Dist: black; extra == "cicd"
+Requires-Dist: coverage; extra == "cicd"
+Requires-Dist: genbadge[coverage]; extra == "cicd"
+Requires-Dist: mypy; extra == "cicd"
+Requires-Dist: pylint; extra == "cicd"
+Requires-Dist: pytest-dependency; extra == "cicd"
+Requires-Dist: z3-solver; extra == "cicd"
+Provides-Extra: docs
+Requires-Dist: ensembl-utils>=1.0.0; extra == "docs"
+Requires-Dist: myst-parser>=5.1.0; extra == "docs"
+Requires-Dist: pydata-sphinx-theme>=0.20.0; extra == "docs"
+Requires-Dist: sphinx>=7; extra == "docs"
+Requires-Dist: sphinx-autodoc-typehints>=3.13.2; extra == "docs"
+Requires-Dist: sphinx-copybutton>=0.5.2; extra == "docs"
+Provides-Extra: validation
+Requires-Dist: z3-solver; extra == "validation"
+Dynamic: license-file
+
+# Ensembl VEP
+
+[![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](https://github.com/Ensembl/ensembl-vep-py/blob/main/LICENSE)
+[![Python-Coverage](https://ensembl.github.io/ensembl-vep-py/latest/_images/python-coverage-badge.svg)](https://ensembl.github.io/ensembl-vep-py/latest/coverage/python/htmlcov/index.html)
+[![Rust-Coverage](https://ensembl.github.io/ensembl-vep-py/latest/_images/rust-coverage-badge.svg)](https://ensembl.github.io/ensembl-vep-py/latest/coverage/rust/html/index.html)
+[![CI](https://github.com/Ensembl/ensembl-vep-py/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Ensembl/ensembl-utilstemplate-python/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/pypi/v/ensembl-vep)](https://pypi.org/project/ensembl-vep)
+
+Ensembl VEP (Variant Effect Predictor) predicts the functional effects of genomic variants.
+
+> **_NOTE:_**  This project is in an initial development phase. Many features are incomplete, APIs may change without notice, and documentation is partial. Use at your own risk and feel free to open issues or contribute; your feedback is welcome.
+
+## Documentation
+
+Full documentation is available at: https://ensembl.github.io/ensembl-vep-py/
+
+## Installation
+
+### Requirements
+
+- Python 3.12 or higher
+- Rust 1.95.0 or higher (TBD - not strictly tested)
+- Dependencies listed in `pyproject.toml` and `Cargo.toml`
+
+### Using pip (TBD - after PyPI release)
+
+```bash
+pip install ensembl-vep
+```
+
+### Using uv (recommended)  (TBD - after PyPI release)
+
+```bash
+uv pip install ensembl-vep
+```
+
+### Development Installation
+
+1. clone the repository
+    ```bash
+    git clone https://github.com/Ensembl/ensembl-vep-py.git
+    cd ensembl-vep-py
+    ```
+
+2. Create a branch against remote main branch
+    ```bash
+    git checkout -b feature/some_feature origin/main
+    ```
+
+3. Install the package in editable mode
+    ```bash
+    uv pip install -e .
+    ```
+
+See more details in the [Contributing Guide](CONTRIBUTING.md) guide.
+
+## Quick Start
+
+### Basic Usage
+
+```python
+from ensembl_vep import hello
+
+print(hello("world!"))
+```
+
+### Command-Line Interface
+
+```bash
+vep world!
+```
+
+## Configuration
+
+### Cache Files (TBD)
+
+## Testing
+
+Run the test suite:
+
+```bash
+# Run pytest with coverage
+uv run coverage run -m pytest
+
+# Run Rust llvm-cov
+cargo llvm-cov --ignore-filename-regex '(^|/)src/rust/lib\.rs$'
+```
+
+The Rust crate root `src/rust/lib.rs` is reserved for PyO3 module registration
+glue. Keep testable Rust logic in submodules; coverage runs ignore `lib.rs` so
+the project can use stable Rust without nightly-only coverage attributes.
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+## Citation (TBD)
+
+If you use this software, please cite:
+
+McLaren W, Gil L, Hunt SE, Riat HS, Ritchie GR, Thormann A, Flicek P, Cunningham F.  
+The Ensembl Variant Effect Predictor.  
+*Genome Biology* Jun 6;17(1):122. (2016)  
+doi:[10.1186/s13059-016-0974-4](https://doi.org/10.1186/s13059-016-0974-4)
+
+## Support (TBD)
+
+- Bugs: [Issues](https://github.com/ensembl-vep-py/issues)
+- Features: [Discussions → Ideas](https://github.com/ensembl-vep-py/discussions/categories/ideas)
+
+## Changelog (TBD)
+
+See [CHANGELOG.md](CHANGELOG.md) for version history and updates.
+
+## Acknowledgments (TBD)

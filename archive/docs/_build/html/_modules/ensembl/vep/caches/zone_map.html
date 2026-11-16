@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ensembl.vep.caches.zone_map &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/ensembl.css?v=25cdf2e9" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ensembl/vep/caches/zone_map';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = '_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../../../../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../../../../_static/ensembl_favicon.png"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 09, 2026"/>
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/ensembl_mark_white.png" class="logo__image only-light" alt=""/>
+    <img src="../../../../_static/ensembl_mark_white.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">ensembl-vep</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference/ensembl.vep.html">
+    ensembl.vep package
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
+    Coverage
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference/ensembl.vep.html">
+    ensembl.vep package
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
+    Coverage
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.caches.zone_map</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ensembl.vep.caches.zone_map</h1><div class="highlight"><pre>
+<span></span><span class="c1"># See the NOTICE file distributed with this work for additional information</span>
+<span class="c1"># regarding copyright ownership.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1"># http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="sd">"""Cache transcript geometry as positional-fact zones.</span>
+
+<span class="sd">Zone boundaries partition a transcript and its flanks into spans with constant positional facts.</span>
+<span class="sd">Each zone stores a fact bitmask, allowing variant spans to be evaluated with a binary search and</span>
+<span class="sd">short bitwise union instead of repeated interval scans. Allele-dependent sequence facts remain</span>
+<span class="sd">outside the zone map.</span>
+
+<span class="sd">``ZoneMapCache`` reuses maps across variants and evicts least-recently-used maps by estimated byte</span>
+<span class="sd">size. Computed facts are inserted through ``FactContext.prefill`` without charging their normal</span>
+<span class="sd">evaluation cost.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">array</span><span class="w"> </span><span class="kn">import</span> <span class="n">array</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClassVar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bisect</span><span class="w"> </span><span class="kn">import</span> <span class="n">bisect_right</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">RLock</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">frozen</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.context.fact</span><span class="w"> </span><span class="kn">import</span> <span class="n">FactContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.facts.helper</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">intron_offsets_to_genomic_span</span><span class="p">,</span>
+    <span class="n">variant_genomic_span</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_DISTANCE</span><span class="p">,</span> <span class="n">Strand</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.genic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transcript</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.overlap</span><span class="w"> </span><span class="kn">import</span> <span class="n">TranscriptVariationAllele</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"DEFAULT_ZONE_MAP_BYTES"</span><span class="p">,</span>
+    <span class="s2">"MEMO_FACT_NAMES"</span><span class="p">,</span>
+    <span class="s2">"SERVED_FACT_NAMES"</span><span class="p">,</span>
+    <span class="s2">"ZoneMap"</span><span class="p">,</span>
+    <span class="s2">"ZoneMapCache"</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">DEFAULT_ZONE_MAP_BYTES</span> <span class="o">=</span> <span class="mi">256</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span>
+<span class="sd">"""Default byte budget for a zone-map cache."""</span>
+
+<span class="n">POSITIONAL_FACT_NAMES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"overlap_feature"</span><span class="p">,</span>
+    <span class="s2">"overlap_exon"</span><span class="p">,</span>
+    <span class="s2">"overlap_intron"</span><span class="p">,</span>
+    <span class="s2">"overlap_intron_interior"</span><span class="p">,</span>
+    <span class="s2">"overlap_intron_boundary"</span><span class="p">,</span>
+    <span class="s2">"overlap_donor_site"</span><span class="p">,</span>
+    <span class="s2">"overlap_acceptor_site"</span><span class="p">,</span>
+    <span class="s2">"overlap_donor_5th_base"</span><span class="p">,</span>
+    <span class="s2">"overlap_donor_region"</span><span class="p">,</span>
+    <span class="s2">"overlap_polypyrimidine_tract"</span><span class="p">,</span>
+    <span class="s2">"overlap_splice_region"</span><span class="p">,</span>
+    <span class="s2">"is_upstream"</span><span class="p">,</span>
+    <span class="s2">"is_downstream"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="sd">"""Facts determined by a genomic span and fixed transcript geometry."""</span>
+
+
+<span class="n">_ZONE_FACT_NAMES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">POSITIONAL_FACT_NAMES</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span>
+    <span class="s2">"overlap_five_prime_utr"</span><span class="p">,</span>
+    <span class="s2">"overlap_three_prime_utr"</span><span class="p">,</span>
+    <span class="s2">"overlap_start_codon"</span><span class="p">,</span>
+    <span class="s2">"overlap_stop_codon"</span><span class="p">,</span>
+    <span class="s2">"overlap_cds"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="sd">"""Facts served as a union of the zone masks covered by a variant."""</span>
+
+<span class="c1"># Flank bits: a union over zones, but only meaningful when the variant misses the transcript</span>
+<span class="c1"># entirely, so they are not served directly out of the zone mask (see prefill()).</span>
+<span class="n">_UPSTREAM_FACT_NAME</span> <span class="o">=</span> <span class="s2">"is_upstream"</span>
+<span class="n">_DOWNSTREAM_FACT_NAME</span> <span class="o">=</span> <span class="s2">"is_downstream"</span>
+
+<span class="n">_MASK_FACT_NAMES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">_ZONE_FACT_NAMES</span> <span class="o">+</span> <span class="p">(</span><span class="n">_UPSTREAM_FACT_NAME</span><span class="p">,</span> <span class="n">_DOWNSTREAM_FACT_NAME</span><span class="p">)</span>
+<span class="n">_FACT_BIT</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">fact_name</span><span class="p">:</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">bit_index</span> <span class="k">for</span> <span class="n">bit_index</span><span class="p">,</span> <span class="n">fact_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_MASK_FACT_NAMES</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1"># Everything this annotator prefills, i.e. every fact computation it removes from the bill.</span>
+<span class="n">SERVED_FACT_NAMES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">_MASK_FACT_NAMES</span>
+
+<span class="n">MEMO_FACT_NAMES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"overlap_feature"</span><span class="p">,</span>
+    <span class="s2">"overlap_exon"</span><span class="p">,</span>
+    <span class="s2">"overlap_cds"</span><span class="p">,</span>
+    <span class="s2">"overlap_start_codon"</span><span class="p">,</span>
+    <span class="s2">"overlap_stop_codon"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="sd">"""Facts written to each overlap memo as well as returned in columns.</span>
+
+<span class="sd">These facts appear in another fact's requirements and must remain available through ``get_fact``.</span>
+<span class="sd">The remaining served facts are read directly from columns by columnar annotators.</span>
+<span class="sd">"""</span>
+
+<span class="n">_MASK_INTERN_CACHE</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="sd">"""Interned zone masks shared by all zone maps.</span>
+
+<span class="sd">Zone masks repeat frequently. Sharing boxed integers keeps tuple lookup fast while reducing the</span>
+<span class="sd">memory overhead of repeated values. The cache is bounded by the masks expressible by</span>
+<span class="sd">``_FACT_BIT``.</span>
+<span class="sd">"""</span>
+
+
+<span class="n">_ESTIMATED_ENTRY_OVERHEAD_BYTES</span> <span class="o">=</span> <span class="mi">250</span>
+<span class="sd">"""Fixed per-entry allowance used by ``ZoneMap.estimated_bytes``.</span>
+
+<span class="sd">The allowance covers the zone-map object, cache key, and cache bookkeeping that container sizes do</span>
+<span class="sd">not include. It is calibrated against ``tracemalloc`` measurements in the zone-map tests.</span>
+<span class="sd">"""</span>
+
+
+<span class="n">_FLANK_ONLY_MARGIN</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="sd">"""Distance beyond a transcript where only flank facts can hold.</span>
+
+<span class="sd">Every non-flank span a zone map records lies within the transcript's own start and end; the margin</span>
+<span class="sd">is slack, not a measured bound.</span>
+<span class="sd">"""</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_flank_windows</span><span class="p">(</span>
+    <span class="n">transcript</span><span class="p">:</span> <span class="n">Transcript</span><span class="p">,</span> <span class="n">upstream_distance</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">downstream_distance</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Return the ``is_upstream`` and ``is_downstream`` genomic windows of a transcript.</span>
+
+<span class="sd">    The two distances need not be equal, so each window is measured from the end it belongs to:</span>
+<span class="sd">    on the reverse strand the 5' end is the transcript's highest coordinate.</span>
+<span class="sd">    """</span>
+
+    <span class="n">before</span><span class="p">,</span> <span class="n">after</span> <span class="o">=</span> <span class="n">upstream_distance</span><span class="p">,</span> <span class="n">downstream_distance</span>
+    <span class="k">if</span> <span class="n">transcript</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">:</span>
+        <span class="n">before</span><span class="p">,</span> <span class="n">after</span> <span class="o">=</span> <span class="n">after</span><span class="p">,</span> <span class="n">before</span>
+    <span class="n">lower_flank</span> <span class="o">=</span> <span class="p">(</span><span class="n">transcript</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="n">before</span><span class="p">,</span> <span class="n">transcript</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">upper_flank</span> <span class="o">=</span> <span class="p">(</span><span class="n">transcript</span><span class="o">.</span><span class="n">end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">transcript</span><span class="o">.</span><span class="n">end</span> <span class="o">+</span> <span class="n">after</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">transcript</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">((</span><span class="s2">"is_upstream"</span><span class="p">,</span> <span class="o">*</span><span class="n">lower_flank</span><span class="p">),</span> <span class="p">(</span><span class="s2">"is_downstream"</span><span class="p">,</span> <span class="o">*</span><span class="n">upper_flank</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">((</span><span class="s2">"is_upstream"</span><span class="p">,</span> <span class="o">*</span><span class="n">upper_flank</span><span class="p">),</span> <span class="p">(</span><span class="s2">"is_downstream"</span><span class="p">,</span> <span class="o">*</span><span class="n">lower_flank</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_flank_mask</span><span class="p">(</span>
+    <span class="n">transcript</span><span class="p">:</span> <span class="n">Transcript</span><span class="p">,</span>
+    <span class="n">min_position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">max_position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">upstream_distance</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">downstream_distance</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return the zone mask of a span that does not reach the transcript itself."""</span>
+
+    <span class="n">mask</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">fact_name</span><span class="p">,</span> <span class="n">flank_start</span><span class="p">,</span> <span class="n">flank_end</span> <span class="ow">in</span> <span class="n">_flank_windows</span><span class="p">(</span>
+        <span class="n">transcript</span><span class="p">,</span> <span class="n">upstream_distance</span><span class="p">,</span> <span class="n">downstream_distance</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">min_position</span> <span class="o">&lt;=</span> <span class="n">flank_end</span> <span class="ow">and</span> <span class="n">max_position</span> <span class="o">&gt;=</span> <span class="n">flank_start</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">|=</span> <span class="n">_FACT_BIT</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">mask</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_int64_array</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">array</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Pack zone start positions into a signed 64-bit array."""</span>
+    <span class="k">return</span> <span class="n">array</span><span class="p">(</span><span class="s2">"q"</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_dedup_masks</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Return ``values`` as a tuple, each slot pointing at one shared boxed int.</span>
+
+<span class="sd">    See ``_MASK_INTERN_CACHE``.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">_MASK_INTERN_CACHE</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ZoneMap">
+<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.zone_map.ZoneMap">[docs]</a>
+<span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">hash</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ZoneMap</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Partition a transcript and its flanks into positional-fact zones.</span>
+
+<span class="sd">    ``starts[i]`` is the first genomic position of zone ``i`` and ``masks[i]`` its fact bitmask;</span>
+<span class="sd">    each zone ends immediately before the next start. ``hash=False`` reflects the unhashable</span>
+<span class="sd">    ``array`` used for starts.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        lowest_position (int): Lowest genomic position covered by any zone.</span>
+<span class="sd">        highest_position (int): Highest genomic position covered by any zone.</span>
+<span class="sd">        starts (array[int]): Ascending zone starts packed as signed 64-bit integers.</span>
+<span class="sd">        masks (tuple[int, ...]): Fact mask for each corresponding zone start.</span>
+<span class="sd">        inverted (tuple[tuple[int, int, int], ...]): Degenerate ``(bit, start, end)`` intervals</span>
+<span class="sd">            matched when a variant spans both bounds.</span>
+<span class="sd">    """</span>
+
+    <span class="n">lowest_position</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">highest_position</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">starts</span><span class="p">:</span> <span class="n">array</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="n">_int64_array</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">())</span>
+    <span class="n">masks</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="n">_dedup_masks</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">())</span>
+    <span class="n">inverted</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">())</span>
+
+<div class="viewcode-block" id="ZoneMap.lookup">
+<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.zone_map.ZoneMap.lookup">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">lookup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">max_position</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the union of masks for every zone overlapped by a span.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            min_position (int): Inclusive lower bound of the genomic span.</span>
+<span class="sd">            max_position (int): Inclusive upper bound of the genomic span.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Combined mask for overlapping zones and covered inverted intervals.</span>
+<span class="sd">        """</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">max_position</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lowest_position</span> <span class="ow">and</span> <span class="n">min_position</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">highest_position</span><span class="p">:</span>
+            <span class="n">clipped_min</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">min_position</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lowest_position</span><span class="p">)</span>
+            <span class="n">clipped_max</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_position</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">highest_position</span><span class="p">)</span>
+            <span class="n">start_index</span> <span class="o">=</span> <span class="n">bisect_right</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starts</span><span class="p">,</span> <span class="n">clipped_min</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">end_index</span> <span class="o">=</span> <span class="n">bisect_right</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starts</span><span class="p">,</span> <span class="n">clipped_max</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">zone_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_index</span><span class="p">,</span> <span class="n">end_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">mask</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">masks</span><span class="p">[</span><span class="n">zone_index</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">bit</span><span class="p">,</span> <span class="n">interval_start</span><span class="p">,</span> <span class="n">interval_end</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inverted</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">min_position</span> <span class="o">&lt;=</span> <span class="n">interval_end</span> <span class="ow">and</span> <span class="n">max_position</span> <span class="o">&gt;=</span> <span class="n">interval_start</span><span class="p">:</span>
+                <span class="n">mask</span> <span class="o">|=</span> <span class="n">bit</span>
+        <span class="k">return</span> <span class="n">mask</span></div>
+
+
+<div class="viewcode-block" id="ZoneMap.estimated_bytes">
+<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.zone_map.ZoneMap.estimated_bytes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">estimated_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Estimate the heap space used by this zone map.</span>
+
+<span class="sd">        Container sizes are combined with a fixed allowance for the zone-map object and cache</span>
+<span class="sd">        bookkeeping. Interned mask integers are not charged per map.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Estimated size in bytes.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starts</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">masks</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inverted</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">_ESTIMATED_ENTRY_OVERHEAD_BYTES</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ZoneMap.build">
+<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.zone_map.ZoneMap.build">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">transcript</span><span class="p">:</span> <span class="n">Transcript</span><span class="p">,</span>
+        <span class="n">upstream_distance</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_DISTANCE</span><span class="p">,</span>
+        <span class="n">downstream_distance</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_DISTANCE</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ZoneMap</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Build the positional-fact zones for a transcript.</span>
+
+<span class="sd">        Splice windows use ``intron_offsets_to_genomic_span``, matching the per-variant facts.</span>
+<span class="sd">        Coding intervals come from the transcript's CDS, UTR, and codon mappings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            transcript (Transcript): Transcript to compile.</span>
+<span class="sd">            upstream_distance (int): Bases before the 5' end that ``is_upstream`` covers.</span>
+<span class="sd">            downstream_distance (int): Bases past the 3' end that ``is_downstream`` covers.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ZoneMap: Compiled zone partition.</span>
+<span class="sd">        """</span>
+        <span class="n">spans</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># (bit, start, end)</span>
+        <span class="n">inverted</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="n">fact_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">bit</span> <span class="o">=</span> <span class="n">_FACT_BIT</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">start</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">:</span>
+                <span class="n">spans</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">bit</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">inverted</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">bit</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">))</span>
+
+        <span class="n">add</span><span class="p">(</span><span class="s2">"overlap_feature"</span><span class="p">,</span> <span class="n">transcript</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">transcript</span><span class="o">.</span><span class="n">end</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">exon</span> <span class="ow">in</span> <span class="n">transcript</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">:</span>
+            <span class="n">add</span><span class="p">(</span><span class="s2">"overlap_exon"</span><span class="p">,</span> <span class="n">exon</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">exon</span><span class="o">.</span><span class="n">end</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">intron</span> <span class="ow">in</span> <span class="n">transcript</span><span class="o">.</span><span class="n">introns</span><span class="p">:</span>
+            <span class="n">add</span><span class="p">(</span><span class="s2">"overlap_intron"</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">end</span><span class="p">)</span>
+            <span class="c1"># Inverted for an intron shorter than five bases, which add() keeps out of the zones:</span>
+            <span class="c1"># the fact's own genomic_overlap test then matches only a span covering the whole window.</span>
+            <span class="n">add</span><span class="p">(</span><span class="s2">"overlap_intron_interior"</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="c1"># Genomic, strand-agnostic windows -- no strand resolution needed, unlike every</span>
+            <span class="c1"># offset-based span below. See overlap_intron_boundary's own docstring (position.py) for</span>
+            <span class="c1"># the known coverage gap relative to overlap_polypyrimidine_tract/overlap_splice_region.</span>
+            <span class="n">add</span><span class="p">(</span><span class="s2">"overlap_intron_boundary"</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="mi">3</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="mi">7</span><span class="p">)</span>
+            <span class="n">add</span><span class="p">(</span><span class="s2">"overlap_intron_boundary"</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="mi">7</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">end</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="n">strand</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">strand</span>
+            <span class="n">add</span><span class="p">(</span><span class="s2">"overlap_donor_site"</span><span class="p">,</span> <span class="o">*</span><span class="n">intron_offsets_to_genomic_span</span><span class="p">(</span><span class="n">intron</span><span class="p">,</span> <span class="n">strand</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+            <span class="n">add</span><span class="p">(</span><span class="s2">"overlap_acceptor_site"</span><span class="p">,</span> <span class="o">*</span><span class="n">intron_offsets_to_genomic_span</span><span class="p">(</span><span class="n">intron</span><span class="p">,</span> <span class="n">strand</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+            <span class="n">add</span><span class="p">(</span><span class="s2">"overlap_donor_5th_base"</span><span class="p">,</span> <span class="o">*</span><span class="n">intron_offsets_to_genomic_span</span><span class="p">(</span><span class="n">intron</span><span class="p">,</span> <span class="n">strand</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+            <span class="n">add</span><span class="p">(</span><span class="s2">"overlap_donor_region"</span><span class="p">,</span> <span class="o">*</span><span class="n">intron_offsets_to_genomic_span</span><span class="p">(</span><span class="n">intron</span><span class="p">,</span> <span class="n">strand</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+            <span class="n">add</span><span class="p">(</span>
+                <span class="s2">"overlap_polypyrimidine_tract"</span><span class="p">,</span>
+                <span class="o">*</span><span class="n">intron_offsets_to_genomic_span</span><span class="p">(</span><span class="n">intron</span><span class="p">,</span> <span class="n">strand</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">add</span><span class="p">(</span><span class="s2">"overlap_splice_region"</span><span class="p">,</span> <span class="o">*</span><span class="n">intron_offsets_to_genomic_span</span><span class="p">(</span><span class="n">intron</span><span class="p">,</span> <span class="n">strand</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+            <span class="n">add</span><span class="p">(</span><span class="s2">"overlap_splice_region"</span><span class="p">,</span> <span class="o">*</span><span class="n">intron_offsets_to_genomic_span</span><span class="p">(</span><span class="n">intron</span><span class="p">,</span> <span class="n">strand</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+            <span class="c1"># The exonic side of each boundary is strand-independent, unlike the offset spans above.</span>
+            <span class="n">add</span><span class="p">(</span><span class="s2">"overlap_splice_region"</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="mi">3</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">add</span><span class="p">(</span><span class="s2">"overlap_splice_region"</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">end</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">fact_name</span><span class="p">,</span> <span class="n">flank_start</span><span class="p">,</span> <span class="n">flank_end</span> <span class="ow">in</span> <span class="n">_flank_windows</span><span class="p">(</span>
+            <span class="n">transcript</span><span class="p">,</span> <span class="n">upstream_distance</span><span class="p">,</span> <span class="n">downstream_distance</span>
+        <span class="p">):</span>
+            <span class="n">add</span><span class="p">(</span><span class="n">fact_name</span><span class="p">,</span> <span class="n">flank_start</span><span class="p">,</span> <span class="n">flank_end</span><span class="p">)</span>
+
+        <span class="c1"># overlap_cds/overlap_five_prime_utr/overlap_three_prime_utr are not part of the geometry</span>
+        <span class="c1"># decomposition above -- they reduce to a plain interval union over an already exon-clipped</span>
+        <span class="c1"># genomic spans list (Transcript.cds_genomic_spans/five_prime_utr_genomic_spans/</span>
+        <span class="c1"># three_prime_utr_genomic_spans), added directly from that list instead.</span>
+        <span class="k">for</span> <span class="n">block_start</span><span class="p">,</span> <span class="n">block_end</span> <span class="ow">in</span> <span class="n">transcript</span><span class="o">.</span><span class="n">cds_genomic_spans</span> <span class="ow">or</span> <span class="p">():</span>
+            <span class="n">add</span><span class="p">(</span><span class="s2">"overlap_cds"</span><span class="p">,</span> <span class="n">block_start</span><span class="p">,</span> <span class="n">block_end</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">block_start</span><span class="p">,</span> <span class="n">block_end</span> <span class="ow">in</span> <span class="n">transcript</span><span class="o">.</span><span class="n">five_prime_utr_genomic_spans</span> <span class="ow">or</span> <span class="p">():</span>
+            <span class="n">add</span><span class="p">(</span><span class="s2">"overlap_five_prime_utr"</span><span class="p">,</span> <span class="n">block_start</span><span class="p">,</span> <span class="n">block_end</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">block_start</span><span class="p">,</span> <span class="n">block_end</span> <span class="ow">in</span> <span class="n">transcript</span><span class="o">.</span><span class="n">three_prime_utr_genomic_spans</span> <span class="ow">or</span> <span class="p">():</span>
+            <span class="n">add</span><span class="p">(</span><span class="s2">"overlap_three_prime_utr"</span><span class="p">,</span> <span class="n">block_start</span><span class="p">,</span> <span class="n">block_end</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">span_start</span><span class="p">,</span> <span class="n">span_end</span> <span class="ow">in</span> <span class="n">transcript</span><span class="o">.</span><span class="n">start_codon_genomic_spans</span><span class="p">()</span> <span class="ow">or</span> <span class="p">():</span>
+            <span class="n">add</span><span class="p">(</span><span class="s2">"overlap_start_codon"</span><span class="p">,</span> <span class="n">span_start</span><span class="p">,</span> <span class="n">span_end</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">span_start</span><span class="p">,</span> <span class="n">span_end</span> <span class="ow">in</span> <span class="n">transcript</span><span class="o">.</span><span class="n">stop_codon_genomic_spans</span><span class="p">()</span> <span class="ow">or</span> <span class="p">():</span>
+            <span class="n">add</span><span class="p">(</span><span class="s2">"overlap_stop_codon"</span><span class="p">,</span> <span class="n">span_start</span><span class="p">,</span> <span class="n">span_end</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">spans</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"no positional spans to build a zone map from for transcript </span><span class="si">{</span><span class="n">transcript</span><span class="o">.</span><span class="n">stable_id</span><span class="si">!r}</span><span class="s2">"</span>
+            <span class="p">)</span>
+
+        <span class="n">lowest_position</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">start</span> <span class="k">for</span> <span class="n">_bit</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">_end</span> <span class="ow">in</span> <span class="n">spans</span><span class="p">)</span>
+        <span class="n">highest_position</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">end</span> <span class="k">for</span> <span class="n">_bit</span><span class="p">,</span> <span class="n">_start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">spans</span><span class="p">)</span>
+
+        <span class="n">cut_points</span> <span class="o">=</span> <span class="p">{</span><span class="n">lowest_position</span><span class="p">,</span> <span class="n">highest_position</span> <span class="o">+</span> <span class="mi">1</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">_bit</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">spans</span><span class="p">:</span>
+            <span class="n">cut_points</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+            <span class="n">cut_points</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">zone_boundaries</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="n">point</span> <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">cut_points</span> <span class="k">if</span> <span class="n">lowest_position</span> <span class="o">&lt;=</span> <span class="n">point</span> <span class="o">&lt;=</span> <span class="n">highest_position</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Sweep the cut points once, counting open spans per bit, instead of testing every span</span>
+        <span class="c1"># against every zone: a many-exon transcript has thousands of both. Every span start and</span>
+        <span class="c1"># end + 1 is itself a cut point, so each event lands on a zone boundary.</span>
+        <span class="n">opening_bits</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="n">closing_bits</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">bit</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">spans</span><span class="p">:</span>
+            <span class="n">opening_bits</span><span class="p">[</span><span class="n">start</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bit</span><span class="p">)</span>
+            <span class="n">closing_bits</span><span class="p">[</span><span class="n">end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bit</span><span class="p">)</span>
+
+        <span class="n">open_counts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">zone_starts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">zone_masks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">zone_start</span> <span class="ow">in</span> <span class="n">zone_boundaries</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">bit</span> <span class="ow">in</span> <span class="n">closing_bits</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">zone_start</span><span class="p">,</span> <span class="p">()):</span>
+                <span class="n">open_counts</span><span class="p">[</span><span class="n">bit</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">open_counts</span><span class="p">[</span><span class="n">bit</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">mask</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">bit</span>
+            <span class="k">for</span> <span class="n">bit</span> <span class="ow">in</span> <span class="n">opening_bits</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">zone_start</span><span class="p">,</span> <span class="p">()):</span>
+                <span class="n">open_counts</span><span class="p">[</span><span class="n">bit</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">mask</span> <span class="o">|=</span> <span class="n">bit</span>
+            <span class="n">zone_starts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">zone_start</span><span class="p">)</span>
+            <span class="n">zone_masks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">lowest_position</span><span class="o">=</span><span class="n">lowest_position</span><span class="p">,</span>
+            <span class="n">highest_position</span><span class="o">=</span><span class="n">highest_position</span><span class="p">,</span>
+            <span class="n">starts</span><span class="o">=</span><span class="n">zone_starts</span><span class="p">,</span>
+            <span class="n">masks</span><span class="o">=</span><span class="n">zone_masks</span><span class="p">,</span>
+            <span class="n">inverted</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">inverted</span><span class="p">),</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ZoneMapCache">
+<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.zone_map.ZoneMapCache">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ZoneMapCache</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Store per-transcript zone maps in a byte-budget LRU cache.</span>
+
+<span class="sd">    Maps are built outside the lock and inserted or evicted while holding it. ``eq=False``</span>
+<span class="sd">    preserves identity semantics for mutable shared state.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        max_bytes (int): Byte budget for cached zone maps.</span>
+<span class="sd">        upstream_distance (int): Upstream distance covered by flank zones.</span>
+<span class="sd">        downstream_distance (int): Downstream distance covered by flank zones.</span>
+<span class="sd">        hit_count (int): Number of cache hits.</span>
+<span class="sd">        miss_count (int): Number of maps built after cache misses.</span>
+<span class="sd">        maps_built (int): Alias for ``miss_count``.</span>
+<span class="sd">        eviction_count (int): Number of entries evicted.</span>
+<span class="sd">        build_seconds (float): Total time spent building zone maps.</span>
+<span class="sd">        facts_served (int): Number of fact values prefilled without evaluation.</span>
+<span class="sd">    """</span>
+
+    <span class="n">max_bytes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_ZONE_MAP_BYTES</span>
+    <span class="n">upstream_distance</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_DISTANCE</span>
+    <span class="n">downstream_distance</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_DISTANCE</span>
+    <span class="n">hit_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">miss_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">eviction_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">build_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">facts_served</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">_zone_maps</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span> <span class="n">ZoneMap</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">factory</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">_sizes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">_total_bytes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">_lock</span><span class="p">:</span> <span class="n">RLock</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="n">RLock</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">_implied_facts_by_mask</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="w">    </span><span class="sd">"""Cache fact names implied by each zone mask.</span>
+
+<span class="sd">    The mapping depends only on ``_FACT_BIT`` and is shared by all instances. It is bounded by the</span>
+<span class="sd">    masks expressible by ``_MASK_FACT_NAMES``.</span>
+<span class="sd">    """</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_implied_fact_names</span><span class="p">(</span><span class="n">mask</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return the fact names implied by a zone mask.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mask (int): Packed zone mask returned by ``ZoneMap.lookup``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple[str, ...]: Set facts with incompatible flank facts suppressed.</span>
+<span class="sd">        """</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="n">ZoneMapCache</span><span class="o">.</span><span class="n">_implied_facts_by_mask</span>
+        <span class="n">implied_fact_names</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">implied_fact_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">implied</span> <span class="o">=</span> <span class="p">[</span><span class="n">fact_name</span> <span class="k">for</span> <span class="n">fact_name</span> <span class="ow">in</span> <span class="n">_ZONE_FACT_NAMES</span> <span class="k">if</span> <span class="n">mask</span> <span class="o">&amp;</span> <span class="n">_FACT_BIT</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]]</span>
+            <span class="c1"># Flanks are suppressed by any overlap with the feature, so they are not a plain</span>
+            <span class="c1"># union over the covered zones.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">mask</span> <span class="o">&amp;</span> <span class="n">_FACT_BIT</span><span class="p">[</span><span class="s2">"overlap_feature"</span><span class="p">]:</span>
+                <span class="n">implied</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                    <span class="n">fact_name</span>
+                    <span class="k">for</span> <span class="n">fact_name</span> <span class="ow">in</span> <span class="p">(</span><span class="n">_UPSTREAM_FACT_NAME</span><span class="p">,</span> <span class="n">_DOWNSTREAM_FACT_NAME</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">mask</span> <span class="o">&amp;</span> <span class="n">_FACT_BIT</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="n">implied_fact_names</span> <span class="o">=</span> <span class="n">cache</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">implied</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">implied_fact_names</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">maps_built</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the number of zone maps built."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">miss_count</span>
+
+<div class="viewcode-block" id="ZoneMapCache.zone_map">
+<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.zone_map.ZoneMapCache.zone_map">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">zone_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transcript</span><span class="p">:</span> <span class="n">Transcript</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ZoneMap</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return a transcript's cached zone map, building it on a miss.</span>
+
+<span class="sd">        Entries are keyed by stable ID and version. Concurrent misses may build the same map more</span>
+<span class="sd">        than once, but insertion keeps byte accounting exact.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            transcript (Transcript): Transcript to look up.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ZoneMap: Transcript zone partition.</span>
+<span class="sd">        """</span>
+        <span class="n">cache_key</span> <span class="o">=</span> <span class="p">(</span><span class="n">transcript</span><span class="o">.</span><span class="n">stable_id</span><span class="p">,</span> <span class="n">transcript</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="n">cached</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zone_maps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cache_key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cached</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_zone_maps</span><span class="o">.</span><span class="n">move_to_end</span><span class="p">(</span><span class="n">cache_key</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">hit_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">return</span> <span class="n">cached</span>
+
+        <span class="n">build_started</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+        <span class="n">zone_map</span> <span class="o">=</span> <span class="n">ZoneMap</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">transcript</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">upstream_distance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">downstream_distance</span><span class="p">)</span>
+        <span class="n">build_elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">build_started</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">zone_map</span><span class="o">.</span><span class="n">estimated_bytes</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cache_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_total_bytes</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="p">[</span><span class="n">cache_key</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_zone_maps</span><span class="p">[</span><span class="n">cache_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">zone_map</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_zone_maps</span><span class="o">.</span><span class="n">move_to_end</span><span class="p">(</span><span class="n">cache_key</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="p">[</span><span class="n">cache_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">size</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_total_bytes</span> <span class="o">+=</span> <span class="n">size</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">miss_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">build_seconds</span> <span class="o">+=</span> <span class="n">build_elapsed</span>
+            <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_bytes</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_bytes</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_zone_maps</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">evicted_key</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zone_maps</span><span class="o">.</span><span class="n">popitem</span><span class="p">(</span><span class="n">last</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_total_bytes</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">evicted_key</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">eviction_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">zone_map</span></div>
+
+
+<div class="viewcode-block" id="ZoneMapCache.clear">
+<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.zone_map.ZoneMapCache.clear">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Clear the cache contents."""</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_zone_maps</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_total_bytes</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="ZoneMapCache.columns">
+<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.zone_map.ZoneMapCache.columns">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_contexts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FactContext</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return zone-map facts as bit columns for a context batch.</span>
+
+<span class="sd">        Facts in ``MEMO_FACT_NAMES`` are also written to each context because other facts read</span>
+<span class="sd">        them through ``get_fact``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fact_contexts (Sequence[FactContext]): Contexts in batch-index order.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict[str, int]: Fact names mapped to bit columns.</span>
+<span class="sd">        """</span>
+        <span class="n">columns</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">fact_name</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">fact_name</span> <span class="ow">in</span> <span class="n">SERVED_FACT_NAMES</span><span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">context_index</span><span class="p">,</span> <span class="n">fact_context</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fact_contexts</span><span class="p">):</span>
+            <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">variant_span</span>
+            <span class="n">transcript</span> <span class="o">=</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">variant_max</span> <span class="o">&lt;</span> <span class="n">transcript</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="n">_FLANK_ONLY_MARGIN</span>
+                <span class="ow">or</span> <span class="n">variant_min</span> <span class="o">&gt;</span> <span class="n">transcript</span><span class="o">.</span><span class="n">end</span> <span class="o">+</span> <span class="n">_FLANK_ONLY_MARGIN</span>
+            <span class="p">):</span>
+                <span class="c1"># Most overlaps on a real genome reach the transcript only through its flank.</span>
+                <span class="c1"># Only the flank facts can hold there, so answer them without building a map.</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="n">_flank_mask</span><span class="p">(</span>
+                    <span class="n">transcript</span><span class="p">,</span>
+                    <span class="n">variant_min</span><span class="p">,</span>
+                    <span class="n">variant_max</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">upstream_distance</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">downstream_distance</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zone_map</span><span class="p">(</span><span class="n">transcript</span><span class="p">)</span><span class="o">.</span><span class="n">lookup</span><span class="p">(</span><span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span><span class="p">)</span>
+            <span class="n">bit</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">context_index</span>
+
+            <span class="k">for</span> <span class="n">fact_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_implied_fact_names</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
+                <span class="n">columns</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]</span> <span class="o">|=</span> <span class="n">bit</span>
+
+        <span class="c1"># Only the facts some other fact's `requires` guard reads need to exist per overlap.</span>
+        <span class="k">for</span> <span class="n">context_index</span><span class="p">,</span> <span class="n">fact_context</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fact_contexts</span><span class="p">):</span>
+            <span class="n">bit</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">context_index</span>
+            <span class="n">fact_context</span><span class="o">.</span><span class="n">prefill</span><span class="p">({</span><span class="n">fact_name</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">bit</span><span class="p">)</span> <span class="k">for</span> <span class="n">fact_name</span> <span class="ow">in</span> <span class="n">MEMO_FACT_NAMES</span><span class="p">})</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">facts_served</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fact_contexts</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">columns</span></div>
+
+
+<div class="viewcode-block" id="ZoneMapCache.prefill">
+<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.zone_map.ZoneMapCache.prefill">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prefill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Prefill every zone-map fact without charging evaluation cost.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fact_context (FactContext): Overlap context to prefill.</span>
+<span class="sd">        """</span>
+        <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="n">variant_genomic_span</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+        <span class="n">zone_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zone_map</span><span class="p">(</span><span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">zone_map</span><span class="o">.</span><span class="n">lookup</span><span class="p">(</span><span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span><span class="p">)</span>
+
+        <span class="n">served_values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">fact_name</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">mask</span> <span class="o">&amp;</span> <span class="n">_FACT_BIT</span><span class="p">[</span><span class="n">fact_name</span><span class="p">])</span> <span class="k">for</span> <span class="n">fact_name</span> <span class="ow">in</span> <span class="n">_ZONE_FACT_NAMES</span>
+        <span class="p">}</span>
+
+        <span class="c1"># The flanking facts are suppressed by any overlap with the transcript, so they are not a</span>
+        <span class="c1"># plain union over the covered zones.</span>
+        <span class="n">variant_misses_transcript</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">served_values</span><span class="p">[</span><span class="s2">"overlap_feature"</span><span class="p">]</span>
+        <span class="n">served_values</span><span class="p">[</span><span class="n">_UPSTREAM_FACT_NAME</span><span class="p">]</span> <span class="o">=</span> <span class="n">variant_misses_transcript</span> <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span>
+            <span class="n">mask</span> <span class="o">&amp;</span> <span class="n">_FACT_BIT</span><span class="p">[</span><span class="n">_UPSTREAM_FACT_NAME</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">served_values</span><span class="p">[</span><span class="n">_DOWNSTREAM_FACT_NAME</span><span class="p">]</span> <span class="o">=</span> <span class="n">variant_misses_transcript</span> <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span>
+            <span class="n">mask</span> <span class="o">&amp;</span> <span class="n">_FACT_BIT</span><span class="p">[</span><span class="n">_DOWNSTREAM_FACT_NAME</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">fact_context</span><span class="o">.</span><span class="n">prefill</span><span class="p">(</span><span class="n">served_values</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">facts_served</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">served_values</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

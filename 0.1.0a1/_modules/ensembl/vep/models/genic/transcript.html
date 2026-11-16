@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ensembl.vep.models.genic.transcript &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../../../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ensembl/vep/models/genic/transcript';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.0a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../../../../../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../../../../../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+  
+    
+    <script src="../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    <script src="../../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../../../../../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
+    Coverage Report
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
+    Coverage Report
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.models.genic.transcript</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ensembl.vep.models.genic.transcript</h1><div class="highlight"><pre>
+<span></span><span class="c1"># See the NOTICE file distributed with this work for additional information</span>
+<span class="c1"># regarding copyright ownership.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1"># http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="sd">"""Transcript class."""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">ClassVar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">RLock</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Feature</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.genic.cds</span><span class="w"> </span><span class="kn">import</span> <span class="n">CDS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.genic.intron</span><span class="w"> </span><span class="kn">import</span> <span class="n">Intron</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.genic.translation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Translation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.genic.utr</span><span class="w"> </span><span class="kn">import</span> <span class="n">UTR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.sequence</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapper</span><span class="p">,</span> <span class="n">MapperIndex</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">Attribute</span><span class="p">,</span> <span class="n">ExonPhase</span><span class="p">,</span> <span class="n">Strand</span><span class="p">,</span> <span class="n">invalidates</span><span class="p">,</span> <span class="n">is_resolved</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.common.codons</span><span class="w"> </span><span class="kn">import</span> <span class="n">translate_dna</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.genic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Gene</span><span class="p">,</span> <span class="n">Exon</span><span class="p">,</span> <span class="n">CDNA</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="n">_CODING_DERIVATIONS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"_coding_start"</span><span class="p">,</span>
+    <span class="s2">"_coding_end"</span><span class="p">,</span>
+    <span class="s2">"_first_coding_exon_index"</span><span class="p">,</span>
+    <span class="s2">"_last_coding_exon_index"</span><span class="p">,</span>
+    <span class="s2">"_exon_coding_start"</span><span class="p">,</span>
+    <span class="s2">"_exon_coding_end"</span><span class="p">,</span>
+    <span class="s2">"_cds_start_phase"</span><span class="p">,</span>
+    <span class="s2">"_cdna_coding_start"</span><span class="p">,</span>
+    <span class="s2">"_cdna_coding_end"</span><span class="p">,</span>
+    <span class="s2">"_cds"</span><span class="p">,</span>
+    <span class="s2">"_five_prime_utr"</span><span class="p">,</span>
+    <span class="s2">"_three_prime_utr"</span><span class="p">,</span>
+    <span class="s2">"_coding_sequence"</span><span class="p">,</span>
+    <span class="s2">"_translated_seq"</span><span class="p">,</span>
+    <span class="s2">"_cds_genomic_spans"</span><span class="p">,</span>
+    <span class="s2">"_five_prime_utr_genomic_spans"</span><span class="p">,</span>
+    <span class="s2">"_three_prime_utr_genomic_spans"</span><span class="p">,</span>
+    <span class="s2">"_cds_mapper"</span><span class="p">,</span>
+    <span class="s2">"_cdna_mapper"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="sd">"""Everything downstream of a coding boundary. Seeding any coding-signal source makes all of</span>
+<span class="sd">this stale. </span>
+
+<span class="sd">Here _coding_start/_coding_end are the first things to go, they are what every other entry below</span>
+<span class="sd">is computed from, and leaving them cached is what made a seed applied after a read silently have no</span>
+<span class="sd">effect.</span>
+
+<span class="sd">And _cds and _translation are deliberately absent as an explicitly seeded translation must survive</span>
+<span class="sd">a later cds seed and vice versa, the same exception ``spliced_exons``' own invalidates() list makes</span>
+<span class="sd">for it.</span>
+<span class="sd">"""</span>
+
+
+<div class="viewcode-block" id="Transcript">
+<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.genic.html#ensembl.vep.models.genic.transcript.Transcript">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Transcript</span><span class="p">(</span><span class="n">Feature</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Represents a transcript.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        stable_id (str):</span>
+<span class="sd">          Ensembl stable transcript identifier (e.g. "ENST00000366667").</span>
+<span class="sd">        version (int | None):</span>
+<span class="sd">          Version of the stable identifier.</span>
+<span class="sd">        gene (Gene | None):</span>
+<span class="sd">          The gene to which this transcript belongs.</span>
+<span class="sd">        biotype (str | None):</span>
+<span class="sd">          Biotype of the transcript (e.g. "protein_coding").</span>
+<span class="sd">        spliced_exons (list[Exon]):</span>
+<span class="sd">          List of exons that are spliced together to form the transcript, in transcript (5' to</span>
+<span class="sd">          3') order, therefore, index 0 is always the first exon.</span>
+<span class="sd">        introns (list[Intron]):</span>
+<span class="sd">          Introns between consecutive spliced exons, in transcript order. Derived from</span>
+<span class="sd">          ``spliced_exons`` on first access rather than loaded; seed with ``seed_attrs``.</span>
+<span class="sd">        translation (Translation | None):</span>
+<span class="sd">          The translation associated with this transcript, explicitly assigned or derived from</span>
+<span class="sd">          whatever coding-boundary information is available.</span>
+<span class="sd">        alternative_translations (list[Translation] | None):</span>
+<span class="sd">          List of alternative translations associated with this transcript,</span>
+<span class="sd">          if applicable.</span>
+<span class="sd">        attributes (list[Attribute] | None):</span>
+<span class="sd">          List of attributes associated with this transcript.</span>
+<span class="sd">    """</span>
+
+    <span class="n">stable_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">gene</span><span class="p">:</span> <span class="n">Gene</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">biotype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">spliced_exons</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Exon</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span>
+        <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">on_setattr</span><span class="o">=</span><span class="n">invalidates</span><span class="p">(</span>
+            <span class="o">*</span><span class="n">_CODING_DERIVATIONS</span><span class="p">,</span>
+            <span class="s2">"_spliced_seq"</span><span class="p">,</span>
+            <span class="s2">"_translated_seq"</span><span class="p">,</span>
+            <span class="s2">"_introns"</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">alternative_translations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Translation</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">attributes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Attribute</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">_lock</span><span class="p">:</span> <span class="n">RLock</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="n">RLock</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">SEED_INVALIDATES</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"cds"</span><span class="p">:</span> <span class="n">_CODING_DERIVATIONS</span><span class="p">,</span>
+        <span class="s2">"translation"</span><span class="p">:</span> <span class="n">_CODING_DERIVATIONS</span><span class="p">,</span>
+        <span class="s2">"five_prime_utr"</span><span class="p">:</span> <span class="n">_CODING_DERIVATIONS</span><span class="p">,</span>
+        <span class="s2">"three_prime_utr"</span><span class="p">:</span> <span class="n">_CODING_DERIVATIONS</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="w">    </span><span class="sd">"""Seeding any coding-signal source invalidates the whole coding derivation closure."""</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">introns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Intron</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _introns.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[Intron]: The introns between consecutive spliced exons, in transcript (5' to 3')</span>
+<span class="sd">                order.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_introns</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_introns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Intron</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Derive one intron per pair of consecutive spliced exons.</span>
+
+<span class="sd">        Every adjacent pair gets an intron, including a pair with no genomic gap between them --</span>
+<span class="sd">        such an intron has ``start &gt; end`` and records adjacency only; callers that care about gap</span>
+<span class="sd">        size check that themselves.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[Intron]: The introns, in transcript (5' to 3') order.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="n">introns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Intron</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">prev_exon</span><span class="p">,</span> <span class="n">next_exon</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+                <span class="n">first</span><span class="p">,</span> <span class="n">second</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="p">(</span><span class="n">next_exon</span><span class="p">,</span> <span class="n">prev_exon</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">REVERSE</span> <span class="k">else</span> <span class="p">(</span><span class="n">prev_exon</span><span class="p">,</span> <span class="n">next_exon</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">intron</span> <span class="o">=</span> <span class="n">Intron</span><span class="p">(</span>
+                    <span class="n">start</span><span class="o">=</span><span class="n">first</span><span class="o">.</span><span class="n">end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">second</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">strand</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">strand</span><span class="p">,</span> <span class="nb">slice</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">slice</span>
+                <span class="p">)</span>
+                <span class="n">intron</span><span class="o">.</span><span class="n">assign_without_hooks</span><span class="p">(</span><span class="n">prev_exon</span><span class="o">=</span><span class="n">prev_exon</span><span class="p">,</span> <span class="n">next_exon</span><span class="o">=</span><span class="n">next_exon</span><span class="p">)</span>
+                <span class="n">introns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">intron</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">introns</span>
+
+    <span class="c1"># --------------------------------------------------------------------------</span>
+    <span class="c1"># Coding boundaries derivation:</span>
+    <span class="c1"># If a transcript is protein coding, then we should have coding boundaries. The coding boundary is</span>
+    <span class="c1"># captured by coding_start and coding_end and can be derived from either of the following:</span>
+    <span class="c1">#       - CDS (attribute: cds)</span>
+    <span class="c1">#       - UTRs (attributes: five_prime_utr and three_prime_utr)</span>
+    <span class="c1">#       - Translation (attribute: translation)</span>
+    <span class="c1">#       - first and last coding exon and coding start and end relative to the respective exon (attributes:</span>
+    <span class="c1"># first_coding_exon_index, last_coding_exon_index, exon_coding_start and exon_coding_end)</span>
+    <span class="c1">#</span>
+    <span class="c1"># Each of the above set of attributes can be derived from any of the other set but one of them must be</span>
+    <span class="c1"># seeded. Otherwise the transcript would not have enough information to determine its coding boundaries</span>
+    <span class="c1"># and be treated as non coding.</span>
+    <span class="c1">#</span>
+    <span class="c1"># The mutual dependency here (exon_coding_start can derive from cds, cds derives from</span>
+    <span class="c1"># exon_coding_start) never actually recurses: because the point of contention is in coding_start and</span>
+    <span class="c1"># coding_end function body and there we only peek at the underlying slot using is_resolved() and never</span>
+    <span class="c1"># instigates a computation which can recurse back to the same property.</span>
+    <span class="c1">#</span>
+    <span class="c1"># If any of the attributes directly reference the other attribute in their function body, then</span>
+    <span class="c1"># the other attribute should not also directly reference the first attribute in its function body. In</span>
+    <span class="c1"># such case is_resolved() should be used to break recursive calls.</span>
+    <span class="c1"># --------------------------------------------------------------------------</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">coding_start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _coding_start.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: Start of the coding region or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coding_start</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_coding_start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Returns the start of the coding region.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: Start of the coding region or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">is_resolved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_cds"</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">cds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds</span>
+                <span class="k">return</span> <span class="n">cds</span><span class="o">.</span><span class="n">start</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span> <span class="k">else</span> <span class="n">cds</span><span class="o">.</span><span class="n">end</span>
+
+            <span class="k">if</span> <span class="n">is_resolved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_five_prime_utr"</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">five_prime_utr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">five_prime_utr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">five_prime_utr</span>
+                <span class="k">return</span> <span class="n">five_prime_utr</span><span class="o">.</span><span class="n">end</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span> <span class="k">else</span> <span class="n">five_prime_utr</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">is_resolved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_translation"</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">translation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">translation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">translation</span>
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="n">translation</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span>
+                    <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">translation</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">is_resolved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_first_coding_exon_index"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_resolved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_exon_coding_start"</span><span class="p">):</span>
+                <span class="n">first_coding_exon_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_coding_exon_index</span>
+                <span class="n">exon_coding_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exon_coding_start</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span> <span class="ow">or</span> <span class="n">first_coding_exon_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">exon_coding_start</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+                <span class="n">start_exon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">[</span><span class="n">first_coding_exon_index</span><span class="p">]</span>
+
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="n">start_exon</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="n">exon_coding_start</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span>
+                    <span class="k">else</span> <span class="n">start_exon</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">exon_coding_start</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="p">)</span>
+
+            <span class="c1"># No coding signal from any source.</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">coding_end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _coding_end.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: End of the coding region, or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coding_end</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_coding_end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Returns the end of the coding region.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: End of the coding region or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">is_resolved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_cds"</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">cds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds</span>
+                <span class="k">return</span> <span class="n">cds</span><span class="o">.</span><span class="n">end</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span> <span class="k">else</span> <span class="n">cds</span><span class="o">.</span><span class="n">start</span>
+
+            <span class="k">if</span> <span class="n">is_resolved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_three_prime_utr"</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">three_prime_utr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">three_prime_utr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">three_prime_utr</span>
+                <span class="k">return</span> <span class="n">three_prime_utr</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span> <span class="k">else</span> <span class="n">three_prime_utr</span><span class="o">.</span><span class="n">end</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">is_resolved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_translation"</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">translation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">translation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">translation</span>
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="n">translation</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span>
+                    <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">translation</span><span class="o">.</span><span class="n">end</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">is_resolved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_last_coding_exon_index"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_resolved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_exon_coding_end"</span><span class="p">):</span>
+                <span class="n">last_coding_exon_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_coding_exon_index</span>
+                <span class="n">exon_coding_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exon_coding_end</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span> <span class="ow">or</span> <span class="n">last_coding_exon_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">exon_coding_end</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+                <span class="n">end_exon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">[</span><span class="n">last_coding_exon_index</span><span class="p">]</span>
+
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="n">end_exon</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="n">exon_coding_end</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span>
+                    <span class="k">else</span> <span class="n">end_exon</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">exon_coding_end</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="p">)</span>
+
+            <span class="c1"># No coding signal from any source.</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">first_coding_exon_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _first_coding_exon_index.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: Index into spliced_exons of the exon where coding starts,</span>
+<span class="sd">                or None if the transcript has no coding signal at all.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_coding_exon_index</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_first_coding_exon_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Derives the first coding exon's index.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: Index into spliced_exons, or None if not coding.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_start</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">target_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_start</span>
+                <span class="k">for</span> <span class="n">exon_index</span><span class="p">,</span> <span class="n">exon</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">exon</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="n">target_position</span> <span class="o">&lt;=</span> <span class="n">exon</span><span class="o">.</span><span class="n">end</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">exon_index</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">last_coding_exon_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _last_coding_exon_index.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: Index into spliced_exons of the exon where coding ends, or None</span>
+<span class="sd">                if the transcript has no coding signal at all.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_coding_exon_index</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_last_coding_exon_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Derives the last coding exon's index.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: Index into spliced_exons, or None if not coding.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_end</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">target_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_end</span>
+                <span class="k">for</span> <span class="n">exon_index</span><span class="p">,</span> <span class="n">exon</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">exon</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="n">target_position</span> <span class="o">&lt;=</span> <span class="n">exon</span><span class="o">.</span><span class="n">end</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">exon_index</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exon_coding_start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _exon_coding_start.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: 1-based offset, within the first coding exon, of the first coding base,</span>
+<span class="sd">                or None if the transcript has no coding signal at all.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exon_coding_start</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_exon_coding_start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Derives the coding start offset from the first coding exon.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: 1-based exon-relative offset, or None if not coding.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_start</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_coding_exon_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">target_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_start</span>
+                <span class="n">start_exon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">first_coding_exon_index</span><span class="p">]</span>
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="p">(</span><span class="n">target_position</span> <span class="o">-</span> <span class="n">start_exon</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span>
+                    <span class="k">else</span> <span class="p">(</span><span class="n">start_exon</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">target_position</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exon_coding_end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _exon_coding_end.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: 1-based offset, within the last coding exon, of the last coding base, or</span>
+<span class="sd">                None if the transcript has no coding signal at all.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exon_coding_end</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_exon_coding_end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Derives the coding end offset from the last coding exon.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: 1-based exon-relative offset, or None if not coding.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_end</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_coding_exon_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">target_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_end</span>
+                <span class="n">end_exon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">last_coding_exon_index</span><span class="p">]</span>
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="p">(</span><span class="n">target_position</span> <span class="o">-</span> <span class="n">end_exon</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span>
+                    <span class="k">else</span> <span class="p">(</span><span class="n">end_exon</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">target_position</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cds_start_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _cds_start_phase.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Bases of the first codon missing from the CDS's 5' end, 0 when it is complete.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cds_start_phase</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cds_start_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Derive the start phase from the first coding exon, as VEP does.</span>
+
+<span class="sd">        An exon's phase counts the bases of its first codon that lie before it. On the first coding</span>
+<span class="sd">        exon that can only mean the CDS begins part-way through a codon, and VEP pads the</span>
+<span class="sd">        translateable sequence with that many ``N`` (``Bio::EnsEMBL::Transcript::translateable_seq``).</span>
+<span class="sd">        No phase, or an unknown one, means a complete 5' end.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: 0, 1 or 2.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="n">first_coding_exon_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_coding_exon_index</span>
+            <span class="k">if</span> <span class="n">first_coding_exon_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">0</span>
+            <span class="n">phase</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">[</span><span class="n">first_coding_exon_index</span><span class="p">]</span><span class="o">.</span><span class="n">phase</span>
+            <span class="k">if</span> <span class="n">phase</span> <span class="ow">in</span> <span class="p">(</span><span class="n">ExonPhase</span><span class="o">.</span><span class="n">ONE</span><span class="p">,</span> <span class="n">ExonPhase</span><span class="o">.</span><span class="n">TWO</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">phase</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cdna_coding_start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _cdna_coding_start.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: cDNA coordinate of the start of the coding sequence, or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cdna_coding_start</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cdna_coding_start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Returns the start of the coding sequence with respect to the cDNA, or None if not applicable.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: cDNA coordinate of the start of the coding sequence, or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="n">first_coding_exon_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_coding_exon_index</span>
+            <span class="n">exon_coding_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exon_coding_start</span>
+            <span class="k">if</span> <span class="n">first_coding_exon_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">exon_coding_start</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="n">start</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">exon_index</span><span class="p">,</span> <span class="n">exon</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">exon_index</span> <span class="o">&lt;</span> <span class="n">first_coding_exon_index</span><span class="p">:</span>
+                    <span class="c1"># if non-translateable then add the whole exon length</span>
+                    <span class="n">start</span> <span class="o">+=</span> <span class="n">exon</span><span class="o">.</span><span class="n">length</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">start</span> <span class="o">+=</span> <span class="n">exon_coding_start</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="k">break</span>
+
+            <span class="k">return</span> <span class="n">start</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cdna_coding_end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _cdna_coding_end.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: cDNA coordinate of the end of the coding sequence, or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cdna_coding_end</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cdna_coding_end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Returns the end of the coding sequence with respect to the cDNA, or None if not applicable.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: cDNA coordinate of the end of the coding sequence, or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="n">last_coding_exon_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_coding_exon_index</span>
+            <span class="k">if</span> <span class="n">last_coding_exon_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="n">exon_coding_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exon_coding_end</span>
+
+            <span class="n">end</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">exon_index</span><span class="p">,</span> <span class="n">exon</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">exon_index</span> <span class="o">&lt;</span> <span class="n">last_coding_exon_index</span><span class="p">:</span>
+                    <span class="c1"># if non-translateable then add the whole exon length</span>
+                    <span class="n">end</span> <span class="o">+=</span> <span class="n">exon</span><span class="o">.</span><span class="n">length</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">exon_coding_end</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">end</span> <span class="o">+=</span> <span class="n">exon</span><span class="o">.</span><span class="n">length</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">end</span> <span class="o">+=</span> <span class="n">exon_coding_end</span>
+                    <span class="k">break</span>
+
+            <span class="k">return</span> <span class="n">end</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CDS</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _cds.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            CDS | None: The CDS of the transcript, or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cds</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CDS</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Returns the CDS associated with this transcript, or None if not applicable.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            CDS | None: The CDS associated with this transcript, or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="n">genomic_spans</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds_genomic_spans</span>
+            <span class="n">first_coding_exon_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_coding_exon_index</span>
+            <span class="n">last_coding_exon_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_coding_exon_index</span>
+            <span class="k">if</span> <span class="n">genomic_spans</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">first_coding_exon_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">last_coding_exon_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Cannot compute CDS for transcript </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stable_id</span><span class="si">}</span><span class="s2"> because no coding"</span>
+                    <span class="s2">" boundary information is available."</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="n">coding_exons</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">[</span><span class="n">first_coding_exon_index</span> <span class="p">:</span> <span class="n">last_coding_exon_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coding_exons</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">genomic_spans</span><span class="p">):</span>
+                <span class="c1"># An exon clipped to nothing means the coding offsets are inconsistent with the exons.</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Cannot compute CDS for transcript </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stable_id</span><span class="si">}</span><span class="s2"> because its coding boundaries"</span>
+                    <span class="s2">" do not fit its exons."</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="n">blocks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">exon</span><span class="p">,</span> <span class="p">(</span><span class="n">block_start</span><span class="p">,</span> <span class="n">block_end</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">coding_exons</span><span class="p">,</span> <span class="n">genomic_spans</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">exon</span><span class="o">.</span><span class="n">seq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Exon </span><span class="si">{</span><span class="n">exon</span><span class="o">.</span><span class="n">stable_id</span><span class="si">}</span><span class="s2"> has no sequence information,"</span>
+                        <span class="sa">f</span><span class="s2">" adding N instead of the exact sequence for this exon"</span>
+                        <span class="sa">f</span><span class="s2">" when constructing CDS sequence for transcript </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stable_id</span><span class="si">}</span><span class="s2">."</span>
+                        <span class="sa">f</span><span class="s2">" Transcript sequence may not be accurate."</span>
+                    <span class="p">)</span>
+                    <span class="n">exon_seq</span> <span class="o">=</span> <span class="s2">"N"</span> <span class="o">*</span> <span class="n">exon</span><span class="o">.</span><span class="n">length</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">exon_seq</span> <span class="o">=</span> <span class="n">exon</span><span class="o">.</span><span class="n">seq</span>
+
+                <span class="c1"># exon sequence is already reverse complemented</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">:</span>
+                    <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">exon_seq</span><span class="p">[</span><span class="n">exon</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">block_end</span> <span class="p">:</span> <span class="n">exon</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">block_start</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">exon_seq</span><span class="p">[</span><span class="n">block_start</span> <span class="o">-</span> <span class="n">exon</span><span class="o">.</span><span class="n">start</span> <span class="p">:</span> <span class="n">block_end</span> <span class="o">-</span> <span class="n">exon</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+
+            <span class="c1"># Blocks are in transcript order and the sequence has already been reverse complemented</span>
+            <span class="c1"># so we can just join the sequences together</span>
+            <span class="n">seq</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span>
+
+            <span class="n">cds_start</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">block_start</span> <span class="k">for</span> <span class="n">block_start</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">genomic_spans</span><span class="p">)</span>
+            <span class="n">cds_end</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">block_end</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">block_end</span> <span class="ow">in</span> <span class="n">genomic_spans</span><span class="p">)</span>
+            <span class="n">cds</span> <span class="o">=</span> <span class="n">CDS</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">cds_start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">cds_end</span><span class="p">,</span> <span class="n">strand</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">strand</span><span class="p">,</span> <span class="nb">slice</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">slice</span><span class="p">)</span>
+            <span class="n">cds</span><span class="o">.</span><span class="n">seq</span> <span class="o">=</span> <span class="n">seq</span>
+            <span class="n">cds</span><span class="o">.</span><span class="n">transcript</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="k">if</span> <span class="n">is_resolved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_translation"</span><span class="p">):</span>
+                <span class="n">cds</span><span class="o">.</span><span class="n">translation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">translation</span>
+
+            <span class="k">return</span> <span class="n">cds</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cdna</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CDNA</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the cDNA sequence for the transcript, or None if not applicable."""</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Feature is not implemented yet."</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">five_prime_utr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UTR</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _five_prime_utr.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The 5' UTR of the transcript, or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_five_prime_utr</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_five_prime_utr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UTR</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the 5' UTR of the transcript, or None if not applicable.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            UTR | None: The 5' UTR, or None if the transcript is not coding or has no 5' UTR.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utr_envelope</span><span class="p">(</span><span class="n">five_prime</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">three_prime_utr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UTR</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _three_prime_utr.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The 3' UTR of the transcript, or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_three_prime_utr</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_three_prime_utr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UTR</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the 3' UTR of the transcript, or None if not applicable.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            UTR | None: The 3' UTR, or None if the transcript is not coding or has no 3' UTR.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utr_envelope</span><span class="p">(</span><span class="n">five_prime</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_utr_envelope</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">five_prime</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UTR</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Build the genomic envelope of one UTR.</span>
+
+<span class="sd">        We are calling it envelope because it is just the genomic span of the UTR and does not capture</span>
+<span class="sd">        full information. The actual UTR may span multiple exons, and therefore there are segments in the</span>
+<span class="sd">        between the envelope's range which is not part of the UTR but an intron.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            five_prime (bool): True if we want the 5' UTR, False if we want the 3' UTR.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            UTR | None: The UTR feature, or None when the transcript is not coding or the</span>
+<span class="sd">                requested side is empty (the CDS runs to that end of the transcript).</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">five_prime</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_start</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">:</span>
+                <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_start</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_start</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">end</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_end</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">:</span>
+                <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">end</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_end</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">start</span> <span class="o">&gt;</span> <span class="n">end</span><span class="p">:</span>
+            <span class="c1"># The coding boundary runs all the way to this side of the transcript -- no UTR here.</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"No </span><span class="si">{</span><span class="s1">'five'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">five_prime</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'three'</span><span class="si">}</span><span class="s2">_prime_utr for transcript"</span>
+                <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stable_id</span><span class="si">}</span><span class="s2">: the coding region runs to that end of the transcript."</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">utr</span> <span class="o">=</span> <span class="n">UTR</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span> <span class="n">strand</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">strand</span><span class="p">,</span> <span class="nb">slice</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">slice</span><span class="p">)</span>
+        <span class="n">utr</span><span class="o">.</span><span class="n">transcript</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="n">utr</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">translation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Translation</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _translation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Translation | None: The transcript's translation, seeded or derived, or None if the</span>
+<span class="sd">                transcript has no coding signal at all.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_translation</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_translation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Translation</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the translation associated with this transcript, or None if not applicable.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Translation | None: The derived translation, or None if not coding.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_start</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_end</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">coding_start</span><span class="p">,</span> <span class="n">coding_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_end</span>
+
+        <span class="c1"># 1-based, measured from this transcript's own 5' end -- the exact inverse of</span>
+        <span class="c1"># _coding_start/_coding_end's translation-fallback branches above.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">:</span>
+            <span class="n">translation_start</span> <span class="o">=</span> <span class="n">coding_start</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">translation_end</span> <span class="o">=</span> <span class="n">coding_end</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">translation_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">coding_start</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">translation_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">coding_end</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="n">exon_coding_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exon_coding_start</span> <span class="k">if</span> <span class="n">is_resolved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_exon_coding_start"</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">exon_coding_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exon_coding_end</span> <span class="k">if</span> <span class="n">is_resolved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_exon_coding_end"</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="n">translation</span> <span class="o">=</span> <span class="n">Translation</span><span class="p">(</span>
+            <span class="n">start</span><span class="o">=</span><span class="n">translation_start</span><span class="p">,</span>
+            <span class="n">end</span><span class="o">=</span><span class="n">translation_end</span><span class="p">,</span>
+            <span class="n">stable_id</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stable_id</span><span class="si">}</span><span class="s2">_derived_translation"</span><span class="p">,</span>
+            <span class="n">exon_coding_start</span><span class="o">=</span><span class="n">exon_coding_start</span><span class="p">,</span>
+            <span class="n">exon_coding_end</span><span class="o">=</span><span class="n">exon_coding_end</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">translation</span><span class="o">.</span><span class="n">transcript</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="n">coding_sequence</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_sequence</span>
+        <span class="k">if</span> <span class="n">coding_sequence</span><span class="p">:</span>
+            <span class="n">translation</span><span class="o">.</span><span class="n">seq</span> <span class="o">=</span> <span class="n">translate_dna</span><span class="p">(</span><span class="n">coding_sequence</span><span class="p">)</span>
+            <span class="n">translation</span><span class="o">.</span><span class="n">derived_from_coding_sequence</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">translation</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">spliced_seq</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _spliced_seq.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The spliced sequence of the transcript,</span>
+<span class="sd">            or None if sequence information is not available for all exons.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spliced_seq</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_spliced_seq</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        The spliced sequence of the transcript,</span>
+<span class="sd">        or None if sequence information is not available for all exons.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The spliced sequence of the transcript,</span>
+<span class="sd">            or None if sequence information is not available for all exons.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="n">seq</span> <span class="o">=</span> <span class="s2">""</span>
+
+            <span class="k">for</span> <span class="n">exon</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">exon</span><span class="o">.</span><span class="n">seq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Exon </span><span class="si">{</span><span class="n">exon</span><span class="o">.</span><span class="n">stable_id</span><span class="si">}</span><span class="s2"> has no sequence information,"</span>
+                        <span class="sa">f</span><span class="s2">" adding N instead of the exact sequence for this exon"</span>
+                        <span class="sa">f</span><span class="s2">" when constructing spliced sequence for transcript </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stable_id</span><span class="si">}</span><span class="s2">."</span>
+                        <span class="sa">f</span><span class="s2">" Spliced sequence may not be accurate."</span>
+                    <span class="p">)</span>
+                    <span class="n">seq</span> <span class="o">+=</span> <span class="s2">"N"</span> <span class="o">*</span> <span class="n">exon</span><span class="o">.</span><span class="n">length</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">seq</span> <span class="o">+=</span> <span class="n">exon</span><span class="o">.</span><span class="n">seq</span>
+            <span class="k">return</span> <span class="n">seq</span> <span class="k">if</span> <span class="n">seq</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">coding_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _coding_sequence.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str | None: The full CDS nucleotide sequence in transcript-sense, or</span>
+<span class="sd">                None if the transcript is not coding or sequence is unavailable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coding_sequence</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_coding_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the full CDS nucleotide sequence in transcript-sense.</span>
+
+<span class="sd">        Prefixed with ``cds_start_phase`` ``N``, so that it lines up with ``cds_mapper`` offsets.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str | None: CDS nucleotide sequence in transcript-sense orientation, or None if the</span>
+<span class="sd">                transcript is not coding or no sequence is available from either source.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="n">padding</span> <span class="o">=</span> <span class="s2">"N"</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds_start_phase</span>
+            <span class="n">cds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds</span>
+            <span class="k">if</span> <span class="n">cds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cds</span><span class="o">.</span><span class="n">seq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">padding</span> <span class="o">+</span> <span class="n">cds</span><span class="o">.</span><span class="n">seq</span>
+
+            <span class="n">genomic_spans</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds_genomic_spans</span>
+            <span class="k">if</span> <span class="n">genomic_spans</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">slice</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="n">blocks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">padding</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">block_start</span><span class="p">,</span> <span class="n">block_end</span> <span class="ow">in</span> <span class="n">genomic_spans</span><span class="p">:</span>
+                <span class="n">block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slice</span><span class="o">.</span><span class="n">subseq</span><span class="p">(</span><span class="n">block_start</span><span class="p">,</span> <span class="n">block_end</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">block</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+                <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">translated_seq</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _translated_seq.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str | None: The translated sequence of the transcript, or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_translated_seq</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_translated_seq</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the translated sequence of the transcript, or None if not applicable.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str | None: The translated sequence of the transcript, or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">translation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">translation</span><span class="o">.</span><span class="n">seq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">translation</span><span class="o">.</span><span class="n">seq</span>
+
+            <span class="n">coding_sequence</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_sequence</span>
+            <span class="k">if</span> <span class="n">coding_sequence</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Cannot compute translated_seq for transcript </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stable_id</span><span class="si">}</span><span class="s2"> because "</span>
+                    <span class="sa">f</span><span class="s2">"translation and CDS sequence are both not available."</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="k">return</span> <span class="n">translate_dna</span><span class="p">(</span><span class="n">coding_sequence</span><span class="p">)</span>
+
+    <span class="c1"># ----------------------------------------------------------------------</span>
+    <span class="c1"># Genomic &lt;-&gt; CDS and Genomic &lt;-&gt; cDNA mapping.</span>
+    <span class="c1"># ----------------------------------------------------------------------</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cds_genomic_spans</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _cds_genomic_spans.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[tuple[int, int]] | None: Transcript (5' to 3') order exon blocks clipped to the</span>
+<span class="sd">                CDS, or None if the transcript is not coding.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cds_genomic_spans</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cds_genomic_spans</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the exon blocks clipped to the CDS, in transcript (5' to 3') order.</span>
+
+<span class="sd">        Both endpoints of every block are always given low-to-high regardless of strand, but the</span>
+<span class="sd">        list itself is in transcript order, matching ``spliced_exons``' own convention.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[tuple[int, int]] | None: Transcript-order CDS-clipped exon blocks, or None if</span>
+<span class="sd">                the transcript has no coding signal or no exons.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="n">first_coding_exon_index</span><span class="p">,</span> <span class="n">exon_coding_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_coding_exon_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exon_coding_start</span>
+            <span class="n">last_coding_exon_index</span><span class="p">,</span> <span class="n">exon_coding_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_coding_exon_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exon_coding_end</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">first_coding_exon_index</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="ow">or</span> <span class="n">last_coding_exon_index</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="ow">or</span> <span class="n">exon_coding_start</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="ow">or</span> <span class="n">exon_coding_end</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span>
+            <span class="p">):</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="n">genomic_blocks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">exon_index</span><span class="p">,</span> <span class="n">exon</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">exon_index</span> <span class="o">&lt;</span> <span class="n">first_coding_exon_index</span> <span class="ow">or</span> <span class="n">exon_index</span> <span class="o">&gt;</span> <span class="n">last_coding_exon_index</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">block_start</span><span class="p">,</span> <span class="n">block_end</span> <span class="o">=</span> <span class="n">exon</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">exon</span><span class="o">.</span><span class="n">end</span>
+
+                <span class="k">if</span> <span class="n">exon_index</span> <span class="o">==</span> <span class="n">first_coding_exon_index</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">:</span>
+                        <span class="n">block_end</span> <span class="o">=</span> <span class="n">exon</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="p">(</span><span class="n">exon_coding_start</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">block_start</span> <span class="o">=</span> <span class="n">exon</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="n">exon_coding_start</span> <span class="o">-</span> <span class="mi">1</span>
+
+                <span class="k">if</span> <span class="n">exon_index</span> <span class="o">==</span> <span class="n">last_coding_exon_index</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">:</span>
+                        <span class="n">block_start</span> <span class="o">=</span> <span class="n">exon</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">exon_coding_end</span> <span class="o">+</span> <span class="mi">1</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">block_end</span> <span class="o">=</span> <span class="n">exon</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="n">exon_coding_end</span> <span class="o">-</span> <span class="mi">1</span>
+
+                <span class="k">if</span> <span class="n">block_start</span> <span class="o">&lt;=</span> <span class="n">block_end</span><span class="p">:</span>
+                    <span class="n">genomic_blocks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">block_start</span><span class="p">,</span> <span class="n">block_end</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">genomic_blocks</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="k">return</span> <span class="n">genomic_blocks</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">five_prime_utr_genomic_spans</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _five_prime_utr_genomic_spans.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[tuple[int, int]] | None: Transcript (5' to 3') order exon blocks clipped to the</span>
+<span class="sd">                5' UTR, or None if the transcript is not coding or has no 5' UTR.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_five_prime_utr_genomic_spans</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_five_prime_utr_genomic_spans</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the exon blocks clipped to the 5' UTR, in transcript (5' to 3') order.</span>
+
+<span class="sd">        The mirror of cds_genomic_spans for the region upstream of the CDS in transcript sense:</span>
+<span class="sd">        every exon strictly before the first coding exon, plus the portion of the first coding</span>
+<span class="sd">        exon itself that precedes the CDS. Both endpoints of every block are always given</span>
+<span class="sd">        low-to-high regardless of strand, matching cds_genomic_spans' own convention.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[tuple[int, int]] | None: Transcript-order 5' UTR exon blocks, or None if the</span>
+<span class="sd">                transcript has no coding signal or no 5' UTR.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds_genomic_spans</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="n">first_coding_exon_index</span><span class="p">,</span> <span class="n">exon_coding_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">first_coding_exon_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exon_coding_start</span>
+            <span class="k">if</span> <span class="n">first_coding_exon_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">exon_coding_start</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="n">blocks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="n">exon</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">exon</span><span class="o">.</span><span class="n">end</span><span class="p">)</span> <span class="k">for</span> <span class="n">exon</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">[:</span><span class="n">first_coding_exon_index</span><span class="p">]</span>
+            <span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">exon_coding_start</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">first_coding_exon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">[</span><span class="n">first_coding_exon_index</span><span class="p">]</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">:</span>
+                    <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">first_coding_exon</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">exon_coding_start</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">first_coding_exon</span><span class="o">.</span><span class="n">end</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">first_coding_exon</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">first_coding_exon</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="n">exon_coding_start</span> <span class="o">-</span> <span class="mi">2</span><span class="p">))</span>
+
+            <span class="k">return</span> <span class="n">blocks</span> <span class="k">if</span> <span class="n">blocks</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">three_prime_utr_genomic_spans</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _three_prime_utr_genomic_spans.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[tuple[int, int]] | None: Transcript (5' to 3') order exon blocks clipped to the</span>
+<span class="sd">                3' UTR, or None if the transcript is not coding or has no 3' UTR.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_three_prime_utr_genomic_spans</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_three_prime_utr_genomic_spans</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the exon blocks clipped to the 3' UTR, in transcript (5' to 3') order.</span>
+
+<span class="sd">        The mirror of _five_prime_utr_genomic_spans for the region downstream of the CDS in</span>
+<span class="sd">        transcript sense: the portion of the last coding exon itself that follows the CDS, plus</span>
+<span class="sd">        every exon strictly after it.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[tuple[int, int]] | None: Transcript-order 3' UTR exon blocks, or None if the</span>
+<span class="sd">                transcript has no coding signal or no 3' UTR.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds_genomic_spans</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="n">last_coding_exon_index</span><span class="p">,</span> <span class="n">exon_coding_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_coding_exon_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exon_coding_end</span>
+            <span class="k">if</span> <span class="n">last_coding_exon_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">exon_coding_end</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="n">blocks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">exon_coding_end</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">last_coding_exon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">[</span><span class="n">last_coding_exon_index</span><span class="p">]</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">:</span>
+                    <span class="n">block_end</span> <span class="o">=</span> <span class="n">last_coding_exon</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">exon_coding_end</span>
+                    <span class="k">if</span> <span class="n">last_coding_exon</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="n">block_end</span><span class="p">:</span>
+                        <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">last_coding_exon</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">block_end</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">block_start</span> <span class="o">=</span> <span class="n">last_coding_exon</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="n">exon_coding_end</span>
+                    <span class="k">if</span> <span class="n">block_start</span> <span class="o">&lt;=</span> <span class="n">last_coding_exon</span><span class="o">.</span><span class="n">end</span><span class="p">:</span>
+                        <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">block_start</span><span class="p">,</span> <span class="n">last_coding_exon</span><span class="o">.</span><span class="n">end</span><span class="p">))</span>
+
+            <span class="n">blocks</span><span class="o">.</span><span class="n">extend</span><span class="p">((</span><span class="n">exon</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">exon</span><span class="o">.</span><span class="n">end</span><span class="p">)</span> <span class="k">for</span> <span class="n">exon</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">[</span><span class="n">last_coding_exon_index</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:])</span>
+
+            <span class="k">return</span> <span class="n">blocks</span> <span class="k">if</span> <span class="n">blocks</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cds_mapper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapper</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _cds_mapper.</span>
+
+<span class="sd">        Offsets are **CDS-relative**: offset 0 is the first base of the start codon, and UTR bases</span>
+<span class="sd">        map to nothing at all. A CDS with an incomplete 5' end starts at offset ``cds_start_phase``</span>
+<span class="sd">        instead, the offsets before it being VEP's ``N`` padding. Use this for anything expressed in</span>
+<span class="sd">        coding coordinates, e.g., codon windows, protein offsets. Its sibling ``cdna_mapper`` covers</span>
+<span class="sd">        the whole spliced transcript instead; the two disagree by ``cdna_coding_start - 1`` over the</span>
+<span class="sd">        CDS, and only ``cdna_mapper`` can place a UTR position.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Mapper | None: The genomic&lt;-&gt;CDS&lt;-&gt;protein coordinate mapper for this transcript's</span>
+<span class="sd">                CDS, or None if the transcript is not coding.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cds_mapper</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cds_mapper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapper</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Builds the Mapper for this transcript's CDS, or None if it has none.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Mapper | None: The coordinate mapper, or None if the transcript is not coding.</span>
+<span class="sd">        """</span>
+        <span class="n">genomic_spans</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds_genomic_spans</span>
+        <span class="k">if</span> <span class="n">genomic_spans</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">Mapper</span><span class="p">(</span>
+            <span class="n">genomic_spans</span><span class="o">=</span><span class="n">genomic_spans</span><span class="p">,</span>
+            <span class="n">strand</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">strand</span><span class="p">,</span>
+            <span class="n">coding_start_offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="c1"># Offsets in this mapper start after the padding, so the last coding one is that far</span>
+            <span class="c1"># along from cds_length's own unpadded count.</span>
+            <span class="n">coding_end_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cds_start_phase</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds_length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">padding</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cds_start_phase</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cdna_mapper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapper</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _cdna_mapper.</span>
+
+<span class="sd">        Offsets are **cDNA-relative**: offset 0 is the transcript's first base, so 5' UTR, CDS and</span>
+<span class="sd">        3' UTR positions all map. Use this to place a variant anywhere on the mature transcript.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Mapper | None: The genomic&lt;-&gt;cDNA coordinate mapper for this transcript's whole</span>
+<span class="sd">                spliced sequence (5' UTR + CDS + 3' UTR), or None if it has no exons.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cdna_mapper</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cdna_mapper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapper</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Builds the Mapper for this transcript's whole spliced sequence, or None if it has no</span>
+<span class="sd">        exons.</span>
+
+<span class="sd">        The whole-transcript sibling of ``cds_mapper``, same class and mechanism, just built from</span>
+<span class="sd">        every spliced exon rather than the CDS-clipped spans.</span>
+
+<span class="sd">        A non-coding transcript still gets a mapper, since a cDNA position is meaningful without a</span>
+<span class="sd">        CDS -- VEP reports one for a non-coding transcript variant. Its coding range is left empty</span>
+<span class="sd">        (``coding_end_offset`` below ``coding_start_offset``), so the codon and protein methods</span>
+<span class="sd">        answer None rather than reading a frame that does not exist.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Mapper | None: The coordinate mapper, or None if the transcript has no exons.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">genomic_spans</span> <span class="o">=</span> <span class="p">[(</span><span class="n">exon</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">exon</span><span class="o">.</span><span class="n">end</span><span class="p">)</span> <span class="k">for</span> <span class="n">exon</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">]</span>
+        <span class="n">cdna_coding_start</span><span class="p">,</span> <span class="n">cdna_coding_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdna_coding_start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdna_coding_end</span>
+        <span class="k">if</span> <span class="n">cdna_coding_start</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">cdna_coding_end</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># No coding region: an empty range, which the codon and protein methods answer None to.</span>
+            <span class="n">cdna_coding_start</span><span class="p">,</span> <span class="n">cdna_coding_end</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">return</span> <span class="n">Mapper</span><span class="p">(</span>
+            <span class="n">genomic_spans</span><span class="o">=</span><span class="n">genomic_spans</span><span class="p">,</span>
+            <span class="n">strand</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">strand</span><span class="p">,</span>
+            <span class="n">coding_start_offset</span><span class="o">=</span><span class="n">cdna_coding_start</span><span class="p">,</span>
+            <span class="n">coding_end_offset</span><span class="o">=</span><span class="n">cdna_coding_end</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cds_length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Number of nucleotides in the CDS.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: Number of nucleotides in the CDS, or None if the transcript is not coding.</span>
+<span class="sd">        """</span>
+        <span class="n">genomic_spans</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds_genomic_spans</span>
+        <span class="k">if</span> <span class="n">genomic_spans</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">genomic_spans</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Transcript.genomic_to_cds_offset">
+<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.genic.html#ensembl.vep.models.genic.transcript.Transcript.genomic_to_cds_offset">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">genomic_to_cds_offset</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">genomic_position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="n">MapperIndex</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Map a genomic position to its 0-based CDS offset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            genomic_position (int): A genomic position, 1-based.</span>
+<span class="sd">            accelerator (MapperIndex | None): Optional O(1)-lookup accelerator for the mapping.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: The 0-based offset into the CDS, or None if the position is not coding.</span>
+<span class="sd">        """</span>
+        <span class="n">mapper</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds_mapper</span>
+        <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">mapper</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">mapper</span><span class="o">.</span><span class="n">genomic_to_offset</span><span class="p">(</span><span class="n">genomic_position</span><span class="p">,</span> <span class="n">accelerator</span><span class="o">=</span><span class="n">accelerator</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Transcript.cds_offset_to_genomic">
+<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.genic.html#ensembl.vep.models.genic.transcript.Transcript.cds_offset_to_genomic">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cds_offset_to_genomic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cds_offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="n">MapperIndex</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Map a 0-based CDS offset to its genomic position.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cds_offset (int): 0-based offset into the CDS.</span>
+<span class="sd">            accelerator (MapperIndex | None): Optional O(1)-lookup accelerator for the mapping.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: The genomic position, or None if the offset is out of range or the transcript</span>
+<span class="sd">                is not coding.</span>
+<span class="sd">        """</span>
+        <span class="n">mapper</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds_mapper</span>
+        <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">mapper</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">mapper</span><span class="o">.</span><span class="n">offset_to_genomic</span><span class="p">(</span><span class="n">cds_offset</span><span class="p">,</span> <span class="n">accelerator</span><span class="o">=</span><span class="n">accelerator</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Transcript.start_codon_genomic_spans">
+<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.genic.html#ensembl.vep.models.genic.transcript.Transcript.start_codon_genomic_spans">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start_codon_genomic_spans</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Genomic spans of the three start-codon bases.</span>
+
+<span class="sd">        A list rather than a single ``(min, max)`` envelope because a start codon whose three bases</span>
+<span class="sd">        split across an exon-exon junction can have more than one genomic span here.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[tuple[int, int]] | None: Ascending genomic spans, or None if the transcript is</span>
+<span class="sd">                not coding.</span>
+<span class="sd">        """</span>
+        <span class="n">mapper</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds_mapper</span>
+        <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">mapper</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">mapper</span><span class="o">.</span><span class="n">codon_genomic_spans</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Transcript.stop_codon_genomic_spans">
+<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.genic.html#ensembl.vep.models.genic.transcript.Transcript.stop_codon_genomic_spans">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stop_codon_genomic_spans</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Genomic spans of the three stop-codon bases.</span>
+
+<span class="sd">        A list rather than a single ``(min, max)`` envelope.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[tuple[int, int]] | None: Ascending genomic spans, or None if not coding or the</span>
+<span class="sd">                CDS is shorter than 3 bases.</span>
+<span class="sd">        """</span>
+        <span class="n">mapper</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds_mapper</span>
+        <span class="k">if</span> <span class="n">mapper</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">mapper</span><span class="o">.</span><span class="n">length</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">mapper</span><span class="o">.</span><span class="n">codon_genomic_spans</span><span class="p">(</span><span class="n">mapper</span><span class="o">.</span><span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Compare two Transcripts using various criteria.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other (object): Another object to compare against.</span>
+
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if equals, False otherwise.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Transcript</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stable_id</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">stable_id</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">version</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

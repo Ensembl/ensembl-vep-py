@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ensembl.vep.sources.file.gxf.transcript &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../../../../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ensembl/vep/sources/file/gxf/transcript';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.0a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../../../../../../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../../../../../../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+  
+    
+    <script src="../../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../../_static/language_data.js"></script>
+    <script src="../../../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../../../../../../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
+    Coverage Report
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
+    Coverage Report
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.sources.file.gxf.transcript</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ensembl.vep.sources.file.gxf.transcript</h1><div class="highlight"><pre>
+<span></span><span class="c1"># See the NOTICE file distributed with this work for additional information</span>
+<span class="c1"># regarding copyright ownership.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1"># http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="sd">"""Shared GXF-based transcript source.</span>
+
+<span class="sd">This module contains the common transcript-building workflow used by both file</span>
+<span class="sd">formats:</span>
+
+<span class="sd">* buffer records from the parser in streaming order,</span>
+<span class="sd">* group the buffered records into transcript-sized blocks,</span>
+<span class="sd">* build Transcript, Gene, Exon, and Translation objects (introns are derived lazily by</span>
+<span class="sd">  ``Transcript`` itself), and</span>
+<span class="sd">* reuse Slice and Gene instances across records that share the same region.</span>
+
+<span class="sd">Only the parser-specific record identity and parent resolution rules are left</span>
+<span class="sd">to the concrete GFF3 and GTF adapters.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">cast</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">evolve</span><span class="p">,</span> <span class="n">field</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.caches.feature_pool</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeaturePool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.common</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CoordSystemLevel</span><span class="p">,</span>
+    <span class="n">ExonPhase</span><span class="p">,</span>
+    <span class="n">STRAND_SYMBOL_TO_ENUM</span><span class="p">,</span>
+    <span class="n">GFF_TO_ENSEMBL_PHASE</span><span class="p">,</span>
+    <span class="n">Strand</span><span class="p">,</span>
+    <span class="n">format_region_string</span><span class="p">,</span>
+    <span class="n">parse_region_string</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.genic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Exon</span><span class="p">,</span> <span class="n">Gene</span><span class="p">,</span> <span class="n">Transcript</span><span class="p">,</span> <span class="n">Translation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.sequence</span><span class="w"> </span><span class="kn">import</span> <span class="n">CoordSystem</span><span class="p">,</span> <span class="n">Slice</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.sources.file.file_feature_source</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileFeatureSource</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.sources.synonym</span><span class="w"> </span><span class="kn">import</span> <span class="n">SequenceRegionResolver</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">_CHROMOSOME_COORD_SYSTEM</span> <span class="o">=</span> <span class="n">CoordSystem</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"chromosome"</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">CoordSystemLevel</span><span class="o">.</span><span class="n">CHROMOSOME</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">_PLACEHOLDER_SEQ_REGION_END</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">31</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="n">_ORDERED_FILE_ASSUMPTION_MESSAGE</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"GFF3/GTF streaming iteration assumes records are grouped by gene. A gene record may precede "</span>
+    <span class="s2">"several transcript records and their exon/CDS children. Files that revisit a gene after "</span>
+    <span class="s2">"starting another gene require an index for complete assembly."</span>
+<span class="p">)</span>
+
+<span class="n">P</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"P"</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Parser</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="GXFRecord">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFRecord">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GXFRecord</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Minimal parser record interface shared by GFF3 and GTF records.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        feature_type (str): Raw feature type reported by the parser.</span>
+<span class="sd">        seqid (str): Sequence-region name for the record.</span>
+<span class="sd">        start (int): Genomic start position, 1-based inclusive.</span>
+<span class="sd">        end (int): Genomic end position, 1-based inclusive.</span>
+<span class="sd">        strand_symbol (str): Strand symbol from the parser record.</span>
+<span class="sd">        phase_value (str | None): Phase string for coding features, if present.</span>
+<span class="sd">        attributes (dict[str, tuple[str, ...]]): Parsed key/value attributes from the record.</span>
+<span class="sd">    """</span>
+
+    <span class="n">feature_type</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">seqid</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">start</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">end</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">strand_symbol</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">phase_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">attributes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span>
+
+<div class="viewcode-block" id="GXFRecord.first_attribute">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFRecord.first_attribute">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">first_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the first attribute value for a key, or None when absent."""</span></div>
+
+
+<div class="viewcode-block" id="GXFRecord.attribute_values">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFRecord.attribute_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">attribute_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return every attribute value for a key, empty when absent."""</span></div>
+</div>
+
+
+
+<span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_GXFTranscriptGroup</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Grouped parser records describing one transcript.</span>
+
+<span class="sd">    ``transcript_id`` and ``gene_id`` are resolved once, while grouping, from the same</span>
+<span class="sd">    ``get_record_id``/``get_parent_ids`` calls that route records into this group in the first</span>
+<span class="sd">    place. Carrying them here is what lets the builder stop recomputing them per transcript.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        transcript_id (str): Stable identifier of the transcript record.</span>
+<span class="sd">        gene_id (str | None): Parent gene identifier declared by the transcript record, if any --</span>
+<span class="sd">            not necessarily the id of ``gene_record``, which may be absent even when this is set.</span>
+<span class="sd">        transcript_record (GXFRecord): Primary transcript record for the group.</span>
+<span class="sd">        gene_record (GXFRecord | None): Associated gene record, if one was present in the input.</span>
+<span class="sd">        exon_records (list[GXFRecord]): Exon records attached to the transcript.</span>
+<span class="sd">        cds_records (list[GXFRecord]): Coding records attached to the transcript.</span>
+<span class="sd">    """</span>
+
+    <span class="n">transcript_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">gene_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">transcript_record</span><span class="p">:</span> <span class="n">GXFRecord</span>
+    <span class="n">gene_record</span><span class="p">:</span> <span class="n">GXFRecord</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">exon_records</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">]</span>
+    <span class="n">cds_records</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="GXFTranscriptSource">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GXFTranscriptSource</span><span class="p">(</span><span class="n">FileFeatureSource</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">GXFRecord</span><span class="p">,</span> <span class="n">Transcript</span><span class="p">],</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">P</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">"""Transcript source backed by GFF3 or GTF file.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        gene_feature_types (frozenset[str]): Lower-cased feature types that identify a gene record.</span>
+<span class="sd">        transcript_feature_types (frozenset[str]): Lower-cased feature types that identify a</span>
+<span class="sd">            transcript record.</span>
+<span class="sd">        exon_feature_types (frozenset[str]): Lower-cased feature types that identify an exon record.</span>
+<span class="sd">        coding_feature_types (frozenset[str]): Lower-cased feature types that contribute to the</span>
+<span class="sd">            transcript translation.</span>
+<span class="sd">        reference_region_resolver (SequenceRegionResolver | None): Resolve raw GXF names to the</span>
+<span class="sd">            shared reference names used by model slices.</span>
+<span class="sd">        source_region_resolver (SequenceRegionResolver | None): Resolve model slice names to names</span>
+<span class="sd">            accepted by indexed GXF queries.</span>
+<span class="sd">        transcript_pool (FeaturePool[Transcript] | None): Cross-payload cache of built transcripts,</span>
+<span class="sd">            assigned by the owning worker; ``None`` disables reuse.</span>
+<span class="sd">    """</span>
+
+    <span class="n">gene_feature_types</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">"gene"</span><span class="p">})</span>
+    <span class="n">transcript_feature_types</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">"transcript"</span><span class="p">})</span>
+    <span class="n">exon_feature_types</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">"exon"</span><span class="p">})</span>
+    <span class="n">coding_feature_types</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">"cds"</span><span class="p">})</span>
+    <span class="n">adaptor</span><span class="p">:</span> <span class="n">P</span>
+    <span class="n">reference_region_resolver</span><span class="p">:</span> <span class="n">SequenceRegionResolver</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">source_region_resolver</span><span class="p">:</span> <span class="n">SequenceRegionResolver</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">transcript_pool</span><span class="p">:</span> <span class="n">FeaturePool</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_query_parser</span><span class="p">:</span> <span class="n">P</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">_query_parser_pid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">_pool_poisoned</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transcript_pool_poisoned</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return whether a repeated transcript id has disabled pooling for this source."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pool_poisoned</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sequence_region_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return the tabix index's reference names together with ``##sequence-region`` names.</span>
+
+<span class="sd">        A header can declare a contig that has no rows, and so no index entry.</span>
+<span class="sd">        """</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">adaptor</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">)</span> <span class="k">as</span> <span class="n">adaptor</span><span class="p">:</span>
+                <span class="n">index_names</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">adaptor</span><span class="o">.</span><span class="n">index_sequence_names</span><span class="p">)</span>
+                <span class="n">headers</span> <span class="o">=</span> <span class="n">adaptor</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"header"</span><span class="p">,</span> <span class="p">())</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">frozenset</span><span class="p">()</span>
+
+        <span class="n">header_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">header</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
+                <span class="n">fields</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">header</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">fields</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"##sequence-region"</span><span class="p">:</span>
+                    <span class="n">header_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">index_names</span> <span class="o">|</span> <span class="n">header_names</span>
+
+<div class="viewcode-block" id="GXFTranscriptSource.get_records_by_region">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.get_records_by_region">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_records_by_region</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">seq_region_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">end</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return the records an indexed query over one region reads, assembling nothing.</span>
+
+<span class="sd">        Unlike the file-backed default this resolves the region into the file's own spelling, and</span>
+<span class="sd">        falls back to ``chr`` prefix variants when the name the index declares finds nothing --</span>
+<span class="sd">        which happens for an unindexed GXF with no ``##sequence-region`` directive.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            region (str | None): The region (e.g., "chr1:1000-2000") to read.</span>
+<span class="sd">            seq_region_name (str | None): The name of the sequence region, in reference spelling.</span>
+<span class="sd">            start (int | None): Inclusive query start.</span>
+<span class="sd">            end (int | None): Inclusive query end.</span>
+<span class="sd">            **kwargs (object): ``feature_types``, a frozenset of record types to keep. Matching</span>
+<span class="sd">                happens on the Rust side, before a non-matching line is parsed into a record.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[GXFRecord]: The records the query read, empty when the region is unreadable.</span>
+<span class="sd">        """</span>
+        <span class="n">feature_types</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"frozenset[str] | None"</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"feature_types"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"unexpected query options: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">kwargs</span><span class="p">))</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">query_region</span> <span class="o">=</span> <span class="n">format_region_string</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="n">seq_region_name</span><span class="o">=</span><span class="n">seq_region_name</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+            <span class="n">region_name</span><span class="p">,</span> <span class="n">region_start</span><span class="p">,</span> <span class="n">region_end</span> <span class="o">=</span> <span class="n">parse_region_string</span><span class="p">(</span><span class="n">query_region</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Cannot parse region: </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2">-</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="n">seq_region_name</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_records_for_region</span><span class="p">(</span><span class="n">region_name</span><span class="p">,</span> <span class="n">region_start</span><span class="p">,</span> <span class="n">region_end</span><span class="p">,</span> <span class="n">feature_types</span><span class="o">=</span><span class="n">feature_types</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GXFTranscriptSource.get_features_by_region">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.get_features_by_region">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_features_by_region</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">seq_region_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">end</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return complete transcripts whose spans meet one query region.</span>
+
+<span class="sd">        Two queries, because one is not enough: stage 1 finds the transcript rows overlapping the</span>
+<span class="sd">        region, stage 2 queries the full span of each candidate not already pooled, so exons and</span>
+<span class="sd">        coding records outside the region are kept. Results are in stage-1 (file) order whether a</span>
+<span class="sd">        transcript came from the pool or was just built, which is what fixes CSQ order.</span>
+
+<span class="sd">        A region without coordinates queries the whole sequence region, and so assembles every</span>
+<span class="sd">        transcript on it.</span>
+<span class="sd">        """</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">query_region</span> <span class="o">=</span> <span class="n">format_region_string</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="n">seq_region_name</span><span class="o">=</span><span class="n">seq_region_name</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+            <span class="n">region_name</span><span class="p">,</span> <span class="n">region_start</span><span class="p">,</span> <span class="n">region_end</span> <span class="o">=</span> <span class="n">parse_region_string</span><span class="p">(</span><span class="n">query_region</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Cannot parse region: </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2">-</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="n">seq_region_name</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="n">records</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_records_for_region</span><span class="p">(</span>
+            <span class="n">region_name</span><span class="p">,</span> <span class="n">region_start</span><span class="p">,</span> <span class="n">region_end</span><span class="p">,</span> <span class="n">feature_types</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">transcript_feature_types</span>
+        <span class="p">)</span>  <span class="c1"># stage 1: the transcript rows meeting the region, before their spans are known</span>
+        <span class="n">candidates</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">has_duplicate_candidate</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+            <span class="n">transcript_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_record_id</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">transcript_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">previous_span</span> <span class="o">=</span> <span class="n">candidates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">transcript_id</span><span class="p">)</span>
+            <span class="n">span</span> <span class="o">=</span> <span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">record</span><span class="o">.</span><span class="n">end</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">previous_span</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">previous_span</span> <span class="o">!=</span> <span class="n">span</span><span class="p">:</span>
+                <span class="n">has_duplicate_candidate</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_disable_pool_for_duplicate_id</span><span class="p">(</span><span class="n">transcript_id</span><span class="p">)</span>
+            <span class="n">candidates</span><span class="p">[</span><span class="n">transcript_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">span</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">candidates</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="n">pool</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pool_poisoned</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">transcript_pool</span>
+        <span class="k">if</span> <span class="n">pool</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">pool</span><span class="o">.</span><span class="n">max_bytes</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">has_duplicate_candidate</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_candidates</span><span class="p">(</span><span class="n">region_name</span><span class="p">,</span> <span class="n">candidates</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_candidates_with_pool</span><span class="p">(</span><span class="n">region_name</span><span class="p">,</span> <span class="n">candidates</span><span class="p">,</span> <span class="n">pool</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GXFTranscriptSource.iter_all_features">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.iter_all_features">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">iter_all_features</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Yield transcripts by streaming the file sequentially.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Iterator[Transcript]: Transcripts built from the entire file.</span>
+<span class="sd">        """</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">_ORDERED_FILE_ASSUMPTION_MESSAGE</span><span class="p">)</span>
+
+        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_features_from_records</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iter_all_records</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="GXFTranscriptSource.iter_features_by_region">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.iter_features_by_region">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">iter_features_by_region</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">seq_region_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">end</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Yield complete transcripts intersecting one query region.</span>
+
+<span class="sd">        One region is the batch of one: an indexed query cannot serve this, because a transcript's</span>
+<span class="sd">        exons reach outside the queried region, so the answer is the same sequential pass</span>
+<span class="sd">        ``iter_features_by_regions`` makes. Callers with an index want ``get_features_by_region``,</span>
+<span class="sd">        which queries each candidate's full span instead.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            region (str | None): The region (e.g., "chr1:1000-2000") to get transcripts from.</span>
+<span class="sd">            seq_region_name (str | None): The name of the sequence region (e.g., "chr1").</span>
+<span class="sd">            start (int | None): The start position of the region.</span>
+<span class="sd">            end (int | None): The end position of the region.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Iterator[Transcript]: Transcripts intersecting the region.</span>
+<span class="sd">        """</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">query_region</span> <span class="o">=</span> <span class="n">format_region_string</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="n">seq_region_name</span><span class="o">=</span><span class="n">seq_region_name</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+            <span class="n">region_name</span><span class="p">,</span> <span class="n">region_start</span><span class="p">,</span> <span class="n">region_end</span> <span class="o">=</span> <span class="n">parse_region_string</span><span class="p">(</span><span class="n">query_region</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Cannot parse region: </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2">-</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="n">seq_region_name</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">interval</span> <span class="o">=</span> <span class="p">(</span><span class="n">region_start</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">,</span> <span class="n">region_end</span> <span class="ow">or</span> <span class="n">_PLACEHOLDER_SEQ_REGION_END</span><span class="p">)</span>
+        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_features_by_regions</span><span class="p">({</span><span class="n">region_name</span><span class="p">:</span> <span class="p">[</span><span class="n">interval</span><span class="p">]})</span></div>
+
+
+<div class="viewcode-block" id="GXFTranscriptSource.iter_features_by_regions">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.iter_features_by_regions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">iter_features_by_regions</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">intervals_by_region</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Yield only transcripts intersecting reference-space query intervals.</span>
+
+<span class="sd">        This source's own method, not part of the ``FeatureSource`` contract: a format whose record</span>
+<span class="sd">        already carries a whole feature answers each region on its own, and gains nothing from the</span>
+<span class="sd">        batch. Here one pass serves every requested interval, so a whole input buffer costs one</span>
+<span class="sd">        read of the file rather than one per region.</span>
+
+<span class="sd">        The record predicate runs before transcript, exon, CDS, and gene models are built, which</span>
+<span class="sd">        keeps the unindexed fallback bounded by the current payload rather than the source size.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            intervals_by_region (Mapping[str, Sequence[tuple[int, int]]]): 1-based inclusive</span>
+<span class="sd">                ``(start, end)`` intervals, keyed by sequence-region name.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Iterator[Transcript]: Transcripts intersecting any requested interval.</span>
+<span class="sd">        """</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">_ORDERED_FILE_ASSUMPTION_MESSAGE</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">overlaps_requested_interval</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="n">GXFRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="n">sequence_region</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">seqid</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_region_resolver</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">sequence_region</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_region_resolver</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">sequence_region</span><span class="p">)</span>
+            <span class="n">intervals</span> <span class="o">=</span> <span class="n">intervals_by_region</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sequence_region</span><span class="p">,</span> <span class="p">())</span>
+            <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="n">end</span> <span class="ow">and</span> <span class="n">record</span><span class="o">.</span><span class="n">end</span> <span class="o">&gt;=</span> <span class="n">start</span> <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">intervals</span><span class="p">)</span>
+
+        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_features_from_records</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">iter_all_records</span><span class="p">(),</span>
+            <span class="n">transcript_predicate</span><span class="o">=</span><span class="n">overlaps_requested_interval</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GXFTranscriptSource.records_to_features">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.records_to_features">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">records_to_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">records</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Convert a batch of records into transcripts, with a fresh gene and slice context.</span>
+
+<span class="sd">        The records must be **complete and contiguous**: every exon, CDS and gene row of each</span>
+<span class="sd">        transcript present, in file order. One transcript is many records, so a partial set builds</span>
+<span class="sd">        partial models rather than failing -- which is why the region and streaming getters are</span>
+<span class="sd">        overridden instead of composing this one record at a time.</span>
+
+<span class="sd">        Fresh dictionaries are passed every time: ``_build_transcripts`` defaults to shared</span>
+<span class="sd">        mutable dictionaries, which would carry genes and slices over from one call to the next.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            records (list[GXFRecord]): The records to convert, in file order.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[Transcript]: The transcripts they describe.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_transcripts</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">gene_records</span><span class="o">=</span><span class="p">{},</span> <span class="n">gene_cache</span><span class="o">=</span><span class="p">{})</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_candidates</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">seq_region_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">candidates</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Query every candidate's span and build all of them, without the pool."""</span>
+
+        <span class="n">complete_records</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">span_start</span><span class="p">,</span> <span class="n">span_end</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merged_spans</span><span class="p">(</span><span class="n">candidates</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="c1"># stage 2: the transcript rows that overlap the merged spans</span>
+            <span class="n">complete_records</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_records_for_region</span><span class="p">(</span><span class="n">seq_region_name</span><span class="p">,</span> <span class="n">span_start</span><span class="p">,</span> <span class="n">span_end</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_transcripts</span><span class="p">(</span>
+            <span class="n">complete_records</span><span class="p">,</span> <span class="n">gene_records</span><span class="o">=</span><span class="p">{},</span> <span class="n">gene_cache</span><span class="o">=</span><span class="p">{},</span> <span class="n">candidate_ids</span><span class="o">=</span><span class="n">candidates</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_candidates_with_pool</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">seq_region_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">candidates</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
+        <span class="n">pool</span><span class="p">:</span> <span class="n">FeaturePool</span><span class="p">[</span><span class="n">Transcript</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Reuse pooled transcripts, query and build only the missing ones, in candidate order.</span>
+
+<span class="sd">        A pool hit skips its own span, so stage-2 rows are also checked for a pooled id at a</span>
+<span class="sd">        different span.</span>
+<span class="sd">        """</span>
+
+        <span class="n">pooled</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Transcript</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">missing</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">transcript_id</span><span class="p">,</span> <span class="n">span</span> <span class="ow">in</span> <span class="n">candidates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">span</span>
+            <span class="n">cached</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">seq_region_name</span><span class="p">,</span> <span class="n">transcript_id</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">cached</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">missing</span><span class="p">[</span><span class="n">transcript_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">span</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pooled</span><span class="p">[</span><span class="n">transcript_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">cached</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">missing</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">pooled</span><span class="p">[</span><span class="n">transcript_id</span><span class="p">]</span> <span class="k">for</span> <span class="n">transcript_id</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="n">transcript_id</span> <span class="ow">in</span> <span class="n">pooled</span><span class="p">]</span>
+
+        <span class="n">complete_records</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">span_start</span><span class="p">,</span> <span class="n">span_end</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merged_spans</span><span class="p">(</span><span class="n">missing</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="c1"># stage 2: the transcript rows not in the pool that overlap the merged spans</span>
+            <span class="n">complete_records</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_records_for_region</span><span class="p">(</span><span class="n">seq_region_name</span><span class="p">,</span> <span class="n">span_start</span><span class="p">,</span> <span class="n">span_end</span><span class="p">))</span>
+
+        <span class="n">resurfaced_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_pooled_id_in_records</span><span class="p">(</span><span class="n">complete_records</span><span class="p">,</span> <span class="n">pooled</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">resurfaced_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_disable_pool_for_duplicate_id</span><span class="p">(</span><span class="n">resurfaced_id</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_candidates</span><span class="p">(</span><span class="n">seq_region_name</span><span class="p">,</span> <span class="n">candidates</span><span class="p">)</span>
+
+        <span class="n">built</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_transcripts</span><span class="p">(</span>
+            <span class="n">complete_records</span><span class="p">,</span> <span class="n">gene_records</span><span class="o">=</span><span class="p">{},</span> <span class="n">gene_cache</span><span class="o">=</span><span class="p">{},</span> <span class="n">candidate_ids</span><span class="o">=</span><span class="n">missing</span>
+        <span class="p">)</span>
+        <span class="n">built_by_id</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Transcript</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">transcript</span> <span class="ow">in</span> <span class="n">built</span><span class="p">:</span>
+            <span class="n">built_by_id</span><span class="p">[</span><span class="n">transcript</span><span class="o">.</span><span class="n">stable_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">transcript</span>
+            <span class="n">pool</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">seq_region_name</span><span class="p">,</span> <span class="n">transcript</span><span class="o">.</span><span class="n">stable_id</span><span class="p">,</span> <span class="n">transcript</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">transcript</span><span class="o">.</span><span class="n">end</span><span class="p">),</span>
+                <span class="n">transcript</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">combined</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">pooled</span><span class="p">,</span> <span class="o">**</span><span class="n">built_by_id</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">combined</span><span class="p">[</span><span class="n">transcript_id</span><span class="p">]</span> <span class="k">for</span> <span class="n">transcript_id</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="n">transcript_id</span> <span class="ow">in</span> <span class="n">combined</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_first_pooled_id_in_records</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">records</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">],</span> <span class="n">pooled</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Transcript</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the first transcript id in ``records`` whose span differs from its pooled model."""</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">feature_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">transcript_feature_types</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">record_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_record_id</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">record_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">cached</span> <span class="o">=</span> <span class="n">pooled</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">record_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cached</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">start</span> <span class="o">!=</span> <span class="n">cached</span><span class="o">.</span><span class="n">start</span> <span class="ow">or</span> <span class="n">record</span><span class="o">.</span><span class="n">end</span> <span class="o">!=</span> <span class="n">cached</span><span class="o">.</span><span class="n">end</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">record_id</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_disable_pool_for_duplicate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transcript_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Clear and permanently disable the pool once a transcript id names two rows."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pool_poisoned</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pool_poisoned</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transcript_pool</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">transcript_pool</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">"</span><span class="si">%s</span><span class="s2"> has a repeated transcript id </span><span class="si">%r</span><span class="s2">; disabling the transcript pool for this source"</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span>
+            <span class="n">transcript_id</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_records_for_region</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">seq_region_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">end</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">feature_types</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return raw records for one already-parsed region, resolving its name as the file spells it."""</span>
+        <span class="n">source_name</span> <span class="o">=</span> <span class="n">seq_region_name</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_region_resolver</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">source_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_region_resolver</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">seq_region_name</span><span class="p">)</span>
+        <span class="n">records</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_records</span><span class="p">(</span><span class="n">source_name</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">feature_types</span><span class="o">=</span><span class="n">feature_types</span><span class="p">)</span>
+        <span class="n">source_name_is_declared</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">source_region_resolver</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">source_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_region_resolver</span><span class="o">.</span><span class="n">source_names</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">records</span> <span class="ow">or</span> <span class="n">source_name_is_declared</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">records</span>
+
+        <span class="c1"># If no records were found using the source name declared in index file or header,</span>
+        <span class="c1"># try common fallback names (chr prefix variations). It can happen for an un-indexed</span>
+        <span class="c1"># GFF/GTF file not having the ##sequence-region directive.</span>
+        <span class="n">fallback_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">seq_region_name</span><span class="p">]</span>
+        <span class="n">fallback_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">seq_region_name</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span> <span class="k">if</span> <span class="n">seq_region_name</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"chr"</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">"chr</span><span class="si">{</span><span class="n">seq_region_name</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">fallback_name</span> <span class="ow">in</span> <span class="n">fallback_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">fallback_name</span> <span class="o">==</span> <span class="n">source_name</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">records</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_records</span><span class="p">(</span><span class="n">fallback_name</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">feature_types</span><span class="o">=</span><span class="n">feature_types</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">records</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">records</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_query_records</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">seq_region_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">end</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">feature_types</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Read raw records using one source-specific sequence-region name.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            seq_region_name: The source-spelling sequence-region name to query.</span>
+<span class="sd">            start: Inclusive query start.</span>
+<span class="sd">            end: Inclusive query end.</span>
+<span class="sd">            feature_types: When given, only rows whose column 3 matches one of these values</span>
+<span class="sd">                (case-insensitively) are returned. Applied on the Rust side before a non-matching</span>
+<span class="sd">                line is parsed into a record.</span>
+<span class="sd">        """</span>
+        <span class="n">region</span> <span class="o">=</span> <span class="n">format_region_string</span><span class="p">(</span><span class="n">seq_region_name</span><span class="o">=</span><span class="n">seq_region_name</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_typed_records</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="n">feature_types</span><span class="o">=</span><span class="n">feature_types</span><span class="p">)</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_query_typed_records</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">region</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">feature_types</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Seek the persistent query parser to a region and read its records.</span>
+
+<span class="sd">        Implemented per format because only the GFF3 and GTF parsers accept ``feature_types``;</span>
+<span class="sd">        ``Parser``, which bounds ``P``, does not. A subclass binds ``P`` to its own parser type, so</span>
+<span class="sd">        the call type-checks there without narrowing ``self.adaptor`` here.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[GXFRecord]: The records the query returned, empty when it matched nothing.</span>
+<span class="sd">        """</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+<div class="viewcode-block" id="GXFTranscriptSource.close">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Close the region-query parser and the attached sequence source."""</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_parser</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_query_parser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_query_parser</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_query_parser_pid</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_open_query_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">P</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return a query-mode parser kept open for this process's region queries.</span>
+
+<span class="sd">        Annotation issues thousands of region queries; re-opening the file and its index for each</span>
+<span class="sd">        dominated the run time. The parser is separate from ``adaptor``, which other methods open</span>
+<span class="sd">        and close in other modes, and a process reached through fork opens its own so it never</span>
+<span class="sd">        shares a file offset with its parent.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_parser</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_parser_pid</span> <span class="o">!=</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">():</span>
+            <span class="n">query_parser</span> <span class="o">=</span> <span class="n">evolve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adaptor</span><span class="p">)</span>
+            <span class="n">query_parser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"query"</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_query_parser</span> <span class="o">=</span> <span class="n">query_parser</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_query_parser_pid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_parser</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merged_spans</span><span class="p">(</span><span class="n">spans</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Return overlapping transcript spans as minimal query ranges."""</span>
+        <span class="n">ordered</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">spans</span><span class="p">)</span>
+        <span class="n">merged</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">ordered</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">merged</span> <span class="ow">or</span> <span class="n">start</span> <span class="o">&gt;</span> <span class="n">merged</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">merged</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">))</span>
+                <span class="k">continue</span>
+            <span class="n">previous_start</span><span class="p">,</span> <span class="n">previous_end</span> <span class="o">=</span> <span class="n">merged</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">merged</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">previous_start</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">previous_end</span><span class="p">,</span> <span class="n">end</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">merged</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_iter_features_from_records</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">records</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">transcript_predicate</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">GXFRecord</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Yield transcripts from an ordered record stream, buffering it into blocks.</span>
+
+<span class="sd">        Buffers one contiguous gene block, then converts its grouped records into Transcript</span>
+<span class="sd">        objects. One record is never enough, which is why this exists rather than the per-record</span>
+<span class="sd">        conversion ``FeatureSource`` composes by default.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            records (Iterator[GXFRecord]): The records to stream, in file order.</span>
+<span class="sd">            transcript_predicate (Callable[[GXFRecord], bool] | None): Keeps only the transcripts</span>
+<span class="sd">                whose own record matches, applied before any model is built.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Iterator[Transcript]: Transcripts built from buffered GXF records.</span>
+<span class="sd">        """</span>
+
+        <span class="n">gene_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Gene</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">buffer</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">current_gene_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+            <span class="n">gene_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream_gene_key</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">gene_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">current_gene_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">gene_key</span><span class="p">):</span>
+                <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream_buffer_features</span><span class="p">(</span>
+                    <span class="n">buffer</span><span class="p">,</span>
+                    <span class="n">gene_cache</span><span class="o">=</span><span class="n">gene_cache</span><span class="p">,</span>
+                    <span class="n">transcript_predicate</span><span class="o">=</span><span class="n">transcript_predicate</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">buffer</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">gene_cache</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">gene_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">current_gene_key</span> <span class="o">=</span> <span class="n">gene_key</span>
+            <span class="n">buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">buffer</span><span class="p">:</span>
+            <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream_buffer_features</span><span class="p">(</span>
+                <span class="n">buffer</span><span class="p">,</span>
+                <span class="n">gene_cache</span><span class="o">=</span><span class="n">gene_cache</span><span class="p">,</span>
+                <span class="n">transcript_predicate</span><span class="o">=</span><span class="n">transcript_predicate</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_stream_buffer_features</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">records</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">gene_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Gene</span><span class="p">],</span>
+        <span class="n">transcript_predicate</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">GXFRecord</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Build requested transcripts from one gene-sized streamed record block."""</span>
+
+        <span class="n">groups</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_group_records</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">transcript_predicate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">group</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span> <span class="k">if</span> <span class="n">transcript_predicate</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">transcript_record</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_groups_to_features_with_context</span><span class="p">(</span>
+            <span class="n">groups</span><span class="p">,</span>
+            <span class="n">gene_cache</span><span class="o">=</span><span class="n">gene_cache</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_stream_gene_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">GXFRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the gene-sized streaming block key for one ordered record."""</span>
+
+        <span class="n">explicit_gene_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_attr</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="s2">"gene_id"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">explicit_gene_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">explicit_gene_id</span>
+        <span class="n">feature_type</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">feature_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">feature_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gene_feature_types</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_record_id</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">feature_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">transcript_feature_types</span><span class="p">:</span>
+            <span class="n">parent_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_parent_ids</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">parent_ids</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">parent_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"transcript:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_record_id</span><span class="p">(</span><span class="n">record</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="GXFTranscriptSource.get_record_id">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.get_record_id">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_record_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">GXFRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the stable identifier for a GFF3/GTF record.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record: The record to inspect.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str | None: The record identifier, or None when the record is not</span>
+<span class="sd">            identified.</span>
+<span class="sd">        """</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="GXFTranscriptSource.get_parent_ids">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.get_parent_ids">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_parent_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">GXFRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return the parent identifiers for a GFF3/GTF record, if they exist.</span>
+
+<span class="sd">        Plural because one GFF3 row may name several parents: an exon shared by two transcripts</span>
+<span class="sd">        arrives as a single record with ``Parent=transcript:1,transcript:2``, and taking only the</span>
+<span class="sd">        first would drop it from every transcript but one.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record: The record to inspect.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple[str, ...]: A tuple of parent identifiers, or an empty tuple when the record has</span>
+<span class="sd">            no parent.</span>
+<span class="sd">        """</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_transcripts</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">records</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">gene_records</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">GXFRecord</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">gene_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Gene</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">candidate_ids</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Convert buffered records into Transcript objects while reusing caches.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            records (list[GXFRecord]): Buffered records that belong to one streaming chunk.</span>
+<span class="sd">            gene_records (dict[str, GXFRecord]): Previously seen gene records keyed by gene id.</span>
+<span class="sd">            gene_cache (dict[str, Gene]): Previously built Gene objects keyed by gene id.</span>
+<span class="sd">            candidate_ids (Mapping[str, tuple[int, int]] | None): When given, only transcripts</span>
+<span class="sd">                whose id is a key of this mapping are built; every other transcript is dropped</span>
+<span class="sd">                while grouping, before any model is constructed for it.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[Transcript]: Transcript objects assembled from the buffered records.</span>
+<span class="sd">        """</span>
+
+        <span class="n">gene_records</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">gene_records</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">gene_records</span>
+        <span class="n">gene_cache</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">gene_cache</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">gene_cache</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_group_records</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">candidate_ids</span><span class="o">=</span><span class="n">candidate_ids</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_groups_to_features_with_context</span><span class="p">(</span>
+            <span class="n">groups</span><span class="p">,</span>
+            <span class="n">gene_records</span><span class="o">=</span><span class="n">gene_records</span><span class="p">,</span>
+            <span class="n">gene_cache</span><span class="o">=</span><span class="n">gene_cache</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_groups_to_features_with_context</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">groups</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_GXFTranscriptGroup</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">gene_records</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">GXFRecord</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">gene_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Gene</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Build already-grouped transcripts while reusing gene and slice models."""</span>
+
+        <span class="n">gene_records</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">gene_records</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">gene_records</span>
+        <span class="n">gene_cache</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">gene_cache</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">gene_cache</span>
+        <span class="n">transcripts</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_transcript_from_record_group</span><span class="p">(</span><span class="n">group</span><span class="p">)</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">group</span><span class="p">,</span> <span class="n">transcript</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">groups</span><span class="p">,</span> <span class="n">transcripts</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">gene_record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_gene_record</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">gene_records</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_gene</span><span class="p">(</span><span class="n">gene_record</span><span class="p">,</span> <span class="n">group</span><span class="o">.</span><span class="n">gene_id</span><span class="p">,</span> <span class="n">transcript</span><span class="p">,</span> <span class="n">gene_cache</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">transcripts</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_group_records</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">records</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">candidate_ids</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_GXFTranscriptGroup</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Group parser records into per-transcript blocks.</span>
+
+<span class="sd">        ``record_id`` is computed only for gene and transcript rows, and ``parent_id`` only for</span>
+<span class="sd">        transcript, exon and coding rows -- the ids each routing decision below actually needs. An</span>
+<span class="sd">        exon or CDS record's own id is still resolved later, per exon, when the transcript itself</span>
+<span class="sd">        is built.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            records (Iterable[GXFRecord]): The buffered records to group.</span>
+<span class="sd">            candidate_ids (Mapping[str, tuple[int, int]] | None): When given, only transcripts</span>
+<span class="sd">                whose id is a key of this mapping are grouped; every other transcript's records are</span>
+<span class="sd">                still scanned (a record's transcript is not known until the whole pass completes),</span>
+<span class="sd">                but no group, and therefore no model, is built for it. Relative order among the</span>
+<span class="sd">                kept transcripts is unchanged.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[_GXFTranscriptGroup]: One grouped transcript block per (candidate) transcript</span>
+<span class="sd">            record, in the order transcripts were first seen.</span>
+<span class="sd">        """</span>
+
+        <span class="n">gene_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">GXFRecord</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">transcript_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">exon_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="n">cds_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+            <span class="n">feature_type</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">feature_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">feature_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gene_feature_types</span><span class="p">:</span>
+                <span class="n">record_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_record_id</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">record_id</span><span class="p">:</span>
+                    <span class="n">gene_map</span><span class="p">[</span><span class="n">record_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">record</span>
+            <span class="k">elif</span> <span class="n">feature_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">transcript_feature_types</span><span class="p">:</span>
+                <span class="n">record_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_record_id</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">record_id</span><span class="p">:</span>
+                    <span class="n">previous</span> <span class="o">=</span> <span class="n">transcript_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">record_id</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">previous</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">previous</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">previous</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">end</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span>
+                        <span class="n">record</span><span class="o">.</span><span class="n">start</span><span class="p">,</span>
+                        <span class="n">record</span><span class="o">.</span><span class="n">end</span><span class="p">,</span>
+                    <span class="p">):</span>
+                        <span class="c1"># One row can arrive once per merged span; a different span is a real duplicate.</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_disable_pool_for_duplicate_id</span><span class="p">(</span><span class="n">record_id</span><span class="p">)</span>
+                    <span class="c1"># A later duplicate without a Parent keeps the earlier gene id.</span>
+                    <span class="n">parent_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_parent_ids</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+                    <span class="n">parent_id</span> <span class="o">=</span> <span class="n">parent_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">parent_ids</span> <span class="k">else</span> <span class="kc">None</span>
+                    <span class="n">previous_gene_id</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">previous</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+                    <span class="n">transcript_map</span><span class="p">[</span><span class="n">record_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">parent_id</span> <span class="ow">or</span> <span class="n">previous_gene_id</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">feature_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">exon_feature_types</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">parent_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_parent_ids</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
+                    <span class="n">exon_map</span><span class="p">[</span><span class="n">parent_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">feature_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">coding_feature_types</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">parent_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_parent_ids</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
+                    <span class="n">cds_map</span><span class="p">[</span><span class="n">parent_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">_GXFTranscriptGroup</span><span class="p">(</span>
+                <span class="n">transcript_id</span><span class="o">=</span><span class="n">transcript_id</span><span class="p">,</span>
+                <span class="n">gene_id</span><span class="o">=</span><span class="n">gene_id</span><span class="p">,</span>
+                <span class="n">transcript_record</span><span class="o">=</span><span class="n">transcript_record</span><span class="p">,</span>
+                <span class="n">gene_record</span><span class="o">=</span><span class="n">gene_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">gene_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">gene_id</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">exon_records</span><span class="o">=</span><span class="n">exon_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">transcript_id</span><span class="p">,</span> <span class="p">[]),</span>
+                <span class="n">cds_records</span><span class="o">=</span><span class="n">cds_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">transcript_id</span><span class="p">,</span> <span class="p">[]),</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">transcript_id</span><span class="p">,</span> <span class="p">(</span><span class="n">transcript_record</span><span class="p">,</span> <span class="n">gene_id</span><span class="p">)</span> <span class="ow">in</span> <span class="n">transcript_map</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">candidate_ids</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">transcript_id</span> <span class="ow">in</span> <span class="n">candidate_ids</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_gene_record</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">group</span><span class="p">:</span> <span class="n">_GXFTranscriptGroup</span><span class="p">,</span>
+        <span class="n">gene_records</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">GXFRecord</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GXFRecord</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the gene record for a grouped transcript, if one exists.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            group (_GXFTranscriptGroup): The grouped transcript records.</span>
+<span class="sd">            gene_records (dict[str, GXFRecord]): Previously seen gene records keyed by gene id.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            GXFRecord | None: The gene record for the grouped transcript, or None if not found.</span>
+<span class="sd">        """</span>
+
+        <span class="n">gene_records</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">gene_records</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">gene_records</span>
+        <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">gene_record</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">group</span><span class="o">.</span><span class="n">gene_record</span>
+
+        <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">gene_id</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">gene_records</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">gene_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_gene</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">gene_record</span><span class="p">:</span> <span class="n">GXFRecord</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">gene_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">transcript</span><span class="p">:</span> <span class="n">Transcript</span><span class="p">,</span>
+        <span class="n">gene_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Gene</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Attach a Gene to a Transcript, reusing cached Gene objects when possible.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            gene_record (GXFRecord | None): The gene record to convert, if present.</span>
+<span class="sd">            gene_id (str | None): The gene's own identifier, already resolved by the caller</span>
+<span class="sd">                (``_GXFTranscriptGroup.gene_id`` for the common in-group case) rather than</span>
+<span class="sd">                recomputed from ``gene_record``.</span>
+<span class="sd">            transcript (Transcript): The transcript to attach the gene to.</span>
+<span class="sd">            gene_cache (dict[str, Gene]): Previously built Gene objects keyed by gene id.</span>
+<span class="sd">        """</span>
+
+        <span class="k">if</span> <span class="n">gene_record</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">gene_cache</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">gene_cache</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">gene_cache</span>
+        <span class="n">gene_key</span> <span class="o">=</span> <span class="n">gene_id</span> <span class="ow">or</span> <span class="s2">""</span>
+        <span class="n">gene</span> <span class="o">=</span> <span class="n">gene_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">gene_key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">gene</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">gene</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_gene</span><span class="p">(</span><span class="n">gene_record</span><span class="p">)</span>
+            <span class="n">gene_cache</span><span class="p">[</span><span class="n">gene_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">gene</span>
+
+        <span class="k">assert</span> <span class="n">gene</span><span class="o">.</span><span class="n">transcripts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">gene</span><span class="o">.</span><span class="n">transcripts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transcript</span><span class="p">)</span>
+        <span class="n">transcript</span><span class="o">.</span><span class="n">gene</span> <span class="o">=</span> <span class="n">gene</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_transcript_from_record_group</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">group</span><span class="p">:</span> <span class="n">_GXFTranscriptGroup</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Transcript</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Construct a Transcript from one grouped record block.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            group: The grouped records to convert.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Transcript: The assembled transcript object.</span>
+<span class="sd">        """</span>
+
+        <span class="n">transcript_record</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">transcript_record</span>
+        <span class="n">strand</span> <span class="o">=</span> <span class="n">STRAND_SYMBOL_TO_ENUM</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">transcript_record</span><span class="o">.</span><span class="n">strand_symbol</span><span class="p">,</span> <span class="n">Strand</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">)</span>
+        <span class="n">seq_region_name</span> <span class="o">=</span> <span class="n">transcript_record</span><span class="o">.</span><span class="n">seqid</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_region_resolver</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">seq_region_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_region_resolver</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">seq_region_name</span><span class="p">)</span>
+        <span class="n">genomic_slice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slice_cache</span><span class="o">.</span><span class="n">get_slice</span><span class="p">(</span><span class="n">seq_region_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequence_source</span><span class="p">)</span>
+
+        <span class="n">transcript</span> <span class="o">=</span> <span class="n">Transcript</span><span class="p">(</span>
+            <span class="n">stable_id</span><span class="o">=</span><span class="n">group</span><span class="o">.</span><span class="n">transcript_id</span><span class="p">,</span>
+            <span class="n">start</span><span class="o">=</span><span class="n">transcript_record</span><span class="o">.</span><span class="n">start</span><span class="p">,</span>
+            <span class="n">end</span><span class="o">=</span><span class="n">transcript_record</span><span class="o">.</span><span class="n">end</span><span class="p">,</span>
+            <span class="n">strand</span><span class="o">=</span><span class="n">strand</span><span class="p">,</span>
+            <span class="nb">slice</span><span class="o">=</span><span class="n">genomic_slice</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># Both spellings appear in the wild: GFF3 writes "biotype", GTF "transcript_biotype". It was</span>
+        <span class="c1"># read for the gene but never for the transcript, so a protein_coding transcript read from a</span>
+        <span class="c1"># file came back with no biotype at all.</span>
+        <span class="n">biotype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_attr</span><span class="p">(</span><span class="n">transcript_record</span><span class="p">,</span> <span class="s2">"biotype"</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_attr</span><span class="p">(</span>
+            <span class="n">transcript_record</span><span class="p">,</span> <span class="s2">"transcript_biotype"</span>
+        <span class="p">)</span>
+        <span class="n">exons</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_exons</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">exon_records</span><span class="p">,</span> <span class="n">group</span><span class="o">.</span><span class="n">cds_records</span><span class="p">,</span> <span class="n">strand</span><span class="p">,</span> <span class="n">genomic_slice</span><span class="p">)</span>
+        <span class="c1"># Brand-new transcript: nothing is cached yet, so the on_setattr hook has nothing to</span>
+        <span class="c1"># invalidate -- skip straight to the fields it would leave set.</span>
+        <span class="n">transcript</span><span class="o">.</span><span class="n">assign_without_hooks</span><span class="p">(</span><span class="n">biotype</span><span class="o">=</span><span class="n">biotype</span><span class="p">,</span> <span class="n">spliced_exons</span><span class="o">=</span><span class="n">exons</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">group</span><span class="o">.</span><span class="n">cds_records</span><span class="p">:</span>
+            <span class="n">translation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_translation</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">cds_records</span><span class="p">,</span> <span class="n">transcript</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">translation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">translation</span><span class="o">.</span><span class="n">transcript</span> <span class="o">=</span> <span class="n">transcript</span>
+                <span class="c1"># translation is derived and read-only, so it is seeded rather than assigned.</span>
+                <span class="c1"># seed_attrs, not seed_and_invalidate_attrs: nothing downstream is resolved yet.</span>
+                <span class="n">transcript</span><span class="o">.</span><span class="n">seed_attrs</span><span class="p">(</span><span class="n">translation</span><span class="o">=</span><span class="n">translation</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">transcript</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_exons</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">exon_records</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">],</span>
+        <span class="n">cds_records</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">],</span>
+        <span class="n">strand</span><span class="p">:</span> <span class="n">Strand</span><span class="p">,</span>
+        <span class="n">genomic_slice</span><span class="p">:</span> <span class="n">Slice</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Exon</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Construct exon objects from grouped records.</span>
+
+<span class="sd">        An exon's phase is read from the first CDS row, in transcript order, that starts inside it,</span>
+<span class="sd">        as VEP reads it (``BaseGXF::_create_transcript``); an exon no CDS row starts in has an</span>
+<span class="sd">        unknown phase. A transcript with no CDS rows leaves every phase unset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            exon_records: Exon records attached to one transcript.</span>
+<span class="sd">            cds_records: Coding records attached to the same transcript.</span>
+<span class="sd">            strand: The transcript strand.</span>
+<span class="sd">            genomic_slice: The transcript's own Slice, reused for every exon -- an exon is always</span>
+<span class="sd">                on the same sequence region as its transcript.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[Exon]: The exon objects for the transcript, ordered 5' to 3' along the transcript</span>
+<span class="sd">            (descending genomic start for a reverse-strand transcript).</span>
+<span class="sd">        """</span>
+
+        <span class="n">reverse</span> <span class="o">=</span> <span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">REVERSE</span>
+        <span class="n">ordered_cds_records</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">cds_records</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)</span>
+        <span class="n">exons</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Exon</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">exon_record</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">exon_records</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">):</span>
+            <span class="n">stable_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_record_id</span><span class="p">(</span><span class="n">exon_record</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span>
+            <span class="n">exon</span> <span class="o">=</span> <span class="n">Exon</span><span class="p">(</span>
+                <span class="n">stable_id</span><span class="o">=</span><span class="n">stable_id</span><span class="p">,</span>
+                <span class="n">start</span><span class="o">=</span><span class="n">exon_record</span><span class="o">.</span><span class="n">start</span><span class="p">,</span>
+                <span class="n">end</span><span class="o">=</span><span class="n">exon_record</span><span class="o">.</span><span class="n">end</span><span class="p">,</span>
+                <span class="n">strand</span><span class="o">=</span><span class="n">strand</span><span class="p">,</span>
+                <span class="nb">slice</span><span class="o">=</span><span class="n">genomic_slice</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">ordered_cds_records</span><span class="p">:</span>
+                <span class="c1"># Brand-new exon: nothing cached yet, same reasoning as spliced_exons above.</span>
+                <span class="n">exon</span><span class="o">.</span><span class="n">assign_without_hooks</span><span class="p">(</span><span class="n">phase</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_exon_phase</span><span class="p">(</span><span class="n">exon_record</span><span class="p">,</span> <span class="n">ordered_cds_records</span><span class="p">))</span>
+            <span class="n">exons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">exon</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">exons</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_exon_phase</span><span class="p">(</span><span class="n">exon_record</span><span class="p">:</span> <span class="n">GXFRecord</span><span class="p">,</span> <span class="n">ordered_cds_records</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ExonPhase</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the Ensembl phase of the first CDS row starting inside an exon, else unknown."""</span>
+        <span class="k">for</span> <span class="n">cds_record</span> <span class="ow">in</span> <span class="n">ordered_cds_records</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">exon_record</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="n">cds_record</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="n">exon_record</span><span class="o">.</span><span class="n">end</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">cds_record</span><span class="o">.</span><span class="n">phase_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">ExonPhase</span><span class="o">.</span><span class="n">UNKNOWN</span>
+                <span class="k">return</span> <span class="n">GFF_TO_ENSEMBL_PHASE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cds_record</span><span class="o">.</span><span class="n">phase_value</span><span class="p">,</span> <span class="n">ExonPhase</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ExonPhase</span><span class="o">.</span><span class="n">UNKNOWN</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_translation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cds_records</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">],</span> <span class="n">transcript</span><span class="p">:</span> <span class="n">Transcript</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Translation</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Construct a Translation from CDS records.</span>
+
+<span class="sd">        ``Translation.start`` and ``end`` are offsets from the start of the transcript, not genomic</span>
+<span class="sd">        coordinates -- ``Transcript._coding_start`` re-maps them with ``self.start + start - 1``.</span>
+<span class="sd">        Seeding them with the raw genomic span therefore double-counts the transcript's own start,</span>
+<span class="sd">        putting the coding boundaries outside the transcript: ``cds`` resolves to None, and every</span>
+<span class="sd">        coding consequence silently disappears while positional ones survive.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cds_records: Coding records attached to the transcript.</span>
+<span class="sd">            transcript: The transcript the offsets are relative to, which also gives the strand:</span>
+<span class="sd">                on the reverse strand the translation starts at the highest genomic coordinate.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Translation | None: The translation object, or None when no coding</span>
+<span class="sd">            records are present.</span>
+<span class="sd">        """</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cds_records</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">cds_start</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">start</span> <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">cds_records</span><span class="p">)</span>
+        <span class="n">cds_end</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">end</span> <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">cds_records</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">transcript</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">cds_start</span> <span class="o">-</span> <span class="n">transcript</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">cds_end</span> <span class="o">-</span> <span class="n">transcript</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">cds_end</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">cds_start</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">stable_id</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_first_attr</span><span class="p">(</span><span class="n">cds_records</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">"protein_id"</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_attr</span><span class="p">(</span><span class="n">cds_records</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">"ID"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">Translation</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span> <span class="n">stable_id</span><span class="o">=</span><span class="n">stable_id</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_gene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gene_record</span><span class="p">:</span> <span class="n">GXFRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gene</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Construct a Gene object from a grouped gene record.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            gene_record: The gene record to convert.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Gene: The assembled gene object.</span>
+<span class="sd">        """</span>
+
+        <span class="n">strand</span> <span class="o">=</span> <span class="n">STRAND_SYMBOL_TO_ENUM</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">gene_record</span><span class="o">.</span><span class="n">strand_symbol</span><span class="p">,</span> <span class="n">Strand</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">)</span>
+        <span class="n">stable_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_record_id</span><span class="p">(</span><span class="n">gene_record</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span>
+        <span class="n">seq_region_name</span> <span class="o">=</span> <span class="n">gene_record</span><span class="o">.</span><span class="n">seqid</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_region_resolver</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">seq_region_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_region_resolver</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">seq_region_name</span><span class="p">)</span>
+
+        <span class="n">gene</span> <span class="o">=</span> <span class="n">Gene</span><span class="p">(</span>
+            <span class="n">stable_id</span><span class="o">=</span><span class="n">stable_id</span><span class="p">,</span>
+            <span class="n">start</span><span class="o">=</span><span class="n">gene_record</span><span class="o">.</span><span class="n">start</span><span class="p">,</span>
+            <span class="n">end</span><span class="o">=</span><span class="n">gene_record</span><span class="o">.</span><span class="n">end</span><span class="p">,</span>
+            <span class="n">strand</span><span class="o">=</span><span class="n">strand</span><span class="p">,</span>
+            <span class="nb">slice</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">slice_cache</span><span class="o">.</span><span class="n">get_slice</span><span class="p">(</span><span class="n">seq_region_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequence_source</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_attr</span><span class="p">(</span><span class="n">gene_record</span><span class="p">,</span> <span class="s2">"Name"</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_attr</span><span class="p">(</span><span class="n">gene_record</span><span class="p">,</span> <span class="s2">"gene_name"</span><span class="p">)</span>
+        <span class="n">biotype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_attr</span><span class="p">(</span><span class="n">gene_record</span><span class="p">,</span> <span class="s2">"biotype"</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_attr</span><span class="p">(</span><span class="n">gene_record</span><span class="p">,</span> <span class="s2">"gene_biotype"</span><span class="p">)</span>
+        <span class="c1"># Brand-new gene: nothing cached yet, same reasoning as the transcript and exon paths above.</span>
+        <span class="n">gene</span><span class="o">.</span><span class="n">assign_without_hooks</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">biotype</span><span class="o">=</span><span class="n">biotype</span><span class="p">,</span> <span class="n">transcripts</span><span class="o">=</span><span class="p">[])</span>
+        <span class="k">return</span> <span class="n">gene</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_first_attr</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="n">GXFRecord</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the first attribute value for a key, if present.</span>
+
+<span class="sd">        Uses the ``first_attribute`` pymethod -- a linear scan of the stored attribute pairs --</span>
+<span class="sd">        rather than the ``attributes`` getter, which builds a whole dict per call.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record: The record to inspect.</span>
+<span class="sd">            key: The attribute key to look up.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str | None: The first attribute value for the key, if present.</span>
+<span class="sd">        """</span>
+
+        <span class="k">return</span> <span class="n">record</span><span class="o">.</span><span class="n">first_attribute</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

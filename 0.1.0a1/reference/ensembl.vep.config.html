@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ensembl.vep.config package &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/ensembl.vep.config';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.0a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ensembl.vep.config.parser package" href="ensembl.vep.config.parser.html" />
+    <link rel="prev" title="ensembl.vep.common package" href="ensembl.vep.common.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../coverage_report.html">
+    Coverage Report
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page" aria-expanded="false" aria-controls="pst-secondary-sidebar-modal">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../coverage_report.html">
+    Coverage Report
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="cli/index.html">CLI reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli/run.html">vep run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/explain.html">vep explain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/stats.html">vep stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/corpus.html">vep corpus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/bench.html">vep bench</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/catalogue.html">vep catalogue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/common.html">Common options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="ensembl.vep.html">API reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.annotators.html">ensembl.vep.annotators package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.annotators.consequence.html">ensembl.vep.annotators.consequence package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html">ensembl.vep.annotators.consequence.context package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html">ensembl.vep.annotators.consequence.facts package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html">ensembl.vep.annotators.consequence.rules package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html">ensembl.vep.annotators.consequence.strategies package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.haplo.html">ensembl.vep.annotators.haplo package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.bench.html">ensembl.vep.bench package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.buffer.html">ensembl.vep.buffer package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.buffer.input_buffer.html">ensembl.vep.buffer.input_buffer package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.caches.html">ensembl.vep.caches package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.common.html">ensembl.vep.common package</a></li>
+<li class="toctree-l2 current active has-children"><a aria-current="page" class="current reference internal" href="#">ensembl.vep.config package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.parser.html">ensembl.vep.config.parser package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.config.sections.html">ensembl.vep.config.sections package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html">ensembl.vep.config.sections.bench package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html">ensembl.vep.config.sections.catalogue package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html">ensembl.vep.config.sections.common package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html">ensembl.vep.config.sections.corpus package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.explain.html">ensembl.vep.config.sections.explain package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.run.html">ensembl.vep.config.sections.run package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.stats.html">ensembl.vep.config.sections.stats package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.corpus.html">ensembl.vep.corpus package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.corpus.exporter.html">ensembl.vep.corpus.exporter package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.corpus.exporter.formats.html">ensembl.vep.corpus.exporter.formats package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.corpus.golden.html">ensembl.vep.corpus.golden package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.corpus.loaded.html">ensembl.vep.corpus.loaded package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.corpus.synthetic.html">ensembl.vep.corpus.synthetic package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.corpus.synthetic.components.html">ensembl.vep.corpus.synthetic.components package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.explain.html">ensembl.vep.explain package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.matcher.html">ensembl.vep.matcher package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.models.html">ensembl.vep.models package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.genic.html">ensembl.vep.models.genic package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.haplotype.html">ensembl.vep.models.haplotype package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.overlap.html">ensembl.vep.models.overlap package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.regulatory.html">ensembl.vep.models.regulatory package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.sequence.html">ensembl.vep.models.sequence package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.variation.html">ensembl.vep.models.variation package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.output.html">ensembl.vep.output package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.output.factory.html">ensembl.vep.output.factory package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.stream.html">ensembl.vep.output.factory.stream package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html">ensembl.vep.output.factory.write package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.output.parser.html">ensembl.vep.output.parser package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.overlaps.html">ensembl.vep.overlaps package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.parsers.html">ensembl.vep.parsers package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.render.html">ensembl.vep.render package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.render.graph.html">ensembl.vep.render.graph package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.runner.html">ensembl.vep.runner package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.bench.html">ensembl.vep.runner.bench package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.catalogue.html">ensembl.vep.runner.catalogue package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.corpus.html">ensembl.vep.runner.corpus package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.run.html">ensembl.vep.runner.run package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.sources.html">ensembl.vep.sources package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.sources.file.html">ensembl.vep.sources.file package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.fasta.html">ensembl.vep.sources.file.fasta package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gff3.html">ensembl.vep.sources.file.gff3 package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gtf.html">ensembl.vep.sources.file.gtf package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html">ensembl.vep.sources.file.gxf package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html">ensembl.vep.sources.file.vcf namespace</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.stats.html">ensembl.vep.stats package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.trace.html">ensembl.vep.trace package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.workflow.html">ensembl.vep.workflow package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.workflow.build.html">ensembl.vep.workflow.build package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.workflow.tracks.html">ensembl.vep.workflow.tracks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.workflow.tracks.consequence.html">ensembl.vep.workflow.tracks.consequence package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.workflow.worker.html">ensembl.vep.workflow.worker package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../reference.html" class="nav-link">Reference</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ensembl.vep.html" class="nav-link">ensembl.vep package</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.config package</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-ensembl.vep.config">
+<span id="ensembl-vep-config-package"></span><h1>ensembl.vep.config package<a class="headerlink" href="#module-ensembl.vep.config" title="Link to this heading">#</a></h1>
+<p>Configuration declarations, sections and loaders.</p>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.config.parser.html">ensembl.vep.config.parser package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.parser.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.parser.html#module-ensembl.vep.config.parser.cli">ensembl.vep.config.parser.cli module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.parser.html#ensembl.vep.config.parser.cli.add_section_arguments"><code class="docutils literal notranslate"><span class="pre">add_section_arguments()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.parser.html#ensembl.vep.config.parser.cli.build_parser"><code class="docutils literal notranslate"><span class="pre">build_parser()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.parser.html#ensembl.vep.config.parser.cli.check_no_flag_collisions"><code class="docutils literal notranslate"><span class="pre">check_no_flag_collisions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.parser.html#ensembl.vep.config.parser.cli.destination"><code class="docutils literal notranslate"><span class="pre">destination()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.parser.html#ensembl.vep.config.parser.cli.parse_args"><code class="docutils literal notranslate"><span class="pre">parse_args()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.parser.html#module-ensembl.vep.config.parser.common">ensembl.vep.config.parser.common module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.parser.html#ensembl.vep.config.parser.common.flag_for"><code class="docutils literal notranslate"><span class="pre">flag_for()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.parser.html#ensembl.vep.config.parser.common.option_spellings"><code class="docutils literal notranslate"><span class="pre">option_spellings()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.parser.html#ensembl.vep.config.parser.common.resolve_option"><code class="docutils literal notranslate"><span class="pre">resolve_option()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.parser.html#ensembl.vep.config.parser.common.resolve_option_key"><code class="docutils literal notranslate"><span class="pre">resolve_option_key()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.parser.html#module-ensembl.vep.config.parser.config">ensembl.vep.config.parser.config module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.parser.html#ensembl.vep.config.parser.config.read_config_file"><code class="docutils literal notranslate"><span class="pre">read_config_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.parser.html#ensembl.vep.config.parser.config.read_legacy_config_file"><code class="docutils literal notranslate"><span class="pre">read_legacy_config_file()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.parser.html#module-ensembl.vep.config.parser.env">ensembl.vep.config.parser.env module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.parser.html#ensembl.vep.config.parser.env.default_env_name"><code class="docutils literal notranslate"><span class="pre">default_env_name()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.parser.html#ensembl.vep.config.parser.env.read_environment"><code class="docutils literal notranslate"><span class="pre">read_environment()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.config.sections.html">ensembl.vep.config.sections package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.bench.html">ensembl.vep.config.sections.bench package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#module-ensembl.vep.config.sections.bench.bench">ensembl.vep.config.sections.bench.bench module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#module-ensembl.vep.config.sections.bench.endtoend">ensembl.vep.config.sections.bench.endtoend module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#module-ensembl.vep.config.sections.bench.matrix">ensembl.vep.config.sections.bench.matrix module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#module-ensembl.vep.config.sections.bench.oracle">ensembl.vep.config.sections.bench.oracle module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#module-ensembl.vep.config.sections.bench.sweep">ensembl.vep.config.sections.bench.sweep module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html">ensembl.vep.config.sections.catalogue package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#module-ensembl.vep.config.sections.catalogue.add">ensembl.vep.config.sections.catalogue.add module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#module-ensembl.vep.config.sections.catalogue.catalogue">ensembl.vep.config.sections.catalogue.catalogue module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#module-ensembl.vep.config.sections.catalogue.costs">ensembl.vep.config.sections.catalogue.costs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#module-ensembl.vep.config.sections.catalogue.remove">ensembl.vep.config.sections.catalogue.remove module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#module-ensembl.vep.config.sections.catalogue.show">ensembl.vep.config.sections.catalogue.show module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#module-ensembl.vep.config.sections.catalogue.validate">ensembl.vep.config.sections.catalogue.validate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#module-ensembl.vep.config.sections.catalogue.write">ensembl.vep.config.sections.catalogue.write module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.common.html">ensembl.vep.config.sections.common package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#module-ensembl.vep.config.sections.common.annotation">ensembl.vep.config.sections.common.annotation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#module-ensembl.vep.config.sections.common.corpus">ensembl.vep.config.sections.common.corpus module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#module-ensembl.vep.config.sections.common.execution">ensembl.vep.config.sections.common.execution module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#module-ensembl.vep.config.sections.common.logging">ensembl.vep.config.sections.common.logging module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#module-ensembl.vep.config.sections.common.source">ensembl.vep.config.sections.common.source module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html">ensembl.vep.config.sections.corpus package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#module-ensembl.vep.config.sections.corpus.describe">ensembl.vep.config.sections.corpus.describe module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#module-ensembl.vep.config.sections.corpus.golden">ensembl.vep.config.sections.corpus.golden module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#module-ensembl.vep.config.sections.corpus.save">ensembl.vep.config.sections.corpus.save module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.explain.html">ensembl.vep.config.sections.explain package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.explain.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.explain.html#module-ensembl.vep.config.sections.explain.explain">ensembl.vep.config.sections.explain.explain module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.run.html">ensembl.vep.config.sections.run package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.run.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.run.html#module-ensembl.vep.config.sections.run.run">ensembl.vep.config.sections.run.run module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.stats.html">ensembl.vep.config.sections.stats package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.stats.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.stats.html#module-ensembl.vep.config.sections.stats.stats">ensembl.vep.config.sections.stats.stats module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.html#module-ensembl.vep.config.sections.base">ensembl.vep.config.sections.base module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.html#ensembl.vep.config.sections.base.ConfigSection"><code class="docutils literal notranslate"><span class="pre">ConfigSection</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.html#ensembl.vep.config.sections.base.ConfigSection.section_name"><code class="docutils literal notranslate"><span class="pre">ConfigSection.section_name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
+</section>
+<section id="module-ensembl.vep.config.base">
+<span id="ensembl-vep-config-base-module"></span><h2>ensembl.vep.config.base module<a class="headerlink" href="#module-ensembl.vep.config.base" title="Link to this heading">#</a></h2>
+<p>Configuration roots and layer loading.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ensembl.vep.config.base.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">AnnotationConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bench</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">BenchConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bench_endtoend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">BenchEndToEndConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bench_matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">BenchMatrixConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bench_oracle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">BenchOracleConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bench_sweep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">BenchSweepConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catalogue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">CatalogueConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catalogue_add</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">CatalogueAddConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catalogue_costs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">CatalogueCostsConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catalogue_remove</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">CatalogueRemoveConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catalogue_show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">CatalogueShowConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catalogue_validate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">CatalogueValidateConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catalogue_write</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">CatalogueWriteConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corpus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">CorpusConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corpus_describe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">CorpusDescribeConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corpus_golden</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">CorpusGoldenConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corpus_save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">CorpusSaveConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">explain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ExplainConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">execution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ExecutionConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logging</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">LoggingConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">RunConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">SourceConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">StatsConfig()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">command</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sources</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">dict()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/base.html#Config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.base.Config" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The assembled configuration and its value sources.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.annotation">
+<span class="sig-name descname"><span class="pre">annotation</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.annotation.AnnotationConfig" title="ensembl.vep.config.sections.common.annotation.AnnotationConfig"><span class="pre">AnnotationConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.annotation" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.as_mapping">
+<span class="sig-name descname"><span class="pre">as_mapping</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/base.html#Config.as_mapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.base.Config.as_mapping" title="Link to this definition">#</a></dt>
+<dd><p>Return the declared options as <code class="docutils literal notranslate"><span class="pre">section</span> <span class="pre">-&gt;</span> <span class="pre">field</span> <span class="pre">-&gt;</span> <span class="pre">value</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code>]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.bench">
+<span class="sig-name descname"><span class="pre">bench</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.bench.BenchConfig" title="ensembl.vep.config.sections.bench.bench.BenchConfig"><span class="pre">BenchConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.bench" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.bench_endtoend">
+<span class="sig-name descname"><span class="pre">bench_endtoend</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.endtoend.BenchEndToEndConfig" title="ensembl.vep.config.sections.bench.endtoend.BenchEndToEndConfig"><span class="pre">BenchEndToEndConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.bench_endtoend" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.bench_matrix">
+<span class="sig-name descname"><span class="pre">bench_matrix</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.matrix.BenchMatrixConfig" title="ensembl.vep.config.sections.bench.matrix.BenchMatrixConfig"><span class="pre">BenchMatrixConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.bench_matrix" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.bench_oracle">
+<span class="sig-name descname"><span class="pre">bench_oracle</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.oracle.BenchOracleConfig" title="ensembl.vep.config.sections.bench.oracle.BenchOracleConfig"><span class="pre">BenchOracleConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.bench_oracle" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.bench_sweep">
+<span class="sig-name descname"><span class="pre">bench_sweep</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.sweep.BenchSweepConfig" title="ensembl.vep.config.sections.bench.sweep.BenchSweepConfig"><span class="pre">BenchSweepConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.bench_sweep" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.build_section">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">build_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/base.html#Config.build_section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.base.Config.build_section" title="Link to this definition">#</a></dt>
+<dd><p>Build one section class from its merged values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="ensembl.vep.config.sections.html#ensembl.vep.config.sections.base.ConfigSection" title="ensembl.vep.config.sections.base.ConfigSection"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigSection</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.catalogue">
+<span class="sig-name descname"><span class="pre">catalogue</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.catalogue.CatalogueConfig" title="ensembl.vep.config.sections.catalogue.catalogue.CatalogueConfig"><span class="pre">CatalogueConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.catalogue" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.catalogue_add">
+<span class="sig-name descname"><span class="pre">catalogue_add</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.add.CatalogueAddConfig" title="ensembl.vep.config.sections.catalogue.add.CatalogueAddConfig"><span class="pre">CatalogueAddConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.catalogue_add" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.catalogue_costs">
+<span class="sig-name descname"><span class="pre">catalogue_costs</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.costs.CatalogueCostsConfig" title="ensembl.vep.config.sections.catalogue.costs.CatalogueCostsConfig"><span class="pre">CatalogueCostsConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.catalogue_costs" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.catalogue_remove">
+<span class="sig-name descname"><span class="pre">catalogue_remove</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.remove.CatalogueRemoveConfig" title="ensembl.vep.config.sections.catalogue.remove.CatalogueRemoveConfig"><span class="pre">CatalogueRemoveConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.catalogue_remove" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.catalogue_show">
+<span class="sig-name descname"><span class="pre">catalogue_show</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.show.CatalogueShowConfig" title="ensembl.vep.config.sections.catalogue.show.CatalogueShowConfig"><span class="pre">CatalogueShowConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.catalogue_show" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.catalogue_validate">
+<span class="sig-name descname"><span class="pre">catalogue_validate</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.validate.CatalogueValidateConfig" title="ensembl.vep.config.sections.catalogue.validate.CatalogueValidateConfig"><span class="pre">CatalogueValidateConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.catalogue_validate" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.catalogue_write">
+<span class="sig-name descname"><span class="pre">catalogue_write</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.write.CatalogueWriteConfig" title="ensembl.vep.config.sections.catalogue.write.CatalogueWriteConfig"><span class="pre">CatalogueWriteConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.catalogue_write" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.command">
+<span class="sig-name descname"><span class="pre">command</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#ensembl.vep.config.base.Config.command" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.corpus">
+<span class="sig-name descname"><span class="pre">corpus</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.corpus.CorpusConfig" title="ensembl.vep.config.sections.common.corpus.CorpusConfig"><span class="pre">CorpusConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.corpus" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.corpus_describe">
+<span class="sig-name descname"><span class="pre">corpus_describe</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#ensembl.vep.config.sections.corpus.describe.CorpusDescribeConfig" title="ensembl.vep.config.sections.corpus.describe.CorpusDescribeConfig"><span class="pre">CorpusDescribeConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.corpus_describe" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.corpus_golden">
+<span class="sig-name descname"><span class="pre">corpus_golden</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#ensembl.vep.config.sections.corpus.golden.CorpusGoldenConfig" title="ensembl.vep.config.sections.corpus.golden.CorpusGoldenConfig"><span class="pre">CorpusGoldenConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.corpus_golden" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.corpus_save">
+<span class="sig-name descname"><span class="pre">corpus_save</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#ensembl.vep.config.sections.corpus.save.CorpusSaveConfig" title="ensembl.vep.config.sections.corpus.save.CorpusSaveConfig"><span class="pre">CorpusSaveConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.corpus_save" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.execution">
+<span class="sig-name descname"><span class="pre">execution</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.execution.ExecutionConfig" title="ensembl.vep.config.sections.common.execution.ExecutionConfig"><span class="pre">ExecutionConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.execution" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.explain">
+<span class="sig-name descname"><span class="pre">explain</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.explain.html#ensembl.vep.config.sections.explain.explain.ExplainConfig" title="ensembl.vep.config.sections.explain.explain.ExplainConfig"><span class="pre">ExplainConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.explain" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.for_command">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">for_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/base.html#Config.for_command"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.base.Config.for_command" title="Link to this definition">#</a></dt>
+<dd><p>Return the configuration for one command, named as the command line names its options.</p>
+<p>The command’s own sections decide where each option belongs, so a caller gives flat option
+names and never has to know which section declares which. Values are coerced as the command
+line coerces them, so a path may be given as a string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>command</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – A registered command, such as <code class="docutils literal notranslate"><span class="pre">run.default</span></code>.</p></li>
+<li><p><strong>**options</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></span>) – Option values, named by field or by flag.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>The command’s sections built from these options, every other section left at</dt><dd><p>its defaults.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#ensembl.vep.config.base.Config" title="ensembl.vep.config.base.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a></span></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the command is not registered, or an option is not one it reads.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.logging">
+<span class="sig-name descname"><span class="pre">logging</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.logging.LoggingConfig" title="ensembl.vep.config.sections.common.logging.LoggingConfig"><span class="pre">LoggingConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.logging" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.run.html#ensembl.vep.config.sections.run.run.RunConfig" title="ensembl.vep.config.sections.run.run.RunConfig"><span class="pre">RunConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.run" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.section">
+<span class="sig-name descname"><span class="pre">section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/base.html#Config.section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.base.Config.section" title="Link to this definition">#</a></dt>
+<dd><p>Return a configured section by its declared name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="ensembl.vep.config.sections.html#ensembl.vep.config.sections.base.ConfigSection" title="ensembl.vep.config.sections.base.ConfigSection"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigSection</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.section_types">
+<span class="sig-name descname"><span class="pre">section_types</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="ensembl.vep.config.sections.html#ensembl.vep.config.sections.base.ConfigSection" title="ensembl.vep.config.sections.base.ConfigSection"><span class="pre">ConfigSection</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'annotation':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.common.annotation.AnnotationConfig'&gt;,</span> <span class="pre">'bench':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.bench.bench.BenchConfig'&gt;,</span> <span class="pre">'bench_endtoend':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.bench.endtoend.BenchEndToEndConfig'&gt;,</span> <span class="pre">'bench_matrix':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.bench.matrix.BenchMatrixConfig'&gt;,</span> <span class="pre">'bench_oracle':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.bench.oracle.BenchOracleConfig'&gt;,</span> <span class="pre">'bench_sweep':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.bench.sweep.BenchSweepConfig'&gt;,</span> <span class="pre">'catalogue':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.catalogue.catalogue.CatalogueConfig'&gt;,</span> <span class="pre">'catalogue_add':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.catalogue.add.CatalogueAddConfig'&gt;,</span> <span class="pre">'catalogue_costs':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.catalogue.costs.CatalogueCostsConfig'&gt;,</span> <span class="pre">'catalogue_remove':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.catalogue.remove.CatalogueRemoveConfig'&gt;,</span> <span class="pre">'catalogue_show':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.catalogue.show.CatalogueShowConfig'&gt;,</span> <span class="pre">'catalogue_validate':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.catalogue.validate.CatalogueValidateConfig'&gt;,</span> <span class="pre">'catalogue_write':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.catalogue.write.CatalogueWriteConfig'&gt;,</span> <span class="pre">'corpus':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.common.corpus.CorpusConfig'&gt;,</span> <span class="pre">'corpus_describe':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.corpus.describe.CorpusDescribeConfig'&gt;,</span> <span class="pre">'corpus_golden':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.corpus.golden.CorpusGoldenConfig'&gt;,</span> <span class="pre">'corpus_save':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.corpus.save.CorpusSaveConfig'&gt;,</span> <span class="pre">'execution':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.common.execution.ExecutionConfig'&gt;,</span> <span class="pre">'explain':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.explain.explain.ExplainConfig'&gt;,</span> <span class="pre">'logging':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.common.logging.LoggingConfig'&gt;,</span> <span class="pre">'run':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.run.run.RunConfig'&gt;,</span> <span class="pre">'source':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.common.source.SourceConfig'&gt;,</span> <span class="pre">'stats':</span> <span class="pre">&lt;class</span> <span class="pre">'ensembl.vep.config.sections.stats.stats.StatsConfig'&gt;}</span></span><a class="headerlink" href="#ensembl.vep.config.base.Config.section_types" title="Link to this definition">#</a></dt>
+<dd><p>Map section attribute names to their classes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.section_types_for">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">section_types_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/base.html#Config.section_types_for"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.base.Config.section_types_for" title="Link to this definition">#</a></dt>
+<dd><p>Return the section class types for the given section names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code>[<a class="reference internal" href="ensembl.vep.config.sections.html#ensembl.vep.config.sections.base.ConfigSection" title="ensembl.vep.config.sections.base.ConfigSection"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigSection</span></code></a>], <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.sections">
+<span class="sig-name descname"><span class="pre">sections</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/base.html#Config.sections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.base.Config.sections" title="Link to this definition">#</a></dt>
+<dd><p>Return the configured sections in declaration order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<a class="reference internal" href="ensembl.vep.config.sections.html#ensembl.vep.config.sections.base.ConfigSection" title="ensembl.vep.config.sections.base.ConfigSection"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigSection</span></code></a>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.source">
+<span class="sig-name descname"><span class="pre">source</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig" title="ensembl.vep.config.sections.common.source.SourceConfig"><span class="pre">SourceConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.source" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.source_of">
+<span class="sig-name descname"><span class="pre">source_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/base.html#Config.source_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.base.Config.source_of" title="Link to this definition">#</a></dt>
+<dd><p>Return the winning source for a given section name and field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#ensembl.vep.config.sources.ConfigSource" title="ensembl.vep.config.sources.ConfigSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigSource</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.sources">
+<span class="sig-name descname"><span class="pre">sources</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#ensembl.vep.config.sources.ConfigSource" title="ensembl.vep.config.sources.ConfigSource"><span class="pre">ConfigSource</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#ensembl.vep.config.base.Config.sources" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.sources_for">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sources_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/base.html#Config.sources_for"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.base.Config.sources_for" title="Link to this definition">#</a></dt>
+<dd><p>Return the winning source for each option given the configuration layers for different sources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="#ensembl.vep.config.sources.ConfigSource" title="ensembl.vep.config.sources.ConfigSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigSource</span></code></a>]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.Config.stats">
+<span class="sig-name descname"><span class="pre">stats</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.config.sections.stats.html#ensembl.vep.config.sections.stats.stats.StatsConfig" title="ensembl.vep.config.sections.stats.stats.StatsConfig"><span class="pre">StatsConfig</span></a></span><a class="headerlink" href="#ensembl.vep.config.base.Config.stats" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ensembl.vep.config.base.load">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.config.base.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">command</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">environ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/base.html#load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.base.load" title="Link to this definition">#</a></dt>
+<dd><p>Load configuration from the available layers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#ensembl.vep.config.base.Config" title="ensembl.vep.config.base.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ensembl.vep.config.option_spec">
+<span id="ensembl-vep-config-option-spec-module"></span><h2>ensembl.vep.config.option_spec module<a class="headerlink" href="#module-ensembl.vep.config.option_spec" title="Link to this heading">#</a></h2>
+<p>Option declarations for configuration sections.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ensembl.vep.config.option_spec.OptionSpec">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ensembl.vep.config.option_spec.</span></span><span class="sig-name descname"><span class="pre">OptionSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">help</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">short</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">synonyms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constants</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">dict()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">choices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metavar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeatable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/option_spec.html#OptionSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.option_spec.OptionSpec" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>How one option is exposed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>help</strong> (<em>str</em>) – One-line description, used as the argparse help text.</p></li>
+<li><p><strong>flag</strong> (<em>str</em><em> | </em><em>None</em>) – Long flag spelling without the dashes, or None for the field name.</p></li>
+<li><p><strong>short</strong> (<em>str</em><em> | </em><em>None</em>) – Single-character short flag, without the dash.</p></li>
+<li><p><strong>synonyms</strong> (<em>tuple</em><em>[</em><em>str</em><em>, </em><em>...</em><em>]</em>) – Further long spellings that set the same option, for the names
+Perl VEP uses. They work on the command line and in a config file; the environment
+variable keeps the canonical name.</p></li>
+<li><p><strong>constants</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>object</em><em>]</em>) – Flags that set this option to a fixed value, such as
+Perl VEP’s <code class="docutils literal notranslate"><span class="pre">--vcf</span></code> for <code class="docutils literal notranslate"><span class="pre">--output_format</span> <span class="pre">vcf</span></code>, as flag name -&gt; value.</p></li>
+<li><p><strong>choices</strong> (<em>Sequence</em><em>[</em><em>object</em><em>] </em><em>| </em><em>Callable</em><em>[</em><em>[</em><em>]</em><em>, </em><em>Sequence</em><em>[</em><em>object</em><em>]</em><em>] </em><em>| </em><em>None</em>) – The permitted values,
+or a callable returning them for a vocabulary another package owns.</p></li>
+<li><p><strong>metavar</strong> (<em>str</em><em> | </em><em>None</em>) – argparse metavar override.</p></li>
+<li><p><strong>env</strong> (<em>str</em><em> | </em><em>None</em>) – Environment variable name, or None to derive one.</p></li>
+<li><p><strong>hidden</strong> (<em>bool</em>) – True to keep the option out of <code class="docutils literal notranslate"><span class="pre">--help</span></code>.</p></li>
+<li><p><strong>repeatable</strong> (<em>bool</em>) – True for a tuple option given once per item, as Perl VEP’s
+<code class="docutils literal notranslate"><span class="pre">--custom</span></code> is. Each occurrence is kept whole, with no comma splitting.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.option_spec.OptionSpec.choices">
+<span class="sig-name descname"><span class="pre">choices</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#ensembl.vep.config.option_spec.OptionSpec.choices" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.option_spec.OptionSpec.constants">
+<span class="sig-name descname"><span class="pre">constants</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#ensembl.vep.config.option_spec.OptionSpec.constants" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.option_spec.OptionSpec.env">
+<span class="sig-name descname"><span class="pre">env</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#ensembl.vep.config.option_spec.OptionSpec.env" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.option_spec.OptionSpec.flag">
+<span class="sig-name descname"><span class="pre">flag</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#ensembl.vep.config.option_spec.OptionSpec.flag" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.option_spec.OptionSpec.help">
+<span class="sig-name descname"><span class="pre">help</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#ensembl.vep.config.option_spec.OptionSpec.help" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.option_spec.OptionSpec.hidden">
+<span class="sig-name descname"><span class="pre">hidden</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#ensembl.vep.config.option_spec.OptionSpec.hidden" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.option_spec.OptionSpec.metavar">
+<span class="sig-name descname"><span class="pre">metavar</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#ensembl.vep.config.option_spec.OptionSpec.metavar" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.option_spec.OptionSpec.repeatable">
+<span class="sig-name descname"><span class="pre">repeatable</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#ensembl.vep.config.option_spec.OptionSpec.repeatable" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.config.option_spec.OptionSpec.resolved_choices">
+<span class="sig-name descname"><span class="pre">resolved_choices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/option_spec.html#OptionSpec.resolved_choices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.option_spec.OptionSpec.resolved_choices" title="Link to this definition">#</a></dt>
+<dd><p>Return the permitted values, calling <code class="docutils literal notranslate"><span class="pre">choices</span></code> if needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>] | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.option_spec.OptionSpec.short">
+<span class="sig-name descname"><span class="pre">short</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#ensembl.vep.config.option_spec.OptionSpec.short" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.option_spec.OptionSpec.synonyms">
+<span class="sig-name descname"><span class="pre">synonyms</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#ensembl.vep.config.option_spec.OptionSpec.synonyms" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ensembl.vep.config.option_spec.option">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.config.option_spec.</span></span><span class="sig-name descname"><span class="pre">option</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">help</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">short</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">synonyms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constants</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">choices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metavar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeatable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/option_spec.html#option"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.option_spec.option" title="Link to this definition">#</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">attrs</span></code> field metadata for one option.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>help</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – One-line description, used as the argparse help text.</p></li>
+<li><p><strong>flag</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – Long flag spelling without the dashes, or None for the field name.</p></li>
+<li><p><strong>short</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – Single-character short flag, without the dash.</p></li>
+<li><p><strong>synonyms</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]</span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="p"><span class="pre">()</span></span></code></span>) – Further long spellings that set the same option.</p></li>
+<li><p><strong>constants</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code>] | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – Flags that set this option to a fixed value, as
+flag name -&gt; value.</p></li>
+<li><p><strong>choices</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code>] | <code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code>[[], <code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code>]] | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – The permitted values,
+or a callable returning them.</p></li>
+<li><p><strong>metavar</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – argparse metavar override.</p></li>
+<li><p><strong>env</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – Environment variable name, or None to derive one.</p></li>
+<li><p><strong>hidden</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">False</span></span></code></span>) – True to keep the option out of <code class="docutils literal notranslate"><span class="pre">--help</span></code>.</p></li>
+<li><p><strong>repeatable</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">False</span></span></code></span>) – True for a tuple option given once per item, each kept whole.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The metadata to pass as <code class="docutils literal notranslate"><span class="pre">field(metadata=...)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="#ensembl.vep.config.option_spec.OptionSpec" title="ensembl.vep.config.option_spec.OptionSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">OptionSpec</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ensembl.vep.config.option_spec.section_options">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.config.option_spec.</span></span><span class="sig-name descname"><span class="pre">section_options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/option_spec.html#section_options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.option_spec.section_options" title="Link to this definition">#</a></dt>
+<dd><p>Return the declared options of a section, keyed by field name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>section_type</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code>[<a class="reference internal" href="ensembl.vep.config.sections.html#ensembl.vep.config.sections.base.ConfigSection" title="ensembl.vep.config.sections.base.ConfigSection"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigSection</span></code></a>]</span>) – The section class to inspect.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Field name -&gt; (field, spec), in declaration</dt><dd><p>order, for the fields carrying <code class="docutils literal notranslate"><span class="pre">option()</span></code> metadata.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Attribute</span></code>, <a class="reference internal" href="#ensembl.vep.config.option_spec.OptionSpec" title="ensembl.vep.config.option_spec.OptionSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">OptionSpec</span></code></a>]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ensembl.vep.config.option_spec.unwrap_optional_type">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.config.option_spec.</span></span><span class="sig-name descname"><span class="pre">unwrap_optional_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_annotation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/option_spec.html#unwrap_optional_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.option_spec.unwrap_optional_type" title="Link to this definition">#</a></dt>
+<dd><p>Split <code class="docutils literal notranslate"><span class="pre">X</span> <span class="pre">|</span> <span class="pre">None</span></code> into <code class="docutils literal notranslate"><span class="pre">X</span></code> and a nullability flag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>type_annotation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>) – The resolved field type.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>The non-None member and whether None was a member. A union of more than</dt><dd><p>one non-None type is returned unchanged and reported as not optional.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ensembl.vep.config.report">
+<span id="ensembl-vep-config-report-module"></span><h2>ensembl.vep.config.report module<a class="headerlink" href="#module-ensembl.vep.config.report" title="Link to this heading">#</a></h2>
+<p>The formats a report can be rendered in, and which of them a request can combine.</p>
+<p>One vocabulary for every reporting command, so <code class="docutils literal notranslate"><span class="pre">--output_format</span></code> means the same thing to <code class="docutils literal notranslate"><span class="pre">explain</span></code>,
+<code class="docutils literal notranslate"><span class="pre">catalogue</span></code>, <code class="docutils literal notranslate"><span class="pre">corpus</span></code> and <code class="docutils literal notranslate"><span class="pre">bench</span></code>. A report is a table unless <code class="docutils literal notranslate"><span class="pre">--graph</span></code> asks for a diagram,
+and a format belongs to one kind or the other: resolution refuses the combinations that cannot be
+drawn rather than quietly rendering something else.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="ensembl.vep.config.report.GRAPH_FORMATS">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.config.report.</span></span><span class="sig-name descname"><span class="pre">GRAPH_FORMATS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('svg',</span> <span class="pre">'dot',</span> <span class="pre">'mermaid')</span></span><a class="headerlink" href="#ensembl.vep.config.report.GRAPH_FORMATS" title="Link to this definition">#</a></dt>
+<dd><p>Formats that render a diagram. <code class="docutils literal notranslate"><span class="pre">svg</span></code> is wrapped in a navigable HTML document.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ensembl.vep.config.report.REPORT_FORMATS">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.config.report.</span></span><span class="sig-name descname"><span class="pre">REPORT_FORMATS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('text',</span> <span class="pre">'markdown',</span> <span class="pre">'confluence',</span> <span class="pre">'html',</span> <span class="pre">'svg',</span> <span class="pre">'dot',</span> <span class="pre">'mermaid')</span></span><a class="headerlink" href="#ensembl.vep.config.report.REPORT_FORMATS" title="Link to this definition">#</a></dt>
+<dd><p>Every format <code class="docutils literal notranslate"><span class="pre">--format</span></code> accepts, whichever kind the command can render.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ensembl.vep.config.report.TABLE_FORMATS">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.config.report.</span></span><span class="sig-name descname"><span class="pre">TABLE_FORMATS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('text',</span> <span class="pre">'markdown',</span> <span class="pre">'confluence',</span> <span class="pre">'html')</span></span><a class="headerlink" href="#ensembl.vep.config.report.TABLE_FORMATS" title="Link to this definition">#</a></dt>
+<dd><p>Formats that render rows.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ensembl.vep.config.report.resolve_report_format">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.config.report.</span></span><span class="sig-name descname"><span class="pre">resolve_report_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">format_name</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_default</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'svg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_formats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('svg',</span> <span class="pre">'dot',</span> <span class="pre">'mermaid')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/report.html#resolve_report_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.report.resolve_report_format" title="Link to this definition">#</a></dt>
+<dd><p>Return the format to render in, or say why the request cannot be met.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>format_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>) – The requested format, or None to take the default for the kind
+of report asked for.</p></li>
+<li><p><strong>graph</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether a diagram was asked for.</p></li>
+<li><p><strong>table_default</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The format a table takes when none was named.</p></li>
+<li><p><strong>graph_default</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'svg'</span></span></code></span>) – The format a diagram takes when none was named.</p></li>
+<li><p><strong>graph_formats</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]</span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="p"><span class="pre">(</span></span><span class="s1"><span class="pre">'svg'</span></span><span class="p"><span class="pre">,</span></span> <span class="s1"><span class="pre">'dot'</span></span><span class="p"><span class="pre">,</span></span> <span class="s1"><span class="pre">'mermaid'</span></span><span class="p"><span class="pre">)</span></span></code></span>) – The diagram formats this report can draw; empty for a
+report that has no diagram form.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>One of <code class="docutils literal notranslate"><span class="pre">REPORT_FORMATS</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If a diagram was asked for in a table format or of a report that has none, or
+    if a diagram format was named without asking for a diagram.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ensembl.vep.config.sources">
+<span id="ensembl-vep-config-sources-module"></span><h2>ensembl.vep.config.sources module<a class="headerlink" href="#module-ensembl.vep.config.sources" title="Link to this heading">#</a></h2>
+<p>Configuration layers (file, environment, command line etc.) and how they combine.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="ensembl.vep.config.sources.ConfigLayer">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.config.sources.</span></span><span class="sig-name descname"><span class="pre">ConfigLayer</span></span><a class="headerlink" href="#ensembl.vep.config.sources.ConfigLayer" title="Link to this definition">#</a></dt>
+<dd><p>section name -&gt; field name -&gt; value, carrying only what it sets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>One layer of <a class="reference internal" href="ensembl.vep.bench.html#ensembl.vep.bench.baseline.Regression.configuration" title="ensembl.vep.bench.baseline.Regression.configuration">configuration</a></p>
+</dd>
+</dl>
+<p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code>]]</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ensembl.vep.config.sources.ConfigSource">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ensembl.vep.config.sources.</span></span><span class="sig-name descname"><span class="pre">ConfigSource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/sources.html#ConfigSource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.sources.ConfigSource" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Where a configuration value came from.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.sources.ConfigSource.COMMAND_LINE">
+<span class="sig-name descname"><span class="pre">COMMAND_LINE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'command</span> <span class="pre">line'</span></span><a class="headerlink" href="#ensembl.vep.config.sources.ConfigSource.COMMAND_LINE" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.sources.ConfigSource.DEFAULT">
+<span class="sig-name descname"><span class="pre">DEFAULT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'default'</span></span><a class="headerlink" href="#ensembl.vep.config.sources.ConfigSource.DEFAULT" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.sources.ConfigSource.ENVIRONMENT">
+<span class="sig-name descname"><span class="pre">ENVIRONMENT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'environment'</span></span><a class="headerlink" href="#ensembl.vep.config.sources.ConfigSource.ENVIRONMENT" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.sources.ConfigSource.FILE">
+<span class="sig-name descname"><span class="pre">FILE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'file'</span></span><a class="headerlink" href="#ensembl.vep.config.sources.ConfigSource.FILE" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ensembl.vep.config.sources.coerce_layer">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.config.sources.</span></span><span class="sig-name descname"><span class="pre">coerce_layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_types</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/sources.html#coerce_layer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.sources.coerce_layer" title="Link to this definition">#</a></dt>
+<dd><p>Coerce every value in a layer to its declared type and check it against its choices.</p>
+<p>Unknown sections are dropped silently, since a layer may cover sections the command does not
+read. An unknown field in a known section is dropped with a warning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If a value cannot be read as its declared type or is not a permitted choice. The
+    message names the section and field.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code>]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ensembl.vep.config.sources.coerce_value">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.config.sources.</span></span><span class="sig-name descname"><span class="pre">coerce_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_annotation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/sources.html#coerce_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.sources.coerce_value" title="Link to this definition">#</a></dt>
+<dd><p>Coerce a value read from a file or the environment to a field’s declared type.</p>
+<p>Command-line values have already been converted by argparse. These have not: TOML gives real
+ints and bools but strings for paths, and the environment gives strings for everything.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>raw</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></span>) – The value as read.</p></li>
+<li><p><strong>type_annotation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>) – The field’s resolved type.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The coerced value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></span></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If a string cannot be read as the declared type.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ensembl.vep.config.sources.merge_layers">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.config.sources.</span></span><span class="sig-name descname"><span class="pre">merge_layers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">layers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ensembl/vep/config/sources.html#merge_layers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.sources.merge_layers" title="Link to this definition">#</a></dt>
+<dd><p>Merge configuration layers in increasing precedence order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code>]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="ensembl.vep.common.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">ensembl.vep.common package</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="ensembl.vep.config.parser.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">ensembl.vep.config.parser package</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal" tabindex="-1"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subpackages">Subpackages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-ensembl.vep.config.base">ensembl.vep.config.base module</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.annotation"><code class="docutils literal notranslate"><span class="pre">Config.annotation</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.as_mapping"><code class="docutils literal notranslate"><span class="pre">Config.as_mapping()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.bench"><code class="docutils literal notranslate"><span class="pre">Config.bench</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.bench_endtoend"><code class="docutils literal notranslate"><span class="pre">Config.bench_endtoend</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.bench_matrix"><code class="docutils literal notranslate"><span class="pre">Config.bench_matrix</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.bench_oracle"><code class="docutils literal notranslate"><span class="pre">Config.bench_oracle</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.bench_sweep"><code class="docutils literal notranslate"><span class="pre">Config.bench_sweep</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.build_section"><code class="docutils literal notranslate"><span class="pre">Config.build_section()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.catalogue"><code class="docutils literal notranslate"><span class="pre">Config.catalogue</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.catalogue_add"><code class="docutils literal notranslate"><span class="pre">Config.catalogue_add</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.catalogue_costs"><code class="docutils literal notranslate"><span class="pre">Config.catalogue_costs</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.catalogue_remove"><code class="docutils literal notranslate"><span class="pre">Config.catalogue_remove</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.catalogue_show"><code class="docutils literal notranslate"><span class="pre">Config.catalogue_show</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.catalogue_validate"><code class="docutils literal notranslate"><span class="pre">Config.catalogue_validate</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.catalogue_write"><code class="docutils literal notranslate"><span class="pre">Config.catalogue_write</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.command"><code class="docutils literal notranslate"><span class="pre">Config.command</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.corpus"><code class="docutils literal notranslate"><span class="pre">Config.corpus</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.corpus_describe"><code class="docutils literal notranslate"><span class="pre">Config.corpus_describe</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.corpus_golden"><code class="docutils literal notranslate"><span class="pre">Config.corpus_golden</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.corpus_save"><code class="docutils literal notranslate"><span class="pre">Config.corpus_save</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.execution"><code class="docutils literal notranslate"><span class="pre">Config.execution</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.explain"><code class="docutils literal notranslate"><span class="pre">Config.explain</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.for_command"><code class="docutils literal notranslate"><span class="pre">Config.for_command()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.logging"><code class="docutils literal notranslate"><span class="pre">Config.logging</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.run"><code class="docutils literal notranslate"><span class="pre">Config.run</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.section"><code class="docutils literal notranslate"><span class="pre">Config.section()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.section_types"><code class="docutils literal notranslate"><span class="pre">Config.section_types</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.section_types_for"><code class="docutils literal notranslate"><span class="pre">Config.section_types_for()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.sections"><code class="docutils literal notranslate"><span class="pre">Config.sections()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.source"><code class="docutils literal notranslate"><span class="pre">Config.source</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.source_of"><code class="docutils literal notranslate"><span class="pre">Config.source_of()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.sources"><code class="docutils literal notranslate"><span class="pre">Config.sources</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.sources_for"><code class="docutils literal notranslate"><span class="pre">Config.sources_for()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.Config.stats"><code class="docutils literal notranslate"><span class="pre">Config.stats</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.base.load"><code class="docutils literal notranslate"><span class="pre">load()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-ensembl.vep.config.option_spec">ensembl.vep.config.option_spec module</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.option_spec.OptionSpec"><code class="docutils literal notranslate"><span class="pre">OptionSpec</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.option_spec.OptionSpec.choices"><code class="docutils literal notranslate"><span class="pre">OptionSpec.choices</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.option_spec.OptionSpec.constants"><code class="docutils literal notranslate"><span class="pre">OptionSpec.constants</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.option_spec.OptionSpec.env"><code class="docutils literal notranslate"><span class="pre">OptionSpec.env</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.option_spec.OptionSpec.flag"><code class="docutils literal notranslate"><span class="pre">OptionSpec.flag</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.option_spec.OptionSpec.help"><code class="docutils literal notranslate"><span class="pre">OptionSpec.help</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.option_spec.OptionSpec.hidden"><code class="docutils literal notranslate"><span class="pre">OptionSpec.hidden</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.option_spec.OptionSpec.metavar"><code class="docutils literal notranslate"><span class="pre">OptionSpec.metavar</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.option_spec.OptionSpec.repeatable"><code class="docutils literal notranslate"><span class="pre">OptionSpec.repeatable</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.option_spec.OptionSpec.resolved_choices"><code class="docutils literal notranslate"><span class="pre">OptionSpec.resolved_choices()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.option_spec.OptionSpec.short"><code class="docutils literal notranslate"><span class="pre">OptionSpec.short</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.option_spec.OptionSpec.synonyms"><code class="docutils literal notranslate"><span class="pre">OptionSpec.synonyms</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.option_spec.option"><code class="docutils literal notranslate"><span class="pre">option()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.option_spec.section_options"><code class="docutils literal notranslate"><span class="pre">section_options()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.option_spec.unwrap_optional_type"><code class="docutils literal notranslate"><span class="pre">unwrap_optional_type()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-ensembl.vep.config.report">ensembl.vep.config.report module</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.report.GRAPH_FORMATS"><code class="docutils literal notranslate"><span class="pre">GRAPH_FORMATS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.report.REPORT_FORMATS"><code class="docutils literal notranslate"><span class="pre">REPORT_FORMATS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.report.TABLE_FORMATS"><code class="docutils literal notranslate"><span class="pre">TABLE_FORMATS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.report.resolve_report_format"><code class="docutils literal notranslate"><span class="pre">resolve_report_format()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-ensembl.vep.config.sources">ensembl.vep.config.sources module</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.sources.ConfigLayer"><code class="docutils literal notranslate"><span class="pre">ConfigLayer</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.sources.ConfigSource"><code class="docutils literal notranslate"><span class="pre">ConfigSource</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.sources.ConfigSource.COMMAND_LINE"><code class="docutils literal notranslate"><span class="pre">ConfigSource.COMMAND_LINE</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.sources.ConfigSource.DEFAULT"><code class="docutils literal notranslate"><span class="pre">ConfigSource.DEFAULT</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.sources.ConfigSource.ENVIRONMENT"><code class="docutils literal notranslate"><span class="pre">ConfigSource.ENVIRONMENT</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.sources.ConfigSource.FILE"><code class="docutils literal notranslate"><span class="pre">ConfigSource.FILE</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.sources.coerce_layer"><code class="docutils literal notranslate"><span class="pre">coerce_layer()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.sources.coerce_value"><code class="docutils literal notranslate"><span class="pre">coerce_value()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.sources.merge_layers"><code class="docutils literal notranslate"><span class="pre">merge_layers()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

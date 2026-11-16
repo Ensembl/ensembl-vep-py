@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ensembl.vep.annotators.consequence.strategies.columnar &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/ensembl.css?v=25cdf2e9" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../../../../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ensembl/vep/annotators/consequence/strategies/columnar';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = '_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../../../../../../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../../../../../../_static/ensembl_favicon.png"/>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 09, 2026"/>
+  
+    
+    <script src="../../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../../_static/language_data.js"></script>
+    <script src="../../../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../../_static/ensembl_mark_white.png" class="logo__image only-light" alt=""/>
+    <img src="../../../../../../_static/ensembl_mark_white.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">ensembl-vep</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../reference/ensembl.vep.html">
+    ensembl.vep package
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
+    Coverage
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../reference/ensembl.vep.html">
+    ensembl.vep package
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
+    Coverage
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.annotators.consequence.strategies.columnar</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ensembl.vep.annotators.consequence.strategies.columnar</h1><div class="highlight"><pre>
+<span></span><span class="c1"># See the NOTICE file distributed with this work for additional information</span>
+<span class="c1"># regarding copyright ownership.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1"># http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="sd">"""Evaluate consequence rules bit-parallel across an overlap batch.</span>
+
+<span class="sd">Each fact is represented by a Python integer whose bit ``i`` contains the value for overlap ``i``.</span>
+<span class="sd">Rule formulas become bitwise operations, paying Python dispatch once per rule and batch rather than</span>
+<span class="sd">once per rule and overlap.</span>
+
+<span class="sd">Evaluation orders conjuncts by closure cost and carries a live mask of unresolved overlaps. A fact</span>
+<span class="sd">column is materialised only for that mask, while each plan node guarantees correct bits within its</span>
+<span class="sd">input mask and zero elsewhere. Because child masks and results only shrink, unpopulated bits cannot</span>
+<span class="sd">affect a decided result.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">ClassVar</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">frozen</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.strategies.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConsequenceAnnotator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.facts.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">REGISTRY</span><span class="p">,</span> <span class="n">get_fact</span><span class="p">,</span> <span class="n">total_cost</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.context.annotator</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotatorContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.context.fact</span><span class="w"> </span><span class="kn">import</span> <span class="n">FactContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_annotator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.rules.expressions</span><span class="w"> </span><span class="kn">import</span> <span class="n">And</span><span class="p">,</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">Not</span><span class="p">,</span> <span class="n">Or</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.rules.rulesets</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">FactRuleSet</span><span class="p">,</span>
+    <span class="n">build_fact_ruleset</span><span class="p">,</span>
+    <span class="n">prune</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.trace</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationTrace</span><span class="p">,</span> <span class="n">TraceRecorder</span><span class="p">,</span> <span class="n">describe_overlap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.trace</span><span class="w"> </span><span class="kn">import</span> <span class="n">reconstruct</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.overlap</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureOverlap</span><span class="p">,</span> <span class="n">OverlapConsequence</span><span class="p">,</span> <span class="n">TranscriptVariationAllele</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.caches.codon_cache</span><span class="w"> </span><span class="kn">import</span> <span class="n">CodonCache</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.caches.zone_map</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZoneMapCache</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"BitColumnBuffer"</span><span class="p">,</span>
+    <span class="s2">"ColumnarFactsAnnotator"</span><span class="p">,</span>
+    <span class="s2">"DEFAULT_BATCH_SIZE"</span><span class="p">,</span>
+    <span class="s2">"PlanNode"</span><span class="p">,</span>
+    <span class="s2">"RulePlan"</span><span class="p">,</span>
+    <span class="s2">"RulePlanSet"</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">DEFAULT_BATCH_SIZE</span> <span class="o">=</span> <span class="mi">256</span>
+<span class="sd">"""Default maximum number of overlaps evaluated together as one bit-parallel batch. Increase to amortise the</span>
+<span class="sd">plan-walking overhead over more overlaps, decrease to reduce peak memory usage. It has been observed that</span>
+<span class="sd">increasing does not always improve speed, because of big-int arithmetic overhead."""</span>
+
+
+<div class="viewcode-block" id="BitColumnBuffer">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.BitColumnBuffer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BitColumnBuffer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Materialise fact bit-columns lazily for one overlap batch."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_contexts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FactContext</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Initialize the buffer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fact_contexts (Sequence[FactContext]): The overlaps' fact contexts, batch-index order.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fact_contexts</span> <span class="o">=</span> <span class="n">fact_contexts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_known_bits</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_bits</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="BitColumnBuffer.seed">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.BitColumnBuffer.seed">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">column</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">known_mask</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Mark a fact's column as already computed for every context in ``known_mask``.</span>
+
+<span class="sd">        For a caller that produced the whole column by cheaper means than calling ``get_fact``</span>
+<span class="sd">        per context. Unlike FactContext.prefill this does not touch the per-overlap memo, so a fact</span>
+<span class="sd">        seeded here is visible to the rule loop but not to a ``get_fact`` call inside another fact's</span>
+<span class="sd">        body. Therefore only seed leaf facts nothing else reads, or prefill the memo as well.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fact_name (str): The fact atom being seeded.</span>
+<span class="sd">            column (int): Bit ``i`` set where the fact is true for context ``i``.</span>
+<span class="sd">            known_mask (int): The contexts this column is exact for.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_bits</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">column</span> <span class="o">&amp;</span> <span class="n">known_mask</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_known_bits</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_known_bits</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fact_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="n">known_mask</span></div>
+
+
+<div class="viewcode-block" id="BitColumnBuffer.column">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.BitColumnBuffer.column">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">live_mask</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the bit-column for ``fact_name`` within ``live_mask``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fact_name (str): The fact atom to materialise a column for.</span>
+<span class="sd">            live_mask (int): The set of overlap indices (as bits) the caller needs an answer for.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Bits set for every overlap index in ``live_mask`` where the fact is true. Bits</span>
+<span class="sd">                outside ``live_mask`` are not guaranteed to mean anything.</span>
+<span class="sd">        """</span>
+        <span class="n">missing_mask</span> <span class="o">=</span> <span class="n">live_mask</span> <span class="o">&amp;</span> <span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">_known_bits</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fact_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">missing_mask</span><span class="p">:</span>
+            <span class="n">value_bits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_bits</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fact_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">remaining_mask</span> <span class="o">=</span> <span class="n">missing_mask</span>
+            <span class="k">while</span> <span class="n">remaining_mask</span><span class="p">:</span>
+                <span class="n">lowest_bit</span> <span class="o">=</span> <span class="n">remaining_mask</span> <span class="o">&amp;</span> <span class="o">-</span><span class="n">remaining_mask</span>
+                <span class="n">context_index</span> <span class="o">=</span> <span class="n">lowest_bit</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">get_fact</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fact_contexts</span><span class="p">[</span><span class="n">context_index</span><span class="p">],</span> <span class="n">fact_name</span><span class="p">):</span>
+                    <span class="n">value_bits</span> <span class="o">|=</span> <span class="n">lowest_bit</span>
+                <span class="n">remaining_mask</span> <span class="o">^=</span> <span class="n">lowest_bit</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_value_bits</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_bits</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_known_bits</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_known_bits</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fact_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="n">missing_mask</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_bits</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fact_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_AtomPlanNode</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""A compiled plan node for a single fact atom."""</span>
+
+    <span class="n">fact_name</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">live_mask</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">bit_columns</span><span class="p">:</span> <span class="n">BitColumnBuffer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Evaluate this atom over ``live_mask``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            live_mask (int): The overlap indices (as bits) still undecided for this subtree.</span>
+<span class="sd">            bit_columns (BitColumnBuffer): The batch's lazily-materialised fact columns.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Bits set where the fact is true, within ``live_mask``.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">bit_columns</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fact_name</span><span class="p">,</span> <span class="n">live_mask</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">live_mask</span>
+
+
+<span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_NotPlanNode</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""A compiled plan node for a negation."""</span>
+
+    <span class="n">child</span><span class="p">:</span> <span class="n">PlanNode</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">live_mask</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">bit_columns</span><span class="p">:</span> <span class="n">BitColumnBuffer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Evaluate this negation over ``live_mask``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            live_mask (int): The overlap indices (as bits) still undecided for this subtree.</span>
+<span class="sd">            bit_columns (BitColumnBuffer): The batch's lazily-materialised fact columns.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Bits set where the child is false, within ``live_mask``.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">live_mask</span> <span class="o">&amp;</span> <span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">live_mask</span><span class="p">,</span> <span class="n">bit_columns</span><span class="p">)</span>
+
+
+<span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_AndPlanNode</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""A compiled plan node for a conjunction, children ordered cheapest-first."""</span>
+
+    <span class="n">children</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">PlanNode</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">live_mask</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">bit_columns</span><span class="p">:</span> <span class="n">BitColumnBuffer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Evaluate this conjunction, narrowing the mask as each child settles.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            live_mask (int): The overlap indices (as bits) still undecided for this subtree.</span>
+<span class="sd">            bit_columns (BitColumnBuffer): The batch's lazily-materialised fact columns.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Bits set where every child is true, within ``live_mask``.</span>
+<span class="sd">        """</span>
+        <span class="n">still_live</span> <span class="o">=</span> <span class="n">live_mask</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">still_live</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">still_live</span> <span class="o">&amp;=</span> <span class="n">child</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">still_live</span><span class="p">,</span> <span class="n">bit_columns</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">still_live</span>
+
+
+<span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_OrPlanNode</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""A compiled plan node for a disjunction, children ordered cheapest-first."""</span>
+
+    <span class="n">children</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">PlanNode</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">live_mask</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">bit_columns</span><span class="p">:</span> <span class="n">BitColumnBuffer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Evaluate this disjunction over ``live_mask``.</span>
+
+<span class="sd">        Tracks what is still *undecided* (neither proven True nor exhausted), the dual of the</span>
+<span class="sd">        And case, so each child is only asked about the indices no earlier child has settled.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            live_mask (int): The overlap indices (as bits) still undecided for this subtree.</span>
+<span class="sd">            bit_columns (BitColumnBuffer): The batch's lazily-materialised fact columns.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Bits set where any child is true, within ``live_mask``.</span>
+<span class="sd">        """</span>
+        <span class="n">undecided_mask</span> <span class="o">=</span> <span class="n">live_mask</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">undecided_mask</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">undecided_mask</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">child</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">undecided_mask</span><span class="p">,</span> <span class="n">bit_columns</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">live_mask</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">undecided_mask</span>
+
+
+<span class="n">PlanNode</span> <span class="o">=</span> <span class="n">_AtomPlanNode</span> <span class="o">|</span> <span class="n">_NotPlanNode</span> <span class="o">|</span> <span class="n">_AndPlanNode</span> <span class="o">|</span> <span class="n">_OrPlanNode</span>
+
+
+<div class="viewcode-block" id="RulePlan">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlan">[docs]</a>
+<span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RulePlan</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Represent a rule as a cost-ordered bit-parallel evaluation plan.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        root_plan_node (PlanNode): The root of the compiled plan.</span>
+<span class="sd">    """</span>
+
+    <span class="n">root_plan_node</span><span class="p">:</span> <span class="n">PlanNode</span>
+    <span class="n">_transitive_closure_cache</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="w">    </span><span class="sd">"""Shared across every RulePlan, deliberately, since the fact dependency graph is a property of</span>
+<span class="sd">    REGISTRY, not of any one rule. A per-instance cache would rebuild the same closures once per rule.</span>
+<span class="sd">    """</span>
+
+<div class="viewcode-block" id="RulePlan.build">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlan.build">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">expression</span><span class="p">:</span> <span class="n">Expr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RulePlan</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Compile a rule's Expr formula into a RulePlan.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            expression (Expr): The formula to compile.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            RulePlan: The compiled plan, with every ``And``/``Or`` node's children sorted by</span>
+<span class="sd">                ascending cost so the cheapest conjunct/disjunct gets the chance to settle the</span>
+<span class="sd">                whole subtree first.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">root_plan_node</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_compile</span><span class="p">(</span><span class="n">expression</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="RulePlan.evaluate">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlan.evaluate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">live_mask</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">bit_columns</span><span class="p">:</span> <span class="n">BitColumnBuffer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Evaluate this plan over a live mask, short-circuiting as children settle.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            live_mask (int): The set of overlap indices (as bits) still undecided.</span>
+<span class="sd">            bit_columns (BitColumnBuffer): The batch's lazily-materialised fact columns.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Bits set for every overlap index in ``live_mask`` where the rule evaluates True.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_plan_node</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">live_mask</span><span class="p">,</span> <span class="n">bit_columns</span><span class="p">)</span></div>
+
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">expression</span><span class="p">:</span> <span class="n">Expr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PlanNode</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Recursively compile ``expression`` into cost-ordered plan nodes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            expression (Expr): The (sub)expression to compile.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            PlanNode: The compiled node.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: If ``expression`` is a node type this annotator does not support.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">Atom</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">_AtomPlanNode</span><span class="p">(</span><span class="n">fact_name</span><span class="o">=</span><span class="n">expression</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">Not</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">_NotPlanNode</span><span class="p">(</span><span class="n">child</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_compile</span><span class="p">(</span><span class="n">expression</span><span class="o">.</span><span class="n">child</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="p">(</span><span class="n">And</span><span class="p">,</span> <span class="n">Or</span><span class="p">)):</span>
+            <span class="n">ordered_children</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">expression</span><span class="o">.</span><span class="n">children</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_expression_cost</span><span class="p">)</span>
+            <span class="n">compiled_children</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_compile</span><span class="p">(</span><span class="n">child</span><span class="p">)</span> <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">ordered_children</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">_AndPlanNode</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="n">compiled_children</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">And</span><span class="p">)</span>
+                <span class="k">else</span> <span class="n">_OrPlanNode</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="n">compiled_children</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"unsupported expression node type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_expression_cost</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">expression</span><span class="p">:</span> <span class="n">Expr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the cost of deciding ``expression``, counting each shared fact dependency once.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            expression (Expr): The expression (typically one conjunct/disjunct of a rule's</span>
+<span class="sd">                formula) to cost.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: The total cost of every fact ``expression`` transitively depends on.</span>
+<span class="sd">        """</span>
+        <span class="n">reachable_fact_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">atom_name</span> <span class="ow">in</span> <span class="n">expression</span><span class="o">.</span><span class="n">atoms</span><span class="p">():</span>
+            <span class="n">reachable_fact_names</span> <span class="o">|=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_transitive_closure</span><span class="p">(</span><span class="n">atom_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">total_cost</span><span class="p">(</span><span class="n">reachable_fact_names</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_transitive_closure</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fact_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Returns ``fact_name`` plus every fact its declared ``deps`` will pull in, transitively.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fact_name (str): The fact to start from.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            frozenset[str]: ``fact_name`` and every fact reachable from it via ``deps``.</span>
+<span class="sd">        """</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_transitive_closure_cache</span>
+        <span class="n">cached</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fact_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cached</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cached</span>
+        <span class="n">cache</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="n">fact_name</span><span class="p">})</span>  <span class="c1"># break any cycle in the declarations</span>
+        <span class="n">reachable</span> <span class="o">=</span> <span class="p">{</span><span class="n">fact_name</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">dependency_name</span> <span class="ow">in</span> <span class="n">REGISTRY</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]</span><span class="o">.</span><span class="n">deps</span><span class="p">:</span>
+            <span class="n">reachable</span> <span class="o">|=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_transitive_closure</span><span class="p">(</span><span class="n">dependency_name</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">reachable</span><span class="p">)</span>
+        <span class="n">cache</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="RulePlanSet">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlanSet">[docs]</a>
+<span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RulePlanSet</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Pair a rule set with one compiled plan per rule.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        ruleset (FactRuleSet): The compiled rule set, in rank order.</span>
+<span class="sd">        plans (tuple[RulePlan, ...]): One compiled plan per rule in ``ruleset.rules``, same order.</span>
+<span class="sd">    """</span>
+
+    <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span>
+    <span class="n">plans</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">RulePlan</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+
+<div class="viewcode-block" id="RulePlanSet.build">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlanSet.build">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RulePlanSet</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Compile one plan per rule in ``ruleset``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ruleset (FactRuleSet): The rule set to compile plans for.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            RulePlanSet: The rule set paired with its compiled plans.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">ruleset</span><span class="o">=</span><span class="n">ruleset</span><span class="p">,</span> <span class="n">plans</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">RulePlan</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">when</span><span class="p">)</span> <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">rules</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="RulePlanSet.hit_terms_by_context">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlanSet.hit_terms_by_context">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hit_terms_by_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bit_columns</span><span class="p">:</span> <span class="n">BitColumnBuffer</span><span class="p">,</span> <span class="n">context_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Return the terms that evaluated as true for each fact context.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            bit_columns (BitColumnBuffer): The batch's fact columns.</span>
+<span class="sd">            context_count (int): Number of overlaps in this chunk.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[list[str]]: The terms that fired for each fact context, in rule rank order.</span>
+<span class="sd">        """</span>
+        <span class="n">hit_terms_by_context</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">context_count</span><span class="p">)]</span>
+        <span class="n">full_mask</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">context_count</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">rule</span><span class="p">,</span> <span class="n">plan</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ruleset</span><span class="o">.</span><span class="n">rules</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plans</span><span class="p">):</span>
+            <span class="n">fired_mask</span> <span class="o">=</span> <span class="n">plan</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">full_mask</span><span class="p">,</span> <span class="n">bit_columns</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">full_mask</span>
+            <span class="n">remaining_mask</span> <span class="o">=</span> <span class="n">fired_mask</span>
+            <span class="k">while</span> <span class="n">remaining_mask</span><span class="p">:</span>
+                <span class="n">lowest_bit</span> <span class="o">=</span> <span class="n">remaining_mask</span> <span class="o">&amp;</span> <span class="o">-</span><span class="n">remaining_mask</span>
+                <span class="n">context_index</span> <span class="o">=</span> <span class="n">lowest_bit</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">hit_terms_by_context</span><span class="p">[</span><span class="n">context_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">term</span><span class="p">)</span>
+                <span class="n">remaining_mask</span> <span class="o">^=</span> <span class="n">lowest_bit</span>
+        <span class="k">return</span> <span class="n">hit_terms_by_context</span></div>
+
+
+<div class="viewcode-block" id="RulePlanSet.evaluate_over_columns">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlanSet.evaluate_over_columns">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_over_columns</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">bit_columns</span><span class="p">:</span> <span class="n">BitColumnBuffer</span><span class="p">,</span> <span class="n">context_count</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">OverlapConsequence</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Evaluate every rule bit-parallel over a column buffer according to their plan.</span>
+
+<span class="sd">        The column buffer here, already built, gets populated via plain lazy materialisation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            bit_columns (BitColumnBuffer): The batch's fact columns.</span>
+<span class="sd">            context_count (int): Number of overlaps in this chunk.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[list[OverlapConsequence]]: One consequence list per input context, same order.</span>
+<span class="sd">        """</span>
+        <span class="n">ruleset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ruleset</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">[</span>
+                <span class="n">ruleset</span><span class="o">.</span><span class="n">by_term</span><span class="p">[</span><span class="n">term</span><span class="p">]</span><span class="o">.</span><span class="n">to_overlap_consequence</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">prune</span><span class="p">(</span><span class="n">ruleset</span><span class="p">,</span> <span class="n">hit_terms</span><span class="p">,</span> <span class="n">apply_default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="k">for</span> <span class="n">hit_terms</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hit_terms_by_context</span><span class="p">(</span><span class="n">bit_columns</span><span class="p">,</span> <span class="n">context_count</span><span class="p">)</span>
+        <span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ColumnarFactsAnnotator">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.ColumnarFactsAnnotator">[docs]</a>
+<span class="nd">@register_annotator</span><span class="p">(</span><span class="s2">"consequence.columnar"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ColumnarFactsAnnotator</span><span class="p">(</span><span class="n">ConsequenceAnnotator</span><span class="p">[</span><span class="n">FactRuleSet</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">"""Evaluate consequence rules bit-parallel over overlap batches.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        name (str): Registry name, "consequence.columnar".</span>
+<span class="sd">        ruleset (FactRuleSet): The compiled rule set this annotator evaluates.</span>
+<span class="sd">        batch_size (int): Maximum number of overlaps evaluated together as one bit-parallel batch.</span>
+<span class="sd">        last_traces (list[AnnotationTrace]): One derivation per overlap in the most recent</span>
+<span class="sd">            annotate_feature_overlaps call, in the same order, or an empty list if that call did</span>
+<span class="sd">            not trace. The inherited last_trace attribute mirrors this list's final entry.</span>
+<span class="sd">    """</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">"consequence.columnar"</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span>
+        <span class="n">annotator_context</span><span class="p">:</span> <span class="n">AnnotatorContext</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">zone_map</span><span class="p">:</span> <span class="n">ZoneMapCache</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">codon_cache</span><span class="p">:</span> <span class="n">CodonCache</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Initialize the annotator.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ruleset (FactRuleSet | None): The rule set to evaluate, or None to build the default</span>
+<span class="sd">                rule set from the checked-in consequence catalogue.</span>
+<span class="sd">            batch_size (int): Maximum number of overlaps evaluated together as one batch.</span>
+<span class="sd">            annotator_context (AnnotatorContext | None): Run-scoped caches to evaluate against,</span>
+<span class="sd">                or None (the default) for a fresh, private one.</span>
+<span class="sd">            zone_map (ZoneMapCache | None): Optional zone-map cache.</span>
+<span class="sd">            codon_cache (CodonCache | None): Optional shared-codon cache.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">ruleset</span> <span class="k">if</span> <span class="n">ruleset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">build_fact_ruleset</span><span class="p">(),</span>
+            <span class="n">annotator_context</span><span class="p">,</span>
+            <span class="n">zone_map</span><span class="o">=</span><span class="n">zone_map</span><span class="p">,</span>
+            <span class="n">codon_cache</span><span class="o">=</span><span class="n">codon_cache</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_planset</span> <span class="o">=</span> <span class="n">RulePlanSet</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ruleset</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_traces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnnotationTrace</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_evaluate_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_contexts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FactContext</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">OverlapConsequence</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Evaluate every rule, bit-parallel, over one chunk of at most ``batch_size`` overlaps.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fact_contexts (Sequence[FactContext]): The chunk's fact contexts, batch-index order.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[list[OverlapConsequence]]: One consequence list per input context, same order.</span>
+<span class="sd">        """</span>
+        <span class="n">context_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fact_contexts</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">context_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="n">bit_columns</span> <span class="o">=</span> <span class="n">BitColumnBuffer</span><span class="p">(</span><span class="n">fact_contexts</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_planset</span><span class="o">.</span><span class="n">evaluate_over_columns</span><span class="p">(</span><span class="n">bit_columns</span><span class="p">,</span> <span class="n">context_count</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_trace_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_contexts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FactContext</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnnotationTrace</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Debug-only replay of one already-evaluated chunk, to explain each overlap.</span>
+
+<span class="sd">        Deliberately a second and independent pass over the plan rather than a change to _evaluate_chunk which</span>
+<span class="sd">        is the hot batch path. Only ever called when tracing is already known to be enabled.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fact_contexts (Sequence[FactContext]): The already-evaluated chunk, in the same order</span>
+<span class="sd">                passed to the preceding ``_evaluate_chunk`` call.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[AnnotationTrace]: One derivation per context, in the same order.</span>
+<span class="sd">        """</span>
+        <span class="n">context_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fact_contexts</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">context_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="c1"># Taken before the replay: every column below is a memo hit, and get_fact counts those,</span>
+        <span class="c1"># so read counts gathered afterwards would include reads the real pass never made.</span>
+        <span class="n">fact_events_by_context</span> <span class="o">=</span> <span class="p">[</span><span class="n">reconstruct</span><span class="o">.</span><span class="n">memo_fact_events</span><span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="k">for</span> <span class="n">context</span> <span class="ow">in</span> <span class="n">fact_contexts</span><span class="p">]</span>
+
+        <span class="n">bit_columns</span> <span class="o">=</span> <span class="n">BitColumnBuffer</span><span class="p">(</span><span class="n">fact_contexts</span><span class="p">)</span>
+        <span class="n">hit_terms_by_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_planset</span><span class="o">.</span><span class="n">hit_terms_by_context</span><span class="p">(</span><span class="n">bit_columns</span><span class="p">,</span> <span class="n">context_count</span><span class="p">)</span>
+
+        <span class="n">traces</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">context_index</span><span class="p">,</span> <span class="n">fact_context</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fact_contexts</span><span class="p">):</span>
+            <span class="n">hit_terms</span> <span class="o">=</span> <span class="n">hit_terms_by_context</span><span class="p">[</span><span class="n">context_index</span><span class="p">]</span>
+            <span class="n">trace</span> <span class="o">=</span> <span class="n">AnnotationTrace</span><span class="p">(</span>
+                <span class="n">fact_events</span><span class="o">=</span><span class="n">fact_events_by_context</span><span class="p">[</span><span class="n">context_index</span><span class="p">],</span>
+                <span class="n">rule_events</span><span class="o">=</span><span class="n">reconstruct</span><span class="o">.</span><span class="n">plain_rule_events</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ruleset</span><span class="o">.</span><span class="n">rules</span><span class="p">,</span> <span class="n">hit_terms</span><span class="p">),</span>
+                <span class="n">prune_events</span><span class="o">=</span><span class="n">reconstruct</span><span class="o">.</span><span class="n">subsumption_events</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ruleset</span><span class="o">.</span><span class="n">by_term</span><span class="p">,</span> <span class="n">hit_terms</span><span class="p">),</span>
+                <span class="n">emitted_terms</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">prune</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ruleset</span><span class="p">,</span> <span class="n">hit_terms</span><span class="p">,</span> <span class="n">apply_default</span><span class="o">=</span><span class="kc">False</span><span class="p">)),</span>
+                <span class="n">annotator_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">overlap_label</span><span class="o">=</span><span class="n">describe_overlap</span><span class="p">(</span><span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">traces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trace</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">format_explanation</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">traces</span>
+
+<div class="viewcode-block" id="ColumnarFactsAnnotator.annotate_feature_overlaps">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.ColumnarFactsAnnotator.annotate_feature_overlaps">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">annotate_feature_overlaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overlaps</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FeatureOverlap</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">OverlapConsequence</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Calculate consequences for a batch of overlaps at once.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            overlaps (Sequence[FeatureOverlap]): The overlaps to annotate, in order.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[list[OverlapConsequence]]: One consequence list per input overlap, same order.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: If any element of ``overlaps`` is not a TranscriptVariationAllele.</span>
+<span class="sd">        """</span>
+        <span class="n">transcript_variation_alleles</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">overlap</span> <span class="ow">in</span> <span class="n">overlaps</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">overlap</span><span class="p">,</span> <span class="n">TranscriptVariationAllele</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> only annotates TranscriptVariationAllele overlaps, got "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">overlap</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span>
+                <span class="p">)</span>
+            <span class="n">transcript_variation_alleles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">overlap</span><span class="p">)</span>
+
+        <span class="n">debug_enabled</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+        <span class="n">fact_contexts</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">FactContext</span><span class="p">(</span>
+                <span class="n">overlap</span><span class="o">=</span><span class="n">overlap</span><span class="p">,</span>
+                <span class="n">recorder</span><span class="o">=</span><span class="p">(</span><span class="n">TraceRecorder</span><span class="p">()</span> <span class="k">if</span> <span class="n">debug_enabled</span> <span class="k">else</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="n">annotator_context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">annotator_context</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">overlap</span> <span class="ow">in</span> <span class="n">transcript_variation_alleles</span>
+        <span class="p">]</span>
+        <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">OverlapConsequence</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">traces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnnotationTrace</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">chunk_start</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">fact_contexts</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">):</span>
+            <span class="n">chunk</span> <span class="o">=</span> <span class="n">fact_contexts</span><span class="p">[</span><span class="n">chunk_start</span> <span class="p">:</span> <span class="n">chunk_start</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]</span>
+            <span class="c1"># Caches are applied per overlap, before the chunk's columns are materialised, because</span>
+            <span class="c1"># prefilling after expensive tier gets called would save nothing.</span>
+            <span class="k">for</span> <span class="n">fact_context</span> <span class="ow">in</span> <span class="n">chunk</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">annotator_context</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_chunk</span><span class="p">(</span><span class="n">chunk</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">debug_enabled</span><span class="p">:</span>
+                <span class="n">traces</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trace_chunk</span><span class="p">(</span><span class="n">chunk</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_traces</span> <span class="o">=</span> <span class="n">traces</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_trace</span> <span class="o">=</span> <span class="n">traces</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">traces</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

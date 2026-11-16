@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ensembl.vep.workflow.executor &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ensembl/vep/workflow/executor';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.0a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../../../../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../../../../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../../../../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
+    Coverage Report
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
+    Coverage Report
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.workflow.executor</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ensembl.vep.workflow.executor</h1><div class="highlight"><pre>
+<span></span><span class="c1"># See the NOTICE file distributed with this work for additional information</span>
+<span class="c1"># regarding copyright ownership.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1"># http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="sd">"""Payload execution: who runs the work, and how the work is grouped into payloads.</span>
+
+<span class="sd">Three things, one per step of a run's spine. ``ExecutionSpec`` is what the configuration asked</span>
+<span class="sd">for. ``PayloadIterator`` groups a source's records into the payloads one unit of work holds.</span>
+<span class="sd">``Executor`` runs them against a ``Worker``, serially or across processes, and yields the results</span>
+<span class="sd">in payload order whatever order they finish in.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Future</span><span class="p">,</span> <span class="n">ProcessPoolExecutor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">cast</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.common.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">StartMethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.config.sections.common.execution</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExecutionConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.workflow.worker.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Worker</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"ExecutionSpec"</span><span class="p">,</span> <span class="s2">"Executor"</span><span class="p">,</span> <span class="s2">"PayloadIterator"</span><span class="p">]</span>
+
+<span class="n">PayloadT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"PayloadT"</span><span class="p">)</span>
+<span class="n">RecordT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"RecordT"</span><span class="p">)</span>
+<span class="n">ResultT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"ResultT"</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ExecutionSpec">
+<a class="viewcode-back" href="../../../../reference/ensembl.vep.workflow.html#ensembl.vep.workflow.executor.ExecutionSpec">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ExecutionSpec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Worker-local annotation execution settings.</span>
+
+<span class="sd">    The payload and result types are deliberately absent from this value object. They must be</span>
+<span class="sd">    serialisable transport values whenever ``processes`` exceeds one; live model objects remain</span>
+<span class="sd">    inside a worker.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        processes (int): Number of independent worker processes.</span>
+<span class="sd">        start_method (StartMethod): Multiprocessing context, or ``auto`` for the platform default.</span>
+<span class="sd">        threads (int): Threads available to independent tracks in each worker.</span>
+<span class="sd">        buffer_size (int): Maximum records in one sequence-region input buffer.</span>
+<span class="sd">        annotation_window (int): Maximum variations retaining overlap graphs at one time.</span>
+<span class="sd">        max_in_flight (int | None): Explicit submitted-payload cap, or None to match workers.</span>
+<span class="sd">    """</span>
+
+    <span class="n">processes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">start_method</span><span class="p">:</span> <span class="n">StartMethod</span> <span class="o">=</span> <span class="n">StartMethod</span><span class="o">.</span><span class="n">AUTO</span>
+    <span class="n">threads</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">buffer_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5000</span>
+    <span class="n">annotation_window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1024</span>
+    <span class="n">max_in_flight</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Reject values that could drop work or create an unusable executor."""</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">processes</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"processes must be at least one"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">threads</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"threads must be at least one"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer_size</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"buffer_size must be at least one"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotation_window</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"annotation_window must be at least one"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_in_flight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_in_flight</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"max_in_flight must be at least one"</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ExecutionSpec.from_config">
+<a class="viewcode-back" href="../../../../reference/ensembl.vep.workflow.html#ensembl.vep.workflow.executor.ExecutionSpec.from_config">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">ExecutionConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ExecutionSpec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Build a specification from the declared execution options."""</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">processes</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">processes</span><span class="p">,</span>
+            <span class="n">start_method</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">start_method</span><span class="p">,</span>
+            <span class="n">threads</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">threads</span><span class="p">,</span>
+            <span class="n">buffer_size</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">buffer_size</span><span class="p">,</span>
+            <span class="n">annotation_window</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">annotation_window</span><span class="p">,</span>
+            <span class="n">max_in_flight</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">max_in_flight</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">effective_max_in_flight</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the explicit queue cap, defaulting to one payload per worker."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_in_flight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_in_flight</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">processes</span>
+
+<div class="viewcode-block" id="ExecutionSpec.multiprocessing_context">
+<a class="viewcode-back" href="../../../../reference/ensembl.vep.workflow.html#ensembl.vep.workflow.executor.ExecutionSpec.multiprocessing_context">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">multiprocessing_context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">BaseContext</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the multiprocessing context to run workers in.</span>
+
+<span class="sd">        ``auto`` means fork wherever a forked worker is safe, which is what keeps the parallel path</span>
+<span class="sd">        fast: a forked worker inherits the loaded package, its catalogue and its caches, while a</span>
+<span class="sd">        spawned one re-imports all of it. Measured on 10,000 ClinVar variants across four workers,</span>
+<span class="sd">        spawning cost about 30% of wall time. Threads are the exception -- forking a process that</span>
+<span class="sd">        already has them is unsafe -- so a threaded run takes the platform default instead.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_method</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">StartMethod</span><span class="o">.</span><span class="n">AUTO</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">get_context</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_method</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">processes</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">threads</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">StartMethod</span><span class="o">.</span><span class="n">FORK</span><span class="o">.</span><span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">get_all_start_methods</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">get_context</span><span class="p">(</span><span class="n">StartMethod</span><span class="o">.</span><span class="n">FORK</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PayloadIterator">
+<a class="viewcode-back" href="../../../../reference/ensembl.vep.workflow.html#ensembl.vep.workflow.executor.PayloadIterator">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PayloadIterator</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">RecordT</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">"""One source's records, grouped into the payloads an executor runs.</span>
+
+<span class="sd">    Here rather than in the source being read: a source says what a record is and which region it</span>
+<span class="sd">    sits on, and how many records make one unit of work is an execution setting (``buffer_size``).</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        records (Iterable[RecordT]): The records to group, in input order. Closed with this</span>
+<span class="sd">            iterator, since reading them is what holds the input open.</span>
+<span class="sd">        batch_size (int): The most records one payload may hold.</span>
+<span class="sd">        region_of (Callable[[RecordT], str] | None): Name the sequence region a record sits on.</span>
+<span class="sd">            A payload then never spans two regions, which is what a worker's annotation tracks</span>
+<span class="sd">            prime from -- one region's features, fetched once for the whole payload. None groups</span>
+<span class="sd">            by size alone, for records that name no region.</span>
+<span class="sd">    """</span>
+
+    <span class="n">records</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">RecordT</span><span class="p">]</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">region_of</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">RecordT</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Reject a size no payload could hold a record at.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If ``batch_size`` is below one.</span>
+<span class="sd">        """</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"batch_size must be at least one"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">RecordT</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Return this iterator's payloads, so an executor can be given it as it is."""</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">payloads</span><span class="p">()</span>
+
+<div class="viewcode-block" id="PayloadIterator.payloads">
+<a class="viewcode-back" href="../../../../reference/ensembl.vep.workflow.html#ensembl.vep.workflow.executor.PayloadIterator.payloads">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">payloads</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">RecordT</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Yield payloads of at most ``batch_size`` records, in input order.</span>
+
+<span class="sd">        Yields:</span>
+<span class="sd">            Iterator[tuple[RecordT, ...]]: Each payload, closed by its size or by a region change.</span>
+<span class="sd">        """</span>
+
+        <span class="n">region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">payload</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RecordT</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">records</span><span class="p">:</span>
+                <span class="n">record_region</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">region_of</span><span class="p">(</span><span class="n">record</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">region_of</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">payload</span> <span class="ow">and</span> <span class="p">(</span><span class="n">record_region</span> <span class="o">!=</span> <span class="n">region</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">):</span>
+                    <span class="k">yield</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+                    <span class="n">payload</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">region</span> <span class="o">=</span> <span class="n">record_region</span>
+                <span class="n">payload</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">payload</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">_stop_payload_iterator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">records</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Executor">
+<a class="viewcode-back" href="../../../../reference/ensembl.vep.workflow.html#ensembl.vep.workflow.executor.Executor">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Executor</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">PayloadT</span><span class="p">,</span> <span class="n">ResultT</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">"""Ordered payload executor with one worker per process.</span>
+
+<span class="sd">    A worker is built after its process starts and then reused, so what the executor transports is</span>
+<span class="sd">    the factory rather than the worker: a worker holds open sources and warm caches that neither</span>
+<span class="sd">    cross a process boundary nor survive a rebuild. The serial path runs the same way, against a</span>
+<span class="sd">    worker of its own in the calling process, so there is one execution contract rather than two.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        specification (ExecutionSpec): Process and queue configuration.</span>
+<span class="sd">        worker_factory (Callable[[], Worker[PayloadT, ResultT]]): Construct one worker. It is what</span>
+<span class="sd">            crosses to a worker process, so it has to pickle; the worker it builds does not.</span>
+<span class="sd">        payload_iterator (Iterable[PayloadT]): The payloads to run, in input order, each</span>
+<span class="sd">            serialisable whenever ``processes`` exceeds one. A run passes a ``PayloadIterator``.</span>
+<span class="sd">    """</span>
+
+    <span class="n">specification</span><span class="p">:</span> <span class="n">ExecutionSpec</span>
+    <span class="n">worker_factory</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Worker</span><span class="p">[</span><span class="n">PayloadT</span><span class="p">,</span> <span class="n">ResultT</span><span class="p">]]</span>
+    <span class="n">payload_iterator</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">PayloadT</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Executor.execute">
+<a class="viewcode-back" href="../../../../reference/ensembl.vep.workflow.html#ensembl.vep.workflow.executor.Executor.execute">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">ResultT</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Yield every payload's result in payload order, while limiting queued work.</span>
+
+<span class="sd">        Yields:</span>
+<span class="sd">            Iterator[ResultT]: Results in the order ``payload_iterator`` produced the payloads.</span>
+<span class="sd">        """</span>
+        <span class="n">payloads</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">payload_iterator</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">specification</span><span class="o">.</span><span class="n">processes</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute_serial</span><span class="p">(</span><span class="n">payloads</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute_parallel</span><span class="p">(</span><span class="n">payloads</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_execute_serial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payloads</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">PayloadT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">ResultT</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Yield every result from one worker in the calling process."""</span>
+        <span class="n">_start_worker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">worker_factory</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">payload</span> <span class="ow">in</span> <span class="n">payloads</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">cast</span><span class="p">(</span><span class="n">ResultT</span><span class="p">,</span> <span class="n">_submit_payload_to_worker</span><span class="p">(</span><span class="n">payload</span><span class="p">))</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">_stop_payload_iterator</span><span class="p">(</span><span class="n">payloads</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_execute_parallel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payloads</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">PayloadT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">ResultT</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Yield results in payload order from a pool of worker processes."""</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">ProcessPoolExecutor</span><span class="p">(</span>
+            <span class="n">max_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">specification</span><span class="o">.</span><span class="n">processes</span><span class="p">,</span>
+            <span class="n">mp_context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">specification</span><span class="o">.</span><span class="n">multiprocessing_context</span><span class="p">(),</span>
+            <span class="n">initializer</span><span class="o">=</span><span class="n">_start_worker</span><span class="p">,</span>
+            <span class="n">initargs</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">worker_factory</span><span class="p">,),</span>
+        <span class="p">)</span>
+        <span class="n">pending</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Future</span><span class="p">[</span><span class="nb">object</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">next_submit</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">next_yield</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">completed</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">exhausted</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">exhausted</span> <span class="ow">or</span> <span class="n">pending</span><span class="p">:</span>
+                <span class="k">while</span> <span class="ow">not</span> <span class="n">exhausted</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">pending</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">specification</span><span class="o">.</span><span class="n">effective_max_in_flight</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">payload</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">payloads</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+                        <span class="n">exhausted</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">break</span>
+                    <span class="n">pending</span><span class="p">[</span><span class="n">next_submit</span><span class="p">]</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">_submit_payload_to_worker</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+                    <span class="n">next_submit</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">pending</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="n">future</span> <span class="o">=</span> <span class="n">pending</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">next_yield</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">cast</span><span class="p">(</span><span class="n">ResultT</span><span class="p">,</span> <span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
+                <span class="n">next_yield</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">completed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">_stop_payload_iterator</span><span class="p">(</span><span class="n">payloads</span><span class="p">)</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="n">_shut_down</span><span class="p">(</span><span class="n">pool</span><span class="p">,</span> <span class="n">pending</span><span class="p">,</span> <span class="n">completed</span><span class="o">=</span><span class="n">completed</span><span class="p">)</span></div>
+
+
+
+<span class="n">_WORKER</span><span class="p">:</span> <span class="n">Worker</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="sd">"""This process's worker, built once before it is given any payload.</span>
+
+<span class="sd">Per process rather than per executor, because that is what it is: a worker process is initialised</span>
+<span class="sd">once and then runs whatever arrives. The serial path builds it the same way, in the calling</span>
+<span class="sd">process, which is why one run at a time per process is the contract."""</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_start_worker</span><span class="p">(</span><span class="n">worker_factory</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Worker</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Build this process's worker, replacing one an earlier run left behind."""</span>
+    <span class="k">global</span> <span class="n">_WORKER</span>  <span class="c1"># pylint: disable=global-statement</span>
+    <span class="n">_WORKER</span> <span class="o">=</span> <span class="n">worker_factory</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_submit_payload_to_worker</span><span class="p">(</span><span class="n">payload</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Run one payload against this process's worker.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError: If the process was never given a worker to run against.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">_WORKER</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"worker process was not initialised"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_WORKER</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_shut_down</span><span class="p">(</span>
+    <span class="n">pool</span><span class="p">:</span> <span class="n">ProcessPoolExecutor</span><span class="p">,</span>
+    <span class="n">pending</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Future</span><span class="p">[</span><span class="nb">object</span><span class="p">]],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">completed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Wait for a finished pool, or drop the queued work of an abandoned one."""</span>
+    <span class="k">if</span> <span class="n">completed</span><span class="p">:</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">shutdown</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="k">for</span> <span class="n">future</span> <span class="ow">in</span> <span class="n">pending</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">future</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+    <span class="n">terminate_workers</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">pool</span><span class="p">,</span> <span class="s2">"terminate_workers"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">terminate_workers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">terminate_workers</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">shutdown</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cancel_futures</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_stop_payload_iterator</span><span class="p">(</span><span class="n">iterator</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">object</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Close a payload or record iterator that owns input resources."""</span>
+    <span class="n">close</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span> <span class="s2">"close"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">close</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

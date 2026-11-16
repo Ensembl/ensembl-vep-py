@@ -1,0 +1,2 @@
+[console_scripts]
+vep = ensembl.vep.cli:main

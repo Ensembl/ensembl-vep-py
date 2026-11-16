@@ -1,0 +1,52 @@
+# See the NOTICE file distributed with this work for additional information
+# regarding copyright ownership.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""Writers of annotated output."""
+
+from __future__ import annotations
+
+from ensembl.vep.output.factory.write.base import (
+    DEFAULT_PICK_ORDER,
+    AlleleOverlap,
+    OutputFactory,
+    format_coords,
+)
+from ensembl.vep.output.factory.write.json import JSONOutputWriter
+from ensembl.vep.output.factory.write.registry import (
+    OutputWriter,
+    available_output_writers,
+    get_output_writer,
+    register_output_writer,
+)
+from ensembl.vep.output.factory.write.vcf import (
+    DEFAULT_INFO_FIELD,
+    VCF_COLS,
+    VCFOutputFactory,
+    VCFOutputWriter,
+)
+
+__all__ = [
+    "DEFAULT_INFO_FIELD",
+    "DEFAULT_PICK_ORDER",
+    "JSONOutputWriter",
+    "OutputWriter",
+    "VCF_COLS",
+    "AlleleOverlap",
+    "OutputFactory",
+    "VCFOutputFactory",
+    "VCFOutputWriter",
+    "available_output_writers",
+    "format_coords",
+    "get_output_writer",
+    "register_output_writer",
+]

@@ -1,0 +1,155 @@
+# See the NOTICE file distributed with this work for additional information
+# regarding copyright ownership.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""Tests for describing a corpus."""
+
+from __future__ import annotations
+
+import pytest
+
+import ensembl.vep.annotators  # noqa: F401  pylint: disable=unused-import
+
+# ^ keeps the annotators-before-caches import order.
+from ensembl.vep.corpus.describe import CorpusDescription, describe_variant, variant_class
+from ensembl.vep.corpus.overlaps import SyntheticOverlapSource
+from ensembl.vep.corpus.store import distinct_variants
+from ensembl.vep.models.overlap import TranscriptVariationAllele
+from ensembl.vep.runner.explain.overlaps import VariantSelector, names_feature
+
+
+@pytest.fixture(name="source", scope="module")
+def fixture_source() -> SyntheticOverlapSource:
+    """The default corpus, kept small."""
+    return SyntheticOverlapSource(kind="default", fuzz=5)
+
+
+@pytest.fixture(name="description", scope="module")
+def fixture_description(source: SyntheticOverlapSource) -> CorpusDescription:
+    """The whole description, built once."""
+    return CorpusDescription.build(source.corpus, batch_size=100)
+
+
+def _select(
+    source: SyntheticOverlapSource, *, variant: str, feature: str
+) -> tuple[str, TranscriptVariationAllele]:
+    """Return the one corpus overlap a ``--variant`` and ``--transcript`` pair names.
+
+    The same two filters ``vep explain`` applies, so a locus this module prints is checked to be
+    selectable the way a caller would select it.
+    """
+    selector = VariantSelector.parse(variant)
+    for name, overlap in source.named_overlaps():
+        if selector.matches(overlap.overlapping_feature) and names_feature(
+            overlap.feature.stable_id, feature
+        ):
+            return name, overlap
+    raise LookupError(f"no overlap matching {variant!r} for feature {feature!r}")
+
+
+class TestShape:
+    """The chromosome, transcript and class tables."""
+
+    def test_one_chromosome_with_the_corpus_totals(
+        self, source: SyntheticOverlapSource, description: CorpusDescription
+    ) -> None:
+        """The default corpus is one chromosome carrying four transcripts."""
+        (chromosome,) = description.chromosomes
+        assert chromosome.name == "chrSynthetic"
+        assert chromosome.transcripts == 4
+        assert chromosome.overlaps == len(list(source.named_overlaps()))
+
+    def test_transcripts_carry_strand_and_coding_status(self, description: CorpusDescription) -> None:
+        """The reverse-strand and non-coding transcripts are told apart."""
+        by_id = {shape.stable_id: shape for shape in description.transcripts}
+        assert by_id["ENST0002"].strand == "-"
+        assert by_id["ENST0003"].coding is False
+        assert by_id["ENST0004"].biotype == "nonsense_mediated_decay"
+        assert sum(shape.overlaps for shape in description.transcripts) == description.chromosomes[0].overlaps
+
+    def test_variant_classes_account_for_every_variant(self, description: CorpusDescription) -> None:
+        """The class counts sum to the distinct variant count."""
+        assert (
+            sum(count for _kind, count in description.variant_classes) == description.chromosomes[0].variants
+        )
+        assert {kind for kind, _count in description.variant_classes} == {"SNV", "deletion", "insertion"}
+
+    def test_chromosome_totals_include_variants_without_overlaps(
+        self, source: SyntheticOverlapSource, description: CorpusDescription
+    ) -> None:
+        """The description counts every generated variant, not only those in the overlap listing."""
+        corpus = source.corpora[0]
+        overlapping_names = {name for name, _overlap in corpus.named_overlaps}
+        assert any(name not in overlapping_names for name, _allele in corpus.named_variants)
+        assert description.chromosomes[0].variants == len(distinct_variants(corpus))
+
+    def test_transcripts_per_chunk_is_bounded_by_the_transcript_count(
+        self, description: CorpusDescription
+    ) -> None:
+        """A chunk cannot reach more distinct transcripts than the corpus has."""
+        assert 1.0 <= description.transcripts_per_chunk <= 4.0
+        assert description.batch_size == 100
+
+
+class TestOverlapListing:
+    """The listing that gives ``vep explain`` its selectors."""
+
+    def test_entries_follow_source_order(
+        self, source: SyntheticOverlapSource, description: CorpusDescription
+    ) -> None:
+        """The index printed is the one --index accepts."""
+        names = [name for name, _overlap in source.named_overlaps()]
+        assert [entry.name for entry in description.overlaps] == names
+        assert [entry.index for entry in description.overlaps] == list(range(len(names)))
+
+    def test_a_listed_variant_selector_selects_that_overlap(
+        self, source: SyntheticOverlapSource, description: CorpusDescription
+    ) -> None:
+        """Locus and alleles, as printed, are what --variant plus --transcript takes."""
+        checked = 0
+        for entry in description.overlaps[:40]:
+            if "..." in entry.alleles:
+                continue
+            name, overlap = _select(source, variant=f"{entry.locus}:{entry.alleles}", feature=entry.feature)
+            assert name == entry.name
+            assert overlap.feature.stable_id == entry.feature
+            checked += 1
+        assert checked
+
+    def test_select_keeps_one_variants_overlaps(self, source: SyntheticOverlapSource) -> None:
+        """Narrowing by name keeps every overlap of that variant and nothing else."""
+        description = CorpusDescription.build(source.corpus, select="ENST0001_cds3_del1")
+        assert {entry.name for entry in description.overlaps} == {"ENST0001_cds3_del1"}
+
+    def test_a_long_allele_is_abbreviated_with_its_length(self, source: SyntheticOverlapSource) -> None:
+        """A whole-transcript deletion stays a table cell."""
+        description = CorpusDescription.build(source.corpus, select="ENST0001_ablation")
+        (entry,) = description.overlaps
+        assert "bp)" in entry.alleles
+        assert len(entry.alleles) < 40
+
+
+class TestVariantSpelling:
+    """How a variant is classed and printed."""
+
+    def test_classes_come_from_the_trimmed_alleles(self, source: SyntheticOverlapSource) -> None:
+        """Empty alternate is a deletion, empty reference an insertion, one-for-one an SNV."""
+        by_name = {name: overlap.overlapping_feature for name, overlap in source.named_overlaps()}
+        assert variant_class(by_name["ENST0001_cds3_del1"]) == "deletion"
+        assert variant_class(by_name["ENST0001_elongation"]) == "insertion"
+        assert variant_class(by_name["ENST0001_intron0_donor+1"]) == "SNV"
+
+    def test_an_empty_allele_is_printed_as_a_dash(self, source: SyntheticOverlapSource) -> None:
+        """The dash is what the --variant selector reads back as empty."""
+        by_name = {name: overlap.overlapping_feature for name, overlap in source.named_overlaps()}
+        _locus, alleles = describe_variant(by_name["ENST0001_cds3_del1"])
+        assert alleles.endswith(">-")

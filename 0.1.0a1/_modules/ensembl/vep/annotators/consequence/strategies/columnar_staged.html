@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ensembl.vep.annotators.consequence.strategies.columnar_staged &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../../../../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ensembl/vep/annotators/consequence/strategies/columnar_staged';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.0a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../../../../../../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../../../../../../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+  
+    
+    <script src="../../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../../_static/language_data.js"></script>
+    <script src="../../../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../../../../../../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
+    Coverage Report
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
+    Coverage Report
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.annotators.consequence.strategies.columnar_staged</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ensembl.vep.annotators.consequence.strategies.columnar_staged</h1><div class="highlight"><pre>
+<span></span><span class="c1"># See the NOTICE file distributed with this work for additional information</span>
+<span class="c1"># regarding copyright ownership.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1"># http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="sd">"""Combine bit-parallel rule evaluation with staged fact propagation.</span>
+
+<span class="sd">Cheap fact columns are materialised for the complete chunk. A topological sweep of the acyclic</span>
+<span class="sd">``requires`` graph then propagates false bits into forced-false masks without per-context fixpoint</span>
+<span class="sd">work. This matches ``implied_false`` while preserving batch evaluation.</span>
+
+<span class="sd">Forced-false masks may derive only from full-chunk columns or earlier forced masks. Values from a</span>
+<span class="sd">column populated for a smaller live mask cannot establish facts outside that mask.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.strategies.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConsequenceAnnotator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.facts.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">REGISTRY</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.context.annotator</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotatorContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.context.fact</span><span class="w"> </span><span class="kn">import</span> <span class="n">FactContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_annotator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.strategies.columnar</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span>
+    <span class="n">BitColumnBuffer</span><span class="p">,</span>
+    <span class="n">RulePlanSet</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.strategies.staged</span><span class="w"> </span><span class="kn">import</span> <span class="n">CheapAtomAlphabet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.rules.rulesets</span><span class="w"> </span><span class="kn">import</span> <span class="n">FactRuleSet</span><span class="p">,</span> <span class="n">build_fact_ruleset</span><span class="p">,</span> <span class="n">prune</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.trace</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationTrace</span><span class="p">,</span> <span class="n">TraceRecorder</span><span class="p">,</span> <span class="n">describe_overlap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.trace</span><span class="w"> </span><span class="kn">import</span> <span class="n">reconstruct</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.overlap</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureOverlap</span><span class="p">,</span> <span class="n">OverlapConsequence</span><span class="p">,</span> <span class="n">TranscriptVariationAllele</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.caches.codon_cache</span><span class="w"> </span><span class="kn">import</span> <span class="n">CodonCache</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.caches.zone_map</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZoneMapCache</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"ColumnarStagedAnnotator"</span><span class="p">,</span> <span class="s2">"topological_requires_order"</span><span class="p">]</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="topological_requires_order">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar_staged.topological_requires_order">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">topological_requires_order</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]]:</span>
+<span class="w">    </span><span class="sd">"""Return facts with requirements in topological order.</span>
+
+<span class="sd">    Ordered so every atom in a fact's ``requires`` precedes the fact itself, an explicit</span>
+<span class="sd">    topological sort over the ``requires`` graph in REGISTRY, not a reliance on declaration order.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list[tuple[str, tuple[str, ...]]]: Topologically ordered ``(fact_name, requires)`` pairs.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the ``requires`` graph has a cycle. A cycle or a bad forward reference</span>
+<span class="sd">            must fail loudly at annotator construction, not silently under-propagate at</span>
+<span class="sd">            evaluation time.</span>
+<span class="sd">    """</span>
+    <span class="n">gated</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">registered_fact</span><span class="o">.</span><span class="n">requires</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">registered_fact</span> <span class="ow">in</span> <span class="n">REGISTRY</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">registered_fact</span><span class="o">.</span><span class="n">requires</span>
+    <span class="p">}</span>
+    <span class="n">order</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">permanently_visited</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">in_progress</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">visit</span><span class="p">(</span><span class="n">fact_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">fact_name</span> <span class="ow">in</span> <span class="n">permanently_visited</span> <span class="ow">or</span> <span class="n">fact_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">gated</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">fact_name</span> <span class="ow">in</span> <span class="n">in_progress</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"cycle in `requires` graph at </span><span class="si">{</span><span class="n">fact_name</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">in_progress</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">fact_name</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">required_name</span> <span class="ow">in</span> <span class="n">gated</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]:</span>
+            <span class="n">visit</span><span class="p">(</span><span class="n">required_name</span><span class="p">)</span>
+        <span class="n">in_progress</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">fact_name</span><span class="p">)</span>
+        <span class="n">permanently_visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">fact_name</span><span class="p">)</span>
+        <span class="n">order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fact_name</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">fact_name</span> <span class="ow">in</span> <span class="n">gated</span><span class="p">:</span>
+        <span class="n">visit</span><span class="p">(</span><span class="n">fact_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="n">fact_name</span><span class="p">,</span> <span class="n">gated</span><span class="p">[</span><span class="n">fact_name</span><span class="p">])</span> <span class="k">for</span> <span class="n">fact_name</span> <span class="ow">in</span> <span class="n">order</span><span class="p">]</span></div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_StagedBitColumnBuffer</span><span class="p">(</span><span class="n">BitColumnBuffer</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""BitColumnBuffer plus forced-false masks.</span>
+
+<span class="sd">    The function set_forced_false must be called once, with masks derived only from populated columns</span>
+<span class="sd">    across full-chunk and before any column call that should benefit from them. The override marks forced</span>
+<span class="sd">    bits known, so that the base class's ``get_fact`` loop skips them entirely, without ever setting them in</span>
+<span class="sd">    ``_value_bits`` (they are correctly False, i.e. absent, by construction).</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_contexts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FactContext</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Initialize the buffer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fact_contexts (Sequence[FactContext]): The overlaps' fact contexts, batch-index order.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fact_contexts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_forced_false</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_forced_false</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">forced</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Record the per-fact forced-false masks derived by the topological sweep.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            forced (dict[str, int]): Fact name -&gt; mask of overlap indices forced False by</span>
+<span class="sd">                ``requires`` propagation.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_forced_false</span> <span class="o">=</span> <span class="n">forced</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">live_mask</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the bit-column for ``fact_name``, honouring forced-false masks.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fact_name (str): The fact atom to materialise a column for.</span>
+<span class="sd">            live_mask (int): The set of overlap indices (as bits) the caller needs an answer for.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Bits set for every overlap index in ``live_mask`` where the fact is true. Bits</span>
+<span class="sd">                outside ``live_mask`` are not guaranteed to mean anything.</span>
+<span class="sd">        """</span>
+        <span class="n">forced_false_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forced_false</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fact_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">forced_false_mask</span><span class="p">:</span>
+            <span class="n">newly_known_mask</span> <span class="o">=</span> <span class="n">live_mask</span> <span class="o">&amp;</span> <span class="n">forced_false_mask</span> <span class="o">&amp;</span> <span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">_known_bits</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fact_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">newly_known_mask</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_known_bits</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_known_bits</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fact_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="n">newly_known_mask</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">fact_name</span><span class="p">,</span> <span class="n">live_mask</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ColumnarStagedAnnotator">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar_staged.ColumnarStagedAnnotator">[docs]</a>
+<span class="nd">@register_annotator</span><span class="p">(</span><span class="s2">"consequence.columnar-staged"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ColumnarStagedAnnotator</span><span class="p">(</span><span class="n">ConsequenceAnnotator</span><span class="p">[</span><span class="n">FactRuleSet</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">"""Evaluate bit-parallel rules while avoiding unnecessary expensive facts.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        name (str): Registry name, "consequence.columnar-staged".</span>
+<span class="sd">        ruleset (FactRuleSet): The compiled rule set this annotator evaluates.</span>
+<span class="sd">        batch_size (int): Maximum number of overlaps evaluated together as one bit-parallel batch.</span>
+<span class="sd">        last_traces (list[AnnotationTrace]): One derivation per overlap in the most recent</span>
+<span class="sd">            annotate_feature_overlaps call, in the same order, or an empty list if that call did</span>
+<span class="sd">            not trace. The inherited last_trace attribute mirrors this list's final entry.</span>
+<span class="sd">    """</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">"consequence.columnar-staged"</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span>
+        <span class="n">annotator_context</span><span class="p">:</span> <span class="n">AnnotatorContext</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">zone_map</span><span class="p">:</span> <span class="n">ZoneMapCache</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">codon_cache</span><span class="p">:</span> <span class="n">CodonCache</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Initialize the annotator.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ruleset (FactRuleSet | None): The rule set to evaluate, or None to build the default</span>
+<span class="sd">                rule set from the checked-in consequence catalogue.</span>
+<span class="sd">            batch_size (int): Maximum number of overlaps evaluated together as one batch.</span>
+<span class="sd">            annotator_context (AnnotatorContext | None): Run-scoped caches to evaluate against,</span>
+<span class="sd">                or None (the default) for a fresh, private one.</span>
+<span class="sd">            zone_map (ZoneMapCache | None): Optional zone-map cache.</span>
+<span class="sd">            codon_cache (CodonCache | None): Optional shared-codon cache.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">ruleset</span> <span class="k">if</span> <span class="n">ruleset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">build_fact_ruleset</span><span class="p">(),</span>
+            <span class="n">annotator_context</span><span class="p">,</span>
+            <span class="n">zone_map</span><span class="o">=</span><span class="n">zone_map</span><span class="p">,</span>
+            <span class="n">codon_cache</span><span class="o">=</span><span class="n">codon_cache</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_planset</span> <span class="o">=</span> <span class="n">RulePlanSet</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ruleset</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cheap_atom_alphabet</span> <span class="o">=</span> <span class="n">CheapAtomAlphabet</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ruleset</span><span class="o">.</span><span class="n">rules</span><span class="p">)</span>
+        <span class="c1"># Computed and validated once at construction, not per chunk.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_topological_requires_order</span> <span class="o">=</span> <span class="n">topological_requires_order</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_traces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnnotationTrace</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="ColumnarStagedAnnotator.seed_columns">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar_staged.ColumnarStagedAnnotator.seed_columns">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">seed_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_contexts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FactContext</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return fact columns already known for the whole chunk.</span>
+
+<span class="sd">        Extension point for a subclass that can compute a fact for every context in the chunk at</span>
+<span class="sd">        once by some cheaper route than per-context ``get_fact`` (see ColumnarKernelsAnnotator).</span>
+
+<span class="sd">        A returned column must be exact for **every** context in the chunk, since it is marked</span>
+<span class="sd">        fully known. A partially-correct column would be read as authoritative and could lead to</span>
+<span class="sd">        incorrect results. Returning nothing (the default) leaves every column to the ordinary</span>
+<span class="sd">        lazy path.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fact_contexts (Sequence[FactContext]): The chunk's contexts, batch-index order.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict[str, int]: Fact name -&gt; bit column, bit ``i`` being the value for context ``i``.</span>
+<span class="sd">        """</span>
+        <span class="n">zone_map_cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotator_context</span><span class="o">.</span><span class="n">zone_map_cache</span>
+        <span class="k">if</span> <span class="n">zone_map_cache</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="c1"># Evaluated and returned as columns rather than per-overlap memo prefills</span>
+        <span class="k">return</span> <span class="n">zone_map_cache</span><span class="o">.</span><span class="n">columns</span><span class="p">(</span><span class="n">fact_contexts</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_evaluate_staged_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_contexts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FactContext</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">OverlapConsequence</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Evaluate every rule, bit-parallel and ``requires``-staged, over one chunk of overlaps.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fact_contexts (Sequence[FactContext]): The chunk's fact contexts, batch-index order.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[list[OverlapConsequence]]: One consequence list per input context, same order.</span>
+<span class="sd">        """</span>
+        <span class="n">context_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fact_contexts</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">context_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="n">full_mask</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">context_count</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">bit_columns</span> <span class="o">=</span> <span class="n">_StagedBitColumnBuffer</span><span class="p">(</span><span class="n">fact_contexts</span><span class="p">)</span>
+
+        <span class="c1"># 0. Anything a subclass can fill for the whole chunk at once, marked fully known so the</span>
+        <span class="c1">#    lazy path never touches it.</span>
+        <span class="k">for</span> <span class="n">fact_name</span><span class="p">,</span> <span class="n">column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">seed_columns</span><span class="p">(</span><span class="n">fact_contexts</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">bit_columns</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">fact_name</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">full_mask</span><span class="p">)</span>
+
+        <span class="c1"># 1. Materialise every cheap atom for the whole chunk. The same upfront spend</span>
+        <span class="c1">#    consequence.staged already pays, memoised per context. The seeded columns above may</span>
+        <span class="c1">#    do not get re-computed.</span>
+        <span class="n">known_true_masks</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">atom_name</span><span class="p">:</span> <span class="n">bit_columns</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">atom_name</span><span class="p">,</span> <span class="n">full_mask</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">atom_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cheap_atom_alphabet</span><span class="o">.</span><span class="n">atom_names</span>
+        <span class="p">}</span>
+        <span class="n">false_bits</span> <span class="o">=</span> <span class="p">{</span><span class="n">atom_name</span><span class="p">:</span> <span class="n">full_mask</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">mask</span> <span class="k">for</span> <span class="n">atom_name</span><span class="p">,</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">known_true_masks</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+        <span class="c1"># 2. One topological sweep of big-int ORs. A bit-parallel version of `implied_false`.</span>
+        <span class="n">forced</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">fact_name</span><span class="p">,</span> <span class="n">requires_names</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_topological_requires_order</span><span class="p">:</span>
+            <span class="n">forced_mask</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">required_name</span> <span class="ow">in</span> <span class="n">requires_names</span><span class="p">:</span>
+                <span class="n">forced_mask</span> <span class="o">|=</span> <span class="n">false_bits</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">required_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">forced_mask</span> <span class="o">&amp;=</span> <span class="n">full_mask</span>
+            <span class="k">if</span> <span class="n">fact_name</span> <span class="ow">in</span> <span class="n">false_bits</span><span class="p">:</span>
+                <span class="c1"># Already a directly-materialised cheap column (e.g. overlap_exon, which itself has</span>
+                <span class="c1"># requires=("overlap_feature",)): its column is already exact everywhere, so</span>
+                <span class="c1"># this OR is a no-op that just keeps the sweep self-consistent for anything gated</span>
+                <span class="c1"># behind it.</span>
+                <span class="n">false_bits</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]</span> <span class="o">|=</span> <span class="n">forced_mask</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">forced_mask</span><span class="p">:</span>
+                <span class="n">forced</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">forced_mask</span>
+                <span class="n">false_bits</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">forced_mask</span>  <span class="c1"># feeds facts gated on this one</span>
+        <span class="n">bit_columns</span><span class="o">.</span><span class="n">set_forced_false</span><span class="p">(</span><span class="n">forced</span><span class="p">)</span>
+
+        <span class="c1"># 3. Now evaluate each rule using already pre-filled columns.</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_planset</span><span class="o">.</span><span class="n">evaluate_over_columns</span><span class="p">(</span><span class="n">bit_columns</span><span class="p">,</span> <span class="n">context_count</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_trace_staged_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_contexts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FactContext</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnnotationTrace</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Debug-only replay of one already-evaluated chunk, to explain each overlap.</span>
+
+<span class="sd">        Deliberately a second and independent pass over the plan rather than a change to</span>
+<span class="sd">        _evaluate_staged_chunk method which is the hot batch path. Only ever called when tracing is</span>
+<span class="sd">        already known to be enabled.</span>
+
+<span class="sd">        Every ``bit_columns.column`` call below is a memo hit -- the real pass already computed and</span>
+<span class="sd">        charged everything this chunk could possibly need -- so this replay never charges any</span>
+<span class="sd">        additional cost. What it rebuilds is the per-context partial assignment; the forced-False</span>
+<span class="sd">        *facts* fall out of that assignment afterwards, so nothing here re-implements the</span>
+<span class="sd">        propagation in order to explain it.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fact_contexts (Sequence[FactContext]): The already-evaluated chunk, in the same order</span>
+<span class="sd">                passed to the preceding ``_evaluate_staged_chunk`` call.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[AnnotationTrace]: One derivation per context, in the same order.</span>
+<span class="sd">        """</span>
+        <span class="n">context_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fact_contexts</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">context_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="c1"># Taken before the replay: every column below is a memo hit, and get_fact counts those, so</span>
+        <span class="c1"># read counts gathered afterwards would include reads the real pass never made.</span>
+        <span class="n">fact_events_by_context</span> <span class="o">=</span> <span class="p">[</span><span class="n">reconstruct</span><span class="o">.</span><span class="n">memo_fact_events</span><span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="k">for</span> <span class="n">context</span> <span class="ow">in</span> <span class="n">fact_contexts</span><span class="p">]</span>
+
+        <span class="n">full_mask</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">context_count</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">bit_columns</span> <span class="o">=</span> <span class="n">_StagedBitColumnBuffer</span><span class="p">(</span><span class="n">fact_contexts</span><span class="p">)</span>
+
+        <span class="n">known_true_masks</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">atom_name</span><span class="p">:</span> <span class="n">bit_columns</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">atom_name</span><span class="p">,</span> <span class="n">full_mask</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">atom_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cheap_atom_alphabet</span><span class="o">.</span><span class="n">atom_names</span>
+        <span class="p">}</span>
+        <span class="n">false_bits</span> <span class="o">=</span> <span class="p">{</span><span class="n">atom_name</span><span class="p">:</span> <span class="n">full_mask</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">mask</span> <span class="k">for</span> <span class="n">atom_name</span><span class="p">,</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">known_true_masks</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+        <span class="n">forced</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">fact_name</span><span class="p">,</span> <span class="n">requires_names</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_topological_requires_order</span><span class="p">:</span>
+            <span class="n">forced_mask</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">required_name</span> <span class="ow">in</span> <span class="n">requires_names</span><span class="p">:</span>
+                <span class="n">forced_mask</span> <span class="o">|=</span> <span class="n">false_bits</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">required_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">forced_mask</span> <span class="o">&amp;=</span> <span class="n">full_mask</span>
+            <span class="k">if</span> <span class="n">fact_name</span> <span class="ow">in</span> <span class="n">false_bits</span><span class="p">:</span>
+                <span class="n">false_bits</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]</span> <span class="o">|=</span> <span class="n">forced_mask</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">forced_mask</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">forced</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">forced_mask</span>
+            <span class="n">false_bits</span><span class="p">[</span><span class="n">fact_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">forced_mask</span>
+        <span class="n">bit_columns</span><span class="o">.</span><span class="n">set_forced_false</span><span class="p">(</span><span class="n">forced</span><span class="p">)</span>
+
+        <span class="n">hit_terms_by_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_planset</span><span class="o">.</span><span class="n">hit_terms_by_context</span><span class="p">(</span><span class="n">bit_columns</span><span class="p">,</span> <span class="n">context_count</span><span class="p">)</span>
+
+        <span class="n">traces</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">context_index</span><span class="p">,</span> <span class="n">fact_context</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fact_contexts</span><span class="p">):</span>
+            <span class="n">bit</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">context_index</span>
+            <span class="n">known</span> <span class="o">=</span> <span class="p">{</span><span class="n">atom_name</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">mask</span> <span class="o">&amp;</span> <span class="n">bit</span><span class="p">)</span> <span class="k">for</span> <span class="n">atom_name</span><span class="p">,</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">known_true_masks</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="k">for</span> <span class="n">atom_name</span><span class="p">,</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">forced</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">mask</span> <span class="o">&amp;</span> <span class="n">bit</span><span class="p">:</span>
+                    <span class="n">known</span><span class="p">[</span><span class="n">atom_name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">hit_terms</span> <span class="o">=</span> <span class="n">hit_terms_by_context</span><span class="p">[</span><span class="n">context_index</span><span class="p">]</span>
+            <span class="n">trace</span> <span class="o">=</span> <span class="n">AnnotationTrace</span><span class="p">(</span>
+                <span class="n">fact_events</span><span class="o">=</span><span class="n">fact_events_by_context</span><span class="p">[</span><span class="n">context_index</span><span class="p">]</span>
+                <span class="o">+</span> <span class="n">reconstruct</span><span class="o">.</span><span class="n">forced_false_events</span><span class="p">(</span><span class="n">known</span><span class="p">,</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">memo</span><span class="p">),</span>
+                <span class="n">rule_events</span><span class="o">=</span><span class="n">reconstruct</span><span class="o">.</span><span class="n">partial_rule_events</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ruleset</span><span class="o">.</span><span class="n">rules</span><span class="p">,</span> <span class="n">known</span><span class="p">,</span> <span class="n">hit_terms</span><span class="p">),</span>
+                <span class="n">prune_events</span><span class="o">=</span><span class="n">reconstruct</span><span class="o">.</span><span class="n">subsumption_events</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ruleset</span><span class="o">.</span><span class="n">by_term</span><span class="p">,</span> <span class="n">hit_terms</span><span class="p">),</span>
+                <span class="n">emitted_terms</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">prune</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ruleset</span><span class="p">,</span> <span class="n">hit_terms</span><span class="p">,</span> <span class="n">apply_default</span><span class="o">=</span><span class="kc">False</span><span class="p">)),</span>
+                <span class="n">annotator_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">overlap_label</span><span class="o">=</span><span class="n">describe_overlap</span><span class="p">(</span><span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">traces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trace</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">format_explanation</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">traces</span>
+
+<div class="viewcode-block" id="ColumnarStagedAnnotator.annotate_feature_overlaps">
+<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar_staged.ColumnarStagedAnnotator.annotate_feature_overlaps">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">annotate_feature_overlaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overlaps</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FeatureOverlap</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">OverlapConsequence</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Calculate consequences for a batch of transcript/variant-allele overlaps at once.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            overlaps (Sequence[FeatureOverlap]): The overlaps to annotate, in order. Every element</span>
+<span class="sd">                must be a TranscriptVariationAllele.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[list[OverlapConsequence]]: One consequence list per input overlap, same order.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: If any element of ``overlaps`` is not a TranscriptVariationAllele.</span>
+<span class="sd">        """</span>
+        <span class="n">transcript_variation_alleles</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">overlap</span> <span class="ow">in</span> <span class="n">overlaps</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">overlap</span><span class="p">,</span> <span class="n">TranscriptVariationAllele</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> only annotates TranscriptVariationAllele overlaps, got "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">overlap</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span>
+                <span class="p">)</span>
+            <span class="n">transcript_variation_alleles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">overlap</span><span class="p">)</span>
+
+        <span class="c1"># See ColumnarFactsAnnotator.annotate_feature_overlaps: a single isEnabledFor check gates</span>
+        <span class="c1"># everything tracing-related below.</span>
+        <span class="n">debug_enabled</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+        <span class="n">fact_contexts</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">FactContext</span><span class="p">(</span>
+                <span class="n">overlap</span><span class="o">=</span><span class="n">overlap</span><span class="p">,</span>
+                <span class="n">recorder</span><span class="o">=</span><span class="p">(</span><span class="n">TraceRecorder</span><span class="p">()</span> <span class="k">if</span> <span class="n">debug_enabled</span> <span class="k">else</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="n">annotator_context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">annotator_context</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">overlap</span> <span class="ow">in</span> <span class="n">transcript_variation_alleles</span>
+        <span class="p">]</span>
+        <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">OverlapConsequence</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">traces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnnotationTrace</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">chunk_start</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">fact_contexts</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">):</span>
+            <span class="n">chunk</span> <span class="o">=</span> <span class="n">fact_contexts</span><span class="p">[</span><span class="n">chunk_start</span> <span class="p">:</span> <span class="n">chunk_start</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]</span>
+            <span class="c1"># Caches are applied per overlap, before the chunk's columns are materialised --</span>
+            <span class="c1"># prefilling after the sequence tier has been reached would save nothing.</span>
+            <span class="k">for</span> <span class="n">fact_context</span> <span class="ow">in</span> <span class="n">chunk</span><span class="p">:</span>
+                <span class="c1"># The zone map is applied per chunk as columns instead -- see seed_columns.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">annotator_context</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">fact_context</span><span class="p">,</span> <span class="n">apply_zone_map</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_staged_chunk</span><span class="p">(</span><span class="n">chunk</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">debug_enabled</span><span class="p">:</span>
+                <span class="n">traces</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trace_staged_chunk</span><span class="p">(</span><span class="n">chunk</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_traces</span> <span class="o">=</span> <span class="n">traces</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_trace</span> <span class="o">=</span> <span class="n">traces</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">traces</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
