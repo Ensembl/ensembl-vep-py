@@ -27,7 +27,7 @@ env:
   PYTHON_VERSION: "3.12"
 
 jobs:
-  mkdocs:
+  docs:
     name: Deploy documentation to GitHub Pages
     uses: ./.github/workflows/docs.yml
     permissions:
