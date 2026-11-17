@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -523,7 +509,7 @@
 
 
 <div class="viewcode-block" id="Slice">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.render.html#ensembl.vep.render.chart.Slice">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.render.html#ensembl.vep.render.chart.Slice">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Slice</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""One labelled quantity in a chart.</span>
@@ -560,7 +546,7 @@
 
 
 <div class="viewcode-block" id="render_legend">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.render.html#ensembl.vep.render.chart.render_legend">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.render.html#ensembl.vep.render.chart.render_legend">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">render_legend</span><span class="p">(</span><span class="n">slices</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Slice</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return a legend listing each slice with its marker."""</span>
     <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
@@ -595,7 +581,7 @@
 
 
 <div class="viewcode-block" id="render_pie">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.render.html#ensembl.vep.render.chart.render_pie">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.render.html#ensembl.vep.render.chart.render_pie">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">render_pie</span><span class="p">(</span><span class="n">slices</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Slice</span><span class="p">],</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return a pie chart.</span>
 
@@ -628,7 +614,7 @@
 
 
 <div class="viewcode-block" id="render_bars">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.render.html#ensembl.vep.render.chart.render_bars">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.render.html#ensembl.vep.render.chart.render_bars">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">render_bars</span><span class="p">(</span><span class="n">slices</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Slice</span><span class="p">],</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return a horizontal bar chart, one labelled bar per slice."""</span>
     <span class="n">largest</span> <span class="o">=</span> <span class="nb">max</span><span class="p">((</span><span class="n">item</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">slices</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -655,7 +641,7 @@
 
 
 <div class="viewcode-block" id="render_series">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.render.html#ensembl.vep.render.chart.render_series">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.render.html#ensembl.vep.render.chart.render_series">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">render_series</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span> <span class="n">colour</span><span class="p">:</span> <span class="n">Colour</span> <span class="o">=</span> <span class="n">Colour</span><span class="o">.</span><span class="n">BLUE</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return a filled area chart of one series, for a positional distribution."""</span>
     <span class="n">width</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">MARGIN</span> <span class="o">*</span> <span class="mi">2</span>

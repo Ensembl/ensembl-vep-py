@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -513,7 +499,7 @@
 
 
 <div class="viewcode-block" id="overlap_key">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.overlap_key">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.overlap_key">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">overlap_key</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overlap</span><span class="p">:</span> <span class="n">TranscriptVariationAllele</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the key an overlap is filed under: its feature, then its variant's name.</span>
 
@@ -525,7 +511,7 @@
 
 
 <div class="viewcode-block" id="GoldenTerms">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.GoldenTerms">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.GoldenTerms">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">GoldenTerms</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""The terms one annotator emitted for every overlap of one corpus.</span>
@@ -543,7 +529,7 @@
     <span class="n">terms</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
 
 <div class="viewcode-block" id="GoldenTerms.to_json">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.GoldenTerms.to_json">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.GoldenTerms.to_json">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the file text: a header, then one overlap per line.</span>
 
@@ -570,7 +556,7 @@
 
 
 <div class="viewcode-block" id="GoldenTerms.from_json">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.GoldenTerms.from_json">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.GoldenTerms.from_json">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GoldenTerms</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Read terms back from file text.</span>
@@ -592,7 +578,7 @@
 
 
 <div class="viewcode-block" id="GoldenTerms.write">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.GoldenTerms.write">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.GoldenTerms.write">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Write the terms to a file, creating its directory if needed."""</span>
         <span class="n">path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -600,7 +586,7 @@
 
 
 <div class="viewcode-block" id="GoldenTerms.load">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.GoldenTerms.load">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.GoldenTerms.load">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GoldenTerms</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Read terms from a file."""</span>
@@ -610,7 +596,7 @@
 
 
 <div class="viewcode-block" id="record_golden">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.record_golden">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.record_golden">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">record_golden</span><span class="p">(</span>
     <span class="n">corpus</span><span class="p">:</span> <span class="n">Corpus</span><span class="p">,</span> <span class="n">annotator</span><span class="p">:</span> <span class="n">Annotator</span><span class="p">[</span><span class="n">OverlapConsequence</span><span class="p">],</span> <span class="n">annotator_name</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GoldenTerms</span><span class="p">:</span>
@@ -640,7 +626,7 @@
 
 
 <div class="viewcode-block" id="GoldenReport">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.GoldenReport">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.GoldenReport">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">GoldenReport</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""How recorded terms differ from golden ones.</span>
@@ -664,7 +650,7 @@
     <span class="n">mismatches</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">())</span>
 
 <div class="viewcode-block" id="GoldenReport.compare">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.GoldenReport.compare">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.GoldenReport.compare">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">compare</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">golden</span><span class="p">:</span> <span class="n">GoldenTerms</span><span class="p">,</span> <span class="n">recorded</span><span class="p">:</span> <span class="n">GoldenTerms</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GoldenReport</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Compare a recording against golden terms."""</span>
@@ -692,7 +678,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="GoldenReport.lines">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.GoldenReport.lines">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.golden.html#ensembl.vep.corpus.golden.terms.GoldenReport.lines">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_REPORT_LIMIT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the report as readable lines, the reason first, then at most ``limit`` examples."""</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>

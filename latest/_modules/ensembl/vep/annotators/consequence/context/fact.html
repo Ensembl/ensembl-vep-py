@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -504,7 +490,7 @@
 
 
 <div class="viewcode-block" id="FactContext">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.fact.FactContext">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.fact.FactContext">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">FactContext</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">OverlapT_co</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">"""Represent one variant-feature overlap during fact evaluation.</span>
@@ -577,7 +563,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_biotype</span>
 
 <div class="viewcode-block" id="FactContext.for_overlaps">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.fact.FactContext.for_overlaps">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.fact.FactContext.for_overlaps">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">for_overlaps</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">overlaps</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">OverlapT_co</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">FactContext</span><span class="p">[</span><span class="n">OverlapT_co</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Return one context per overlap.</span>
@@ -589,7 +575,7 @@
 
 
 <div class="viewcode-block" id="FactContext.reset">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.fact.FactContext.reset">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.fact.FactContext.reset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Clear the memo table and any other memoised state.</span>
 
@@ -601,7 +587,7 @@
 
 
 <div class="viewcode-block" id="FactContext.prefill">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.fact.FactContext.prefill">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.fact.FactContext.prefill">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">prefill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">origin</span><span class="p">:</span> <span class="n">FactOrigin</span> <span class="o">=</span> <span class="n">FactOrigin</span><span class="o">.</span><span class="n">PREFILLED</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Seed the memo table with already-known values, without charging their cost.</span>
 

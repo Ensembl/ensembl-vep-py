@@ -30,4 +30,4 @@ grep -v '^##' quickstart_output.vcf | head
 
 Ensembl VEP does not replace an existing output file by default. Add `--force_overwrite` to the command when you want to repeat the example and replace both output files.
 
-See the [`vep run` reference](../reference/cli/run.md) for the full set of input, output and execution options.
+See the [`vep run` reference](../auto/reference/cli/run.md) for the full set of input, output and execution options.

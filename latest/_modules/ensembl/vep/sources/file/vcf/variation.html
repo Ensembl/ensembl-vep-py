@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -527,7 +513,7 @@
 
 
 <div class="viewcode-block" id="VCFVariationSource">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.VCFVariationSource">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.VCFVariationSource">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">VCFVariationSource</span><span class="p">(</span><span class="n">FileFeatureSource</span><span class="p">[</span><span class="n">VCFParser</span><span class="p">,</span> <span class="n">VCFRecord</span><span class="p">,</span> <span class="n">Variation</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">"""Variation source backed by a VCF file.</span>
@@ -540,7 +526,7 @@
     <span class="n">sequence_region_resolver</span><span class="p">:</span> <span class="n">SequenceRegionResolver</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
 <div class="viewcode-block" id="VCFVariationSource.record_count">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.VCFVariationSource.record_count">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.VCFVariationSource.record_count">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">record_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">scan</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return how many records the input holds, or None when nothing declares it.</span>
 
@@ -556,7 +542,7 @@
 
 
 <div class="viewcode-block" id="VCFVariationSource.records_to_features">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.VCFVariationSource.records_to_features">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.VCFVariationSource.records_to_features">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">records_to_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">records</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">VCFRecord</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Variation</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Convert VCFRecords into Variation or StructuralVariation objects.</span>
 
@@ -980,7 +966,7 @@
 
 
 <div class="viewcode-block" id="PicklableVCFVariationSource">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">PicklableVCFVariationSource</span><span class="p">(</span><span class="n">VCFVariationSource</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""VCF variation source whose records are the input's own lines.</span>
@@ -1000,7 +986,7 @@
     <span class="n">_header_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PicklableVCFVariationSource.header_lines">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.header_lines">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.header_lines">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">header_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the input's leading header lines, without line endings."""</span>
         <span class="k">with</span> <span class="n">VCFParser</span><span class="p">(</span><span class="n">file_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"sequential"</span><span class="p">)</span> <span class="k">as</span> <span class="n">parser</span><span class="p">:</span>
@@ -1008,14 +994,14 @@
 
 
 <div class="viewcode-block" id="PicklableVCFVariationSource.get_all_records">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.get_all_records">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.get_all_records">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_all_records</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return every record line in the input, in input order."""</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iter_all_records</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="PicklableVCFVariationSource.iter_all_records">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.iter_all_records">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.iter_all_records">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">iter_all_records</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Yield each record's line, as the input spells it, without its line ending.</span>
 
@@ -1032,7 +1018,7 @@
 
 
 <div class="viewcode-block" id="PicklableVCFVariationSource.get_records_by_region">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.get_records_by_region">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.get_records_by_region">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_records_by_region</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1059,7 +1045,7 @@
 
 
 <div class="viewcode-block" id="PicklableVCFVariationSource.iter_records_by_region">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.iter_records_by_region">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.iter_records_by_region">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">iter_records_by_region</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1086,7 +1072,7 @@
 
 
 <div class="viewcode-block" id="PicklableVCFVariationSource.records_to_features">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.records_to_features">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.records_to_features">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">records_to_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">records</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Variation</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the variations for a set of record lines, in input order.</span>
 
@@ -1103,7 +1089,7 @@
 
 
 <div class="viewcode-block" id="PicklableVCFVariationSource.region_of">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.region_of">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.region_of">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">region_of</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the sequence region a record names.</span>
@@ -1120,7 +1106,7 @@
 
 
 <div class="viewcode-block" id="PicklableVCFVariationSource.record_columns">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.record_columns">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.record_columns">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">record_columns</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return a record's own columns, which output echoes back as the input gave them.</span>

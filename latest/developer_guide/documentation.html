@@ -60,13 +60,13 @@
     <link rel="icon" href="../_static/vep-icon.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Reference" href="../reference.html" />
-    <link rel="prev" title="Parsers and Feature Sources" href="parsers_and_feature_sources.html" />
+    <link rel="next" title="Coverage Report" href="coverage_report.html" />
+    <link rel="prev" title="Benchmarking" href="benchmarking.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -181,13 +181,6 @@
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="index.html">
     Developer Guide
@@ -196,7 +189,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../reference.html">
+  <a class="nav-link nav-internal" href="../reference/index.html">
     Reference
   </a>
 </li>
@@ -337,13 +330,6 @@
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="index.html">
     Developer Guide
@@ -352,7 +338,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../reference.html">
+  <a class="nav-link nav-internal" href="../reference/index.html">
     Reference
   </a>
 </li>
@@ -432,7 +418,11 @@
 <li class="toctree-l1"><a class="reference internal" href="coordinates_and_slices.html">Position in a Sequence Region</a></li>
 <li class="toctree-l1"><a class="reference internal" href="circular_dependencies.html">Avoiding circular dependency</a></li>
 <li class="toctree-l1"><a class="reference internal" href="parsers_and_feature_sources.html">Parsers and Feature Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
 <li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Building the Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coverage_report.html">Coverage Report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writing_plugins.html">Writing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adding_annotation_sources.html">Adding an annotation source</a></li>
 </ul>
 </div>
 </nav></div>
@@ -528,6 +518,38 @@ In the <code class="docutils literal notranslate"><span class="pre">conf.py</spa
 <p>produces documentation like this:</p>
 <p><img alt="" src="../_images/vcfrecord-docs-example.png" /></p>
 </section>
+<section id="generated-pages">
+<h2>Generated pages<a class="headerlink" href="#generated-pages" title="Link to this heading">#</a></h2>
+<p>Some pages are generated from the source code before Sphinx runs. Every generated page is written under <code class="docutils literal notranslate"><span class="pre">docs/auto/</span></code>, which is ignored by git and removed by <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">docs-clean</span></code>; hand-written pages never go there.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Make target</p></th>
+<th class="head"><p>Generates</p></th>
+<th class="head"><p>From</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">apidoc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">docs/auto/reference/api/</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sphinx-apidoc</span></code> over the Python packages</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">clidoc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">docs/auto/reference/cli/</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">docs/_scripts/clidoc.py</span></code>, from the registered commands and their option declarations</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">termdoc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">docs/auto/reference/consequence_terms.md</span></code>, <code class="docutils literal notranslate"><span class="pre">docs/auto/static/catalogue/</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">docs/_scripts/termdoc.py</span></code>, from the rows and graphs <code class="docutils literal notranslate"><span class="pre">vep</span> <span class="pre">catalogue</span> <span class="pre">show</span></code> prints</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">explaindoc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">docs/auto/static/explain/</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">docs/_scripts/explaindoc.py</span></code>, which runs <code class="docutils literal notranslate"><span class="pre">vep</span> <span class="pre">explain</span> <span class="pre">--graph</span></code> on the example data for the <a class="reference internal" href="../user_guide/tutorials/explaining_consequences.html"><span class="std std-doc">Explaining a consequence call</span></a> tutorial</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">docs</span></code> runs all four before building the site. The hand-written <a class="reference internal" href="../reference/index.html"><span class="std std-doc">Reference</span></a> page links the generated pages into the site navigation. Files under <code class="docutils literal notranslate"><span class="pre">docs/auto/static/</span></code> are copied into the site’s <code class="docutils literal notranslate"><span class="pre">_static</span></code> directory as they are.</p>
+</section>
 <section id="coverage-reports">
 <h2>Coverage reports<a class="headerlink" href="#coverage-reports" title="Link to this heading">#</a></h2>
 <p>This project uses both Python and Rust, so there are two separate coverage reports. These are generated, along with the coverage badges, using the <code class="docutils literal notranslate"><span class="pre">coverage</span></code> target in the Makefile of this repository.</p>
@@ -557,20 +579,20 @@ In the <code class="docutils literal notranslate"><span class="pre">conf.py</spa
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="parsers_and_feature_sources.html"
+       href="benchmarking.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Parsers and Feature Sources</p>
+        <p class="prev-next-title">Benchmarking</p>
       </div>
     </a>
     <a class="right-next"
-       href="../reference.html"
+       href="coverage_report.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Reference</p>
+        <p class="prev-next-title">Coverage Report</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -595,6 +617,7 @@ In the <code class="docutils literal notranslate"><span class="pre">conf.py</spa
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#changes-to-the-default-configuration">Changes to the default configuration</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documenting-rust-objects">Documenting Rust objects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generated-pages">Generated pages</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#coverage-reports">Coverage reports</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-the-documentation-locally">Building the documentation locally</a></li>
 </ul>

@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -548,7 +534,7 @@
 
 
 <div class="viewcode-block" id="ConsequenceDefinition">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.ConsequenceDefinition">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.ConsequenceDefinition">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ConsequenceDefinition</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Represent one parsed entry from the overlap consequence catalogue.</span>
@@ -580,7 +566,7 @@
 
 
 <div class="viewcode-block" id="catalogue_path">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.catalogue_path">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.catalogue_path">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">catalogue_path</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the filesystem path of the packaged catalogue.</span>
 
@@ -594,7 +580,7 @@
 
 
 <div class="viewcode-block" id="load_catalogue">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.load_catalogue">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.load_catalogue">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_catalogue</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return a catalogue's raw JSON payload, for editing rather than evaluation.</span>
 
@@ -623,7 +609,7 @@
 
 
 <div class="viewcode-block" id="dump_catalogue">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.dump_catalogue">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.dump_catalogue">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">dump_catalogue</span><span class="p">(</span><span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return a catalogue payload as JSON text, in the checked-in formatting."""</span>
     <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span></div>
@@ -631,7 +617,7 @@
 
 
 <div class="viewcode-block" id="load_consequence_definitions">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.load_consequence_definitions">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.load_consequence_definitions">[docs]</a>
 <span class="nd">@cache</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_consequence_definitions</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ConsequenceDefinition</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Load and parse the package consequence catalogue.</span>
@@ -680,7 +666,7 @@
 
 
 <div class="viewcode-block" id="catalogue_digest">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.catalogue_digest">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.catalogue_digest">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">catalogue_digest</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return a short digest of a catalogue file's bytes, the packaged catalogue by default.</span>
 

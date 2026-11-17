@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -547,7 +533,7 @@
 
 
 <div class="viewcode-block" id="OracleCase">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.oracle.OracleCase">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.oracle.OracleCase">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">OracleCase</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""A named overlap, paired with the Perl case of the same name.</span>
@@ -563,7 +549,7 @@
 
 
 <div class="viewcode-block" id="oracle_transcript">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.oracle.oracle_transcript">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.oracle.oracle_transcript">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">oracle_transcript</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Transcript</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return a small forward-strand coding transcript: two exons around one intron, all of both coding.</span>
 
@@ -607,7 +593,7 @@
 
 
 <div class="viewcode-block" id="oracle_cases">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.oracle.oracle_cases">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.oracle.oracle_cases">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">oracle_cases</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">OracleCase</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return the cases, named and ordered as the Perl script's."""</span>
     <span class="n">transcript</span> <span class="o">=</span> <span class="n">oracle_transcript</span><span class="p">()</span>
@@ -630,7 +616,7 @@
 
 
 <div class="viewcode-block" id="python_terms">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.oracle.python_terms">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.oracle.python_terms">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">python_terms</span><span class="p">(</span>
     <span class="n">annotator</span><span class="p">:</span> <span class="n">Annotator</span><span class="p">[</span><span class="n">OverlapConsequence</span><span class="p">],</span> <span class="n">cases</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">OracleCase</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
@@ -643,7 +629,7 @@
 
 
 <div class="viewcode-block" id="perl_unavailable_reason">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.oracle.perl_unavailable_reason">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.oracle.perl_unavailable_reason">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">perl_unavailable_reason</span><span class="p">(</span><span class="n">perl_modules</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">script</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return why the Perl oracle cannot run here, or None if it can."""</span>
     <span class="k">if</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">"perl"</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -664,7 +650,7 @@
 
 
 <div class="viewcode-block" id="perl_terms">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.oracle.perl_terms">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.oracle.perl_terms">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">perl_terms</span><span class="p">(</span><span class="n">perl_modules</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">script</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">case_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Run the oracle for its terms, one tuple per case in its own order.</span>
 
@@ -691,7 +677,7 @@
 
 
 <div class="viewcode-block" id="perl_seconds">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.oracle.perl_seconds">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.oracle.perl_seconds">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">perl_seconds</span><span class="p">(</span><span class="n">perl_modules</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">script</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">repeats</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return the elapsed seconds of each timed oracle run of ``number`` workload executions.</span>
 
@@ -713,7 +699,7 @@
 
 
 <div class="viewcode-block" id="python_seconds">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.oracle.python_seconds">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.oracle.python_seconds">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">python_seconds</span><span class="p">(</span>
     <span class="n">annotator</span><span class="p">:</span> <span class="n">Annotator</span><span class="p">[</span><span class="n">OverlapConsequence</span><span class="p">],</span> <span class="n">cases</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">OracleCase</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">repeats</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
@@ -730,7 +716,7 @@
 
 
 <div class="viewcode-block" id="covered_cases">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.oracle.covered_cases">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.oracle.covered_cases">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">covered_cases</span><span class="p">(</span><span class="n">perl</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">ours</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return how many cases our terms cover every Perl-reported term of."""</span>
     <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">perl_case</span><span class="p">,</span> <span class="n">our_case</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">perl</span><span class="p">,</span> <span class="n">ours</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">perl_case</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="nb">set</span><span class="p">(</span><span class="n">our_case</span><span class="p">))</span></div>
@@ -738,7 +724,7 @@
 
 
 <div class="viewcode-block" id="subsumption_closure">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.oracle.subsumption_closure">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.oracle.subsumption_closure">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">subsumption_closure</span><span class="p">(</span><span class="n">subsumes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">"""Return every term each term suppresses, directly or through a chain of ``subsumes``."""</span>
     <span class="n">closure</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -757,7 +743,7 @@
 
 
 <div class="viewcode-block" id="covered_through_subsumption">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.oracle.covered_through_subsumption">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.oracle.covered_through_subsumption">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">covered_through_subsumption</span><span class="p">(</span>
     <span class="n">perl</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">ours</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">subsumes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>

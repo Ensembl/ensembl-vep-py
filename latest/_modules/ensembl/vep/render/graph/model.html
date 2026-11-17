@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -491,7 +477,7 @@
 
 
 <div class="viewcode-block" id="Node">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Node">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Node">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Node</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""One vertex.</span>
@@ -519,7 +505,7 @@
 
 
 <div class="viewcode-block" id="Edge">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Edge">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Edge">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Edge</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""One directed connection between two nodes.</span>
@@ -539,7 +525,7 @@
 
 
 <div class="viewcode-block" id="Graph">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Graph">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Graph">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Graph</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""A set of nodes and the edges between them.</span>
@@ -555,7 +541,7 @@
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Graph.node">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Graph.node">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Graph.node">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Node</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return one node by its identifier.</span>
 
@@ -569,7 +555,7 @@
 
 
 <div class="viewcode-block" id="Graph.layers">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Graph.layers">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Graph.layers">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">layers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the distinct layer numbers present, in ascending order."""</span>
         <span class="n">present</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="o">.</span><span class="n">layer</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">}</span>
@@ -577,7 +563,7 @@
 
 
 <div class="viewcode-block" id="Graph.nodes_in_layer">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Graph.nodes_in_layer">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Graph.nodes_in_layer">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">nodes_in_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the nodes of one layer, in declaration order."""</span>
         <span class="n">selected</span> <span class="o">=</span> <span class="p">[]</span>
@@ -588,7 +574,7 @@
 
 
 <div class="viewcode-block" id="Graph.edges_from">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Graph.edges_from">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Graph.edges_from">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">edges_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Edge</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the edges leaving one node."""</span>
         <span class="n">leaving</span> <span class="o">=</span> <span class="p">[]</span>
@@ -599,7 +585,7 @@
 
 
 <div class="viewcode-block" id="Graph.with_hits">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Graph.with_hits">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Graph.with_hits">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">with_hits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hits_by_identifier</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return a copy whose nodes carry the given hit counts.</span>
 

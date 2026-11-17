@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -498,7 +484,7 @@
 
 
 <div class="viewcode-block" id="CorpusOptionsError">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.registry.CorpusOptionsError">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.registry.CorpusOptionsError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CorpusOptionsError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""A configured corpus name, parameter, or external input cannot be used."""</span></div>
 
@@ -512,7 +498,7 @@
 
 
 <div class="viewcode-block" id="register_corpus">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.registry.register_corpus">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.registry.register_corpus">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register_corpus</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">aliases</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">())</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">CorpusFactory</span><span class="p">],</span> <span class="n">CorpusFactory</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Register a corpus factory and any compatibility aliases.</span>
 
@@ -551,7 +537,7 @@
 
 
 <div class="viewcode-block" id="corpus_factory">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.registry.corpus_factory">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.registry.corpus_factory">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">corpus_factory</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CorpusFactory</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the factory registered under ``name`` or one of its aliases.</span>
 
@@ -574,7 +560,7 @@
 
 
 <div class="viewcode-block" id="build_corpus">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.registry.build_corpus">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.registry.build_corpus">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_corpus</span><span class="p">(</span><span class="n">specification</span><span class="p">:</span> <span class="n">CorpusSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Corpus</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Build the corpus described by ``specification``.</span>
 
@@ -592,7 +578,7 @@
 
 
 <div class="viewcode-block" id="corpus_spec_from_options">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.registry.corpus_spec_from_options">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.registry.corpus_spec_from_options">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">corpus_spec_from_options</span><span class="p">(</span><span class="n">options</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CorpusSpec</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Build a specification from command options.</span>
 
@@ -613,7 +599,7 @@
 
 
 <div class="viewcode-block" id="build_corpus_from_options">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.registry.build_corpus_from_options">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.registry.build_corpus_from_options">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_corpus_from_options</span><span class="p">(</span><span class="n">options</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Corpus</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Build a configured corpus with one user-facing error type.</span>
 
@@ -637,7 +623,7 @@
 
 
 <div class="viewcode-block" id="available_corpora">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.registry.available_corpora">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.registry.available_corpora">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">available_corpora</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return registered corpus names in sorted order."""</span>
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_CORPUS_FACTORIES</span><span class="p">))</span></div>

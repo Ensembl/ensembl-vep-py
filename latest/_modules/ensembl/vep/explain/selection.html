@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -548,7 +534,7 @@
 
 
 <div class="viewcode-block" id="VariantSelector">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.explain.html#ensembl.vep.explain.selection.VariantSelector">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.VariantSelector">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">VariantSelector</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Variant selector written as ``CHR:POS:REF&gt;ALT`` or ``CHR:POS:ID``.</span>
@@ -575,7 +561,7 @@
     <span class="n">allele_num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 
 <div class="viewcode-block" id="VariantSelector.parse">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.explain.html#ensembl.vep.explain.selection.VariantSelector.parse">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.VariantSelector.parse">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">allele_num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VariantSelector</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Parse a selector, with ``-`` for an empty allele.</span>
@@ -635,7 +621,7 @@
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span>
 
 <div class="viewcode-block" id="VariantSelector.matches">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.explain.html#ensembl.vep.explain.selection.VariantSelector.matches">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.VariantSelector.matches">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allele</span><span class="p">:</span> <span class="n">VariationAllele</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return whether an allele is the one this selector names."""</span>
         <span class="n">seq_region_name</span> <span class="o">=</span> <span class="n">allele</span><span class="o">.</span><span class="n">slice</span><span class="o">.</span><span class="n">seq_region_name</span> <span class="k">if</span> <span class="n">allele</span><span class="o">.</span><span class="n">slice</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
@@ -665,7 +651,7 @@
 
 
 <div class="viewcode-block" id="FeatureSelector">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.explain.html#ensembl.vep.explain.selection.FeatureSelector">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.FeatureSelector">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">FeatureSelector</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Feature selector using a stable identifier and optional GFF3 type prefix.</span>
@@ -680,7 +666,7 @@
     <span class="n">stable_id</span><span class="p">:</span> <span class="nb">str</span>
 
 <div class="viewcode-block" id="FeatureSelector.parse">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.explain.html#ensembl.vep.explain.selection.FeatureSelector.parse">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.FeatureSelector.parse">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FeatureSelector</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Parse a feature selector.</span>
@@ -700,7 +686,7 @@
 
 
 <div class="viewcode-block" id="FeatureSelector.matches">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.explain.html#ensembl.vep.explain.selection.FeatureSelector.matches">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.FeatureSelector.matches">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature</span><span class="p">:</span> <span class="n">Transcript</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return whether a feature is the one this selector names.</span>
 
@@ -712,7 +698,7 @@
 
 
 <div class="viewcode-block" id="OverlapSelection">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">OverlapSelection</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Selectable overlaps and the sources used to find them.</span>
@@ -730,7 +716,7 @@
     <span class="n">_built_corpus</span><span class="p">:</span> <span class="n">Corpus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
 <div class="viewcode-block" id="OverlapSelection.close">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection.close">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Release the generated corpus, if one was built."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_built_corpus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -739,7 +725,7 @@
 
 
 <div class="viewcode-block" id="OverlapSelection.select">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection.select">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection.select">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NamedOverlap</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the single overlap the selectors identify.</span>
 
@@ -799,7 +785,7 @@
 
 
 <div class="viewcode-block" id="OverlapSelection.candidate_overlaps">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection.candidate_overlaps">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection.candidate_overlaps">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">candidate_overlaps</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="n">VariantSelector</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">NamedOverlap</span><span class="p">]:</span>
@@ -824,7 +810,7 @@
 
 
 <div class="viewcode-block" id="OverlapSelection.all_overlaps">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection.all_overlaps">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection.all_overlaps">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">all_overlaps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">NamedOverlap</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Yield every selectable overlap, in the order ``--index`` counts.</span>
 
@@ -987,7 +973,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_built_corpus</span>
 
 <div class="viewcode-block" id="OverlapSelection.description">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection.description">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection.description">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Describe where the overlaps come from, for an error or a log line."""</span>
         <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">source</span>
@@ -1000,7 +986,7 @@
 
 
 <div class="viewcode-block" id="OverlapSelection.listing">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection.listing">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection.listing">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">listing</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return every selectable overlap, one per line, as index, name and feature."""</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>

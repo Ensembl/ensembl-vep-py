@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -499,7 +485,7 @@
 
 
 <div class="viewcode-block" id="ReportFormat">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.render.html#ensembl.vep.render.report.ReportFormat">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.render.html#ensembl.vep.render.report.ReportFormat">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ReportFormat</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""The formats a report can be rendered in."""</span>
 
@@ -510,7 +496,7 @@
 
 
 <div class="viewcode-block" id="ChartKind">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.render.html#ensembl.vep.render.report.ChartKind">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.render.html#ensembl.vep.render.report.ChartKind">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ChartKind</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""How a section's quantities are drawn, if at all."""</span>
 
@@ -521,7 +507,7 @@
 
 
 <div class="viewcode-block" id="ReportSection">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.render.html#ensembl.vep.render.report.ReportSection">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.render.html#ensembl.vep.render.report.ReportSection">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ReportSection</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""One block of a report: a table, a chart, or both.</span>
@@ -584,7 +570,7 @@
 
 
 <div class="viewcode-block" id="render_report">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.render.html#ensembl.vep.render.report.render_report">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.render.html#ensembl.vep.render.report.render_report">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">render_report</span><span class="p">(</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subtitle</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sections</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">ReportSection</span><span class="p">],</span> <span class="n">report_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ReportFormat</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>

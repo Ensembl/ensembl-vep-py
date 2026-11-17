@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -509,7 +495,7 @@
 
 
 <div class="viewcode-block" id="SourceConfig">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">SourceConfig</span><span class="p">(</span><span class="n">ConfigSection</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Input variant and annotation source configuration.</span>
@@ -553,7 +539,9 @@
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">option</span><span class="p">(</span><span class="s2">"file of sequence-region synonyms, one region per line"</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="n">cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">option</span><span class="p">(</span><span class="s2">"annotate from a VEP cache (not implemented yet)"</span><span class="p">))</span>
-    <span class="n">dir_cache</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">option</span><span class="p">(</span><span class="s2">"directory of the VEP cache"</span><span class="p">))</span>
+    <span class="n">dir_cache</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">option</span><span class="p">(</span><span class="s2">"directory of the VEP cache (not implemented yet)"</span><span class="p">)</span>
+    <span class="p">)</span>
     <span class="n">database</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">option</span><span class="p">(</span><span class="s2">"annotate from an Ensembl database (not implemented yet)"</span><span class="p">)</span>
     <span class="p">)</span>
@@ -594,7 +582,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"distance must be zero or greater"</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SourceConfig.has_features">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig.has_features">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig.has_features">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_features</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return whether a transcript source has been configured.</span>
 

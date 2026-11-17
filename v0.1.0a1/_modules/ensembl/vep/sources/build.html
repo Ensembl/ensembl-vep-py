@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ensembl.vep.sources.build &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ensembl/vep/sources/build';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.0a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../../../../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../../../../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../../../../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.sources.build</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ensembl.vep.sources.build</h1><div class="highlight"><pre>
+<span></span><span class="c1"># See the NOTICE file distributed with this work for additional information</span>
+<span class="c1"># regarding copyright ownership.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1"># http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="sd">"""Source construction from run configuration.</span>
+
+<span class="sd">Two kinds of source, named apart on purpose: the **input source** holds the variants being</span>
+<span class="sd">annotated, and the **annotation sources** hold what they are annotated against. Perl VEP draws the</span>
+<span class="sd">same line -- its input is a Parser and its annotation sources come from</span>
+<span class="sd">``AnnotationSourceAdaptor::get_all``, which reads the configuration and returns whichever set of</span>
+<span class="sd">sources it names (a cache, a database, a GFF3/GTF file, custom files).</span>
+
+<span class="sd">These are functions rather than a class holding the set: a run's sources are built once, wired to</span>
+<span class="sd">each other, and then used directly by whoever asked for them. The one thing they must share is the</span>
+<span class="sd">reference sequence and the synonym map, which is why those are built first and passed in.</span>
+
+<span class="sd">There is one builder per kind of annotation source rather than one call returning the whole set.</span>
+<span class="sd">Each annotation track builds the source it annotates against, so nothing has to pick its own source</span>
+<span class="sd">out of a list of everything configured.</span>
+
+<span class="sd">Which input format to read is decided here, by name, against the closed set in</span>
+<span class="sd">``common/constants.py``. One conditional in one place, rather than a registry each source</span>
+<span class="sd">registers with: the configuration package offers the same names as ``--format`` choices and cannot</span>
+<span class="sd">import the sources, which import it.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.common.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">COMPRESSION_SUFFIXES</span><span class="p">,</span> <span class="n">INPUT_FORMAT_EXTENSIONS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.config.sections.common.source</span><span class="w"> </span><span class="kn">import</span> <span class="n">SourceConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.sources.file.fasta.sequence</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastaSequenceSource</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.sources.file.gff3.transcript</span><span class="w"> </span><span class="kn">import</span> <span class="n">GFF3TranscriptSource</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.sources.file.gtf.transcript</span><span class="w"> </span><span class="kn">import</span> <span class="n">GTFTranscriptSource</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.sources.file.vcf.variation</span><span class="w"> </span><span class="kn">import</span> <span class="n">PicklableVCFVariationSource</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.sources.sequence_source</span><span class="w"> </span><span class="kn">import</span> <span class="n">SequenceSource</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.sources.synonym</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChromosomeSynonyms</span><span class="p">,</span> <span class="n">SequenceRegionResolver</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"DEFAULT_INPUT_FORMAT"</span><span class="p">,</span>
+    <span class="s2">"InputSource"</span><span class="p">,</span>
+    <span class="s2">"TranscriptSource"</span><span class="p">,</span>
+    <span class="s2">"build_chromosome_synonyms"</span><span class="p">,</span>
+    <span class="s2">"build_input_source"</span><span class="p">,</span>
+    <span class="s2">"build_sequence_source"</span><span class="p">,</span>
+    <span class="s2">"build_transcript_source"</span><span class="p">,</span>
+    <span class="s2">"detect_input_format"</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">DEFAULT_INPUT_FORMAT</span> <span class="o">=</span> <span class="s2">"vcf"</span>
+<span class="sd">"""What an input file whose name names no format is read as."""</span>
+
+<span class="n">TranscriptSource</span> <span class="o">=</span> <span class="n">GFF3TranscriptSource</span> <span class="o">|</span> <span class="n">GTFTranscriptSource</span>
+<span class="sd">"""The file-backed transcript annotation sources."""</span>
+
+<span class="n">InputSource</span> <span class="o">=</span> <span class="n">PicklableVCFVariationSource</span>
+<span class="sd">"""The sources a run can read its variants from.</span>
+
+<span class="sd">What a run asks of one: ``iter_all_records`` and ``records_to_features`` either side of a process</span>
+<span class="sd">boundary, ``region_of`` and ``record_columns`` to place and echo a record, and</span>
+<span class="sd">``header_lines`` and ``record_count`` for what output and progress need before reading."""</span>
+
+
+<div class="viewcode-block" id="build_chromosome_synonyms">
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.sources.html#ensembl.vep.sources.build.build_chromosome_synonyms">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_chromosome_synonyms</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">SourceConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ChromosomeSynonyms</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return the run's sequence-region synonyms.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (SourceConfig): The configured sources.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ChromosomeSynonyms: The map ``--synonyms`` names, or an empty one when it was not given.</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">synonyms</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ChromosomeSynonyms</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">ChromosomeSynonyms</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">synonyms</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_sequence_source">
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.sources.html#ensembl.vep.sources.build.build_sequence_source">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_sequence_source</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">SourceConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FastaSequenceSource</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return the reference sequence source every other source shares.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (SourceConfig): The configured sources.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        FastaSequenceSource: The reference source.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If no FASTA was configured.</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">fasta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"annotating a variant file needs a reference: give --fasta"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">FastaSequenceSource</span><span class="p">(</span><span class="n">file_path</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">fasta</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_reference_names</span><span class="p">(</span><span class="n">sequence_source</span><span class="p">:</span> <span class="n">SequenceSource</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Return the names the reference sequence declares, or none without one.</span>
+
+<span class="sd">    The reference and not the input, because this is the spelling every model slice is built in,</span>
+<span class="sd">    and a slice is what sequence is fetched with: the sequence source is asked for a region by the</span>
+<span class="sd">    name it declares, with nothing mapping the name on its way in. Every other side maps into or</span>
+<span class="sd">    out of it -- a GXF record's own name is resolved in, a region query back out -- and the input's</span>
+<span class="sd">    own spelling is kept on the variation's ``uploaded_locus``, which is what output reports.</span>
+
+<span class="sd">    Asked of the source rather than of a FASTA: which kind of reference a run has is</span>
+<span class="sd">    ``build_sequence_source``'s business, and a cache or a database answers this as well as a</span>
+<span class="sd">    file does. A source that lists no regions, and one whose index cannot be read, both leave</span>
+<span class="sd">    every uploaded name resolving to itself.</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="n">sequence_source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">frozenset</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sequence_source</span><span class="o">.</span><span class="n">sequence_region_names</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">frozenset</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_region_resolver</span><span class="p">(</span>
+    <span class="n">sequence_source</span><span class="p">:</span> <span class="n">SequenceSource</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">synonyms</span><span class="p">:</span> <span class="n">ChromosomeSynonyms</span><span class="p">,</span>
+    <span class="n">source_names</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SequenceRegionResolver</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return a resolver naming regions the way one side of a run spells them.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sequence_source (SequenceSource | None): The shared reference source, or None for a</span>
+<span class="sd">            caller that can work without reference sequence -- ``vep explain`` allows it, a run</span>
+<span class="sd">            does not -- which leaves the resolver with no names.</span>
+<span class="sd">        synonyms (ChromosomeSynonyms): The run's sequence-region synonyms.</span>
+<span class="sd">        source_names (frozenset[str] | None): The names to resolve into. None asks for the</span>
+<span class="sd">            reference's own names, which is what a record read from a file is given.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        SequenceRegionResolver: The resolver for those names.</span>
+<span class="sd">    """</span>
+
+    <span class="n">names</span> <span class="o">=</span> <span class="n">_reference_names</span><span class="p">(</span><span class="n">sequence_source</span><span class="p">)</span> <span class="k">if</span> <span class="n">source_names</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">source_names</span>
+    <span class="k">return</span> <span class="n">SequenceRegionResolver</span><span class="p">(</span><span class="n">source_names</span><span class="o">=</span><span class="n">names</span><span class="p">,</span> <span class="n">synonyms</span><span class="o">=</span><span class="n">synonyms</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_format_for_path</span><span class="p">(</span><span class="n">input_file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return the format owning an input path's extension, or None when no format claims it."""</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="n">COMPRESSION_SUFFIXES</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">suffix</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[:</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">suffix</span><span class="p">)]</span>
+            <span class="k">break</span>
+    <span class="k">for</span> <span class="n">format_name</span><span class="p">,</span> <span class="n">extensions</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">INPUT_FORMAT_EXTENSIONS</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">extension</span><span class="p">)</span> <span class="k">for</span> <span class="n">extension</span> <span class="ow">in</span> <span class="n">extensions</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">format_name</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="detect_input_format">
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.sources.html#ensembl.vep.sources.build.detect_input_format">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">detect_input_format</span><span class="p">(</span><span class="n">input_file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">configured_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return the format an input file is read as.</span>
+
+<span class="sd">    A configured format wins, since only the caller knows what an unqualified file holds. An</span>
+<span class="sd">    unrecognised name is refused rather than guessed at, but an unrecognised *extension* falls</span>
+<span class="sd">    back to ``DEFAULT_INPUT_FORMAT``: VEP has always read ``--input_file`` of any name as VCF, and</span>
+<span class="sd">    ``--format`` is how another format is named.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_file (Path | str): The configured input file.</span>
+<span class="sd">        configured_format (str | None): What ``--format`` named, or None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: A registered input format name.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If a configured format names no registered input source.</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="n">configured_format</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">configured_format</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">INPUT_FORMAT_EXTENSIONS</span><span class="p">:</span>
+            <span class="n">supported</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">INPUT_FORMAT_EXTENSIONS</span><span class="p">))</span> <span class="ow">or</span> <span class="s2">"&lt;none&gt;"</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"no reader for input format </span><span class="si">{</span><span class="n">configured_format</span><span class="si">!r}</span><span class="s2"> yet; supported: </span><span class="si">{</span><span class="n">supported</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">name</span>
+
+    <span class="n">detected</span> <span class="o">=</span> <span class="n">_format_for_path</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">detected</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">detected</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> names no input format; reading it as </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">DEFAULT_INPUT_FORMAT</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">DEFAULT_INPUT_FORMAT</span></div>
+
+
+
+<div class="viewcode-block" id="build_input_source">
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.sources.html#ensembl.vep.sources.build.build_input_source">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_input_source</span><span class="p">(</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">SourceConfig</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">sequence_source</span><span class="p">:</span> <span class="n">SequenceSource</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">synonyms</span><span class="p">:</span> <span class="n">ChromosomeSynonyms</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InputSource</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return the source holding the variants being annotated.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (SourceConfig): The configured sources.</span>
+<span class="sd">        sequence_source (SequenceSource | None): The shared reference source, or None.</span>
+<span class="sd">        synonyms (ChromosomeSynonyms): The run's sequence-region synonyms.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        InputSource: The input source the configured format reads with.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If no input file was configured, or its format has no reader.</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">input_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"annotating needs variants: give --input_file"</span><span class="p">)</span>
+
+    <span class="n">source_format</span> <span class="o">=</span> <span class="n">detect_input_format</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">input_file</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
+    <span class="c1"># source_format can't be anything other than vcf at the moment</span>
+    <span class="c1"># keep as a guard</span>
+    <span class="k">if</span> <span class="n">source_format</span> <span class="o">!=</span> <span class="s2">"vcf"</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"no reader for input format </span><span class="si">{</span><span class="n">source_format</span><span class="si">!r}</span><span class="s2"> yet"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">PicklableVCFVariationSource</span><span class="p">(</span>
+        <span class="n">file_path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">input_file</span><span class="p">),</span>
+        <span class="n">sequence_source</span><span class="o">=</span><span class="n">sequence_source</span><span class="p">,</span>
+        <span class="n">sequence_region_resolver</span><span class="o">=</span><span class="n">_region_resolver</span><span class="p">(</span><span class="n">sequence_source</span><span class="p">,</span> <span class="n">synonyms</span><span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_transcript_source">
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.sources.html#ensembl.vep.sources.build.build_transcript_source">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_transcript_source</span><span class="p">(</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">SourceConfig</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">sequence_source</span><span class="p">:</span> <span class="n">SequenceSource</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">synonyms</span><span class="p">:</span> <span class="n">ChromosomeSynonyms</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TranscriptSource</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return the transcript source a run annotates against, wired to resolve names both ways.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (SourceConfig): The configured sources.</span>
+<span class="sd">        sequence_source (SequenceSource | None): The shared reference source. None is for a</span>
+<span class="sd">            caller that can work without reference sequence -- ``vep explain`` allows it, a run</span>
+<span class="sd">            does not -- and leaves the source with no sequence and no reference names.</span>
+<span class="sd">        synonyms (ChromosomeSynonyms): The run's sequence-region synonyms.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        TranscriptSource: The transcript source.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the transcript files are ambiguous or absent.</span>
+<span class="sd">        NotImplementedError: If the configured transcript provider has no reader yet.</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"annotating from a VEP cache (--cache, --dir_cache) is not implemented yet"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">database</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"annotating from an Ensembl database is not implemented yet"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">gff</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">config</span><span class="o">.</span><span class="n">gtf</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"give --gff or --gtf, not both"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">gff</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">config</span><span class="o">.</span><span class="n">gtf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"annotating a variant file needs transcripts: give --gff or --gtf"</span><span class="p">)</span>
+
+    <span class="c1"># Two directions, one map: records read from the file get reference names, and a region query</span>
+    <span class="c1"># built from a reference name goes out in the file's own spelling.</span>
+    <span class="n">reference_region_resolver</span> <span class="o">=</span> <span class="n">_region_resolver</span><span class="p">(</span><span class="n">sequence_source</span><span class="p">,</span> <span class="n">synonyms</span><span class="p">)</span>
+    <span class="n">source</span><span class="p">:</span> <span class="n">TranscriptSource</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">gff</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">GFF3TranscriptSource</span><span class="p">(</span>
+            <span class="n">file_path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">gff</span><span class="p">),</span>
+            <span class="n">sequence_source</span><span class="o">=</span><span class="n">sequence_source</span><span class="p">,</span>
+            <span class="n">reference_region_resolver</span><span class="o">=</span><span class="n">reference_region_resolver</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">gtf</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">GTFTranscriptSource</span><span class="p">(</span>
+            <span class="n">file_path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">gtf</span><span class="p">),</span>
+            <span class="n">sequence_source</span><span class="o">=</span><span class="n">sequence_source</span><span class="p">,</span>
+            <span class="n">reference_region_resolver</span><span class="o">=</span><span class="n">reference_region_resolver</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">source</span><span class="o">.</span><span class="n">source_region_resolver</span> <span class="o">=</span> <span class="n">_region_resolver</span><span class="p">(</span><span class="n">sequence_source</span><span class="p">,</span> <span class="n">synonyms</span><span class="p">,</span> <span class="n">source</span><span class="o">.</span><span class="n">sequence_region_names</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">source</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

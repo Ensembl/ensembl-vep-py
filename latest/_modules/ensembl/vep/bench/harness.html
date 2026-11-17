@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -544,7 +530,7 @@
 
 
 <div class="viewcode-block" id="terms_of">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.harness.terms_of">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.harness.terms_of">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">terms_of</span><span class="p">(</span><span class="n">consequences</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">OverlapConsequence</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return the terms of a consequence list, in order."""</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">consequence</span><span class="o">.</span><span class="n">term</span> <span class="k">for</span> <span class="n">consequence</span> <span class="ow">in</span> <span class="n">consequences</span><span class="p">]</span></div>
@@ -552,7 +538,7 @@
 
 
 <div class="viewcode-block" id="consequence_strategies">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.harness.consequence_strategies">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.harness.consequence_strategies">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">consequence_strategies</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return every registered ``consequence.*`` strategy, the reference first."""</span>
     <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">available_annotators</span><span class="p">()</span> <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"consequence."</span><span class="p">)]</span>
@@ -564,7 +550,7 @@
 
 
 <div class="viewcode-block" id="native_kernels_available">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.harness.native_kernels_available">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.harness.native_kernels_available">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">native_kernels_available</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return whether the strategy that needs the compiled extension is registered."""</span>
     <span class="k">return</span> <span class="n">KERNELS_STRATEGY</span> <span class="ow">in</span> <span class="n">available_annotators</span><span class="p">()</span></div>
@@ -572,7 +558,7 @@
 
 
 <div class="viewcode-block" id="GateReport">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.harness.GateReport">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.harness.GateReport">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">GateReport</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""What the conformance gate found.</span>
@@ -599,7 +585,7 @@
 
 
 <div class="viewcode-block" id="conformance_gate">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.harness.conformance_gate">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.harness.conformance_gate">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">conformance_gate</span><span class="p">(</span>
     <span class="n">overlaps</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
@@ -649,7 +635,7 @@
 
 
 <div class="viewcode-block" id="TimingPolicy">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.harness.TimingPolicy">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.harness.TimingPolicy">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">TimingPolicy</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""How a measurement is taken.</span>
@@ -665,7 +651,7 @@
 
 
 <div class="viewcode-block" id="Timing">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.harness.Timing">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.harness.Timing">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Timing</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""The samples one measurement took.</span>
@@ -684,7 +670,7 @@
         <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Timing.ms_per_thousand">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.harness.Timing.ms_per_thousand">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.harness.Timing.ms_per_thousand">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ms_per_thousand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contexts</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the best sample as milliseconds per thousand contexts."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">best</span> <span class="o">*</span> <span class="mi">1_000_000</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">contexts</span><span class="p">)</span></div>
@@ -693,7 +679,7 @@
 
 
 <div class="viewcode-block" id="time_best">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.harness.time_best">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.harness.time_best">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">time_best</span><span class="p">(</span><span class="n">run_once</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">object</span><span class="p">],</span> <span class="n">policy</span><span class="p">:</span> <span class="n">TimingPolicy</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Timing</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Run a workload the policy's warmup times untimed, then time it the policy's repeats times."""</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">policy</span><span class="o">.</span><span class="n">warmup</span><span class="p">):</span>
@@ -708,7 +694,7 @@
 
 
 <div class="viewcode-block" id="fact_cost">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.harness.fact_cost">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.harness.fact_cost">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">fact_cost</span><span class="p">(</span>
     <span class="n">annotator</span><span class="p">:</span> <span class="n">Annotator</span><span class="p">[</span><span class="n">OverlapConsequence</span><span class="p">],</span> <span class="n">overlaps</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
@@ -725,7 +711,7 @@
 
 
 <div class="viewcode-block" id="annotator_extras">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.harness.annotator_extras">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.harness.annotator_extras">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">annotator_extras</span><span class="p">(</span><span class="n">annotator</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return whatever instrumentation an annotator and its caches expose, labelled.</span>
 

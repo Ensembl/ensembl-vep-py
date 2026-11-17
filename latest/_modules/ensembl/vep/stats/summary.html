@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -518,7 +504,7 @@
 
 
 <div class="viewcode-block" id="RunSummary">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummary">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummary">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">RunSummary</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Term-level summary of an annotation run.</span>
@@ -561,7 +547,7 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">variants</span><span class="si">}</span><span class="s2"> variants, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">alleles</span><span class="si">}</span><span class="s2"> alleles, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">overlaps</span><span class="si">}</span><span class="s2"> overlaps"</span>
 
 <div class="viewcode-block" id="RunSummary.sections">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummary.sections">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummary.sections">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">sections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ReportSection</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the summary as report sections, in the order the Perl summary shows them."""</span>
         <span class="k">return</span> <span class="p">(</span>
@@ -610,7 +596,7 @@
 
 
 <div class="viewcode-block" id="RunSummaryDelta">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummaryDelta">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummaryDelta">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">RunSummaryDelta</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Mergeable summary counts from one worker buffer.</span>
@@ -712,7 +698,7 @@
 
 
 <div class="viewcode-block" id="RunSummaryCollector">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummaryCollector">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummaryCollector">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">RunSummaryCollector</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Incremental collector for a ``RunSummary``.</span>
@@ -733,7 +719,7 @@
     <span class="n">_streaming_positions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_StreamingPositionBins</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RunSummaryCollector.observe">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummaryCollector.observe">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummaryCollector.observe">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">observe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variation</span><span class="p">:</span> <span class="n">Variation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Count one variation and everything hanging off it.</span>
 
@@ -765,7 +751,7 @@
 
 
 <div class="viewcode-block" id="RunSummaryCollector.merge">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummaryCollector.merge">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummaryCollector.merge">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">:</span> <span class="n">RunSummaryDelta</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Merge a worker-buffer summary delta."""</span>
 
@@ -777,7 +763,7 @@
 
 
 <div class="viewcode-block" id="RunSummaryCollector.merge_ordered_delta">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummaryCollector.merge_ordered_delta">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummaryCollector.merge_ordered_delta">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">merge_ordered_delta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">:</span> <span class="n">RunSummaryDelta</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Merge one sequence-region worker delta in arbitrary source order.</span>
 
@@ -834,7 +820,7 @@
                 <span class="n">totals</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">totals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">count</span>
 
 <div class="viewcode-block" id="RunSummaryCollector.delta">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummaryCollector.delta">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummaryCollector.delta">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">delta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunSummaryDelta</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the mergeable counts accumulated so far."""</span>
         <span class="n">positions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -854,7 +840,7 @@
 
 
 <div class="viewcode-block" id="RunSummaryCollector.finish">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummaryCollector.finish">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummaryCollector.finish">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunSummary</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the summary of everything observed so far."""</span>
         <span class="n">coding</span> <span class="o">=</span> <span class="n">coding_terms</span><span class="p">()</span>

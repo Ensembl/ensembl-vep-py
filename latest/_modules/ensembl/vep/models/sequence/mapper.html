@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -505,7 +491,7 @@
 
 
 <div class="viewcode-block" id="MapperIndex">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.MapperIndex">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.MapperIndex">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MapperIndex</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Index holding the offset&lt;-&gt;genomic position mapping.</span>
@@ -526,7 +512,7 @@
 
 
 <div class="viewcode-block" id="Mapper">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.Mapper">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.Mapper">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Mapper</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Genomic &lt;-&gt; offset coordinate mapping over an ordered list of genomic spans.</span>
@@ -598,7 +584,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefix_lengths</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
 <div class="viewcode-block" id="Mapper.genomic_to_offset">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.Mapper.genomic_to_offset">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.Mapper.genomic_to_offset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">genomic_to_offset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">genomic_position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="n">MapperIndex</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -638,7 +624,7 @@
 
 
 <div class="viewcode-block" id="Mapper.offset_to_genomic">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.Mapper.offset_to_genomic">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.Mapper.offset_to_genomic">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">offset_to_genomic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="n">MapperIndex</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Map a 0-based CDS/cDNA offset to its genomic position.</span>
 
@@ -671,7 +657,7 @@
 
 
 <div class="viewcode-block" id="Mapper.genomic_span_to_offsets">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.Mapper.genomic_span_to_offsets">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.Mapper.genomic_span_to_offsets">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">genomic_span_to_offsets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">max_position</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Map a genomic span ``[min_position, max_position]`` to CDS/cDNA offsets ``[low, high]``.</span>
 
@@ -734,7 +720,7 @@
 
 
 <div class="viewcode-block" id="Mapper.codon_genomic_spans">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.Mapper.codon_genomic_spans">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.Mapper.codon_genomic_spans">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">codon_genomic_spans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Genomic spans of the whole codon containing ``offset``.</span>
 
@@ -779,7 +765,7 @@
 
 
 <div class="viewcode-block" id="Mapper.codon_window">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.Mapper.codon_window">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.Mapper.codon_window">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">codon_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offsets</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""0-based CDS half-open offsets ``[start, end)`` extending to whole codon(s) window.</span>
 
@@ -799,7 +785,7 @@
 
 
 <div class="viewcode-block" id="Mapper.offset_to_protein_offset">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.Mapper.offset_to_protein_offset">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.Mapper.offset_to_protein_offset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">offset_to_protein_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Map a 0-based CDS offset to its 0-based protein (residue) offset.</span>
 
@@ -815,7 +801,7 @@
 
 
 <div class="viewcode-block" id="Mapper.protein_offset_to_span">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.Mapper.protein_offset_to_span">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.Mapper.protein_offset_to_span">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">protein_offset_to_span</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">protein_offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Map a 0-based protein (residue) offset to its codon's CDS-offset span.</span>
 
@@ -834,7 +820,7 @@
 
 
 <div class="viewcode-block" id="Mapper.build_index">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.Mapper.build_index">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.sequence.html#ensembl.vep.models.sequence.mapper.Mapper.build_index">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">build_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MapperIndex</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Build the O(length) accelerator.</span>
 

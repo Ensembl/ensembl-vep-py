@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -484,7 +470,7 @@
 
 
 <div class="viewcode-block" id="UnsafeSetterMixin">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.common.html#ensembl.vep.common.mixins.UnsafeSetterMixin">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.common.html#ensembl.vep.common.mixins.UnsafeSetterMixin">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">UnsafeSetterMixin</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Can be used to temporarily disable cache invalidation to allow faster but unsafe attribute update.</span>
@@ -501,7 +487,7 @@
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
 <div class="viewcode-block" id="UnsafeSetterMixin.unsafe">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.common.html#ensembl.vep.common.mixins.UnsafeSetterMixin.unsafe">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.common.html#ensembl.vep.common.mixins.UnsafeSetterMixin.unsafe">[docs]</a>
     <span class="nd">@contextmanager</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">unsafe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
 <span class="w">        </span><span class="sd">"""Context manager that temporarily swaps the class of this instance to a version with an</span>
@@ -528,7 +514,7 @@
 
 
 <div class="viewcode-block" id="UnsafeSetterMixin.assign_without_hooks">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.common.html#ensembl.vep.common.mixins.UnsafeSetterMixin.assign_without_hooks">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.common.html#ensembl.vep.common.mixins.UnsafeSetterMixin.assign_without_hooks">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">assign_without_hooks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">values</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Assign real (non-derived) fields directly, via ``object.__setattr__``.</span>
 
@@ -549,7 +535,7 @@
 
 
 <div class="viewcode-block" id="UnsafeSetterMixin.seed_attrs">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.common.html#ensembl.vep.common.mixins.UnsafeSetterMixin.seed_attrs">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.common.html#ensembl.vep.common.mixins.UnsafeSetterMixin.seed_attrs">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">seed_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">seeds</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""(Pre-)populate derived and cached attributes, by name, without triggering their normal</span>
 <span class="sd">        derivation.</span>
@@ -576,7 +562,7 @@
 
 
 <div class="viewcode-block" id="UnsafeSetterMixin.seed_and_invalidate_attrs">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.common.html#ensembl.vep.common.mixins.UnsafeSetterMixin.seed_and_invalidate_attrs">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.common.html#ensembl.vep.common.mixins.UnsafeSetterMixin.seed_and_invalidate_attrs">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">seed_and_invalidate_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">seeds</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""(Pre-)populate derived and cached attributes, by name, without triggering their</span>
 <span class="sd">        normal derivation and invalidate dependent derived attributes. Don't invalidate dependent</span>
@@ -606,7 +592,7 @@
 
 
 <div class="viewcode-block" id="CachedAttributeGuardMixin">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.common.html#ensembl.vep.common.mixins.CachedAttributeGuardMixin">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.common.html#ensembl.vep.common.mixins.CachedAttributeGuardMixin">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CachedAttributeGuardMixin</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Mixin that guards against setting attributes that are internal properties</span>
 <span class="sd">    and/or invalidate cached properties when their dependencies change.</span>

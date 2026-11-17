@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -499,7 +485,7 @@
 
 
 <div class="viewcode-block" id="register_output_writer">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.registry.register_output_writer">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.registry.register_output_writer">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register_output_writer</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">OutputWriterFactory</span><span class="p">],</span> <span class="n">OutputWriterFactory</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Register an output writer factory under a format name."""</span>
 
@@ -512,7 +498,7 @@
 
 
 <div class="viewcode-block" id="available_output_writers">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.registry.available_output_writers">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.registry.available_output_writers">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">available_output_writers</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return the sorted set of registered output formats."""</span>
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_OUTPUT_WRITER_REGISTRY</span><span class="p">))</span></div>
@@ -520,7 +506,7 @@
 
 
 <div class="viewcode-block" id="get_output_writer">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.registry.get_output_writer">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.registry.get_output_writer">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_output_writer</span><span class="p">(</span><span class="n">output_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">command_line</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OutputWriter</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the writer for one output format.</span>
 

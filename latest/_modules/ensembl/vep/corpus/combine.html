@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -493,7 +479,7 @@
 
 
 <div class="viewcode-block" id="CombinedCorpus">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.combine.CombinedCorpus">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.combine.CombinedCorpus">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">CombinedCorpus</span><span class="p">(</span><span class="n">Corpus</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Present several corpora through one flattened corpus view.</span>
@@ -560,7 +546,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_named_overlaps</span>
 
 <div class="viewcode-block" id="CombinedCorpus.close">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.combine.CombinedCorpus.close">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.combine.CombinedCorpus.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Release every component corpus."""</span>
         <span class="k">for</span> <span class="n">corpus</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">corpora</span><span class="p">:</span>
@@ -570,7 +556,7 @@
 
 
 <div class="viewcode-block" id="combine_corpora">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.combine.combine_corpora">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.combine.combine_corpora">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">combine_corpora</span><span class="p">(</span><span class="n">specification</span><span class="p">:</span> <span class="n">CorpusSpec</span><span class="p">,</span> <span class="n">corpora</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Corpus</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">CombinedCorpus</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return one validated corpus over the supplied component corpora.</span>
 

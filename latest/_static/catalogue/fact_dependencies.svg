@@ -1,0 +1,383 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1318 1538" width="1318" height="1538" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>Fact dependencies</title>
+  <defs><marker id="arrow-Fact-dependencies" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 1074 41 C 989 41, 989 145, 904 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 145, 904 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 145, 904 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 145, 904 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 145, 904 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 145, 904 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 145, 904 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 1074 93 C 989 93, 989 197, 904 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 197, 904 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 197, 904 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 197, 904 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 197, 904 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 197, 904 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 197, 904 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 197, 904 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 197, 904 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 1074 93 C 989 93, 989 249, 904 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 249, 904 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 249, 904 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 249, 904 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 249, 904 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 249, 904 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 249, 904 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 249, 904 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 249, 904 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 1074 93 C 989 93, 989 301, 904 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 301, 904 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 301, 904 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 301, 904 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 301, 904 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 301, 904 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 301, 904 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 301, 904 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 301, 904 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 41, 24 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 41, 24 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 93, 24 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 93, 24 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 145, 24 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 145, 24 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 197, 24 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 197, 24 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 439 1497, 439 93, 684 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 549 197, 549 93, 684 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 769 145, 769 93, 684 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 439 509, 439 93, 684 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 439 1497, 439 93, 684 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 549 197, 549 93, 684 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 769 145, 769 93, 684 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 439 509, 439 93, 684 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 1294 41 C 659 41, 659 249, 24 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 249, 24 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 219 197, 219 249, 24 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 439 145, 439 249, 24 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 109 509, 109 249, 24 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 197 C 439 197, 439 249, 24 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 249, 24 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 219 197, 219 249, 24 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 439 145, 439 249, 24 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 109 509, 109 249, 24 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 197 C 439 197, 439 249, 24 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 1294 41 C 659 41, 659 301, 24 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 301, 24 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 219 197, 219 301, 24 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 439 145, 439 301, 24 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 109 509, 109 301, 24 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 197 C 439 197, 439 301, 24 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 301, 24 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 219 197, 219 301, 24 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 439 145, 439 301, 24 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 109 509, 109 301, 24 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 197 C 439 197, 439 301, 24 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 1294 41 C 659 41, 659 353, 24 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 353, 24 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 219 197, 219 353, 24 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 439 145, 439 353, 24 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 109 509, 109 353, 24 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 353, 24 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 219 197, 219 353, 24 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 439 145, 439 353, 24 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 109 509, 109 353, 24 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 1294 41 C 659 41, 659 405, 24 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 405, 24 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 219 197, 219 405, 24 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 439 145, 439 405, 24 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 109 509, 109 405, 24 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 405, 24 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 219 197, 219 405, 24 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 439 145, 439 405, 24 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 109 509, 109 405, 24 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 1294 41 C 659 41, 659 457, 24 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 457, 24 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 219 197, 219 457, 24 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 439 145, 439 457, 24 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 109 509, 109 457, 24 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 457, 24 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 219 197, 219 457, 24 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 439 145, 439 457, 24 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 109 509, 109 457, 24 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 509, 24 509" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 109 1497, 109 509, 24 509" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 1074 93 C 989 93, 989 353, 904 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 353, 904 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 353, 904 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 353, 904 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 353, 904 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 353, 904 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 353, 904 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 353, 904 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 353, 904 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 1074 93 C 989 93, 989 405, 904 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 405, 904 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 405, 904 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 405, 904 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 405, 904 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 405, 904 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 405, 904 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 405, 904 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 405, 904 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1289 C 109 1289, 109 561, 24 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1289 C 109 1289, 109 561, 24 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1289 C 109 1289, 109 613, 24 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1289 C 109 1289, 109 613, 24 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1289 C 109 1289, 109 665, 24 665" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1289 C 109 1289, 109 665, 24 665" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1081 C 109 1081, 109 717, 24 717" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1341 C 109 1341, 109 717, 24 717" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1289 C 109 1289, 109 769, 24 769" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1289 C 109 1289, 109 769, 24 769" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1133 C 109 1133, 109 821, 24 821" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1393 C 109 1393, 109 821, 24 821" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1185 C 109 1185, 109 873, 24 873" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1445 C 109 1445, 109 873, 24 873" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1029 C 109 1029, 109 1081, 24 1081" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1029 C 109 1029, 109 1081, 24 1081" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1185 C 109 1185, 109 1133, 24 1133" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1081 C 109 1081, 109 1133, 24 1133" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1029 C 109 1029, 109 1133, 24 1133" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1029 C 109 1029, 109 1133, 24 1133" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1029 C 109 1029, 109 1185, 24 1185" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1029 C 109 1029, 109 1185, 24 1185" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1029 C 109 1029, 109 1237, 24 1237" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1029 C 109 1029, 109 1237, 24 1237" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1289 C 109 1289, 109 1341, 24 1341" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1289 C 109 1289, 109 1341, 24 1341" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1445 C 109 1445, 109 1393, 24 1393" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1341 C 109 1341, 109 1393, 24 1393" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1289 C 109 1289, 109 1393, 24 1393" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1289 C 109 1289, 109 1393, 24 1393" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1289 C 109 1289, 109 1445, 24 1445" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1289 C 109 1289, 109 1445, 24 1445" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 41 C 549 41, 549 93, 464 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 93, 464 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 93, 464 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 457 C 549 457, 549 93, 464 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 93, 464 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 93, 464 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 457 C 549 457, 549 93, 464 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 41 C 769 41, 769 145, 684 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 439 1497, 439 145, 684 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 549 197, 549 145, 684 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 301 C 659 301, 659 145, 684 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 439 509, 439 145, 684 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 439 1497, 439 145, 684 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 549 197, 549 145, 684 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 301 C 659 301, 659 145, 684 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 439 509, 439 145, 684 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 41 C 549 41, 549 145, 464 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 145, 464 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 145, 464 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 457 C 549 457, 549 145, 464 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 145, 464 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 145, 464 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 457 C 549 457, 549 145, 464 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 41 C 549 41, 549 197, 464 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 197, 464 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 197, 464 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 457 C 549 457, 549 197, 464 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 197, 464 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 197, 464 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 457 C 549 457, 549 197, 464 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 41 C 549 41, 549 249, 464 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 249, 464 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 249, 464 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 457 C 549 457, 549 249, 464 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 249, 464 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 249, 464 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 457 C 549 457, 549 249, 464 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 301, 464 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 301, 464 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 301, 464 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 301, 464 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 353, 464 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 353, 464 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 301 C 549 301, 549 353, 464 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 353, 464 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 353, 464 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 301 C 549 301, 549 353, 464 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 405, 464 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 405, 464 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 405, 464 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 405, 464 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 457, 464 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 457, 464 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 457, 464 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 457, 464 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 509, 464 509" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 509, 464 509" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 509, 464 509" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 509, 464 509" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 41 C 549 41, 549 561, 464 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 561, 464 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 561, 464 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 405 C 549 405, 549 561, 464 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 561, 464 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 561, 464 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 405 C 549 405, 549 561, 464 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 41 C 549 41, 549 613, 464 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 613, 464 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 613, 464 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 457 C 549 457, 549 613, 464 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 613, 464 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 613, 464 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 457 C 549 457, 549 613, 464 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 439 1497, 439 197, 684 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 549 197, 549 197, 684 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 301 C 659 301, 659 197, 684 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 439 509, 439 197, 684 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 439 1497, 439 197, 684 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 549 197, 549 197, 684 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 301 C 659 301, 659 197, 684 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 439 509, 439 197, 684 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 439 1497, 439 249, 684 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 549 197, 549 249, 684 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 301 C 659 301, 659 249, 684 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 769 145, 769 249, 684 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 439 1497, 439 249, 684 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 549 197, 549 249, 684 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 301 C 659 301, 659 249, 684 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 769 145, 769 249, 684 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 665, 464 665" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 665, 464 665" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 301 C 549 301, 549 665, 464 665" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 665, 464 665" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 665, 464 665" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 301 C 549 301, 549 665, 464 665" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 41 C 769 41, 769 301, 684 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 439 1497, 439 301, 684 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 549 197, 549 301, 684 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 301 C 659 301, 659 301, 684 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 439 1497, 439 301, 684 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 549 197, 549 301, 684 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 634 301 C 659 301, 659 301, 684 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 1074 93 C 989 93, 989 457, 904 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 457, 904 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 457, 904 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 457, 904 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 457, 904 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 457, 904 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 457, 904 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 457, 904 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 457, 904 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 1074 93 C 989 93, 989 509, 904 509" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 509, 904 509" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 509, 904 509" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 509, 904 509" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 509, 904 509" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 509, 904 509" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 509, 904 509" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 509, 904 509" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 509, 904 509" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 1074 93 C 989 93, 989 561, 904 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 561, 904 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 561, 904 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 561, 904 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 561, 904 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 561, 904 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 561, 904 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 561, 904 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 561, 904 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 1074 93 C 989 93, 989 613, 904 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 613, 904 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 613, 904 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 613, 904 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 613, 904 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 613, 904 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 613, 904 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 613, 904 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 613, 904 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 1074 93 C 989 93, 989 665, 904 665" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 665, 904 665" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 665, 904 665" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 665, 904 665" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 665, 904 665" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 665, 904 665" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 665, 904 665" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 665, 904 665" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 665, 904 665" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 1074 93 C 989 93, 989 717, 904 717" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 717, 904 717" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 717, 904 717" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 717, 904 717" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 717, 904 717" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 549 1497, 549 717, 904 717" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 659 197, 659 717, 904 717" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 854 145 C 879 145, 879 717, 904 717" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 509 C 549 509, 549 717, 904 717" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 717, 464 717" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 717, 464 717" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 194 1497 C 329 1497, 329 717, 464 717" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <path d="M 414 197 C 439 197, 439 717, 464 717" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Fact-dependencies)"/>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">biotype_miRNA</text><text x="32" y="51" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">biotype_nmd</text><text x="32" y="103" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">biotype_non_coding</text><text x="32" y="155" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">biotype_protein_coding</text><text x="32" y="207" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="232" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="247" font-size="11" fill="#1b2c39">cds_start_lost</text><text x="32" y="259" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="284" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="299" font-size="11" fill="#1b2c39">cds_start_retained</text><text x="32" y="311" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="336" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="351" font-size="11" fill="#1b2c39">cds_stop_gain</text><text x="32" y="363" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="388" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="403" font-size="11" fill="#1b2c39">cds_stop_lost</text><text x="32" y="415" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="440" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="455" font-size="11" fill="#1b2c39">cds_stop_retained</text><text x="32" y="467" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="492" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="507" font-size="11" fill="#1b2c39">has_translation</text><text x="32" y="519" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="544" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="559" font-size="11" fill="#1b2c39">is_chromosomal_breakpoint</text><text x="32" y="571" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="596" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="611" font-size="11" fill="#1b2c39">is_copy_number_gain</text><text x="32" y="623" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="648" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="663" font-size="11" fill="#1b2c39">is_copy_number_loss</text><text x="32" y="675" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="700" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="715" font-size="11" fill="#1b2c39">is_deletion</text><text x="32" y="727" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="752" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="767" font-size="11" fill="#1b2c39">is_duplication</text><text x="32" y="779" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="804" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="819" font-size="11" fill="#1b2c39">is_indel</text><text x="32" y="831" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="856" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="871" font-size="11" fill="#1b2c39">is_insertion</text><text x="32" y="883" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="908" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="923" font-size="11" fill="#1b2c39">is_motif</text><text x="32" y="935" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="960" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="975" font-size="11" fill="#1b2c39">is_regulatory</text><text x="32" y="987" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="1012" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="1027" font-size="11" fill="#1b2c39">is_short</text><text x="32" y="1039" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="1064" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="1079" font-size="11" fill="#1b2c39">is_short_deletion</text><text x="32" y="1091" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="1116" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="1131" font-size="11" fill="#1b2c39">is_short_indel</text><text x="32" y="1143" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="1168" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="1183" font-size="11" fill="#1b2c39">is_short_insertion</text><text x="32" y="1195" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="1220" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="1235" font-size="11" fill="#1b2c39">is_snv</text><text x="32" y="1247" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="1272" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="1287" font-size="11" fill="#1b2c39">is_structural</text><text x="32" y="1299" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="1324" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="1339" font-size="11" fill="#1b2c39">is_structural_deletion</text><text x="32" y="1351" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="1376" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="1391" font-size="11" fill="#1b2c39">is_structural_indel</text><text x="32" y="1403" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="1428" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="1443" font-size="11" fill="#1b2c39">is_structural_insertion</text><text x="32" y="1455" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="24" y="1480" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="1495" font-size="11" fill="#1b2c39">is_transcript</text><text x="32" y="1507" font-size="9" fill="#1b2c39">FREE</text>
+  <rect x="244" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="39" font-size="11" fill="#1b2c39">contain_feature</text><text x="252" y="51" font-size="9" fill="#1b2c39">BOUNDS</text>
+  <rect x="244" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="91" font-size="11" fill="#1b2c39">is_downstream</text><text x="252" y="103" font-size="9" fill="#1b2c39">BOUNDS</text>
+  <rect x="244" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="143" font-size="11" fill="#1b2c39">is_upstream</text><text x="252" y="155" font-size="9" fill="#1b2c39">BOUNDS</text>
+  <rect x="244" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="195" font-size="11" fill="#1b2c39">overlap_feature</text><text x="252" y="207" font-size="9" fill="#1b2c39">BOUNDS</text>
+  <rect x="244" y="232" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="247" font-size="11" fill="#1b2c39">within_feature</text><text x="252" y="259" font-size="9" fill="#1b2c39">BOUNDS</text>
+  <rect x="464" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="39" font-size="11" fill="#1b2c39">_nearby_introns</text><text x="472" y="51" font-size="9" fill="#1b2c39">INTERVAL</text>
+  <rect x="464" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="91" font-size="11" fill="#1b2c39">overlap_acceptor_site</text><text x="472" y="103" font-size="9" fill="#1b2c39">INTERVAL</text>
+  <rect x="464" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="143" font-size="11" fill="#1b2c39">overlap_donor_5th_base</text><text x="472" y="155" font-size="9" fill="#1b2c39">INTERVAL</text>
+  <rect x="464" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="195" font-size="11" fill="#1b2c39">overlap_donor_region</text><text x="472" y="207" font-size="9" fill="#1b2c39">INTERVAL</text>
+  <rect x="464" y="232" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="247" font-size="11" fill="#1b2c39">overlap_donor_site</text><text x="472" y="259" font-size="9" fill="#1b2c39">INTERVAL</text>
+  <rect x="464" y="284" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="299" font-size="11" fill="#1b2c39">overlap_exon</text><text x="472" y="311" font-size="9" fill="#1b2c39">INTERVAL</text>
+  <rect x="464" y="336" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="351" font-size="11" fill="#1b2c39">overlap_five_prime_utr</text><text x="472" y="363" font-size="9" fill="#1b2c39">INTERVAL</text>
+  <rect x="464" y="388" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="403" font-size="11" fill="#1b2c39">overlap_intron</text><text x="472" y="415" font-size="9" fill="#1b2c39">INTERVAL</text>
+  <rect x="464" y="440" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="455" font-size="11" fill="#1b2c39">overlap_intron_boundary</text><text x="472" y="467" font-size="9" fill="#1b2c39">INTERVAL</text>
+  <rect x="464" y="492" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="507" font-size="11" fill="#1b2c39">overlap_intron_interior</text><text x="472" y="519" font-size="9" fill="#1b2c39">INTERVAL</text>
+  <rect x="464" y="544" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="559" font-size="11" fill="#1b2c39">overlap_polypyrimidine_tract</text><text x="472" y="571" font-size="9" fill="#1b2c39">INTERVAL</text>
+  <rect x="464" y="596" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="611" font-size="11" fill="#1b2c39">overlap_splice_region</text><text x="472" y="623" font-size="9" fill="#1b2c39">INTERVAL</text>
+  <rect x="464" y="648" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="663" font-size="11" fill="#1b2c39">overlap_three_prime_utr</text><text x="472" y="675" font-size="9" fill="#1b2c39">INTERVAL</text>
+  <rect x="464" y="700" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="715" font-size="11" fill="#1b2c39">within_any_exon</text><text x="472" y="727" font-size="9" fill="#1b2c39">INTERVAL</text>
+  <rect x="684" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="692" y="39" font-size="11" fill="#1b2c39">_cds_footprint</text><text x="692" y="51" font-size="9" fill="#1b2c39">MAPPING</text>
+  <rect x="684" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="692" y="91" font-size="11" fill="#1b2c39">cds_length_change_inframe</text><text x="692" y="103" font-size="9" fill="#1b2c39">MAPPING</text>
+  <rect x="684" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="692" y="143" font-size="11" fill="#1b2c39">overlap_cds</text><text x="692" y="155" font-size="9" fill="#1b2c39">MAPPING</text>
+  <rect x="684" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="692" y="195" font-size="11" fill="#1b2c39">overlap_start_codon</text><text x="692" y="207" font-size="9" fill="#1b2c39">MAPPING</text>
+  <rect x="684" y="232" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="692" y="247" font-size="11" fill="#1b2c39">overlap_stop_codon</text><text x="692" y="259" font-size="9" fill="#1b2c39">MAPPING</text>
+  <rect x="684" y="284" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="692" y="299" font-size="11" fill="#1b2c39">partial_last_codon</text><text x="692" y="311" font-size="9" fill="#1b2c39">MAPPING</text>
+  <rect x="904" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="39" font-size="11" fill="#1b2c39">_codon_alleles</text><text x="912" y="51" font-size="9" fill="#1b2c39">SEQUENCE</text>
+  <rect x="904" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="91" font-size="11" fill="#1b2c39">_peptide_alleles</text><text x="912" y="103" font-size="9" fill="#1b2c39">SEQUENCE</text>
+  <rect x="904" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="143" font-size="11" fill="#1b2c39">alt_matches_ref_codon_edge</text><text x="912" y="155" font-size="9" fill="#1b2c39">SEQUENCE</text>
+  <rect x="904" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="195" font-size="11" fill="#1b2c39">alt_peptide_has_ter</text><text x="912" y="207" font-size="9" fill="#1b2c39">SEQUENCE</text>
+  <rect x="904" y="232" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="247" font-size="11" fill="#1b2c39">alt_peptide_is_ter</text><text x="912" y="259" font-size="9" fill="#1b2c39">SEQUENCE</text>
+  <rect x="904" y="284" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="299" font-size="11" fill="#1b2c39">alt_peptide_matches_ref_edge</text><text x="912" y="311" font-size="9" fill="#1b2c39">SEQUENCE</text>
+  <rect x="904" y="336" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="351" font-size="11" fill="#1b2c39">insertion_after_start</text><text x="912" y="363" font-size="9" fill="#1b2c39">SEQUENCE</text>
+  <rect x="904" y="388" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="403" font-size="11" fill="#1b2c39">insertion_before_start</text><text x="912" y="415" font-size="9" fill="#1b2c39">SEQUENCE</text>
+  <rect x="904" y="440" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="455" font-size="11" fill="#1b2c39">peptide_changed</text><text x="912" y="467" font-size="9" fill="#1b2c39">SEQUENCE</text>
+  <rect x="904" y="492" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="507" font-size="11" fill="#1b2c39">peptide_has_X</text><text x="912" y="519" font-size="9" fill="#1b2c39">SEQUENCE</text>
+  <rect x="904" y="544" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="559" font-size="11" fill="#1b2c39">peptide_same_length</text><text x="912" y="571" font-size="9" fill="#1b2c39">SEQUENCE</text>
+  <rect x="904" y="596" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="611" font-size="11" fill="#1b2c39">ref_peptide_has_ter</text><text x="912" y="623" font-size="9" fill="#1b2c39">SEQUENCE</text>
+  <rect x="904" y="648" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="663" font-size="11" fill="#1b2c39">ref_peptide_is_ter</text><text x="912" y="675" font-size="9" fill="#1b2c39">SEQUENCE</text>
+  <rect x="904" y="700" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="715" font-size="11" fill="#1b2c39">ref_peptide_startswith_ter</text><text x="912" y="727" font-size="9" fill="#1b2c39">SEQUENCE</text>
+  <rect x="1124" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="1132" y="39" font-size="11" fill="#1b2c39">_full_cds_peptide_alleles</text><text x="1132" y="51" font-size="9" fill="#1b2c39">TRANSCRIPT_SEQUENCE</text>
+</svg>

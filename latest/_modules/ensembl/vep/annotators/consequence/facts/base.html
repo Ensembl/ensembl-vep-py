@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -523,7 +509,7 @@
 
 
 <div class="viewcode-block" id="Fact">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.Fact">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.Fact">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Fact</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Represent a named, cost-tagged property derived from a context.</span>
@@ -560,7 +546,7 @@
 
 
 <div class="viewcode-block" id="register_fact">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.register_fact">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.register_fact">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register_fact</span><span class="p">(</span>
     <span class="n">cost</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">deps</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span> <span class="n">requires</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">FactContext</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="nb">object</span><span class="p">]],</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">FactContext</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="nb">object</span><span class="p">]]:</span>
@@ -598,7 +584,7 @@
 
 
 <div class="viewcode-block" id="build_requires_guard">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.build_requires_guard">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.build_requires_guard">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_requires_guard</span><span class="p">(</span>
     <span class="n">compute</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">FactContext</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="nb">object</span><span class="p">],</span> <span class="n">requires</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">FactContext</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="nb">object</span><span class="p">]:</span>
@@ -628,7 +614,7 @@
 
 
 <div class="viewcode-block" id="get_fact">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.get_fact">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.get_fact">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_fact</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Fetch a fact's value for this context, computing it at most once.</span>
 
@@ -663,7 +649,7 @@
 
 
 <div class="viewcode-block" id="atom_names">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.atom_names">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.atom_names">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">atom_names</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return the Boolean facts a rule may reference.</span>
 
@@ -675,7 +661,7 @@
 
 
 <div class="viewcode-block" id="implied_false">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.implied_false">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.implied_false">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">implied_false</span><span class="p">(</span><span class="n">known</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Extend known facts that are implied False by the current assignment.</span>
 
@@ -706,7 +692,7 @@
 
 
 <div class="viewcode-block" id="verify_requires">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.verify_requires">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.verify_requires">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">verify_requires</span><span class="p">(</span><span class="n">fact_contexts</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">FactContext</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Check every ``requires`` claim against real contexts.</span>
 
@@ -766,7 +752,7 @@
 
 
 <div class="viewcode-block" id="closure_cost">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.closure_cost">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.closure_cost">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">closure_cost</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the cost of a fact and its dependencies.</span>
 
@@ -794,7 +780,7 @@
 
 
 <div class="viewcode-block" id="total_cost">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.total_cost">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.total_cost">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">total_cost</span><span class="p">(</span><span class="n">names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the cost of facts and their shared dependencies.</span>
 
@@ -836,7 +822,7 @@
 
 
 <div class="viewcode-block" id="apply_fact_cost_overrides">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.apply_fact_cost_overrides">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.apply_fact_cost_overrides">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">apply_fact_cost_overrides</span><span class="p">(</span><span class="n">overrides</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Override REGISTRY entries' ``cost`` in place from a measured fact-cost table.</span>
 
@@ -857,7 +843,7 @@
 
 
 <div class="viewcode-block" id="load_fact_cost_overrides_from_package">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.load_fact_cost_overrides_from_package">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.load_fact_cost_overrides_from_package">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_fact_cost_overrides_from_package</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Read the checked-in measured fact-cost table, if any, without applying it.</span>
 
@@ -873,7 +859,7 @@
 
 
 <div class="viewcode-block" id="apply_packaged_fact_cost_overrides">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.apply_packaged_fact_cost_overrides">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.apply_packaged_fact_cost_overrides">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">apply_packaged_fact_cost_overrides</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Apply the packaged measured-cost table, if the package ships one.</span>
 

@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -489,7 +475,7 @@
 
 
 <div class="viewcode-block" id="Parser">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.parsers.html#ensembl.vep.parsers.parser.Parser">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.parsers.html#ensembl.vep.parsers.parser.Parser">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Parser</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">"""Parser interface.</span>
@@ -533,7 +519,7 @@
         <span class="k">return</span> <span class="p">[]</span>
 
 <div class="viewcode-block" id="Parser.open">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.parsers.html#ensembl.vep.parsers.parser.Parser.open">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.parsers.html#ensembl.vep.parsers.parser.Parser.open">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Parser</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Open a file for parsing.</span>
@@ -550,7 +536,7 @@
 
 
 <div class="viewcode-block" id="Parser.close">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.parsers.html#ensembl.vep.parsers.parser.Parser.close">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.parsers.html#ensembl.vep.parsers.parser.Parser.close">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Close the parser."""</span>
@@ -559,7 +545,7 @@
 
 
 <div class="viewcode-block" id="Parser.seek">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.parsers.html#ensembl.vep.parsers.parser.Parser.seek">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.parsers.html#ensembl.vep.parsers.parser.Parser.seek">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">seek</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -585,7 +571,7 @@
 
 
 <div class="viewcode-block" id="Parser.next">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.parsers.html#ensembl.vep.parsers.parser.Parser.next">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.parsers.html#ensembl.vep.parsers.parser.Parser.next">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the next raw row from the active region query.</span>
@@ -598,7 +584,7 @@
 
 
 <div class="viewcode-block" id="Parser.records">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.parsers.html#ensembl.vep.parsers.parser.Parser.records">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.parsers.html#ensembl.vep.parsers.parser.Parser.records">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return all records from the active region query.</span>
 
@@ -636,7 +622,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Parser.parse_text">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.parsers.html#ensembl.vep.parsers.parser.Parser.parse_text">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.parsers.html#ensembl.vep.parsers.parser.Parser.parse_text">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">parse_text</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Parse raw text data and return a list of records.</span>
@@ -653,7 +639,7 @@
 
 
 <div class="viewcode-block" id="Parser.parse_file">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.parsers.html#ensembl.vep.parsers.parser.Parser.parse_file">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.parsers.html#ensembl.vep.parsers.parser.Parser.parse_file">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">parse_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Parse a file and return a list of records.</span>

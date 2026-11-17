@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -530,7 +516,7 @@
 
 
 <div class="viewcode-block" id="RunOutcome">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.endtoend.RunOutcome">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.endtoend.RunOutcome">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">RunOutcome</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""What one run of the command line cost.</span>
@@ -547,7 +533,7 @@
 
 
 <div class="viewcode-block" id="EndToEndRow">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.endtoend.EndToEndRow">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.endtoend.EndToEndRow">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">EndToEndRow</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""One configuration's measurements over one corpus.</span>
@@ -573,7 +559,7 @@
     <span class="n">peak_rss_bytes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
 <div class="viewcode-block" id="EndToEndRow.to_json">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.endtoend.EndToEndRow.to_json">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.endtoend.EndToEndRow.to_json">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the row as plain JSON values."""</span>
         <span class="k">return</span> <span class="p">{</span>
@@ -591,7 +577,7 @@
 
 
 <div class="viewcode-block" id="repository_path">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.endtoend.repository_path">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.endtoend.repository_path">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">repository_path</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the directory holding the ``ensembl`` package this process imported.</span>
 
@@ -612,7 +598,7 @@
 
 
 <div class="viewcode-block" id="run_command">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.endtoend.run_command">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.endtoend.run_command">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run_command</span><span class="p">(</span>
     <span class="n">configuration</span><span class="p">:</span> <span class="n">Configuration</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">processes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">workspace</span><span class="p">:</span> <span class="n">Workspace</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">Path</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
@@ -648,7 +634,7 @@
 
 
 <div class="viewcode-block" id="run_once">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.endtoend.run_once">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.endtoend.run_once">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run_once</span><span class="p">(</span><span class="n">command</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">log_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunOutcome</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Run one command to completion, timing it and reading its resource usage.</span>
 
@@ -685,7 +671,7 @@
 
 
 <div class="viewcode-block" id="time_runs">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.endtoend.time_runs">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.endtoend.time_runs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">time_runs</span><span class="p">(</span><span class="n">command</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">log_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">repeats</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">warmup</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">RunOutcome</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Run a command untimed ``warmup`` times, then return the outcome of ``repeats`` timed runs.</span>
 
@@ -727,7 +713,7 @@
 
 
 <div class="viewcode-block" id="consequence_sets">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.endtoend.consequence_sets">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.endtoend.consequence_sets">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">consequence_sets</span><span class="p">(</span><span class="n">output</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">"""Return each variant's consequence terms, keyed by the variant it was called on.</span>
 
@@ -772,7 +758,7 @@
 
 
 <div class="viewcode-block" id="output_mismatches">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.endtoend.output_mismatches">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.endtoend.output_mismatches">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">output_mismatches</span><span class="p">(</span><span class="n">reference</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">candidate</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return how a candidate's output differs from the reference's, up to ``MISMATCH_LIMIT``.</span>
 

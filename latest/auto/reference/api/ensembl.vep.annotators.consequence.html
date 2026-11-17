@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ensembl.vep.annotators.consequence package &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto/reference/api/ensembl.vep.annotators.consequence';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.0a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../../../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../../../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="ensembl.vep.annotators.consequence.context package" href="ensembl.vep.annotators.consequence.context.html" />
+    <link rel="prev" title="ensembl.vep.annotators package" href="ensembl.vep.annotators.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../../../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page" aria-expanded="false" aria-controls="pst-secondary-sidebar-modal">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../cli/index.html">CLI reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../cli/run.html">vep run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/explain.html">vep explain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/stats.html">vep stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/corpus.html">vep corpus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/bench.html">vep bench</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/catalogue.html">vep catalogue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/common.html">Common options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/data_formats.html">Data formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../consequence_terms.html">Consequence terms</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="ensembl.vep.html">API reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="ensembl.vep.annotators.html">ensembl.vep.annotators package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active has-children"><a aria-current="page" class="current reference internal" href="#">ensembl.vep.annotators.consequence package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html">ensembl.vep.annotators.consequence.context package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html">ensembl.vep.annotators.consequence.facts package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html">ensembl.vep.annotators.consequence.rules package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html">ensembl.vep.annotators.consequence.strategies package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.haplo.html">ensembl.vep.annotators.haplo package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.bench.html">ensembl.vep.bench package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.buffer.html">ensembl.vep.buffer package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.buffer.input_buffer.html">ensembl.vep.buffer.input_buffer package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.caches.html">ensembl.vep.caches package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.common.html">ensembl.vep.common package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.config.html">ensembl.vep.config package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.parser.html">ensembl.vep.config.parser package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.config.sections.html">ensembl.vep.config.sections package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html">ensembl.vep.config.sections.bench package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html">ensembl.vep.config.sections.catalogue package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html">ensembl.vep.config.sections.common package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html">ensembl.vep.config.sections.corpus package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.explain.html">ensembl.vep.config.sections.explain package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.run.html">ensembl.vep.config.sections.run package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.stats.html">ensembl.vep.config.sections.stats package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.corpus.html">ensembl.vep.corpus package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.corpus.exporter.html">ensembl.vep.corpus.exporter package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.corpus.exporter.formats.html">ensembl.vep.corpus.exporter.formats package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.corpus.golden.html">ensembl.vep.corpus.golden package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.corpus.loaded.html">ensembl.vep.corpus.loaded package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.corpus.synthetic.html">ensembl.vep.corpus.synthetic package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.corpus.synthetic.components.html">ensembl.vep.corpus.synthetic.components package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.explain.html">ensembl.vep.explain package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.matcher.html">ensembl.vep.matcher package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.models.html">ensembl.vep.models package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.genic.html">ensembl.vep.models.genic package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.haplotype.html">ensembl.vep.models.haplotype package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.overlap.html">ensembl.vep.models.overlap package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.regulatory.html">ensembl.vep.models.regulatory package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.sequence.html">ensembl.vep.models.sequence package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.variation.html">ensembl.vep.models.variation package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.output.html">ensembl.vep.output package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.output.factory.html">ensembl.vep.output.factory package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.stream.html">ensembl.vep.output.factory.stream package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html">ensembl.vep.output.factory.write package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.output.parser.html">ensembl.vep.output.parser package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.overlaps.html">ensembl.vep.overlaps package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.parsers.html">ensembl.vep.parsers package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.render.html">ensembl.vep.render package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.render.graph.html">ensembl.vep.render.graph package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.runner.html">ensembl.vep.runner package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.bench.html">ensembl.vep.runner.bench package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.catalogue.html">ensembl.vep.runner.catalogue package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.corpus.html">ensembl.vep.runner.corpus package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.run.html">ensembl.vep.runner.run package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.sources.html">ensembl.vep.sources package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.sources.file.html">ensembl.vep.sources.file package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.fasta.html">ensembl.vep.sources.file.fasta package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gff3.html">ensembl.vep.sources.file.gff3 package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gtf.html">ensembl.vep.sources.file.gtf package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html">ensembl.vep.sources.file.gxf package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html">ensembl.vep.sources.file.vcf namespace</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.stats.html">ensembl.vep.stats package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.trace.html">ensembl.vep.trace package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.workflow.html">ensembl.vep.workflow package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.workflow.build.html">ensembl.vep.workflow.build package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.workflow.tracks.html">ensembl.vep.workflow.tracks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.workflow.tracks.consequence.html">ensembl.vep.workflow.tracks.consequence package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.workflow.worker.html">ensembl.vep.workflow.worker package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../reference/index.html" class="nav-link">Reference</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ensembl.vep.html" class="nav-link">ensembl.vep package</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ensembl.vep.annotators.html" class="nav-link">ensembl.vep.annotators package</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.annotators.consequence package</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-ensembl.vep.annotators.consequence">
+<span id="ensembl-vep-annotators-consequence-package"></span><h1>ensembl.vep.annotators.consequence package<a class="headerlink" href="#module-ensembl.vep.annotators.consequence" title="Link to this heading">#</a></h1>
+<p>Consequence annotation facts, rules, and strategies.</p>
+<p>The package has three dependency-ordered layers:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">facts</span></code> defines cost-tagged properties of a variant-feature overlap.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rules</span></code> compiles Sequence Ontology terms into Boolean formulas over facts.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">strategies</span></code> provides interchangeable evaluators that produce identical consequences.</p></li>
+</ul>
+<p>Importing this package registers every fact and every <code class="docutils literal notranslate"><span class="pre">consequence.*</span></code> annotator as an import
+side effect. <code class="docutils literal notranslate"><span class="pre">strategies</span></code> is imported last because it depends on facts and rules.</p>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html">ensembl.vep.annotators.consequence.context package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#module-ensembl.vep.annotators.consequence.context.annotator">ensembl.vep.annotators.consequence.context.annotator module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.annotator.AnnotatorContext"><code class="docutils literal notranslate"><span class="pre">AnnotatorContext</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.annotator.AnnotatorContext.bitmask_candidate_cache"><code class="docutils literal notranslate"><span class="pre">AnnotatorContext.bitmask_candidate_cache</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.annotator.AnnotatorContext.cache_hits"><code class="docutils literal notranslate"><span class="pre">AnnotatorContext.cache_hits</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.annotator.AnnotatorContext.cache_misses"><code class="docutils literal notranslate"><span class="pre">AnnotatorContext.cache_misses</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.annotator.AnnotatorContext.codon_cache"><code class="docutils literal notranslate"><span class="pre">AnnotatorContext.codon_cache</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.annotator.AnnotatorContext.digest_candidate_cache"><code class="docutils literal notranslate"><span class="pre">AnnotatorContext.digest_candidate_cache</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.annotator.AnnotatorContext.downstream_distance"><code class="docutils literal notranslate"><span class="pre">AnnotatorContext.downstream_distance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.annotator.AnnotatorContext.mapper_index_cache"><code class="docutils literal notranslate"><span class="pre">AnnotatorContext.mapper_index_cache</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.annotator.AnnotatorContext.prepare"><code class="docutils literal notranslate"><span class="pre">AnnotatorContext.prepare()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.annotator.AnnotatorContext.readthrough"><code class="docutils literal notranslate"><span class="pre">AnnotatorContext.readthrough</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.annotator.AnnotatorContext.reset_candidate_caches"><code class="docutils literal notranslate"><span class="pre">AnnotatorContext.reset_candidate_caches()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.annotator.AnnotatorContext.upstream_distance"><code class="docutils literal notranslate"><span class="pre">AnnotatorContext.upstream_distance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.annotator.AnnotatorContext.zone_map_cache"><code class="docutils literal notranslate"><span class="pre">AnnotatorContext.zone_map_cache</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#module-ensembl.vep.annotators.consequence.context.fact">ensembl.vep.annotators.consequence.context.fact module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.fact.FactContext"><code class="docutils literal notranslate"><span class="pre">FactContext</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.fact.FactContext.annotator_context"><code class="docutils literal notranslate"><span class="pre">FactContext.annotator_context</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.fact.FactContext.biotype"><code class="docutils literal notranslate"><span class="pre">FactContext.biotype</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.fact.FactContext.for_overlaps"><code class="docutils literal notranslate"><span class="pre">FactContext.for_overlaps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.fact.FactContext.memo"><code class="docutils literal notranslate"><span class="pre">FactContext.memo</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.fact.FactContext.overlap"><code class="docutils literal notranslate"><span class="pre">FactContext.overlap</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.fact.FactContext.prefill"><code class="docutils literal notranslate"><span class="pre">FactContext.prefill()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.fact.FactContext.recorder"><code class="docutils literal notranslate"><span class="pre">FactContext.recorder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.fact.FactContext.reset"><code class="docutils literal notranslate"><span class="pre">FactContext.reset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.fact.FactContext.variant_span"><code class="docutils literal notranslate"><span class="pre">FactContext.variant_span</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html#ensembl.vep.annotators.consequence.context.fact.OverlapT_co"><code class="docutils literal notranslate"><span class="pre">OverlapT_co</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html">ensembl.vep.annotators.consequence.facts package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#module-ensembl.vep.annotators.consequence.facts.base">ensembl.vep.annotators.consequence.facts.base module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.Fact"><code class="docutils literal notranslate"><span class="pre">Fact</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.Fact.compute"><code class="docutils literal notranslate"><span class="pre">Fact.compute</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.Fact.cost"><code class="docutils literal notranslate"><span class="pre">Fact.cost</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.Fact.deps"><code class="docutils literal notranslate"><span class="pre">Fact.deps</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.Fact.documentation"><code class="docutils literal notranslate"><span class="pre">Fact.documentation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.Fact.name"><code class="docutils literal notranslate"><span class="pre">Fact.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.Fact.requires"><code class="docutils literal notranslate"><span class="pre">Fact.requires</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.Fact.unguarded_compute"><code class="docutils literal notranslate"><span class="pre">Fact.unguarded_compute</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.REGISTRY"><code class="docutils literal notranslate"><span class="pre">REGISTRY</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.apply_fact_cost_overrides"><code class="docutils literal notranslate"><span class="pre">apply_fact_cost_overrides()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.apply_packaged_fact_cost_overrides"><code class="docutils literal notranslate"><span class="pre">apply_packaged_fact_cost_overrides()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.atom_names"><code class="docutils literal notranslate"><span class="pre">atom_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.build_requires_guard"><code class="docutils literal notranslate"><span class="pre">build_requires_guard()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.closure_cost"><code class="docutils literal notranslate"><span class="pre">closure_cost()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.get_fact"><code class="docutils literal notranslate"><span class="pre">get_fact()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.implied_false"><code class="docutils literal notranslate"><span class="pre">implied_false()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.load_fact_cost_overrides_from_package"><code class="docutils literal notranslate"><span class="pre">load_fact_cost_overrides_from_package()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.register_fact"><code class="docutils literal notranslate"><span class="pre">register_fact()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.total_cost"><code class="docutils literal notranslate"><span class="pre">total_cost()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.base.verify_requires"><code class="docutils literal notranslate"><span class="pre">verify_requires()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#module-ensembl.vep.annotators.consequence.facts.costs">ensembl.vep.annotators.consequence.facts.costs module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.costs.declared_vs_measured"><code class="docutils literal notranslate"><span class="pre">declared_vs_measured()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.costs.fact_costs_path"><code class="docutils literal notranslate"><span class="pre">fact_costs_path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.costs.normalised_cost_table"><code class="docutils literal notranslate"><span class="pre">normalised_cost_table()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.costs.profile_self_nanoseconds"><code class="docutils literal notranslate"><span class="pre">profile_self_nanoseconds()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.costs.write_cost_table"><code class="docutils literal notranslate"><span class="pre">write_cost_table()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#module-ensembl.vep.annotators.consequence.facts.helper">ensembl.vep.annotators.consequence.facts.helper module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.UPSTREAM_DISTANCE"><code class="docutils literal notranslate"><span class="pre">UPSTREAM_DISTANCE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.allele_length_difference"><code class="docutils literal notranslate"><span class="pre">allele_length_difference()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.alternate_allele"><code class="docutils literal notranslate"><span class="pre">alternate_allele()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.alternate_allele_length"><code class="docutils literal notranslate"><span class="pre">alternate_allele_length()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.downstream_distance"><code class="docutils literal notranslate"><span class="pre">downstream_distance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.genomic_overlap"><code class="docutils literal notranslate"><span class="pre">genomic_overlap()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.intron_offsets_to_genomic_span"><code class="docutils literal notranslate"><span class="pre">intron_offsets_to_genomic_span()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.reference_allele"><code class="docutils literal notranslate"><span class="pre">reference_allele()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.reference_allele_length"><code class="docutils literal notranslate"><span class="pre">reference_allele_length()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.upstream_distance"><code class="docutils literal notranslate"><span class="pre">upstream_distance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.variant_genomic_span"><code class="docutils literal notranslate"><span class="pre">variant_genomic_span()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#module-ensembl.vep.annotators.consequence.facts.kind">ensembl.vep.annotators.consequence.facts.kind module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.biotype_miRNA"><code class="docutils literal notranslate"><span class="pre">biotype_miRNA()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.biotype_nmd"><code class="docutils literal notranslate"><span class="pre">biotype_nmd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.biotype_non_coding"><code class="docutils literal notranslate"><span class="pre">biotype_non_coding()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.biotype_protein_coding"><code class="docutils literal notranslate"><span class="pre">biotype_protein_coding()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.has_translation"><code class="docutils literal notranslate"><span class="pre">has_translation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.is_chromosomal_breakpoint"><code class="docutils literal notranslate"><span class="pre">is_chromosomal_breakpoint()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.is_copy_number_gain"><code class="docutils literal notranslate"><span class="pre">is_copy_number_gain()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.is_copy_number_loss"><code class="docutils literal notranslate"><span class="pre">is_copy_number_loss()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.is_deletion"><code class="docutils literal notranslate"><span class="pre">is_deletion()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.is_duplication"><code class="docutils literal notranslate"><span class="pre">is_duplication()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.is_indel"><code class="docutils literal notranslate"><span class="pre">is_indel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.is_insertion"><code class="docutils literal notranslate"><span class="pre">is_insertion()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.is_motif"><code class="docutils literal notranslate"><span class="pre">is_motif()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.is_regulatory"><code class="docutils literal notranslate"><span class="pre">is_regulatory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.is_short"><code class="docutils literal notranslate"><span class="pre">is_short()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.is_short_deletion"><code class="docutils literal notranslate"><span class="pre">is_short_deletion()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.is_short_indel"><code class="docutils literal notranslate"><span class="pre">is_short_indel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.is_short_insertion"><code class="docutils literal notranslate"><span class="pre">is_short_insertion()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.is_snv"><code class="docutils literal notranslate"><span class="pre">is_snv()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.is_structural"><code class="docutils literal notranslate"><span class="pre">is_structural()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.is_structural_deletion"><code class="docutils literal notranslate"><span class="pre">is_structural_deletion()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.is_structural_indel"><code class="docutils literal notranslate"><span class="pre">is_structural_indel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.is_structural_insertion"><code class="docutils literal notranslate"><span class="pre">is_structural_insertion()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.kind.is_transcript"><code class="docutils literal notranslate"><span class="pre">is_transcript()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#module-ensembl.vep.annotators.consequence.facts.position">ensembl.vep.annotators.consequence.facts.position module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.contain_feature"><code class="docutils literal notranslate"><span class="pre">contain_feature()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.is_downstream"><code class="docutils literal notranslate"><span class="pre">is_downstream()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.is_upstream"><code class="docutils literal notranslate"><span class="pre">is_upstream()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_acceptor_site"><code class="docutils literal notranslate"><span class="pre">overlap_acceptor_site()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_cds"><code class="docutils literal notranslate"><span class="pre">overlap_cds()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_donor_5th_base"><code class="docutils literal notranslate"><span class="pre">overlap_donor_5th_base()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_donor_region"><code class="docutils literal notranslate"><span class="pre">overlap_donor_region()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_donor_site"><code class="docutils literal notranslate"><span class="pre">overlap_donor_site()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_exon"><code class="docutils literal notranslate"><span class="pre">overlap_exon()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_feature"><code class="docutils literal notranslate"><span class="pre">overlap_feature()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_five_prime_utr"><code class="docutils literal notranslate"><span class="pre">overlap_five_prime_utr()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_intron"><code class="docutils literal notranslate"><span class="pre">overlap_intron()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_intron_boundary"><code class="docutils literal notranslate"><span class="pre">overlap_intron_boundary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_intron_interior"><code class="docutils literal notranslate"><span class="pre">overlap_intron_interior()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_polypyrimidine_tract"><code class="docutils literal notranslate"><span class="pre">overlap_polypyrimidine_tract()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_splice_region"><code class="docutils literal notranslate"><span class="pre">overlap_splice_region()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_start_codon"><code class="docutils literal notranslate"><span class="pre">overlap_start_codon()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_stop_codon"><code class="docutils literal notranslate"><span class="pre">overlap_stop_codon()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_three_prime_utr"><code class="docutils literal notranslate"><span class="pre">overlap_three_prime_utr()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.partial_last_codon"><code class="docutils literal notranslate"><span class="pre">partial_last_codon()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.within_any_exon"><code class="docutils literal notranslate"><span class="pre">within_any_exon()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.within_feature"><code class="docutils literal notranslate"><span class="pre">within_feature()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#module-ensembl.vep.annotators.consequence.facts.sequence">ensembl.vep.annotators.consequence.facts.sequence module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.sequence.alt_matches_ref_codon_edge"><code class="docutils literal notranslate"><span class="pre">alt_matches_ref_codon_edge()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.sequence.alt_peptide_has_ter"><code class="docutils literal notranslate"><span class="pre">alt_peptide_has_ter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.sequence.alt_peptide_is_ter"><code class="docutils literal notranslate"><span class="pre">alt_peptide_is_ter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.sequence.alt_peptide_matches_ref_edge"><code class="docutils literal notranslate"><span class="pre">alt_peptide_matches_ref_edge()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.sequence.cds_length_change_inframe"><code class="docutils literal notranslate"><span class="pre">cds_length_change_inframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.sequence.cds_start_lost"><code class="docutils literal notranslate"><span class="pre">cds_start_lost()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.sequence.cds_start_retained"><code class="docutils literal notranslate"><span class="pre">cds_start_retained()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.sequence.cds_stop_gain"><code class="docutils literal notranslate"><span class="pre">cds_stop_gain()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.sequence.cds_stop_lost"><code class="docutils literal notranslate"><span class="pre">cds_stop_lost()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.sequence.cds_stop_retained"><code class="docutils literal notranslate"><span class="pre">cds_stop_retained()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.sequence.insertion_after_start"><code class="docutils literal notranslate"><span class="pre">insertion_after_start()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.sequence.insertion_before_start"><code class="docutils literal notranslate"><span class="pre">insertion_before_start()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.sequence.peptide_changed"><code class="docutils literal notranslate"><span class="pre">peptide_changed()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.sequence.peptide_has_X"><code class="docutils literal notranslate"><span class="pre">peptide_has_X()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.sequence.peptide_same_length"><code class="docutils literal notranslate"><span class="pre">peptide_same_length()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.sequence.ref_peptide_has_ter"><code class="docutils literal notranslate"><span class="pre">ref_peptide_has_ter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.sequence.ref_peptide_is_ter"><code class="docutils literal notranslate"><span class="pre">ref_peptide_is_ter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.sequence.ref_peptide_startswith_ter"><code class="docutils literal notranslate"><span class="pre">ref_peptide_startswith_ter()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html">ensembl.vep.annotators.consequence.rules package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#module-ensembl.vep.annotators.consequence.rules.catalogue">ensembl.vep.annotators.consequence.rules.catalogue module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.ACCESSION_PATTERN"><code class="docutils literal notranslate"><span class="pre">ACCESSION_PATTERN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.ConsequenceDefinition"><code class="docutils literal notranslate"><span class="pre">ConsequenceDefinition</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.ConsequenceDefinition.accession"><code class="docutils literal notranslate"><span class="pre">ConsequenceDefinition.accession</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.ConsequenceDefinition.impact"><code class="docutils literal notranslate"><span class="pre">ConsequenceDefinition.impact</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.ConsequenceDefinition.notes"><code class="docutils literal notranslate"><span class="pre">ConsequenceDefinition.notes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.ConsequenceDefinition.rank"><code class="docutils literal notranslate"><span class="pre">ConsequenceDefinition.rank</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.ConsequenceDefinition.so_supported_parents"><code class="docutils literal notranslate"><span class="pre">ConsequenceDefinition.so_supported_parents</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.ConsequenceDefinition.subsumes"><code class="docutils literal notranslate"><span class="pre">ConsequenceDefinition.subsumes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.ConsequenceDefinition.term"><code class="docutils literal notranslate"><span class="pre">ConsequenceDefinition.term</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.ConsequenceDefinition.tier"><code class="docutils literal notranslate"><span class="pre">ConsequenceDefinition.tier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.ConsequenceDefinition.when"><code class="docutils literal notranslate"><span class="pre">ConsequenceDefinition.when</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.DEFAULT_TERM"><code class="docutils literal notranslate"><span class="pre">DEFAULT_TERM</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.ENTRY_KEY_ORDER"><code class="docutils literal notranslate"><span class="pre">ENTRY_KEY_ORDER</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.EXCLUDED_TERMS"><code class="docutils literal notranslate"><span class="pre">EXCLUDED_TERMS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.catalogue_digest"><code class="docutils literal notranslate"><span class="pre">catalogue_digest()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.catalogue_path"><code class="docutils literal notranslate"><span class="pre">catalogue_path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.dump_catalogue"><code class="docutils literal notranslate"><span class="pre">dump_catalogue()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.load_catalogue"><code class="docutils literal notranslate"><span class="pre">load_catalogue()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.catalogue.load_consequence_definitions"><code class="docutils literal notranslate"><span class="pre">load_consequence_definitions()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#module-ensembl.vep.annotators.consequence.rules.editing">ensembl.vep.annotators.consequence.rules.editing module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.editing.accession_index"><code class="docutils literal notranslate"><span class="pre">accession_index()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.editing.apply_add"><code class="docutils literal notranslate"><span class="pre">apply_add()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.editing.apply_remove"><code class="docutils literal notranslate"><span class="pre">apply_remove()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.editing.build_entry"><code class="docutils literal notranslate"><span class="pre">build_entry()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.editing.derive_subsumes"><code class="docutils literal notranslate"><span class="pre">derive_subsumes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.editing.insert_at_rank"><code class="docutils literal notranslate"><span class="pre">insert_at_rank()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.editing.next_rank"><code class="docutils literal notranslate"><span class="pre">next_rank()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.editing.remove_term"><code class="docutils literal notranslate"><span class="pre">remove_term()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.editing.resolve_when"><code class="docutils literal notranslate"><span class="pre">resolve_when()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#module-ensembl.vep.annotators.consequence.rules.expressions">ensembl.vep.annotators.consequence.rules.expressions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.And"><code class="docutils literal notranslate"><span class="pre">And</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.And.atoms"><code class="docutils literal notranslate"><span class="pre">And.atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.And.children"><code class="docutils literal notranslate"><span class="pre">And.children</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.And.evaluate"><code class="docutils literal notranslate"><span class="pre">And.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.And.evaluate_partial"><code class="docutils literal notranslate"><span class="pre">And.evaluate_partial()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Atom"><code class="docutils literal notranslate"><span class="pre">Atom</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Atom.atoms"><code class="docutils literal notranslate"><span class="pre">Atom.atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Atom.evaluate"><code class="docutils literal notranslate"><span class="pre">Atom.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Atom.evaluate_partial"><code class="docutils literal notranslate"><span class="pre">Atom.evaluate_partial()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Atom.name"><code class="docutils literal notranslate"><span class="pre">Atom.name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Expr"><code class="docutils literal notranslate"><span class="pre">Expr</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Expr.atoms"><code class="docutils literal notranslate"><span class="pre">Expr.atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Expr.cost"><code class="docutils literal notranslate"><span class="pre">Expr.cost()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Expr.evaluate"><code class="docutils literal notranslate"><span class="pre">Expr.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Expr.evaluate_partial"><code class="docutils literal notranslate"><span class="pre">Expr.evaluate_partial()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Not"><code class="docutils literal notranslate"><span class="pre">Not</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Not.atoms"><code class="docutils literal notranslate"><span class="pre">Not.atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Not.child"><code class="docutils literal notranslate"><span class="pre">Not.child</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Not.evaluate"><code class="docutils literal notranslate"><span class="pre">Not.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Not.evaluate_partial"><code class="docutils literal notranslate"><span class="pre">Not.evaluate_partial()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Or"><code class="docutils literal notranslate"><span class="pre">Or</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Or.atoms"><code class="docutils literal notranslate"><span class="pre">Or.atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Or.children"><code class="docutils literal notranslate"><span class="pre">Or.children</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Or.evaluate"><code class="docutils literal notranslate"><span class="pre">Or.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Or.evaluate_partial"><code class="docutils literal notranslate"><span class="pre">Or.evaluate_partial()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.all_of"><code class="docutils literal notranslate"><span class="pre">all_of()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.any_of"><code class="docutils literal notranslate"><span class="pre">any_of()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.expr_from_json"><code class="docutils literal notranslate"><span class="pre">expr_from_json()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.no"><code class="docutils literal notranslate"><span class="pre">no()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#module-ensembl.vep.annotators.consequence.rules.rulesets">ensembl.vep.annotators.consequence.rules.rulesets module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.FactRule"><code class="docutils literal notranslate"><span class="pre">FactRule</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.FactRule.accession"><code class="docutils literal notranslate"><span class="pre">FactRule.accession</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.FactRule.atoms"><code class="docutils literal notranslate"><span class="pre">FactRule.atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.FactRule.cheap_guard"><code class="docutils literal notranslate"><span class="pre">FactRule.cheap_guard()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.FactRule.feature_type"><code class="docutils literal notranslate"><span class="pre">FactRule.feature_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.FactRule.impact"><code class="docutils literal notranslate"><span class="pre">FactRule.impact</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.FactRule.notes"><code class="docutils literal notranslate"><span class="pre">FactRule.notes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.FactRule.overlapping_feature_type"><code class="docutils literal notranslate"><span class="pre">FactRule.overlapping_feature_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.FactRule.rank"><code class="docutils literal notranslate"><span class="pre">FactRule.rank</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.FactRule.subsumes"><code class="docutils literal notranslate"><span class="pre">FactRule.subsumes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.FactRule.term"><code class="docutils literal notranslate"><span class="pre">FactRule.term</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.FactRule.tier"><code class="docutils literal notranslate"><span class="pre">FactRule.tier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.FactRule.to_overlap_consequence"><code class="docutils literal notranslate"><span class="pre">FactRule.to_overlap_consequence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.FactRule.when"><code class="docutils literal notranslate"><span class="pre">FactRule.when</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.FactRuleSet"><code class="docutils literal notranslate"><span class="pre">FactRuleSet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.FactRuleSet.by_term"><code class="docutils literal notranslate"><span class="pre">FactRuleSet.by_term</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.FactRuleSet.rules"><code class="docutils literal notranslate"><span class="pre">FactRuleSet.rules</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.build_fact_ruleset"><code class="docutils literal notranslate"><span class="pre">build_fact_ruleset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.build_fact_ruleset_from_definitions"><code class="docutils literal notranslate"><span class="pre">build_fact_ruleset_from_definitions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.coding_terms"><code class="docutils literal notranslate"><span class="pre">coding_terms()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.prune"><code class="docutils literal notranslate"><span class="pre">prune()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.subsumes_topological_order"><code class="docutils literal notranslate"><span class="pre">subsumes_topological_order()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#module-ensembl.vep.annotators.consequence.rules.validation">ensembl.vep.annotators.consequence.rules.validation module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace"><code class="docutils literal notranslate"><span class="pre">FactAssignmentSpace</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.allows"><code class="docutils literal notranslate"><span class="pre">FactAssignmentSpace.allows()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.consistent_assignments"><code class="docutils literal notranslate"><span class="pre">FactAssignmentSpace.consistent_assignments()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.for_rule"><code class="docutils literal notranslate"><span class="pre">FactAssignmentSpace.for_rule()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.satisfies"><code class="docutils literal notranslate"><span class="pre">FactAssignmentSpace.satisfies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.support"><code class="docutils literal notranslate"><span class="pre">FactAssignmentSpace.support</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.union"><code class="docutils literal notranslate"><span class="pre">FactAssignmentSpace.union()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RulePairFinding"><code class="docutils literal notranslate"><span class="pre">RulePairFinding</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RulePairFinding.contradictory_in"><code class="docutils literal notranslate"><span class="pre">RulePairFinding.contradictory_in()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RulePairFinding.kind"><code class="docutils literal notranslate"><span class="pre">RulePairFinding.kind</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RulePairFinding.message"><code class="docutils literal notranslate"><span class="pre">RulePairFinding.message</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RulePairFinding.redundant_in"><code class="docutils literal notranslate"><span class="pre">RulePairFinding.redundant_in()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RulePairFinding.term_a"><code class="docutils literal notranslate"><span class="pre">RulePairFinding.term_a</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RulePairFinding.term_b"><code class="docutils literal notranslate"><span class="pre">RulePairFinding.term_b</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RuleReachability"><code class="docutils literal notranslate"><span class="pre">RuleReachability</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RuleReachability.for_rule"><code class="docutils literal notranslate"><span class="pre">RuleReachability.for_rule()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RuleReachability.is_reachable"><code class="docutils literal notranslate"><span class="pre">RuleReachability.is_reachable</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RuleReachability.satisfying_assignment_count"><code class="docutils literal notranslate"><span class="pre">RuleReachability.satisfying_assignment_count</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RuleReachability.support"><code class="docutils literal notranslate"><span class="pre">RuleReachability.support</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RuleReachability.term"><code class="docutils literal notranslate"><span class="pre">RuleReachability.term</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RuleReachability.unreachable_in"><code class="docutils literal notranslate"><span class="pre">RuleReachability.unreachable_in()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RuleReachability.valid_assignment_count"><code class="docutils literal notranslate"><span class="pre">RuleReachability.valid_assignment_count</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.SolverChecks"><code class="docutils literal notranslate"><span class="pre">SolverChecks</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.SolverChecks.findings"><code class="docutils literal notranslate"><span class="pre">SolverChecks.findings()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks"><code class="docutils literal notranslate"><span class="pre">StructuralChecks</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.missing_when_terms"><code class="docutils literal notranslate"><span class="pre">StructuralChecks.missing_when_terms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.ruleset_problems"><code class="docutils literal notranslate"><span class="pre">StructuralChecks.ruleset_problems()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.subsumes_so_parent_drift"><code class="docutils literal notranslate"><span class="pre">StructuralChecks.subsumes_so_parent_drift()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.subsumption_cycles"><code class="docutils literal notranslate"><span class="pre">StructuralChecks.subsumption_cycles()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.term_and_rank_uniqueness"><code class="docutils literal notranslate"><span class="pre">StructuralChecks.term_and_rank_uniqueness()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport"><code class="docutils literal notranslate"><span class="pre">ValidationReport</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport.contradictory_pairs"><code class="docutils literal notranslate"><span class="pre">ValidationReport.contradictory_pairs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport.errors"><code class="docutils literal notranslate"><span class="pre">ValidationReport.errors</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport.for_catalogue_entries"><code class="docutils literal notranslate"><span class="pre">ValidationReport.for_catalogue_entries()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport.for_ruleset"><code class="docutils literal notranslate"><span class="pre">ValidationReport.for_ruleset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport.has_errors"><code class="docutils literal notranslate"><span class="pre">ValidationReport.has_errors</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport.missing_when_problems"><code class="docutils literal notranslate"><span class="pre">ValidationReport.missing_when_problems</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport.redundant_pairs"><code class="docutils literal notranslate"><span class="pre">ValidationReport.redundant_pairs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport.so_parent_drift"><code class="docutils literal notranslate"><span class="pre">ValidationReport.so_parent_drift</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport.unreachable_rules"><code class="docutils literal notranslate"><span class="pre">ValidationReport.unreachable_rules</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport.warnings"><code class="docutils literal notranslate"><span class="pre">ValidationReport.warnings</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html">ensembl.vep.annotators.consequence.strategies package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#module-ensembl.vep.annotators.consequence.strategies.base">ensembl.vep.annotators.consequence.strategies.base module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.base.ConsequenceAnnotator"><code class="docutils literal notranslate"><span class="pre">ConsequenceAnnotator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.base.ConsequenceAnnotator.annotate_feature_overlap"><code class="docutils literal notranslate"><span class="pre">ConsequenceAnnotator.annotate_feature_overlap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.base.ConsequenceAnnotator.annotate_feature_overlaps"><code class="docutils literal notranslate"><span class="pre">ConsequenceAnnotator.annotate_feature_overlaps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.base.ConsequenceAnnotator.cache_hits"><code class="docutils literal notranslate"><span class="pre">ConsequenceAnnotator.cache_hits</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.base.ConsequenceAnnotator.cache_misses"><code class="docutils literal notranslate"><span class="pre">ConsequenceAnnotator.cache_misses</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.base.ConsequenceAnnotator.name"><code class="docutils literal notranslate"><span class="pre">ConsequenceAnnotator.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#module-ensembl.vep.annotators.consequence.strategies.columnar">ensembl.vep.annotators.consequence.strategies.columnar module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.BitColumnBuffer"><code class="docutils literal notranslate"><span class="pre">BitColumnBuffer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.BitColumnBuffer.column"><code class="docutils literal notranslate"><span class="pre">BitColumnBuffer.column()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.BitColumnBuffer.seed"><code class="docutils literal notranslate"><span class="pre">BitColumnBuffer.seed()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.ColumnarFactsAnnotator"><code class="docutils literal notranslate"><span class="pre">ColumnarFactsAnnotator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.ColumnarFactsAnnotator.annotate_feature_overlaps"><code class="docutils literal notranslate"><span class="pre">ColumnarFactsAnnotator.annotate_feature_overlaps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.ColumnarFactsAnnotator.last_traces"><code class="docutils literal notranslate"><span class="pre">ColumnarFactsAnnotator.last_traces</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.ColumnarFactsAnnotator.name"><code class="docutils literal notranslate"><span class="pre">ColumnarFactsAnnotator.name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.DEFAULT_BATCH_SIZE"><code class="docutils literal notranslate"><span class="pre">DEFAULT_BATCH_SIZE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlan"><code class="docutils literal notranslate"><span class="pre">RulePlan</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlan.build"><code class="docutils literal notranslate"><span class="pre">RulePlan.build()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlan.evaluate"><code class="docutils literal notranslate"><span class="pre">RulePlan.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlan.root_plan_node"><code class="docutils literal notranslate"><span class="pre">RulePlan.root_plan_node</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlanSet"><code class="docutils literal notranslate"><span class="pre">RulePlanSet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlanSet.build"><code class="docutils literal notranslate"><span class="pre">RulePlanSet.build()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlanSet.evaluate_over_columns"><code class="docutils literal notranslate"><span class="pre">RulePlanSet.evaluate_over_columns()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlanSet.hit_terms_by_context"><code class="docutils literal notranslate"><span class="pre">RulePlanSet.hit_terms_by_context()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlanSet.plans"><code class="docutils literal notranslate"><span class="pre">RulePlanSet.plans</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlanSet.ruleset"><code class="docutils literal notranslate"><span class="pre">RulePlanSet.ruleset</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#module-ensembl.vep.annotators.consequence.strategies.columnar_kernels">ensembl.vep.annotators.consequence.strategies.columnar_kernels module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar_kernels.ColumnarKernelsAnnotator"><code class="docutils literal notranslate"><span class="pre">ColumnarKernelsAnnotator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar_kernels.ColumnarKernelsAnnotator.name"><code class="docutils literal notranslate"><span class="pre">ColumnarKernelsAnnotator.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar_kernels.ColumnarKernelsAnnotator.seed_columns"><code class="docutils literal notranslate"><span class="pre">ColumnarKernelsAnnotator.seed_columns()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar_kernels.SEEDED_FACT_NAMES"><code class="docutils literal notranslate"><span class="pre">SEEDED_FACT_NAMES</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#module-ensembl.vep.annotators.consequence.strategies.columnar_staged">ensembl.vep.annotators.consequence.strategies.columnar_staged module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar_staged.ColumnarStagedAnnotator"><code class="docutils literal notranslate"><span class="pre">ColumnarStagedAnnotator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar_staged.ColumnarStagedAnnotator.annotate_feature_overlaps"><code class="docutils literal notranslate"><span class="pre">ColumnarStagedAnnotator.annotate_feature_overlaps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar_staged.ColumnarStagedAnnotator.last_traces"><code class="docutils literal notranslate"><span class="pre">ColumnarStagedAnnotator.last_traces</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar_staged.ColumnarStagedAnnotator.name"><code class="docutils literal notranslate"><span class="pre">ColumnarStagedAnnotator.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar_staged.ColumnarStagedAnnotator.seed_columns"><code class="docutils literal notranslate"><span class="pre">ColumnarStagedAnnotator.seed_columns()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar_staged.topological_requires_order"><code class="docutils literal notranslate"><span class="pre">topological_requires_order()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#module-ensembl.vep.annotators.consequence.strategies.linear">ensembl.vep.annotators.consequence.strategies.linear module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.linear.LinearFactsAnnotator"><code class="docutils literal notranslate"><span class="pre">LinearFactsAnnotator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.linear.LinearFactsAnnotator.annotate_feature_overlap"><code class="docutils literal notranslate"><span class="pre">LinearFactsAnnotator.annotate_feature_overlap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.linear.LinearFactsAnnotator.annotate_feature_overlaps"><code class="docutils literal notranslate"><span class="pre">LinearFactsAnnotator.annotate_feature_overlaps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.linear.LinearFactsAnnotator.name"><code class="docutils literal notranslate"><span class="pre">LinearFactsAnnotator.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#module-ensembl.vep.annotators.consequence.strategies.staged">ensembl.vep.annotators.consequence.strategies.staged module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.staged.CheapAtomAlphabet"><code class="docutils literal notranslate"><span class="pre">CheapAtomAlphabet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.staged.CheapAtomAlphabet.atom_names"><code class="docutils literal notranslate"><span class="pre">CheapAtomAlphabet.atom_names</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.staged.CheapAtomAlphabet.build"><code class="docutils literal notranslate"><span class="pre">CheapAtomAlphabet.build()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.staged.StagedFactsAnnotator"><code class="docutils literal notranslate"><span class="pre">StagedFactsAnnotator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.staged.StagedFactsAnnotator.annotate_feature_overlap"><code class="docutils literal notranslate"><span class="pre">StagedFactsAnnotator.annotate_feature_overlap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.staged.StagedFactsAnnotator.annotate_feature_overlaps"><code class="docutils literal notranslate"><span class="pre">StagedFactsAnnotator.annotate_feature_overlaps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.staged.StagedFactsAnnotator.name"><code class="docutils literal notranslate"><span class="pre">StagedFactsAnnotator.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
+</section>
+<section id="module-ensembl.vep.annotators.consequence.graphs">
+<span id="ensembl-vep-annotators-consequence-graphs-module"></span><h2>ensembl.vep.annotators.consequence.graphs module<a class="headerlink" href="#module-ensembl.vep.annotators.consequence.graphs" title="Link to this heading">#</a></h2>
+<p>Build graphs from consequence facts and rules.</p>
+<p>This module assigns domain meaning to graph nodes and edges. Renderers remain responsible for
+visual presentation so <code class="docutils literal notranslate"><span class="pre">ensembl.vep.render</span></code> stays independent of consequence annotation.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="ensembl.vep.annotators.consequence.graphs.catalogue_overview_graph">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.annotators.consequence.graphs.</span></span><span class="sig-name descname"><span class="pre">catalogue_overview_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">definitions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/annotators/consequence/graphs.html#catalogue_overview_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.annotators.consequence.graphs.catalogue_overview_graph" title="Link to this definition">#</a></dt>
+<dd><p>Return every catalogue term and the direction of subsumption between them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Graph" title="ensembl.vep.render.graph.model.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ensembl.vep.annotators.consequence.graphs.derivation_graphs">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.annotators.consequence.graphs.</span></span><span class="sig-name descname"><span class="pre">derivation_graphs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ruleset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/annotators/consequence/graphs.html#derivation_graphs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.annotators.consequence.graphs.derivation_graphs" title="Link to this definition">#</a></dt>
+<dd><p>Return every rule decorated with its result for one overlap.</p>
+<p>Each term keeps its own expression tree. Observed True and False expression nodes carry those
+states for the renderer; nodes whose atoms were never observed remain neutral. The graphs are
+grouped by outcome – emitted first, then firing terms removed by subsumption, then rules that
+did not fire – and retain rank order within each group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trace</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="ensembl.vep.trace.html#ensembl.vep.trace.annotation.AnnotationTrace" title="ensembl.vep.trace.annotation.AnnotationTrace"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnotationTrace</span></code></a></span>) – The derivation to draw.</p></li>
+<li><p><strong>ruleset</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.FactRuleSet" title="ensembl.vep.annotators.consequence.rules.rulesets.FactRuleSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">FactRuleSet</span></code></a> | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – The rules the trace was produced against, or None for the
+packaged catalogue’s.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>One decorated expression tree per rule.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<a class="reference internal" href="ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Graph" title="ensembl.vep.render.graph.model.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ensembl.vep.annotators.consequence.graphs.fact_dependency_graph">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.annotators.consequence.graphs.</span></span><span class="sig-name descname"><span class="pre">fact_dependency_graph</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/annotators/consequence/graphs.html#fact_dependency_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.annotators.consequence.graphs.fact_dependency_graph" title="Link to this definition">#</a></dt>
+<dd><p>Return the fact registry as a graph, columns ordered by cost tier.</p>
+<p>Two edge kinds, and the distinction matters: <code class="docutils literal notranslate"><span class="pre">deps</span></code> is what must be computed first, while
+<code class="docutils literal notranslate"><span class="pre">requires</span></code> is the implication a staging planner exploits to settle a rule without computing
+the expensive atom at all.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Graph" title="ensembl.vep.render.graph.model.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ensembl.vep.annotators.consequence.graphs.rule_graph">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.annotators.consequence.graphs.</span></span><span class="sig-name descname"><span class="pre">rule_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">term</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ruleset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/annotators/consequence/graphs.html#rule_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.annotators.consequence.graphs.rule_graph" title="Link to this definition">#</a></dt>
+<dd><p>Return one rule as a Boolean expression tree.</p>
+<p>The formula reads left to right: atoms feed <code class="docutils literal notranslate"><span class="pre">ALL</span></code> and <code class="docutils literal notranslate"><span class="pre">ANY</span></code> operators, which feed the term.
+Negation of an atom stays on that leaf; a separate <code class="docutils literal notranslate"><span class="pre">NOT</span></code> operator is reserved for a compound
+expression. Subsumption belongs to <code class="docutils literal notranslate"><span class="pre">catalogue_overview_graph</span></code> rather than this tree.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>term</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The SO term to draw.</p></li>
+<li><p><strong>ruleset</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.rulesets.FactRuleSet" title="ensembl.vep.annotators.consequence.rules.rulesets.FactRuleSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">FactRuleSet</span></code></a> | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – The rules to read, or None for the packaged catalogue’s.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The term’s tree.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Graph" title="ensembl.vep.render.graph.model.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a></span></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>KeyError</strong> – If no rule is named <code class="docutils literal notranslate"><span class="pre">term</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ensembl.vep.annotators.consequence.graphs.rule_graphs">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.annotators.consequence.graphs.</span></span><span class="sig-name descname"><span class="pre">rule_graphs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ruleset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/annotators/consequence/graphs.html#rule_graphs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.annotators.consequence.graphs.rule_graphs" title="Link to this definition">#</a></dt>
+<dd><p>Return one tree per rule, in catalogue rank order.</p>
+<p>One graph each rather than a single merged diagram: the rules share atoms but not structure, so
+merging them produces a tangle that shows neither formula clearly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<a class="reference internal" href="ensembl.vep.render.graph.html#ensembl.vep.render.graph.model.Graph" title="ensembl.vep.render.graph.model.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="ensembl.vep.annotators.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">ensembl.vep.annotators package</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="ensembl.vep.annotators.consequence.context.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">ensembl.vep.annotators.consequence.context package</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal" tabindex="-1"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subpackages">Subpackages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-ensembl.vep.annotators.consequence.graphs">ensembl.vep.annotators.consequence.graphs module</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.annotators.consequence.graphs.catalogue_overview_graph"><code class="docutils literal notranslate"><span class="pre">catalogue_overview_graph()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.annotators.consequence.graphs.derivation_graphs"><code class="docutils literal notranslate"><span class="pre">derivation_graphs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.annotators.consequence.graphs.fact_dependency_graph"><code class="docutils literal notranslate"><span class="pre">fact_dependency_graph()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.annotators.consequence.graphs.rule_graph"><code class="docutils literal notranslate"><span class="pre">rule_graph()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.annotators.consequence.graphs.rule_graphs"><code class="docutils literal notranslate"><span class="pre">rule_graphs()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

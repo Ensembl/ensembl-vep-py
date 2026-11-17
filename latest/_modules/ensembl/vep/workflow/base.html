@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -493,7 +479,7 @@
 
 
 <div class="viewcode-block" id="Workflow">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.workflow.html#ensembl.vep.workflow.base.Workflow">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.workflow.html#ensembl.vep.workflow.base.Workflow">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Workflow</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Ordered annotation tracks for an input buffer.</span>
@@ -528,7 +514,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Workflow.track">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.workflow.html#ensembl.vep.workflow.base.Workflow.track">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.workflow.html#ensembl.vep.workflow.base.Workflow.track">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnnotationTrack</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the track that produced results under ``identifier``.</span>
 
@@ -542,7 +528,7 @@
 
 
 <div class="viewcode-block" id="Workflow.begin_payload">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.workflow.html#ensembl.vep.workflow.base.Workflow.begin_payload">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.workflow.html#ensembl.vep.workflow.base.Workflow.begin_payload">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">begin_payload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_buffer</span><span class="p">:</span> <span class="n">VariationAlleleBuffer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Release the previous payload's state and prime each track for this one.</span>
 
@@ -554,7 +540,7 @@
 
 
 <div class="viewcode-block" id="Workflow.annotate">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.workflow.html#ensembl.vep.workflow.base.Workflow.annotate">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.workflow.html#ensembl.vep.workflow.base.Workflow.annotate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">annotate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_buffer</span><span class="p">:</span> <span class="n">VariationAlleleBuffer</span><span class="p">,</span>
@@ -588,7 +574,7 @@
 
 
 <div class="viewcode-block" id="Workflow.close">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.workflow.html#ensembl.vep.workflow.base.Workflow.close">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.workflow.html#ensembl.vep.workflow.base.Workflow.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Close every track's source."""</span>
         <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tracks</span><span class="p">:</span>

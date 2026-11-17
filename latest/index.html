@@ -66,7 +66,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="_static/searchtools.js"></script>
@@ -182,13 +182,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="developer_guide/index.html">
     Developer Guide
   </a>
@@ -196,7 +189,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="reference.html">
+  <a class="nav-link nav-internal" href="reference/index.html">
     Reference
   </a>
 </li>
@@ -336,13 +329,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="developer_guide/index.html">
     Developer Guide
   </a>
@@ -350,7 +336,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="reference.html">
+  <a class="nav-link nav-internal" href="reference/index.html">
     Reference
   </a>
 </li>
@@ -451,24 +437,18 @@
 <li class="toctree-l1"><a class="reference internal" href="user_guide/index.html">User Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="user_guide/install.html">Download and install</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_guide/quickstart.html">Quickstart guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorials/install_vep.html">Install Ensembl VEP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/how_to/configuring_a_run.html">Configuring a run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/how_to/annotation_sources.html">Choosing annotation sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/how_to/output.html">Writing output and run summaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/how_to/custom_annotation.html">Using custom annotation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/how_to/plugins.html">Using plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/how_to/filtering_results.html">Filtering results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/how_to/performance.html">Improving performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorials/streaming_annotations.html">Streaming annotations in Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorials/explaining_consequences.html">Explaining a consequence call</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_guide/faq.html">FAQs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_guide/troubleshooting.html">Troubleshooting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_guide/contact.html">Contact Us</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</section>
-<section id="coverage">
-<h2>Coverage<a class="headerlink" href="#coverage" title="Link to this heading">#</a></h2>
-<p>Coverage report of the unit tests for this library.</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="coverage_report.html">Coverage Report</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="coverage_report.html#python">Python</a></li>
-<li class="toctree-l2"><a class="reference internal" href="coverage_report.html#rust">Rust</a></li>
-<li class="toctree-l2"><a class="reference internal" href="coverage_report.html#coverage-trends">Coverage Trends</a></li>
 </ul>
 </li>
 </ul>
@@ -522,13 +502,30 @@
 <li class="toctree-l3"><a class="reference internal" href="developer_guide/parsers_and_feature_sources.html#sources">Sources</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/benchmarking.html">Benchmarking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/benchmarking.html#the-conformance-gate">The conformance gate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/benchmarking.html#vep-bench-matrix-the-annotator-alone"><code class="docutils literal notranslate"><span class="pre">vep</span> <span class="pre">bench</span> <span class="pre">matrix</span></code>: the annotator alone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/benchmarking.html#vep-bench-endtoend-the-whole-command-line"><code class="docutils literal notranslate"><span class="pre">vep</span> <span class="pre">bench</span> <span class="pre">endtoend</span></code>: the whole command line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/benchmarking.html#other-commands">Other commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/benchmarking.html#recording-and-comparing-results">Recording and comparing results</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="developer_guide/documentation.html">Building the Documentation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="developer_guide/documentation.html#changes-to-the-default-configuration">Changes to the default configuration</a></li>
 <li class="toctree-l3"><a class="reference internal" href="developer_guide/documentation.html#documenting-rust-objects">Documenting Rust objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/documentation.html#generated-pages">Generated pages</a></li>
 <li class="toctree-l3"><a class="reference internal" href="developer_guide/documentation.html#coverage-reports">Coverage reports</a></li>
 <li class="toctree-l3"><a class="reference internal" href="developer_guide/documentation.html#building-the-documentation-locally">Building the documentation locally</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/coverage_report.html">Coverage Report</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/coverage_report.html#python">Python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/coverage_report.html#rust">Rust</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/coverage_report.html#coverage-trends">Coverage Trends</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/writing_plugins.html">Writing Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/adding_annotation_sources.html">Adding an annotation source</a></li>
 </ul>
 </li>
 </ul>
@@ -536,12 +533,14 @@
 </section>
 <section id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>
-<p>Command-line and API reference.</p>
+<p>Command-line, data format, consequence term and API reference.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="reference/cli/index.html">CLI reference</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference/ensembl.vep.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/index.html">Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="auto/reference/cli/index.html">CLI reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/data_formats.html">Data formats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auto/reference/consequence_terms.html">Consequence terms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auto/reference/api/ensembl.vep.html">API reference</a></li>
 </ul>
 </li>
 </ul>

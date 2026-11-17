@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VEP consequence catalogue</title>
+<style>
+:root {
+  --color-black: #1b2c39;
+  --color-soft-black: #374148;
+  --color-white: #fff;
+  --color-off-white: #fefefe;
+  --color-blue: #0099ff;
+  --color-light-blue: #33adff;
+  --color-ice-blue: #e5f5ff;
+  --color-teal: #327c89;
+  --color-duckegg-blue: #96d0c9;
+  --color-neon-blue: #8ef4f8;
+  --color-light-grey: #f1f2f4;
+  --color-medium-light-grey: #d4d9de;
+  --color-grey: #b7c0c8;
+  --color-medium-dark-grey: #9aa7b1;
+  --color-dark-grey: #6f8190;
+  --color-red: #d90000;
+  --color-dark-pink: #eb768a;
+  --color-purple: #ca81ff;
+  --color-orange: #ff9900;
+  --color-mustard: #cc9933;
+  --color-dark-yellow: #f8c041;
+  --color-green: #47d147;
+  --color-lime: #84fa3a;
+  --font-family-body: Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;
+  --font-family-monospace: 'IBM Plex Mono', 'Liberation Mono', Courier, monospace;
+  --standard-gutter: 30px;
+  --body-font-size: 13px;
+  --body-line-height: 1.5;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-bold: 700;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 13px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-off-white);
+  color: var(--color-black);
+  font-family: var(--font-family-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--color-blue);
+  text-decoration: none;
+}
+
+code, kbd, pre {
+  font-family: var(--font-family-monospace);
+}
+
+.vep-table {
+  border-collapse: collapse;
+  background-color: var(--color-white);
+}
+
+.vep-table th {
+  font-size: 11px;
+  font-weight: 300;
+  text-align: left;
+  padding: 0 32px 4px 24px;
+  box-shadow: inset 0 -1.5px 0 var(--color-blue);
+}
+
+.vep-table td {
+  padding: 9px 32px 9px 24px;
+  vertical-align: middle;
+}
+
+.vep-table tr + tr {
+  border-top: 1px solid var(--color-grey);
+}
+
+.vep-masthead {
+  border-bottom: 1px solid var(--color-medium-light-grey);
+  padding: 30px;
+}
+
+.vep-masthead h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 300;
+}
+
+.vep-masthead p {
+  margin: 4px 0 0;
+  color: var(--color-dark-grey);
+}
+
+.vep-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 30px;
+  padding: 30px;
+}
+
+.vep-menu {
+  position: sticky;
+  top: 30px;
+  min-width: 200px;
+  max-height: calc(100vh - 2 * 30px);
+  overflow-y: auto;
+  border-left: 2px solid var(--color-blue);
+  padding-left: 12px;
+}
+
+.vep-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.vep-menu li {
+  padding: 3px 0;
+}
+
+.vep-menu .vep-menu-group {
+  margin-top: 12px;
+  color: var(--color-soft-black);
+  font-weight: 700;
+}
+
+.vep-menu .vep-menu-group:first-child {
+  margin-top: 0;
+}
+
+.vep-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.vep-section {
+  margin-bottom: 30px;
+}
+
+.vep-section h2 {
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--color-soft-black);
+  margin: 0 0 12px;
+  padding-bottom: 4px;
+  box-shadow: inset 0 -1.5px 0 var(--color-blue);
+}
+
+.vep-figures {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 30px;
+}
+
+.vep-figures > svg {
+  max-width: 100%;
+  height: auto;
+}
+
+</style>
+</head>
+<body>
+  <header class="vep-masthead">
+    <h1>VEP consequence catalogue</h1>
+    <p>39 rule expressions and 2 fallback terms</p>
+  </header>
+  <div class="vep-layout">
+  <nav class="vep-menu">
+    <ul>
+      <li><a href="#transcript_ablation">transcript_ablation</a></li>
+      <li><a href="#splice_acceptor_variant">splice_acceptor_variant</a></li>
+      <li><a href="#splice_donor_variant">splice_donor_variant</a></li>
+      <li><a href="#stop_gained">stop_gained</a></li>
+      <li><a href="#frameshift_variant">frameshift_variant</a></li>
+      <li><a href="#stop_lost">stop_lost</a></li>
+      <li><a href="#start_lost">start_lost</a></li>
+      <li><a href="#transcript_amplification">transcript_amplification</a></li>
+      <li><a href="#feature_elongation">feature_elongation</a></li>
+      <li><a href="#feature_truncation">feature_truncation</a></li>
+      <li><a href="#inframe_insertion">inframe_insertion</a></li>
+      <li><a href="#inframe_deletion">inframe_deletion</a></li>
+      <li><a href="#missense_variant">missense_variant</a></li>
+      <li><a href="#protein_altering_variant">protein_altering_variant</a></li>
+      <li><a href="#splice_donor_5th_base_variant">splice_donor_5th_base_variant</a></li>
+      <li><a href="#splice_region_variant">splice_region_variant</a></li>
+      <li><a href="#splice_donor_region_variant">splice_donor_region_variant</a></li>
+      <li><a href="#splice_polypyrimidine_tract_variant">splice_polypyrimidine_tract_variant</a></li>
+      <li><a href="#incomplete_terminal_codon_variant">incomplete_terminal_codon_variant</a></li>
+      <li><a href="#start_retained_variant">start_retained_variant</a></li>
+      <li><a href="#stop_retained_variant">stop_retained_variant</a></li>
+      <li><a href="#synonymous_variant">synonymous_variant</a></li>
+      <li><a href="#coding_sequence_variant">coding_sequence_variant</a></li>
+      <li><a href="#mature_miRNA_variant">mature_miRNA_variant</a></li>
+      <li><a href="#5_prime_UTR_variant">5_prime_UTR_variant</a></li>
+      <li><a href="#3_prime_UTR_variant">3_prime_UTR_variant</a></li>
+      <li><a href="#non_coding_transcript_exon_variant">non_coding_transcript_exon_variant</a></li>
+      <li><a href="#intron_variant">intron_variant</a></li>
+      <li><a href="#NMD_transcript_variant">NMD_transcript_variant</a></li>
+      <li><a href="#non_coding_transcript_variant">non_coding_transcript_variant</a></li>
+      <li><a href="#coding_transcript_variant">coding_transcript_variant</a></li>
+      <li><a href="#upstream_gene_variant">upstream_gene_variant</a></li>
+      <li><a href="#downstream_gene_variant">downstream_gene_variant</a></li>
+      <li><a href="#TFBS_ablation">TFBS_ablation</a></li>
+      <li><a href="#TFBS_amplification">TFBS_amplification</a></li>
+      <li><a href="#TF_binding_site_variant">TF_binding_site_variant</a></li>
+      <li><a href="#regulatory_region_ablation">regulatory_region_ablation</a></li>
+      <li><a href="#regulatory_region_amplification">regulatory_region_amplification</a></li>
+      <li><a href="#regulatory_region_variant">regulatory_region_variant</a></li>
+      <li><a href="#intergenic_variant">intergenic_variant</a></li>
+      <li><a href="#sequence_variant">sequence_variant</a></li>
+      <li><a href="#catalogue-overview">Catalogue overview</a></li>
+    </ul>
+  </nav>
+  <main class="vep-content">
+  <section class="vep-section" id="transcript_ablation">
+    <h2>transcript_ablation</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 238" width="683" height="238" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>transcript_ablation</title>
+  <defs><marker id="arrow-transcript_ablation" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-transcript_ablation)"/>
+  <path d="M 194 93 C 245 93, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-transcript_ablation)"/>
+  <path d="M 194 145 C 245 145, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-transcript_ablation)"/>
+  <path d="M 194 197 C 245 197, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-transcript_ablation)"/>
+  <path d="M 361 119 C 400 119, 400 119, 439 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-transcript_ablation)"/>
+  <text x="400" y="115" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="102" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="117" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_structural</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">contain_feature</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">is_structural_deletion</text>
+  <rect x="439" y="102" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="117" font-size="11" fill="#1b2c39">transcript_ablation</text><text x="447" y="129" font-size="9" fill="#1b2c39">SO:0001893 · rank 1 · tier 1 · HIGH</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="splice_acceptor_variant">
+    <h2>splice_acceptor_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 238" width="683" height="238" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>splice_acceptor_variant</title>
+  <defs><marker id="arrow-splice_acceptor_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_acceptor_variant)"/>
+  <path d="M 194 93 C 245 93, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_acceptor_variant)"/>
+  <path d="M 194 145 C 245 145, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_acceptor_variant)"/>
+  <path d="M 194 197 C 245 197, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_acceptor_variant)"/>
+  <path d="M 361 119 C 400 119, 400 119, 439 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_acceptor_variant)"/>
+  <text x="400" y="115" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="102" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="117" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">overlap_intron_boundary</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">overlap_acceptor_site</text>
+  <rect x="439" y="102" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="117" font-size="11" fill="#1b2c39">splice_acceptor_variant</text><text x="447" y="129" font-size="9" fill="#1b2c39">SO:0001574 · rank 2 · tier 3 · HIGH</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="splice_donor_variant">
+    <h2>splice_donor_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 238" width="683" height="238" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>splice_donor_variant</title>
+  <defs><marker id="arrow-splice_donor_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_donor_variant)"/>
+  <path d="M 194 93 C 245 93, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_donor_variant)"/>
+  <path d="M 194 145 C 245 145, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_donor_variant)"/>
+  <path d="M 194 197 C 245 197, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_donor_variant)"/>
+  <path d="M 361 119 C 400 119, 400 119, 439 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_donor_variant)"/>
+  <text x="400" y="115" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="102" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="117" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">overlap_intron_boundary</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">overlap_donor_site</text>
+  <rect x="439" y="102" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="117" font-size="11" fill="#1b2c39">splice_donor_variant</text><text x="447" y="129" font-size="9" fill="#1b2c39">SO:0001575 · rank 3 · tier 3 · HIGH</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="stop_gained">
+    <h2>stop_gained</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1123 498" width="1123" height="498" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>stop_gained</title>
+  <defs><marker id="arrow-stop_gained" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 634 41 C 685 41, 685 203, 737 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_gained)"/>
+  <path d="M 634 93 C 685 93, 685 203, 737 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_gained)"/>
+  <path d="M 634 145 C 685 145, 685 203, 737 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_gained)"/>
+  <path d="M 634 197 C 685 197, 685 203, 737 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_gained)"/>
+  <path d="M 194 249 C 245 249, 245 301, 297 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_gained)"/>
+  <path d="M 194 301 C 245 301, 245 301, 297 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_gained)"/>
+  <path d="M 194 353 C 245 353, 245 301, 297 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_gained)"/>
+  <path d="M 361 301 C 439 301, 439 366, 517 366" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_gained)"/>
+  <path d="M 194 405 C 245 405, 245 431, 297 431" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_gained)"/>
+  <path d="M 194 457 C 245 457, 245 431, 297 431" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_gained)"/>
+  <path d="M 361 431 C 439 431, 439 366, 517 366" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_gained)"/>
+  <path d="M 581 366 C 659 366, 659 203, 737 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_gained)"/>
+  <path d="M 801 203 C 840 203, 840 203, 879 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_gained)"/>
+  <text x="840" y="199" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="737" y="186" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="745" y="201" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="464" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="39" font-size="11" fill="#1b2c39">NOT is_structural</text><text x="472" y="51" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="464" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="91" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="464" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="143" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="464" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="195" font-size="11" fill="#1b2c39">overlap_cds</text>
+  <rect x="517" y="349" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="525" y="364" font-size="11" fill="#1b2c39">ANY</text>
+  <rect x="297" y="284" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="299" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="232" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="247" font-size="11" fill="#1b2c39">NOT peptide_has_X</text><text x="32" y="259" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="24" y="284" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="299" font-size="11" fill="#1b2c39">alt_peptide_has_ter</text>
+  <rect x="24" y="336" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="351" font-size="11" fill="#1b2c39">NOT ref_peptide_has_ter</text><text x="32" y="363" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="297" y="414" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="429" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="388" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="403" font-size="11" fill="#1b2c39">peptide_has_X</text>
+  <rect x="24" y="440" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="455" font-size="11" fill="#1b2c39">cds_stop_gain</text>
+  <rect x="879" y="186" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="887" y="201" font-size="11" fill="#1b2c39">stop_gained</text><text x="887" y="213" font-size="9" fill="#1b2c39">SO:0001587 · rank 4 · tier 3 · HIGH</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="frameshift_variant">
+    <h2>frameshift_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1123 498" width="1123" height="498" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>frameshift_variant</title>
+  <defs><marker id="arrow-frameshift_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 634 41 C 685 41, 685 197, 737 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-frameshift_variant)"/>
+  <path d="M 634 93 C 685 93, 685 197, 737 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-frameshift_variant)"/>
+  <path d="M 634 145 C 685 145, 685 197, 737 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-frameshift_variant)"/>
+  <path d="M 194 197 C 245 197, 245 275, 297 275" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-frameshift_variant)"/>
+  <path d="M 194 249 C 245 249, 245 275, 297 275" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-frameshift_variant)"/>
+  <path d="M 194 301 C 245 301, 245 275, 297 275" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-frameshift_variant)"/>
+  <path d="M 194 353 C 245 353, 245 275, 297 275" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-frameshift_variant)"/>
+  <path d="M 361 275 C 439 275, 439 353, 517 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-frameshift_variant)"/>
+  <path d="M 194 405 C 245 405, 245 431, 297 431" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-frameshift_variant)"/>
+  <path d="M 194 457 C 245 457, 245 431, 297 431" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-frameshift_variant)"/>
+  <path d="M 361 431 C 439 431, 439 353, 517 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-frameshift_variant)"/>
+  <path d="M 581 353 C 659 353, 659 197, 737 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-frameshift_variant)"/>
+  <path d="M 801 197 C 840 197, 840 197, 879 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-frameshift_variant)"/>
+  <text x="840" y="193" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="737" y="180" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="745" y="195" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="464" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="464" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="464" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="143" font-size="11" fill="#1b2c39">overlap_cds</text>
+  <rect x="517" y="336" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="525" y="351" font-size="11" fill="#1b2c39">ANY</text>
+  <rect x="297" y="258" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="273" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">NOT is_structural</text><text x="32" y="207" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="24" y="232" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="247" font-size="11" fill="#1b2c39">is_short_indel</text>
+  <rect x="24" y="284" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="299" font-size="11" fill="#1b2c39">NOT ref_peptide_startswith_ter</text><text x="32" y="311" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="24" y="336" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="351" font-size="11" fill="#1b2c39">NOT cds_length_change_inframe</text><text x="32" y="363" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="297" y="414" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="429" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="388" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="403" font-size="11" fill="#1b2c39">is_structural</text>
+  <rect x="24" y="440" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="455" font-size="11" fill="#1b2c39">cds_length_change_inframe</text>
+  <rect x="879" y="180" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="887" y="195" font-size="11" fill="#1b2c39">frameshift_variant</text><text x="887" y="207" font-size="9" fill="#1b2c39">SO:0001589 · rank 5 · tier 3 · HIGH</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="stop_lost">
+    <h2>stop_lost</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1123 498" width="1123" height="498" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>stop_lost</title>
+  <defs><marker id="arrow-stop_lost" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 634 41 C 685 41, 685 203, 737 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_lost)"/>
+  <path d="M 634 93 C 685 93, 685 203, 737 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_lost)"/>
+  <path d="M 634 145 C 685 145, 685 203, 737 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_lost)"/>
+  <path d="M 634 197 C 685 197, 685 203, 737 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_lost)"/>
+  <path d="M 194 249 C 245 249, 245 301, 297 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_lost)"/>
+  <path d="M 194 301 C 245 301, 245 301, 297 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_lost)"/>
+  <path d="M 194 353 C 245 353, 245 301, 297 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_lost)"/>
+  <path d="M 361 301 C 439 301, 439 366, 517 366" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_lost)"/>
+  <path d="M 194 405 C 245 405, 245 431, 297 431" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_lost)"/>
+  <path d="M 194 457 C 245 457, 245 431, 297 431" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_lost)"/>
+  <path d="M 361 431 C 439 431, 439 366, 517 366" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_lost)"/>
+  <path d="M 581 366 C 659 366, 659 203, 737 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_lost)"/>
+  <path d="M 801 203 C 840 203, 840 203, 879 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_lost)"/>
+  <text x="840" y="199" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="737" y="186" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="745" y="201" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="464" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="39" font-size="11" fill="#1b2c39">NOT is_structural</text><text x="472" y="51" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="464" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="91" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="464" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="143" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="464" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="195" font-size="11" fill="#1b2c39">overlap_cds</text>
+  <rect x="517" y="349" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="525" y="364" font-size="11" fill="#1b2c39">ANY</text>
+  <rect x="297" y="284" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="299" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="232" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="247" font-size="11" fill="#1b2c39">NOT peptide_has_X</text><text x="32" y="259" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="24" y="284" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="299" font-size="11" fill="#1b2c39">NOT alt_peptide_has_ter</text><text x="32" y="311" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="24" y="336" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="351" font-size="11" fill="#1b2c39">ref_peptide_has_ter</text>
+  <rect x="297" y="414" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="429" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="388" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="403" font-size="11" fill="#1b2c39">peptide_has_X</text>
+  <rect x="24" y="440" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="455" font-size="11" fill="#1b2c39">cds_stop_lost</text>
+  <rect x="879" y="186" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="887" y="201" font-size="11" fill="#1b2c39">stop_lost</text><text x="887" y="213" font-size="9" fill="#1b2c39">SO:0001578 · rank 6 · tier 3 · HIGH</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="start_lost">
+    <h2>start_lost</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1343 654" width="1343" height="654" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>start_lost</title>
+  <defs><marker id="arrow-start_lost" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 854 41 C 905 41, 905 265, 957 265" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_lost)"/>
+  <path d="M 854 93 C 905 93, 905 265, 957 265" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_lost)"/>
+  <path d="M 854 145 C 905 145, 905 265, 957 265" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_lost)"/>
+  <path d="M 854 197 C 905 197, 905 265, 957 265" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_lost)"/>
+  <path d="M 854 249 C 905 249, 905 265, 957 265" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_lost)"/>
+  <path d="M 414 301 C 465 301, 465 392, 517 392" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_lost)"/>
+  <path d="M 414 353 C 465 353, 465 392, 517 392" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_lost)"/>
+  <path d="M 414 405 C 465 405, 465 392, 517 392" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_lost)"/>
+  <path d="M 194 457 C 245 457, 245 483, 297 483" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_lost)"/>
+  <path d="M 194 509 C 245 509, 245 483, 297 483" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_lost)"/>
+  <path d="M 361 483 C 439 483, 439 392, 517 392" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_lost)"/>
+  <path d="M 581 392 C 659 392, 659 489, 737 489" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_lost)"/>
+  <path d="M 414 561 C 465 561, 465 587, 517 587" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_lost)"/>
+  <path d="M 414 613 C 465 613, 465 587, 517 587" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_lost)"/>
+  <path d="M 581 587 C 659 587, 659 489, 737 489" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_lost)"/>
+  <path d="M 801 489 C 879 489, 879 265, 957 265" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_lost)"/>
+  <path d="M 1021 265 C 1060 265, 1060 265, 1099 265" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_lost)"/>
+  <text x="1060" y="261" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="957" y="248" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="965" y="263" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="684" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="692" y="39" font-size="11" fill="#1b2c39">NOT is_structural</text><text x="692" y="51" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="684" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="692" y="91" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="684" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="692" y="143" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="684" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="692" y="195" font-size="11" fill="#1b2c39">overlap_cds</text>
+  <rect x="684" y="232" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="692" y="247" font-size="11" fill="#1b2c39">overlap_start_codon</text>
+  <rect x="737" y="472" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="745" y="487" font-size="11" fill="#1b2c39">ANY</text>
+  <rect x="517" y="375" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="525" y="390" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="244" y="284" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="299" font-size="11" fill="#1b2c39">NOT peptide_has_X</text><text x="252" y="311" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="244" y="336" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="351" font-size="11" fill="#1b2c39">NOT insertion_before_start</text><text x="252" y="363" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="244" y="388" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="403" font-size="11" fill="#1b2c39">NOT insertion_after_start</text><text x="252" y="415" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="297" y="466" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="481" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="440" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="455" font-size="11" fill="#1b2c39">peptide_changed</text>
+  <rect x="24" y="492" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="507" font-size="11" fill="#1b2c39">peptide_same_length</text>
+  <rect x="517" y="570" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="525" y="585" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="244" y="544" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="559" font-size="11" fill="#1b2c39">peptide_has_X</text>
+  <rect x="244" y="596" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="611" font-size="11" fill="#1b2c39">cds_start_lost</text>
+  <rect x="1099" y="248" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="1107" y="263" font-size="11" fill="#1b2c39">start_lost</text><text x="1107" y="275" font-size="9" fill="#1b2c39">SO:0002012 · rank 7 · tier 3 · HIGH</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="transcript_amplification">
+    <h2>transcript_amplification</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 238" width="683" height="238" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>transcript_amplification</title>
+  <defs><marker id="arrow-transcript_amplification" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-transcript_amplification)"/>
+  <path d="M 194 93 C 245 93, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-transcript_amplification)"/>
+  <path d="M 194 145 C 245 145, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-transcript_amplification)"/>
+  <path d="M 194 197 C 245 197, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-transcript_amplification)"/>
+  <path d="M 361 119 C 400 119, 400 119, 439 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-transcript_amplification)"/>
+  <text x="400" y="115" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="102" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="117" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_structural</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">contain_feature</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">is_structural_insertion</text>
+  <rect x="439" y="102" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="117" font-size="11" fill="#1b2c39">transcript_amplification</text><text x="447" y="129" font-size="9" fill="#1b2c39">SO:0001889 · rank 8 · tier 1 · HIGH</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="feature_elongation">
+    <h2>feature_elongation</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 903 290" width="903" height="290" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>feature_elongation</title>
+  <defs><marker id="arrow-feature_elongation" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 414 41 C 465 41, 465 145, 517 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-feature_elongation)"/>
+  <path d="M 194 93 C 245 93, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-feature_elongation)"/>
+  <path d="M 194 145 C 245 145, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-feature_elongation)"/>
+  <path d="M 361 119 C 439 119, 439 145, 517 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-feature_elongation)"/>
+  <path d="M 414 197 C 465 197, 465 145, 517 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-feature_elongation)"/>
+  <path d="M 414 249 C 465 249, 465 145, 517 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-feature_elongation)"/>
+  <path d="M 581 145 C 620 145, 620 145, 659 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-feature_elongation)"/>
+  <text x="620" y="141" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="517" y="128" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="525" y="143" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="244" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="39" font-size="11" fill="#1b2c39">is_structural</text>
+  <rect x="297" y="102" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="117" font-size="11" fill="#1b2c39">ANY</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">NOT is_transcript</text><text x="32" y="103" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">overlap_exon</text>
+  <rect x="244" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="195" font-size="11" fill="#1b2c39">within_feature</text>
+  <rect x="244" y="232" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="247" font-size="11" fill="#1b2c39">is_structural_insertion</text>
+  <rect x="659" y="128" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="667" y="143" font-size="11" fill="#1b2c39">feature_elongation</text><text x="667" y="155" font-size="9" fill="#1b2c39">SO:0001907 · rank 9 · tier 3 · HIGH</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="feature_truncation">
+    <h2>feature_truncation</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1343 394" width="1343" height="394" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>feature_truncation</title>
+  <defs><marker id="arrow-feature_truncation" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 854 41 C 905 41, 905 122, 957 122" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-feature_truncation)"/>
+  <path d="M 414 93 C 465 93, 465 119, 517 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-feature_truncation)"/>
+  <path d="M 414 145 C 465 145, 465 119, 517 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-feature_truncation)"/>
+  <path d="M 581 119 C 659 119, 659 203, 737 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-feature_truncation)"/>
+  <path d="M 194 197 C 245 197, 245 223, 297 223" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-feature_truncation)"/>
+  <path d="M 194 249 C 245 249, 245 223, 297 223" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-feature_truncation)"/>
+  <path d="M 361 223 C 439 223, 439 288, 517 288" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-feature_truncation)"/>
+  <path d="M 414 301 C 465 301, 465 288, 517 288" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-feature_truncation)"/>
+  <path d="M 414 353 C 465 353, 465 288, 517 288" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-feature_truncation)"/>
+  <path d="M 581 288 C 659 288, 659 203, 737 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-feature_truncation)"/>
+  <path d="M 801 203 C 879 203, 879 122, 957 122" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-feature_truncation)"/>
+  <path d="M 1021 122 C 1060 122, 1060 122, 1099 122" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-feature_truncation)"/>
+  <text x="1060" y="118" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="957" y="105" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="965" y="120" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="684" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="692" y="39" font-size="11" fill="#1b2c39">is_structural</text>
+  <rect x="737" y="186" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="745" y="201" font-size="11" fill="#1b2c39">ANY</text>
+  <rect x="517" y="102" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="525" y="117" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="244" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="91" font-size="11" fill="#1b2c39">is_chromosomal_breakpoint</text>
+  <rect x="244" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="143" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="517" y="271" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="525" y="286" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="297" y="206" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="221" font-size="11" fill="#1b2c39">ANY</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">NOT is_transcript</text><text x="32" y="207" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="24" y="232" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="247" font-size="11" fill="#1b2c39">overlap_exon</text>
+  <rect x="244" y="284" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="299" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="244" y="336" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="351" font-size="11" fill="#1b2c39">is_structural_deletion</text>
+  <rect x="1099" y="105" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="1107" y="120" font-size="11" fill="#1b2c39">feature_truncation</text><text x="1107" y="132" font-size="9" fill="#1b2c39">SO:0001906 · rank 10 · tier 3 · HIGH</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="inframe_insertion">
+    <h2>inframe_insertion</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1563 602" width="1563" height="602" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>inframe_insertion</title>
+  <defs><marker id="arrow-inframe_insertion" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 1074 41 C 1125 41, 1125 242, 1177 242" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_insertion)"/>
+  <path d="M 1074 93 C 1125 93, 1125 242, 1177 242" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_insertion)"/>
+  <path d="M 1074 145 C 1125 145, 1125 242, 1177 242" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_insertion)"/>
+  <path d="M 1074 197 C 1125 197, 1125 242, 1177 242" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_insertion)"/>
+  <path d="M 634 249 C 685 249, 685 353, 737 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_insertion)"/>
+  <path d="M 194 301 C 245 301, 245 327, 297 327" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_insertion)"/>
+  <path d="M 194 353 C 245 353, 245 327, 297 327" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_insertion)"/>
+  <path d="M 361 327 C 439 327, 439 327, 517 327" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_insertion)"/>
+  <path d="M 581 327 C 659 327, 659 353, 737 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_insertion)"/>
+  <path d="M 634 405 C 685 405, 685 353, 737 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_insertion)"/>
+  <path d="M 634 457 C 685 457, 685 353, 737 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_insertion)"/>
+  <path d="M 801 353 C 879 353, 879 444, 957 444" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_insertion)"/>
+  <path d="M 634 509 C 685 509, 685 535, 737 535" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_insertion)"/>
+  <path d="M 634 561 C 685 561, 685 535, 737 535" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_insertion)"/>
+  <path d="M 801 535 C 879 535, 879 444, 957 444" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_insertion)"/>
+  <path d="M 1021 444 C 1099 444, 1099 242, 1177 242" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_insertion)"/>
+  <path d="M 1241 242 C 1280 242, 1280 242, 1319 242" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_insertion)"/>
+  <text x="1280" y="238" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="1177" y="225" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="1185" y="240" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="904" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="904" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="904" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="143" font-size="11" fill="#1b2c39">overlap_cds</text>
+  <rect x="904" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="195" font-size="11" fill="#1b2c39">is_insertion</text>
+  <rect x="957" y="427" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="965" y="442" font-size="11" fill="#1b2c39">ANY</text>
+  <rect x="737" y="336" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="745" y="351" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="464" y="232" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="247" font-size="11" fill="#1b2c39">NOT is_structural</text><text x="472" y="259" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="517" y="310" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="525" y="325" font-size="11" fill="#1b2c39">NOT</text>
+  <rect x="297" y="310" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="325" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="284" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="299" font-size="11" fill="#1b2c39">overlap_start_codon</text>
+  <rect x="24" y="336" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="351" font-size="11" fill="#1b2c39">insertion_before_start</text>
+  <rect x="464" y="388" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="403" font-size="11" fill="#1b2c39">alt_peptide_matches_ref_edge</text>
+  <rect x="464" y="440" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="455" font-size="11" fill="#1b2c39">cds_length_change_inframe</text>
+  <rect x="737" y="518" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="745" y="533" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="464" y="492" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="507" font-size="11" fill="#1b2c39">is_structural</text>
+  <rect x="464" y="544" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="559" font-size="11" fill="#1b2c39">cds_length_change_inframe</text>
+  <rect x="1319" y="225" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="1327" y="240" font-size="11" fill="#1b2c39">inframe_insertion</text><text x="1327" y="252" font-size="9" fill="#1b2c39">SO:0001821 · rank 11 · tier 3 · MODERATE</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="inframe_deletion">
+    <h2>inframe_deletion</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1123 498" width="1123" height="498" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>inframe_deletion</title>
+  <defs><marker id="arrow-inframe_deletion" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 634 41 C 685 41, 685 203, 737 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_deletion)"/>
+  <path d="M 634 93 C 685 93, 685 203, 737 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_deletion)"/>
+  <path d="M 634 145 C 685 145, 685 203, 737 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_deletion)"/>
+  <path d="M 634 197 C 685 197, 685 203, 737 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_deletion)"/>
+  <path d="M 194 249 C 245 249, 245 301, 297 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_deletion)"/>
+  <path d="M 194 301 C 245 301, 245 301, 297 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_deletion)"/>
+  <path d="M 194 353 C 245 353, 245 301, 297 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_deletion)"/>
+  <path d="M 361 301 C 439 301, 439 366, 517 366" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_deletion)"/>
+  <path d="M 194 405 C 245 405, 245 431, 297 431" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_deletion)"/>
+  <path d="M 194 457 C 245 457, 245 431, 297 431" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_deletion)"/>
+  <path d="M 361 431 C 439 431, 439 366, 517 366" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_deletion)"/>
+  <path d="M 581 366 C 659 366, 659 203, 737 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_deletion)"/>
+  <path d="M 801 203 C 840 203, 840 203, 879 203" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-inframe_deletion)"/>
+  <text x="840" y="199" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="737" y="186" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="745" y="201" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="464" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="464" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="464" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="143" font-size="11" fill="#1b2c39">overlap_cds</text>
+  <rect x="464" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="195" font-size="11" fill="#1b2c39">is_deletion</text>
+  <rect x="517" y="349" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="525" y="364" font-size="11" fill="#1b2c39">ANY</text>
+  <rect x="297" y="284" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="299" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="232" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="247" font-size="11" fill="#1b2c39">NOT is_structural</text><text x="32" y="259" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="24" y="284" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="299" font-size="11" fill="#1b2c39">alt_matches_ref_codon_edge</text>
+  <rect x="24" y="336" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="351" font-size="11" fill="#1b2c39">cds_length_change_inframe</text>
+  <rect x="297" y="414" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="429" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="388" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="403" font-size="11" fill="#1b2c39">is_structural</text>
+  <rect x="24" y="440" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="455" font-size="11" fill="#1b2c39">cds_length_change_inframe</text>
+  <rect x="879" y="186" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="887" y="201" font-size="11" fill="#1b2c39">inframe_deletion</text><text x="887" y="213" font-size="9" fill="#1b2c39">SO:0001822 · rank 12 · tier 3 · MODERATE</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="missense_variant">
+    <h2>missense_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 394" width="683" height="394" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>missense_variant</title>
+  <defs><marker id="arrow-missense_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-missense_variant)"/>
+  <path d="M 194 93 C 245 93, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-missense_variant)"/>
+  <path d="M 194 145 C 245 145, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-missense_variant)"/>
+  <path d="M 194 197 C 245 197, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-missense_variant)"/>
+  <path d="M 194 249 C 245 249, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-missense_variant)"/>
+  <path d="M 194 301 C 245 301, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-missense_variant)"/>
+  <path d="M 194 353 C 245 353, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-missense_variant)"/>
+  <path d="M 361 197 C 400 197, 400 197, 439 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-missense_variant)"/>
+  <text x="400" y="193" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="180" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="195" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">NOT is_structural</text><text x="32" y="51" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">overlap_cds</text>
+  <rect x="24" y="232" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="247" font-size="11" fill="#1b2c39">NOT peptide_has_X</text><text x="32" y="259" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="24" y="284" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="299" font-size="11" fill="#1b2c39">peptide_changed</text>
+  <rect x="24" y="336" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="351" font-size="11" fill="#1b2c39">peptide_same_length</text>
+  <rect x="439" y="180" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="195" font-size="11" fill="#1b2c39">missense_variant</text><text x="447" y="207" font-size="9" fill="#1b2c39">SO:0001583 · rank 13 · tier 3 · MODERATE</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="protein_altering_variant">
+    <h2>protein_altering_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 238" width="683" height="238" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>protein_altering_variant</title>
+  <defs><marker id="arrow-protein_altering_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-protein_altering_variant)"/>
+  <path d="M 194 93 C 245 93, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-protein_altering_variant)"/>
+  <path d="M 194 145 C 245 145, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-protein_altering_variant)"/>
+  <path d="M 194 197 C 245 197, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-protein_altering_variant)"/>
+  <path d="M 361 119 C 400 119, 400 119, 439 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-protein_altering_variant)"/>
+  <text x="400" y="115" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="102" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="117" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">overlap_cds</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">peptide_changed</text>
+  <rect x="439" y="102" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="117" font-size="11" fill="#1b2c39">protein_altering_variant</text><text x="447" y="129" font-size="9" fill="#1b2c39">SO:0001818 · rank 14 · tier 3 · MODERATE</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="splice_donor_5th_base_variant">
+    <h2>splice_donor_5th_base_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 238" width="683" height="238" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>splice_donor_5th_base_variant</title>
+  <defs><marker id="arrow-splice_donor_5th_base_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_donor_5th_base_variant)"/>
+  <path d="M 194 93 C 245 93, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_donor_5th_base_variant)"/>
+  <path d="M 194 145 C 245 145, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_donor_5th_base_variant)"/>
+  <path d="M 194 197 C 245 197, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_donor_5th_base_variant)"/>
+  <path d="M 361 119 C 400 119, 400 119, 439 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_donor_5th_base_variant)"/>
+  <text x="400" y="115" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="102" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="117" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">overlap_intron_boundary</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">overlap_donor_5th_base</text>
+  <rect x="439" y="102" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="117" font-size="11" fill="#1b2c39">splice_donor_5th_base_variant</text><text x="447" y="129" font-size="9" fill="#1b2c39">SO:0001787 · rank 15 · tier 3 · LOW</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="splice_region_variant">
+    <h2>splice_region_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 238" width="683" height="238" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>splice_region_variant</title>
+  <defs><marker id="arrow-splice_region_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_region_variant)"/>
+  <path d="M 194 93 C 245 93, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_region_variant)"/>
+  <path d="M 194 145 C 245 145, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_region_variant)"/>
+  <path d="M 194 197 C 245 197, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_region_variant)"/>
+  <path d="M 361 119 C 400 119, 400 119, 439 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_region_variant)"/>
+  <text x="400" y="115" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="102" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="117" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">overlap_intron_boundary</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">overlap_splice_region</text>
+  <rect x="439" y="102" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="117" font-size="11" fill="#1b2c39">splice_region_variant</text><text x="447" y="129" font-size="9" fill="#1b2c39">SO:0001630 · rank 16 · tier 3 · LOW</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="splice_donor_region_variant">
+    <h2>splice_donor_region_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 238" width="683" height="238" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>splice_donor_region_variant</title>
+  <defs><marker id="arrow-splice_donor_region_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_donor_region_variant)"/>
+  <path d="M 194 93 C 245 93, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_donor_region_variant)"/>
+  <path d="M 194 145 C 245 145, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_donor_region_variant)"/>
+  <path d="M 194 197 C 245 197, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_donor_region_variant)"/>
+  <path d="M 361 119 C 400 119, 400 119, 439 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_donor_region_variant)"/>
+  <text x="400" y="115" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="102" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="117" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">overlap_intron_boundary</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">overlap_donor_region</text>
+  <rect x="439" y="102" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="117" font-size="11" fill="#1b2c39">splice_donor_region_variant</text><text x="447" y="129" font-size="9" fill="#1b2c39">SO:0002170 · rank 17 · tier 3 · LOW</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="splice_polypyrimidine_tract_variant">
+    <h2>splice_polypyrimidine_tract_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 238" width="683" height="238" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>splice_polypyrimidine_tract_variant</title>
+  <defs><marker id="arrow-splice_polypyrimidine_tract_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_polypyrimidine_tract_variant)"/>
+  <path d="M 194 93 C 245 93, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_polypyrimidine_tract_variant)"/>
+  <path d="M 194 145 C 245 145, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_polypyrimidine_tract_variant)"/>
+  <path d="M 194 197 C 245 197, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_polypyrimidine_tract_variant)"/>
+  <path d="M 361 119 C 400 119, 400 119, 439 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-splice_polypyrimidine_tract_variant)"/>
+  <text x="400" y="115" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="102" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="117" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">overlap_intron</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">overlap_polypyrimidine_tract</text>
+  <rect x="439" y="102" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="117" font-size="11" fill="#1b2c39">splice_polypyrimidine_tract_variant</text><text x="447" y="129" font-size="9" fill="#1b2c39">SO:0002169 · rank 18 · tier 3 · LOW</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="incomplete_terminal_codon_variant">
+    <h2>incomplete_terminal_codon_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 238" width="683" height="238" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>incomplete_terminal_codon_variant</title>
+  <defs><marker id="arrow-incomplete_terminal_codon_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-incomplete_terminal_codon_variant)"/>
+  <path d="M 194 93 C 245 93, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-incomplete_terminal_codon_variant)"/>
+  <path d="M 194 145 C 245 145, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-incomplete_terminal_codon_variant)"/>
+  <path d="M 194 197 C 245 197, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-incomplete_terminal_codon_variant)"/>
+  <path d="M 361 119 C 400 119, 400 119, 439 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-incomplete_terminal_codon_variant)"/>
+  <text x="400" y="115" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="102" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="117" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">overlap_cds</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">partial_last_codon</text>
+  <rect x="439" y="102" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="117" font-size="11" fill="#1b2c39">incomplete_terminal_codon_variant</text><text x="447" y="129" font-size="9" fill="#1b2c39">SO:0001626 · rank 19 · tier 3 · LOW</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="start_retained_variant">
+    <h2>start_retained_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1563 654" width="1563" height="654" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>start_retained_variant</title>
+  <defs><marker id="arrow-start_retained_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 1074 41 C 1125 41, 1125 257, 1177 257" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_retained_variant)"/>
+  <path d="M 1074 93 C 1125 93, 1125 257, 1177 257" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_retained_variant)"/>
+  <path d="M 1074 145 C 1125 145, 1125 257, 1177 257" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_retained_variant)"/>
+  <path d="M 1074 197 C 1125 197, 1125 257, 1177 257" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_retained_variant)"/>
+  <path d="M 1074 249 C 1125 249, 1125 257, 1177 257" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_retained_variant)"/>
+  <path d="M 634 301 C 685 301, 685 359, 737 359" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_retained_variant)"/>
+  <path d="M 414 353 C 465 353, 465 418, 517 418" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_retained_variant)"/>
+  <path d="M 414 405 C 465 405, 465 418, 517 418" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_retained_variant)"/>
+  <path d="M 194 457 C 245 457, 245 483, 297 483" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_retained_variant)"/>
+  <path d="M 194 509 C 245 509, 245 483, 297 483" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_retained_variant)"/>
+  <path d="M 361 483 C 439 483, 439 418, 517 418" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_retained_variant)"/>
+  <path d="M 581 418 C 659 418, 659 359, 737 359" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_retained_variant)"/>
+  <path d="M 801 359 C 879 359, 879 473, 957 473" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_retained_variant)"/>
+  <path d="M 634 561 C 685 561, 685 587, 737 587" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_retained_variant)"/>
+  <path d="M 634 613 C 685 613, 685 587, 737 587" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_retained_variant)"/>
+  <path d="M 801 587 C 879 587, 879 473, 957 473" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_retained_variant)"/>
+  <path d="M 1021 473 C 1099 473, 1099 257, 1177 257" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_retained_variant)"/>
+  <path d="M 1241 257 C 1280 257, 1280 257, 1319 257" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-start_retained_variant)"/>
+  <text x="1280" y="253" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="1177" y="240" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="1185" y="255" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="904" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="39" font-size="11" fill="#1b2c39">NOT is_structural</text><text x="912" y="51" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="904" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="91" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="904" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="143" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="904" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="195" font-size="11" fill="#1b2c39">overlap_cds</text>
+  <rect x="904" y="232" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="247" font-size="11" fill="#1b2c39">overlap_start_codon</text>
+  <rect x="957" y="456" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="965" y="471" font-size="11" fill="#1b2c39">ANY</text>
+  <rect x="737" y="342" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="745" y="357" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="464" y="284" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="299" font-size="11" fill="#1b2c39">NOT peptide_has_X</text><text x="472" y="311" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="517" y="401" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="525" y="416" font-size="11" fill="#1b2c39">ANY</text>
+  <rect x="244" y="336" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="351" font-size="11" fill="#1b2c39">insertion_before_start</text>
+  <rect x="244" y="388" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="403" font-size="11" fill="#1b2c39">insertion_after_start</text>
+  <rect x="297" y="466" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="481" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="440" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="455" font-size="11" fill="#1b2c39">NOT peptide_changed</text><text x="32" y="467" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="24" y="492" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="507" font-size="11" fill="#1b2c39">peptide_same_length</text>
+  <rect x="737" y="570" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="745" y="585" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="464" y="544" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="559" font-size="11" fill="#1b2c39">peptide_has_X</text>
+  <rect x="464" y="596" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="611" font-size="11" fill="#1b2c39">NOT cds_start_lost</text><text x="472" y="623" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="1319" y="240" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="1327" y="255" font-size="11" fill="#1b2c39">start_retained_variant</text><text x="1327" y="267" font-size="9" fill="#1b2c39">SO:0002019 · rank 20 · tier 3 · LOW</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="stop_retained_variant">
+    <h2>stop_retained_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1123 602" width="1123" height="602" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>stop_retained_variant</title>
+  <defs><marker id="arrow-stop_retained_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 634 41 C 685 41, 685 255, 737 255" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_retained_variant)"/>
+  <path d="M 634 93 C 685 93, 685 255, 737 255" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_retained_variant)"/>
+  <path d="M 634 145 C 685 145, 685 255, 737 255" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_retained_variant)"/>
+  <path d="M 634 197 C 685 197, 685 255, 737 255" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_retained_variant)"/>
+  <path d="M 634 249 C 685 249, 685 255, 737 255" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_retained_variant)"/>
+  <path d="M 634 301 C 685 301, 685 255, 737 255" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_retained_variant)"/>
+  <path d="M 194 353 C 245 353, 245 405, 297 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_retained_variant)"/>
+  <path d="M 194 405 C 245 405, 245 405, 297 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_retained_variant)"/>
+  <path d="M 194 457 C 245 457, 245 405, 297 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_retained_variant)"/>
+  <path d="M 361 405 C 439 405, 439 470, 517 470" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_retained_variant)"/>
+  <path d="M 194 509 C 245 509, 245 535, 297 535" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_retained_variant)"/>
+  <path d="M 194 561 C 245 561, 245 535, 297 535" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_retained_variant)"/>
+  <path d="M 361 535 C 439 535, 439 470, 517 470" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_retained_variant)"/>
+  <path d="M 581 470 C 659 470, 659 255, 737 255" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_retained_variant)"/>
+  <path d="M 801 255 C 840 255, 840 255, 879 255" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-stop_retained_variant)"/>
+  <text x="840" y="251" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="737" y="238" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="745" y="253" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="464" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="39" font-size="11" fill="#1b2c39">NOT is_structural</text><text x="472" y="51" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="464" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="91" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="464" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="143" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="464" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="195" font-size="11" fill="#1b2c39">overlap_cds</text>
+  <rect x="464" y="232" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="247" font-size="11" fill="#1b2c39">overlap_stop_codon</text>
+  <rect x="464" y="284" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="299" font-size="11" fill="#1b2c39">NOT cds_start_lost</text><text x="472" y="311" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="517" y="453" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="525" y="468" font-size="11" fill="#1b2c39">ANY</text>
+  <rect x="297" y="388" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="403" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="336" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="351" font-size="11" fill="#1b2c39">NOT peptide_has_X</text><text x="32" y="363" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="24" y="388" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="403" font-size="11" fill="#1b2c39">ref_peptide_is_ter</text>
+  <rect x="24" y="440" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="455" font-size="11" fill="#1b2c39">alt_peptide_is_ter</text>
+  <rect x="297" y="518" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="533" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="492" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="507" font-size="11" fill="#1b2c39">peptide_has_X</text>
+  <rect x="24" y="544" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="559" font-size="11" fill="#1b2c39">NOT cds_stop_lost</text><text x="32" y="571" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="879" y="238" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="887" y="253" font-size="11" fill="#1b2c39">stop_retained_variant</text><text x="887" y="265" font-size="9" fill="#1b2c39">SO:0001567 · rank 21 · tier 3 · LOW</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="synonymous_variant">
+    <h2>synonymous_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 394" width="683" height="394" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>synonymous_variant</title>
+  <defs><marker id="arrow-synonymous_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-synonymous_variant)"/>
+  <path d="M 194 93 C 245 93, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-synonymous_variant)"/>
+  <path d="M 194 145 C 245 145, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-synonymous_variant)"/>
+  <path d="M 194 197 C 245 197, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-synonymous_variant)"/>
+  <path d="M 194 249 C 245 249, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-synonymous_variant)"/>
+  <path d="M 194 301 C 245 301, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-synonymous_variant)"/>
+  <path d="M 194 353 C 245 353, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-synonymous_variant)"/>
+  <path d="M 361 197 C 400 197, 400 197, 439 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-synonymous_variant)"/>
+  <text x="400" y="193" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="180" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="195" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">NOT is_structural</text><text x="32" y="51" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">overlap_cds</text>
+  <rect x="24" y="232" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="247" font-size="11" fill="#1b2c39">NOT peptide_has_X</text><text x="32" y="259" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="24" y="284" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="299" font-size="11" fill="#1b2c39">NOT peptide_changed</text><text x="32" y="311" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="24" y="336" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="351" font-size="11" fill="#1b2c39">peptide_same_length</text>
+  <rect x="439" y="180" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="195" font-size="11" fill="#1b2c39">synonymous_variant</text><text x="447" y="207" font-size="9" fill="#1b2c39">SO:0001819 · rank 22 · tier 3 · LOW</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="coding_sequence_variant">
+    <h2>coding_sequence_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 186" width="683" height="186" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>coding_sequence_variant</title>
+  <defs><marker id="arrow-coding_sequence_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 93, 297 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-coding_sequence_variant)"/>
+  <path d="M 194 93 C 245 93, 245 93, 297 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-coding_sequence_variant)"/>
+  <path d="M 194 145 C 245 145, 245 93, 297 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-coding_sequence_variant)"/>
+  <path d="M 361 93 C 400 93, 400 93, 439 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-coding_sequence_variant)"/>
+  <text x="400" y="89" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="76" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="91" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">overlap_cds</text>
+  <rect x="439" y="76" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="91" font-size="11" fill="#1b2c39">coding_sequence_variant</text><text x="447" y="103" font-size="9" fill="#1b2c39">SO:0001580 · rank 23 · tier 3 · MODIFIER</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="mature_miRNA_variant">
+    <h2>mature_miRNA_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 238" width="683" height="238" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>mature_miRNA_variant</title>
+  <defs><marker id="arrow-mature_miRNA_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-mature_miRNA_variant)"/>
+  <path d="M 194 93 C 245 93, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-mature_miRNA_variant)"/>
+  <path d="M 194 145 C 245 145, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-mature_miRNA_variant)"/>
+  <path d="M 194 197 C 245 197, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-mature_miRNA_variant)"/>
+  <path d="M 361 119 C 400 119, 400 119, 439 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-mature_miRNA_variant)"/>
+  <text x="400" y="115" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="102" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="117" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">biotype_miRNA</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">overlap_exon</text>
+  <rect x="439" y="102" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="117" font-size="11" fill="#1b2c39">mature_miRNA_variant</text><text x="447" y="129" font-size="9" fill="#1b2c39">SO:0001620 · rank 24 · tier 2 · MODIFIER</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="5_prime_UTR_variant">
+    <h2>5_prime_UTR_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 186" width="683" height="186" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>5_prime_UTR_variant</title>
+  <defs><marker id="arrow-5_prime_UTR_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 93, 297 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-5_prime_UTR_variant)"/>
+  <path d="M 194 93 C 245 93, 245 93, 297 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-5_prime_UTR_variant)"/>
+  <path d="M 194 145 C 245 145, 245 93, 297 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-5_prime_UTR_variant)"/>
+  <path d="M 361 93 C 400 93, 400 93, 439 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-5_prime_UTR_variant)"/>
+  <text x="400" y="89" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="76" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="91" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">overlap_five_prime_utr</text>
+  <rect x="439" y="76" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="91" font-size="11" fill="#1b2c39">5_prime_UTR_variant</text><text x="447" y="103" font-size="9" fill="#1b2c39">SO:0001623 · rank 25 · tier 3 · MODIFIER</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="3_prime_UTR_variant">
+    <h2>3_prime_UTR_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 186" width="683" height="186" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>3_prime_UTR_variant</title>
+  <defs><marker id="arrow-3_prime_UTR_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 93, 297 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-3_prime_UTR_variant)"/>
+  <path d="M 194 93 C 245 93, 245 93, 297 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-3_prime_UTR_variant)"/>
+  <path d="M 194 145 C 245 145, 245 93, 297 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-3_prime_UTR_variant)"/>
+  <path d="M 361 93 C 400 93, 400 93, 439 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-3_prime_UTR_variant)"/>
+  <text x="400" y="89" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="76" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="91" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">overlap_three_prime_utr</text>
+  <rect x="439" y="76" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="91" font-size="11" fill="#1b2c39">3_prime_UTR_variant</text><text x="447" y="103" font-size="9" fill="#1b2c39">SO:0001624 · rank 26 · tier 3 · MODIFIER</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="non_coding_transcript_exon_variant">
+    <h2>non_coding_transcript_exon_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 903 394" width="903" height="394" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>non_coding_transcript_exon_variant</title>
+  <defs><marker id="arrow-non_coding_transcript_exon_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 414 41 C 465 41, 465 197, 517 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-non_coding_transcript_exon_variant)"/>
+  <path d="M 414 93 C 465 93, 465 197, 517 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-non_coding_transcript_exon_variant)"/>
+  <path d="M 414 145 C 465 145, 465 197, 517 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-non_coding_transcript_exon_variant)"/>
+  <path d="M 414 197 C 465 197, 465 197, 517 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-non_coding_transcript_exon_variant)"/>
+  <path d="M 194 249 C 245 249, 245 275, 297 275" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-non_coding_transcript_exon_variant)"/>
+  <path d="M 194 301 C 245 301, 245 275, 297 275" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-non_coding_transcript_exon_variant)"/>
+  <path d="M 361 275 C 439 275, 439 197, 517 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-non_coding_transcript_exon_variant)"/>
+  <path d="M 414 353 C 465 353, 465 197, 517 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-non_coding_transcript_exon_variant)"/>
+  <path d="M 581 197 C 620 197, 620 197, 659 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-non_coding_transcript_exon_variant)"/>
+  <text x="620" y="193" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="517" y="180" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="525" y="195" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="244" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="244" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="244" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="143" font-size="11" fill="#1b2c39">NOT biotype_protein_coding</text><text x="252" y="155" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="244" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="195" font-size="11" fill="#1b2c39">NOT has_translation</text><text x="252" y="207" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="297" y="258" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="273" font-size="11" fill="#1b2c39">ANY</text>
+  <rect x="24" y="232" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="247" font-size="11" fill="#1b2c39">NOT biotype_miRNA</text><text x="32" y="259" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="24" y="284" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="299" font-size="11" fill="#1b2c39">NOT overlap_exon</text><text x="32" y="311" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="244" y="336" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="351" font-size="11" fill="#1b2c39">overlap_exon</text>
+  <rect x="659" y="180" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="667" y="195" font-size="11" fill="#1b2c39">non_coding_transcript_exon_variant</text><text x="667" y="207" font-size="9" fill="#1b2c39">SO:0001792 · rank 27 · tier 3 · MODIFIER</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="intron_variant">
+    <h2>intron_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 186" width="683" height="186" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>intron_variant</title>
+  <defs><marker id="arrow-intron_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 93, 297 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-intron_variant)"/>
+  <path d="M 194 93 C 245 93, 245 93, 297 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-intron_variant)"/>
+  <path d="M 194 145 C 245 145, 245 93, 297 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-intron_variant)"/>
+  <path d="M 361 93 C 400 93, 400 93, 439 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-intron_variant)"/>
+  <text x="400" y="89" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="76" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="91" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">overlap_intron_interior</text>
+  <rect x="439" y="76" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="91" font-size="11" fill="#1b2c39">intron_variant</text><text x="447" y="103" font-size="9" fill="#1b2c39">SO:0001627 · rank 28 · tier 3 · MODIFIER</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="NMD_transcript_variant">
+    <h2>NMD_transcript_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 186" width="683" height="186" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>NMD_transcript_variant</title>
+  <defs><marker id="arrow-NMD_transcript_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 93, 297 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-NMD_transcript_variant)"/>
+  <path d="M 194 93 C 245 93, 245 93, 297 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-NMD_transcript_variant)"/>
+  <path d="M 194 145 C 245 145, 245 93, 297 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-NMD_transcript_variant)"/>
+  <path d="M 361 93 C 400 93, 400 93, 439 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-NMD_transcript_variant)"/>
+  <text x="400" y="89" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="76" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="91" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">biotype_nmd</text>
+  <rect x="439" y="76" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="91" font-size="11" fill="#1b2c39">NMD_transcript_variant</text><text x="447" y="103" font-size="9" fill="#1b2c39">SO:0001621 · rank 29 · tier 3 · MODIFIER</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="non_coding_transcript_variant">
+    <h2>non_coding_transcript_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 903 342" width="903" height="342" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>non_coding_transcript_variant</title>
+  <defs><marker id="arrow-non_coding_transcript_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 414 41 C 465 41, 465 158, 517 158" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-non_coding_transcript_variant)"/>
+  <path d="M 414 93 C 465 93, 465 158, 517 158" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-non_coding_transcript_variant)"/>
+  <path d="M 414 145 C 465 145, 465 158, 517 158" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-non_coding_transcript_variant)"/>
+  <path d="M 414 197 C 465 197, 465 158, 517 158" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-non_coding_transcript_variant)"/>
+  <path d="M 194 249 C 245 249, 245 275, 297 275" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-non_coding_transcript_variant)"/>
+  <path d="M 194 301 C 245 301, 245 275, 297 275" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-non_coding_transcript_variant)"/>
+  <path d="M 361 275 C 439 275, 439 158, 517 158" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-non_coding_transcript_variant)"/>
+  <path d="M 581 158 C 620 158, 620 158, 659 158" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-non_coding_transcript_variant)"/>
+  <text x="620" y="154" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="517" y="141" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="525" y="156" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="244" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="244" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="244" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="143" font-size="11" fill="#1b2c39">NOT biotype_protein_coding</text><text x="252" y="155" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="244" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="195" font-size="11" fill="#1b2c39">NOT has_translation</text><text x="252" y="207" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="297" y="258" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="273" font-size="11" fill="#1b2c39">ANY</text>
+  <rect x="24" y="232" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="247" font-size="11" fill="#1b2c39">NOT biotype_miRNA</text><text x="32" y="259" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="24" y="284" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="299" font-size="11" fill="#1b2c39">NOT overlap_exon</text><text x="32" y="311" font-size="9" fill="#1b2c39">must be false</text>
+  <rect x="659" y="141" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="667" y="156" font-size="11" fill="#1b2c39">non_coding_transcript_variant</text><text x="667" y="168" font-size="9" fill="#1b2c39">SO:0001619 · rank 30 · tier 3 · MODIFIER</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="coding_transcript_variant">
+    <h2>coding_transcript_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 186" width="683" height="186" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>coding_transcript_variant</title>
+  <defs><marker id="arrow-coding_transcript_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 93, 297 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-coding_transcript_variant)"/>
+  <path d="M 194 93 C 245 93, 245 93, 297 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-coding_transcript_variant)"/>
+  <path d="M 194 145 C 245 145, 245 93, 297 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-coding_transcript_variant)"/>
+  <path d="M 361 93 C 400 93, 400 93, 439 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-coding_transcript_variant)"/>
+  <text x="400" y="89" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="76" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="91" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">biotype_protein_coding</text>
+  <rect x="439" y="76" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="91" font-size="11" fill="#1b2c39">coding_transcript_variant</text><text x="447" y="103" font-size="9" fill="#1b2c39">SO:0001968 · rank 31 · tier 3 · MODIFIER</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="upstream_gene_variant">
+    <h2>upstream_gene_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 82" width="683" height="82" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>upstream_gene_variant</title>
+  <defs><marker id="arrow-upstream_gene_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 41, 297 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-upstream_gene_variant)"/>
+  <path d="M 361 41 C 400 41, 400 41, 439 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-upstream_gene_variant)"/>
+  <text x="400" y="37" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="24" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="39" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_upstream</text>
+  <rect x="439" y="24" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="39" font-size="11" fill="#1b2c39">upstream_gene_variant</text><text x="447" y="51" font-size="9" fill="#1b2c39">SO:0001631 · rank 32 · tier 3 · MODIFIER</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="downstream_gene_variant">
+    <h2>downstream_gene_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 82" width="683" height="82" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>downstream_gene_variant</title>
+  <defs><marker id="arrow-downstream_gene_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 41, 297 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-downstream_gene_variant)"/>
+  <path d="M 361 41 C 400 41, 400 41, 439 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-downstream_gene_variant)"/>
+  <text x="400" y="37" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="24" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="39" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_downstream</text>
+  <rect x="439" y="24" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="39" font-size="11" fill="#1b2c39">downstream_gene_variant</text><text x="447" y="51" font-size="9" fill="#1b2c39">SO:0001632 · rank 33 · tier 3 · MODIFIER</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="TFBS_ablation">
+    <h2>TFBS_ablation</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 238" width="683" height="238" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>TFBS_ablation</title>
+  <defs><marker id="arrow-TFBS_ablation" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-TFBS_ablation)"/>
+  <path d="M 194 93 C 245 93, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-TFBS_ablation)"/>
+  <path d="M 194 145 C 245 145, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-TFBS_ablation)"/>
+  <path d="M 194 197 C 245 197, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-TFBS_ablation)"/>
+  <path d="M 361 119 C 400 119, 400 119, 439 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-TFBS_ablation)"/>
+  <text x="400" y="115" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="102" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="117" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_structural</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">is_motif</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">contain_feature</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">is_structural_deletion</text>
+  <rect x="439" y="102" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="117" font-size="11" fill="#1b2c39">TFBS_ablation</text><text x="447" y="129" font-size="9" fill="#1b2c39">SO:0001895 · rank 34 · tier 2 · MODERATE</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="TFBS_amplification">
+    <h2>TFBS_amplification</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 238" width="683" height="238" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>TFBS_amplification</title>
+  <defs><marker id="arrow-TFBS_amplification" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-TFBS_amplification)"/>
+  <path d="M 194 93 C 245 93, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-TFBS_amplification)"/>
+  <path d="M 194 145 C 245 145, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-TFBS_amplification)"/>
+  <path d="M 194 197 C 245 197, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-TFBS_amplification)"/>
+  <path d="M 361 119 C 400 119, 400 119, 439 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-TFBS_amplification)"/>
+  <text x="400" y="115" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="102" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="117" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_structural</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">is_motif</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">contain_feature</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">is_structural_insertion</text>
+  <rect x="439" y="102" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="117" font-size="11" fill="#1b2c39">TFBS_amplification</text><text x="447" y="129" font-size="9" fill="#1b2c39">SO:0001892 · rank 35 · tier 2 · MODIFIER</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="TF_binding_site_variant">
+    <h2>TF_binding_site_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 134" width="683" height="134" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>TF_binding_site_variant</title>
+  <defs><marker id="arrow-TF_binding_site_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 67, 297 67" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-TF_binding_site_variant)"/>
+  <path d="M 194 93 C 245 93, 245 67, 297 67" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-TF_binding_site_variant)"/>
+  <path d="M 361 67 C 400 67, 400 67, 439 67" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-TF_binding_site_variant)"/>
+  <text x="400" y="63" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="50" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="65" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_motif</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="439" y="50" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="65" font-size="11" fill="#1b2c39">TF_binding_site_variant</text><text x="447" y="77" font-size="9" fill="#1b2c39">SO:0001782 · rank 36 · tier 2 · MODIFIER</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="regulatory_region_ablation">
+    <h2>regulatory_region_ablation</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 238" width="683" height="238" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>regulatory_region_ablation</title>
+  <defs><marker id="arrow-regulatory_region_ablation" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-regulatory_region_ablation)"/>
+  <path d="M 194 93 C 245 93, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-regulatory_region_ablation)"/>
+  <path d="M 194 145 C 245 145, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-regulatory_region_ablation)"/>
+  <path d="M 194 197 C 245 197, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-regulatory_region_ablation)"/>
+  <path d="M 361 119 C 400 119, 400 119, 439 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-regulatory_region_ablation)"/>
+  <text x="400" y="115" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="102" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="117" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_structural</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">is_regulatory</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">contain_feature</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">is_structural_deletion</text>
+  <rect x="439" y="102" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="117" font-size="11" fill="#1b2c39">regulatory_region_ablation</text><text x="447" y="129" font-size="9" fill="#1b2c39">SO:0001894 · rank 37 · tier 2 · MODIFIER</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="regulatory_region_amplification">
+    <h2>regulatory_region_amplification</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 238" width="683" height="238" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>regulatory_region_amplification</title>
+  <defs><marker id="arrow-regulatory_region_amplification" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-regulatory_region_amplification)"/>
+  <path d="M 194 93 C 245 93, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-regulatory_region_amplification)"/>
+  <path d="M 194 145 C 245 145, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-regulatory_region_amplification)"/>
+  <path d="M 194 197 C 245 197, 245 119, 297 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-regulatory_region_amplification)"/>
+  <path d="M 361 119 C 400 119, 400 119, 439 119" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-regulatory_region_amplification)"/>
+  <text x="400" y="115" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="102" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="117" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_structural</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">is_regulatory</text>
+  <rect x="24" y="128" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">contain_feature</text>
+  <rect x="24" y="180" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">is_structural_insertion</text>
+  <rect x="439" y="102" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="117" font-size="11" fill="#1b2c39">regulatory_region_amplification</text><text x="447" y="129" font-size="9" fill="#1b2c39">SO:0001891 · rank 38 · tier 2 · MODIFIER</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="regulatory_region_variant">
+    <h2>regulatory_region_variant</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 134" width="683" height="134" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>regulatory_region_variant</title>
+  <defs><marker id="arrow-regulatory_region_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 67, 297 67" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-regulatory_region_variant)"/>
+  <path d="M 194 93 C 245 93, 245 67, 297 67" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-regulatory_region_variant)"/>
+  <path d="M 361 67 C 400 67, 400 67, 439 67" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-regulatory_region_variant)"/>
+  <text x="400" y="63" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="50" width="64" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="65" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">is_regulatory</text>
+  <rect x="24" y="76" width="170" height="34" fill="#fff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="439" y="50" width="220" height="34" fill="#33adff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="65" font-size="11" fill="#1b2c39">regulatory_region_variant</text><text x="447" y="77" font-size="9" fill="#1b2c39">SO:0001566 · rank 39 · tier 2 · MODIFIER</text>
+</svg>
+    </div>
+  </section>
+  <section class="vep-section" id="intergenic_variant">
+    <h2>intergenic_variant</h2>
+    <div class="vep-figures">
+      <p>This fallback term has no <code>when</code> expression.</p>
+    </div>
+  </section>
+  <section class="vep-section" id="sequence_variant">
+    <h2>sequence_variant</h2>
+    <div class="vep-figures">
+      <p>This fallback term has no <code>when</code> expression.</p>
+    </div>
+  </section>
+  <section class="vep-section" id="catalogue-overview">
+    <h2>Catalogue overview</h2>
+    <div class="vep-figures">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1538 1018" width="1538" height="1018" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>Catalogue overview</title>
+  <defs><marker id="arrow-Catalogue-overview" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 659 41, 659 41, 1124 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 41 C 769 41, 769 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 41 C 219 41, 219 509, 244 509" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 41 C 329 41, 329 301, 464 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 41 C 219 41, 219 457, 244 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 41 C 219 41, 219 353, 244 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 41 C 219 41, 219 405, 244 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 93 C 329 93, 329 197, 464 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 93 C 769 93, 769 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 93 C 329 93, 329 41, 464 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 93 C 219 93, 219 41, 244 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 93 C 219 93, 219 301, 244 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 93 C 219 93, 219 93, 244 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 93 C 219 93, 219 249, 244 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 93 C 329 93, 329 93, 464 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 93 C 439 93, 439 41, 684 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 93 C 329 93, 329 249, 464 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 93 C 219 93, 219 145, 244 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 93 C 329 93, 329 145, 464 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 145 C 329 145, 329 197, 464 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 145 C 769 145, 769 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 145 C 329 145, 329 41, 464 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 145 C 219 145, 219 41, 244 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 145 C 219 145, 219 301, 244 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 145 C 219 145, 219 93, 244 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 145 C 219 145, 219 249, 244 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 145 C 329 145, 329 93, 464 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 145 C 439 145, 439 41, 684 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 145 C 329 145, 329 249, 464 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 145 C 219 145, 219 145, 244 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 145 C 329 145, 329 145, 464 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 634 41 C 879 41, 879 41, 1124 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 634 41 C 769 41, 769 41, 904 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 634 41 C 989 41, 989 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 634 41 C 659 41, 659 41, 684 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 634 93 C 769 93, 769 41, 904 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 634 93 C 879 93, 879 41, 1124 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 634 93 C 989 93, 989 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 41 C 769 41, 769 41, 1124 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 41 C 659 41, 659 41, 904 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 41 C 879 41, 879 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 41 C 549 41, 549 41, 684 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 41 C 439 41, 439 41, 464 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 93 C 879 93, 879 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 93 C 769 93, 769 41, 1124 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 93 C 659 93, 659 41, 904 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 93 C 549 93, 549 41, 684 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 93 C 439 93, 439 145, 464 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 197 C 659 197, 659 41, 1124 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 197 C 769 197, 769 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 197 C 219 197, 219 509, 244 509" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 197 C 329 197, 329 301, 464 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 197 C 219 197, 219 457, 244 457" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 197 C 219 197, 219 353, 244 353" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 197 C 219 197, 219 405, 244 405" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 634 145 C 879 145, 879 41, 1124 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 634 145 C 769 145, 769 41, 904 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 634 145 C 989 145, 989 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 145 C 769 145, 769 41, 1124 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 145 C 659 145, 659 41, 904 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 145 C 879 145, 879 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 854 41 C 989 41, 989 41, 1124 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 854 41 C 879 41, 879 41, 904 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 854 41 C 1099 41, 1099 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 1074 41 C 1099 41, 1099 41, 1124 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 1074 41 C 1209 41, 1209 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 353 C 329 353, 329 197, 464 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 353 C 219 353, 219 197, 244 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 197 C 439 197, 439 197, 464 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 457 C 659 457, 659 41, 1124 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 457 C 769 457, 769 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 457 C 329 457, 329 93, 464 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 457 C 329 457, 329 145, 464 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 457 C 219 457, 219 145, 244 145" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 457 C 329 457, 329 249, 464 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 249 C 439 249, 439 249, 464 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 249 C 769 249, 769 41, 1124 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 249 C 879 249, 879 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 301 C 439 301, 439 249, 464 249" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 301 C 439 301, 439 93, 464 93" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 301 C 549 301, 549 41, 684 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 301 C 439 301, 439 41, 464 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 301 C 769 301, 769 41, 1124 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 301 C 879 301, 879 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 634 249 C 879 249, 879 41, 1124 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 634 249 C 989 249, 989 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 1294 41 C 1319 41, 1319 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 353 C 879 353, 879 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 405 C 879 405, 879 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 457 C 439 457, 439 301, 464 301" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 414 509 C 879 509, 879 41, 1344 41" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 717 C 219 717, 219 561, 244 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 769 C 219 769, 219 561, 244 561" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 821 C 219 821, 219 613, 244 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <path d="M 194 873 C 219 873, 219 613, 244 613" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-Catalogue-overview)"/>
+  <a href="#transcript_ablation"><rect x="24" y="24" width="170" height="34" fill="#eb768a" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">transcript_ablation</text><text x="32" y="51" font-size="9" fill="#1b2c39">rank 1 · tier 1 · HIGH</text></a>
+  <a href="#splice_acceptor_variant"><rect x="24" y="76" width="170" height="34" fill="#eb768a" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">splice_acceptor_variant</text><text x="32" y="103" font-size="9" fill="#1b2c39">rank 2 · tier 3 · HIGH</text></a>
+  <a href="#splice_donor_variant"><rect x="24" y="128" width="170" height="34" fill="#eb768a" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">splice_donor_variant</text><text x="32" y="155" font-size="9" fill="#1b2c39">rank 3 · tier 3 · HIGH</text></a>
+  <a href="#transcript_amplification"><rect x="24" y="180" width="170" height="34" fill="#eb768a" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">transcript_amplification</text><text x="32" y="207" font-size="9" fill="#1b2c39">rank 8 · tier 1 · HIGH</text></a>
+  <a href="#feature_elongation"><rect x="24" y="232" width="170" height="34" fill="#eb768a" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="247" font-size="11" fill="#1b2c39">feature_elongation</text><text x="32" y="259" font-size="9" fill="#1b2c39">rank 9 · tier 3 · HIGH</text></a>
+  <a href="#feature_truncation"><rect x="24" y="284" width="170" height="34" fill="#eb768a" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="299" font-size="11" fill="#1b2c39">feature_truncation</text><text x="32" y="311" font-size="9" fill="#1b2c39">rank 10 · tier 3 · HIGH</text></a>
+  <a href="#splice_donor_5th_base_variant"><rect x="24" y="336" width="170" height="34" fill="#96d0c9" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="351" font-size="11" fill="#1b2c39">splice_donor_5th_base_variant</text><text x="32" y="363" font-size="9" fill="#1b2c39">rank 15 · tier 3 · LOW</text></a>
+  <a href="#splice_polypyrimidine_tract_variant"><rect x="24" y="388" width="170" height="34" fill="#96d0c9" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="403" font-size="11" fill="#1b2c39">splice_polypyrimidine_tract_variant</text><text x="32" y="415" font-size="9" fill="#1b2c39">rank 18 · tier 3 · LOW</text></a>
+  <a href="#incomplete_terminal_codon_variant"><rect x="24" y="440" width="170" height="34" fill="#96d0c9" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="455" font-size="11" fill="#1b2c39">incomplete_terminal_codon_variant</text><text x="32" y="467" font-size="9" fill="#1b2c39">rank 19 · tier 3 · LOW</text></a>
+  <a href="#mature_miRNA_variant"><rect x="24" y="492" width="170" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="507" font-size="11" fill="#1b2c39">mature_miRNA_variant</text><text x="32" y="519" font-size="9" fill="#1b2c39">rank 24 · tier 2 · MODIFIER</text></a>
+  <a href="#NMD_transcript_variant"><rect x="24" y="544" width="170" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="559" font-size="11" fill="#1b2c39">NMD_transcript_variant</text><text x="32" y="571" font-size="9" fill="#1b2c39">rank 29 · tier 3 · MODIFIER</text></a>
+  <a href="#upstream_gene_variant"><rect x="24" y="596" width="170" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="611" font-size="11" fill="#1b2c39">upstream_gene_variant</text><text x="32" y="623" font-size="9" fill="#1b2c39">rank 32 · tier 3 · MODIFIER</text></a>
+  <a href="#downstream_gene_variant"><rect x="24" y="648" width="170" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="663" font-size="11" fill="#1b2c39">downstream_gene_variant</text><text x="32" y="675" font-size="9" fill="#1b2c39">rank 33 · tier 3 · MODIFIER</text></a>
+  <a href="#TFBS_ablation"><rect x="24" y="700" width="170" height="34" fill="#ff9900" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="715" font-size="11" fill="#1b2c39">TFBS_ablation</text><text x="32" y="727" font-size="9" fill="#1b2c39">rank 34 · tier 2 · MODERATE</text></a>
+  <a href="#TFBS_amplification"><rect x="24" y="752" width="170" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="767" font-size="11" fill="#1b2c39">TFBS_amplification</text><text x="32" y="779" font-size="9" fill="#1b2c39">rank 35 · tier 2 · MODIFIER</text></a>
+  <a href="#regulatory_region_ablation"><rect x="24" y="804" width="170" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="819" font-size="11" fill="#1b2c39">regulatory_region_ablation</text><text x="32" y="831" font-size="9" fill="#1b2c39">rank 37 · tier 2 · MODIFIER</text></a>
+  <a href="#regulatory_region_amplification"><rect x="24" y="856" width="170" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="871" font-size="11" fill="#1b2c39">regulatory_region_amplification</text><text x="32" y="883" font-size="9" fill="#1b2c39">rank 38 · tier 2 · MODIFIER</text></a>
+  <a href="#intergenic_variant"><rect x="24" y="908" width="170" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="923" font-size="11" fill="#1b2c39">intergenic_variant</text><text x="32" y="935" font-size="9" fill="#1b2c39">rank 40 · tier 4 · MODIFIER</text></a>
+  <a href="#sequence_variant"><rect x="24" y="960" width="170" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="975" font-size="11" fill="#1b2c39">sequence_variant</text><text x="32" y="987" font-size="9" fill="#1b2c39">rank 41 · tier 4 · MODIFIER</text></a>
+  <a href="#stop_lost"><rect x="244" y="24" width="170" height="34" fill="#eb768a" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="39" font-size="11" fill="#1b2c39">stop_lost</text><text x="252" y="51" font-size="9" fill="#1b2c39">rank 6 · tier 3 · HIGH</text></a>
+  <a href="#start_lost"><rect x="244" y="76" width="170" height="34" fill="#eb768a" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="91" font-size="11" fill="#1b2c39">start_lost</text><text x="252" y="103" font-size="9" fill="#1b2c39">rank 7 · tier 3 · HIGH</text></a>
+  <a href="#inframe_deletion"><rect x="244" y="128" width="170" height="34" fill="#ff9900" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="143" font-size="11" fill="#1b2c39">inframe_deletion</text><text x="252" y="155" font-size="9" fill="#1b2c39">rank 12 · tier 3 · MODERATE</text></a>
+  <a href="#splice_donor_region_variant"><rect x="244" y="180" width="170" height="34" fill="#96d0c9" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="195" font-size="11" fill="#1b2c39">splice_donor_region_variant</text><text x="252" y="207" font-size="9" fill="#1b2c39">rank 17 · tier 3 · LOW</text></a>
+  <a href="#start_retained_variant"><rect x="244" y="232" width="170" height="34" fill="#96d0c9" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="247" font-size="11" fill="#1b2c39">start_retained_variant</text><text x="252" y="259" font-size="9" fill="#1b2c39">rank 20 · tier 3 · LOW</text></a>
+  <a href="#stop_retained_variant"><rect x="244" y="284" width="170" height="34" fill="#96d0c9" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="299" font-size="11" fill="#1b2c39">stop_retained_variant</text><text x="252" y="311" font-size="9" fill="#1b2c39">rank 21 · tier 3 · LOW</text></a>
+  <a href="#5_prime_UTR_variant"><rect x="244" y="336" width="170" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="351" font-size="11" fill="#1b2c39">5_prime_UTR_variant</text><text x="252" y="363" font-size="9" fill="#1b2c39">rank 25 · tier 3 · MODIFIER</text></a>
+  <a href="#3_prime_UTR_variant"><rect x="244" y="388" width="170" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="403" font-size="11" fill="#1b2c39">3_prime_UTR_variant</text><text x="252" y="415" font-size="9" fill="#1b2c39">rank 26 · tier 3 · MODIFIER</text></a>
+  <a href="#non_coding_transcript_exon_variant"><rect x="244" y="440" width="170" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="455" font-size="11" fill="#1b2c39">non_coding_transcript_exon_variant</text><text x="252" y="467" font-size="9" fill="#1b2c39">rank 27 · tier 3 · MODIFIER</text></a>
+  <a href="#intron_variant"><rect x="244" y="492" width="170" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="507" font-size="11" fill="#1b2c39">intron_variant</text><text x="252" y="519" font-size="9" fill="#1b2c39">rank 28 · tier 3 · MODIFIER</text></a>
+  <a href="#TF_binding_site_variant"><rect x="244" y="544" width="170" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="559" font-size="11" fill="#1b2c39">TF_binding_site_variant</text><text x="252" y="571" font-size="9" fill="#1b2c39">rank 36 · tier 2 · MODIFIER</text></a>
+  <a href="#regulatory_region_variant"><rect x="244" y="596" width="170" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="0"/><text x="252" y="611" font-size="11" fill="#1b2c39">regulatory_region_variant</text><text x="252" y="623" font-size="9" fill="#1b2c39">rank 39 · tier 2 · MODIFIER</text></a>
+  <a href="#stop_gained"><rect x="464" y="24" width="170" height="34" fill="#eb768a" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="39" font-size="11" fill="#1b2c39">stop_gained</text><text x="472" y="51" font-size="9" fill="#1b2c39">rank 4 · tier 3 · HIGH</text></a>
+  <a href="#frameshift_variant"><rect x="464" y="76" width="170" height="34" fill="#eb768a" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="91" font-size="11" fill="#1b2c39">frameshift_variant</text><text x="472" y="103" font-size="9" fill="#1b2c39">rank 5 · tier 3 · HIGH</text></a>
+  <a href="#inframe_insertion"><rect x="464" y="128" width="170" height="34" fill="#ff9900" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="143" font-size="11" fill="#1b2c39">inframe_insertion</text><text x="472" y="155" font-size="9" fill="#1b2c39">rank 11 · tier 3 · MODERATE</text></a>
+  <a href="#splice_region_variant"><rect x="464" y="180" width="170" height="34" fill="#96d0c9" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="195" font-size="11" fill="#1b2c39">splice_region_variant</text><text x="472" y="207" font-size="9" fill="#1b2c39">rank 16 · tier 3 · LOW</text></a>
+  <a href="#synonymous_variant"><rect x="464" y="232" width="170" height="34" fill="#96d0c9" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="247" font-size="11" fill="#1b2c39">synonymous_variant</text><text x="472" y="259" font-size="9" fill="#1b2c39">rank 22 · tier 3 · LOW</text></a>
+  <a href="#non_coding_transcript_variant"><rect x="464" y="284" width="170" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="0"/><text x="472" y="299" font-size="11" fill="#1b2c39">non_coding_transcript_variant</text><text x="472" y="311" font-size="9" fill="#1b2c39">rank 30 · tier 3 · MODIFIER</text></a>
+  <a href="#missense_variant"><rect x="684" y="24" width="170" height="34" fill="#ff9900" stroke="#6f8190" stroke-width="1" rx="0"/><text x="692" y="39" font-size="11" fill="#1b2c39">missense_variant</text><text x="692" y="51" font-size="9" fill="#1b2c39">rank 13 · tier 3 · MODERATE</text></a>
+  <a href="#protein_altering_variant"><rect x="904" y="24" width="170" height="34" fill="#ff9900" stroke="#6f8190" stroke-width="1" rx="0"/><text x="912" y="39" font-size="11" fill="#1b2c39">protein_altering_variant</text><text x="912" y="51" font-size="9" fill="#1b2c39">rank 14 · tier 3 · MODERATE</text></a>
+  <a href="#coding_sequence_variant"><rect x="1124" y="24" width="170" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="0"/><text x="1132" y="39" font-size="11" fill="#1b2c39">coding_sequence_variant</text><text x="1132" y="51" font-size="9" fill="#1b2c39">rank 23 · tier 3 · MODIFIER</text></a>
+  <a href="#coding_transcript_variant"><rect x="1344" y="24" width="170" height="34" fill="#f1f2f4" stroke="#6f8190" stroke-width="1" rx="0"/><text x="1352" y="39" font-size="11" fill="#1b2c39">coding_transcript_variant</text><text x="1352" y="51" font-size="9" fill="#1b2c39">rank 31 · tier 3 · MODIFIER</text></a>
+</svg>
+    </div>
+  </section>
+  </main>
+  </div>
+</body>
+</html>

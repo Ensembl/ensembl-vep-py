@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -529,7 +515,7 @@
 
 
 <div class="viewcode-block" id="transcript_candidate_window">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.transcript_candidate_window">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.transcript_candidate_window">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">transcript_candidate_window</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the bases added each side of an allele before transcripts are fetched.</span>
 
@@ -541,7 +527,7 @@
 
 
 <div class="viewcode-block" id="build_transcript_overlap_finder">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.build_transcript_overlap_finder">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.build_transcript_overlap_finder">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_transcript_overlap_finder</span><span class="p">(</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span>
     <span class="n">candidates</span><span class="p">:</span> <span class="n">CandidateLookup</span><span class="p">[</span><span class="n">Transcript</span><span class="p">],</span>
@@ -571,7 +557,7 @@
 
 
 <div class="viewcode-block" id="build_transcript_tracks">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.build_transcript_tracks">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.build_transcript_tracks">[docs]</a>
 <span class="nd">@register_track</span><span class="p">(</span><span class="s2">"consequence.transcript"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_transcript_tracks</span><span class="p">(</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span>
@@ -677,7 +663,7 @@
 
 
 <div class="viewcode-block" id="TranscriptCandidateLookup">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.TranscriptCandidateLookup">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.TranscriptCandidateLookup">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">TranscriptCandidateLookup</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Cached transcript lookup for an input buffer.</span>
@@ -705,7 +691,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">transcript_pool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span>
 
 <div class="viewcode-block" id="TranscriptCandidateLookup.begin_payload">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.TranscriptCandidateLookup.begin_payload">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.TranscriptCandidateLookup.begin_payload">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">begin_payload</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Release transcript state retained by the previous payload.</span>
 
@@ -718,7 +704,7 @@
 
 
 <div class="viewcode-block" id="TranscriptCandidateLookup.log_statistics">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.TranscriptCandidateLookup.log_statistics">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.TranscriptCandidateLookup.log_statistics">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">log_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Log the transcript pool's running counters, cheap enough to do every payload."""</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
@@ -732,14 +718,14 @@
 
 
 <div class="viewcode-block" id="TranscriptCandidateLookup.close">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.TranscriptCandidateLookup.close">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.TranscriptCandidateLookup.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Close the transcript source."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="TranscriptCandidateLookup.candidates">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.TranscriptCandidateLookup.candidates">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.TranscriptCandidateLookup.candidates">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">candidates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_buffer</span><span class="p">:</span> <span class="n">VariationAlleleBuffer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return each transcript that can pair with this one-region buffer."""</span>
         <span class="n">candidates</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Transcript</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -847,7 +833,7 @@
 
 
 <div class="viewcode-block" id="TranscriptConsequenceTrack">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.TranscriptConsequenceTrack">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.TranscriptConsequenceTrack">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">TranscriptConsequenceTrack</span><span class="p">(</span><span class="n">OverlapAnnotationTrack</span><span class="p">[</span><span class="n">OverlapConsequence</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">"""Transcript consequence annotation track.</span>
@@ -859,7 +845,7 @@
     <span class="n">lookup</span><span class="p">:</span> <span class="n">TranscriptCandidateLookup</span>
 
 <div class="viewcode-block" id="TranscriptConsequenceTrack.begin_payload">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.TranscriptConsequenceTrack.begin_payload">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.TranscriptConsequenceTrack.begin_payload">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">begin_payload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_buffer</span><span class="p">:</span> <span class="n">VariationAlleleBuffer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Release the previous payload's transcripts and fetch this payload's in one pass.</span>
 
@@ -872,7 +858,7 @@
 
 
 <div class="viewcode-block" id="TranscriptConsequenceTrack.attach">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.TranscriptConsequenceTrack.attach">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.TranscriptConsequenceTrack.attach">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">attach</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">variations</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Variation</span><span class="p">],</span>
@@ -898,7 +884,7 @@
 
 
 <div class="viewcode-block" id="TranscriptConsequenceTrack.close">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.TranscriptConsequenceTrack.close">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.workflow.tracks.consequence.html#ensembl.vep.workflow.tracks.consequence.transcript.TranscriptConsequenceTrack.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Close the transcript source this track reads."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lookup</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>

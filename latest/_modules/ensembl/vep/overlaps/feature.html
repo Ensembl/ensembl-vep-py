@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -519,7 +505,7 @@
 
 
 <div class="viewcode-block" id="FeatureOverlapFinder">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.overlaps.html#ensembl.vep.overlaps.feature.FeatureOverlapFinder">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.overlaps.html#ensembl.vep.overlaps.feature.FeatureOverlapFinder">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">FeatureOverlapFinder</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">FeatureT</span><span class="p">,</span> <span class="n">OverlapT</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">"""Overlap finder for source features and variation alleles.</span>
@@ -542,7 +528,7 @@
     <span class="n">overlap_factory</span><span class="p">:</span> <span class="n">OverlapFactory</span><span class="p">[</span><span class="n">FeatureT</span><span class="p">,</span> <span class="n">OverlapT</span><span class="p">]</span> <span class="o">=</span> <span class="n">_feature_overlap</span>  <span class="c1"># type: ignore[assignment]</span>
 
 <div class="viewcode-block" id="FeatureOverlapFinder.find">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.overlaps.html#ensembl.vep.overlaps.feature.FeatureOverlapFinder.find">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.overlaps.html#ensembl.vep.overlaps.feature.FeatureOverlapFinder.find">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_buffer</span><span class="p">:</span> <span class="n">VariationAlleleBuffer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">OverlapT</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Yield overlaps for every matching candidate pair."""</span>
         <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">candidates</span><span class="p">(</span><span class="n">input_buffer</span><span class="p">):</span>

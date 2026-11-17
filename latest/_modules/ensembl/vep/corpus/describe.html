@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -538,7 +524,7 @@
 
 
 <div class="viewcode-block" id="variant_class">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.variant_class">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.variant_class">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">variant_class</span><span class="p">(</span><span class="n">allele</span><span class="p">:</span> <span class="n">VariationAllele</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return a variant's class from its trimmed alleles alone."""</span>
     <span class="n">reference_allele</span> <span class="o">=</span> <span class="p">(</span><span class="n">allele</span><span class="o">.</span><span class="n">reference_allele</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">EMPTY_ALLELE</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
@@ -554,7 +540,7 @@
 
 
 <div class="viewcode-block" id="describe_variant">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.describe_variant">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.describe_variant">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">describe_variant</span><span class="p">(</span><span class="n">allele</span><span class="p">:</span> <span class="n">VariationAllele</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return a variant's locus and alleles, spelled the way ``--variant`` accepts them.</span>
 
@@ -569,7 +555,7 @@
 
 
 <div class="viewcode-block" id="ChromosomeShape">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.ChromosomeShape">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.ChromosomeShape">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ChromosomeShape</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""One chromosome's totals.</span>
@@ -589,7 +575,7 @@
     <span class="n">overlaps</span><span class="p">:</span> <span class="nb">int</span>
 
 <div class="viewcode-block" id="ChromosomeShape.build">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.ChromosomeShape.build">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.ChromosomeShape.build">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sequence_region</span><span class="p">:</span> <span class="n">Slice</span><span class="p">,</span> <span class="n">corpus</span><span class="p">:</span> <span class="n">Corpus</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ChromosomeShape</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Build one sequence region's corpus totals."""</span>
@@ -607,7 +593,7 @@
 
 
 <div class="viewcode-block" id="TranscriptShape">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.TranscriptShape">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.TranscriptShape">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">TranscriptShape</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""One transcript's shape and how many overlaps reach it.</span>
@@ -635,7 +621,7 @@
     <span class="n">overlaps</span><span class="p">:</span> <span class="nb">int</span>
 
 <div class="viewcode-block" id="TranscriptShape.build">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.TranscriptShape.build">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.TranscriptShape.build">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">transcript</span><span class="p">:</span> <span class="n">Transcript</span><span class="p">,</span> <span class="n">overlap_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TranscriptShape</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Build one transcript's shape, or ``None`` when it has no sequence region."""</span>
@@ -660,7 +646,7 @@
 
 
 <div class="viewcode-block" id="OverlapEntry">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.OverlapEntry">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.OverlapEntry">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">OverlapEntry</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""One selectable overlap, as ``vep explain`` addresses it.</span>
@@ -680,7 +666,7 @@
     <span class="n">alleles</span><span class="p">:</span> <span class="nb">str</span>
 
 <div class="viewcode-block" id="OverlapEntry.build">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.OverlapEntry.build">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.OverlapEntry.build">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overlap</span><span class="p">:</span> <span class="n">TranscriptVariationAllele</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OverlapEntry</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Build one selectable overlap entry at its corpus index."""</span>
@@ -697,7 +683,7 @@
 
 
 <div class="viewcode-block" id="CorpusDescription">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.CorpusDescription">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.CorpusDescription">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">CorpusDescription</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""A corpus's shape, as tables.</span>
@@ -722,7 +708,7 @@
     <span class="n">overlaps</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">OverlapEntry</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
 
 <div class="viewcode-block" id="CorpusDescription.build">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.CorpusDescription.build">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.CorpusDescription.build">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">corpus</span><span class="p">:</span> <span class="n">Corpus</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">select</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CorpusDescription</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Build a description of one corpus.</span>
@@ -793,7 +779,7 @@
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">distinct_counts</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">distinct_counts</span><span class="p">)</span>
 
 <div class="viewcode-block" id="CorpusDescription.chromosome_rows">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.CorpusDescription.chromosome_rows">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.CorpusDescription.chromosome_rows">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">chromosome_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Return the chromosome table, in ``CHROMOSOME_HEADERS`` order."""</span>
         <span class="n">rows</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -803,7 +789,7 @@
 
 
 <div class="viewcode-block" id="CorpusDescription.transcript_rows">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.CorpusDescription.transcript_rows">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.CorpusDescription.transcript_rows">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">transcript_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Return the transcript table, in ``TRANSCRIPT_HEADERS`` order."""</span>
         <span class="n">rows</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -825,14 +811,14 @@
 
 
 <div class="viewcode-block" id="CorpusDescription.class_rows">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.CorpusDescription.class_rows">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.CorpusDescription.class_rows">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">class_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Return the variant-class table, in ``CLASS_HEADERS`` order."""</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variant_classes</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="CorpusDescription.overlap_rows">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.CorpusDescription.overlap_rows">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.describe.CorpusDescription.overlap_rows">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">overlap_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Return the overlap listing, in ``OVERLAP_HEADERS`` order."""</span>
         <span class="n">rows</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>

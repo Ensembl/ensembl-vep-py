@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -492,7 +478,7 @@
 
 
 <div class="viewcode-block" id="ChromosomeSynonyms">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.sources.html#ensembl.vep.sources.synonym.ChromosomeSynonyms">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.sources.html#ensembl.vep.sources.synonym.ChromosomeSynonyms">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ChromosomeSynonyms</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Sequence-region names that name the same region, held once for the whole run.</span>
@@ -510,7 +496,7 @@
     <span class="n">by_name</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ChromosomeSynonyms.from_file">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.sources.html#ensembl.vep.sources.synonym.ChromosomeSynonyms.from_file">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.sources.html#ensembl.vep.sources.synonym.ChromosomeSynonyms.from_file">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ChromosomeSynonyms</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Read a synonyms file in Perl VEP's format.</span>
@@ -550,7 +536,7 @@
 
 
 <div class="viewcode-block" id="ChromosomeSynonyms.synonyms_of">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.sources.html#ensembl.vep.sources.synonym.ChromosomeSynonyms.synonyms_of">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.sources.html#ensembl.vep.sources.synonym.ChromosomeSynonyms.synonyms_of">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">synonyms_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the other names for a region.</span>
 
@@ -567,7 +553,7 @@
 
 
 <div class="viewcode-block" id="SequenceRegionResolver">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.sources.html#ensembl.vep.sources.synonym.SequenceRegionResolver">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.sources.html#ensembl.vep.sources.synonym.SequenceRegionResolver">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">SequenceRegionResolver</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Resolve uploaded sequence-region names against one source.</span>
@@ -598,7 +584,7 @@
             <span class="n">folded_names</span><span class="p">[</span><span class="n">folded_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">source_name</span>
 
 <div class="viewcode-block" id="SequenceRegionResolver.resolve">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.sources.html#ensembl.vep.sources.synonym.SequenceRegionResolver.resolve">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.sources.html#ensembl.vep.sources.synonym.SequenceRegionResolver.resolve">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uploaded_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the source sequence-region name for an uploaded name."""</span>
 

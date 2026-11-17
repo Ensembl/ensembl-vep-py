@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -489,7 +475,7 @@
 
 
 <div class="viewcode-block" id="GTFTranscriptSource">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gtf.html#ensembl.vep.sources.file.gtf.transcript.GTFTranscriptSource">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.gtf.html#ensembl.vep.sources.file.gtf.transcript.GTFTranscriptSource">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">GTFTranscriptSource</span><span class="p">(</span><span class="n">GXFTranscriptSource</span><span class="p">[</span><span class="n">GTFParser</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">"""Transcript source backed by a GTF file.</span>
@@ -523,7 +509,7 @@
         <span class="k">return</span> <span class="n">query_parser</span><span class="o">.</span><span class="n">records</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">feature_types</span><span class="o">=</span><span class="n">feature_types</span><span class="p">)</span>
 
 <div class="viewcode-block" id="GTFTranscriptSource.get_record_id">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gtf.html#ensembl.vep.sources.file.gtf.transcript.GTFTranscriptSource.get_record_id">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.gtf.html#ensembl.vep.sources.file.gtf.transcript.GTFTranscriptSource.get_record_id">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_record_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">GTFRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the GTF record identifier for a record.</span>
 
@@ -544,7 +530,7 @@
 
 
 <div class="viewcode-block" id="GTFTranscriptSource.get_parent_ids">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gtf.html#ensembl.vep.sources.file.gtf.transcript.GTFTranscriptSource.get_parent_ids">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.gtf.html#ensembl.vep.sources.file.gtf.transcript.GTFTranscriptSource.get_parent_ids">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_parent_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">GTFRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the GTF parent identifiers for a record, if any exist.</span>
 

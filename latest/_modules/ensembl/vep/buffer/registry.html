@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -507,7 +493,7 @@
 
 
 <div class="viewcode-block" id="register_buffer">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.buffer.html#ensembl.vep.buffer.registry.register_buffer">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.buffer.html#ensembl.vep.buffer.registry.register_buffer">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register_buffer</span><span class="p">(</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">factory</span><span class="p">:</span> <span class="n">BufferFactory</span><span class="p">[</span><span class="n">BufferItemT</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BufferFactory</span><span class="p">[</span><span class="n">BufferItemT</span><span class="p">]</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">BufferFactory</span><span class="p">[</span><span class="n">BufferItemT</span><span class="p">]],</span> <span class="n">BufferFactory</span><span class="p">[</span><span class="n">BufferItemT</span><span class="p">]]:</span>
@@ -533,7 +519,7 @@
 
 
 <div class="viewcode-block" id="buffer_factory">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.buffer.html#ensembl.vep.buffer.registry.buffer_factory">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.buffer.html#ensembl.vep.buffer.registry.buffer_factory">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">buffer_factory</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BufferFactory</span><span class="p">[</span><span class="n">BufferItemT</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return the registered factory without calling it.</span>
 
@@ -555,7 +541,7 @@
 
 
 <div class="viewcode-block" id="get_buffer">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.buffer.html#ensembl.vep.buffer.registry.get_buffer">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.buffer.html#ensembl.vep.buffer.registry.get_buffer">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_buffer</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Buffer</span><span class="p">[</span><span class="n">BufferItemT</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return a registered buffer instance.</span>
 
@@ -575,7 +561,7 @@
 
 
 <div class="viewcode-block" id="available_buffers">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.buffer.html#ensembl.vep.buffer.registry.available_buffers">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.buffer.html#ensembl.vep.buffer.registry.available_buffers">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">available_buffers</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return the sorted set of registered buffer names."""</span>
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_BUFFER_REGISTRY</span><span class="p">))</span></div>

@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -495,7 +481,7 @@
 
 
 <div class="viewcode-block" id="InputBuffer">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.buffer.input_buffer.html#ensembl.vep.buffer.input_buffer.base.InputBuffer">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.buffer.input_buffer.html#ensembl.vep.buffer.input_buffer.base.InputBuffer">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">InputBuffer</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">ObjectT</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">"""Indexed batch of input objects for overlap discovery.</span>
@@ -518,7 +504,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exhausted</span>
 
 <div class="viewcode-block" id="InputBuffer.next">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.buffer.input_buffer.html#ensembl.vep.buffer.input_buffer.base.InputBuffer.next">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.buffer.input_buffer.html#ensembl.vep.buffer.input_buffer.base.InputBuffer.next">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">ObjectT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Reset the batch and refill it from ``items``.</span>
 
@@ -534,7 +520,7 @@
 
 
 <div class="viewcode-block" id="InputBuffer.get_objects_by_intervals">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.buffer.input_buffer.html#ensembl.vep.buffer.input_buffer.base.InputBuffer.get_objects_by_intervals">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.buffer.input_buffer.html#ensembl.vep.buffer.input_buffer.base.InputBuffer.get_objects_by_intervals">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_objects_by_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intervals</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Interval</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ObjectT</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the objects meeting any candidate interval, in input order.</span>
 
@@ -556,7 +542,7 @@
 
 
 <div class="viewcode-block" id="InputBuffer.get_overlapping_objects">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.buffer.input_buffer.html#ensembl.vep.buffer.input_buffer.base.InputBuffer.get_overlapping_objects">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.buffer.input_buffer.html#ensembl.vep.buffer.input_buffer.base.InputBuffer.get_overlapping_objects">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_overlapping_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ObjectT</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the objects overlapping one inclusive interval, in input order.</span>
 
@@ -574,7 +560,7 @@
 
 
 <div class="viewcode-block" id="InputBuffer.clear">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.buffer.input_buffer.html#ensembl.vep.buffer.input_buffer.base.InputBuffer.clear">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.buffer.input_buffer.html#ensembl.vep.buffer.input_buffer.base.InputBuffer.clear">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Drop the index built for the batch, leaving the batch itself alone."""</span>
 

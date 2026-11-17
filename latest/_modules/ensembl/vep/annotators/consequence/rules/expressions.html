@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -493,12 +479,12 @@
 
 
 <div class="viewcode-block" id="Expr">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Expr">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Expr">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Expr</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Represent a Boolean expression over fact atoms."""</span>
 
 <div class="viewcode-block" id="Expr.atoms">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Expr.atoms">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Expr.atoms">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return every fact atom referenced by this expression.</span>
 
@@ -509,7 +495,7 @@
 
 
 <div class="viewcode-block" id="Expr.evaluate">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Expr.evaluate">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Expr.evaluate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Evaluate this expression against a fact context, computing facts as needed.</span>
 
@@ -523,7 +509,7 @@
 
 
 <div class="viewcode-block" id="Expr.cost">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Expr.cost">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Expr.cost">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">cost</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the cold cost of evaluating this expression.</span>
 
@@ -534,7 +520,7 @@
 
 
 <div class="viewcode-block" id="Expr.evaluate_partial">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Expr.evaluate_partial">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Expr.evaluate_partial">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_partial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">known</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Evaluate this expression against a partial (Kleene) assignment.</span>
 
@@ -563,7 +549,7 @@
 
 
 <div class="viewcode-block" id="Atom">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Atom">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Atom">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Atom</span><span class="p">(</span><span class="n">Expr</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Represent one fact atom by name."""</span>
@@ -571,21 +557,21 @@
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
 
 <div class="viewcode-block" id="Atom.atoms">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Atom.atoms">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Atom.atoms">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return this atom's name."""</span>
         <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="Atom.evaluate">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Atom.evaluate">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Atom.evaluate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return this atom's value in a fact context."""</span>
         <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">get_fact</span><span class="p">(</span><span class="n">fact_context</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="Atom.evaluate_partial">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Atom.evaluate_partial">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Atom.evaluate_partial">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_partial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">known</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return this atom's known value, if assigned."""</span>
         <span class="k">return</span> <span class="n">known</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
@@ -597,7 +583,7 @@
 
 
 <div class="viewcode-block" id="Not">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Not">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Not">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Not</span><span class="p">(</span><span class="n">Expr</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Negate one child expression."""</span>
@@ -605,21 +591,21 @@
     <span class="n">child</span><span class="p">:</span> <span class="n">Expr</span>
 
 <div class="viewcode-block" id="Not.atoms">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Not.atoms">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Not.atoms">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the atoms referenced by the child expression."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">atoms</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="Not.evaluate">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Not.evaluate">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Not.evaluate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the negated child value in a fact context."""</span>
         <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Not.evaluate_partial">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Not.evaluate_partial">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Not.evaluate_partial">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_partial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">known</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the negated child value when it is known."""</span>
         <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="o">.</span><span class="n">evaluate_partial</span><span class="p">(</span><span class="n">known</span><span class="p">)</span>
@@ -632,7 +618,7 @@
 
 
 <div class="viewcode-block" id="And">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.And">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.And">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">And</span><span class="p">(</span><span class="n">Expr</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Combine child expressions with logical conjunction."""</span>
@@ -643,14 +629,14 @@
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">children</span><span class="p">))</span>
 
 <div class="viewcode-block" id="And.atoms">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.And.atoms">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.And.atoms">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the atoms referenced by all child expressions."""</span>
         <span class="k">return</span> <span class="nb">set</span><span class="p">()</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">atoms</span><span class="p">()</span> <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">))</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span> <span class="k">else</span> <span class="nb">set</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="And.evaluate">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.And.evaluate">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.And.evaluate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return whether every child is true in a fact context."""</span>
         <span class="c1"># Cheapest conjunct first: a false cheap test skips the expensive ones.</span>
@@ -663,7 +649,7 @@
 
 
 <div class="viewcode-block" id="And.evaluate_partial">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.And.evaluate_partial">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.And.evaluate_partial">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_partial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">known</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the conjunction when the known values settle it."""</span>
         <span class="n">unknown</span> <span class="o">=</span> <span class="kc">False</span>
@@ -682,7 +668,7 @@
 
 
 <div class="viewcode-block" id="Or">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Or">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Or">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Or</span><span class="p">(</span><span class="n">Expr</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Combine child expressions with logical disjunction."""</span>
@@ -693,14 +679,14 @@
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">children</span><span class="p">))</span>
 
 <div class="viewcode-block" id="Or.atoms">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Or.atoms">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Or.atoms">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the atoms referenced by all child expressions."""</span>
         <span class="k">return</span> <span class="nb">set</span><span class="p">()</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">atoms</span><span class="p">()</span> <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">))</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span> <span class="k">else</span> <span class="nb">set</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="Or.evaluate">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Or.evaluate">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Or.evaluate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return whether any child is true in a fact context."""</span>
         <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">child</span><span class="p">:</span> <span class="n">child</span><span class="o">.</span><span class="n">cost</span><span class="p">()):</span>
@@ -710,7 +696,7 @@
 
 
 <div class="viewcode-block" id="Or.evaluate_partial">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Or.evaluate_partial">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.Or.evaluate_partial">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_partial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">known</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the disjunction when the known values settle it."""</span>
         <span class="n">unknown</span> <span class="o">=</span> <span class="kc">False</span>
@@ -744,7 +730,7 @@
 
 
 <div class="viewcode-block" id="all_of">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.all_of">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.all_of">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">all_of</span><span class="p">(</span><span class="o">*</span><span class="n">operands</span><span class="p">:</span> <span class="n">ExprLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expr</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Build a conjunction from a mix of Expr nodes and bare fact atom names.</span>
 
@@ -759,7 +745,7 @@
 
 
 <div class="viewcode-block" id="any_of">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.any_of">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.any_of">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">any_of</span><span class="p">(</span><span class="o">*</span><span class="n">operands</span><span class="p">:</span> <span class="n">ExprLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expr</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Build a disjunction from a mix of Expr nodes and bare fact atom names.</span>
 
@@ -774,7 +760,7 @@
 
 
 <div class="viewcode-block" id="no">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.no">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.no">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">no</span><span class="p">(</span><span class="n">operand</span><span class="p">:</span> <span class="n">ExprLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expr</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Negate a single Expr node or bare fact atom name.</span>
 
@@ -789,7 +775,7 @@
 
 
 <div class="viewcode-block" id="expr_from_json">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.expr_from_json">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.expressions.expr_from_json">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">expr_from_json</span><span class="p">(</span><span class="n">payload</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expr</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Compile a JSON boolean expression payload (as used in the consequence catalogue) into an Expr.</span>
 

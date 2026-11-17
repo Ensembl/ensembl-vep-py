@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -498,13 +484,13 @@
 
 
 <div class="viewcode-block" id="CorpusResource">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.corpus.loaded.html#ensembl.vep.corpus.loaded.base.CorpusResource">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.loaded.html#ensembl.vep.corpus.loaded.base.CorpusResource">[docs]</a>
 <span class="nd">@runtime_checkable</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">CorpusResource</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""A resource retained by a materialised corpus and released with it."""</span>
 
 <div class="viewcode-block" id="CorpusResource.close">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.corpus.loaded.html#ensembl.vep.corpus.loaded.base.CorpusResource.close">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.loaded.html#ensembl.vep.corpus.loaded.base.CorpusResource.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Release the resource."""</span></div>
 </div>
@@ -512,7 +498,7 @@
 
 
 <div class="viewcode-block" id="LoadedCorpus">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.corpus.loaded.html#ensembl.vep.corpus.loaded.base.LoadedCorpus">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.loaded.html#ensembl.vep.corpus.loaded.base.LoadedCorpus">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">LoadedCorpus</span><span class="p">(</span><span class="n">Corpus</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Hold a validated corpus and any external resources that back it.</span>
@@ -589,7 +575,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="LoadedCorpus.close">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.corpus.loaded.html#ensembl.vep.corpus.loaded.base.LoadedCorpus.close">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.loaded.html#ensembl.vep.corpus.loaded.base.LoadedCorpus.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Release every owned source or connection once."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>

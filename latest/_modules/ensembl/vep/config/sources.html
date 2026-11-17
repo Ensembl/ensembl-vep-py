@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -507,7 +493,7 @@
 
 
 <div class="viewcode-block" id="ConfigSource">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.config.html#ensembl.vep.config.sources.ConfigSource">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.config.html#ensembl.vep.config.sources.ConfigSource">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ConfigSource</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Where a configuration value came from."""</span>
 
@@ -594,7 +580,7 @@
 
 
 <div class="viewcode-block" id="coerce_value">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.config.html#ensembl.vep.config.sources.coerce_value">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.config.html#ensembl.vep.config.sources.coerce_value">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">coerce_value</span><span class="p">(</span><span class="n">raw</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">type_annotation</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Coerce a value read from a file or the environment to a field's declared type.</span>
 
@@ -648,7 +634,7 @@
 
 
 <div class="viewcode-block" id="coerce_layer">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.config.html#ensembl.vep.config.sources.coerce_layer">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.config.html#ensembl.vep.config.sources.coerce_layer">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">coerce_layer</span><span class="p">(</span><span class="n">layer</span><span class="p">:</span> <span class="n">ConfigLayer</span><span class="p">,</span> <span class="n">section_types</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">ConfigSection</span><span class="p">],</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ConfigLayer</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Coerce every value in a layer to its declared type and check it against its choices.</span>
 
@@ -685,7 +671,7 @@
 
 
 <div class="viewcode-block" id="merge_layers">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.config.html#ensembl.vep.config.sources.merge_layers">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.config.html#ensembl.vep.config.sources.merge_layers">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">merge_layers</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">:</span> <span class="n">ConfigLayer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConfigLayer</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Merge configuration layers in increasing precedence order."""</span>
     <span class="n">merged</span><span class="p">:</span> <span class="n">ConfigLayer</span> <span class="o">=</span> <span class="p">{}</span>

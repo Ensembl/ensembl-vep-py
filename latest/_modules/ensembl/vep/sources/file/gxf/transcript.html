@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -532,7 +518,7 @@
 
 
 <div class="viewcode-block" id="GXFRecord">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFRecord">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFRecord">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GXFRecord</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Minimal parser record interface shared by GFF3 and GTF records.</span>
 
@@ -555,13 +541,13 @@
     <span class="n">attributes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span>
 
 <div class="viewcode-block" id="GXFRecord.first_attribute">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFRecord.first_attribute">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFRecord.first_attribute">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">first_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the first attribute value for a key, or None when absent."""</span></div>
 
 
 <div class="viewcode-block" id="GXFRecord.attribute_values">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFRecord.attribute_values">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFRecord.attribute_values">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">attribute_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return every attribute value for a key, empty when absent."""</span></div>
 </div>
@@ -595,7 +581,7 @@
 
 
 <div class="viewcode-block" id="GXFTranscriptSource">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">GXFTranscriptSource</span><span class="p">(</span><span class="n">FileFeatureSource</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">GXFRecord</span><span class="p">,</span> <span class="n">Transcript</span><span class="p">],</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">P</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">"""Transcript source backed by GFF3 or GTF file.</span>
@@ -654,7 +640,7 @@
         <span class="k">return</span> <span class="n">index_names</span> <span class="o">|</span> <span class="n">header_names</span>
 
 <div class="viewcode-block" id="GXFTranscriptSource.get_records_by_region">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.get_records_by_region">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.get_records_by_region">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_records_by_region</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -694,7 +680,7 @@
 
 
 <div class="viewcode-block" id="GXFTranscriptSource.get_features_by_region">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.get_features_by_region">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.get_features_by_region">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_features_by_region</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -745,7 +731,7 @@
 
 
 <div class="viewcode-block" id="GXFTranscriptSource.iter_all_features">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.iter_all_features">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.iter_all_features">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">iter_all_features</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Yield transcripts by streaming the file sequentially.</span>
 
@@ -759,7 +745,7 @@
 
 
 <div class="viewcode-block" id="GXFTranscriptSource.iter_features_by_region">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.iter_features_by_region">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.iter_features_by_region">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">iter_features_by_region</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -797,7 +783,7 @@
 
 
 <div class="viewcode-block" id="GXFTranscriptSource.iter_features_by_regions">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.iter_features_by_regions">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.iter_features_by_regions">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">iter_features_by_regions</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">intervals_by_region</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]],</span>
@@ -836,7 +822,7 @@
 
 
 <div class="viewcode-block" id="GXFTranscriptSource.records_to_features">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.records_to_features">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.records_to_features">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">records_to_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">records</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GXFRecord</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Convert a batch of records into transcripts, with a fresh gene and slice context.</span>
 
@@ -1025,7 +1011,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 <div class="viewcode-block" id="GXFTranscriptSource.close">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.close">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Close the region-query parser and the attached sequence source."""</span>
 
@@ -1144,7 +1130,7 @@
         <span class="k">return</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="GXFTranscriptSource.get_record_id">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.get_record_id">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.get_record_id">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_record_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">GXFRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the stable identifier for a GFF3/GTF record.</span>
@@ -1161,7 +1147,7 @@
 
 
 <div class="viewcode-block" id="GXFTranscriptSource.get_parent_ids">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.get_parent_ids">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.get_parent_ids">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_parent_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">GXFRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the parent identifiers for a GFF3/GTF record, if they exist.</span>

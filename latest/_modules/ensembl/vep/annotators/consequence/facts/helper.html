@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -510,7 +496,7 @@
 
 
 <div class="viewcode-block" id="upstream_distance">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.upstream_distance">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.upstream_distance">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">upstream_distance</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the run's upstream pairing distance, or the default outside a run.</span>
 
@@ -524,7 +510,7 @@
 
 
 <div class="viewcode-block" id="downstream_distance">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.downstream_distance">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.downstream_distance">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">downstream_distance</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the run's downstream pairing distance, or the default outside a run."""</span>
 
@@ -539,7 +525,7 @@
 
 
 <div class="viewcode-block" id="variant_genomic_span">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.variant_genomic_span">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.variant_genomic_span">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">variant_genomic_span</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">FeatureOverlap</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return the variant's genomic ``(minimum, maximum)`` span.</span>
 
@@ -551,7 +537,7 @@
 
 
 <div class="viewcode-block" id="genomic_overlap">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.genomic_overlap">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.genomic_overlap">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">genomic_overlap</span><span class="p">(</span><span class="n">range_start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">range_end</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">other_start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">other_end</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return whether two closed genomic intervals share a position."""</span>
     <span class="k">return</span> <span class="n">range_start</span> <span class="o">&lt;=</span> <span class="n">other_end</span> <span class="ow">and</span> <span class="n">range_end</span> <span class="o">&gt;=</span> <span class="n">other_start</span></div>
@@ -564,7 +550,7 @@
 
 
 <div class="viewcode-block" id="intron_offsets_to_genomic_span">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.intron_offsets_to_genomic_span">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.intron_offsets_to_genomic_span">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">intron_offsets_to_genomic_span</span><span class="p">(</span>
     <span class="n">intron</span><span class="p">:</span> <span class="n">Intron</span><span class="p">,</span> <span class="n">strand</span><span class="p">:</span> <span class="n">Strand</span><span class="p">,</span> <span class="n">low</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">high</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">from_donor</span><span class="p">:</span> <span class="nb">bool</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
@@ -635,7 +621,7 @@
 
 
 <div class="viewcode-block" id="reference_allele">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.reference_allele">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.reference_allele">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">reference_allele</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">FeatureOverlap</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the reference allele, treating ``None`` as empty."""</span>
     <span class="k">return</span> <span class="n">_variant</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span><span class="o">.</span><span class="n">reference_allele</span> <span class="ow">or</span> <span class="s2">""</span></div>
@@ -643,7 +629,7 @@
 
 
 <div class="viewcode-block" id="alternate_allele">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.alternate_allele">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.alternate_allele">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">alternate_allele</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">FeatureOverlap</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the alternate allele, treating ``None`` as empty."""</span>
     <span class="k">return</span> <span class="n">_variant</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span><span class="o">.</span><span class="n">alternate_allele</span> <span class="ow">or</span> <span class="s2">""</span></div>
@@ -651,7 +637,7 @@
 
 
 <div class="viewcode-block" id="reference_allele_length">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.reference_allele_length">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.reference_allele_length">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">reference_allele_length</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">FeatureOverlap</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the reference-allele length, treating empty spellings as zero."""</span>
     <span class="n">allele</span> <span class="o">=</span> <span class="n">_variant</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span><span class="o">.</span><span class="n">reference_allele</span> <span class="ow">or</span> <span class="s2">""</span>
@@ -660,7 +646,7 @@
 
 
 <div class="viewcode-block" id="alternate_allele_length">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.alternate_allele_length">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.alternate_allele_length">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">alternate_allele_length</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">FeatureOverlap</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the alternate-allele length, treating empty spellings as zero."""</span>
     <span class="n">allele</span> <span class="o">=</span> <span class="n">_variant</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span><span class="o">.</span><span class="n">alternate_allele</span> <span class="ow">or</span> <span class="s2">""</span>
@@ -669,7 +655,7 @@
 
 
 <div class="viewcode-block" id="allele_length_difference">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.allele_length_difference">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.helper.allele_length_difference">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">allele_length_difference</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">FeatureOverlap</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the length change from reference to alternate allele."""</span>
     <span class="k">return</span> <span class="n">alternate_allele_length</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span> <span class="o">-</span> <span class="n">reference_allele_length</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span></div>

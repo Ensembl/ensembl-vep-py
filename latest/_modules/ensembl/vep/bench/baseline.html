@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -519,7 +505,7 @@
 
 
 <div class="viewcode-block" id="machine_info">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.baseline.machine_info">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.baseline.machine_info">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">machine_info</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return what about this machine could explain a different timing."""</span>
     <span class="k">return</span> <span class="p">{</span>
@@ -534,7 +520,7 @@
 
 
 <div class="viewcode-block" id="git_state">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.baseline.git_state">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.baseline.git_state">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">git_state</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return the git revision and whether the tree is dirty, or Nones outside a repository."""</span>
     <span class="k">try</span><span class="p">:</span>
@@ -551,7 +537,7 @@
 
 
 <div class="viewcode-block" id="utc_timestamp">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.baseline.utc_timestamp">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.baseline.utc_timestamp">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">utc_timestamp</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the current UTC time, to the second."""</span>
     <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">timespec</span><span class="o">=</span><span class="s2">"seconds"</span><span class="p">)</span></div>
@@ -559,7 +545,7 @@
 
 
 <div class="viewcode-block" id="RunInfo">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.baseline.RunInfo">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.baseline.RunInfo">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">RunInfo</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""What produced a set of results.</span>
@@ -587,7 +573,7 @@
 
 
 <div class="viewcode-block" id="BenchResults">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.baseline.BenchResults">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.baseline.BenchResults">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">BenchResults</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""A run's rows and what produced them.</span>
@@ -602,7 +588,7 @@
     <span class="n">rows</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">())</span>
 
 <div class="viewcode-block" id="BenchResults.to_json">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.baseline.BenchResults.to_json">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.baseline.BenchResults.to_json">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the results as indented JSON."""</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"format_version"</span><span class="p">:</span> <span class="n">FORMAT_VERSION</span><span class="p">,</span> <span class="s2">"info"</span><span class="p">:</span> <span class="n">attrs</span><span class="o">.</span><span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">),</span> <span class="s2">"rows"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">)}</span>
@@ -610,7 +596,7 @@
 
 
 <div class="viewcode-block" id="BenchResults.from_json">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.baseline.BenchResults.from_json">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.baseline.BenchResults.from_json">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BenchResults</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Read results back.</span>
@@ -625,7 +611,7 @@
 
 
 <div class="viewcode-block" id="BenchResults.write">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.baseline.BenchResults.write">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.baseline.BenchResults.write">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Write the results, creating the directory if needed."""</span>
         <span class="n">path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -633,7 +619,7 @@
 
 
 <div class="viewcode-block" id="BenchResults.load">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.baseline.BenchResults.load">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.baseline.BenchResults.load">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BenchResults</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Read results from a file."""</span>
@@ -643,7 +629,7 @@
 
 
 <div class="viewcode-block" id="Regression">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.baseline.Regression">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.baseline.Regression">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Regression</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""A timing that got slower than the threshold allows.</span>
@@ -668,7 +654,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">baseline</span> <span class="o">-</span> <span class="mi">1</span>
 
 <div class="viewcode-block" id="Regression.line">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.baseline.Regression.line">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.baseline.Regression.line">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">line</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the regression as one readable line."""</span>
         <span class="k">return</span> <span class="p">(</span>
@@ -680,7 +666,7 @@
 
 
 <div class="viewcode-block" id="Comparison">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.baseline.Comparison">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.baseline.Comparison">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Comparison</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""A run compared against a baseline.</span>
@@ -712,7 +698,7 @@
 
 
 <div class="viewcode-block" id="compare_results">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.baseline.compare_results">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.baseline.compare_results">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">compare_results</span><span class="p">(</span><span class="n">baseline</span><span class="p">:</span> <span class="n">BenchResults</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">BenchResults</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Comparison</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Compare a run against a baseline, row by row.</span>
 

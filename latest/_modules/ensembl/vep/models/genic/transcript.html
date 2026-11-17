@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -537,7 +523,7 @@
 
 
 <div class="viewcode-block" id="Transcript">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.genic.html#ensembl.vep.models.genic.transcript.Transcript">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.genic.html#ensembl.vep.models.genic.transcript.Transcript">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Transcript</span><span class="p">(</span><span class="n">Feature</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
@@ -1512,7 +1498,7 @@
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">genomic_spans</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Transcript.genomic_to_cds_offset">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.genic.html#ensembl.vep.models.genic.transcript.Transcript.genomic_to_cds_offset">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.genic.html#ensembl.vep.models.genic.transcript.Transcript.genomic_to_cds_offset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">genomic_to_cds_offset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">genomic_position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="n">MapperIndex</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -1530,7 +1516,7 @@
 
 
 <div class="viewcode-block" id="Transcript.cds_offset_to_genomic">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.genic.html#ensembl.vep.models.genic.transcript.Transcript.cds_offset_to_genomic">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.genic.html#ensembl.vep.models.genic.transcript.Transcript.cds_offset_to_genomic">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">cds_offset_to_genomic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cds_offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="n">MapperIndex</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Map a 0-based CDS offset to its genomic position.</span>
 
@@ -1547,7 +1533,7 @@
 
 
 <div class="viewcode-block" id="Transcript.start_codon_genomic_spans">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.genic.html#ensembl.vep.models.genic.transcript.Transcript.start_codon_genomic_spans">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.genic.html#ensembl.vep.models.genic.transcript.Transcript.start_codon_genomic_spans">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">start_codon_genomic_spans</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Genomic spans of the three start-codon bases.</span>
 
@@ -1563,7 +1549,7 @@
 
 
 <div class="viewcode-block" id="Transcript.stop_codon_genomic_spans">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.genic.html#ensembl.vep.models.genic.transcript.Transcript.stop_codon_genomic_spans">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.genic.html#ensembl.vep.models.genic.transcript.Transcript.stop_codon_genomic_spans">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">stop_codon_genomic_spans</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Genomic spans of the three stop-codon bases.</span>
 

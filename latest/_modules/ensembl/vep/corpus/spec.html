@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -551,7 +537,7 @@
 
 
 <div class="viewcode-block" id="CorpusSpec">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.spec.CorpusSpec">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.spec.CorpusSpec">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">CorpusSpec</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Describe a registered corpus construction.</span>
@@ -636,7 +622,7 @@
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_parameter_items"</span><span class="p">,</span> <span class="n">_parameter_items</span><span class="p">(</span><span class="n">resolved</span><span class="p">))</span>
 
 <div class="viewcode-block" id="CorpusSpec.from_options">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.spec.CorpusSpec.from_options">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.spec.CorpusSpec.from_options">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_options</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CorpusSpec</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Build a specification from corpus configuration attributes.</span>
@@ -673,7 +659,7 @@
 
 
 <div class="viewcode-block" id="CorpusSpec.from_dict">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.spec.CorpusSpec.from_dict">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.spec.CorpusSpec.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">CorpusSpec</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Build a specification from its JSON-compatible representation.</span>
@@ -707,7 +693,7 @@
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameter_items</span><span class="p">)</span>
 
 <div class="viewcode-block" id="CorpusSpec.parameter">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.spec.CorpusSpec.parameter">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.spec.CorpusSpec.parameter">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">CorpusParameter</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CorpusParameter</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return one factory parameter or ``default`` when absent.</span>
 
@@ -722,7 +708,7 @@
 
 
 <div class="viewcode-block" id="CorpusSpec.with_parameters">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.spec.CorpusSpec.with_parameters">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.spec.CorpusSpec.with_parameters">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">with_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span><span class="p">:</span> <span class="n">CorpusParameter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CorpusSpec</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return a specification with selected parameters replaced.</span>
 
@@ -738,7 +724,7 @@
 
 
 <div class="viewcode-block" id="CorpusSpec.as_dict">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.spec.CorpusSpec.as_dict">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.spec.CorpusSpec.as_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the JSON-compatible representation."""</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span> <span class="s2">"parameters"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">}</span></div>
@@ -794,7 +780,7 @@
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kind</span><span class="p">,)</span>
 
 <div class="viewcode-block" id="CorpusSpec.seeds_by_kind">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.spec.CorpusSpec.seeds_by_kind">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.spec.CorpusSpec.seeds_by_kind">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">seeds_by_kind</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Return synthetic seeds for the selected built-in corpora."""</span>
         <span class="n">seeds</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -813,7 +799,7 @@
 
 
 <div class="viewcode-block" id="CorpusSpec.parameter_hash">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.corpus.html#ensembl.vep.corpus.spec.CorpusSpec.parameter_hash">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.corpus.html#ensembl.vep.corpus.spec.CorpusSpec.parameter_hash">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">parameter_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return a short stable digest of the requested construction."""</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">as_dict</span><span class="p">(),</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">)</span>

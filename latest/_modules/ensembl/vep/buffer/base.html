@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -494,7 +480,7 @@
 
 
 <div class="viewcode-block" id="Buffer">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.buffer.html#ensembl.vep.buffer.base.Buffer">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.buffer.html#ensembl.vep.buffer.base.Buffer">[docs]</a>
 <span class="nd">@runtime_checkable</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Buffer</span><span class="p">(</span><span class="n">Protocol</span><span class="p">[</span><span class="n">ItemT</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">"""Refillable batch of input items."""</span>
@@ -510,14 +496,14 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 <div class="viewcode-block" id="Buffer.next">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.buffer.html#ensembl.vep.buffer.base.Buffer.next">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.buffer.html#ensembl.vep.buffer.base.Buffer.next">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">ItemT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Reset the batch and refill it from ``items``."""</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="Buffer.clear">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.buffer.html#ensembl.vep.buffer.base.Buffer.clear">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.buffer.html#ensembl.vep.buffer.base.Buffer.clear">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Drop whatever was indexed for the current batch."""</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>

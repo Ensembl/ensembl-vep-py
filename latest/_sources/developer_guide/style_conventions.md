@@ -54,7 +54,7 @@ All docstrings in this project must follow the [Google Python Style Guide](https
 
 **Rationale:**
 - Google style docstrings provide clear, consistent documentation and improve readability.
-- The docstring will facilitate automated documentation generation using mkdocs. 
+- The docstring will facilitate automated documentation generation using Sphinx.
 
 > No docstring, no visibility in the public docs!
 

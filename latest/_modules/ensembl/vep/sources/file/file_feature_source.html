@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -498,7 +484,7 @@
 
 
 <div class="viewcode-block" id="FileFeatureSource">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.sources.file.html#ensembl.vep.sources.file.file_feature_source.FileFeatureSource">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.sources.file.html#ensembl.vep.sources.file.file_feature_source.FileFeatureSource">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">FileFeatureSource</span><span class="p">(</span><span class="n">FeatureSource</span><span class="p">[</span><span class="n">R</span><span class="p">,</span> <span class="n">F</span><span class="p">],</span> <span class="n">Generic</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">F</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">"""Feature source backed by a parser-readable file.</span>
@@ -514,7 +500,7 @@
     <span class="n">source_type</span><span class="p">:</span> <span class="n">SourceType</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">SourceType</span><span class="o">.</span><span class="n">FILE</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FileFeatureSource.get_all_records">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.sources.file.html#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.get_all_records">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.sources.file.html#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.get_all_records">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_all_records</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">R</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return every unconverted record in the source file.</span>
 
@@ -541,7 +527,7 @@
 
 
 <div class="viewcode-block" id="FileFeatureSource.iter_all_records">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.sources.file.html#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.iter_all_records">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.sources.file.html#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.iter_all_records">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">iter_all_records</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">R</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Yield every unconverted record in the source file."""</span>
 
@@ -551,7 +537,7 @@
 
 
 <div class="viewcode-block" id="FileFeatureSource.get_records_by_region">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.sources.file.html#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.get_records_by_region">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.sources.file.html#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.get_records_by_region">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_records_by_region</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -588,7 +574,7 @@
 
 
 <div class="viewcode-block" id="FileFeatureSource.iter_records_by_region">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.sources.file.html#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.iter_records_by_region">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.sources.file.html#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.iter_records_by_region">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">iter_records_by_region</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -626,7 +612,7 @@
 
 
 <div class="viewcode-block" id="FileFeatureSource.close">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.sources.file.html#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.close">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.sources.file.html#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Release the attached sequence source, if any.</span>
 

@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -497,7 +483,7 @@
 
 
 <div class="viewcode-block" id="register_exporter">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.corpus.exporter.html#ensembl.vep.corpus.exporter.registry.register_exporter">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.exporter.html#ensembl.vep.corpus.exporter.registry.register_exporter">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register_exporter</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ExporterFactoryT</span><span class="p">],</span> <span class="n">ExporterFactoryT</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Register an exporter factory under a name."""</span>
 
@@ -512,7 +498,7 @@
 
 
 <div class="viewcode-block" id="get_exporter">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.corpus.exporter.html#ensembl.vep.corpus.exporter.registry.get_exporter">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.exporter.html#ensembl.vep.corpus.exporter.registry.get_exporter">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_exporter</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CorpusExporter</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return a new registered exporter.</span>
 
@@ -528,7 +514,7 @@
 
 
 <div class="viewcode-block" id="available_exporters">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.corpus.exporter.html#ensembl.vep.corpus.exporter.registry.available_exporters">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.exporter.html#ensembl.vep.corpus.exporter.registry.available_exporters">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">available_exporters</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return the sorted set of registered exporter names."""</span>
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_EXPORTER_REGISTRY</span><span class="p">))</span></div>

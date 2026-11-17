@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -533,7 +519,7 @@
 
 
 <div class="viewcode-block" id="BitColumnBuffer">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.BitColumnBuffer">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.BitColumnBuffer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BitColumnBuffer</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Materialise fact bit-columns lazily for one overlap batch."""</span>
 
@@ -548,7 +534,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_value_bits</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
 <div class="viewcode-block" id="BitColumnBuffer.seed">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.BitColumnBuffer.seed">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.BitColumnBuffer.seed">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">column</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">known_mask</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Mark a fact's column as already computed for every context in ``known_mask``.</span>
 
@@ -567,7 +553,7 @@
 
 
 <div class="viewcode-block" id="BitColumnBuffer.column">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.BitColumnBuffer.column">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.BitColumnBuffer.column">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">live_mask</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the bit-column for ``fact_name`` within ``live_mask``.</span>
 
@@ -689,7 +675,7 @@
 
 
 <div class="viewcode-block" id="RulePlan">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlan">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlan">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">RulePlan</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Represent a rule as a cost-ordered bit-parallel evaluation plan.</span>
@@ -705,7 +691,7 @@
 <span class="sd">    """</span>
 
 <div class="viewcode-block" id="RulePlan.build">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlan.build">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlan.build">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">expression</span><span class="p">:</span> <span class="n">Expr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RulePlan</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Compile a rule's Expr formula into a RulePlan.</span>
@@ -722,7 +708,7 @@
 
 
 <div class="viewcode-block" id="RulePlan.evaluate">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlan.evaluate">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlan.evaluate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">live_mask</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">bit_columns</span><span class="p">:</span> <span class="n">BitColumnBuffer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Evaluate this plan over a live mask, short-circuiting as children settle.</span>
 
@@ -804,7 +790,7 @@
 
 
 <div class="viewcode-block" id="RulePlanSet">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlanSet">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlanSet">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">RulePlanSet</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Pair a rule set with one compiled plan per rule.</span>
@@ -818,7 +804,7 @@
     <span class="n">plans</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">RulePlan</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
 
 <div class="viewcode-block" id="RulePlanSet.build">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlanSet.build">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlanSet.build">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RulePlanSet</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Compile one plan per rule in ``ruleset``.</span>
@@ -833,7 +819,7 @@
 
 
 <div class="viewcode-block" id="RulePlanSet.hit_terms_by_context">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlanSet.hit_terms_by_context">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlanSet.hit_terms_by_context">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">hit_terms_by_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bit_columns</span><span class="p">:</span> <span class="n">BitColumnBuffer</span><span class="p">,</span> <span class="n">context_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Return the terms that evaluated as true for each fact context.</span>
 
@@ -858,7 +844,7 @@
 
 
 <div class="viewcode-block" id="RulePlanSet.evaluate_over_columns">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlanSet.evaluate_over_columns">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.RulePlanSet.evaluate_over_columns">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_over_columns</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">bit_columns</span><span class="p">:</span> <span class="n">BitColumnBuffer</span><span class="p">,</span> <span class="n">context_count</span><span class="p">:</span> <span class="nb">int</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">OverlapConsequence</span><span class="p">]]:</span>
@@ -886,7 +872,7 @@
 
 
 <div class="viewcode-block" id="ColumnarFactsAnnotator">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.ColumnarFactsAnnotator">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.ColumnarFactsAnnotator">[docs]</a>
 <span class="nd">@register_annotator</span><span class="p">(</span><span class="s2">"consequence.columnar"</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ColumnarFactsAnnotator</span><span class="p">(</span><span class="n">ConsequenceAnnotator</span><span class="p">[</span><span class="n">FactRuleSet</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">"""Evaluate consequence rules bit-parallel over overlap batches.</span>
@@ -986,7 +972,7 @@
         <span class="k">return</span> <span class="n">traces</span>
 
 <div class="viewcode-block" id="ColumnarFactsAnnotator.annotate_feature_overlaps">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.ColumnarFactsAnnotator.annotate_feature_overlaps">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.columnar.ColumnarFactsAnnotator.annotate_feature_overlaps">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">annotate_feature_overlaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overlaps</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FeatureOverlap</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">OverlapConsequence</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Calculate consequences for a batch of overlaps at once.</span>
 

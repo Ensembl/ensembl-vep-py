@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -516,7 +502,7 @@
 
 
 <div class="viewcode-block" id="Interval">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.Interval">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.Interval">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Interval</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Inclusive genomic interval or interbase insertion point.</span>
@@ -562,7 +548,7 @@
 
 
 <div class="viewcode-block" id="IntervalTree">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTree">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTree">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">IntervalTree</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">FeatureT</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">"""Feature index for overlap and proximity queries.</span>
@@ -593,7 +579,7 @@
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_lock"</span><span class="p">,</span> <span class="n">RLock</span><span class="p">())</span>
 
 <div class="viewcode-block" id="IntervalTree.add_features">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTree.add_features">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTree.add_features">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FeatureT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Add features to the index.</span>
 
@@ -606,7 +592,7 @@
 
 
 <div class="viewcode-block" id="IntervalTree.get_overlapping_features">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTree.get_overlapping_features">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTree.get_overlapping_features">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_overlapping_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">FeatureT</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return every indexed feature overlapping an inclusive interval.</span>
 
@@ -625,7 +611,7 @@
 
 
 <div class="viewcode-block" id="IntervalTree.get_overlapping_features_by_feature">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTree.get_overlapping_features_by_feature">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTree.get_overlapping_features_by_feature">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_overlapping_features_by_feature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature</span><span class="p">:</span> <span class="n">IntervalLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">FeatureT</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return every indexed feature overlapping another feature's span.</span>
 
@@ -643,7 +629,7 @@
 
 
 <div class="viewcode-block" id="IntervalTree.get_overlapping_positions">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTree.get_overlapping_positions">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTree.get_overlapping_positions">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_overlapping_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the positions in ``features`` of every feature overlapping an interval.</span>
 
@@ -667,7 +653,7 @@
 
 
 <div class="viewcode-block" id="IntervalTree.get_nearest_features">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTree.get_nearest_features">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTree.get_nearest_features">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_nearest_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">FeatureT</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the ``k`` indexed features nearest an inclusive interval.</span>
 
@@ -690,7 +676,7 @@
 
 
 <div class="viewcode-block" id="IntervalTree.get_nearest_features_by_feature">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTree.get_nearest_features_by_feature">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTree.get_nearest_features_by_feature">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_nearest_features_by_feature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature</span><span class="p">:</span> <span class="n">IntervalLike</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">FeatureT</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the ``k`` indexed features nearest another feature's span.</span>
 
@@ -748,7 +734,7 @@
 
 
 <div class="viewcode-block" id="IntervalTreeKey">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTreeKey">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTreeKey">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">IntervalTreeKey</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Identity of one cached interval tree.</span>
@@ -768,13 +754,13 @@
 
 
 <div class="viewcode-block" id="IntervalTreeCache">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTreeCache">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTreeCache">[docs]</a>
 <span class="nd">@runtime_checkable</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">IntervalTreeCache</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Region-based interval-tree cache."""</span>
 
 <div class="viewcode-block" id="IntervalTreeCache.get_interval_tree">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTreeCache.get_interval_tree">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTreeCache.get_interval_tree">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_interval_tree</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">seq_region_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -788,7 +774,7 @@
 
 
 <div class="viewcode-block" id="IntervalTreeCache.clear">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTreeCache.clear">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.IntervalTreeCache.clear">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Clear cached state."""</span>
 
@@ -798,7 +784,7 @@
 
 
 <div class="viewcode-block" id="FeatureIntervalTreeCache">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.FeatureIntervalTreeCache">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.FeatureIntervalTreeCache">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">FeatureIntervalTreeCache</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Shared interval trees keyed by region and source.</span>
@@ -810,7 +796,7 @@
     <span class="n">_lock</span><span class="p">:</span> <span class="n">RLock</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="n">RLock</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FeatureIntervalTreeCache.get_interval_tree">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.FeatureIntervalTreeCache.get_interval_tree">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.FeatureIntervalTreeCache.get_interval_tree">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_interval_tree</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">seq_region_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -855,7 +841,7 @@
 
 
 <div class="viewcode-block" id="FeatureIntervalTreeCache.clear">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.FeatureIntervalTreeCache.clear">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.caches.html#ensembl.vep.caches.interval_tree.FeatureIntervalTreeCache.clear">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Clear every cached tree."""</span>
 

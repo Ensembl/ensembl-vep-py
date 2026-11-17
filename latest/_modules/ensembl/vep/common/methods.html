@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -497,7 +483,7 @@
 
 
 <div class="viewcode-block" id="is_resolved">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.common.html#ensembl.vep.common.methods.is_resolved">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.common.html#ensembl.vep.common.methods.is_resolved">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_resolved</span><span class="p">(</span><span class="n">instance</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return whether a slot-backed cached property is already resolved without triggering computation.</span>
 
@@ -527,7 +513,7 @@
 
 
 <div class="viewcode-block" id="invalidate">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.common.html#ensembl.vep.common.methods.invalidate">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.common.html#ensembl.vep.common.methods.invalidate">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">invalidate</span><span class="p">(</span><span class="n">instance</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="o">*</span><span class="n">invalidate_names</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Clear the named cached properties of a class object when the attributes are set.</span>
 
@@ -552,7 +538,7 @@
 
 
 <div class="viewcode-block" id="invalidates">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.common.html#ensembl.vep.common.methods.invalidates">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.common.html#ensembl.vep.common.methods.invalidates">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">invalidates</span><span class="p">(</span><span class="o">*</span><span class="n">cached_names</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return an attrs ``on_setattr`` hook that clears named cached properties.</span>
 
@@ -580,7 +566,7 @@
 
 
 <div class="viewcode-block" id="resets_attrs">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.common.html#ensembl.vep.common.methods.resets_attrs">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.common.html#ensembl.vep.common.methods.resets_attrs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">resets_attrs</span><span class="p">(</span><span class="o">*</span><span class="n">attrs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return an attrs ``on_setattr`` hook that resets named attributes.</span>
 
@@ -618,7 +604,7 @@
 
 
 <div class="viewcode-block" id="trim_sequences">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.common.html#ensembl.vep.common.methods.trim_sequences">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.common.html#ensembl.vep.common.methods.trim_sequences">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">trim_sequences</span><span class="p">(</span>
     <span class="n">ref</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">alt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -746,7 +732,7 @@
 
 
 <div class="viewcode-block" id="shift_sequence">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.common.html#ensembl.vep.common.methods.shift_sequence">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.common.html#ensembl.vep.common.methods.shift_sequence">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">shift_sequence</span><span class="p">(</span>
     <span class="n">seq</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -835,7 +821,7 @@
 
 
 <div class="viewcode-block" id="parse_region_string">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.common.html#ensembl.vep.common.methods.parse_region_string">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.common.html#ensembl.vep.common.methods.parse_region_string">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">parse_region_string</span><span class="p">(</span><span class="n">region</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Split a region string into its sequence-region name and optional bounds.</span>
 
@@ -875,7 +861,7 @@
 
 
 <div class="viewcode-block" id="format_region_string">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.common.html#ensembl.vep.common.methods.format_region_string">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.common.html#ensembl.vep.common.methods.format_region_string">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">format_region_string</span><span class="p">(</span>
     <span class="n">region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -921,7 +907,7 @@
 
 
 <div class="viewcode-block" id="format_coords">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.common.html#ensembl.vep.common.methods.format_coords">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.common.html#ensembl.vep.common.methods.format_coords">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">format_coords</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return a coordinate range the way VEP prints one.</span>
 
@@ -941,7 +927,7 @@
 
 
 <div class="viewcode-block" id="infer_variant_so_term">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.common.html#ensembl.vep.common.methods.infer_variant_so_term">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.common.html#ensembl.vep.common.methods.infer_variant_so_term">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">infer_variant_so_term</span><span class="p">(</span><span class="n">allele_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ref_correct</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClassSOTerm</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Return the SO term for the class of the variation.</span>
@@ -1008,7 +994,7 @@
 
 
 <div class="viewcode-block" id="infer_symbolic_variant_so_term">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.common.html#ensembl.vep.common.methods.infer_symbolic_variant_so_term">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.common.html#ensembl.vep.common.methods.infer_symbolic_variant_so_term">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">infer_symbolic_variant_so_term</span><span class="p">(</span><span class="n">allele_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">svtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClassSOTerm</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Infer the SO term for a symbolic structural variant.</span>
 
@@ -1071,7 +1057,7 @@
 
 
 <div class="viewcode-block" id="reverse_complement">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.common.html#ensembl.vep.common.methods.reverse_complement">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.common.html#ensembl.vep.common.methods.reverse_complement">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">reverse_complement</span><span class="p">(</span><span class="n">sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the reverse complement of a nucleotide sequence.</span>
 
@@ -1088,7 +1074,7 @@
 
 
 <div class="viewcode-block" id="setup_logging">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.common.html#ensembl.vep.common.methods.setup_logging">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.common.html#ensembl.vep.common.methods.setup_logging">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">setup_logging</span><span class="p">(</span><span class="n">level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"INFO"</span><span class="p">,</span> <span class="n">log_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Set up logging configuration. Call once, from the application entry point.</span>
 

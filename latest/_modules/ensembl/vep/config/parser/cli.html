@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -585,7 +571,7 @@
 
 
 <div class="viewcode-block" id="destination">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.config.parser.html#ensembl.vep.config.parser.cli.destination">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.config.parser.html#ensembl.vep.config.parser.cli.destination">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">destination</span><span class="p">(</span><span class="n">section_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the parsed-namespace key one section's option is read back from.</span>
 
@@ -724,7 +710,7 @@
 
 
 <div class="viewcode-block" id="add_section_arguments">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.config.parser.html#ensembl.vep.config.parser.cli.add_section_arguments">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.config.parser.html#ensembl.vep.config.parser.cli.add_section_arguments">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">add_section_arguments</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">section_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ConfigSection</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Add every option a section declares to a parser, as its own argument group."""</span>
     <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">section_type</span><span class="o">.</span><span class="n">section_name</span><span class="si">}</span><span class="s2"> options"</span><span class="p">)</span>
@@ -734,7 +720,7 @@
 
 
 <div class="viewcode-block" id="check_no_flag_collisions">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.config.parser.html#ensembl.vep.config.parser.cli.check_no_flag_collisions">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.config.parser.html#ensembl.vep.config.parser.cli.check_no_flag_collisions">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_no_flag_collisions</span><span class="p">(</span><span class="n">section_types</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">ConfigSection</span><span class="p">],</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Raise if two of the given sections declare the same flag.</span>
 
@@ -769,7 +755,7 @@
 
 
 <div class="viewcode-block" id="build_parser">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.config.parser.html#ensembl.vep.config.parser.cli.build_parser">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.config.parser.html#ensembl.vep.config.parser.cli.build_parser">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_parser</span><span class="p">(</span>
     <span class="n">prog</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">section_types</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">ConfigSection</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">:</span>
@@ -788,7 +774,7 @@
 
 
 <div class="viewcode-block" id="parse_args">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.config.parser.html#ensembl.vep.config.parser.cli.parse_args">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.config.parser.html#ensembl.vep.config.parser.cli.parse_args">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">parse_args</span><span class="p">(</span>
     <span class="n">parser</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">argv</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">section_types</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">ConfigSection</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConfigLayer</span><span class="p">:</span>

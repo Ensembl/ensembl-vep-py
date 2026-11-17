@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ensembl.vep.output.factory.base &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../../../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ensembl/vep/output/factory/base';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.0a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../../../../../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../../../../../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
+  
+    
+    <script src="../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    <script src="../../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../../../../../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.output.factory.base</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ensembl.vep.output.factory.base</h1><div class="highlight"><pre>
+<span></span><span class="c1"># See the NOTICE file distributed with this work for additional information</span>
+<span class="c1"># regarding copyright ownership.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1"># http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="sd">"""Format-neutral annotated variants and their factory.</span>
+
+<span class="sd">The factory is a port of the format-independent half of Perl VEP's ``OutputFactory.pm``. A variation</span>
+<span class="sd">first becomes a hash of what is known from its position alone (``variation_hash``). That hash is</span>
+<span class="sd">copied and extended once per (allele, feature) overlap (``allele_hash``). The copies are then</span>
+<span class="sd">filtered, picked or squashed as the options ask (``output_hashes``), and ``build_annotated_variant``</span>
+<span class="sd">hands them to ``AnnotatedVariant.build``, which detaches the variant's own fields. The snapshot is</span>
+<span class="sd">the only thing that crosses a worker boundary and the only thing an output format sees.</span>
+
+<span class="sd">Only fields this model can actually supply are ever populated. A column VEP fills from data not</span>
+<span class="sd">carried here yet -- HGVS, SIFT, frequencies, co-located variants -- stays empty rather than being</span>
+<span class="sd">approximated, which is VEP's own convention for "not available". The *column layout* for a given</span>
+<span class="sd">set of flags is VEP's, so a downstream tool reading the ``Format`` declaration finds what it</span>
+<span class="sd">expects.</span>
+
+<span class="sd">Consequences reach an allele through ``VariationAllele.transcript_variation_alleles``. Assigning</span>
+<span class="sd">that list invalidates the allele's aggregate, so assign each overlap's consequences first and</span>
+<span class="sd">attach the overlaps afterwards.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">frozen</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.rules.catalogue</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_consequence_definitions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.common.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">EMPTY_ALLELE</span><span class="p">,</span> <span class="n">UNKNOWN_VALUE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.common.methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">format_coords</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.overlap</span><span class="w"> </span><span class="kn">import</span> <span class="n">OverlapConsequence</span><span class="p">,</span> <span class="n">TranscriptVariationAllele</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.variation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Variation</span><span class="p">,</span> <span class="n">VariationAllele</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunSummary</span><span class="p">,</span> <span class="n">RunSummaryCollector</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"DEFAULT_PICK_ORDER"</span><span class="p">,</span>
+    <span class="s2">"DISTANCE_TERMS"</span><span class="p">,</span>
+    <span class="s2">"FLAG_FIELDS"</span><span class="p">,</span>
+    <span class="s2">"AlleleOverlap"</span><span class="p">,</span>
+    <span class="s2">"AnnotatedVariant"</span><span class="p">,</span>
+    <span class="s2">"AnnotatedVariantFactory"</span><span class="p">,</span>
+    <span class="s2">"AnnotatedVariants"</span><span class="p">,</span>
+    <span class="s2">"AnnotationRecord"</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">AnnotationRecord</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span>
+<span class="sd">"""One VEP output hash, copied from a selected allele-feature annotation."""</span>
+
+
+<span class="n">DEFAULT_PICK_ORDER</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"mane_select"</span><span class="p">,</span>
+    <span class="s2">"mane_plus_clinical"</span><span class="p">,</span>
+    <span class="s2">"canonical"</span><span class="p">,</span>
+    <span class="s2">"appris"</span><span class="p">,</span>
+    <span class="s2">"tsl"</span><span class="p">,</span>
+    <span class="s2">"biotype"</span><span class="p">,</span>
+    <span class="s2">"ccds"</span><span class="p">,</span>
+    <span class="s2">"rank"</span><span class="p">,</span>
+    <span class="s2">"length"</span><span class="p">,</span>
+    <span class="s2">"ensembl"</span><span class="p">,</span>
+    <span class="s2">"refseq"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="sd">"""The order ``--pick`` weighs a transcript by, as VEP defaults it. A criterion this model has no</span>
+<span class="sd">data for ties for every candidate and so defers to the next one -- exactly VEP's behaviour when</span>
+<span class="sd">two candidates are equal on a criterion."""</span>
+
+<span class="n">DISTANCE_TERMS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">"upstream_gene_variant"</span><span class="p">,</span> <span class="s2">"downstream_gene_variant"</span><span class="p">})</span>
+<span class="sd">"""The terms whose output carries a ``DISTANCE`` to the transcript."""</span>
+
+<span class="n">FLAG_FIELDS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="s2">"allele_number"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"ALLELE_NUM"</span><span class="p">,)),</span>
+    <span class="p">(</span><span class="s2">"show_ref_allele"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"REF_ALLELE"</span><span class="p">,)),</span>
+    <span class="p">(</span><span class="s2">"flag_pick"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"PICK"</span><span class="p">,)),</span>
+    <span class="p">(</span><span class="s2">"flag_pick_allele"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"PICK"</span><span class="p">,)),</span>
+    <span class="p">(</span><span class="s2">"variant_class"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"VARIANT_CLASS"</span><span class="p">,)),</span>
+    <span class="p">(</span><span class="s2">"symbol"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"SYMBOL"</span><span class="p">,</span> <span class="s2">"SYMBOL_SOURCE"</span><span class="p">,</span> <span class="s2">"HGNC_ID"</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s2">"biotype"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"BIOTYPE"</span><span class="p">,)),</span>
+    <span class="p">(</span><span class="s2">"numbers"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"EXON"</span><span class="p">,</span> <span class="s2">"INTRON"</span><span class="p">)),</span>
+<span class="p">)</span>
+<span class="sd">"""Flag -&gt; the output fields it adds, in VEP's order, for the flags this factory supports.</span>
+
+<span class="sd">The whole field list is declared even where only part of it can be filled (``SYMBOL_SOURCE``,</span>
+<span class="sd">``HGNC_ID``), so the column layout matches VEP's for the same flags."""</span>
+
+<span class="n">_MISSING_RANK</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">_UNKNOWN_PICK_VALUE</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">_TSL_PATTERN</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"tsl(\d+)"</span><span class="p">)</span>
+<span class="n">_APPRIS_PATTERN</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"([A-Za-z]).+(\d+)"</span><span class="p">)</span>
+<span class="n">_VERSIONED</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\.\d+$"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_as_iterator</span><span class="p">(</span><span class="n">variants</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">AnnotatedVariant</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">AnnotatedVariant</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Return a single-pass iterator over annotated variants."""</span>
+    <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="n">variants</span><span class="p">)</span>
+
+
+<span class="nd">@cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_intergenic_consequence</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">OverlapConsequence</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return ``intergenic_variant`` as the catalogue defines it: the term for an allele with no overlap."""</span>
+    <span class="k">for</span> <span class="n">definition</span> <span class="ow">in</span> <span class="n">load_consequence_definitions</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">definition</span><span class="o">.</span><span class="n">term</span> <span class="o">==</span> <span class="s2">"intergenic_variant"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">OverlapConsequence</span><span class="p">(</span>
+                <span class="n">term</span><span class="o">=</span><span class="n">definition</span><span class="o">.</span><span class="n">term</span><span class="p">,</span>
+                <span class="n">accession</span><span class="o">=</span><span class="n">definition</span><span class="o">.</span><span class="n">accession</span><span class="p">,</span>
+                <span class="n">rank</span><span class="o">=</span><span class="n">definition</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span>
+                <span class="n">tier</span><span class="o">=</span><span class="n">definition</span><span class="o">.</span><span class="n">tier</span><span class="p">,</span>
+                <span class="n">impact</span><span class="o">=</span><span class="n">definition</span><span class="o">.</span><span class="n">impact</span><span class="p">,</span>
+            <span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">LookupError</span><span class="p">(</span><span class="s2">"the catalogue defines no intergenic_variant term"</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="AnnotatedVariant">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.output.factory.html#ensembl.vep.output.factory.base.AnnotatedVariant">[docs]</a>
+<span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnnotatedVariant</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Format-neutral snapshot of one annotated variant.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        id (str | None): The uploaded or stable variant identifier.</span>
+<span class="sd">        seq_region_name (str): The sequence-region name, as the input spelled it.</span>
+<span class="sd">        start (int): The inclusive genomic start.</span>
+<span class="sd">        end (int): The inclusive genomic end.</span>
+<span class="sd">        strand (int): The genomic strand.</span>
+<span class="sd">        allele_string (str): The reference and alternate alleles separated by ``/``.</span>
+<span class="sd">        input_columns (tuple[str, ...]): The original input columns, when present.</span>
+<span class="sd">        annotations (tuple[AnnotationRecord, ...]): Selected VEP output hashes.</span>
+<span class="sd">        most_severe_consequence (str | None): The most severe emitted consequence term.</span>
+<span class="sd">        variant_class (str | None): The Sequence Ontology class term.</span>
+<span class="sd">        assembly_name (str | None): The assembly name, when known.</span>
+<span class="sd">        skipped (bool): Whether annotation was skipped for this input variant.</span>
+<span class="sd">    """</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">seq_region_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">start</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">end</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">strand</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">allele_string</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">input_columns</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">annotations</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">AnnotationRecord</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">most_severe_consequence</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">variant_class</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">assembly_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">skipped</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="AnnotatedVariant.build">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.output.factory.html#ensembl.vep.output.factory.base.AnnotatedVariant.build">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">variation</span><span class="p">:</span> <span class="n">Variation</span><span class="p">,</span>
+        <span class="n">record_columns</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">annotations</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">AnnotationRecord</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
+        <span class="n">assembly_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skipped</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnnotatedVariant</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the snapshot of one variation, carrying records chosen elsewhere.</span>
+
+<span class="sd">        Which records a run writes is an output-format question, answered by the output factory;</span>
+<span class="sd">        everything here is the variant's own.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            variation (Variation): The variation whose annotation is complete.</span>
+<span class="sd">            record_columns (Sequence[str] | None): Original input columns, when available.</span>
+<span class="sd">            annotations (tuple[AnnotationRecord, ...]): The selected output hashes.</span>
+<span class="sd">            assembly_name (str | None): Assembly name to expose in structured output.</span>
+<span class="sd">            skipped (bool): Whether sources could not annotate this variation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            AnnotatedVariant: The detached snapshot.</span>
+<span class="sd">        """</span>
+        <span class="n">uploaded_locus</span> <span class="o">=</span> <span class="n">variation</span><span class="o">.</span><span class="n">uploaded_locus</span>
+        <span class="n">uploaded_name</span> <span class="o">=</span> <span class="n">uploaded_locus</span><span class="o">.</span><span class="n">seq_region_name</span> <span class="k">if</span> <span class="n">uploaded_locus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">sequence_region_name</span> <span class="o">=</span> <span class="n">uploaded_name</span> <span class="ow">or</span> <span class="n">UNKNOWN_VALUE</span>
+        <span class="n">class_term</span> <span class="o">=</span> <span class="n">variation</span><span class="o">.</span><span class="n">class_so_term</span>
+        <span class="n">most_severe</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">skipped</span> <span class="k">else</span> <span class="n">variation</span><span class="o">.</span><span class="n">most_severe_consequence</span>
+        <span class="n">most_severe_term</span> <span class="o">=</span> <span class="n">most_severe</span><span class="o">.</span><span class="n">term</span> <span class="k">if</span> <span class="n">most_severe</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">most_severe_term</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">annotations</span><span class="p">:</span>
+            <span class="c1"># A term the model reports only inside the records, such as one a flag squashed.</span>
+            <span class="n">first_terms</span> <span class="o">=</span> <span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Consequence"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first_terms</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="n">first_terms</span><span class="p">:</span>
+                <span class="n">most_severe_term</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">first_terms</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="n">variation</span><span class="o">.</span><span class="n">stable_id</span><span class="p">,</span>
+            <span class="n">seq_region_name</span><span class="o">=</span><span class="n">sequence_region_name</span><span class="p">,</span>
+            <span class="n">start</span><span class="o">=</span><span class="n">variation</span><span class="o">.</span><span class="n">start</span><span class="p">,</span>
+            <span class="n">end</span><span class="o">=</span><span class="n">variation</span><span class="o">.</span><span class="n">end</span><span class="p">,</span>
+            <span class="n">strand</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">variation</span><span class="o">.</span><span class="n">strand</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+            <span class="n">allele_string</span><span class="o">=</span><span class="n">variation</span><span class="o">.</span><span class="n">allele_string</span> <span class="ow">or</span> <span class="p">(</span><span class="n">class_term</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="n">class_term</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">""</span><span class="p">),</span>
+            <span class="n">input_columns</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">column</span><span class="p">)</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">record_columns</span> <span class="ow">or</span> <span class="p">()),</span>
+            <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">,</span>
+            <span class="n">most_severe_consequence</span><span class="o">=</span><span class="n">most_severe_term</span><span class="p">,</span>
+            <span class="n">variant_class</span><span class="o">=</span><span class="n">class_term</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="n">class_term</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">assembly_name</span><span class="o">=</span><span class="n">assembly_name</span><span class="p">,</span>
+            <span class="n">skipped</span><span class="o">=</span><span class="n">skipped</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AnnotatedVariants">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.output.factory.html#ensembl.vep.output.factory.base.AnnotatedVariants">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnnotatedVariants</span><span class="p">(</span><span class="n">Iterator</span><span class="p">[</span><span class="n">AnnotatedVariant</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">"""Closable annotation iterator with its completed run summary.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        variants (Iterable[AnnotatedVariant]): Ordered annotated variants.</span>
+<span class="sd">        collector (RunSummaryCollector): Summary state updated as variants become available.</span>
+<span class="sd">    """</span>
+
+    <span class="n">_iterator</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">AnnotatedVariant</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">"variants"</span><span class="p">,</span> <span class="n">converter</span><span class="o">=</span><span class="n">_as_iterator</span><span class="p">)</span>
+    <span class="n">_collector</span><span class="p">:</span> <span class="n">RunSummaryCollector</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">"collector"</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">_completed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">_closed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">_variant_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnnotatedVariants</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return this single-pass annotation stream."""</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnnotatedVariant</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the next annotated variant in input order."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">variant</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_iterator</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_completed</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">raise</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variant_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">variant</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnnotatedVariants</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return this stream for bounded consumption."""</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_error</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Close worker resources when consumption stops."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">completed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return whether every input variant has been consumed."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_completed</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">variant_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the number of variants yielded to the consumer."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variant_count</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">collector</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunSummaryCollector</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the collector after complete consumption.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RuntimeError: If the stream has not been exhausted.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_completed</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"the run summary is available after the annotation stream is exhausted"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collector</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunSummary</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the final summary after complete consumption.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RuntimeError: If the stream has not been exhausted.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_completed</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"the run summary is available after the annotation stream is exhausted"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collector</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+
+<div class="viewcode-block" id="AnnotatedVariants.close">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.output.factory.html#ensembl.vep.output.factory.base.AnnotatedVariants.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Release resources held by the underlying annotation iterator."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">close</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_iterator</span><span class="p">,</span> <span class="s2">"close"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">close</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span> <span class="o">=</span> <span class="kc">True</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AlleleOverlap">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.output.factory.html#ensembl.vep.output.factory.base.AlleleOverlap">[docs]</a>
+<span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AlleleOverlap</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""One allele of a variation against one feature, with the consequences it was assigned.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        allele_number (int): The allele's 1-based position among the variation's alternates.</span>
+<span class="sd">        allele (VariationAllele): The allele.</span>
+<span class="sd">        overlap (TranscriptVariationAllele | None): The feature overlap, or None for an allele that</span>
+<span class="sd">            overlaps nothing -- which VEP reports as intergenic.</span>
+<span class="sd">        consequences (tuple[OverlapConsequence, ...]): The consequences, most severe first.</span>
+<span class="sd">    """</span>
+
+    <span class="n">allele_number</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">allele</span><span class="p">:</span> <span class="n">VariationAllele</span>
+    <span class="n">overlap</span><span class="p">:</span> <span class="n">TranscriptVariationAllele</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">consequences</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">OverlapConsequence</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">allele_seq</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the allele as VEP writes it, using ``-`` when empty."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">allele</span><span class="o">.</span><span class="n">alternate_allele</span> <span class="ow">or</span> <span class="n">EMPTY_ALLELE</span></div>
+
+
+
+<div class="viewcode-block" id="AnnotatedVariantFactory">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.output.factory.html#ensembl.vep.output.factory.base.AnnotatedVariantFactory">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnnotatedVariantFactory</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-many-instance-attributes</span>
+<span class="w">    </span><span class="sd">"""Factory for detached annotated-variant snapshots.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        most_severe (bool): One record per variation, carrying only its most severe term.</span>
+<span class="sd">        summary (bool): One record per variation, carrying every distinct term, most severe first.</span>
+<span class="sd">        pick (bool): Keep only the single best (allele, feature) per variation.</span>
+<span class="sd">        pick_allele (bool): Keep the best feature per allele.</span>
+<span class="sd">        flag_pick (bool): Keep everything, and mark the single best with ``PICK``.</span>
+<span class="sd">        flag_pick_allele (bool): Keep everything, and mark the best per allele with ``PICK``.</span>
+<span class="sd">        pick_order (tuple[str, ...]): The criteria the picking flags weigh, in order.</span>
+<span class="sd">        no_intergenic (bool): Write nothing for an allele that overlaps no feature.</span>
+<span class="sd">        variant_class (bool): Add ``VARIANT_CLASS``.</span>
+<span class="sd">        symbol (bool): Add the gene symbol.</span>
+<span class="sd">        biotype (bool): Add the transcript biotype.</span>
+<span class="sd">        numbers (bool): Add exon and intron numbers.</span>
+<span class="sd">        allele_number (bool): Add ``ALLELE_NUM``.</span>
+<span class="sd">        show_ref_allele (bool): Add ``REF_ALLELE``.</span>
+<span class="sd">        transcript_version (bool): Append the version to transcript identifiers.</span>
+<span class="sd">        gene_version (bool): Append the version to gene identifiers.</span>
+<span class="sd">    """</span>
+
+    <span class="n">most_severe</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">summary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">pick</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">pick_allele</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">flag_pick</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">flag_pick_allele</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">pick_order</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_PICK_ORDER</span><span class="p">)</span>
+    <span class="n">no_intergenic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">variant_class</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">symbol</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">biotype</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">numbers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">allele_number</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">show_ref_allele</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">transcript_version</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">gene_version</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AnnotatedVariantFactory.flag_fields">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.output.factory.html#ensembl.vep.output.factory.base.AnnotatedVariantFactory.flag_fields">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">flag_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return the output fields the enabled flags add, in order and without repeats."""</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">flag</span><span class="p">,</span> <span class="n">names</span> <span class="ow">in</span> <span class="n">FLAG_FIELDS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flag</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+                    <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fields</span></div>
+
+
+<div class="viewcode-block" id="AnnotatedVariantFactory.output_hashes">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.output.factory.html#ensembl.vep.output.factory.base.AnnotatedVariantFactory.output_hashes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_hashes</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">variation</span><span class="p">:</span> <span class="n">Variation</span><span class="p">,</span> <span class="n">record_columns</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Return the output records of one variation, filtered and picked as the flags ask.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            variation (Variation): The variation, its alleles' overlaps carrying consequences.</span>
+<span class="sd">            record_columns (Sequence[str] | None): The original VCF columns, if it came from one.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[dict[str, object]]: One hash per written (allele, feature), or a single squashed</span>
+<span class="sd">                hash under ``most_severe``/``summary``. Empty under ``no_intergenic`` for a</span>
+<span class="sd">                variation that overlaps nothing.</span>
+<span class="sd">        """</span>
+        <span class="n">variation_fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">variation_hash</span><span class="p">(</span><span class="n">variation</span><span class="p">,</span> <span class="n">record_columns</span><span class="p">)</span>
+        <span class="n">overlaps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">allele_overlaps</span><span class="p">(</span><span class="n">variation</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">overlaps</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">most_severe</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_summary_only</span><span class="p">(</span><span class="n">variation_fields</span><span class="p">,</span> <span class="n">overlaps</span><span class="p">)]</span>
+
+        <span class="n">selected</span><span class="p">,</span> <span class="n">picked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span><span class="p">(</span><span class="n">overlaps</span><span class="p">)</span>
+        <span class="n">hashes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">selected</span><span class="p">:</span>
+            <span class="n">output_hash</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">variation_fields</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">allele_hash</span><span class="p">(</span><span class="n">output_hash</span><span class="p">,</span> <span class="n">entry</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">entry</span> <span class="ow">is</span> <span class="n">chosen</span> <span class="k">for</span> <span class="n">chosen</span> <span class="ow">in</span> <span class="n">picked</span><span class="p">):</span>
+                <span class="n">output_hash</span><span class="p">[</span><span class="s2">"PICK"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">hashes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output_hash</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hashes</span></div>
+
+
+<div class="viewcode-block" id="AnnotatedVariantFactory.build_annotated_variant">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.output.factory.html#ensembl.vep.output.factory.base.AnnotatedVariantFactory.build_annotated_variant">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_annotated_variant</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">variation</span><span class="p">:</span> <span class="n">Variation</span><span class="p">,</span>
+        <span class="n">record_columns</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">assembly_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skipped</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnnotatedVariant</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Detach one annotated variation, carrying the records the flags select.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            variation (Variation): The variation whose annotations are complete.</span>
+<span class="sd">            record_columns (Sequence[str] | None): Original input columns, when available.</span>
+<span class="sd">            assembly_name (str | None): Assembly name to expose in structured output.</span>
+<span class="sd">            skipped (bool): Whether sources could not annotate this variation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            AnnotatedVariant: A serialisable snapshot for stream and file factories.</span>
+<span class="sd">        """</span>
+        <span class="n">annotations</span> <span class="o">=</span> <span class="p">()</span> <span class="k">if</span> <span class="n">skipped</span> <span class="k">else</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_hashes</span><span class="p">(</span><span class="n">variation</span><span class="p">,</span> <span class="n">record_columns</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">AnnotatedVariant</span><span class="o">.</span><span class="n">build</span><span class="p">(</span>
+            <span class="n">variation</span><span class="p">,</span>
+            <span class="n">record_columns</span><span class="p">,</span>
+            <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">,</span>
+            <span class="n">assembly_name</span><span class="o">=</span><span class="n">assembly_name</span><span class="p">,</span>
+            <span class="n">skipped</span><span class="o">=</span><span class="n">skipped</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AnnotatedVariantFactory.variation_hash">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.output.factory.html#ensembl.vep.output.factory.base.AnnotatedVariantFactory.variation_hash">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">variation_hash</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">variation</span><span class="p">:</span> <span class="n">Variation</span><span class="p">,</span> <span class="n">record_columns</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return what is known about a variation from its position alone."""</span>
+        <span class="n">uploaded_locus</span> <span class="o">=</span> <span class="n">variation</span><span class="o">.</span><span class="n">uploaded_locus</span>
+        <span class="n">uploaded_name</span> <span class="o">=</span> <span class="n">uploaded_locus</span><span class="o">.</span><span class="n">seq_region_name</span> <span class="k">if</span> <span class="n">uploaded_locus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">chromosome</span> <span class="o">=</span> <span class="n">uploaded_name</span> <span class="ow">or</span> <span class="n">UNKNOWN_VALUE</span>
+        <span class="n">class_term</span> <span class="o">=</span> <span class="n">variation</span><span class="o">.</span><span class="n">class_so_term</span>
+        <span class="n">alleles</span> <span class="o">=</span> <span class="n">variation</span><span class="o">.</span><span class="n">allele_string</span> <span class="ow">or</span> <span class="p">(</span><span class="n">class_term</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="n">class_term</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">""</span><span class="p">)</span>
+        <span class="n">positional_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">chromosome</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">variation</span><span class="o">.</span><span class="n">start</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">alleles</span><span class="si">}</span><span class="s2">"</span>
+
+        <span class="n">name</span> <span class="o">=</span> <span class="n">variation</span><span class="o">.</span><span class="n">stable_id</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"."</span><span class="p">,</span> <span class="n">positional_name</span><span class="p">}:</span>
+            <span class="n">uploaded</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="k">elif</span> <span class="n">record_columns</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">record_columns</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="n">reference</span><span class="p">,</span> <span class="n">alternates</span> <span class="o">=</span> <span class="n">record_columns</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">record_columns</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">","</span><span class="p">,</span> <span class="s2">"/"</span><span class="p">)</span>
+            <span class="n">uploaded</span> <span class="o">=</span> <span class="s2">"_"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="n">record_columns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">record_columns</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">reference</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">alternates</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">alternates</span> <span class="k">else</span> <span class="n">reference</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">uploaded</span> <span class="o">=</span> <span class="n">positional_name</span>
+
+        <span class="n">fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"Uploaded_variation"</span><span class="p">:</span> <span class="n">uploaded</span><span class="p">,</span>
+            <span class="s2">"Location"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">chromosome</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">format_coords</span><span class="p">(</span><span class="n">variation</span><span class="o">.</span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">variation</span><span class="o">.</span><span class="n">end</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">variant_class</span> <span class="ow">and</span> <span class="n">class_term</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fields</span><span class="p">[</span><span class="s2">"VARIANT_CLASS"</span><span class="p">]</span> <span class="o">=</span> <span class="n">class_term</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">return</span> <span class="n">fields</span></div>
+
+
+<div class="viewcode-block" id="AnnotatedVariantFactory.allele_overlaps">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.output.factory.html#ensembl.vep.output.factory.base.AnnotatedVariantFactory.allele_overlaps">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">allele_overlaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variation</span><span class="p">:</span> <span class="n">Variation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AlleleOverlap</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return every (allele, feature) of a variation, grouped by feature.</span>
+
+<span class="sd">        Grouped by feature and then in allele order, as VEP groups them. An allele with no overlap</span>
+<span class="sd">        yields one intergenic entry, unless ``no_intergenic`` is set.</span>
+<span class="sd">        """</span>
+        <span class="n">order</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">by_feature</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">AlleleOverlap</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">intergenic</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AlleleOverlap</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">allele</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">variation</span><span class="o">.</span><span class="n">variation_alleles</span><span class="p">):</span>
+            <span class="n">overlaps</span> <span class="o">=</span> <span class="n">allele</span><span class="o">.</span><span class="n">transcript_variation_alleles</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">overlaps</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_intergenic</span><span class="p">:</span>
+                    <span class="n">intergenic</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">AlleleOverlap</span><span class="p">(</span>
+                            <span class="n">allele_number</span><span class="o">=</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                            <span class="n">allele</span><span class="o">=</span><span class="n">allele</span><span class="p">,</span>
+                            <span class="n">overlap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">consequences</span><span class="o">=</span><span class="p">(</span><span class="n">_intergenic_consequence</span><span class="p">(),),</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">overlap</span> <span class="ow">in</span> <span class="n">overlaps</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">overlap</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">stable_id</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">by_feature</span><span class="p">:</span>
+                    <span class="n">by_feature</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="n">consequences</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">overlap</span><span class="o">.</span><span class="n">overlap_consequences</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">rank</span><span class="p">))</span>
+                <span class="n">by_feature</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">AlleleOverlap</span><span class="p">(</span>
+                        <span class="n">allele_number</span><span class="o">=</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">allele</span><span class="o">=</span><span class="n">allele</span><span class="p">,</span> <span class="n">overlap</span><span class="o">=</span><span class="n">overlap</span><span class="p">,</span> <span class="n">consequences</span><span class="o">=</span><span class="n">consequences</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+        <span class="n">grouped</span> <span class="o">=</span> <span class="p">[</span><span class="n">entry</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">order</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">by_feature</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="n">grouped</span> <span class="o">+</span> <span class="n">intergenic</span></div>
+
+
+<div class="viewcode-block" id="AnnotatedVariantFactory.allele_hash">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.output.factory.html#ensembl.vep.output.factory.base.AnnotatedVariantFactory.allele_hash">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">allele_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_hash</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">],</span> <span class="n">entry</span><span class="p">:</span> <span class="n">AlleleOverlap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Extend a copy of the variation's hash with one (allele, feature)'s fields, in place."""</span>
+        <span class="n">output_hash</span><span class="p">[</span><span class="s2">"Allele"</span><span class="p">]</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">allele_seq</span>
+        <span class="n">output_hash</span><span class="p">[</span><span class="s2">"Consequence"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">consequence</span><span class="o">.</span><span class="n">term</span> <span class="k">for</span> <span class="n">consequence</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">consequences</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">consequences</span> <span class="ow">and</span> <span class="n">entry</span><span class="o">.</span><span class="n">consequences</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">impact</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">output_hash</span><span class="p">[</span><span class="s2">"IMPACT"</span><span class="p">]</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">consequences</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">impact</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">allele_number</span><span class="p">:</span>
+            <span class="n">output_hash</span><span class="p">[</span><span class="s2">"ALLELE_NUM"</span><span class="p">]</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">allele_number</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_ref_allele</span><span class="p">:</span>
+            <span class="n">output_hash</span><span class="p">[</span><span class="s2">"REF_ALLELE"</span><span class="p">]</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">allele</span><span class="o">.</span><span class="n">reference_allele</span> <span class="ow">or</span> <span class="n">EMPTY_ALLELE</span>
+        <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">overlap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_transcript_fields</span><span class="p">(</span><span class="n">output_hash</span><span class="p">,</span> <span class="n">entry</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_transcript_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_hash</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">],</span> <span class="n">entry</span><span class="p">:</span> <span class="n">AlleleOverlap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Add what a transcript overlap contributes."""</span>
+        <span class="n">overlap</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">overlap</span>
+        <span class="k">assert</span> <span class="n">overlap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">transcript</span> <span class="o">=</span> <span class="n">overlap</span><span class="o">.</span><span class="n">feature</span>
+        <span class="n">gene</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">gene</span>
+
+        <span class="n">output_hash</span><span class="p">[</span><span class="s2">"Feature_type"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Transcript"</span>
+        <span class="n">feature</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">stable_id</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transcript_version</span> <span class="ow">and</span> <span class="n">transcript</span><span class="o">.</span><span class="n">version</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_VERSIONED</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">feature</span><span class="p">):</span>
+            <span class="n">feature</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">feature</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">transcript</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">"</span>
+        <span class="n">output_hash</span><span class="p">[</span><span class="s2">"Feature"</span><span class="p">]</span> <span class="o">=</span> <span class="n">feature</span>
+        <span class="k">if</span> <span class="n">gene</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">gene_id</span> <span class="o">=</span> <span class="n">gene</span><span class="o">.</span><span class="n">stable_id</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gene_version</span> <span class="ow">and</span> <span class="n">gene</span><span class="o">.</span><span class="n">version</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_VERSIONED</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">gene_id</span><span class="p">):</span>
+                <span class="n">gene_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">gene_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">gene</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">"</span>
+            <span class="n">output_hash</span><span class="p">[</span><span class="s2">"Gene"</span><span class="p">]</span> <span class="o">=</span> <span class="n">gene_id</span>
+        <span class="n">output_hash</span><span class="p">[</span><span class="s2">"STRAND"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">transcript</span><span class="o">.</span><span class="n">strand</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numbers</span><span class="p">:</span>
+            <span class="n">exon_number</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">overlap</span><span class="p">,</span> <span class="s2">"exon_number"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">exon_number</span><span class="p">:</span>
+                <span class="n">output_hash</span><span class="p">[</span><span class="s2">"EXON"</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">exon_number</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">transcript</span><span class="o">.</span><span class="n">spliced_exons</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+            <span class="n">intron_number</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">overlap</span><span class="p">,</span> <span class="s2">"intron_number"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">intron_number</span><span class="p">:</span>
+                <span class="n">output_hash</span><span class="p">[</span><span class="s2">"INTRON"</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">intron_number</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">transcript</span><span class="o">.</span><span class="n">introns</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+
+        <span class="k">if</span> <span class="n">DISTANCE_TERMS</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">consequence</span><span class="o">.</span><span class="n">term</span> <span class="k">for</span> <span class="n">consequence</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">consequences</span><span class="p">):</span>
+            <span class="n">distance</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">overlap</span><span class="p">,</span> <span class="s2">"distance_to_transcript"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">distance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">output_hash</span><span class="p">[</span><span class="s2">"DISTANCE"</span><span class="p">]</span> <span class="o">=</span> <span class="n">distance</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span> <span class="ow">and</span> <span class="n">gene</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">gene</span><span class="o">.</span><span class="n">symbol</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">EMPTY_ALLELE</span><span class="p">):</span>
+            <span class="n">output_hash</span><span class="p">[</span><span class="s2">"SYMBOL"</span><span class="p">]</span> <span class="o">=</span> <span class="n">gene</span><span class="o">.</span><span class="n">symbol</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">biotype</span><span class="p">:</span>
+            <span class="c1"># This model may carry the biotype on the gene only; VEP reads the transcript's.</span>
+            <span class="n">biotype</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">biotype</span> <span class="ow">or</span> <span class="p">(</span><span class="n">gene</span><span class="o">.</span><span class="n">biotype</span> <span class="k">if</span> <span class="n">gene</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">biotype</span><span class="p">:</span>
+                <span class="n">output_hash</span><span class="p">[</span><span class="s2">"BIOTYPE"</span><span class="p">]</span> <span class="o">=</span> <span class="n">biotype</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_position_fields</span><span class="p">(</span><span class="n">output_hash</span><span class="p">,</span> <span class="n">overlap</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_position_fields</span><span class="p">(</span><span class="n">output_hash</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">],</span> <span class="n">overlap</span><span class="p">:</span> <span class="n">TranscriptVariationAllele</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Add cDNA/CDS/protein positions, amino acids and codons, where the overlap has them.</span>
+
+<span class="sd">        A position is written only when the variant touches that sequence at all, as VEP writes it,</span>
+<span class="sd">        and an end off the sequence prints as ``?``. Codons come already cased the way VEP writes</span>
+<span class="sd">        them, the allele's own bases upper case.</span>
+<span class="sd">        """</span>
+        <span class="k">for</span> <span class="n">column</span><span class="p">,</span> <span class="n">position</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s2">"cDNA_position"</span><span class="p">,</span> <span class="n">overlap</span><span class="o">.</span><span class="n">cdna_position</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"CDS_position"</span><span class="p">,</span> <span class="n">overlap</span><span class="o">.</span><span class="n">cds_position</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"Protein_position"</span><span class="p">,</span> <span class="n">overlap</span><span class="o">.</span><span class="n">protein_position</span><span class="p">),</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="n">position</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">output_hash</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">format_coords</span><span class="p">(</span><span class="o">*</span><span class="n">position</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">overlap</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">translation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">reference_peptide</span><span class="p">,</span> <span class="n">alternate_peptide</span> <span class="o">=</span> <span class="n">overlap</span><span class="o">.</span><span class="n">reference_peptide</span><span class="p">,</span> <span class="n">overlap</span><span class="o">.</span><span class="n">alternate_peptide</span>
+        <span class="k">if</span> <span class="n">reference_peptide</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">alternate_peptide</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">reference_peptide</span> <span class="o">==</span> <span class="n">alternate_peptide</span><span class="p">:</span>
+                <span class="n">output_hash</span><span class="p">[</span><span class="s2">"Amino_acids"</span><span class="p">]</span> <span class="o">=</span> <span class="n">reference_peptide</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">output_hash</span><span class="p">[</span><span class="s2">"Amino_acids"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">reference_peptide</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">EMPTY_ALLELE</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">alternate_peptide</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">EMPTY_ALLELE</span><span class="si">}</span><span class="s2">"</span>
+                <span class="p">)</span>
+        <span class="n">reference_codon</span><span class="p">,</span> <span class="n">alternate_codon</span> <span class="o">=</span> <span class="n">overlap</span><span class="o">.</span><span class="n">reference_codon</span><span class="p">,</span> <span class="n">overlap</span><span class="o">.</span><span class="n">alternate_codon</span>
+        <span class="k">if</span> <span class="n">reference_codon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">alternate_codon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">output_hash</span><span class="p">[</span><span class="s2">"Codons"</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">reference_codon</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">EMPTY_ALLELE</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">alternate_codon</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">EMPTY_ALLELE</span><span class="si">}</span><span class="s2">"</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_summary_only</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">variation_fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">],</span> <span class="n">overlaps</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AlleleOverlap</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Squash every overlap's consequences into one record: all distinct terms, or the worst."""</span>
+        <span class="n">output_hash</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">variation_fields</span><span class="p">)</span>
+        <span class="n">consequences</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">consequence</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">overlaps</span> <span class="k">for</span> <span class="n">consequence</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">consequences</span><span class="p">),</span>
+            <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">consequences</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">output_hash</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span><span class="p">:</span>
+            <span class="n">terms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">consequence</span> <span class="ow">in</span> <span class="n">consequences</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">consequence</span><span class="o">.</span><span class="n">term</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">terms</span><span class="p">:</span>
+                    <span class="n">terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">consequence</span><span class="o">.</span><span class="n">term</span><span class="p">)</span>
+            <span class="n">output_hash</span><span class="p">[</span><span class="s2">"Consequence"</span><span class="p">]</span> <span class="o">=</span> <span class="n">terms</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output_hash</span><span class="p">[</span><span class="s2">"Consequence"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">consequences</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">term</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">output_hash</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overlaps</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AlleleOverlap</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">AlleleOverlap</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">AlleleOverlap</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Apply the picking flags, returning what to write and what to mark ``PICK``."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pick</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pick_worst</span><span class="p">(</span><span class="n">overlaps</span><span class="p">)],</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pick_allele</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pick_worst</span><span class="p">(</span><span class="n">group</span><span class="p">)</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">_by_allele</span><span class="p">(</span><span class="n">overlaps</span><span class="p">)],</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag_pick</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">overlaps</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pick_worst</span><span class="p">(</span><span class="n">overlaps</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag_pick_allele</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">overlaps</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pick_worst</span><span class="p">(</span><span class="n">group</span><span class="p">)</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">_by_allele</span><span class="p">(</span><span class="n">overlaps</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">overlaps</span><span class="p">,</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="AnnotatedVariantFactory.pick_worst">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.output.factory.html#ensembl.vep.output.factory.base.AnnotatedVariantFactory.pick_worst">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pick_worst</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overlaps</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AlleleOverlap</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">AlleleOverlap</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the single overlap the pick order prefers.</span>
+
+<span class="sd">        A port of VEP's ``pick_worst_VariationFeatureOverlapAllele``: narrow the candidates one</span>
+<span class="sd">        criterion at a time, keeping every candidate tied on it, until one remains; the first of</span>
+<span class="sd">        any tie that survives every criterion wins.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If there is nothing to pick from.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">overlaps</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"nothing to pick from"</span><span class="p">)</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">overlaps</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">criterion</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pick_order</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">_pick_value</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="n">criterion</span><span class="p">)</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">]</span>
+            <span class="n">best</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+            <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">entry</span> <span class="k">for</span> <span class="n">entry</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">score</span> <span class="o">==</span> <span class="n">best</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_by_allele</span><span class="p">(</span><span class="n">overlaps</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AlleleOverlap</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">AlleleOverlap</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Group overlaps by allele, in allele order."""</span>
+    <span class="n">groups</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">AlleleOverlap</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">overlaps</span><span class="p">:</span>
+        <span class="n">groups</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">allele_seq</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_attribute_values</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="n">AlleleOverlap</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Return the values of every transcript attribute with one name."""</span>
+    <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">overlap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">attributes</span> <span class="ow">or</span> <span class="p">[]:</span>
+        <span class="k">if</span> <span class="n">attribute</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">values</span>
+
+
+<span class="c1"># pylint: disable-next=too-many-return-statements</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_pick_value</span><span class="p">(</span><span class="n">entry</span><span class="p">:</span> <span class="n">AlleleOverlap</span><span class="p">,</span> <span class="n">criterion</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return an overlap's score on one pick criterion; lower is preferred."""</span>
+    <span class="k">if</span> <span class="n">criterion</span> <span class="o">==</span> <span class="s2">"rank"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">entry</span><span class="o">.</span><span class="n">consequences</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rank</span> <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">consequences</span> <span class="k">else</span> <span class="n">_MISSING_RANK</span>
+    <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">overlap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_UNKNOWN_PICK_VALUE</span> <span class="k">if</span> <span class="n">criterion</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"tsl"</span><span class="p">,</span> <span class="s2">"appris"</span><span class="p">}</span> <span class="k">else</span> <span class="mi">100</span>
+    <span class="n">transcript</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span>
+    <span class="k">if</span> <span class="n">criterion</span> <span class="o">==</span> <span class="s2">"mane_select"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">_attribute_values</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="s2">"MANE_Select"</span><span class="p">)</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">criterion</span> <span class="o">==</span> <span class="s2">"mane_plus_clinical"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">_attribute_values</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="s2">"MANE_Plus_Clinical"</span><span class="p">)</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">criterion</span> <span class="o">==</span> <span class="s2">"biotype"</span><span class="p">:</span>
+        <span class="n">biotype</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">biotype</span> <span class="ow">or</span> <span class="p">(</span><span class="n">transcript</span><span class="o">.</span><span class="n">gene</span><span class="o">.</span><span class="n">biotype</span> <span class="k">if</span> <span class="n">transcript</span><span class="o">.</span><span class="n">gene</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">biotype</span> <span class="o">==</span> <span class="s2">"protein_coding"</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">criterion</span> <span class="o">==</span> <span class="s2">"length"</span><span class="p">:</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">cds_length</span> <span class="k">if</span> <span class="n">transcript</span><span class="o">.</span><span class="n">translation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">transcript</span><span class="o">.</span><span class="n">length</span>
+        <span class="k">return</span> <span class="o">-</span><span class="p">(</span><span class="n">length</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">criterion</span> <span class="o">==</span> <span class="s2">"tsl"</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">_attribute_values</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="s2">"TSL"</span><span class="p">):</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">_TSL_PATTERN</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)):</span>
+                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="mi">100</span>
+    <span class="k">if</span> <span class="n">criterion</span> <span class="o">==</span> <span class="s2">"appris"</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">_attribute_values</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="s2">"appris"</span><span class="p">):</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">_APPRIS_PATTERN</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="n">grade</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="mi">10</span> <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"a"</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">grade</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">grade</span>
+        <span class="k">return</span> <span class="mi">100</span>
+    <span class="c1"># canonical, ccds, ensembl, refseq: nothing in this model distinguishes candidates.</span>
+    <span class="k">return</span> <span class="n">_UNKNOWN_PICK_VALUE</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

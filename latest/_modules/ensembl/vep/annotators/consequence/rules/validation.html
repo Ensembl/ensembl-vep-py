@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -521,7 +507,7 @@
 
 
 <div class="viewcode-block" id="StructuralChecks">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">StructuralChecks</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Run validation checks that require no formula evaluation.</span>
 
@@ -530,7 +516,7 @@
 <span class="sd">    """</span>
 
 <div class="viewcode-block" id="StructuralChecks.ruleset_problems">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.ruleset_problems">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.ruleset_problems">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">ruleset_problems</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Run structural checks over a rule set.</span>
@@ -588,7 +574,7 @@
 
 
 <div class="viewcode-block" id="StructuralChecks.subsumption_cycles">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.subsumption_cycles">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.subsumption_cycles">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">subsumption_cycles</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Detect every cycle in the ``subsumes`` graph via DFS.</span>
@@ -642,7 +628,7 @@
 
 
 <div class="viewcode-block" id="StructuralChecks.missing_when_terms">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.missing_when_terms">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.missing_when_terms">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">missing_when_terms</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Cross-check EXCLUDED_TERMS against the catalogue.</span>
@@ -671,7 +657,7 @@
 
 
 <div class="viewcode-block" id="StructuralChecks.subsumes_so_parent_drift">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.subsumes_so_parent_drift">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.subsumes_so_parent_drift">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">subsumes_so_parent_drift</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Report where the declared ``subsumes`` graph disagrees with the SO ``so_supported_parents``.</span>
@@ -720,7 +706,7 @@
 
 
 <div class="viewcode-block" id="StructuralChecks.term_and_rank_uniqueness">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.term_and_rank_uniqueness">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.term_and_rank_uniqueness">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">term_and_rank_uniqueness</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">entries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Check term/rank uniqueness across *every* entry, including ``when``-less ones.</span>
@@ -795,7 +781,7 @@
 
 
 <div class="viewcode-block" id="FactAssignmentSpace">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">FactAssignmentSpace</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Define consistent Boolean fact assignments over an atom support.</span>
@@ -810,7 +796,7 @@
     <span class="n">support</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
 
 <div class="viewcode-block" id="FactAssignmentSpace.for_rule">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.for_rule">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.for_rule">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">for_rule</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">rule</span><span class="p">:</span> <span class="n">FactRule</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FactAssignmentSpace</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the space a rule's formula must be evaluated over to be judged soundly.</span>
@@ -828,14 +814,14 @@
 
 
 <div class="viewcode-block" id="FactAssignmentSpace.union">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.union">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.union">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">union</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">FactAssignmentSpace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FactAssignmentSpace</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the space covering both supports, for a question about a pair of rules."""</span>
         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">support</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">support</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">support</span><span class="p">))))</span></div>
 
 
 <div class="viewcode-block" id="FactAssignmentSpace.allows">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.allows">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.allows">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">allows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assignment</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return whether an assignment over this support violates no ``requires``/axiom.</span>
 
@@ -868,7 +854,7 @@
 
 
 <div class="viewcode-block" id="FactAssignmentSpace.consistent_assignments">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.consistent_assignments">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.consistent_assignments">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">consistent_assignments</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Yield every assignment over this support consistent with ``requires``/the declared axioms.</span>
 
@@ -884,7 +870,7 @@
 
 
 <div class="viewcode-block" id="FactAssignmentSpace.satisfies">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.satisfies">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.satisfies">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">satisfies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expression</span><span class="p">:</span> <span class="n">Expr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return whether an expression has a consistent assignment over ``support``.</span>
 
@@ -1022,7 +1008,7 @@
 
 
 <div class="viewcode-block" id="RuleReachability">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RuleReachability">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RuleReachability">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">RuleReachability</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Represent the Tier 2 reachability result for one rule.</span>
@@ -1048,7 +1034,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">satisfying_assignment_count</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
 <div class="viewcode-block" id="RuleReachability.for_rule">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RuleReachability.for_rule">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RuleReachability.for_rule">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">for_rule</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">rule</span><span class="p">:</span> <span class="n">FactRule</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RuleReachability</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Determine whether a rule is reachable within its fact-assignment space.</span>
@@ -1076,7 +1062,7 @@
 
 
 <div class="viewcode-block" id="RuleReachability.unreachable_in">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RuleReachability.unreachable_in">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RuleReachability.unreachable_in">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">unreachable_in</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">RuleReachability</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return every rule whose ``when`` formula is unsatisfiable under the Tier 2 axioms.</span>
@@ -1099,7 +1085,7 @@
 
 
 <div class="viewcode-block" id="RulePairFinding">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RulePairFinding">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RulePairFinding">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">RulePairFinding</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Record one pairwise rule-validation finding.</span>
@@ -1121,7 +1107,7 @@
     <span class="n">message</span><span class="p">:</span> <span class="nb">str</span>
 
 <div class="viewcode-block" id="RulePairFinding.contradictory_in">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RulePairFinding.contradictory_in">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RulePairFinding.contradictory_in">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">contradictory_in</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">max_union_support</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_MAX_UNION_SUPPORT_FOR_PAIR_ENUMERATION</span>
@@ -1169,7 +1155,7 @@
 
 
 <div class="viewcode-block" id="RulePairFinding.redundant_in">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RulePairFinding.redundant_in">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RulePairFinding.redundant_in">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">redundant_in</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">max_union_support</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_MAX_UNION_SUPPORT_FOR_PAIR_ENUMERATION</span>
@@ -1225,7 +1211,7 @@
 
 
 <div class="viewcode-block" id="ValidationReport">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ValidationReport</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Combine structural and bounded-search validation results.</span>
@@ -1258,7 +1244,7 @@
         <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">errors</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">missing_when_problems</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">unreachable_rules</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ValidationReport.for_ruleset">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport.for_ruleset">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport.for_ruleset">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">for_ruleset</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidationReport</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Run every Tier 1 + Tier 2 check over a rule set. Pure Python, always on; no z3 required.</span>
@@ -1283,7 +1269,7 @@
 
 
 <div class="viewcode-block" id="ValidationReport.for_catalogue_entries">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport.for_catalogue_entries">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport.for_catalogue_entries">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">for_catalogue_entries</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">entries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">baseline_entries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
@@ -1389,12 +1375,12 @@
 
 
 <div class="viewcode-block" id="SolverChecks">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.SolverChecks">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.SolverChecks">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SolverChecks</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Run whole-rule-set validation through z3."""</span>
 
 <div class="viewcode-block" id="SolverChecks.findings">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.SolverChecks.findings">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.SolverChecks.findings">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">findings</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Run the whole-ruleset reachability and subsumption-soundness queries via z3.</span>

@@ -62,12 +62,12 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Setup" href="setup.html" />
-    <link rel="prev" title="Coverage Report" href="../coverage_report.html" />
+    <link rel="prev" title="Contact Us" href="../user_guide/contact.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -182,13 +182,6 @@
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#" aria-current="page">
     Developer Guide
@@ -197,7 +190,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../reference.html">
+  <a class="nav-link nav-internal" href="../reference/index.html">
     Reference
   </a>
 </li>
@@ -334,13 +327,6 @@
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#" aria-current="page">
     Developer Guide
@@ -349,7 +335,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../reference.html">
+  <a class="nav-link nav-internal" href="../reference/index.html">
     Reference
   </a>
 </li>
@@ -429,7 +415,11 @@
 <li class="toctree-l1"><a class="reference internal" href="coordinates_and_slices.html">Position in a Sequence Region</a></li>
 <li class="toctree-l1"><a class="reference internal" href="circular_dependencies.html">Avoiding circular dependency</a></li>
 <li class="toctree-l1"><a class="reference internal" href="parsers_and_feature_sources.html">Parsers and Feature Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="documentation.html">Building the Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coverage_report.html">Coverage Report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writing_plugins.html">Writing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adding_annotation_sources.html">Adding an annotation source</a></li>
 </ul>
 </div>
 </nav></div>
@@ -489,7 +479,7 @@
                   
   <section id="developer-guide">
 <h1>Developer Guide<a class="headerlink" href="#developer-guide" title="Link to this heading">#</a></h1>
-<p>Conventions and architectural notes for contributing to <code class="docutils literal notranslate"><span class="pre">ensembl-vep-py</span></code>. Per-method/per-class detail lives in docstrings and the auto-generated <a class="reference internal" href="../reference/ensembl.vep.html"><span class="std std-doc">code reference</span></a> — these pages cover the conventions and reasoning that aren’t obvious from reading a single file in isolation.</p>
+<p>Conventions and architectural notes for contributing to <code class="docutils literal notranslate"><span class="pre">ensembl-vep-py</span></code>. Per-method/per-class detail lives in docstrings and the auto-generated <a class="reference internal" href="../auto/reference/api/ensembl.vep.html"><span class="std std-doc">API reference</span></a> — these pages cover the conventions and reasoning that aren’t obvious from reading a single file in isolation.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="setup.html">Setup</a><ul>
@@ -550,13 +540,34 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#the-conformance-gate">The conformance gate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#vep-bench-matrix-the-annotator-alone"><code class="docutils literal notranslate"><span class="pre">vep</span> <span class="pre">bench</span> <span class="pre">matrix</span></code>: the annotator alone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#vep-bench-endtoend-the-whole-command-line"><code class="docutils literal notranslate"><span class="pre">vep</span> <span class="pre">bench</span> <span class="pre">endtoend</span></code>: the whole command line</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#files">Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#requirements">Requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#other-commands">Other commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#recording-and-comparing-results">Recording and comparing results</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="documentation.html">Building the Documentation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="documentation.html#changes-to-the-default-configuration">Changes to the default configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="documentation.html#documenting-rust-objects">Documenting Rust objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation.html#generated-pages">Generated pages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="documentation.html#coverage-reports">Coverage reports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="documentation.html#building-the-documentation-locally">Building the documentation locally</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="coverage_report.html">Coverage Report</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="coverage_report.html#python">Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coverage_report.html#rust">Rust</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coverage_report.html#coverage-trends">Coverage Trends</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="writing_plugins.html">Writing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adding_annotation_sources.html">Adding an annotation source</a></li>
 </ul>
 </div>
 </section>
@@ -572,12 +583,12 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../coverage_report.html"
+       href="../user_guide/contact.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Coverage Report</p>
+        <p class="prev-next-title">Contact Us</p>
       </div>
     </a>
     <a class="right-next"

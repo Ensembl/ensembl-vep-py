@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -490,7 +476,7 @@
 
 
 <div class="viewcode-block" id="JSONOutputWriter">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.json.JSONOutputWriter">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.json.JSONOutputWriter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">JSONOutputWriter</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Ensembl VEP-schema JSON-lines serializer."""</span>
 
@@ -503,7 +489,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">stream_factory</span> <span class="o">=</span> <span class="n">stream_factory</span> <span class="ow">or</span> <span class="n">JSONStreamFactory</span><span class="p">()</span>
 
 <div class="viewcode-block" id="JSONOutputWriter.headers">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.json.JSONOutputWriter.headers">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.json.JSONOutputWriter.headers">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_headers</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">())</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return no headers for JSON lines."""</span>
         <span class="k">del</span> <span class="n">input_headers</span>
@@ -511,7 +497,7 @@
 
 
 <div class="viewcode-block" id="JSONOutputWriter.line">
-<a class="viewcode-back" href="../../../../../../reference/ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.json.JSONOutputWriter.line">[docs]</a>
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.json.JSONOutputWriter.line">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variant</span><span class="p">:</span> <span class="n">AnnotatedVariant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return one compact JSON object for an annotated variant."""</span>
         <span class="n">record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_factory</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">variant</span><span class="p">)</span>

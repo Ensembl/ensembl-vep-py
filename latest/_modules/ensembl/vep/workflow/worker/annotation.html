@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -517,7 +503,7 @@
 
 
 <div class="viewcode-block" id="AnnotationBufferResult">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.workflow.worker.html#ensembl.vep.workflow.worker.annotation.AnnotationBufferResult">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.workflow.worker.html#ensembl.vep.workflow.worker.annotation.AnnotationBufferResult">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">AnnotationBufferResult</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Ordered worker result detached from live model objects.</span>
@@ -533,7 +519,7 @@
 
 
 <div class="viewcode-block" id="AnnotationBufferWorker">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.workflow.worker.html#ensembl.vep.workflow.worker.annotation.AnnotationBufferWorker">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.workflow.worker.html#ensembl.vep.workflow.worker.annotation.AnnotationBufferWorker">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AnnotationBufferWorker</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Worker-local sources and workflow state for payloads of input records.</span>
 
@@ -563,7 +549,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_track_identifiers</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">track</span><span class="o">.</span><span class="n">identifier</span> <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">tracks</span><span class="p">)</span>
 
 <div class="viewcode-block" id="AnnotationBufferWorker.run">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.workflow.worker.html#ensembl.vep.workflow.worker.annotation.AnnotationBufferWorker.run">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.workflow.worker.html#ensembl.vep.workflow.worker.annotation.AnnotationBufferWorker.run">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">records</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">AnnotationBufferResult</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return detached annotations for one payload of input records."""</span>
         <span class="n">variations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_source</span><span class="o">.</span><span class="n">records_to_features</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>

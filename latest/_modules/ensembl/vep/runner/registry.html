@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -505,7 +491,7 @@
 
 
 <div class="viewcode-block" id="register_runner">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.runner.html#ensembl.vep.runner.registry.register_runner">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.runner.html#ensembl.vep.runner.registry.register_runner">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register_runner</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">default_for_group</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">RunnerT</span><span class="p">],</span> <span class="n">RunnerT</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Register a runner class under a name."""</span>
 
@@ -520,7 +506,7 @@
 
 
 <div class="viewcode-block" id="get_runner">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.runner.html#ensembl.vep.runner.registry.get_runner">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.runner.html#ensembl.vep.runner.registry.get_runner">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_runner</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunnerFactory</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the registered runner class."""</span>
     <span class="k">try</span><span class="p">:</span>
@@ -532,7 +518,7 @@
 
 
 <div class="viewcode-block" id="runner_default">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.runner.html#ensembl.vep.runner.registry.runner_default">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.runner.html#ensembl.vep.runner.registry.runner_default">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">runner_default</span><span class="p">(</span><span class="n">group</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return a group's default runner, if it declares one."""</span>
     <span class="k">return</span> <span class="n">_RUNNER_DEFAULTS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">group</span><span class="p">)</span></div>
@@ -540,7 +526,7 @@
 
 
 <div class="viewcode-block" id="available_runners">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.runner.html#ensembl.vep.runner.registry.available_runners">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.runner.html#ensembl.vep.runner.registry.available_runners">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">available_runners</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return the sorted set of registered runner names.</span>
 
@@ -552,7 +538,7 @@
 
 
 <div class="viewcode-block" id="runner_group">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.runner.html#ensembl.vep.runner.registry.runner_group">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.runner.html#ensembl.vep.runner.registry.runner_group">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">runner_group</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the domain part of a runner name.</span>
 
@@ -567,7 +553,7 @@
 
 
 <div class="viewcode-block" id="runner_groups">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.runner.html#ensembl.vep.runner.registry.runner_groups">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.runner.html#ensembl.vep.runner.registry.runner_groups">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">runner_groups</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">"""Return the registered runners grouped by domain.</span>
 

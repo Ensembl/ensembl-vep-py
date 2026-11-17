@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -504,7 +490,7 @@
 
 
 <div class="viewcode-block" id="AnnotationTrace">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.trace.html#ensembl.vep.trace.annotation.AnnotationTrace">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.trace.html#ensembl.vep.trace.annotation.AnnotationTrace">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">AnnotationTrace</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Record one overlap's derivation.</span>
@@ -527,7 +513,7 @@
     <span class="n">overlap_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span>
 
 <div class="viewcode-block" id="AnnotationTrace.events_by_origin">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.trace.html#ensembl.vep.trace.annotation.AnnotationTrace.events_by_origin">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.trace.html#ensembl.vep.trace.annotation.AnnotationTrace.events_by_origin">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">events_by_origin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">:</span> <span class="n">FactOrigin</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FactEvent</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the fact events with one origin, in trace order."""</span>
         <span class="n">selected</span> <span class="o">=</span> <span class="p">[]</span>
@@ -548,7 +534,7 @@
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">cost</span> <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fact_events</span> <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">origin</span> <span class="ow">is</span> <span class="n">FactOrigin</span><span class="o">.</span><span class="n">FORCED_FALSE</span><span class="p">)</span>
 
 <div class="viewcode-block" id="AnnotationTrace.format_explanation">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.trace.html#ensembl.vep.trace.annotation.AnnotationTrace.format_explanation">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.trace.html#ensembl.vep.trace.annotation.AnnotationTrace.format_explanation">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">format_explanation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return this trace as a human-readable derivation.</span>
 
@@ -613,7 +599,7 @@
 
 
 <div class="viewcode-block" id="annotation_tracing">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.trace.html#ensembl.vep.trace.annotation.annotation_tracing">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.trace.html#ensembl.vep.trace.annotation.annotation_tracing">[docs]</a>
 <span class="nd">@contextmanager</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">annotation_tracing</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Enable annotator tracing for the duration of a context.</span>
@@ -645,7 +631,7 @@
 
 
 <div class="viewcode-block" id="describe_overlap">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.trace.html#ensembl.vep.trace.annotation.describe_overlap">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.trace.html#ensembl.vep.trace.annotation.describe_overlap">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">describe_overlap</span><span class="p">(</span><span class="n">overlap</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return a one-line label for a transcript and variant overlap.</span>
 

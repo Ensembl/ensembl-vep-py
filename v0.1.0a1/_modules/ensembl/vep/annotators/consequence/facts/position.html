@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ensembl.vep.annotators.consequence.facts.position &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../../../../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ensembl/vep/annotators/consequence/facts/position';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.0a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../../../../../../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../../../../../../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
+  
+    
+    <script src="../../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../../_static/language_data.js"></script>
+    <script src="../../../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../../../../../../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.annotators.consequence.facts.position</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ensembl.vep.annotators.consequence.facts.position</h1><div class="highlight"><pre>
+<span></span><span class="c1"># See the NOTICE file distributed with this work for additional information</span>
+<span class="c1"># regarding copyright ownership.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1"># http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="sd">"""Facts describing a variant's position relative to its feature."""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">cast</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.facts.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_fact</span><span class="p">,</span> <span class="n">register_fact</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.facts.helper</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">downstream_distance</span><span class="p">,</span>
+    <span class="n">upstream_distance</span><span class="p">,</span>
+    <span class="n">genomic_overlap</span><span class="p">,</span>
+    <span class="n">intron_offset_hit</span><span class="p">,</span>
+    <span class="n">variant_genomic_span</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.context.fact</span><span class="w"> </span><span class="kn">import</span> <span class="n">FactContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">CostTier</span><span class="p">,</span> <span class="n">Strand</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.genic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Intron</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.overlap</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureOverlap</span><span class="p">,</span> <span class="n">TranscriptVariationAllele</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"contain_feature"</span><span class="p">,</span>
+    <span class="s2">"is_downstream"</span><span class="p">,</span>
+    <span class="s2">"is_upstream"</span><span class="p">,</span>
+    <span class="s2">"overlap_acceptor_site"</span><span class="p">,</span>
+    <span class="s2">"overlap_cds"</span><span class="p">,</span>
+    <span class="s2">"overlap_donor_5th_base"</span><span class="p">,</span>
+    <span class="s2">"overlap_donor_region"</span><span class="p">,</span>
+    <span class="s2">"overlap_donor_site"</span><span class="p">,</span>
+    <span class="s2">"overlap_exon"</span><span class="p">,</span>
+    <span class="s2">"overlap_feature"</span><span class="p">,</span>
+    <span class="s2">"overlap_five_prime_utr"</span><span class="p">,</span>
+    <span class="s2">"overlap_intron"</span><span class="p">,</span>
+    <span class="s2">"overlap_intron_boundary"</span><span class="p">,</span>
+    <span class="s2">"overlap_intron_interior"</span><span class="p">,</span>
+    <span class="s2">"overlap_polypyrimidine_tract"</span><span class="p">,</span>
+    <span class="s2">"overlap_splice_region"</span><span class="p">,</span>
+    <span class="s2">"overlap_start_codon"</span><span class="p">,</span>
+    <span class="s2">"overlap_stop_codon"</span><span class="p">,</span>
+    <span class="s2">"overlap_three_prime_utr"</span><span class="p">,</span>
+    <span class="s2">"partial_last_codon"</span><span class="p">,</span>
+    <span class="s2">"within_any_exon"</span><span class="p">,</span>
+    <span class="s2">"within_feature"</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># --------------------------------------------------------------------------</span>
+<span class="c1"># Placement relative to the whole feature.</span>
+<span class="c1"># --------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="overlap_feature">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_feature">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span><span class="n">CostTier</span><span class="o">.</span><span class="n">BOUNDS</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">overlap_feature</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">FeatureOverlap</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant overlaps the feature's genomic span.</span>
+
+<span class="sd">    The variant can</span>
+<span class="sd">        - just intersect the feature's span</span>
+<span class="sd">        - be fully contained in the feature's span</span>
+<span class="sd">        - or, fully contain the feature's span</span>
+<span class="sd">    """</span>
+    <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="n">variant_genomic_span</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+    <span class="n">transcript</span> <span class="o">=</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span>
+    <span class="k">return</span> <span class="n">genomic_overlap</span><span class="p">(</span><span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span><span class="p">,</span> <span class="n">transcript</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">transcript</span><span class="o">.</span><span class="n">end</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="contain_feature">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.contain_feature">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span><span class="n">CostTier</span><span class="o">.</span><span class="n">BOUNDS</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">contain_feature</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">FeatureOverlap</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant contains the feature's genomic span.</span>
+
+<span class="sd">    Not zone-mappable: a zone-map union answers "does the span touch this interval", not</span>
+<span class="sd">    "is the span fully inside one specific interval".</span>
+<span class="sd">    """</span>
+    <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="n">variant_genomic_span</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+    <span class="n">transcript</span> <span class="o">=</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span>
+    <span class="k">return</span> <span class="n">variant_min</span> <span class="o">&lt;=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">start</span> <span class="ow">and</span> <span class="n">variant_max</span> <span class="o">&gt;=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">end</span></div>
+
+
+
+<div class="viewcode-block" id="within_feature">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.within_feature">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span><span class="n">CostTier</span><span class="o">.</span><span class="n">BOUNDS</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">within_feature</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">FeatureOverlap</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant lies within the feature's genomic span.</span>
+
+<span class="sd">    Not zone-mappable.</span>
+<span class="sd">    """</span>
+    <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="n">variant_genomic_span</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+    <span class="n">transcript</span> <span class="o">=</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span>
+    <span class="k">return</span> <span class="n">transcript</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="n">variant_min</span> <span class="ow">and</span> <span class="n">variant_max</span> <span class="o">&lt;=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">end</span></div>
+
+
+
+<div class="viewcode-block" id="is_upstream">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.is_upstream">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span><span class="n">CostTier</span><span class="o">.</span><span class="n">BOUNDS</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_upstream</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">FeatureOverlap</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant lies within the upstream pairing distance."""</span>
+    <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="n">variant_genomic_span</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+    <span class="n">transcript</span> <span class="o">=</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span>
+    <span class="n">distance</span> <span class="o">=</span> <span class="n">upstream_distance</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">transcript</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">transcript</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="n">variant_max</span> <span class="o">&lt;=</span> <span class="n">distance</span>
+    <span class="k">return</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">variant_min</span> <span class="o">-</span> <span class="n">transcript</span><span class="o">.</span><span class="n">end</span> <span class="o">&lt;=</span> <span class="n">distance</span></div>
+
+
+
+<div class="viewcode-block" id="is_downstream">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.is_downstream">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span><span class="n">CostTier</span><span class="o">.</span><span class="n">BOUNDS</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_downstream</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">FeatureOverlap</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant lies within the downstream pairing distance."""</span>
+    <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="n">variant_genomic_span</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+    <span class="n">transcript</span> <span class="o">=</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span>
+    <span class="n">distance</span> <span class="o">=</span> <span class="n">downstream_distance</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">transcript</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">variant_min</span> <span class="o">-</span> <span class="n">transcript</span><span class="o">.</span><span class="n">end</span> <span class="o">&lt;=</span> <span class="n">distance</span>
+    <span class="k">return</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">transcript</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="n">variant_max</span> <span class="o">&lt;=</span> <span class="n">distance</span></div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------</span>
+<span class="c1"># Placement within a transcript</span>
+<span class="c1"># --------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="overlap_exon">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_exon">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span><span class="n">CostTier</span><span class="o">.</span><span class="n">INTERVAL</span><span class="p">,</span> <span class="n">requires</span><span class="o">=</span><span class="p">(</span><span class="s2">"is_transcript"</span><span class="p">,</span> <span class="s2">"overlap_feature"</span><span class="p">))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">overlap_exon</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant overlaps an exon."""</span>
+    <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="n">variant_genomic_span</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">genomic_overlap</span><span class="p">(</span><span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span><span class="p">,</span> <span class="n">exon</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">exon</span><span class="o">.</span><span class="n">end</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">exon</span> <span class="ow">in</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">spliced_exons</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="within_any_exon">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.within_any_exon">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span><span class="n">CostTier</span><span class="o">.</span><span class="n">INTERVAL</span><span class="p">,</span> <span class="n">requires</span><span class="o">=</span><span class="p">(</span><span class="s2">"is_transcript"</span><span class="p">,</span> <span class="s2">"overlap_feature"</span><span class="p">))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">within_any_exon</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant lies within one exon.</span>
+
+<span class="sd">    Not zone-mappable.</span>
+<span class="sd">    """</span>
+    <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="n">variant_genomic_span</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">exon</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="n">variant_min</span> <span class="ow">and</span> <span class="n">variant_max</span> <span class="o">&lt;=</span> <span class="n">exon</span><span class="o">.</span><span class="n">end</span>
+        <span class="k">for</span> <span class="n">exon</span> <span class="ow">in</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">spliced_exons</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="overlap_intron">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_intron">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span><span class="n">CostTier</span><span class="o">.</span><span class="n">INTERVAL</span><span class="p">,</span> <span class="n">requires</span><span class="o">=</span><span class="p">(</span><span class="s2">"is_transcript"</span><span class="p">,</span> <span class="s2">"overlap_feature"</span><span class="p">))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">overlap_intron</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant overlaps an intron."""</span>
+    <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="n">variant_genomic_span</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">genomic_overlap</span><span class="p">(</span><span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">end</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">intron</span> <span class="ow">in</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">introns</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="overlap_intron_interior">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_intron_interior">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span><span class="n">CostTier</span><span class="o">.</span><span class="n">INTERVAL</span><span class="p">,</span> <span class="n">requires</span><span class="o">=</span><span class="p">(</span><span class="s2">"is_transcript"</span><span class="p">,</span> <span class="s2">"overlap_feature"</span><span class="p">))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">overlap_intron_interior</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant overlaps an intron away from its splice sites.</span>
+
+<span class="sd">    VEP's ``intronic`` test (``BaseTranscriptVariationAllele::_intron_effects``): overlap with</span>
+<span class="sd">    ``intron.start + 2 .. intron.end - 2``. An insertion's span is its two flanking bases, so one</span>
+<span class="sd">    at either end of that window counts, as VEP's own insertion special case has it.</span>
+<span class="sd">    """</span>
+    <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="n">variant_genomic_span</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">genomic_overlap</span><span class="p">(</span><span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">intron</span> <span class="ow">in</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">introns</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="overlap_intron_boundary">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_intron_boundary">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span><span class="n">CostTier</span><span class="o">.</span><span class="n">INTERVAL</span><span class="p">,</span> <span class="n">requires</span><span class="o">=</span><span class="p">(</span><span class="s2">"is_transcript"</span><span class="p">,</span> <span class="s2">"overlap_feature"</span><span class="p">))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">overlap_intron_boundary</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant overlaps an intron boundary window."""</span>
+    <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="n">variant_genomic_span</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">genomic_overlap</span><span class="p">(</span><span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="mi">3</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="mi">7</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="n">genomic_overlap</span><span class="p">(</span><span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="mi">7</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">end</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">intron</span> <span class="ow">in</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">introns</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="nd">@register_fact</span><span class="p">(</span><span class="n">CostTier</span><span class="o">.</span><span class="n">INTERVAL</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_nearby_introns</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Intron</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Return every intron within 20 bases of the variant."""</span>
+    <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="n">variant_genomic_span</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+    <span class="n">transcript</span> <span class="o">=</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
+        <span class="n">intron</span>
+        <span class="k">for</span> <span class="n">intron</span> <span class="ow">in</span> <span class="n">transcript</span><span class="o">.</span><span class="n">introns</span>
+        <span class="k">if</span> <span class="n">genomic_overlap</span><span class="p">(</span><span class="n">variant_min</span> <span class="o">-</span> <span class="mi">20</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">+</span> <span class="mi">20</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">end</span><span class="p">)</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="overlap_donor_site">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_donor_site">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span>
+    <span class="n">CostTier</span><span class="o">.</span><span class="n">INTERVAL</span><span class="p">,</span>
+    <span class="n">deps</span><span class="o">=</span><span class="p">(</span><span class="s2">"_nearby_introns"</span><span class="p">,),</span>
+    <span class="n">requires</span><span class="o">=</span><span class="p">(</span><span class="s2">"is_transcript"</span><span class="p">,</span> <span class="s2">"overlap_feature"</span><span class="p">,</span> <span class="s2">"overlap_intron_boundary"</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">overlap_donor_site</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant overlaps donor-site bases +1 or +2."""</span>
+    <span class="k">return</span> <span class="n">intron_offset_hit</span><span class="p">(</span><span class="n">fact_context</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">from_donor</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="overlap_acceptor_site">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_acceptor_site">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span>
+    <span class="n">CostTier</span><span class="o">.</span><span class="n">INTERVAL</span><span class="p">,</span>
+    <span class="n">deps</span><span class="o">=</span><span class="p">(</span><span class="s2">"_nearby_introns"</span><span class="p">,),</span>
+    <span class="n">requires</span><span class="o">=</span><span class="p">(</span><span class="s2">"is_transcript"</span><span class="p">,</span> <span class="s2">"overlap_feature"</span><span class="p">,</span> <span class="s2">"overlap_intron_boundary"</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">overlap_acceptor_site</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant overlaps acceptor-site bases -1 or -2."""</span>
+    <span class="k">return</span> <span class="n">intron_offset_hit</span><span class="p">(</span><span class="n">fact_context</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">from_donor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="overlap_donor_5th_base">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_donor_5th_base">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span>
+    <span class="n">CostTier</span><span class="o">.</span><span class="n">INTERVAL</span><span class="p">,</span>
+    <span class="n">deps</span><span class="o">=</span><span class="p">(</span><span class="s2">"_nearby_introns"</span><span class="p">,),</span>
+    <span class="n">requires</span><span class="o">=</span><span class="p">(</span><span class="s2">"is_transcript"</span><span class="p">,</span> <span class="s2">"overlap_feature"</span><span class="p">,</span> <span class="s2">"overlap_intron_boundary"</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">overlap_donor_5th_base</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant overlaps donor base +5."""</span>
+    <span class="k">return</span> <span class="n">intron_offset_hit</span><span class="p">(</span><span class="n">fact_context</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">from_donor</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="overlap_donor_region">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_donor_region">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span>
+    <span class="n">CostTier</span><span class="o">.</span><span class="n">INTERVAL</span><span class="p">,</span>
+    <span class="n">deps</span><span class="o">=</span><span class="p">(</span><span class="s2">"_nearby_introns"</span><span class="p">,),</span>
+    <span class="n">requires</span><span class="o">=</span><span class="p">(</span><span class="s2">"is_transcript"</span><span class="p">,</span> <span class="s2">"overlap_feature"</span><span class="p">,</span> <span class="s2">"overlap_intron_boundary"</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">overlap_donor_region</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant overlaps donor-region bases +3 to +6."""</span>
+    <span class="k">return</span> <span class="n">intron_offset_hit</span><span class="p">(</span><span class="n">fact_context</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">from_donor</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="overlap_polypyrimidine_tract">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_polypyrimidine_tract">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span>
+    <span class="n">CostTier</span><span class="o">.</span><span class="n">INTERVAL</span><span class="p">,</span>
+    <span class="n">deps</span><span class="o">=</span><span class="p">(</span><span class="s2">"_nearby_introns"</span><span class="p">,),</span>
+    <span class="n">requires</span><span class="o">=</span><span class="p">(</span><span class="s2">"is_transcript"</span><span class="p">,</span> <span class="s2">"overlap_feature"</span><span class="p">,</span> <span class="s2">"overlap_intron"</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">overlap_polypyrimidine_tract</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant overlaps polypyrimidine-tract bases -3 to -17."""</span>
+    <span class="k">return</span> <span class="n">intron_offset_hit</span><span class="p">(</span><span class="n">fact_context</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="n">from_donor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="overlap_splice_region">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_splice_region">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span>
+    <span class="n">CostTier</span><span class="o">.</span><span class="n">INTERVAL</span><span class="p">,</span>
+    <span class="n">deps</span><span class="o">=</span><span class="p">(</span><span class="s2">"_nearby_introns"</span><span class="p">,),</span>
+    <span class="n">requires</span><span class="o">=</span><span class="p">(</span><span class="s2">"is_transcript"</span><span class="p">,</span> <span class="s2">"overlap_feature"</span><span class="p">,</span> <span class="s2">"overlap_intron_boundary"</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">overlap_splice_region</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant overlaps an exonic or intronic splice region."""</span>
+    <span class="k">if</span> <span class="n">intron_offset_hit</span><span class="p">(</span><span class="n">fact_context</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">from_donor</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">intron_offset_hit</span><span class="p">(</span><span class="n">fact_context</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">from_donor</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="n">variant_genomic_span</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">intron</span> <span class="ow">in</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">introns</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">genomic_overlap</span><span class="p">(</span><span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="mi">3</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">genomic_overlap</span><span class="p">(</span><span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">intron</span><span class="o">.</span><span class="n">end</span> <span class="o">+</span> <span class="mi">3</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------</span>
+<span class="c1"># Placement within the coding sequence (CDS) - requires mapping genomic-to-CDS coordinates.</span>
+<span class="c1"># --------------------------------------------------------------------------</span>
+
+
+<span class="nd">@register_fact</span><span class="p">(</span><span class="n">CostTier</span><span class="o">.</span><span class="n">MAPPING</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_cds_footprint</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return the zero-based CDS offset span touched by the variant.</span>
+
+<span class="sd">    Delegates to Mapper.genomic_span_to_cds_offsets, which intersects the variant span against the</span>
+<span class="sd">    CDS's genomic spans directly (O(exon count)) rather than mapping every individual genomic</span>
+<span class="sd">    position in the variant's span (O(span length)) which can be very large for a large structural variant.</span>
+
+<span class="sd">    No accelerator needed here: the block-overlap approach is already O(exon count), which the O(1)</span>
+<span class="sd">    per-position MapperIndex cannot improve on further.</span>
+
+<span class="sd">    NOTE: It is important to check overlap with every coding span, not just the two endpoints of the variant's</span>
+<span class="sd">    genomic span. A variant can have both endpoints outside of coding exons but still overlap the CDS.</span>
+<span class="sd">    """</span>
+    <span class="n">transcript</span> <span class="o">=</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span>
+    <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="n">variant_genomic_span</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+    <span class="n">mapper</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">cds_mapper</span>
+    <span class="k">if</span> <span class="n">mapper</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">mapper</span><span class="o">.</span><span class="n">genomic_span_to_offsets</span><span class="p">(</span><span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="overlap_cds">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_cds">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span>
+    <span class="n">CostTier</span><span class="o">.</span><span class="n">MAPPING</span><span class="p">,</span>
+    <span class="n">deps</span><span class="o">=</span><span class="p">(</span><span class="s2">"_cds_footprint"</span><span class="p">,),</span>
+    <span class="n">requires</span><span class="o">=</span><span class="p">(</span>
+        <span class="s2">"is_transcript"</span><span class="p">,</span>
+        <span class="s2">"overlap_feature"</span><span class="p">,</span>
+        <span class="s2">"overlap_exon"</span><span class="p">,</span>
+        <span class="s2">"has_translation"</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">overlap_cds</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant overlaps the coding sequence."""</span>
+    <span class="k">if</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">translation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">get_fact</span><span class="p">(</span><span class="n">fact_context</span><span class="p">,</span> <span class="s2">"_cds_footprint"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="overlap_five_prime_utr">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_five_prime_utr">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span>
+    <span class="n">CostTier</span><span class="o">.</span><span class="n">INTERVAL</span><span class="p">,</span>
+    <span class="n">requires</span><span class="o">=</span><span class="p">(</span>
+        <span class="s2">"is_transcript"</span><span class="p">,</span>
+        <span class="s2">"overlap_feature"</span><span class="p">,</span>
+        <span class="s2">"overlap_exon"</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">overlap_five_prime_utr</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant overlaps the transcript's 5' UTR.</span>
+
+<span class="sd">    Tested against genomic spans of the five_prime_utr instead of just the span(start, end) as a UTR can</span>
+<span class="sd">    contain introns (non-UTR region) and therefore, can give inaccurate results.</span>
+<span class="sd">    """</span>
+    <span class="n">spans</span> <span class="o">=</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">five_prime_utr_genomic_spans</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">spans</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="n">variant_genomic_span</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">genomic_overlap</span><span class="p">(</span><span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span> <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">spans</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="overlap_three_prime_utr">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_three_prime_utr">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span>
+    <span class="n">CostTier</span><span class="o">.</span><span class="n">INTERVAL</span><span class="p">,</span>
+    <span class="n">requires</span><span class="o">=</span><span class="p">(</span>
+        <span class="s2">"is_transcript"</span><span class="p">,</span>
+        <span class="s2">"overlap_feature"</span><span class="p">,</span>
+        <span class="s2">"overlap_exon"</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">overlap_three_prime_utr</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant overlaps the transcript's 3' UTR."""</span>
+    <span class="n">spans</span> <span class="o">=</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">three_prime_utr_genomic_spans</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">spans</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="n">variant_genomic_span</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">genomic_overlap</span><span class="p">(</span><span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span> <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">spans</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="overlap_start_codon">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_start_codon">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span>
+    <span class="n">CostTier</span><span class="o">.</span><span class="n">MAPPING</span><span class="p">,</span>
+    <span class="n">requires</span><span class="o">=</span><span class="p">(</span>
+        <span class="s2">"is_transcript"</span><span class="p">,</span>
+        <span class="s2">"overlap_feature"</span><span class="p">,</span>
+        <span class="s2">"overlap_exon"</span><span class="p">,</span>
+        <span class="s2">"has_translation"</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">overlap_start_codon</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant overlaps the start codon.</span>
+
+<span class="sd">    Similar to UTRs a start codon can split across an exon-exon junction and therefore should be tested</span>
+<span class="sd">    against all its genomic spans.</span>
+<span class="sd">    """</span>
+    <span class="n">codon_spans</span> <span class="o">=</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">start_codon_genomic_spans</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">codon_spans</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="n">variant_genomic_span</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">genomic_overlap</span><span class="p">(</span><span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span><span class="p">,</span> <span class="n">span_start</span><span class="p">,</span> <span class="n">span_end</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">span_start</span><span class="p">,</span> <span class="n">span_end</span> <span class="ow">in</span> <span class="n">codon_spans</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="overlap_stop_codon">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.overlap_stop_codon">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span>
+    <span class="n">CostTier</span><span class="o">.</span><span class="n">MAPPING</span><span class="p">,</span>
+    <span class="n">requires</span><span class="o">=</span><span class="p">(</span>
+        <span class="s2">"is_transcript"</span><span class="p">,</span>
+        <span class="s2">"overlap_feature"</span><span class="p">,</span>
+        <span class="s2">"overlap_exon"</span><span class="p">,</span>
+        <span class="s2">"overlap_cds"</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">overlap_stop_codon</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant overlaps the stop codon."""</span>
+    <span class="n">codon_spans</span> <span class="o">=</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">stop_codon_genomic_spans</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">codon_spans</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="n">variant_genomic_span</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">genomic_overlap</span><span class="p">(</span><span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span><span class="p">,</span> <span class="n">span_start</span><span class="p">,</span> <span class="n">span_end</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">span_start</span><span class="p">,</span> <span class="n">span_end</span> <span class="ow">in</span> <span class="n">codon_spans</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="partial_last_codon">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.facts.html#ensembl.vep.annotators.consequence.facts.position.partial_last_codon">[docs]</a>
+<span class="nd">@register_fact</span><span class="p">(</span>
+    <span class="n">CostTier</span><span class="o">.</span><span class="n">MAPPING</span><span class="p">,</span>
+    <span class="n">deps</span><span class="o">=</span><span class="p">(</span><span class="s2">"_cds_footprint"</span><span class="p">,),</span>
+    <span class="n">requires</span><span class="o">=</span><span class="p">(</span>
+        <span class="s2">"is_transcript"</span><span class="p">,</span>
+        <span class="s2">"overlap_feature"</span><span class="p">,</span>
+        <span class="s2">"overlap_exon"</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">partial_last_codon</span><span class="p">(</span><span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return whether the variant falls in an incomplete terminal codon."""</span>
+    <span class="n">footprint</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"tuple[int, int] | None"</span><span class="p">,</span> <span class="n">get_fact</span><span class="p">(</span><span class="n">fact_context</span><span class="p">,</span> <span class="s2">"_cds_footprint"</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">footprint</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">high_offset</span> <span class="o">=</span> <span class="n">footprint</span>
+
+    <span class="n">cds_length</span> <span class="o">=</span> <span class="n">fact_context</span><span class="o">.</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">cds_length</span>
+    <span class="k">if</span> <span class="n">cds_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># The last codon that variant overlaps (high_offset) extends beyond the end of the CDS, meaning that</span>
+    <span class="c1"># the last codon is partial.</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">high_offset</span> <span class="o">//</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">&gt;</span> <span class="n">cds_length</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

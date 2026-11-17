@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -490,7 +476,7 @@
 
 
 <div class="viewcode-block" id="SequenceSource">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.sources.html#ensembl.vep.sources.sequence_source.SequenceSource">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.sources.html#ensembl.vep.sources.sequence_source.SequenceSource">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">SequenceSource</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Unified interface for sources that provide sequence for slices."""</span>
@@ -515,7 +501,7 @@
         <span class="k">return</span> <span class="nb">frozenset</span><span class="p">()</span>
 
 <div class="viewcode-block" id="SequenceSource.get_seq_region_length">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.sources.html#ensembl.vep.sources.sequence_source.SequenceSource.get_seq_region_length">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.sources.html#ensembl.vep.sources.sequence_source.SequenceSource.get_seq_region_length">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_seq_region_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq_region_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the length of a sequence region, caching when available.</span>
 
@@ -541,7 +527,7 @@
 
 
 <div class="viewcode-block" id="SequenceSource.get_sequence_by_start_end_strand">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.sources.html#ensembl.vep.sources.sequence_source.SequenceSource.get_sequence_by_start_end_strand">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.sources.html#ensembl.vep.sources.sequence_source.SequenceSource.get_sequence_by_start_end_strand">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_sequence_by_start_end_strand</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">seq_region_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -589,7 +575,7 @@
 
 
 <div class="viewcode-block" id="SequenceSource.close">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.sources.html#ensembl.vep.sources.sequence_source.SequenceSource.close">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.sources.html#ensembl.vep.sources.sequence_source.SequenceSource.close">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Release any resources owned by the source."""</span>
@@ -645,7 +631,7 @@
         <span class="k">return</span> <span class="n">sequence</span>
 
 <div class="viewcode-block" id="SequenceSource.clear_cache">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.sources.html#ensembl.vep.sources.sequence_source.SequenceSource.clear_cache">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.sources.html#ensembl.vep.sources.sequence_source.SequenceSource.clear_cache">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">clear_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Clear derived sequence caches."""</span>
 

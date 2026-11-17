@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -488,7 +474,7 @@
 
 
 <div class="viewcode-block" id="Reportable">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.stats.html#ensembl.vep.stats.report.Reportable">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.stats.html#ensembl.vep.stats.report.Reportable">[docs]</a>
 <span class="nd">@runtime_checkable</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Reportable</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Anything that can be rendered as a report.</span>
@@ -506,7 +492,7 @@
 <span class="w">        </span><span class="sd">"""Return one line shown under the title."""</span>
 
 <div class="viewcode-block" id="Reportable.sections">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.stats.html#ensembl.vep.stats.report.Reportable.sections">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.stats.html#ensembl.vep.stats.report.Reportable.sections">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">sections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ReportSection</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the report sections in rendering order."""</span></div>
 </div>
@@ -514,7 +500,7 @@
 
 
 <div class="viewcode-block" id="render_reportable">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.stats.html#ensembl.vep.stats.report.render_reportable">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.stats.html#ensembl.vep.stats.report.render_reportable">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">render_reportable</span><span class="p">(</span><span class="n">report</span><span class="p">:</span> <span class="n">Reportable</span><span class="p">,</span> <span class="n">report_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ReportFormat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Render any report in the requested format."""</span>
     <span class="k">return</span> <span class="n">render_report</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">report</span><span class="o">.</span><span class="n">subtitle</span><span class="p">,</span> <span class="n">report</span><span class="o">.</span><span class="n">sections</span><span class="p">(),</span> <span class="n">report_format</span><span class="p">)</span></div>

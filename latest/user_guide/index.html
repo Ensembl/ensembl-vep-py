@@ -67,7 +67,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../_static/searchtools.js"></script>
@@ -183,13 +183,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../developer_guide/index.html">
     Developer Guide
   </a>
@@ -197,7 +190,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../reference.html">
+  <a class="nav-link nav-internal" href="../reference/index.html">
     Reference
   </a>
 </li>
@@ -335,13 +328,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../developer_guide/index.html">
     Developer Guide
   </a>
@@ -349,7 +335,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../reference.html">
+  <a class="nav-link nav-internal" href="../reference/index.html">
     Reference
   </a>
 </li>
@@ -427,9 +413,20 @@
 <li class="toctree-l1"><a class="reference internal" href="install.html">Download and install</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart guide</a></li>
 </ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">How-to guides</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="how_to/configuring_a_run.html">Configuring a run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to/annotation_sources.html">Choosing annotation sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to/output.html">Writing output and run summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to/custom_annotation.html">Using custom annotation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to/plugins.html">Using plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to/filtering_results.html">Filtering results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to/performance.html">Improving performance</a></li>
+</ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="tutorials/install_vep.html">Install Ensembl VEP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/streaming_annotations.html">Streaming annotations in Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/explaining_consequences.html">Explaining a consequence call</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Help</span></p>
 <ul class="nav bd-sidenav">
@@ -517,9 +514,69 @@
 </ul>
 </div>
 <div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">How-to guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="how_to/configuring_a_run.html">Configuring a run</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="how_to/configuring_a_run.html#command-line-flags">Command-line flags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how_to/configuring_a_run.html#environment-variables">Environment variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how_to/configuring_a_run.html#configuration-files">Configuration files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how_to/configuring_a_run.html#which-value-wins">Which value wins</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="how_to/annotation_sources.html">Choosing annotation sources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="how_to/annotation_sources.html#transcripts-and-reference-sequence">Transcripts and reference sequence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how_to/annotation_sources.html#indexing-the-files">Indexing the files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how_to/annotation_sources.html#matching-sequence-region-names">Matching sequence-region names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how_to/annotation_sources.html#upstream-and-downstream-distance">Upstream and downstream distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how_to/annotation_sources.html#sources-that-are-not-available-yet">Sources that are not available yet</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="how_to/output.html">Writing output and run summaries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="how_to/output.html#output-file">Output file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how_to/output.html#output-format">Output format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how_to/output.html#run-summary">Run summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how_to/output.html#summarising-an-existing-output-file">Summarising an existing output file</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="how_to/custom_annotation.html">Using custom annotation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to/plugins.html">Using plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to/filtering_results.html">Filtering results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to/performance.html">Improving performance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="how_to/performance.html#index-the-input-files">Index the input files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how_to/performance.html#use-several-processes">Use several processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how_to/performance.html#tune-the-buffers">Tune the buffers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how_to/performance.html#optional-caches">Optional caches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how_to/performance.html#threads">Threads</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/install_vep.html">Install Ensembl VEP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/streaming_annotations.html">Streaming annotations in Python</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/streaming_annotations.html#configure-the-run">Configure the run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/streaming_annotations.html#iterate-over-the-annotated-variants">Iterate over the annotated variants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/streaming_annotations.html#collect-your-own-statistics">Collect your own statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/streaming_annotations.html#convert-the-variants-to-json-records">Convert the variants to JSON records</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/streaming_annotations.html#write-the-stream-to-a-file">Write the stream to a file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/streaming_annotations.html#next-steps">Next steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/explaining_consequences.html">Explaining a consequence call</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/explaining_consequences.html#find-the-overlap-to-explain">Find the overlap to explain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/explaining_consequences.html#explain-the-overlap">Explain the overlap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/explaining_consequences.html#read-the-explanation">Read the explanation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/explaining_consequences.html#draw-the-derivation">Draw the derivation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorials/explaining_consequences.html#an-emitted-term">An emitted term</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials/explaining_consequences.html#a-term-that-fired-but-was-not-emitted">A term that fired but was not emitted</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorials/explaining_consequences.html#a-term-that-never-fired">A term that never fired</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/explaining_consequences.html#compare-two-annotators">Compare two annotators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/explaining_consequences.html#next-steps">Next steps</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">

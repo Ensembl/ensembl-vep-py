@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -504,7 +490,7 @@
 
 
 <div class="viewcode-block" id="register_workflow">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.workflow.build.html#ensembl.vep.workflow.build.registry.register_workflow">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.workflow.build.html#ensembl.vep.workflow.build.registry.register_workflow">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register_workflow</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">WorkflowBuilder</span><span class="p">],</span> <span class="n">WorkflowBuilder</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Register a workflow builder under ``name``."""</span>
 
@@ -517,7 +503,7 @@
 
 
 <div class="viewcode-block" id="workflow_builder">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.workflow.build.html#ensembl.vep.workflow.build.registry.workflow_builder">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.workflow.build.html#ensembl.vep.workflow.build.registry.workflow_builder">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">workflow_builder</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowBuilder</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the workflow builder registered under ``name``.</span>
 
@@ -533,7 +519,7 @@
 
 
 <div class="viewcode-block" id="workflow_for_command">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.workflow.build.html#ensembl.vep.workflow.build.registry.workflow_for_command">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.workflow.build.html#ensembl.vep.workflow.build.registry.workflow_for_command">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">workflow_for_command</span><span class="p">(</span><span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the name of the workflow a command annotates with.</span>
 
@@ -553,7 +539,7 @@
 
 
 <div class="viewcode-block" id="build_workflow">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.workflow.build.html#ensembl.vep.workflow.build.registry.build_workflow">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.workflow.build.html#ensembl.vep.workflow.build.registry.build_workflow">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_workflow</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">resources</span><span class="p">:</span> <span class="n">TrackResources</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Workflow</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Build the workflow a configuration describes.</span>
 
@@ -571,7 +557,7 @@
 
 
 <div class="viewcode-block" id="available_workflows">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.workflow.build.html#ensembl.vep.workflow.build.registry.available_workflows">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.workflow.build.html#ensembl.vep.workflow.build.registry.available_workflows">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">available_workflows</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return registered workflow names in sorted order."""</span>
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_WORKFLOW_BUILDERS</span><span class="p">))</span></div>

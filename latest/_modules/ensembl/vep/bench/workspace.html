@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -521,7 +507,7 @@
 
 
 <div class="viewcode-block" id="MissingTool">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.workspace.MissingTool">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.workspace.MissingTool">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MissingTool</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""An external executable the benchmark cannot run without is not on PATH."""</span></div>
 
@@ -617,7 +603,7 @@
 
 
 <div class="viewcode-block" id="Workspace">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.workspace.Workspace">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.workspace.Workspace">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Workspace</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""A directory holding the corpus, its indexes and the benchmark's own output files.</span>
@@ -655,7 +641,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="n">VCF_NAME</span>
 
 <div class="viewcode-block" id="Workspace.open">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.workspace.Workspace.open">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.workspace.Workspace.open">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Create the directory, remembering whether it had to be created."""</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
@@ -664,7 +650,7 @@
 
 
 <div class="viewcode-block" id="Workspace.materialise">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.workspace.Workspace.materialise">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.workspace.Workspace.materialise">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">materialise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">corpus</span><span class="p">:</span> <span class="n">Corpus</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Write the corpus as files, or leave a corpus already in the directory alone.</span>
 
@@ -688,7 +674,7 @@
 
 
 <div class="viewcode-block" id="Workspace.variant_count">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.workspace.Workspace.variant_count">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.workspace.Workspace.variant_count">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">variant_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return how many variant rows the corpus VCF holds."""</span>
         <span class="n">rows</span> <span class="o">=</span> <span class="mi">0</span>
@@ -700,7 +686,7 @@
 
 
 <div class="viewcode-block" id="Workspace.index">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.workspace.Workspace.index">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.workspace.Workspace.index">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Write the FASTA index, then the sorted, compressed and tabix-indexed GFF3.</span>
 
@@ -714,7 +700,7 @@
 
 
 <div class="viewcode-block" id="Workspace.track">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.workspace.Workspace.track">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.workspace.Workspace.track">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Record a path this invocation created, so ``close`` can remove it."""</span>
         <span class="k">if</span> <span class="n">path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">created</span><span class="p">:</span>
@@ -722,7 +708,7 @@
 
 
 <div class="viewcode-block" id="Workspace.close">
-<a class="viewcode-back" href="../../../../reference/ensembl.vep.bench.html#ensembl.vep.bench.workspace.Workspace.close">[docs]</a>
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.bench.html#ensembl.vep.bench.workspace.Workspace.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Remove what this invocation created, if cleaning was asked for."""</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">clean</span><span class="p">:</span>

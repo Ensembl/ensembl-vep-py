@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -492,7 +478,7 @@
 
 
 <div class="viewcode-block" id="Variation">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.variation.html#ensembl.vep.models.variation.variation.Variation">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.variation.html#ensembl.vep.models.variation.variation.Variation">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Variation</span><span class="p">(</span><span class="n">Feature</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Represents a variation to genomic sequences in a specific locus.</span>
@@ -613,7 +599,7 @@
         <span class="k">return</span> <span class="n">infer_variant_so_term</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">allele_string</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">,</span> <span class="n">ref_correct</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Variation.minimise_alleles">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.variation.html#ensembl.vep.models.variation.variation.Variation.minimise_alleles">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.variation.html#ensembl.vep.models.variation.variation.Variation.minimise_alleles">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">minimise_alleles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Minimise all alleles."""</span>
         <span class="k">for</span> <span class="n">variation_allele</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variation_alleles</span> <span class="ow">or</span> <span class="p">[]:</span>
@@ -621,7 +607,7 @@
 
 
 <div class="viewcode-block" id="Variation.shift_alleles">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.models.variation.html#ensembl.vep.models.variation.variation.Variation.shift_alleles">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.variation.html#ensembl.vep.models.variation.variation.Variation.shift_alleles">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">shift_alleles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Shift all alleles."""</span>
         <span class="k">for</span> <span class="n">variation_allele</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variation_alleles</span> <span class="ow">or</span> <span class="p">[]:</span>

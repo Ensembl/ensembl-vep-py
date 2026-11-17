@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ensembl.vep.annotators.consequence.strategies.linear &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../../../../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ensembl/vep/annotators/consequence/strategies/linear';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.0a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../../../../../../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../../../../../../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
+  
+    
+    <script src="../../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../../_static/language_data.js"></script>
+    <script src="../../../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../../../../../../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.annotators.consequence.strategies.linear</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ensembl.vep.annotators.consequence.strategies.linear</h1><div class="highlight"><pre>
+<span></span><span class="c1"># See the NOTICE file distributed with this work for additional information</span>
+<span class="c1"># regarding copyright ownership.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1"># http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="sd">"""Evaluate consequence rules in rank order.</span>
+
+<span class="sd">For each overlap, the strategy computes cheap guard facts, uses their digest to cache candidate</span>
+<span class="sd">rules, evaluates candidates in rank order, and applies subsumption.</span>
+
+<span class="sd">This strategy is the conformance reference. Every other consequence strategy must produce the same</span>
+<span class="sd">ordered ``OverlapConsequence`` terms for the same input.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">field</span><span class="p">,</span> <span class="n">frozen</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.strategies.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConsequenceAnnotator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_annotator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.facts.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_fact</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.context.annotator</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotatorContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.context.fact</span><span class="w"> </span><span class="kn">import</span> <span class="n">FactContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.rules.rulesets</span><span class="w"> </span><span class="kn">import</span> <span class="n">FactRule</span><span class="p">,</span> <span class="n">FactRuleSet</span><span class="p">,</span> <span class="n">build_fact_ruleset</span><span class="p">,</span> <span class="n">prune</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.trace</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationTrace</span><span class="p">,</span> <span class="n">TraceRecorder</span><span class="p">,</span> <span class="n">describe_overlap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.trace</span><span class="w"> </span><span class="kn">import</span> <span class="n">reconstruct</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.overlap</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureOverlap</span><span class="p">,</span> <span class="n">OverlapConsequence</span><span class="p">,</span> <span class="n">TranscriptVariationAllele</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.caches.codon_cache</span><span class="w"> </span><span class="kn">import</span> <span class="n">CodonCache</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.caches.zone_map</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZoneMapCache</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"LinearFactsAnnotator"</span><span class="p">]</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_GuardDigestAlphabet</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""The sorted set of fact atoms that can be used as cheap guards.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        atom_names (tuple[str, ...]): Every cheap guard atom name referenced by any rule in the</span>
+<span class="sd">            rule set this was built from, sorted for a stable digest string ordering.</span>
+<span class="sd">    """</span>
+
+    <span class="n">atom_names</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">())</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_GuardDigestAlphabet</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Collect every cheap guard atom referenced by any rule in a rule set.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ruleset (FactRuleSet): The rule set to inspect.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            _GuardDigestAlphabet: The sorted alphabet of cheap guard atom names.</span>
+<span class="sd">        """</span>
+        <span class="n">atom_names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">({</span><span class="n">atom_name</span> <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">rules</span> <span class="k">for</span> <span class="n">atom_name</span> <span class="ow">in</span> <span class="n">rule</span><span class="o">.</span><span class="n">cheap_guard</span><span class="p">()})</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">atom_names</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">atom_names</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="LinearFactsAnnotator">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.linear.LinearFactsAnnotator">[docs]</a>
+<span class="nd">@register_annotator</span><span class="p">(</span><span class="s2">"consequence.linear"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LinearFactsAnnotator</span><span class="p">(</span><span class="n">ConsequenceAnnotator</span><span class="p">[</span><span class="n">FactRuleSet</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">"""Evaluate a fact rule set with a rank-ordered linear scan.</span>
+
+<span class="sd">    There is also a cheap guard to find shorter candidate rule lists, implemented by a digest-keyed</span>
+<span class="sd">    candidate cache.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        name (str): Registry name, "consequence.linear".</span>
+<span class="sd">        ruleset (FactRuleSet): The compiled rule set this annotator evaluates.</span>
+<span class="sd">    """</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">"consequence.linear"</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">annotator_context</span><span class="p">:</span> <span class="n">AnnotatorContext</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">zone_map</span><span class="p">:</span> <span class="n">ZoneMapCache</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">codon_cache</span><span class="p">:</span> <span class="n">CodonCache</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Initialize the annotator.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ruleset (FactRuleSet | None): The rule set to evaluate, or None to build the default</span>
+<span class="sd">                rule set from the checked-in consequence catalogue.</span>
+<span class="sd">            annotator_context (AnnotatorContext | None): Run-scoped caches to evaluate against,</span>
+<span class="sd">                or None (the default) for a fresh, private one.</span>
+<span class="sd">            zone_map (ZoneMapCache | None): Optional zone-map cache.</span>
+<span class="sd">            codon_cache (CodonCache | None): Optional shared-codon cache.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">ruleset</span> <span class="k">if</span> <span class="n">ruleset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">build_fact_ruleset</span><span class="p">(),</span>
+            <span class="n">annotator_context</span><span class="p">,</span>
+            <span class="n">zone_map</span><span class="o">=</span><span class="n">zone_map</span><span class="p">,</span>
+            <span class="n">codon_cache</span><span class="o">=</span><span class="n">codon_cache</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_guard_digest_alphabet</span><span class="p">:</span> <span class="n">_GuardDigestAlphabet</span> <span class="o">=</span> <span class="n">_GuardDigestAlphabet</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ruleset</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_guard_flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Compute the guard atom values in this annotator's guard digest alphabet.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fact_context (FactContext): The overlap to evaluate the guard atoms against.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict[str, bool]: Guard atom name -&gt; boolean value.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">atom_name</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">get_fact</span><span class="p">(</span><span class="n">fact_context</span><span class="p">,</span> <span class="n">atom_name</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">atom_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_guard_digest_alphabet</span><span class="o">.</span><span class="n">atom_names</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_digest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Compute digest string from the guard flags for an overlap.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fact_context (FactContext): The overlap to evaluate the guard atoms against.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: A digest string suitable as a candidate-rule-list cache key: identical for two</span>
+<span class="sd">                overlaps whenever every guard atom agrees between them.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">atom_name</span><span class="si">}{</span><span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">atom_name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_guard_flags</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_candidates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fact_context</span><span class="p">:</span> <span class="n">FactContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FactRule</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Returns the rules whose cheap guard holds for this overlap.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fact_context (FactContext): The context for the overlap being evaluated.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple[FactRule, ...]: Every rule from self.ruleset whose cheap_guard() atoms are</span>
+<span class="sd">                all true for this overlap.</span>
+<span class="sd">        """</span>
+        <span class="n">annotator_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotator_context</span>
+        <span class="n">candidate_cache</span> <span class="o">=</span> <span class="n">annotator_context</span><span class="o">.</span><span class="n">digest_candidate_cache</span>
+        <span class="n">digest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_digest</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+        <span class="n">cached</span> <span class="o">=</span> <span class="n">candidate_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">digest</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cached</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">annotator_context</span><span class="o">.</span><span class="n">cache_misses</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">guard_flags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_guard_flags</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+            <span class="n">cached</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                <span class="n">rule</span>
+                <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ruleset</span><span class="o">.</span><span class="n">rules</span>
+                <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">guard_flags</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">rule</span><span class="o">.</span><span class="n">cheap_guard</span><span class="p">())</span>
+            <span class="p">)</span>
+            <span class="n">candidate_cache</span><span class="p">[</span><span class="n">digest</span><span class="p">]</span> <span class="o">=</span> <span class="n">cached</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">annotator_context</span><span class="o">.</span><span class="n">cache_hits</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">cached</span>
+
+<div class="viewcode-block" id="LinearFactsAnnotator.annotate_feature_overlap">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.linear.LinearFactsAnnotator.annotate_feature_overlap">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">annotate_feature_overlap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overlap</span><span class="p">:</span> <span class="n">FeatureOverlap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">OverlapConsequence</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Calculate consequences for an overlap.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            overlap (FeatureOverlap): The overlap to annotate.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[OverlapConsequence]: The consequences that apply, in rank order. Empty if</span>
+<span class="sd">                nothing matched.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: If overlap is not a TranscriptVariationAllele (subclass of FeatureOverlap).</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">overlap</span><span class="p">,</span> <span class="n">TranscriptVariationAllele</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> only annotates TranscriptVariationAllele overlaps, got "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">overlap</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+
+        <span class="n">recorder</span> <span class="o">=</span> <span class="n">TraceRecorder</span><span class="p">()</span> <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">fact_context</span> <span class="o">=</span> <span class="n">FactContext</span><span class="p">(</span>
+            <span class="n">overlap</span><span class="o">=</span><span class="n">overlap</span><span class="p">,</span> <span class="n">recorder</span><span class="o">=</span><span class="n">recorder</span><span class="p">,</span> <span class="n">annotator_context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">annotator_context</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">annotator_context</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_candidates</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)</span>
+        <span class="n">hit_terms</span> <span class="o">=</span> <span class="p">[</span><span class="n">rule</span><span class="o">.</span><span class="n">term</span> <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="n">rule</span><span class="o">.</span><span class="n">when</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">fact_context</span><span class="p">)]</span>
+        <span class="n">kept_terms</span> <span class="o">=</span> <span class="n">prune</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ruleset</span><span class="p">,</span> <span class="n">hit_terms</span><span class="p">,</span> <span class="n">apply_default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">consequences</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ruleset</span><span class="o">.</span><span class="n">by_term</span><span class="p">[</span><span class="n">term</span><span class="p">]</span><span class="o">.</span><span class="n">to_overlap_consequence</span><span class="p">()</span> <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">kept_terms</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_trace</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">recorder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Fact events first: recomputing the guard flags below goes back through get_fact, and</span>
+            <span class="c1"># those memo hits would otherwise be counted as reads the real path never made.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_trace</span> <span class="o">=</span> <span class="n">AnnotationTrace</span><span class="p">(</span>
+                <span class="n">fact_events</span><span class="o">=</span><span class="n">reconstruct</span><span class="o">.</span><span class="n">memo_fact_events</span><span class="p">(</span><span class="n">fact_context</span><span class="p">),</span>
+                <span class="n">rule_events</span><span class="o">=</span><span class="n">reconstruct</span><span class="o">.</span><span class="n">guarded_rule_events</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ruleset</span><span class="o">.</span><span class="n">rules</span><span class="p">,</span>
+                    <span class="p">{</span><span class="n">rule</span><span class="o">.</span><span class="n">term</span> <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">},</span>
+                    <span class="n">hit_terms</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_compute_guard_flags</span><span class="p">(</span><span class="n">fact_context</span><span class="p">),</span>
+                <span class="p">),</span>
+                <span class="n">prune_events</span><span class="o">=</span><span class="n">reconstruct</span><span class="o">.</span><span class="n">subsumption_events</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ruleset</span><span class="o">.</span><span class="n">by_term</span><span class="p">,</span> <span class="n">hit_terms</span><span class="p">),</span>
+                <span class="n">emitted_terms</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">kept_terms</span><span class="p">),</span>
+                <span class="n">annotator_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">overlap_label</span><span class="o">=</span><span class="n">describe_overlap</span><span class="p">(</span><span class="n">overlap</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_trace</span><span class="o">.</span><span class="n">format_explanation</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="n">consequences</span></div>
+
+
+<div class="viewcode-block" id="LinearFactsAnnotator.annotate_feature_overlaps">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.strategies.html#ensembl.vep.annotators.consequence.strategies.linear.LinearFactsAnnotator.annotate_feature_overlaps">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">annotate_feature_overlaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overlaps</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FeatureOverlap</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">OverlapConsequence</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Calculate consequences for a batch of overlaps, one at a time.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            overlaps (Sequence[FeatureOverlap]): The overlaps to annotate, in order.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[list[OverlapConsequence]]: One consequence list per input overlap, same order.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">annotate_feature_overlap</span><span class="p">(</span><span class="n">overlap</span><span class="p">)</span> <span class="k">for</span> <span class="n">overlap</span> <span class="ow">in</span> <span class="n">overlaps</span><span class="p">]</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

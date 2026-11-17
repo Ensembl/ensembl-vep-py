@@ -1,6 +1,11 @@
 [
   {
-    "name": "0.1.0a1 (latest)",
+    "name": "v0.1.0a1 (latest)",
+    "version": "v0.1.0a1",
+    "url": "https://ensembl.github.io/ensembl-vep-py/v0.1.0a1/"
+  },
+  {
+    "name": "0.1.0a1",
     "version": "0.1.0a1",
     "url": "https://ensembl.github.io/ensembl-vep-py/0.1.0a1/"
   }

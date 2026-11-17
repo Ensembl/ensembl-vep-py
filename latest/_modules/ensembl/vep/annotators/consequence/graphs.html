@@ -63,7 +63,7 @@
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
-    <meta name="docbuild:last-update" content="Nov 16, 2026"/>
+    <meta name="docbuild:last-update" content="Nov 17, 2026"/>
   
     
     <script src="../../../../../_static/searchtools.js"></script>
@@ -179,13 +179,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -193,7 +186,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -333,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../coverage_report.html">
-    Coverage Report
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
     Developer Guide
   </a>
@@ -347,7 +333,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../../reference.html">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
     Reference
   </a>
 </li>
@@ -532,7 +518,7 @@
 
 
 <div class="viewcode-block" id="fact_dependency_graph">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.annotators.consequence.html#ensembl.vep.annotators.consequence.graphs.fact_dependency_graph">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.annotators.consequence.html#ensembl.vep.annotators.consequence.graphs.fact_dependency_graph">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">fact_dependency_graph</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return the fact registry as a graph, columns ordered by cost tier.</span>
 
@@ -695,7 +681,7 @@
 
 
 <div class="viewcode-block" id="rule_graph">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.annotators.consequence.html#ensembl.vep.annotators.consequence.graphs.rule_graph">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.annotators.consequence.html#ensembl.vep.annotators.consequence.graphs.rule_graph">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">rule_graph</span><span class="p">(</span><span class="n">term</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return one rule as a Boolean expression tree.</span>
 
@@ -750,7 +736,7 @@
 
 
 <div class="viewcode-block" id="catalogue_overview_graph">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.annotators.consequence.html#ensembl.vep.annotators.consequence.graphs.catalogue_overview_graph">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.annotators.consequence.html#ensembl.vep.annotators.consequence.graphs.catalogue_overview_graph">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">catalogue_overview_graph</span><span class="p">(</span>
     <span class="n">definitions</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ConsequenceDefinition</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
@@ -786,7 +772,7 @@
 
 
 <div class="viewcode-block" id="rule_graphs">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.annotators.consequence.html#ensembl.vep.annotators.consequence.graphs.rule_graphs">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.annotators.consequence.html#ensembl.vep.annotators.consequence.graphs.rule_graphs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">rule_graphs</span><span class="p">(</span><span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Graph</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return one tree per rule, in catalogue rank order.</span>
 
@@ -802,7 +788,7 @@
 
 
 <div class="viewcode-block" id="derivation_graphs">
-<a class="viewcode-back" href="../../../../../reference/ensembl.vep.annotators.consequence.html#ensembl.vep.annotators.consequence.graphs.derivation_graphs">[docs]</a>
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.annotators.consequence.html#ensembl.vep.annotators.consequence.graphs.derivation_graphs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">derivation_graphs</span><span class="p">(</span><span class="n">trace</span><span class="p">:</span> <span class="n">AnnotationTrace</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Graph</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Return every rule decorated with its result for one overlap.</span>
 
