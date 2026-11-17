@@ -10,7 +10,7 @@ Flags are the most direct way to set an option. Most options take a value:
 vep run --input_file variants.vcf --gtf genes.gtf.bgz --fasta genome.fa.bgz
 ```
 
-Switches take no value. Each switch also has a `--no_` form that turns it off again, which is useful to override a value set in a configuration file or an environment variable:
+Switches take no value. Each switch also has a negative form that turns it on/off again (e.g. `--no_stats vs --stats` ), which is useful to override a value set in a configuration file or an environment variable:
 
 ```bash
 vep run --config vep.toml --no_stats

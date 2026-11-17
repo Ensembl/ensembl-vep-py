@@ -37,7 +37,7 @@ See [Data formats](../../reference/data_formats.md) for the content of each form
 - `--stats_format` selects `html` (the default), `text` or `json`. `--stats_html` and `--stats_text` are shorthands.
 - `--no_stats` skips the summary.
 
-No summary is derived when the output goes to standard output; give `--stats_file` to write one.
+When the output goes to standard output, only a summary of how many variants, alleles and overlaps were processed is printed by default; give `--stats_file` to write a full summary file.
 
 ## Summarising an existing output file
 

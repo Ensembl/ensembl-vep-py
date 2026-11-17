@@ -25,7 +25,7 @@ All three files can be plain text or compressed with `bgzip`. They can be read w
 - **GFF3 and GTF:** sort the file, compress it with `bgzip` and index it with `tabix`. A transcript file read without an index must keep all the records of a gene together. e.g.
 ```bash
 (grep "^#" genes.gff; grep -v "^#" genes.gff | sort -t$'\t' -k1,1 -k4,4n) | bgzip > genes.gff.bgz
-tabix -p gff gene.gff.gz
+tabix -p gff genes.gff.bgz
 ```
 - **FASTA:** index the file with `samtools faidx`. A plain FASTA file needs a `.fai` index; a `bgzip` compressed FASTA file needs both a `.fai` and a `.gzi` index. e.g.
 ```bash
@@ -63,4 +63,4 @@ See the {ref}`source options <cli-section-source>` section for the default.
 
 ## Sources that are not available yet
 
-The `--cache`, `--dir_cache` and `--database` options are accepted, but annotating from a VEP cache or an Ensembl database is not implemented yet. A run given either option stops with an error saying so.
+The `--cache`, `--dir_cache` and `--database` options are documented, but annotating from a VEP cache or an Ensembl database is not implemented yet. A run given either option stops with an error saying so.

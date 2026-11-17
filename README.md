@@ -28,12 +28,12 @@ Or alternatively, using uv (recommended)
 uv pip install ensembl-vep
 ```
 
-### Using source 
+### Using source
 
 #### Requirements
 
 - Git
-- uv (https://github.com/Ensembl/uv)    
+- uv (https://github.com/Ensembl/uv)
 - a Rust toolchain, including Cargo.
 
 uv installs Python 3.12 when it is not already available. Rust and Cargo are required because the source distribution includes a native Rust extension.
