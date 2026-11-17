@@ -86,7 +86,9 @@ class SourceConfig(ConfigSection):
         default=None, metadata=option("file of sequence-region synonyms, one region per line")
     )
     cache: bool = field(default=False, metadata=option("annotate from a VEP cache (not implemented yet)"))
-    dir_cache: Path | None = field(default=None, metadata=option("directory of the VEP cache"))
+    dir_cache: Path | None = field(
+        default=None, metadata=option("directory of the VEP cache (not implemented yet)")
+    )
     database: bool = field(
         default=False, metadata=option("annotate from an Ensembl database (not implemented yet)")
     )

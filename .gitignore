@@ -81,7 +81,7 @@ instance/
 
 # Sphinx documentation
 docs/_build/
-docs/reference/
+docs/auto/
 docs/reports/
 
 # PyBuilder
@@ -132,9 +132,6 @@ venv.bak/
 
 # Rope project settings
 .ropeproject
-
-# mkdocs documentation
-/site
 
 # mypy
 .mypy_cache/

@@ -17,8 +17,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from ensembl.vep.annotators.base import Annotator
 from ensembl.vep.annotators.consequence.facts.base import verify_requires
 from ensembl.vep.annotators.consequence.context.fact import FactContext
@@ -110,11 +108,6 @@ class TestHeavyLocusCorpusConformance:
 class TestBatchPathConformance:
     """Every annotator must agree with itself."""
 
-    @pytest.fixture(scope="class")
-    def batch_annotator_names(self) -> list[str]:
-        """Registry names of every currently-registered strategy."""
-        return list(available_annotators())
-
     def test_every_registered_annotator_implements_the_batch_path(self) -> None:
         """Both halves of the contract are available on every registered strategy."""
         for name in available_annotators():
@@ -122,12 +115,10 @@ class TestBatchPathConformance:
             assert callable(annotator.annotate_feature_overlaps)
             assert callable(annotator.annotate_feature_overlap)
 
-    def test_batch_output_matches_single_overlap_output(
-        self, batch_annotator_names: list[str], small_default_corpus: SyntheticCorpus
-    ) -> None:
+    def test_batch_output_matches_single_overlap_output(self, small_default_corpus: SyntheticCorpus) -> None:
         """Batch output matches single-overlap output."""
         overlaps = [overlap for _name, overlap in small_default_corpus.named_overlaps]
-        for strategy_name in batch_annotator_names:
+        for strategy_name in available_annotators():
             annotator = get_annotator(strategy_name)
             batch_terms = [
                 _consequence_terms(consequences)
@@ -138,16 +129,14 @@ class TestBatchPathConformance:
             ]
             assert batch_terms == single_terms, f"{strategy_name}: batch output != single-overlap output"
 
-    def test_batch_output_matches_the_reference(
-        self, batch_annotator_names: list[str], small_default_corpus: SyntheticCorpus
-    ) -> None:
+    def test_batch_output_matches_the_reference(self, small_default_corpus: SyntheticCorpus) -> None:
         """Batch output matches the reference."""
         reference = get_annotator("consequence.linear")
         overlaps = [overlap for _name, overlap in small_default_corpus.named_overlaps]
         reference_terms = [
             _consequence_terms(reference.annotate_feature_overlap(overlap)) for overlap in overlaps
         ]
-        for strategy_name in batch_annotator_names:
+        for strategy_name in available_annotators():
             annotator = get_annotator(strategy_name)
             batch_terms = [
                 _consequence_terms(consequences)

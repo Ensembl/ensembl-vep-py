@@ -275,8 +275,9 @@ class TestIndexedMatchesSequentialGFF3:
     """
 
     @pytest.fixture(scope="class", name="indexed_gff3_path")
+    @staticmethod
     def fixture_indexed_gff3_path(
-        self, tmp_path_factory: pytest.TempPathFactory, htslib_toolchain: _HtslibToolchain
+        tmp_path_factory: pytest.TempPathFactory, htslib_toolchain: _HtslibToolchain
     ) -> Path:
         """A synthetic-corpus GFF3, bgzipped and tabix-indexed with a real HTSlib toolchain."""
         directory = tmp_path_factory.mktemp("stage3b_gff3")
@@ -387,8 +388,9 @@ class TestIndexedMatchesSequentialGTF:
     """The GTF adapter shares the same grouping code as GFF3, through the same base class."""
 
     @pytest.fixture(scope="class", name="indexed_gtf_path")
+    @staticmethod
     def fixture_indexed_gtf_path(
-        self, tmp_path_factory: pytest.TempPathFactory, htslib_toolchain: _HtslibToolchain
+        tmp_path_factory: pytest.TempPathFactory, htslib_toolchain: _HtslibToolchain
     ) -> Path:
         """The hand-authored GTF fixture, bgzipped and tabix-indexed with a real HTSlib toolchain."""
         directory = tmp_path_factory.mktemp("stage3b_gtf")
@@ -473,7 +475,8 @@ class TestFixedExpectations:
     """
 
     @pytest.fixture(scope="class", name="transcripts_by_id")
-    def fixture_transcripts_by_id(self, tmp_path_factory: pytest.TempPathFactory) -> dict[str, Transcript]:
+    @staticmethod
+    def fixture_transcripts_by_id(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Transcript]:
         """The fixture's transcripts, keyed by id, built through the plain (unindexed) reader."""
         directory = tmp_path_factory.mktemp("fixed_expectations")
         gff3_path = directory / "fixture.gff3"
