@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ensembl.vep.explain.selection &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ensembl/vep/explain/selection';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.01a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../../../../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../../../../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 18, 2026"/>
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../../../../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.explain.selection</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ensembl.vep.explain.selection</h1><div class="highlight"><pre>
+<span></span><span class="c1"># See the NOTICE file distributed with this work for additional information</span>
+<span class="c1"># regarding copyright ownership.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1"># http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="sd">"""Overlap selection for consequence explanations.</span>
+
+<span class="sd">Explaining one derivation needs one ``(variant, transcript)`` pair out of a real input, which is a</span>
+<span class="sd">different job from annotating a whole file: there is no buffering, no output, and reading the whole</span>
+<span class="sd">input to pair every variant would be waste when the caller named one. What it must not be is a</span>
+<span class="sd">second opinion about which pairs exist -- so the pairing here is built by the transcript track's</span>
+<span class="sd">own ``build_transcript_overlap_finder`` over the same sources the run path builds, and only the</span>
+<span class="sd">*search* is explain's own.</span>
+
+<span class="sd">The two kinds of source answer the same question differently: a file is searched for the named</span>
+<span class="sd">variant alone, pairing no more of it than that takes, while a generated corpus is walked, there</span>
+<span class="sd">being nothing to query. ``OverlapSelection`` holds that choice for one run, reading each source</span>
+<span class="sd">lazily and at most once, so selecting by name costs one pass and selecting nothing costs none.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">closing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Generator</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.buffer</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedSizeInputBuffer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.common.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">EMPTY_ALLELE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.corpus.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Corpus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.corpus.registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_corpus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.corpus.spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">CorpusSpec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.genic.transcript</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transcript</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.overlap</span><span class="w"> </span><span class="kn">import</span> <span class="n">TranscriptVariationAllele</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.variation.variation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Variation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.variation.variation_allele</span><span class="w"> </span><span class="kn">import</span> <span class="n">VariationAllele</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.sources.build</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">InputSource</span><span class="p">,</span>
+    <span class="n">TranscriptSource</span><span class="p">,</span>
+    <span class="n">build_chromosome_synonyms</span><span class="p">,</span>
+    <span class="n">build_input_source</span><span class="p">,</span>
+    <span class="n">build_sequence_source</span><span class="p">,</span>
+    <span class="n">build_transcript_source</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.workflow.tracks</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_transcript_overlap_finder</span><span class="p">,</span> <span class="n">transcript_candidate_window</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"FeatureSelector"</span><span class="p">,</span> <span class="s2">"NamedOverlap"</span><span class="p">,</span> <span class="s2">"OverlapSelection"</span><span class="p">,</span> <span class="s2">"VariantSelector"</span><span class="p">]</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">NamedOverlap</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TranscriptVariationAllele</span><span class="p">]</span>
+<span class="sd">"""One overlap and the name of the variant it came from."""</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalised_allele</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return an allele in the single spelling a selector comparison can rely on.</span>
+
+<span class="sd">    An empty allele is spelled ``""`` by the generated corpus and ``"-"`` by the VCF reader, which</span>
+<span class="sd">    follows VEP. Selecting an overlap must work the same way whichever source produced it, so both</span>
+<span class="sd">    collapse to ``""`` here. Without this, a selector matched SNVs from a file but never indels.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value (str | None): The allele as the model stores it.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The allele upper-cased, with either spelling of "empty" as an empty string.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="n">EMPTY_ALLELE</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">""</span>
+    <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="VariantSelector">
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.VariantSelector">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VariantSelector</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Variant selector written as ``CHR:POS:REF&gt;ALT`` or ``CHR:POS:ID``.</span>
+
+<span class="sd">    The two forms locate a variant differently. ``REF&gt;ALT`` names one allele by its minimised</span>
+<span class="sd">    coordinates, as the model stores them. ``ID`` names a record by the identifier and position the</span>
+<span class="sd">    input gives it -- a VCF's ID and POS columns -- and ``allele_num`` picks one of its alternate</span>
+<span class="sd">    alleles.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        seq_region_name (str): Sequence region name.</span>
+<span class="sd">        position (int): The allele's start for ``REF&gt;ALT``, the input's own position for ``ID``.</span>
+<span class="sd">        reference_allele (str | None): Upper-cased reference allele, ``""`` when empty; None for ``ID``.</span>
+<span class="sd">        alternate_allele (str | None): Upper-cased alternate allele, ``""`` when empty; None for ``ID``.</span>
+<span class="sd">        identifier (str | None): The variant's identifier in the input; None for ``REF&gt;ALT``.</span>
+<span class="sd">        allele_num (int): Which alternate allele an ``ID`` selects, counting from 1.</span>
+<span class="sd">    """</span>
+
+    <span class="n">seq_region_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">position</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">reference_allele</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">alternate_allele</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">allele_num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="VariantSelector.parse">
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.VariantSelector.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">allele_num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VariantSelector</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Parse a selector, with ``-`` for an empty allele.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector (str): ``CHR:POS:REF&gt;ALT``, e.g. ``chr1:1052:-&gt;ACG`` for an insertion before 1052,</span>
+<span class="sd">                or ``CHR:POS:ID``, e.g. ``22:15528194:rs123``.</span>
+<span class="sd">            allele_num (int | None): The alternate allele an ``ID`` selects, counting from 1. None means</span>
+<span class="sd">                the first.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            VariantSelector: The parsed selector.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the selector does not have either shape, or ``allele_num`` is given for a</span>
+<span class="sd">                ``REF&gt;ALT`` selector, which already names its allele, or is below 1.</span>
+<span class="sd">        """</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">":"</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"expected a variant as CHR:POS:REF&gt;ALT or CHR:POS:ID, got </span><span class="si">{</span><span class="n">selector</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">seq_region_name</span><span class="p">,</span> <span class="n">position_text</span><span class="p">,</span> <span class="n">detail</span> <span class="o">=</span> <span class="n">parts</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">position_text</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"expected an integer position in </span><span class="si">{</span><span class="n">selector</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">error</span>
+
+        <span class="k">if</span> <span class="s2">"&gt;"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">detail</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">allele_num</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">allele_num</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"allele numbers count alternate alleles from 1, got </span><span class="si">{</span><span class="n">allele_num</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+                <span class="n">seq_region_name</span><span class="o">=</span><span class="n">seq_region_name</span><span class="p">,</span>
+                <span class="n">position</span><span class="o">=</span><span class="n">position</span><span class="p">,</span>
+                <span class="n">identifier</span><span class="o">=</span><span class="n">detail</span><span class="p">,</span>
+                <span class="n">allele_num</span><span class="o">=</span><span class="n">allele_num</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">allele_num</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"an allele number selects from a CHR:POS:ID variant; </span><span class="si">{</span><span class="n">selector</span><span class="si">!r}</span><span class="s2"> names its allele"</span>
+            <span class="p">)</span>
+        <span class="n">reference_allele</span><span class="p">,</span> <span class="n">alternate_allele</span> <span class="o">=</span> <span class="n">detail</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"&gt;"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">seq_region_name</span><span class="o">=</span><span class="n">seq_region_name</span><span class="p">,</span>
+            <span class="n">position</span><span class="o">=</span><span class="n">position</span><span class="p">,</span>
+            <span class="n">reference_allele</span><span class="o">=</span><span class="n">_normalised_allele</span><span class="p">(</span><span class="n">reference_allele</span><span class="p">),</span>
+            <span class="n">alternate_allele</span><span class="o">=</span><span class="n">_normalised_allele</span><span class="p">(</span><span class="n">alternate_allele</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">query_span</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return the 1-based query span covering this variant's input record.</span>
+
+<span class="sd">        One base before the position as well, because a VCF anchors an indel on the preceding base</span>
+<span class="sd">        and the minimised start of an insertion lies after it.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span>
+
+<div class="viewcode-block" id="VariantSelector.matches">
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.VariantSelector.matches">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allele</span><span class="p">:</span> <span class="n">VariationAllele</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return whether an allele is the one this selector names."""</span>
+        <span class="n">seq_region_name</span> <span class="o">=</span> <span class="n">allele</span><span class="o">.</span><span class="n">slice</span><span class="o">.</span><span class="n">seq_region_name</span> <span class="k">if</span> <span class="n">allele</span><span class="o">.</span><span class="n">slice</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">seq_region_name</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq_region_name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">allele</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span>
+                <span class="ow">and</span> <span class="n">_normalised_allele</span><span class="p">(</span><span class="n">allele</span><span class="o">.</span><span class="n">reference_allele</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_allele</span>
+                <span class="ow">and</span> <span class="n">_normalised_allele</span><span class="p">(</span><span class="n">allele</span><span class="o">.</span><span class="n">alternate_allele</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">alternate_allele</span>
+            <span class="p">)</span>
+
+        <span class="n">variation</span> <span class="o">=</span> <span class="n">allele</span><span class="o">.</span><span class="n">variation</span>
+        <span class="k">if</span> <span class="n">variation</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">variation</span><span class="o">.</span><span class="n">stable_id</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">variation</span><span class="o">.</span><span class="n">stable_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">";"</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">uploaded_start</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">variation</span><span class="o">.</span><span class="n">uploaded_locus</span><span class="o">.</span><span class="n">start</span> <span class="k">if</span> <span class="n">variation</span><span class="o">.</span><span class="n">uploaded_locus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">variation</span><span class="o">.</span><span class="n">start</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">uploaded_start</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">alleles</span> <span class="o">=</span> <span class="n">variation</span><span class="o">.</span><span class="n">variation_alleles</span> <span class="ow">or</span> <span class="p">()</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">alleles</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">allele_num</span> <span class="ow">and</span> <span class="n">alleles</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">allele_num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="n">allele</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="FeatureSelector">
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.FeatureSelector">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FeatureSelector</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Feature selector using a stable identifier and optional GFF3 type prefix.</span>
+
+<span class="sd">    A GFF3 spells a transcript's id ``transcript:ENST00000775241`` and the reader keeps it, while a</span>
+<span class="sd">    caller naturally types ``ENST00000775241``; both name the same feature.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        stable_id (str): The stable id the caller typed, either spelling.</span>
+<span class="sd">    """</span>
+
+    <span class="n">stable_id</span><span class="p">:</span> <span class="nb">str</span>
+
+<div class="viewcode-block" id="FeatureSelector.parse">
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.FeatureSelector.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FeatureSelector</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Parse a feature selector.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selector (str): A stable id, e.g. ``ENST00000775241`` or ``transcript:ENST00000775241``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            FeatureSelector: The parsed selector.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the selector is empty.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">selector</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"expected a feature stable id, got an empty selector"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stable_id</span><span class="o">=</span><span class="n">selector</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FeatureSelector.matches">
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.FeatureSelector.matches">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature</span><span class="p">:</span> <span class="n">Transcript</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return whether a feature is the one this selector names.</span>
+
+<span class="sd">        A prefix match is not a match: the id after the prefix has to be the same one.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stable_id</span> <span class="ow">in</span> <span class="p">(</span><span class="n">feature</span><span class="o">.</span><span class="n">stable_id</span><span class="p">,</span> <span class="n">feature</span><span class="o">.</span><span class="n">stable_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">":"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="OverlapSelection">
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OverlapSelection</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Selectable overlaps and the sources used to find them.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        config (Config): The run's configuration; its ``source``, ``corpus`` and ``explain``</span>
+<span class="sd">            sections say where the overlaps come from and which one is wanted.</span>
+<span class="sd">        sources (tuple[InputSource, TranscriptSource] | None): The two readers, built from</span>
+<span class="sd">            the configuration on first use. Assignable so a caller can supply readers of its own</span>
+<span class="sd">            -- a test over in-memory sequence, say -- instead of real files.</span>
+<span class="sd">    """</span>
+
+    <span class="n">config</span><span class="p">:</span> <span class="n">Config</span>
+    <span class="n">sources</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">InputSource</span><span class="p">,</span> <span class="n">TranscriptSource</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_built_corpus</span><span class="p">:</span> <span class="n">Corpus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="OverlapSelection.close">
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Release the generated corpus, if one was built."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_built_corpus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_built_corpus</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_built_corpus</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="OverlapSelection.select">
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection.select">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NamedOverlap</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the single overlap the selectors identify.</span>
+
+<span class="sd">        A name or a variant identifies the variant, not the overlap, so one that pairs with several</span>
+<span class="sd">        features needs ``--transcript`` as well. Saying which stable ids matched is the whole value</span>
+<span class="sd">        of the error, so the message names them.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            NamedOverlap: The selected overlap and the name it came under.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            LookupError: If nothing matches, if several do and no feature was named, or if the</span>
+<span class="sd">                index is past the end.</span>
+<span class="sd">            ValueError: If the variant selector is malformed, or an allele number was given</span>
+<span class="sd">                without a ``CHR:POS:ID`` variant.</span>
+<span class="sd">        """</span>
+        <span class="n">explain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">explain</span>
+        <span class="k">if</span> <span class="n">explain</span><span class="o">.</span><span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">position</span><span class="p">,</span> <span class="n">named_overlap</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_overlaps</span><span class="p">()):</span>
+                <span class="k">if</span> <span class="n">position</span> <span class="o">==</span> <span class="n">explain</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">named_overlap</span>
+            <span class="k">raise</span> <span class="ne">LookupError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"index </span><span class="si">{</span><span class="n">explain</span><span class="o">.</span><span class="n">index</span><span class="si">}</span><span class="s2"> is past the end of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">explain</span><span class="o">.</span><span class="n">allele_num</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">explain</span><span class="o">.</span><span class="n">variant</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"an allele number selects from a CHR:POS:ID variant; give the variant too"</span><span class="p">)</span>
+        <span class="n">selector</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">VariantSelector</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">explain</span><span class="o">.</span><span class="n">variant</span><span class="p">,</span> <span class="n">allele_num</span><span class="o">=</span><span class="n">explain</span><span class="o">.</span><span class="n">allele_num</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">explain</span><span class="o">.</span><span class="n">variant</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="n">selector_text</span> <span class="o">=</span> <span class="n">explain</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">explain</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">explain</span><span class="o">.</span><span class="n">variant</span>
+        <span class="n">feature</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">explain</span><span class="o">.</span><span class="n">transcript</span><span class="p">)</span> <span class="k">if</span> <span class="n">explain</span><span class="o">.</span><span class="n">transcript</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="n">matches</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">NamedOverlap</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">candidate_name</span><span class="p">,</span> <span class="n">overlap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">candidate_overlaps</span><span class="p">(</span><span class="n">explain</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">selector</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">explain</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">candidate_name</span> <span class="o">!=</span> <span class="n">explain</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">selector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">selector</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">overlap</span><span class="o">.</span><span class="n">overlapping_feature</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">feature</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">feature</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">candidate_name</span><span class="p">,</span> <span class="n">overlap</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">feature</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># A named feature makes the pair unique, so nothing later can make this ambiguous.</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">matches</span><span class="p">:</span>
+            <span class="n">suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">" for feature </span><span class="si">{</span><span class="n">explain</span><span class="o">.</span><span class="n">transcript</span><span class="si">!r}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">feature</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">""</span>
+            <span class="k">raise</span> <span class="ne">LookupError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"no overlap matching </span><span class="si">{</span><span class="n">selector_text</span><span class="si">!r}</span><span class="s2"> in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">()</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">stable_ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">({</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">stable_id</span> <span class="k">for</span> <span class="n">_name</span><span class="p">,</span> <span class="n">overlap</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">})</span>
+            <span class="k">raise</span> <span class="ne">LookupError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span><span class="si">}</span><span class="s2"> overlaps match </span><span class="si">{</span><span class="n">selector_text</span><span class="si">!r}</span><span class="s2"> (features: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">stable_ids</span><span class="p">)</span><span class="si">}</span><span class="s2">); "</span>
+                <span class="s2">"disambiguate by naming one"</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="OverlapSelection.candidate_overlaps">
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection.candidate_overlaps">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">candidate_overlaps</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="n">VariantSelector</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">NamedOverlap</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Yield the overlaps that could match, pairing no more of the input than it takes.</span>
+
+<span class="sd">        A real input is searched for the named variant alone; a generated corpus is walked, there</span>
+<span class="sd">        being nothing to query, and is returned unfiltered for the caller to sift.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str | None): The variant name to look for.</span>
+<span class="sd">            selector (VariantSelector | None): The variant's locus and alleles, or its identifier.</span>
+
+<span class="sd">        Yields:</span>
+<span class="sd">            NamedOverlap: Every overlap that still has to be filtered by the caller.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">input_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_corpus</span><span class="p">()</span><span class="o">.</span><span class="n">named_overlaps</span>
+            <span class="k">return</span>
+        <span class="k">for</span> <span class="n">allele_name</span><span class="p">,</span> <span class="n">allele</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_candidate_variation_alleles</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">selector</span><span class="o">=</span><span class="n">selector</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">overlap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pair</span><span class="p">(</span><span class="n">allele</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_candidate_features</span><span class="p">(</span><span class="n">allele</span><span class="p">)):</span>
+                <span class="k">yield</span> <span class="n">allele_name</span><span class="p">,</span> <span class="n">overlap</span></div>
+
+
+<div class="viewcode-block" id="OverlapSelection.all_overlaps">
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection.all_overlaps">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">all_overlaps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">NamedOverlap</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Yield every selectable overlap, in the order ``--index`` counts.</span>
+
+<span class="sd">        Pairing every variant means reading both files whole: an un-indexed GFF3 or GTF cannot</span>
+<span class="sd">        serve a region query at all, and a caller asking for the listing has asked for all of</span>
+<span class="sd">        them. The transcripts are grouped by sequence region once, rather than queried per</span>
+<span class="sd">        variant, which is what keeps this one pass over each file.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">input_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_corpus</span><span class="p">()</span><span class="o">.</span><span class="n">named_overlaps</span>
+            <span class="k">return</span>
+
+        <span class="n">transcripts_by_region</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">transcript</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_candidate_features</span><span class="p">():</span>
+            <span class="n">region</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">slice</span><span class="o">.</span><span class="n">seq_region_name</span> <span class="k">if</span> <span class="n">transcript</span><span class="o">.</span><span class="n">slice</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">region</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">transcripts_by_region</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transcript</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">allele</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_candidate_variation_alleles</span><span class="p">():</span>
+            <span class="k">assert</span> <span class="n">allele</span><span class="o">.</span><span class="n">slice</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">nearby</span> <span class="o">=</span> <span class="n">transcripts_by_region</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">allele</span><span class="o">.</span><span class="n">slice</span><span class="o">.</span><span class="n">seq_region_name</span><span class="p">,</span> <span class="p">())</span>
+            <span class="k">for</span> <span class="n">overlap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pair</span><span class="p">(</span><span class="n">allele</span><span class="p">,</span> <span class="n">nearby</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">name</span><span class="p">,</span> <span class="n">overlap</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_candidate_variation_alleles</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">selector</span><span class="p">:</span> <span class="n">VariantSelector</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VariationAllele</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Yield named alleles from the input: every one, or the ones a name or selector identifies.</span>
+
+<span class="sd">        Filtered, this stops at the first variation with any allele matching, which is what makes</span>
+<span class="sd">        selecting by name cost a partial pass rather than a whole file. The input is queried by</span>
+<span class="sd">        region where a selector gives a position and the file has an index.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str | None): The variant name to look for, as ``display_name`` spells it.</span>
+<span class="sd">            selector (VariantSelector | None): The variant's locus and alleles, or its identifier.</span>
+
+<span class="sd">        Yields:</span>
+<span class="sd">            tuple[str, VariationAllele]: Each allele and the name it is known by.</span>
+<span class="sd">        """</span>
+        <span class="n">variation_source</span><span class="p">,</span> <span class="n">_transcript_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_sources</span><span class="p">()</span>
+        <span class="n">wanted</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">selector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">variations</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Variation</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">            </span><span class="sd">"""Yield the variations that could match, from a region query where there is an index."""</span>
+            <span class="k">if</span> <span class="n">selector</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">yield from</span> <span class="n">variation_source</span><span class="o">.</span><span class="n">iter_all_features</span><span class="p">()</span>
+                <span class="k">return</span>
+            <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">query_span</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">found</span> <span class="o">=</span> <span class="n">variation_source</span><span class="o">.</span><span class="n">get_features_by_region</span><span class="p">(</span>
+                    <span class="n">seq_region_name</span><span class="o">=</span><span class="n">selector</span><span class="o">.</span><span class="n">seq_region_name</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"the variant input has no region index; reading it in order to the first match"</span><span class="p">)</span>
+                <span class="k">yield from</span> <span class="n">variation_source</span><span class="o">.</span><span class="n">iter_all_features</span><span class="p">()</span>
+                <span class="k">return</span>
+            <span class="k">yield from</span> <span class="n">found</span>
+
+        <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">variations</span><span class="p">())</span> <span class="k">as</span> <span class="n">candidates</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">variation</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+                <span class="n">matched</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">allele</span> <span class="ow">in</span> <span class="n">variation</span><span class="o">.</span><span class="n">variation_alleles</span> <span class="ow">or</span> <span class="p">():</span>
+                    <span class="k">if</span> <span class="n">allele</span><span class="o">.</span><span class="n">slice</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"skipping an allele with no sequence region: </span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="n">allele</span><span class="p">)</span>
+                        <span class="k">continue</span>
+                    <span class="n">allele_name</span> <span class="o">=</span> <span class="n">allele</span><span class="o">.</span><span class="n">display_name</span>
+                    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">allele_name</span> <span class="o">!=</span> <span class="n">name</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="k">if</span> <span class="n">selector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">selector</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">allele</span><span class="p">):</span>
+                        <span class="k">continue</span>
+                    <span class="n">matched</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">allele_name</span><span class="p">,</span> <span class="n">allele</span><span class="p">))</span>
+                <span class="k">yield from</span> <span class="n">matched</span>
+                <span class="k">if</span> <span class="n">matched</span> <span class="ow">and</span> <span class="n">wanted</span><span class="p">:</span>
+                    <span class="k">return</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_candidate_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allele</span><span class="p">:</span> <span class="n">VariationAllele</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return the transcripts one allele could pair with, or every transcript in the file.</span>
+
+<span class="sd">        One allele's window is a region query where the file has an index, and a stream of just</span>
+<span class="sd">        that window where it has not. The window is the transcript track's own, so a transcript</span>
+<span class="sd">        fetched here is one a run would have fetched for the same allele.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            allele (VariationAllele | None): The allele to fetch a window around, or None for all.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Sequence[Transcript]: The candidate transcripts.</span>
+<span class="sd">        """</span>
+        <span class="n">_variation_source</span><span class="p">,</span> <span class="n">transcript_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_sources</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">allele</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">transcript_source</span><span class="o">.</span><span class="n">get_all_features</span><span class="p">())</span>
+
+        <span class="k">assert</span> <span class="n">allele</span><span class="o">.</span><span class="n">slice</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">region</span> <span class="o">=</span> <span class="n">allele</span><span class="o">.</span><span class="n">slice</span><span class="o">.</span><span class="n">seq_region_name</span>
+        <span class="n">widest</span> <span class="o">=</span> <span class="n">transcript_candidate_window</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">allele</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">allele</span><span class="o">.</span><span class="n">end</span><span class="p">)</span> <span class="o">-</span> <span class="n">widest</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">allele</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">allele</span><span class="o">.</span><span class="n">end</span><span class="p">)</span> <span class="o">+</span> <span class="n">widest</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">transcript_source</span><span class="o">.</span><span class="n">get_features_by_region</span><span class="p">(</span><span class="n">seq_region_name</span><span class="o">=</span><span class="n">region</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">"the transcript file has no region index; streaming it for </span><span class="si">%s</span><span class="s2">:</span><span class="si">%d</span><span class="s2">-</span><span class="si">%d</span><span class="s2">"</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="n">transcript_source</span><span class="o">.</span><span class="n">iter_features_by_region</span><span class="p">(</span><span class="n">seq_region_name</span><span class="o">=</span><span class="n">region</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_pair</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">allele</span><span class="p">:</span> <span class="n">VariationAllele</span><span class="p">,</span> <span class="n">transcripts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">TranscriptVariationAllele</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Pair one allele with the transcripts it meets, by the run path's own rule.</span>
+
+<span class="sd">        The candidates are the transcripts already found here, so the track's finder pairs them</span>
+<span class="sd">        without any of the caching a run wants around it.</span>
+<span class="sd">        """</span>
+        <span class="n">finder</span> <span class="o">=</span> <span class="n">build_transcript_overlap_finder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">_buffer</span><span class="p">:</span> <span class="n">transcripts</span><span class="p">)</span>
+        <span class="k">yield from</span> <span class="n">finder</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">FixedSizeInputBuffer</span><span class="p">(</span><span class="n">objects</span><span class="o">=</span><span class="p">(</span><span class="n">allele</span><span class="p">,)))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_file_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">InputSource</span><span class="p">,</span> <span class="n">TranscriptSource</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Build the input and transcript sources the options name, once per run.</span>
+
+<span class="sd">        The same builders the run path uses, so a variant explained here is read, named and</span>
+<span class="sd">        resolved exactly as a run would read, name and resolve it.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple[InputSource, TranscriptSource]: The input source and transcript source.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the transcript files are ambiguous or absent, or no input file was given.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span>
+
+        <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">source</span>
+        <span class="n">synonyms</span> <span class="o">=</span> <span class="n">build_chromosome_synonyms</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">fasta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># A run refuses this; explaining is allowed to go on without it, and says what is</span>
+            <span class="c1"># lost. The sequence facts then have no bases and a slice cannot resolve its region's</span>
+            <span class="c1"># length.</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">"no --fasta given: slices cannot resolve a sequence-region length and sequence facts "</span>
+                <span class="s2">"have no bases to read"</span>
+            <span class="p">)</span>
+            <span class="n">sequence_source</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sequence_source</span> <span class="o">=</span> <span class="n">build_sequence_source</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sources</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">build_input_source</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">sequence_source</span><span class="o">=</span><span class="n">sequence_source</span><span class="p">,</span> <span class="n">synonyms</span><span class="o">=</span><span class="n">synonyms</span><span class="p">),</span>
+            <span class="n">build_transcript_source</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">sequence_source</span><span class="o">=</span><span class="n">sequence_source</span><span class="p">,</span> <span class="n">synonyms</span><span class="o">=</span><span class="n">synonyms</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_corpus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Corpus</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the generated corpus the options describe."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_built_corpus</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_built_corpus</span> <span class="o">=</span> <span class="n">build_corpus</span><span class="p">(</span><span class="n">CorpusSpec</span><span class="o">.</span><span class="n">from_options</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">corpus</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_built_corpus</span>
+
+<div class="viewcode-block" id="OverlapSelection.description">
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection.description">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Describe where the overlaps come from, for an error or a log line."""</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">source</span>
+        <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">input_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_corpus</span><span class="p">()</span><span class="o">.</span><span class="n">description</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">gff</span> <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">gff</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">source</span><span class="o">.</span><span class="n">gtf</span>
+        <span class="n">feature_name</span> <span class="o">=</span> <span class="s2">"no transcripts"</span> <span class="k">if</span> <span class="n">features</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Path</span><span class="p">(</span><span class="n">features</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">source</span><span class="o">.</span><span class="n">distance</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">input_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> against </span><span class="si">{</span><span class="n">feature_name</span><span class="si">}</span><span class="s2"> (distance </span><span class="si">{</span><span class="n">distance</span><span class="si">}</span><span class="s2">)"</span></div>
+
+
+<div class="viewcode-block" id="OverlapSelection.listing">
+<a class="viewcode-back" href="../../../../auto/reference/api/ensembl.vep.explain.html#ensembl.vep.explain.selection.OverlapSelection.listing">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">listing</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return every selectable overlap, one per line, as index, name and feature."""</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">overlap</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_overlaps</span><span class="p">()):</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="n">index</span><span class="si">:</span><span class="s2">&gt;5</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">&lt;42</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">overlap</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">stable_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

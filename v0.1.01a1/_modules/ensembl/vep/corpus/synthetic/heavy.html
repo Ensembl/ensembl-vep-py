@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ensembl.vep.corpus.synthetic.heavy &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../../../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ensembl/vep/corpus/synthetic/heavy';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.01a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../../../../../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../../../../../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 18, 2026"/>
+  
+    
+    <script src="../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    <script src="../../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../../../../../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.corpus.synthetic.heavy</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ensembl.vep.corpus.synthetic.heavy</h1><div class="highlight"><pre>
+<span></span><span class="c1"># See the NOTICE file distributed with this work for additional information</span>
+<span class="c1"># regarding copyright ownership.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1"># http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="sd">"""Build the dense heavy-locus synthetic corpus."""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">CoordSystemLevel</span><span class="p">,</span> <span class="n">Strand</span><span class="p">,</span> <span class="n">invalidate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.corpus.overlap</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_transcript_overlaps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.corpus.registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_corpus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.corpus.spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">CorpusSpec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.corpus.synthetic.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">SyntheticCorpus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.corpus.synthetic.components.sequence</span><span class="w"> </span><span class="kn">import</span> <span class="n">fill_locus_sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.corpus.synthetic.components.transcript</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">build_cds_genomic_bounds</span><span class="p">,</span>
+    <span class="n">build_transcript</span><span class="p">,</span>
+    <span class="n">patch_terminal_codons</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.corpus.synthetic.components.variation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_deletion</span><span class="p">,</span>
+    <span class="n">_insertion</span><span class="p">,</span>
+    <span class="n">_snv</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.genic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Gene</span><span class="p">,</span> <span class="n">Transcript</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.sequence</span><span class="w"> </span><span class="kn">import</span> <span class="n">CoordSystem</span><span class="p">,</span> <span class="n">Slice</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.variation</span><span class="w"> </span><span class="kn">import</span> <span class="n">VariationAllele</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"build_genome"</span><span class="p">,</span>
+    <span class="s2">"build_transcripts"</span><span class="p">,</span>
+    <span class="s2">"build_variation_alleles"</span><span class="p">,</span>
+    <span class="s2">"heavy_corpus"</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># --------------------------------------------------------------------------</span>
+<span class="c1"># A heavy transcript locus.</span>
+<span class="c1">#</span>
+<span class="c1"># The four transcripts in default corpus are disjoint, which makes them useless for measuring</span>
+<span class="c1"># anything that shares work *between* transcripts. A real dense locus has many transcripts over</span>
+<span class="c1"># one gene sharing most of their internal exons and differing at the edges, so this builds that</span>
+<span class="c1"># shape (2 strands x 18 exon-sharing transcripts per strand):</span>
+<span class="c1">#</span>
+<span class="c1"># * three alternative first exons (alternative TSS), of different lengths, so transcripts enter</span>
+<span class="c1">#   the shared exons in different reading frames;</span>
+<span class="c1"># * five constitutive internal exons present in every transcript;</span>
+<span class="c1"># * one cassette exon of 61bp -- deliberately not a multiple of three -- so including it shifts</span>
+<span class="c1">#   the frame of everything downstream of it;</span>
+<span class="c1"># * three alternative last exons.</span>
+<span class="c1">#</span>
+<span class="c1"># 3 x 2 x 3 = 18 transcripts per locus, one locus per strand. This is the only corpus that</span>
+<span class="c1"># exercises multi-variant-per-transcript zone reuse (the zone map cache, caches/zone_map.py)</span>
+<span class="c1"># and, in a later phase, cross-transcript codon sharing.</span>
+<span class="c1"># --------------------------------------------------------------------------</span>
+
+<span class="n">_CHROMOSOME_NAME</span> <span class="o">=</span> <span class="s2">"chrHeavyLocus"</span>
+<span class="n">_CHROMOSOME_LENGTH</span> <span class="o">=</span> <span class="mi">130000</span>
+
+<span class="n">_FIRST_EXONS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1200</span><span class="p">),</span> <span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">2200</span><span class="p">))</span>
+<span class="n">_CONSTITUTIVE_EXONS_UPSTREAM_OF_CASSETTE</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="mi">3150</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">4000</span><span class="p">,</span> <span class="mi">4120</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">_CASSETTE_EXON</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4500</span><span class="p">,</span> <span class="mi">4560</span><span class="p">)</span>
+<span class="n">_CONSTITUTIVE_EXONS_DOWNSTREAM_OF_CASSETTE</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="mi">5180</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">6000</span><span class="p">,</span> <span class="mi">6090</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">7000</span><span class="p">,</span> <span class="mi">7210</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">_LAST_EXONS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="mi">8000</span><span class="p">,</span> <span class="mi">8300</span><span class="p">),</span> <span class="p">(</span><span class="mi">9000</span><span class="p">,</span> <span class="mi">9400</span><span class="p">),</span> <span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">10300</span><span class="p">))</span>
+
+<span class="n">_LOCUS_SPAN</span> <span class="o">=</span> <span class="mi">10300</span>
+<span class="n">_FORWARD_ORIGIN</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">_REVERSE_ORIGIN</span> <span class="o">=</span> <span class="mi">70000</span>
+<span class="n">_CDS_START_OFFSET</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">_CDS_STOP_OFFSET</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">_CDS_STOP_SPACING</span> <span class="o">=</span> <span class="mi">6</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_biotype</span><span class="p">(</span><span class="n">transcript_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Return ``(biotype, is_coding)`` for a heavy-locus transcript, by its index in the locus.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        transcript_index (int): The transcript's 0-based index within its 18-transcript locus.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple[str, bool]: The transcript's biotype and whether it is coding.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">transcript_index</span> <span class="o">%</span> <span class="mi">11</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">"lincRNA"</span><span class="p">,</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">transcript_index</span> <span class="o">%</span> <span class="mi">7</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">"nonsense_mediated_decay"</span><span class="p">,</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="s2">"protein_coding"</span><span class="p">,</span> <span class="kc">True</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_transcript</span><span class="p">(</span>
+    <span class="n">synthetic_slice</span><span class="p">:</span> <span class="n">Slice</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">strand</span><span class="p">:</span> <span class="n">Strand</span><span class="p">,</span>
+    <span class="n">stable_id_tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">transcript_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">first_exon_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">last_exon_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">exons_genomic_ascending</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Transcript</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Build a single heavy-locus transcript over a fixed exon layout.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        synthetic_slice (Slice): The shared synthetic-chromosome slice.</span>
+<span class="sd">        strand (Strand): The transcript's strand.</span>
+<span class="sd">        stable_id_tag (str): Prefix for the transcript's stable_id.</span>
+<span class="sd">        transcript_index (int): The transcript's 0-based index within its locus.</span>
+<span class="sd">        first_exon_index (int): Index of the alternative first exon this transcript uses.</span>
+<span class="sd">        last_exon_index (int): Index of the alternative last exon this transcript uses.</span>
+<span class="sd">        exons_genomic_ascending (Sequence[tuple[int, int]]): This transcript's exon blocks,</span>
+<span class="sd">            ascending</span>
+<span class="sd">            genomic order.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Transcript: The constructed transcript, not yet carrying real start/stop codon sequence.</span>
+<span class="sd">    """</span>
+    <span class="n">biotype</span><span class="p">,</span> <span class="n">is_coding</span> <span class="o">=</span> <span class="n">_biotype</span><span class="p">(</span><span class="n">transcript_index</span><span class="p">)</span>
+
+    <span class="n">translation_bounds</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">is_coding</span><span class="p">:</span>
+        <span class="n">frame_index</span> <span class="o">=</span> <span class="n">first_exon_index</span> <span class="k">if</span> <span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span> <span class="k">else</span> <span class="n">last_exon_index</span>
+        <span class="n">translation_bounds</span> <span class="o">=</span> <span class="n">build_cds_genomic_bounds</span><span class="p">(</span>
+            <span class="n">exons_genomic_ascending</span><span class="p">,</span>
+            <span class="n">strand</span><span class="o">=</span><span class="n">strand</span><span class="p">,</span>
+            <span class="n">frame_index</span><span class="o">=</span><span class="n">frame_index</span><span class="p">,</span>
+            <span class="n">start_offset</span><span class="o">=</span><span class="n">_CDS_START_OFFSET</span><span class="p">,</span>
+            <span class="n">stop_offset</span><span class="o">=</span><span class="n">_CDS_STOP_OFFSET</span> <span class="o">+</span> <span class="n">_CDS_STOP_SPACING</span> <span class="o">*</span> <span class="n">transcript_index</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">stable_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">stable_id_tag</span><span class="si">}{</span><span class="n">transcript_index</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">gene</span><span class="p">:</span> <span class="n">Gene</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">biotype</span> <span class="o">==</span> <span class="s2">"nonsense_mediated_decay"</span><span class="p">:</span>
+        <span class="n">gene</span> <span class="o">=</span> <span class="n">Gene</span><span class="p">(</span>
+            <span class="n">start</span><span class="o">=</span><span class="n">exons_genomic_ascending</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">end</span><span class="o">=</span><span class="n">exons_genomic_ascending</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">strand</span><span class="o">=</span><span class="n">strand</span><span class="p">,</span>
+            <span class="n">stable_id</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">stable_id</span><span class="si">}</span><span class="s2">_gene"</span><span class="p">,</span>
+            <span class="nb">slice</span><span class="o">=</span><span class="n">synthetic_slice</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">gene</span><span class="o">.</span><span class="n">biotype</span> <span class="o">=</span> <span class="n">biotype</span>
+
+    <span class="k">return</span> <span class="n">build_transcript</span><span class="p">(</span>
+        <span class="n">stable_id</span><span class="o">=</span><span class="n">stable_id</span><span class="p">,</span>
+        <span class="n">synthetic_slice</span><span class="o">=</span><span class="n">synthetic_slice</span><span class="p">,</span>
+        <span class="n">strand</span><span class="o">=</span><span class="n">strand</span><span class="p">,</span>
+        <span class="n">exons_genomic_ascending</span><span class="o">=</span><span class="n">exons_genomic_ascending</span><span class="p">,</span>
+        <span class="n">cds_genomic_bounds</span><span class="o">=</span><span class="n">translation_bounds</span><span class="p">,</span>
+        <span class="n">gene</span><span class="o">=</span><span class="n">gene</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="build_transcripts">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.synthetic.html#ensembl.vep.corpus.synthetic.heavy.build_transcripts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_transcripts</span><span class="p">(</span>
+    <span class="n">synthetic_slice</span><span class="p">:</span> <span class="n">Slice</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">origin</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">strand</span><span class="p">:</span> <span class="n">Strand</span><span class="p">,</span> <span class="n">stable_id_tag</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Build 18 transcripts sharing constitutive exons over a single locus.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        synthetic_slice (Slice): The shared synthetic-chromosome slice.</span>
+<span class="sd">        origin (int): Genomic (slice-relative) offset the locus's exon coordinates are relative</span>
+<span class="sd">            to.</span>
+<span class="sd">        strand (Strand): The strand every transcript in this locus is built on.</span>
+<span class="sd">        stable_id_tag (str): Prefix for each transcript's stable_id (e.g. "FWD", "REV").</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list[Transcript]: The 18 transcripts, not yet carrying real start/stop codon sequence</span>
+<span class="sd">            (see build_genome, which patches that in afterwards).</span>
+<span class="sd">    """</span>
+    <span class="n">transcripts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Transcript</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">transcript_index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">first_exon_index</span><span class="p">,</span> <span class="n">first_exon</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_FIRST_EXONS</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">include_cassette_exon</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">last_exon_index</span><span class="p">,</span> <span class="n">last_exon</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_LAST_EXONS</span><span class="p">):</span>
+                <span class="n">exon_blocks</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="p">[</span><span class="n">first_exon</span><span class="p">]</span>
+                    <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">_CONSTITUTIVE_EXONS_UPSTREAM_OF_CASSETTE</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="p">([</span><span class="n">_CASSETTE_EXON</span><span class="p">]</span> <span class="k">if</span> <span class="n">include_cassette_exon</span> <span class="k">else</span> <span class="p">[])</span>
+                    <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">_CONSTITUTIVE_EXONS_DOWNSTREAM_OF_CASSETTE</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="p">[</span><span class="n">last_exon</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">exons_genomic_ascending</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+                    <span class="p">(</span><span class="n">origin</span> <span class="o">+</span> <span class="n">block_start</span><span class="p">,</span> <span class="n">origin</span> <span class="o">+</span> <span class="n">block_end</span><span class="p">)</span> <span class="k">for</span> <span class="n">block_start</span><span class="p">,</span> <span class="n">block_end</span> <span class="ow">in</span> <span class="n">exon_blocks</span>
+                <span class="p">)</span>
+                <span class="n">transcripts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">_build_transcript</span><span class="p">(</span>
+                        <span class="n">synthetic_slice</span><span class="p">,</span>
+                        <span class="n">strand</span><span class="o">=</span><span class="n">strand</span><span class="p">,</span>
+                        <span class="n">stable_id_tag</span><span class="o">=</span><span class="n">stable_id_tag</span><span class="p">,</span>
+                        <span class="n">transcript_index</span><span class="o">=</span><span class="n">transcript_index</span><span class="p">,</span>
+                        <span class="n">first_exon_index</span><span class="o">=</span><span class="n">first_exon_index</span><span class="p">,</span>
+                        <span class="n">last_exon_index</span><span class="o">=</span><span class="n">last_exon_index</span><span class="p">,</span>
+                        <span class="n">exons_genomic_ascending</span><span class="o">=</span><span class="n">exons_genomic_ascending</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">transcript_index</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">transcripts</span></div>
+
+
+
+<div class="viewcode-block" id="build_genome">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.synthetic.html#ensembl.vep.corpus.synthetic.heavy.build_genome">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_genome</span><span class="p">(</span><span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">31</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Slice</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Transcript</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Build the two-locus (one per strand), 36-transcript heavy-locus synthetic chromosome.</span>
+
+<span class="sd">    Mirrors ``socore.data.build_locus_genome``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        seed (int): Random seed, for reproducibility.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple[Slice, tuple[Transcript, ...]]: The shared chromosome slice (with real, codon-patched</span>
+<span class="sd">            sequence) and all 36 transcripts (18 forward-strand, 18 reverse-strand).</span>
+<span class="sd">    """</span>
+    <span class="n">random_generator</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">Random</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">chromosome_chars</span> <span class="o">=</span> <span class="p">[</span><span class="s2">""</span><span class="p">]</span> <span class="o">*</span> <span class="n">_CHROMOSOME_LENGTH</span>
+    <span class="n">fill_locus_sequence</span><span class="p">(</span>
+        <span class="n">chromosome_chars</span><span class="p">,</span>
+        <span class="mi">1</span><span class="p">,</span>
+        <span class="n">_CHROMOSOME_LENGTH</span><span class="p">,</span>
+        <span class="n">random_generator</span><span class="p">,</span>
+        <span class="n">bases</span><span class="o">=</span><span class="s2">"ACGT"</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">synthetic_slice</span> <span class="o">=</span> <span class="n">Slice</span><span class="p">(</span>
+        <span class="n">coord_system</span><span class="o">=</span><span class="n">CoordSystem</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"chromosome"</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">CoordSystemLevel</span><span class="o">.</span><span class="n">CHROMOSOME</span><span class="p">),</span>
+        <span class="n">seq_region_name</span><span class="o">=</span><span class="n">_CHROMOSOME_NAME</span><span class="p">,</span>
+        <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">end</span><span class="o">=</span><span class="n">_CHROMOSOME_LENGTH</span><span class="p">,</span>
+        <span class="n">strand</span><span class="o">=</span><span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">with</span> <span class="n">synthetic_slice</span><span class="o">.</span><span class="n">unsafe</span><span class="p">()</span> <span class="k">as</span> <span class="n">unsafe_slice</span><span class="p">:</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">unsafe_slice</span><span class="p">,</span> <span class="s2">"_seq"</span><span class="p">,</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chromosome_chars</span><span class="p">))</span>
+
+    <span class="n">forward_transcripts</span> <span class="o">=</span> <span class="n">build_transcripts</span><span class="p">(</span>
+        <span class="n">synthetic_slice</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="n">_FORWARD_ORIGIN</span><span class="p">,</span> <span class="n">strand</span><span class="o">=</span><span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">,</span> <span class="n">stable_id_tag</span><span class="o">=</span><span class="s2">"FWD"</span>
+    <span class="p">)</span>
+    <span class="n">reverse_transcripts</span> <span class="o">=</span> <span class="n">build_transcripts</span><span class="p">(</span>
+        <span class="n">synthetic_slice</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="n">_REVERSE_ORIGIN</span><span class="p">,</span> <span class="n">strand</span><span class="o">=</span><span class="n">Strand</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">,</span> <span class="n">stable_id_tag</span><span class="o">=</span><span class="s2">"REV"</span>
+    <span class="p">)</span>
+    <span class="n">transcripts</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">forward_transcripts</span> <span class="o">+</span> <span class="n">reverse_transcripts</span><span class="p">)</span>
+
+    <span class="n">fill_locus_sequence</span><span class="p">(</span>
+        <span class="n">chromosome_chars</span><span class="p">,</span>
+        <span class="n">_FORWARD_ORIGIN</span><span class="p">,</span>
+        <span class="n">_FORWARD_ORIGIN</span> <span class="o">+</span> <span class="n">_LOCUS_SPAN</span><span class="p">,</span>
+        <span class="n">random_generator</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">fill_locus_sequence</span><span class="p">(</span>
+        <span class="n">chromosome_chars</span><span class="p">,</span>
+        <span class="n">_REVERSE_ORIGIN</span><span class="p">,</span>
+        <span class="n">_REVERSE_ORIGIN</span> <span class="o">+</span> <span class="n">_LOCUS_SPAN</span><span class="p">,</span>
+        <span class="n">random_generator</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">patch_terminal_codons</span><span class="p">(</span><span class="n">chromosome_chars</span><span class="p">,</span> <span class="n">transcripts</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">synthetic_slice</span><span class="o">.</span><span class="n">unsafe</span><span class="p">()</span> <span class="k">as</span> <span class="n">unsafe_slice</span><span class="p">:</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">unsafe_slice</span><span class="p">,</span> <span class="s2">"_seq"</span><span class="p">,</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chromosome_chars</span><span class="p">))</span>
+
+    <span class="c1"># Unlike the default corpus's four disjoint transcripts, transcripts here legitimately</span>
+    <span class="c1"># share exons in different reading frames, so one transcript's real start/stop codon</span>
+    <span class="c1"># can land as a premature or missing stop in a sibling's frame. That is expected, not a data</span>
+    <span class="c1"># bug. Only the coding-sequence cache needs invalidating here.</span>
+    <span class="k">for</span> <span class="n">transcript</span> <span class="ow">in</span> <span class="n">transcripts</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">transcript</span><span class="o">.</span><span class="n">translation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">invalidate</span><span class="p">(</span><span class="n">transcript</span><span class="p">,</span> <span class="s2">"_coding_sequence"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">synthetic_slice</span><span class="p">,</span> <span class="n">transcripts</span></div>
+
+
+
+<div class="viewcode-block" id="build_variation_alleles">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.synthetic.html#ensembl.vep.corpus.synthetic.heavy.build_variation_alleles">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_variation_alleles</span><span class="p">(</span>
+    <span class="n">synthetic_slice</span><span class="p">:</span> <span class="n">Slice</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">13</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">41</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VariationAllele</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Build a dense sweep of variants across each locus, so shared exons are hit repeatedly.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        synthetic_slice (Slice): The chromosome slice built by build_genome.</span>
+<span class="sd">        step (int): Genomic spacing between consecutive sweep positions.</span>
+<span class="sd">        seed (int): Random seed, for reproducibility.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple[tuple[str, VariationAllele], ...]: Named heavy-locus sweep variants.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If ``step`` is not positive.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">step</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"step must be positive, got </span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">random_generator</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">Random</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">named_variants</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VariationAllele</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">origin</span><span class="p">,</span> <span class="n">tag</span> <span class="ow">in</span> <span class="p">((</span><span class="n">_FORWARD_ORIGIN</span><span class="p">,</span> <span class="s2">"FWD"</span><span class="p">),</span> <span class="p">(</span><span class="n">_REVERSE_ORIGIN</span><span class="p">,</span> <span class="s2">"REV"</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">sweep_index</span><span class="p">,</span> <span class="n">position</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">origin</span> <span class="o">+</span> <span class="n">_LOCUS_SPAN</span><span class="p">,</span> <span class="n">step</span><span class="p">)):</span>
+            <span class="n">named_variants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">_snv</span><span class="p">(</span><span class="n">synthetic_slice</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">_snv</span><span class="si">{</span><span class="n">sweep_index</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">random_generator</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">sweep_index</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">named_variants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_deletion</span><span class="p">(</span><span class="n">synthetic_slice</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">_del1_</span><span class="si">{</span><span class="n">sweep_index</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">sweep_index</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">named_variants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_deletion</span><span class="p">(</span><span class="n">synthetic_slice</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">_del3_</span><span class="si">{</span><span class="n">sweep_index</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">sweep_index</span> <span class="o">%</span> <span class="mi">7</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">named_variants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">_insertion</span><span class="p">(</span><span class="n">synthetic_slice</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="s2">"ACG"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">_ins3_</span><span class="si">{</span><span class="n">sweep_index</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">sweep_index</span> <span class="o">%</span> <span class="mi">11</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">named_variants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_insertion</span><span class="p">(</span><span class="n">synthetic_slice</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="s2">"A"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">_ins1_</span><span class="si">{</span><span class="n">sweep_index</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">named_variants</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="heavy_corpus">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.corpus.synthetic.html#ensembl.vep.corpus.synthetic.heavy.heavy_corpus">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">heavy_corpus</span><span class="p">(</span>
+    <span class="n">step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">13</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">31</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">sweep_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">41</span><span class="p">,</span>
+    <span class="n">spec</span><span class="p">:</span> <span class="n">CorpusSpec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SyntheticCorpus</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Build the heavy-locus corpus: 2 strands x 18 exon-sharing transcripts, a dense variant sweep.</span>
+
+<span class="sd">    Mirrors ``socore.data.heavy_locus_dataset``. Unlike default_corpus's four disjoint</span>
+<span class="sd">    transcripts, this is the only corpus that exercises multi-variant-per-transcript zone reuse</span>
+<span class="sd">    (the zone map cache, caches/zone_map.py) and, in a later phase, cross-transcript codon</span>
+<span class="sd">    sharing -- many transcripts here share the same genomic exon footprint, so a transcript's</span>
+<span class="sd">    zone map (or codon cache entry) built for one variant is reused by every other variant that</span>
+<span class="sd">    lands in the same shared exon, across every transcript sharing it.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        step (int): Genomic spacing between consecutive sweep positions.</span>
+<span class="sd">        seed (int): Random seed for the underlying chromosome, for reproducibility.</span>
+<span class="sd">        sweep_seed (int): Random seed for the variant sweep's alternate bases.</span>
+<span class="sd">        spec (CorpusSpec | None): Construction specification retained by the corpus.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        SyntheticCorpus: The synthetic slice, its 36 transcripts, variants, and overlaps.</span>
+<span class="sd">    """</span>
+    <span class="n">synthetic_slice</span><span class="p">,</span> <span class="n">transcripts</span> <span class="o">=</span> <span class="n">build_genome</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">named_variants</span> <span class="o">=</span> <span class="n">build_variation_alleles</span><span class="p">(</span><span class="n">synthetic_slice</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">sweep_seed</span><span class="p">)</span>
+    <span class="n">named_overlaps</span> <span class="o">=</span> <span class="n">build_transcript_overlaps</span><span class="p">(</span><span class="n">named_variants</span><span class="p">,</span> <span class="n">transcripts</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">SyntheticCorpus</span><span class="p">(</span>
+        <span class="n">synthetic_slice</span><span class="o">=</span><span class="n">synthetic_slice</span><span class="p">,</span>
+        <span class="n">transcripts</span><span class="o">=</span><span class="n">transcripts</span><span class="p">,</span>
+        <span class="n">named_variants</span><span class="o">=</span><span class="n">named_variants</span><span class="p">,</span>
+        <span class="n">named_overlaps</span><span class="o">=</span><span class="n">named_overlaps</span><span class="p">,</span>
+        <span class="n">spec</span><span class="o">=</span><span class="n">spec</span> <span class="ow">or</span> <span class="n">CorpusSpec</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">"synthetic.heavy"</span><span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="nd">@register_corpus</span><span class="p">(</span><span class="s2">"synthetic.heavy"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_registered_heavy_corpus</span><span class="p">(</span><span class="n">specification</span><span class="p">:</span> <span class="n">CorpusSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SyntheticCorpus</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Build the registered heavy-locus synthetic corpus."""</span>
+    <span class="k">return</span> <span class="n">heavy_corpus</span><span class="p">(</span>
+        <span class="n">step</span><span class="o">=</span><span class="n">specification</span><span class="o">.</span><span class="n">step</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="n">specification</span><span class="o">.</span><span class="n">heavy_genome_seed</span><span class="p">,</span>
+        <span class="n">sweep_seed</span><span class="o">=</span><span class="n">specification</span><span class="o">.</span><span class="n">sweep_seed</span><span class="p">,</span>
+        <span class="n">spec</span><span class="o">=</span><span class="n">specification</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

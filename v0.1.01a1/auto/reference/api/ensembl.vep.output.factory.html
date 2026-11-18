@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ensembl.vep.output.factory package &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto/reference/api/ensembl.vep.output.factory';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.01a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../../../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../../../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="ensembl.vep.output.factory.stream package" href="ensembl.vep.output.factory.stream.html" />
+    <link rel="prev" title="ensembl.vep.output package" href="ensembl.vep.output.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 18, 2026"/>
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../../../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page" aria-expanded="false" aria-controls="pst-secondary-sidebar-modal">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../cli/index.html">CLI reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../cli/run.html">vep run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/explain.html">vep explain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/stats.html">vep stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/corpus.html">vep corpus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/bench.html">vep bench</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/catalogue.html">vep catalogue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/common.html">Common options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/data_formats.html">Data formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../consequence_terms.html">Consequence terms</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="ensembl.vep.html">API reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.annotators.html">ensembl.vep.annotators package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.annotators.consequence.html">ensembl.vep.annotators.consequence package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html">ensembl.vep.annotators.consequence.context package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html">ensembl.vep.annotators.consequence.facts package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html">ensembl.vep.annotators.consequence.rules package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html">ensembl.vep.annotators.consequence.strategies package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.haplo.html">ensembl.vep.annotators.haplo package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.bench.html">ensembl.vep.bench package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.buffer.html">ensembl.vep.buffer package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.buffer.input_buffer.html">ensembl.vep.buffer.input_buffer package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.caches.html">ensembl.vep.caches package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.common.html">ensembl.vep.common package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.config.html">ensembl.vep.config package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.parser.html">ensembl.vep.config.parser package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.config.sections.html">ensembl.vep.config.sections package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html">ensembl.vep.config.sections.bench package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html">ensembl.vep.config.sections.catalogue package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html">ensembl.vep.config.sections.common package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html">ensembl.vep.config.sections.corpus package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.explain.html">ensembl.vep.config.sections.explain package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.run.html">ensembl.vep.config.sections.run package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.stats.html">ensembl.vep.config.sections.stats package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.corpus.html">ensembl.vep.corpus package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.corpus.exporter.html">ensembl.vep.corpus.exporter package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.corpus.exporter.formats.html">ensembl.vep.corpus.exporter.formats package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.corpus.golden.html">ensembl.vep.corpus.golden package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.corpus.loaded.html">ensembl.vep.corpus.loaded package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.corpus.synthetic.html">ensembl.vep.corpus.synthetic package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.corpus.synthetic.components.html">ensembl.vep.corpus.synthetic.components package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.explain.html">ensembl.vep.explain package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.matcher.html">ensembl.vep.matcher package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.models.html">ensembl.vep.models package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.genic.html">ensembl.vep.models.genic package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.haplotype.html">ensembl.vep.models.haplotype package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.overlap.html">ensembl.vep.models.overlap package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.regulatory.html">ensembl.vep.models.regulatory package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.sequence.html">ensembl.vep.models.sequence package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.variation.html">ensembl.vep.models.variation package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="ensembl.vep.output.html">ensembl.vep.output package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active has-children"><a aria-current="page" class="current reference internal" href="#">ensembl.vep.output.factory package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.stream.html">ensembl.vep.output.factory.stream package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html">ensembl.vep.output.factory.write package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.output.parser.html">ensembl.vep.output.parser package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.overlaps.html">ensembl.vep.overlaps package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.parsers.html">ensembl.vep.parsers package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.render.html">ensembl.vep.render package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.render.graph.html">ensembl.vep.render.graph package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.runner.html">ensembl.vep.runner package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.bench.html">ensembl.vep.runner.bench package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.catalogue.html">ensembl.vep.runner.catalogue package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.corpus.html">ensembl.vep.runner.corpus package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.run.html">ensembl.vep.runner.run package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.sources.html">ensembl.vep.sources package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.sources.file.html">ensembl.vep.sources.file package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.fasta.html">ensembl.vep.sources.file.fasta package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gff3.html">ensembl.vep.sources.file.gff3 package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gtf.html">ensembl.vep.sources.file.gtf package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html">ensembl.vep.sources.file.gxf package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html">ensembl.vep.sources.file.vcf namespace</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.stats.html">ensembl.vep.stats package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.trace.html">ensembl.vep.trace package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.workflow.html">ensembl.vep.workflow package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.workflow.build.html">ensembl.vep.workflow.build package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.workflow.tracks.html">ensembl.vep.workflow.tracks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.workflow.tracks.consequence.html">ensembl.vep.workflow.tracks.consequence package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.workflow.worker.html">ensembl.vep.workflow.worker package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../reference/index.html" class="nav-link">Reference</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ensembl.vep.html" class="nav-link">ensembl.vep package</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ensembl.vep.output.html" class="nav-link">ensembl.vep.output package</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.output.factory package</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-ensembl.vep.output.factory">
+<span id="ensembl-vep-output-factory-package"></span><h1>ensembl.vep.output.factory package<a class="headerlink" href="#module-ensembl.vep.output.factory" title="Link to this heading">#</a></h1>
+<p>Factories for annotated output.</p>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.output.factory.stream.html">ensembl.vep.output.factory.stream package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.output.factory.stream.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.output.factory.stream.html#module-ensembl.vep.output.factory.stream.base">ensembl.vep.output.factory.stream.base module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.output.factory.stream.html#ensembl.vep.output.factory.stream.base.AnnotationStreamFactory"><code class="docutils literal notranslate"><span class="pre">AnnotationStreamFactory</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.stream.html#ensembl.vep.output.factory.stream.base.AnnotationStreamFactory.records"><code class="docutils literal notranslate"><span class="pre">AnnotationStreamFactory.records()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.output.factory.stream.html#module-ensembl.vep.output.factory.stream.json">ensembl.vep.output.factory.stream.json module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.output.factory.stream.html#ensembl.vep.output.factory.stream.json.JSONStreamFactory"><code class="docutils literal notranslate"><span class="pre">JSONStreamFactory</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.stream.html#ensembl.vep.output.factory.stream.json.JSONStreamFactory.record"><code class="docutils literal notranslate"><span class="pre">JSONStreamFactory.record()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.stream.html#ensembl.vep.output.factory.stream.json.JSONStreamFactory.records"><code class="docutils literal notranslate"><span class="pre">JSONStreamFactory.records()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.output.factory.write.html">ensembl.vep.output.factory.write package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.output.factory.write.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.output.factory.write.html#module-ensembl.vep.output.factory.write.base">ensembl.vep.output.factory.write.base module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.base.OutputWriter"><code class="docutils literal notranslate"><span class="pre">OutputWriter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.base.OutputWriter.headers"><code class="docutils literal notranslate"><span class="pre">OutputWriter.headers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.base.OutputWriter.line"><code class="docutils literal notranslate"><span class="pre">OutputWriter.line()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.output.factory.write.html#module-ensembl.vep.output.factory.write.json">ensembl.vep.output.factory.write.json module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.json.JSONOutputWriter"><code class="docutils literal notranslate"><span class="pre">JSONOutputWriter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.json.JSONOutputWriter.headers"><code class="docutils literal notranslate"><span class="pre">JSONOutputWriter.headers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.json.JSONOutputWriter.line"><code class="docutils literal notranslate"><span class="pre">JSONOutputWriter.line()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.output.factory.write.html#module-ensembl.vep.output.factory.write.registry">ensembl.vep.output.factory.write.registry module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.registry.available_output_writers"><code class="docutils literal notranslate"><span class="pre">available_output_writers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.registry.get_output_writer"><code class="docutils literal notranslate"><span class="pre">get_output_writer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.registry.register_output_writer"><code class="docutils literal notranslate"><span class="pre">register_output_writer()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.output.factory.write.html#module-ensembl.vep.output.factory.write.vcf">ensembl.vep.output.factory.write.vcf module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.vcf.VCFOutputWriter"><code class="docutils literal notranslate"><span class="pre">VCFOutputWriter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.vcf.VCFOutputWriter.command_line"><code class="docutils literal notranslate"><span class="pre">VCFOutputWriter.command_line</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.vcf.VCFOutputWriter.fields"><code class="docutils literal notranslate"><span class="pre">VCFOutputWriter.fields()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.vcf.VCFOutputWriter.headers"><code class="docutils literal notranslate"><span class="pre">VCFOutputWriter.headers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.vcf.VCFOutputWriter.info_chunk"><code class="docutils literal notranslate"><span class="pre">VCFOutputWriter.info_chunk()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.vcf.VCFOutputWriter.info_field"><code class="docutils literal notranslate"><span class="pre">VCFOutputWriter.info_field</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.vcf.VCFOutputWriter.keep_csq"><code class="docutils literal notranslate"><span class="pre">VCFOutputWriter.keep_csq</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.vcf.VCFOutputWriter.line"><code class="docutils literal notranslate"><span class="pre">VCFOutputWriter.line()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.vcf.VCFOutputWriter.prepare_input_columns"><code class="docutils literal notranslate"><span class="pre">VCFOutputWriter.prepare_input_columns()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.vcf.VCFOutputWriter.records"><code class="docutils literal notranslate"><span class="pre">VCFOutputWriter.records</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.vcf.VCFOutputWriter.time"><code class="docutils literal notranslate"><span class="pre">VCFOutputWriter.time</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.vcf.VCFOutputWriter.timestamp"><code class="docutils literal notranslate"><span class="pre">VCFOutputWriter.timestamp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.vcf.VCFOutputWriter.version"><code class="docutils literal notranslate"><span class="pre">VCFOutputWriter.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.output.factory.write.html#ensembl.vep.output.factory.write.vcf.VCF_COLS"><code class="docutils literal notranslate"><span class="pre">VCF_COLS</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
+</section>
+<section id="module-ensembl.vep.output.factory.base">
+<span id="ensembl-vep-output-factory-base-module"></span><h2>ensembl.vep.output.factory.base module<a class="headerlink" href="#module-ensembl.vep.output.factory.base" title="Link to this heading">#</a></h2>
+<p>Format-neutral annotated variants and their factory.</p>
+<p>The factory is a port of the format-independent half of Perl VEP’s <code class="docutils literal notranslate"><span class="pre">OutputFactory.pm</span></code>. A variation
+first becomes a hash of what is known from its position alone (<code class="docutils literal notranslate"><span class="pre">variation_hash</span></code>). That hash is
+copied and extended once per (allele, feature) overlap (<code class="docutils literal notranslate"><span class="pre">allele_hash</span></code>). The copies are then
+filtered, picked or squashed as the options ask (<code class="docutils literal notranslate"><span class="pre">output_hashes</span></code>), and <code class="docutils literal notranslate"><span class="pre">build_annotated_variant</span></code>
+hands them to <code class="docutils literal notranslate"><span class="pre">AnnotatedVariant.build</span></code>, which detaches the variant’s own fields. The snapshot is
+the only thing that crosses a worker boundary and the only thing an output format sees.</p>
+<p>Only fields this model can actually supply are ever populated. A column VEP fills from data not
+carried here yet – HGVS, SIFT, frequencies, co-located variants – stays empty rather than being
+approximated, which is VEP’s own convention for “not available”. The <em>column layout</em> for a given
+set of flags is VEP’s, so a downstream tool reading the <code class="docutils literal notranslate"><span class="pre">Format</span></code> declaration finds what it
+expects.</p>
+<p>Consequences reach an allele through <code class="docutils literal notranslate"><span class="pre">VariationAllele.transcript_variation_alleles</span></code>. Assigning
+that list invalidates the allele’s aggregate, so assign each overlap’s consequences first and
+attach the overlaps afterwards.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AlleleOverlap">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ensembl.vep.output.factory.base.</span></span><span class="sig-name descname"><span class="pre">AlleleOverlap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">allele_number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allele</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consequences</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/output/factory/base.html#AlleleOverlap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.output.factory.base.AlleleOverlap" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>One allele of a variation against one feature, with the consequences it was assigned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>allele_number</strong> (<em>int</em>) – The allele’s 1-based position among the variation’s alternates.</p></li>
+<li><p><strong>allele</strong> (<a class="reference internal" href="ensembl.vep.models.variation.html#ensembl.vep.models.variation.variation_allele.VariationAllele" title="ensembl.vep.models.variation.variation_allele.VariationAllele"><em>VariationAllele</em></a>) – The allele.</p></li>
+<li><p><strong>overlap</strong> (<a class="reference internal" href="ensembl.vep.models.overlap.html#ensembl.vep.models.overlap.transcript_variation_allele.TranscriptVariationAllele" title="ensembl.vep.models.overlap.transcript_variation_allele.TranscriptVariationAllele"><em>TranscriptVariationAllele</em></a><em> | </em><em>None</em>) – The feature overlap, or None for an allele that
+overlaps nothing – which VEP reports as intergenic.</p></li>
+<li><p><strong>consequences</strong> (<em>tuple</em><em>[</em><a class="reference internal" href="ensembl.vep.models.overlap.html#ensembl.vep.models.overlap.overlap_consequence.OverlapConsequence" title="ensembl.vep.models.overlap.overlap_consequence.OverlapConsequence"><em>OverlapConsequence</em></a><em>, </em><em>...</em><em>]</em>) – The consequences, most severe first.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AlleleOverlap.allele">
+<span class="sig-name descname"><span class="pre">allele</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.models.variation.html#ensembl.vep.models.variation.variation_allele.VariationAllele" title="ensembl.vep.models.variation.variation_allele.VariationAllele"><span class="pre">VariationAllele</span></a></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AlleleOverlap.allele" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AlleleOverlap.allele_number">
+<span class="sig-name descname"><span class="pre">allele_number</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AlleleOverlap.allele_number" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AlleleOverlap.allele_seq">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">allele_seq</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AlleleOverlap.allele_seq" title="Link to this definition">#</a></dt>
+<dd><p>Return the allele as VEP writes it, using <code class="docutils literal notranslate"><span class="pre">-</span></code> when empty.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AlleleOverlap.consequences">
+<span class="sig-name descname"><span class="pre">consequences</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="ensembl.vep.models.overlap.html#ensembl.vep.models.overlap.overlap_consequence.OverlapConsequence" title="ensembl.vep.models.overlap.overlap_consequence.OverlapConsequence"><span class="pre">OverlapConsequence</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AlleleOverlap.consequences" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AlleleOverlap.overlap">
+<span class="sig-name descname"><span class="pre">overlap</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.models.overlap.html#ensembl.vep.models.overlap.transcript_variation_allele.TranscriptVariationAllele" title="ensembl.vep.models.overlap.transcript_variation_allele.TranscriptVariationAllele"><span class="pre">TranscriptVariationAllele</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AlleleOverlap.overlap" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariant">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ensembl.vep.output.factory.base.</span></span><span class="sig-name descname"><span class="pre">AnnotatedVariant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_region_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allele_string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">most_severe_consequence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variant_class</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assembly_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipped</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/output/factory/base.html#AnnotatedVariant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariant" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Format-neutral snapshot of one annotated variant.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>str</em><em> | </em><em>None</em>) – The uploaded or stable variant identifier.</p></li>
+<li><p><strong>seq_region_name</strong> (<em>str</em>) – The sequence-region name, as the input spelled it.</p></li>
+<li><p><strong>start</strong> (<em>int</em>) – The inclusive genomic start.</p></li>
+<li><p><strong>end</strong> (<em>int</em>) – The inclusive genomic end.</p></li>
+<li><p><strong>strand</strong> (<em>int</em>) – The genomic strand.</p></li>
+<li><p><strong>allele_string</strong> (<em>str</em>) – The reference and alternate alleles separated by <code class="docutils literal notranslate"><span class="pre">/</span></code>.</p></li>
+<li><p><strong>input_columns</strong> (<em>tuple</em><em>[</em><em>str</em><em>, </em><em>...</em><em>]</em>) – The original input columns, when present.</p></li>
+<li><p><strong>annotations</strong> (<em>tuple</em><em>[</em><a class="reference internal" href="#ensembl.vep.output.factory.base.AnnotationRecord" title="ensembl.vep.output.factory.base.AnnotationRecord"><em>AnnotationRecord</em></a><em>, </em><em>...</em><em>]</em>) – Selected VEP output hashes.</p></li>
+<li><p><strong>most_severe_consequence</strong> (<em>str</em><em> | </em><em>None</em>) – The most severe emitted consequence term.</p></li>
+<li><p><strong>variant_class</strong> (<em>str</em><em> | </em><em>None</em>) – The Sequence Ontology class term.</p></li>
+<li><p><strong>assembly_name</strong> (<em>str</em><em> | </em><em>None</em>) – The assembly name, when known.</p></li>
+<li><p><strong>skipped</strong> (<em>bool</em>) – Whether annotation was skipped for this input variant.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariant.allele_string">
+<span class="sig-name descname"><span class="pre">allele_string</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariant.allele_string" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariant.annotations">
+<span class="sig-name descname"><span class="pre">annotations</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariant.annotations" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariant.assembly_name">
+<span class="sig-name descname"><span class="pre">assembly_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariant.assembly_name" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariant.build">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assembly_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipped</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/output/factory/base.html#AnnotatedVariant.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariant.build" title="Link to this definition">#</a></dt>
+<dd><p>Return the snapshot of one variation, carrying records chosen elsewhere.</p>
+<p>Which records a run writes is an output-format question, answered by the output factory;
+everything here is the variant’s own.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variation</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="ensembl.vep.models.variation.html#ensembl.vep.models.variation.variation.Variation" title="ensembl.vep.models.variation.variation.Variation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variation</span></code></a></span>) – The variation whose annotation is complete.</p></li>
+<li><p><strong>record_columns</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>] | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – Original input columns, when available.</p></li>
+<li><p><strong>annotations</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]</span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="p"><span class="pre">()</span></span></code></span>) – The selected output hashes.</p></li>
+<li><p><strong>assembly_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – Assembly name to expose in structured output.</p></li>
+<li><p><strong>skipped</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">False</span></span></code></span>) – Whether sources could not annotate this variation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The detached snapshot.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#ensembl.vep.output.factory.base.AnnotatedVariant" title="ensembl.vep.output.factory.base.AnnotatedVariant"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnotatedVariant</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariant.end">
+<span class="sig-name descname"><span class="pre">end</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariant.end" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariant.id">
+<span class="sig-name descname"><span class="pre">id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariant.id" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariant.input_columns">
+<span class="sig-name descname"><span class="pre">input_columns</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariant.input_columns" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariant.most_severe_consequence">
+<span class="sig-name descname"><span class="pre">most_severe_consequence</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariant.most_severe_consequence" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariant.seq_region_name">
+<span class="sig-name descname"><span class="pre">seq_region_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariant.seq_region_name" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariant.skipped">
+<span class="sig-name descname"><span class="pre">skipped</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariant.skipped" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariant.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariant.start" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariant.strand">
+<span class="sig-name descname"><span class="pre">strand</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariant.strand" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariant.variant_class">
+<span class="sig-name descname"><span class="pre">variant_class</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariant.variant_class" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ensembl.vep.output.factory.base.</span></span><span class="sig-name descname"><span class="pre">AnnotatedVariantFactory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">most_severe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">summary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pick</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pick_allele</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag_pick</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag_pick_allele</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pick_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('mane_select',</span> <span class="pre">'mane_plus_clinical',</span> <span class="pre">'canonical',</span> <span class="pre">'appris',</span> <span class="pre">'tsl',</span> <span class="pre">'biotype',</span> <span class="pre">'ccds',</span> <span class="pre">'rank',</span> <span class="pre">'length',</span> <span class="pre">'ensembl',</span> <span class="pre">'refseq')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_intergenic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variant_class</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">biotype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numbers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allele_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_ref_allele</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transcript_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/output/factory/base.html#AnnotatedVariantFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Factory for detached annotated-variant snapshots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>most_severe</strong> (<em>bool</em>) – One record per variation, carrying only its most severe term.</p></li>
+<li><p><strong>summary</strong> (<em>bool</em>) – One record per variation, carrying every distinct term, most severe first.</p></li>
+<li><p><strong>pick</strong> (<em>bool</em>) – Keep only the single best (allele, feature) per variation.</p></li>
+<li><p><strong>pick_allele</strong> (<em>bool</em>) – Keep the best feature per allele.</p></li>
+<li><p><strong>flag_pick</strong> (<em>bool</em>) – Keep everything, and mark the single best with <code class="docutils literal notranslate"><span class="pre">PICK</span></code>.</p></li>
+<li><p><strong>flag_pick_allele</strong> (<em>bool</em>) – Keep everything, and mark the best per allele with <code class="docutils literal notranslate"><span class="pre">PICK</span></code>.</p></li>
+<li><p><strong>pick_order</strong> (<em>tuple</em><em>[</em><em>str</em><em>, </em><em>...</em><em>]</em>) – The criteria the picking flags weigh, in order.</p></li>
+<li><p><strong>no_intergenic</strong> (<em>bool</em>) – Write nothing for an allele that overlaps no feature.</p></li>
+<li><p><strong>variant_class</strong> (<em>bool</em>) – Add <code class="docutils literal notranslate"><span class="pre">VARIANT_CLASS</span></code>.</p></li>
+<li><p><strong>symbol</strong> (<em>bool</em>) – Add the gene symbol.</p></li>
+<li><p><strong>biotype</strong> (<em>bool</em>) – Add the transcript biotype.</p></li>
+<li><p><strong>numbers</strong> (<em>bool</em>) – Add exon and intron numbers.</p></li>
+<li><p><strong>allele_number</strong> (<em>bool</em>) – Add <code class="docutils literal notranslate"><span class="pre">ALLELE_NUM</span></code>.</p></li>
+<li><p><strong>show_ref_allele</strong> (<em>bool</em>) – Add <code class="docutils literal notranslate"><span class="pre">REF_ALLELE</span></code>.</p></li>
+<li><p><strong>transcript_version</strong> (<em>bool</em>) – Append the version to transcript identifiers.</p></li>
+<li><p><strong>gene_version</strong> (<em>bool</em>) – Append the version to gene identifiers.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.allele_hash">
+<span class="sig-name descname"><span class="pre">allele_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_hash</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/output/factory/base.html#AnnotatedVariantFactory.allele_hash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.allele_hash" title="Link to this definition">#</a></dt>
+<dd><p>Extend a copy of the variation’s hash with one (allele, feature)’s fields, in place.</p>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.allele_number">
+<span class="sig-name descname"><span class="pre">allele_number</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.allele_number" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.allele_overlaps">
+<span class="sig-name descname"><span class="pre">allele_overlaps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/output/factory/base.html#AnnotatedVariantFactory.allele_overlaps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.allele_overlaps" title="Link to this definition">#</a></dt>
+<dd><p>Return every (allele, feature) of a variation, grouped by feature.</p>
+<p>Grouped by feature and then in allele order, as VEP groups them. An allele with no overlap
+yields one intergenic entry, unless <code class="docutils literal notranslate"><span class="pre">no_intergenic</span></code> is set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<a class="reference internal" href="#ensembl.vep.output.factory.base.AlleleOverlap" title="ensembl.vep.output.factory.base.AlleleOverlap"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlleleOverlap</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.biotype">
+<span class="sig-name descname"><span class="pre">biotype</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.biotype" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.build_annotated_variant">
+<span class="sig-name descname"><span class="pre">build_annotated_variant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">assembly_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipped</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/output/factory/base.html#AnnotatedVariantFactory.build_annotated_variant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.build_annotated_variant" title="Link to this definition">#</a></dt>
+<dd><p>Detach one annotated variation, carrying the records the flags select.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variation</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="ensembl.vep.models.variation.html#ensembl.vep.models.variation.variation.Variation" title="ensembl.vep.models.variation.variation.Variation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variation</span></code></a></span>) – The variation whose annotations are complete.</p></li>
+<li><p><strong>record_columns</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>] | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – Original input columns, when available.</p></li>
+<li><p><strong>assembly_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – Assembly name to expose in structured output.</p></li>
+<li><p><strong>skipped</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">False</span></span></code></span>) – Whether sources could not annotate this variation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A serialisable snapshot for stream and file factories.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#ensembl.vep.output.factory.base.AnnotatedVariant" title="ensembl.vep.output.factory.base.AnnotatedVariant"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnotatedVariant</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.flag_fields">
+<span class="sig-name descname"><span class="pre">flag_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/output/factory/base.html#AnnotatedVariantFactory.flag_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.flag_fields" title="Link to this definition">#</a></dt>
+<dd><p>Return the output fields the enabled flags add, in order and without repeats.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.flag_pick">
+<span class="sig-name descname"><span class="pre">flag_pick</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.flag_pick" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.flag_pick_allele">
+<span class="sig-name descname"><span class="pre">flag_pick_allele</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.flag_pick_allele" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.gene_version">
+<span class="sig-name descname"><span class="pre">gene_version</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.gene_version" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.most_severe">
+<span class="sig-name descname"><span class="pre">most_severe</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.most_severe" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.no_intergenic">
+<span class="sig-name descname"><span class="pre">no_intergenic</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.no_intergenic" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.numbers">
+<span class="sig-name descname"><span class="pre">numbers</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.numbers" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.output_hashes">
+<span class="sig-name descname"><span class="pre">output_hashes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/output/factory/base.html#AnnotatedVariantFactory.output_hashes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.output_hashes" title="Link to this definition">#</a></dt>
+<dd><p>Return the output records of one variation, filtered and picked as the flags ask.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variation</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="ensembl.vep.models.variation.html#ensembl.vep.models.variation.variation.Variation" title="ensembl.vep.models.variation.variation.Variation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variation</span></code></a></span>) – The variation, its alleles’ overlaps carrying consequences.</p></li>
+<li><p><strong>record_columns</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>] | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – The original VCF columns, if it came from one.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>One hash per written (allele, feature), or a single squashed</dt><dd><p>hash under <code class="docutils literal notranslate"><span class="pre">most_severe</span></code>/<code class="docutils literal notranslate"><span class="pre">summary</span></code>. Empty under <code class="docutils literal notranslate"><span class="pre">no_intergenic</span></code> for a
+variation that overlaps nothing.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code>]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.pick">
+<span class="sig-name descname"><span class="pre">pick</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.pick" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.pick_allele">
+<span class="sig-name descname"><span class="pre">pick_allele</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.pick_allele" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.pick_order">
+<span class="sig-name descname"><span class="pre">pick_order</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.pick_order" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.pick_worst">
+<span class="sig-name descname"><span class="pre">pick_worst</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">overlaps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/output/factory/base.html#AnnotatedVariantFactory.pick_worst"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.pick_worst" title="Link to this definition">#</a></dt>
+<dd><p>Return the single overlap the pick order prefers.</p>
+<p>A port of VEP’s <code class="docutils literal notranslate"><span class="pre">pick_worst_VariationFeatureOverlapAllele</span></code>: narrow the candidates one
+criterion at a time, keeping every candidate tied on it, until one remains; the first of
+any tie that survives every criterion wins.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If there is nothing to pick from.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#ensembl.vep.output.factory.base.AlleleOverlap" title="ensembl.vep.output.factory.base.AlleleOverlap"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlleleOverlap</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.show_ref_allele">
+<span class="sig-name descname"><span class="pre">show_ref_allele</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.show_ref_allele" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.summary" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.symbol">
+<span class="sig-name descname"><span class="pre">symbol</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.symbol" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.transcript_version">
+<span class="sig-name descname"><span class="pre">transcript_version</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.transcript_version" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.variant_class">
+<span class="sig-name descname"><span class="pre">variant_class</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.variant_class" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariantFactory.variation_hash">
+<span class="sig-name descname"><span class="pre">variation_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/output/factory/base.html#AnnotatedVariantFactory.variation_hash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.variation_hash" title="Link to this definition">#</a></dt>
+<dd><p>Return what is known about a variation from its position alone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariants">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ensembl.vep.output.factory.base.</span></span><span class="sig-name descname"><span class="pre">AnnotatedVariants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">variants</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collector</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/output/factory/base.html#AnnotatedVariants"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariants" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<a class="reference internal" href="#ensembl.vep.output.factory.base.AnnotatedVariant" title="ensembl.vep.output.factory.base.AnnotatedVariant"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnotatedVariant</span></code></a>]</p>
+<p>Closable annotation iterator with its completed run summary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variants</strong> (<em>Iterable</em><em>[</em><a class="reference internal" href="#ensembl.vep.output.factory.base.AnnotatedVariant" title="ensembl.vep.output.factory.base.AnnotatedVariant"><em>AnnotatedVariant</em></a><em>]</em>) – Ordered annotated variants.</p></li>
+<li><p><strong>collector</strong> (<a class="reference internal" href="ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummaryCollector" title="ensembl.vep.stats.summary.RunSummaryCollector"><em>RunSummaryCollector</em></a>) – Summary state updated as variants become available.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariants.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/output/factory/base.html#AnnotatedVariants.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariants.close" title="Link to this definition">#</a></dt>
+<dd><p>Release resources held by the underlying annotation iterator.</p>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariants.collector">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">collector</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummaryCollector" title="ensembl.vep.stats.summary.RunSummaryCollector"><span class="pre">RunSummaryCollector</span></a></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariants.collector" title="Link to this definition">#</a></dt>
+<dd><p>Return the collector after complete consumption.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If the stream has not been exhausted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariants.completed">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">completed</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariants.completed" title="Link to this definition">#</a></dt>
+<dd><p>Return whether every input variant has been consumed.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariants.summary">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">summary</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.stats.html#ensembl.vep.stats.summary.RunSummary" title="ensembl.vep.stats.summary.RunSummary"><span class="pre">RunSummary</span></a></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariants.summary" title="Link to this definition">#</a></dt>
+<dd><p>Return the final summary after complete consumption.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If the stream has not been exhausted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotatedVariants.variant_count">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">variant_count</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotatedVariants.variant_count" title="Link to this definition">#</a></dt>
+<dd><p>Return the number of variants yielded to the consumer.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.AnnotationRecord">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.output.factory.base.</span></span><span class="sig-name descname"><span class="pre">AnnotationRecord</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.AnnotationRecord" title="Link to this definition">#</a></dt>
+<dd><p>One VEP output hash, copied from a selected allele-feature annotation.</p>
+<p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code>]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.DEFAULT_PICK_ORDER">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.output.factory.base.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_PICK_ORDER</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mane_select',</span> <span class="pre">'mane_plus_clinical',</span> <span class="pre">'canonical',</span> <span class="pre">'appris',</span> <span class="pre">'tsl',</span> <span class="pre">'biotype',</span> <span class="pre">'ccds',</span> <span class="pre">'rank',</span> <span class="pre">'length',</span> <span class="pre">'ensembl',</span> <span class="pre">'refseq')</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.DEFAULT_PICK_ORDER" title="Link to this definition">#</a></dt>
+<dd><p>The order <code class="docutils literal notranslate"><span class="pre">--pick</span></code> weighs a transcript by, as VEP defaults it. A criterion this model has no
+data for ties for every candidate and so defers to the next one – exactly VEP’s behaviour when
+two candidates are equal on a criterion.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.DISTANCE_TERMS">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.output.factory.base.</span></span><span class="sig-name descname"><span class="pre">DISTANCE_TERMS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'downstream_gene_variant',</span> <span class="pre">'upstream_gene_variant'})</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.DISTANCE_TERMS" title="Link to this definition">#</a></dt>
+<dd><p>The terms whose output carries a <code class="docutils literal notranslate"><span class="pre">DISTANCE</span></code> to the transcript.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ensembl.vep.output.factory.base.FLAG_FIELDS">
+<span class="sig-prename descclassname"><span class="pre">ensembl.vep.output.factory.base.</span></span><span class="sig-name descname"><span class="pre">FLAG_FIELDS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(('allele_number',</span> <span class="pre">('ALLELE_NUM',)),</span> <span class="pre">('show_ref_allele',</span> <span class="pre">('REF_ALLELE',)),</span> <span class="pre">('flag_pick',</span> <span class="pre">('PICK',)),</span> <span class="pre">('flag_pick_allele',</span> <span class="pre">('PICK',)),</span> <span class="pre">('variant_class',</span> <span class="pre">('VARIANT_CLASS',)),</span> <span class="pre">('symbol',</span> <span class="pre">('SYMBOL',</span> <span class="pre">'SYMBOL_SOURCE',</span> <span class="pre">'HGNC_ID')),</span> <span class="pre">('biotype',</span> <span class="pre">('BIOTYPE',)),</span> <span class="pre">('numbers',</span> <span class="pre">('EXON',</span> <span class="pre">'INTRON')))</span></span><a class="headerlink" href="#ensembl.vep.output.factory.base.FLAG_FIELDS" title="Link to this definition">#</a></dt>
+<dd><p>Flag -&gt; the output fields it adds, in VEP’s order, for the flags this factory supports.</p>
+<p>The whole field list is declared even where only part of it can be filled (<code class="docutils literal notranslate"><span class="pre">SYMBOL_SOURCE</span></code>,
+<code class="docutils literal notranslate"><span class="pre">HGNC_ID</span></code>), so the column layout matches VEP’s for the same flags.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="ensembl.vep.output.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">ensembl.vep.output package</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="ensembl.vep.output.factory.stream.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">ensembl.vep.output.factory.stream package</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal" tabindex="-1"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subpackages">Subpackages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-ensembl.vep.output.factory.base">ensembl.vep.output.factory.base module</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AlleleOverlap"><code class="docutils literal notranslate"><span class="pre">AlleleOverlap</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AlleleOverlap.allele"><code class="docutils literal notranslate"><span class="pre">AlleleOverlap.allele</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AlleleOverlap.allele_number"><code class="docutils literal notranslate"><span class="pre">AlleleOverlap.allele_number</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AlleleOverlap.allele_seq"><code class="docutils literal notranslate"><span class="pre">AlleleOverlap.allele_seq</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AlleleOverlap.consequences"><code class="docutils literal notranslate"><span class="pre">AlleleOverlap.consequences</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AlleleOverlap.overlap"><code class="docutils literal notranslate"><span class="pre">AlleleOverlap.overlap</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariant"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariant</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariant.allele_string"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariant.allele_string</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariant.annotations"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariant.annotations</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariant.assembly_name"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariant.assembly_name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariant.build"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariant.build()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariant.end"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariant.end</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariant.id"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariant.id</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariant.input_columns"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariant.input_columns</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariant.most_severe_consequence"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariant.most_severe_consequence</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariant.seq_region_name"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariant.seq_region_name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariant.skipped"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariant.skipped</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariant.start"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariant.start</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariant.strand"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariant.strand</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariant.variant_class"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariant.variant_class</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.allele_hash"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.allele_hash()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.allele_number"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.allele_number</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.allele_overlaps"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.allele_overlaps()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.biotype"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.biotype</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.build_annotated_variant"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.build_annotated_variant()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.flag_fields"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.flag_fields()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.flag_pick"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.flag_pick</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.flag_pick_allele"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.flag_pick_allele</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.gene_version"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.gene_version</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.most_severe"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.most_severe</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.no_intergenic"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.no_intergenic</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.numbers"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.numbers</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.output_hashes"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.output_hashes()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.pick"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.pick</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.pick_allele"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.pick_allele</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.pick_order"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.pick_order</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.pick_worst"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.pick_worst()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.show_ref_allele"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.show_ref_allele</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.summary"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.summary</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.symbol"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.symbol</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.transcript_version"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.transcript_version</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.variant_class"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.variant_class</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariantFactory.variation_hash"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariantFactory.variation_hash()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariants"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariants</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariants.close"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariants.close()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariants.collector"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariants.collector</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariants.completed"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariants.completed</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariants.summary"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariants.summary</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotatedVariants.variant_count"><code class="docutils literal notranslate"><span class="pre">AnnotatedVariants.variant_count</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.AnnotationRecord"><code class="docutils literal notranslate"><span class="pre">AnnotationRecord</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.DEFAULT_PICK_ORDER"><code class="docutils literal notranslate"><span class="pre">DEFAULT_PICK_ORDER</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.DISTANCE_TERMS"><code class="docutils literal notranslate"><span class="pre">DISTANCE_TERMS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.output.factory.base.FLAG_FIELDS"><code class="docutils literal notranslate"><span class="pre">FLAG_FIELDS</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

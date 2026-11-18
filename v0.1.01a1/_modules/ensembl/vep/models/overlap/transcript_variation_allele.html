@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ensembl.vep.models.overlap.transcript_variation_allele &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../../../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ensembl/vep/models/overlap/transcript_variation_allele';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.01a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../../../../../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../../../../../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 18, 2026"/>
+  
+    
+    <script src="../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    <script src="../../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../../../../../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.models.overlap.transcript_variation_allele</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ensembl.vep.models.overlap.transcript_variation_allele</h1><div class="highlight"><pre>
+<span></span><span class="c1"># See the NOTICE file distributed with this work for additional information</span>
+<span class="c1"># regarding copyright ownership.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1"># http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="sd">"""TranscriptVariationAllele class."""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">RLock</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">attr</span><span class="w"> </span><span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">Readthrough</span><span class="p">,</span> <span class="n">SequenceEdit</span><span class="p">,</span> <span class="n">Strand</span><span class="p">,</span> <span class="n">invalidates</span><span class="p">,</span> <span class="n">reverse_complement</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.common.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">EMPTY_ALLELE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.common.codons</span><span class="w"> </span><span class="kn">import</span> <span class="n">translate_dna</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.overlap.feature_overlap</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureOverlap</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.genic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transcript</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.sequence</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapper</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.variation</span><span class="w"> </span><span class="kn">import</span> <span class="n">VariationAllele</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">Locus</span>
+
+<span class="n">MAX_READTHROUGH_BASES</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="sd">"""Cap on how far ``Readthrough.BEYOND_TRANSCRIPT`` reads past a transcript's own boundary."""</span>
+
+<span class="n">Position</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span>
+<span class="sd">"""1-based positions. Primarily used for a variant's 5' and 3' ends on a transcript sequence, None for an</span>
+<span class="sd">end that lies off it"""</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_nucleotide_sequence_up_to_stop</span><span class="p">(</span><span class="n">nucleotide_sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Truncate ``nucleotide_sequence`` to end at (and include) its first stop codon, if any.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        nucleotide_sequence (str): Nucleotide sequence, transcript-sense.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple[str, str]: The input truncated at (and including) its first stop codon, or</span>
+<span class="sd">            unchanged if no stop codon is found within it, paired with its translation</span>
+<span class="sd">            (truncated the same way). ``translate_dna`` translates strictly in fixed 3-base</span>
+<span class="sd">            chunks from position 0 with no state carried between codons, so slicing its result</span>
+<span class="sd">            at the stop residue is exactly ``translate_dna`` of the truncated nucleotides --</span>
+<span class="sd">            re-translating the truncated sequence would repeat work for the same answer.</span>
+<span class="sd">    """</span>
+    <span class="n">peptide</span> <span class="o">=</span> <span class="n">translate_dna</span><span class="p">(</span><span class="n">nucleotide_sequence</span><span class="p">)</span>
+    <span class="n">stop_index</span> <span class="o">=</span> <span class="n">peptide</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">stop_index</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">nucleotide_sequence</span><span class="p">,</span> <span class="n">peptide</span>
+    <span class="k">return</span> <span class="n">nucleotide_sequence</span><span class="p">[:</span> <span class="p">(</span><span class="n">stop_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span><span class="p">],</span> <span class="n">peptide</span><span class="p">[:</span> <span class="n">stop_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_edited_boundary</span><span class="p">(</span><span class="n">original_boundary</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">edit_start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">edit_end</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">length_change</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Returns the offset of a boundary after an edit.</span>
+
+<span class="sd">    The new offset can be used to clip the edited sequence to only have the coding sequence. If the edit</span>
+<span class="sd">        1. starts after the boundary, the boundary is unaffected.</span>
+<span class="sd">        2. ends before the boundary, the boundary is shifted by the length change of the edit.</span>
+<span class="sd">        3. overlaps the boundary, the boundary is anchored to the start of the edit.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        original_boundary (int): The boundary's own offset before the edit (0-based, into spliced_seq).</span>
+<span class="sd">        edit_start (int): Start of the edited half-open range (0-based, into spliced_seq).</span>
+<span class="sd">        edit_end (int): End of the edited half-open range (exclusive).</span>
+<span class="sd">        length_change (int): Net length change of the edit (negative for deletion).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int: The boundary's offset in the edited sequence.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">original_boundary</span> <span class="o">&lt;</span> <span class="n">edit_start</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">original_boundary</span>
+    <span class="k">if</span> <span class="n">original_boundary</span> <span class="o">&gt;=</span> <span class="n">edit_end</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">original_boundary</span> <span class="o">+</span> <span class="n">length_change</span>
+    <span class="k">return</span> <span class="n">edit_start</span>
+
+
+<div class="viewcode-block" id="TranscriptVariationAllele">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.overlap.html#ensembl.vep.models.overlap.transcript_variation_allele.TranscriptVariationAllele">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TranscriptVariationAllele</span><span class="p">(</span><span class="n">FeatureOverlap</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Represents the overlap between a transcript and a variation allele.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        feature (Transcript):</span>
+<span class="sd">            The transcript that is getting overlapped.</span>
+<span class="sd">        overlapping_feature (VariationAllele):</span>
+<span class="sd">            The variation allele that is overlapping.</span>
+<span class="sd">        is_reference (bool):</span>
+<span class="sd">            Whether the overlapping variation allele is the reference allele.</span>
+<span class="sd">        cdna_position (Position | None):</span>
+<span class="sd">            The variant's position on the spliced transcript, or None if it touches no exon.</span>
+<span class="sd">        cds_position (Position | None):</span>
+<span class="sd">            The variant's position on the CDS, counted from a whole first codon, or None if</span>
+<span class="sd">            it does not touch the CDS.</span>
+<span class="sd">        protein_position (Position | None):</span>
+<span class="sd">            The residues the variant's two ends fall in, or None if it does not touch the CDS.</span>
+<span class="sd">        distance_to_transcript (int | None):</span>
+<span class="sd">            The distance from the variation allele to the transcript,</span>
+<span class="sd">            or None if the variation allele overlaps the transcript.</span>
+<span class="sd">        exon_number (int | None):</span>
+<span class="sd">            The exon number of the transcript that is overlapped by the variation allele,</span>
+<span class="sd">            or None if the variation allele does not overlap any exon.</span>
+<span class="sd">        intron_number (int | None):</span>
+<span class="sd">            The intron number of the transcript that is overlapped by the variation allele,</span>
+<span class="sd">            or None if the variation allele does not overlap any intron.</span>
+<span class="sd">        reference_codon (str | None):</span>
+<span class="sd">            The reference allele's whole-codon window in the CDS (transcript-sense), covering</span>
+<span class="sd">            every codon touched by the variant, or None if the variant does not overlap the CDS.</span>
+<span class="sd">            Cased for display as VEP writes it: lower case but for the allele's own bases.</span>
+<span class="sd">        alternate_codon (str | None):</span>
+<span class="sd">            The alternate allele's whole-codon window in the CDS (transcript-sense), i.e.</span>
+<span class="sd">            reference_codon with the variant allele spliced in, or None if not applicable. Cased</span>
+<span class="sd">            the same way, so a deletion's is all lower case.</span>
+<span class="sd">        reference_peptide (str | None):</span>
+<span class="sd">            The amino acid translation of reference_codon, or None if not applicable.</span>
+<span class="sd">        alternate_peptide (str | None):</span>
+<span class="sd">            The amino acid translation of alternate_codon, or None if not applicable.</span>
+<span class="sd">        reference_cds (str | None):</span>
+<span class="sd">            The whole reference CDS (transcript-sense, includes the start and stop codon), or</span>
+<span class="sd">            None if the transcript has no CDS at all.</span>
+<span class="sd">        alternate_cds (str | None):</span>
+<span class="sd">            The whole reference CDS (transcript-sense) with the variant allele spliced in, or None</span>
+<span class="sd">            if not applicable.</span>
+<span class="sd">        reference_cds_peptide (str | None):</span>
+<span class="sd">            The amino acid translation of reference_cds, or None if reference_cds is None.</span>
+<span class="sd">        alternate_cds_peptide (str | None):</span>
+<span class="sd">            The amino acid translation of alternate_cds, or None if alternate_cds is None.</span>
+<span class="sd">        readthrough (Readthrough):</span>
+<span class="sd">            How far translation of alternate_cds may run when the variant destroys the stop codon.</span>
+<span class="sd">    """</span>
+
+    <span class="n">feature</span><span class="p">:</span> <span class="n">Transcript</span>
+    <span class="n">overlapping_feature</span><span class="p">:</span> <span class="n">VariationAllele</span>
+    <span class="n">is_reference</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">readthrough</span><span class="p">:</span> <span class="n">Readthrough</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">Readthrough</span><span class="o">.</span><span class="n">NONE</span><span class="p">,</span> <span class="n">on_setattr</span><span class="o">=</span><span class="n">invalidates</span><span class="p">(</span><span class="s2">"_full_cds_alleles"</span><span class="p">,</span> <span class="s2">"_full_peptide_alleles"</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">distance_to_transcript</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">exon_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">intron_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">_lock</span><span class="p">:</span> <span class="n">RLock</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="n">RLock</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_position_on</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapper</span><span class="p">:</span> <span class="n">Mapper</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Position</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Place the variant's 5' and 3' ends on ``mapper``'s sequence, 1-based.</span>
+
+<span class="sd">        An insertion's ends are its two flanking bases. As in VEP, where the Ensembl mapper answers</span>
+<span class="sd">        a gap for an end off the sequence, that end is None; a variant covering none of ``mapper``'s</span>
+<span class="sd">        spans has no position at all.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mapper (Mapper | None): The mapper whose sequence to place the variant on.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Position | None: The two ends, or None if the variant misses every span.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">mapper</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">variant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlapping_feature</span>
+        <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">variant</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">variant</span><span class="o">.</span><span class="n">end</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">variant</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">variant</span><span class="o">.</span><span class="n">end</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mapper</span><span class="o">.</span><span class="n">genomic_span_to_offsets</span><span class="p">(</span><span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">:</span>
+            <span class="n">five_prime_end</span><span class="p">,</span> <span class="n">three_prime_end</span> <span class="o">=</span> <span class="n">variant_max</span><span class="p">,</span> <span class="n">variant_min</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">five_prime_end</span><span class="p">,</span> <span class="n">three_prime_end</span> <span class="o">=</span> <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span>
+        <span class="n">five_prime_offset</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">genomic_to_offset</span><span class="p">(</span><span class="n">five_prime_end</span><span class="p">)</span>
+        <span class="n">three_prime_offset</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">genomic_to_offset</span><span class="p">(</span><span class="n">three_prime_end</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="kc">None</span> <span class="k">if</span> <span class="n">five_prime_offset</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">five_prime_offset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="kc">None</span> <span class="k">if</span> <span class="n">three_prime_offset</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">three_prime_offset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cdna_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Position</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _cdna_position.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Position | None: The variant's position on the spliced transcript, or None if</span>
+<span class="sd">                it touches no exon.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cdna_position</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cdna_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Position</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Place the variant on the spliced transcript.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Position | None: The position, or None if the variant touches no exon.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position_on</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">cdna_mapper</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cds_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Position</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _cds_position.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Position | None: The variant's position on the CDS, or None if it does not</span>
+<span class="sd">                touch the CDS.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cds_position</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cds_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Position</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Place the variant on the CDS.</span>
+
+<span class="sd">        CDS offsets already start after any ``cds_start_phase`` padding, so a CDS with an</span>
+<span class="sd">        incomplete 5' end is counted from a whole first codon, as VEP adds the start exon's phase.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Position | None: The position, or None if the variant does not touch the CDS.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position_on</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">cds_mapper</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">protein_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Position</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _protein_position.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Position | None: The residues the variant's two ends fall in, or None if it</span>
+<span class="sd">                does not touch the CDS.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_protein_position</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_protein_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Position</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Derive the residue positions from the CDS positions, three bases a residue.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Position | None: The residue positions, or None if the variant does not touch</span>
+<span class="sd">                the CDS.</span>
+<span class="sd">        """</span>
+        <span class="n">cds_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cds_position</span>
+        <span class="k">if</span> <span class="n">cds_position</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">residues</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">position</span> <span class="ow">in</span> <span class="n">cds_position</span><span class="p">:</span>
+            <span class="n">residues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span> <span class="k">if</span> <span class="n">position</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="n">position</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">residues</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">residues</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_edit_on</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapper</span><span class="p">:</span> <span class="n">Mapper</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SequenceEdit</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Express the edit caused by this variant in ``mapper``'s offset space.</span>
+
+<span class="sd">        The geometry shared by every downstream reconstruction, parameterised by which mapper does</span>
+<span class="sd">        the genomic-&gt;offset conversion. Uses pure coordinate and allele-string arithmetic with no</span>
+<span class="sd">        sequence involved (which makes ``cds_length_change`` cheap).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mapper (Mapper | None): The mapper whose offset space the edit is expressed in.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            SequenceEdit | None: The edit, or None when the variant covers none of ``mapper``'s</span>
+<span class="sd">                spans (so there is nothing to replace).</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">mapper</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="n">variant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlapping_feature</span>
+            <span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">variant</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">variant</span><span class="o">.</span><span class="n">end</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">variant</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">variant</span><span class="o">.</span><span class="n">end</span><span class="p">)</span>
+            <span class="n">footprint</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">genomic_span_to_offsets</span><span class="p">(</span><span class="n">variant_min</span><span class="p">,</span> <span class="n">variant_max</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">footprint</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="n">low_offset</span><span class="p">,</span> <span class="n">high_offset</span> <span class="o">=</span> <span class="n">footprint</span>
+
+            <span class="n">alternate_allele</span> <span class="o">=</span> <span class="p">(</span><span class="n">variant</span><span class="o">.</span><span class="n">alternate_allele</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">EMPTY_ALLELE</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+            <span class="n">reference_allele_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">((</span><span class="n">variant</span><span class="o">.</span><span class="n">reference_allele</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">EMPTY_ALLELE</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span>
+            <span class="n">transcript_sense_alternate</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">alternate_allele</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span>
+                <span class="k">else</span> <span class="n">reverse_complement</span><span class="p">(</span><span class="n">alternate_allele</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">reference_allele_length</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># Pure insertion: splice in immediately after the anchor offset.</span>
+                <span class="n">edit_start</span> <span class="o">=</span> <span class="n">edit_end</span> <span class="o">=</span> <span class="n">low_offset</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">edit_start</span><span class="p">,</span> <span class="n">edit_end</span> <span class="o">=</span> <span class="n">low_offset</span><span class="p">,</span> <span class="n">high_offset</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="k">return</span> <span class="n">SequenceEdit</span><span class="p">(</span>
+                <span class="n">footprint</span><span class="o">=</span><span class="n">footprint</span><span class="p">,</span>
+                <span class="n">start</span><span class="o">=</span><span class="n">edit_start</span><span class="p">,</span>
+                <span class="n">end</span><span class="o">=</span><span class="n">edit_end</span><span class="p">,</span>
+                <span class="n">replacement</span><span class="o">=</span><span class="n">transcript_sense_alternate</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cds_edit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SequenceEdit</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""This variant as an edit in CDS offset space (clipped to the coding sequence).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            SequenceEdit | None: The edit, or None if the variant does not overlap the CDS.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edit_on</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">cds_mapper</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cdna_edit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SequenceEdit</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""This variant as an edit in cDNA offset space (clipped to the exons).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            SequenceEdit | None: The edit, or None if the variant touches no exon at all.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edit_on</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">cdna_mapper</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reference_codon</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the codons variant touches in the reference sequence.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str | None: The reference allele's whole-codon window (transcript-sense), or None if</span>
+<span class="sd">                the variant does not overlap the CDS.</span>
+<span class="sd">        """</span>
+        <span class="n">codons</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_codon_window_alleles</span>
+        <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">codons</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">codons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">alternate_codon</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the codons variant touches with the variant allele spliced in.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str | None: reference_codon with the variant allele spliced in, or None if not</span>
+<span class="sd">                applicable.</span>
+<span class="sd">        """</span>
+        <span class="n">codons</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_codon_window_alleles</span>
+        <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">codons</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">codons</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_codon_window_alleles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns (reference_codon, alternate_codon), the whole-codon window around the variant,</span>
+<span class="sd">        in transcript-sense, with the variant allele spliced in for the alternate half.</span>
+
+<span class="sd">        An insertion that falls between two codons has an empty reference window and the inserted</span>
+<span class="sd">        bases as its alternate one, as VEP's does.</span>
+
+<span class="sd">        Each is lower case but for its own allele's bases, which are upper case: VEP's</span>
+<span class="sd">        ``display_codon``. An empty allele (the reference side of an insertion, the alternate side</span>
+<span class="sd">        of a deletion) leaves its codon all lower case. Anything computing on a codon upper-cases it</span>
+<span class="sd">        first.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple[str, str] | None: (reference_codon, alternate_codon), or None if the variant</span>
+<span class="sd">                does not overlap the CDS.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="n">transcript</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature</span>
+            <span class="n">mapper</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">cds_mapper</span>
+            <span class="n">edit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cds_edit</span>
+            <span class="k">if</span> <span class="n">mapper</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">edit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="n">window</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">codon_window</span><span class="p">(</span><span class="n">edit</span><span class="o">.</span><span class="n">footprint</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="n">coding_sequence</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">coding_sequence</span>
+            <span class="k">if</span> <span class="n">coding_sequence</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="n">edit</span><span class="o">.</span><span class="n">start</span> <span class="o">==</span> <span class="n">edit</span><span class="o">.</span><span class="n">end</span> <span class="ow">and</span> <span class="n">edit</span><span class="o">.</span><span class="n">start</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># An insertion between two codons: VEP's window runs from the residue after the</span>
+                <span class="c1"># insertion point back to the one before it, which is empty, leaving the inserted</span>
+                <span class="c1"># bases alone on the alternate side (``TranscriptVariationAllele::codon``).</span>
+                <span class="k">return</span> <span class="s2">""</span><span class="p">,</span> <span class="n">edit</span><span class="o">.</span><span class="n">replacement</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+            <span class="n">codon_start</span><span class="p">,</span> <span class="n">codon_end</span> <span class="o">=</span> <span class="n">window</span>
+            <span class="n">leading_bases</span> <span class="o">=</span> <span class="n">coding_sequence</span><span class="p">[</span><span class="n">codon_start</span> <span class="p">:</span> <span class="n">edit</span><span class="o">.</span><span class="n">start</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="n">trailing_bases</span> <span class="o">=</span> <span class="n">coding_sequence</span><span class="p">[</span><span class="n">edit</span><span class="o">.</span><span class="n">end</span> <span class="p">:</span> <span class="n">codon_end</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="n">reference_bases</span> <span class="o">=</span> <span class="n">coding_sequence</span><span class="p">[</span><span class="n">edit</span><span class="o">.</span><span class="n">start</span> <span class="p">:</span> <span class="n">edit</span><span class="o">.</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+            <span class="n">reference_codon</span> <span class="o">=</span> <span class="n">leading_bases</span> <span class="o">+</span> <span class="n">reference_bases</span> <span class="o">+</span> <span class="n">trailing_bases</span>
+            <span class="n">alternate_codon</span> <span class="o">=</span> <span class="n">leading_bases</span> <span class="o">+</span> <span class="n">edit</span><span class="o">.</span><span class="n">replacement</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="n">trailing_bases</span>
+            <span class="k">return</span> <span class="n">reference_codon</span><span class="p">,</span> <span class="n">alternate_codon</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reference_peptide</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the amino acid translation of the reference_codon.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str | None: The amino acid translation of reference_codon, or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="n">peptides</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_peptide_window_alleles</span>
+        <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">peptides</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">peptides</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">alternate_peptide</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the amino acid translation of the alternate_codon.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str | None: The amino acid translation of alternate_codon, or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="n">peptides</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_peptide_window_alleles</span>
+        <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">peptides</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">peptides</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_peptide_window_alleles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns (reference_peptide, alternate_peptide), translated from _codon_window_alleles.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple[str, str] | None: (reference_peptide, alternate_peptide), or None if the</span>
+<span class="sd">                variant does not overlap the CDS.</span>
+<span class="sd">        """</span>
+        <span class="n">codons</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_codon_window_alleles</span>
+        <span class="k">if</span> <span class="n">codons</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">reference_codon</span><span class="p">,</span> <span class="n">alternate_codon</span> <span class="o">=</span> <span class="n">codons</span>
+        <span class="k">return</span> <span class="n">translate_dna</span><span class="p">(</span><span class="n">reference_codon</span><span class="o">.</span><span class="n">upper</span><span class="p">()),</span> <span class="n">translate_dna</span><span class="p">(</span><span class="n">alternate_codon</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cds_length_change</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Net change in **coding** length the variant makes, in bases.</span>
+
+<span class="sd">        Positive for an insertion, negative for a deletion, zero for a substitution. Derived from the CDS</span>
+<span class="sd">        edit geometry rather than the cDNA. Any intronic portion of the variant's genomic span is already</span>
+<span class="sd">        discounted, since the offsets come from the mapper's block-overlap clipping.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: The net coding length change, or None when the variant does not overlap</span>
+<span class="sd">                the CDS and so changes no coding length at all.</span>
+<span class="sd">        """</span>
+        <span class="n">edit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cds_edit</span>
+        <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">edit</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">edit</span><span class="o">.</span><span class="n">length_change</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reference_cds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the whole reference CDS.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str | None: The whole reference CDS (transcript-sense), or None if the transcript has</span>
+<span class="sd">                no CDS at all.</span>
+<span class="sd">        """</span>
+        <span class="n">alleles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_full_cds_alleles</span>
+        <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">alleles</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">alleles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">alternate_cds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the whole CDS with the variant applied.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str | None: The whole CDS with the variant applied, or None if the transcript has no CDS</span>
+<span class="sd">                at all.</span>
+<span class="sd">        """</span>
+        <span class="n">alleles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_full_cds_alleles</span>
+        <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">alleles</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">alleles</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_full_cds_alleles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns (reference_cds, alternate_cds, alternate_peptide), the whole CDS, in</span>
+<span class="sd">        transcript-sense, with the variant applied for the alternate half.</span>
+
+<span class="sd">        For alternate CDS edit, replaces the half-open transcript-wide cDNA offset that the variant overlapped</span>
+<span class="sd">        with the strand-corrected alternate allele in the transcript.spliced_seq (5' UTR + CDS + 3' UTR). By</span>
+<span class="sd">        default, we assume there is no intron retention, exon skipping or readthrough. Only the</span>
+<span class="sd">        coding sequence</span>
+<span class="sd">        is considered.</span>
+
+<span class="sd">        Rather than just the CDS it uses cDNA sequence to optionally allow readthrough into the UTR. If not</span>
+<span class="sd">        opted-for, the CDS is truncated to include only the coding sequence.</span>
+
+<span class="sd">        ``reference_cds`` reuses ``transcript.coding_sequence`` in place of re-slicing ``spliced_seq``</span>
+<span class="sd">        when its length matches -- both are assembled from the same coding exons, so the content</span>
+<span class="sd">        agrees (proved corpus-wide by tests, not re-checked per overlap). Both sides carry the</span>
+<span class="sd">        transcript's ``cds_start_phase`` ``N`` padding, as its CDS offsets do.</span>
+<span class="sd">        ``alternate_peptide`` is the translation ``_nucleotide_sequence_up_to_stop`` already produced</span>
+<span class="sd">        while truncating ``alternate_cds`` at its first stop codon, so ``_full_peptide_alleles`` can</span>
+<span class="sd">        reuse it instead of re-translating. It is None only when the variant touches no exon at all,</span>
+<span class="sd">        the one path that leaves ``alternate_cds`` untranslated here.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple[str, str, str | None] | None: (reference_cds, alternate_cds, alternate_peptide),</span>
+<span class="sd">                or None if the transcript has no CDS at all (non-coding, or missing sequence</span>
+<span class="sd">                data). A variant that changes nothing about the CDS (entirely within a UTR,</span>
+<span class="sd">                entirely intronic, or entirely outside the transcript) yields two identical</span>
+<span class="sd">                sequences and no alternate peptide.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="n">transcript</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature</span>
+            <span class="n">cdna_mapper</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">cdna_mapper</span>
+            <span class="n">spliced_seq</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">spliced_seq</span>
+            <span class="n">cds_length</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">cds_length</span>
+            <span class="n">cdna_coding_start</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">cdna_coding_start</span>
+            <span class="k">if</span> <span class="n">cdna_mapper</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">spliced_seq</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">cds_length</span> <span class="ow">or</span> <span class="n">cdna_coding_start</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="c1"># 0-based start/end position for slicing. cds_length counts only real bases, so the</span>
+            <span class="c1"># padding is prefixed separately; the spliced sequence does not carry it either.</span>
+            <span class="n">padding</span> <span class="o">=</span> <span class="s2">"N"</span> <span class="o">*</span> <span class="n">transcript</span><span class="o">.</span><span class="n">cds_start_phase</span>
+            <span class="n">cdna_coding_start0</span> <span class="o">=</span> <span class="n">cdna_coding_start</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">cdna_coding_end0</span> <span class="o">=</span> <span class="n">cdna_coding_start0</span> <span class="o">+</span> <span class="n">cds_length</span>
+            <span class="n">coding_sequence</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">coding_sequence</span>
+            <span class="k">if</span> <span class="n">coding_sequence</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">coding_sequence</span><span class="p">)</span> <span class="o">==</span> <span class="n">cds_length</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">padding</span><span class="p">):</span>
+                <span class="n">reference_cds</span> <span class="o">=</span> <span class="n">coding_sequence</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">reference_cds</span> <span class="o">=</span> <span class="n">padding</span> <span class="o">+</span> <span class="n">spliced_seq</span><span class="p">[</span><span class="n">cdna_coding_start0</span><span class="p">:</span><span class="n">cdna_coding_end0</span><span class="p">]</span>
+
+            <span class="n">edit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cdna_edit</span>
+            <span class="k">if</span> <span class="n">edit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># The variant touches no exon at all (purely intronic, or entirely outside the</span>
+                <span class="c1"># transcript). Splicing is assumed to proceed normally, so the CDS is unchanged.</span>
+                <span class="k">return</span> <span class="n">reference_cds</span><span class="p">,</span> <span class="n">reference_cds</span><span class="p">,</span> <span class="kc">None</span>
+            <span class="n">edit_start</span><span class="p">,</span> <span class="n">edit_end</span><span class="p">,</span> <span class="n">transcript_sense_alternate</span> <span class="o">=</span> <span class="n">edit</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">edit</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">edit</span><span class="o">.</span><span class="n">replacement</span>
+
+            <span class="n">alternate_spliced_seq</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">spliced_seq</span><span class="p">[:</span><span class="n">edit_start</span><span class="p">]</span> <span class="o">+</span> <span class="n">transcript_sense_alternate</span> <span class="o">+</span> <span class="n">spliced_seq</span><span class="p">[</span><span class="n">edit_end</span><span class="p">:]</span>
+            <span class="p">)</span>
+
+            <span class="n">length_change</span> <span class="o">=</span> <span class="n">edit</span><span class="o">.</span><span class="n">length_change</span>
+
+            <span class="c1"># Clip the edited sequence boundary to contain only the coding sequence.</span>
+            <span class="n">anchor</span> <span class="o">=</span> <span class="n">_edited_boundary</span><span class="p">(</span><span class="n">cdna_coding_start0</span><span class="p">,</span> <span class="n">edit_start</span><span class="p">,</span> <span class="n">edit_end</span><span class="p">,</span> <span class="n">length_change</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">readthrough</span> <span class="o">&gt;=</span> <span class="n">Readthrough</span><span class="o">.</span><span class="n">UTR</span><span class="p">:</span>
+                <span class="c1"># Translate on through whatever follows the coding sequence in the edited cDNA.</span>
+                <span class="n">end_bound</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">alternate_spliced_seq</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">end_bound</span> <span class="o">=</span> <span class="n">_edited_boundary</span><span class="p">(</span><span class="n">cdna_coding_end0</span><span class="p">,</span> <span class="n">edit_start</span><span class="p">,</span> <span class="n">edit_end</span><span class="p">,</span> <span class="n">length_change</span><span class="p">)</span>
+
+            <span class="n">alternate_tail</span> <span class="o">=</span> <span class="n">padding</span> <span class="o">+</span> <span class="n">alternate_spliced_seq</span><span class="p">[</span><span class="n">anchor</span><span class="p">:</span><span class="n">end_bound</span><span class="p">]</span>
+            <span class="n">alternate_cds</span><span class="p">,</span> <span class="n">alternate_peptide</span> <span class="o">=</span> <span class="n">_nucleotide_sequence_up_to_stop</span><span class="p">(</span><span class="n">alternate_tail</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">readthrough</span> <span class="o">&gt;=</span> <span class="n">Readthrough</span><span class="o">.</span><span class="n">BEYOND_TRANSCRIPT</span> <span class="ow">and</span> <span class="s2">"*"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">alternate_peptide</span><span class="p">:</span>
+                <span class="c1"># No in-frame stop anywhere in the edited cDNA, so carry on into raw genomic</span>
+                <span class="c1"># sequence past the transcript's own boundary.</span>
+                <span class="n">flank</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_downstream_flanking_sequence</span><span class="p">(</span><span class="n">MAX_READTHROUGH_BASES</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">flank</span><span class="p">:</span>
+                    <span class="n">alternate_cds</span><span class="p">,</span> <span class="n">alternate_peptide</span> <span class="o">=</span> <span class="n">_nucleotide_sequence_up_to_stop</span><span class="p">(</span><span class="n">alternate_tail</span> <span class="o">+</span> <span class="n">flank</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">reference_cds</span><span class="p">,</span> <span class="n">alternate_cds</span><span class="p">,</span> <span class="n">alternate_peptide</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_downstream_flanking_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Up to ``length`` bases of raw genomic sequence past this transcript's own 3' boundary</span>
+<span class="sd">        (transcript sense), read directly from the attached Slice.</span>
+
+<span class="sd">        Only reached at ``Readthrough.BEYOND_TRANSCRIPT``. It trusts the attached slice already covers</span>
+<span class="sd">        what is needed rather than issuing a fresh sequence-source fetch.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            length (int): How many bases to try to read.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Up to ``length`` bases of transcript-sense sequence past the transcript's own</span>
+<span class="sd">                boundary, or ``""`` if none is available.</span>
+<span class="sd">        """</span>
+        <span class="n">transcript</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature</span>
+        <span class="n">slice_</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">slice</span>
+        <span class="k">if</span> <span class="n">length</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">slice_</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">slice_</span><span class="o">.</span><span class="n">seq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">""</span>
+        <span class="k">if</span> <span class="n">transcript</span><span class="o">.</span><span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">:</span>
+            <span class="n">search_end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">slice_</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">transcript</span><span class="o">.</span><span class="n">end</span> <span class="o">+</span> <span class="n">length</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">search_end</span> <span class="o">&lt;=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">end</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">""</span>
+            <span class="k">return</span> <span class="n">slice_</span><span class="o">.</span><span class="n">seq</span><span class="p">[</span><span class="n">transcript</span><span class="o">.</span><span class="n">end</span> <span class="p">:</span> <span class="n">search_end</span><span class="p">]</span>
+        <span class="n">search_start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">slice_</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">transcript</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="n">length</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">search_start</span> <span class="o">&gt;=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">""</span>
+        <span class="k">return</span> <span class="n">reverse_complement</span><span class="p">(</span><span class="n">slice_</span><span class="o">.</span><span class="n">seq</span><span class="p">[</span><span class="n">search_start</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">transcript</span><span class="o">.</span><span class="n">start</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reference_cds_peptide</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the amino acid translation of the reference CDS.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str | None: The amino acid translation of reference_cds, or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="n">peptides</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_full_peptide_alleles</span>
+        <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">peptides</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">peptides</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">alternate_cds_peptide</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the amino acid translation of the alternate CDS.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str | None: The amino acid translation of alternate_cds, or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="n">peptides</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_full_peptide_alleles</span>
+        <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">peptides</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">peptides</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_full_peptide_alleles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns (reference_cds_peptide, alternate_cds_peptide), translated from</span>
+<span class="sd">        _full_cds_alleles.</span>
+
+<span class="sd">        ``alternate_cds_peptide`` reuses the peptide ``_full_cds_alleles`` already produced while</span>
+<span class="sd">        truncating ``alternate_cds`` at its first stop codon, translating it here only for the one</span>
+<span class="sd">        path that leaves it untranslated (the variant touches no exon at all). See</span>
+<span class="sd">        ``_reference_cds_peptide`` for how the reference half is sourced.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple[str, str] | None: (reference_cds_peptide, alternate_cds_peptide), or None if</span>
+<span class="sd">                the variant does not overlap the CDS.</span>
+<span class="sd">        """</span>
+        <span class="n">alleles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_full_cds_alleles</span>
+        <span class="k">if</span> <span class="n">alleles</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">reference_cds</span><span class="p">,</span> <span class="n">alternate_cds</span><span class="p">,</span> <span class="n">alternate_peptide</span> <span class="o">=</span> <span class="n">alleles</span>
+        <span class="k">if</span> <span class="n">alternate_peptide</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">alternate_peptide</span> <span class="o">=</span> <span class="n">translate_dna</span><span class="p">(</span><span class="n">alternate_cds</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reference_cds_peptide</span><span class="p">(</span><span class="n">reference_cds</span><span class="p">),</span> <span class="n">alternate_peptide</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_reference_cds_peptide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reference_cds</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the translation of the reference CDS, reusing ``transcript.translated_seq``</span>
+<span class="sd">        when it is provably ``translate_dna(reference_cds)``.</span>
+
+<span class="sd">        ``translated_seq`` returns ``translation.seq`` when set. For every source in this codebase</span>
+<span class="sd">        today that is itself ``translate_dna(cds.seq)`` (GFF/GTF-built translations seed</span>
+<span class="sd">        ``seq=None`` and fall back the same way), and ``Transcript._translation`` marks exactly</span>
+<span class="sd">        that case via ``Translation.derived_from_coding_sequence``. A hypothetical future source</span>
+<span class="sd">        could instead seed a curated peptide (for example, one edited for selenocysteine or without</span>
+<span class="sd">        a trailing stop), which the stop facts compare positionally against this CDS -- so reuse is</span>
+<span class="sd">        guarded to the cases where that cannot have happened: the transcript's coding sequence</span>
+<span class="sd">        matches ``reference_cds`` in length, and its translation is either unset, has no seq of its</span>
+<span class="sd">        own, or is marked as derived from this same coding sequence.</span>
+
+<span class="sd">        Checking the marker rather than *when* ``_translation`` resolved (the previous guard) means</span>
+<span class="sd">        reuse no longer depends on evaluation order: a transcript with several overlapping variants</span>
+<span class="sd">        benefits from the very first one resolving ``_translation`` the plain way, instead of only</span>
+<span class="sd">        the first overlap getting to reuse it and every later one paying to retranslate.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            reference_cds (str): The reference CDS this TVA computed (possibly itself already</span>
+<span class="sd">                reused from ``transcript.cds.seq``).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The reference CDS peptide.</span>
+<span class="sd">        """</span>
+        <span class="n">transcript</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature</span>
+        <span class="n">coding_sequence</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">coding_sequence</span>
+        <span class="k">if</span> <span class="n">coding_sequence</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">coding_sequence</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">reference_cds</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">translate_dna</span><span class="p">(</span><span class="n">reference_cds</span><span class="p">)</span>
+
+        <span class="n">translation</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">translation</span>
+        <span class="k">if</span> <span class="n">translation</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">translation</span><span class="o">.</span><span class="n">seq</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">translation</span><span class="o">.</span><span class="n">derived_from_coding_sequence</span><span class="p">:</span>
+            <span class="n">translated_seq</span> <span class="o">=</span> <span class="n">transcript</span><span class="o">.</span><span class="n">translated_seq</span>
+            <span class="k">if</span> <span class="n">translated_seq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">translated_seq</span>
+
+        <span class="k">return</span> <span class="n">translate_dna</span><span class="p">(</span><span class="n">reference_cds</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">shifted</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Public accessor for _shifted.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the allele has been shifted, False otherwise.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shifted</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_shifted</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Returns whether the allele has been shifted from its original position.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the allele has been shifted, False otherwise.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">shifted_cdna_locus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Locus</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Public accessor for _shifted_cdna_locus.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Locus | None: The cDNA locus of the variation allele after shifting,</span>
+<span class="sd">                or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shifted_cdna_locus</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_shifted_cdna_locus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Locus</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Returns the cDNA locus of the variation allele after shifting, or None if not applicable.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Locus | None: The cDNA locus of the variation allele after shifting,</span>
+<span class="sd">                or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">shifted_cds_locus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Locus</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Public accessor for _shifted_cds_locus.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Locus | None: The CDS locus of the variation allele after shifting,</span>
+<span class="sd">                or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shifted_cds_locus</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_shifted_cds_locus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Locus</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Returns the CDS locus of the variation allele after shifting, or None if not applicable.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Locus | None: The CDS locus of the variation allele after shifting,</span>
+<span class="sd">                or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">shifted_protein_locus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Locus</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Public accessor for _shifted_protein_locus.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Locus | None: The protein locus of the variation allele after shifting,</span>
+<span class="sd">                or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shifted_protein_locus</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_shifted_protein_locus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Locus</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Returns the protein locus of the variation allele after shifting, or None if not applicable.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Locus | None: The protein locus of the variation allele after shifting,</span>
+<span class="sd">                or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">original_cdna_locus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Locus</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _original_cdna_locus.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Locus | None: The original cDNA locus of the variation allele before shifting,</span>
+<span class="sd">                or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_original_cdna_locus</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_original_cdna_locus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Locus</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the original cDNA locus of the variation allele before shifting, or None if not applicable.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Locus | None: The original cDNA locus of the variation allele before shifting,</span>
+<span class="sd">                or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">original_cds_locus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Locus</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _original_cds_locus.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Locus | None: The original CDS locus of the variation allele before shifting,</span>
+<span class="sd">                or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_original_cds_locus</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_original_cds_locus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Locus</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the original CDS locus of the variation allele before shifting, or None if not applicable.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Locus | None: The original CDS locus of the variation allele before shifting,</span>
+<span class="sd">                or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">original_protein_locus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Locus</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Public accessor for _original_protein_locus.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Locus | None: The original protein locus of the variation allele before shifting,</span>
+<span class="sd">                or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_original_protein_locus</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_original_protein_locus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Locus</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""The original protein locus of the variation allele before shifting,</span>
+<span class="sd">        or None if not applicable.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Locus | None: The original protein locus of the variation allele before shifting,</span>
+<span class="sd">                or None if not applicable.</span>
+<span class="sd">        """</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Feature is not implemented yet."</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TranscriptVariationAllele.shift">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.overlap.html#ensembl.vep.models.overlap.transcript_variation_allele.TranscriptVariationAllele.shift">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">shift</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Shifts the variation allele to its most 3' position on the transcript according to HGVS rules."""</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Feature is not implemented yet."</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TranscriptVariationAllele.hgvs_genomic">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.overlap.html#ensembl.vep.models.overlap.transcript_variation_allele.TranscriptVariationAllele.hgvs_genomic">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hgvs_genomic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the HGVS genomic notation for this variation allele."""</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Feature is not implemented yet."</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TranscriptVariationAllele.hgvs_transcript">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.overlap.html#ensembl.vep.models.overlap.transcript_variation_allele.TranscriptVariationAllele.hgvs_transcript">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hgvs_transcript</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the HGVS transcript notation for this variation allele."""</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Feature is not implemented yet."</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TranscriptVariationAllele.hgvs_protein">
+<a class="viewcode-back" href="../../../../../auto/reference/api/ensembl.vep.models.overlap.html#ensembl.vep.models.overlap.transcript_variation_allele.TranscriptVariationAllele.hgvs_protein">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hgvs_protein</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the HGVS protein notation for this variation allele."""</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Feature is not implemented yet."</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

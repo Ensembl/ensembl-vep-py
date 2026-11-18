@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Writing Classes &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'developer_guide/writing_classes';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.01a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Position in a Sequence Region" href="coordinates_and_slices.html" />
+    <link rel="prev" title="Style Conventions" href="style_conventions.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 18, 2026"/>
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page" aria-expanded="false" aria-controls="pst-secondary-sidebar-modal">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="style_conventions.html">Style Conventions</a></li>
+<li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Writing Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coordinates_and_slices.html">Position in a Sequence Region</a></li>
+<li class="toctree-l1"><a class="reference internal" href="circular_dependencies.html">Avoiding circular dependency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parsers_and_feature_sources.html">Parsers and Feature Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Building the Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coverage_report.html">Coverage Report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writing_plugins.html">Writing Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adding_annotation_sources.html">Adding an annotation source</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Developer Guide</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Writing Classes</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="writing-classes">
+<h1>Writing Classes<a class="headerlink" href="#writing-classes" title="Link to this heading">#</a></h1>
+<section id="class-naming">
+<h2>Class Naming<a class="headerlink" href="#class-naming" title="Link to this heading">#</a></h2>
+<p>Class names must use <code class="docutils literal notranslate"><span class="pre">CapWords</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">MyClass</span></code>), in line with widely accepted Python conventions and PEP 8 guidelines.</p>
+<p>We are deliberately not using the <code class="docutils literal notranslate"><span class="pre">Base</span></code> prefix. Classes are named to reflect the object they model, and extended (if need be) via inheritance using progressively specific names using meaningful prefixes rather than just <code class="docutils literal notranslate"><span class="pre">Base</span></code> — for example, <code class="docutils literal notranslate"><span class="pre">Variation</span></code> as the parent class and <code class="docutils literal notranslate"><span class="pre">StructuralVariation</span></code> as its subclass.</p>
+<p><strong>Rationale:</strong> This is a matter of stylistic preference — both approaches offer the same extensibility.</p>
+</section>
+<section id="class-attributes">
+<h2>Class attributes<a class="headerlink" href="#class-attributes" title="Link to this heading">#</a></h2>
+<section id="non-derived-attributes">
+<h3>Non-derived attributes<a class="headerlink" href="#non-derived-attributes" title="Link to this heading">#</a></h3>
+<p>Attributes that are not derived from other attributes are defined in the class body with type annotations. They are generally not lazy-loaded or cached and further categorised into core attributes and externally-set attributes.</p>
+<section id="core-attributes">
+<h4>Core Attributes<a class="headerlink" href="#core-attributes" title="Link to this heading">#</a></h4>
+<p>Core attributes are those that are set during object initialization and are essential to the object’s identity. They are included in the <code class="docutils literal notranslate"><span class="pre">__init__</span></code> method generated by <code class="docutils literal notranslate"><span class="pre">attrs</span></code>. They do not have default values.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnsafeSetterMixin</span><span class="p">,</span> <span class="n">invalidates</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">(</span><span class="n">UnsafeSetterMixin</span><span class="p">):</span>
+    <span class="n">core_attr1</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">on_setattr</span><span class="o">=</span><span class="n">invalidates</span><span class="p">(</span><span class="s1">'derived_attr1'</span><span class="p">))</span>
+    <span class="n">core_attr2</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">derived_attr1</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">some_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">derived_attr1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_attr1</span> <span class="o">*</span> <span class="mi">2</span>
+
+<span class="bp">cls</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">(</span><span class="n">core_attr1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">core_attr2</span><span class="o">=</span><span class="s2">"foo"</span><span class="p">)</span>
+<span class="k">with</span> <span class="bp">cls</span><span class="o">.</span><span class="n">unsafe</span><span class="p">():</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="n">core_attr1</span> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+</div>
+</section>
+<section id="externally-set-attributes">
+<h4>Externally-set attributes<a class="headerlink" href="#externally-set-attributes" title="Link to this heading">#</a></h4>
+<p>These are similarly not derived and externally set like core attributes but they are not essential to be in the <code class="docutils literal notranslate"><span class="pre">__init__</span></code> method. The class is not responsible for calculating these attributes, so it should not enforce immutability or caching.</p>
+<p>They should still be defined in the class body (with type annotations) to be compatible with <code class="docutils literal notranslate"><span class="pre">slots=True</span></code> and to ensure they are tracked properly.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">():</span>
+    <span class="n">core_attr</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">externally_set_attr</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="bp">cls</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">(</span><span class="n">core_attr</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="bp">cls</span><span class="o">.</span><span class="n">externally_set_attr</span> <span class="o">=</span> <span class="n">some_external_method</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="derived-attributes">
+<h3>Derived Attributes<a class="headerlink" href="#derived-attributes" title="Link to this heading">#</a></h3>
+<p>Derived attributes are read-only properties derived from one or more attributes. They are lazy-loaded (not part of <code class="docutils literal notranslate"><span class="pre">__init__</span></code>) and can be cached (using <code class="docutils literal notranslate"><span class="pre">functools.cached_property</span></code>).</p>
+<p><strong>Read-only enforcement</strong> is handled by the using a combination of a protected variable (prefixing name with <code class="docutils literal notranslate"><span class="pre">_</span></code>) and a public variable property with no setter. The public variable should be used for all access outside of the class definition, the protected variable is for internal use only.
+Because the public accessible variable has no setter, you should never assign directly to it, mypy will throw a <code class="docutils literal notranslate"><span class="pre">misc</span></code> error if you do (property is read-only). Reading or assigning to the protected variable directly outside of the class definition will result in a <a class="reference external" href="https://pylint.readthedocs.io/en/stable/user_guide/messages/warning/protected-access.html">W202</a> error by pylint. Both will fail the CI checks and should be avoided. Ensure mypy and pylint are enabled in your IDE for linting annotations during development.</p>
+<p><strong>Lazy-loading</strong> is achieved by setting <code class="docutils literal notranslate"><span class="pre">init=False</span></code> for the derived attribute, which means it will not be included in the <code class="docutils literal notranslate"><span class="pre">__init__</span></code> method and will only be computed when accessed.</p>
+<p><strong>Caching</strong> is implemented using <code class="docutils literal notranslate"><span class="pre">functools.cached_property</span></code> on the private variable, which stores the computed value after the first access and returns the cached value on subsequent accesses. In some cases, the derived attribute may not be cached,</p>
+<ul class="simple">
+<li><p>if the computation is cheap and does not justify the overhead of caching, or</p></li>
+<li><p>if the derived attribute is set by product of some internal computation and does not have its own function to be decorated with <code class="docutils literal notranslate"><span class="pre">&#64;cached_property</span></code>.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">(</span><span class="n">CachedAttributeGuardMixin</span><span class="p">):</span>
+    <span class="n">core_attr1</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">_derived_attr3</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>    <span class="c1"># default value for non-cached derived attribute that is set by internal computation</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">derived_attr1</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_derived_attr1</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_derived_attr1</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="c1"># perform expensive computation here using core_attr1</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_attr1</span> <span class="o">*</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">derived_attr2</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="c1"># perform cheap computation here using core_attr1</span>
+        <span class="c1"># does not justify caching</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_attr1</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">derived_attr3</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="c1"># this attribute is set by some internal computation</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_derived_attr3</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_derived_attr3</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="c1"># alternative to defining default value at attribute definition</span>
+        <span class="c1"># can be used for some minor compuations for initial value assignment</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">some_internal_computation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># perform some internal computation here and set derived_attr3</span>
+        <span class="c1"># cannot do caching</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_derived_attr3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_attr1</span> <span class="o">*</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<section id="cache-invalidation">
+<h4>Cache invalidation<a class="headerlink" href="#cache-invalidation" title="Link to this heading">#</a></h4>
+<p>It is expected that core attributes are not changed after initialization. In the unlikely event they do need to be updated, the related derived attributes needs to be invalidated. Some derived attribute may also depend on other derived attributes, we may need to invalidate those as well.</p>
+<p><strong>Invalidating cache dependent on core attributes</strong>: This is handled by using the <code class="docutils literal notranslate"><span class="pre">invalidates</span></code> hook with <code class="docutils literal notranslate"><span class="pre">on_setattr</span></code>. This has speed penalty for object creation and assignment of core attributes. Core attributes are not expected to be updated that much.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
+    <span class="n">core_attr1</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">on_setattr</span><span class="o">=</span><span class="n">invalidates</span><span class="p">(</span><span class="s1">'_derived_attr1'</span><span class="p">))</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">derived_attr1</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_derived_attr1</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_derived_attr1</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="c1"># perform expensive computation here using core_attr1</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_attr1</span> <span class="o">*</span> <span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+<p><strong>Invalidating cache dependent on derived attributes</strong>: Derived attributes may not be defined in the attribute list, so we cannot use <code class="docutils literal notranslate"><span class="pre">invalidates</span></code> hook. Instead, we can directly call <code class="docutils literal notranslate"><span class="pre">invalidate</span></code> function from the function that calculates the derived attribute that the other derived attribute depends on.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">():</span>
+    <span class="n">core_attr1</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">derived_attr1</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_derived_attr1</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_derived_attr1</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">invalidate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'_derived_attr2'</span><span class="p">)</span>  <span class="c1"># invalidate dependent derived attribute</span>
+
+        <span class="c1"># perform expensive computation here using core_attr1</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_attr1</span> <span class="o">*</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">derived_attr2</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_derived_attr2</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_derived_attr2</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="c1"># perform expensive computation here using derived_attr1</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_attr1</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p><strong>Resetting derived attribute which does not have its own function</strong>: In some cases, the derived attribute is set by some internal computation and does not have its own function to be decorated with <code class="docutils literal notranslate"><span class="pre">&#64;cached_property</span></code> (third case mentioned in <a class="reference internal" href="#derived-attributes">Derived Attributes</a>). So, if we invalidate the attribute and in some place we try to access it, we will run into error. In such cases, we can use <code class="docutils literal notranslate"><span class="pre">reset_attrs</span></code> that will instead of invalidating the attribute, reset it to its default state.</p>
+<blockquote>
+<div><p><strong>Note:</strong> In some cases, we may want to allow updating core attributes without invalidating derived attributes. In that case, we can also use the <code class="docutils literal notranslate"><span class="pre">UnsafeSetterMixin</span></code> mixin. It allows using context managers to temporarily disable cache invalidation for faster but unsafe attribute update. Generally this should not be necessary.</p>
+</div></blockquote>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">(</span><span class="n">UnsafeSetterMixin</span><span class="p">):</span>
+    <span class="n">core_attr1</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">on_setattr</span><span class="o">=</span><span class="n">invalidates</span><span class="p">(</span><span class="s1">'_derived_attr1'</span><span class="p">))</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">derived_attr1</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_derived_attr1</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_derived_attr1</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="c1"># perform expensive computation here using core_attr1</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_attr1</span> <span class="o">*</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="bp">cls</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">(</span><span class="n">core_attr1</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">with</span> <span class="bp">cls</span><span class="o">.</span><span class="n">unsafe</span><span class="p">():</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="n">core_attr1</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># does not invalidate derived_attr1</span>
+</pre></div>
+</div>
+<p><strong>Assigning attributes without running hooks</strong>: When building a brand-new object, before construction is complete and before anything has read a value derived from the field being set, we may want to assign to attributes without running any hooks. The <code class="docutils literal notranslate"><span class="pre">assign_without_hooks</span></code> method can be used to set the real field and avoid running not just any <code class="docutils literal notranslate"><span class="pre">on_setattr</span></code> hooks, but also any validators or converters that <code class="docutils literal notranslate"><span class="pre">attrs</span></code> would normally run, and consequently speed up assigning those values.</p>
+<p>For example, when creating a <code class="docutils literal notranslate"><span class="pre">Transcript</span></code> object, we can immediately assign the <code class="docutils literal notranslate"><span class="pre">spliced_exons</span></code> attribute, because none of the downstream attributes have been cached yet, so there is nothing to invalidate. We can avoid numerous method calls and speed up attribute assignment.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">transcript</span> <span class="o">=</span> <span class="n">Transcript</span><span class="p">(</span>
+    <span class="n">stable_id</span><span class="o">=</span><span class="n">group</span><span class="o">.</span><span class="n">transcript_id</span><span class="p">,</span>
+    <span class="n">start</span><span class="o">=</span><span class="n">transcript_record</span><span class="o">.</span><span class="n">start</span><span class="p">,</span>
+    <span class="n">end</span><span class="o">=</span><span class="n">transcript_record</span><span class="o">.</span><span class="n">end</span><span class="p">,</span>
+    <span class="n">strand</span><span class="o">=</span><span class="n">strand</span><span class="p">,</span>
+    <span class="nb">slice</span><span class="o">=</span><span class="n">genomic_slice</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">transcript</span><span class="o">.</span><span class="n">assign_without_hooks</span><span class="p">(</span><span class="n">spliced_exons</span><span class="o">=</span><span class="n">exons</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="use-of-attrs">
+<h2>Use of attrs<a class="headerlink" href="#use-of-attrs" title="Link to this heading">#</a></h2>
+<p>We heavily use the <code class="docutils literal notranslate"><span class="pre">attrs</span></code> module for writing classes. All classes use the following <code class="docutils literal notranslate"><span class="pre">attrs</span></code> decorator defaults:</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">slots</span> <span class="pre">=</span> <span class="pre">True</span></code></strong></p>
+<p>Slotted classes are enabled by default for improved memory efficiency and attribute access performance.</p>
+<p><strong>Caveat:</strong> Slotted classes come with known limitations. Refer to the <a class="reference external" href="https://www.attrs.org/en/stable/glossary.html#term-slotted-classes">attrs glossary on slotted classes</a> for a full list.</p>
+<p><strong>Rationale:</strong> This is an intentional design constraint. Requiring all attributes to be declared upfront — including private or cache-related ones — prevents hidden state from accumulating across the codebase. Readers should be able to understand an object’s full structure without hunting through unrelated code paths.</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">auto_attribs</span> <span class="pre">=</span> <span class="pre">True</span></code></strong></p>
+<p>All attributes must have explicit type annotations. This is enforced to maintain consistency and enable static analysis.</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">kw_only</span> <span class="pre">=</span> <span class="pre">True</span></code></strong></p>
+<p>All constructor arguments are keyword-only. This improves readability at call sites by making argument names self-documenting.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Good — intent is clear</span>
+<span class="n">MyClass</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"foo"</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># Avoided — positional args obscure intent</span>
+<span class="n">MyClass</span><span class="p">(</span><span class="s2">"foo"</span><span class="p">,</span> <span class="mi">42</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong><code class="docutils literal notranslate"><span class="pre">on_setattr</span></code> vs Custom <code class="docutils literal notranslate"><span class="pre">__setattr__</span></code></strong></p>
+<p>We use a custom <code class="docutils literal notranslate"><span class="pre">__setattr__</span></code> rather than <code class="docutils literal notranslate"><span class="pre">on_setattr</span></code> because <code class="docutils literal notranslate"><span class="pre">on_setattr</span></code> does not trigger for attributes defined via <code class="docutils literal notranslate"><span class="pre">&#64;cached_property</span></code> — even at the class level. Since we want these cached attributes to be immutable and they cannot be registered in the <code class="docutils literal notranslate"><span class="pre">attrs</span></code> attribute list, a custom <code class="docutils literal notranslate"><span class="pre">__setattr__</span></code> is necessary to enforce that constraint uniformly.</p>
+<p><strong>Caveat:</strong> This approach may cause performance issues. As <strong>setattr</strong> is called for every attribute assignment, it can introduce overhead, especially if there are many attributes or frequent updates. This is a trade-off between enforcing immutability and performance.</p>
+<p>We can possibly emulate the <code class="docutils literal notranslate"><span class="pre">attrs</span></code>-generated <code class="docutils literal notranslate"><span class="pre">__setattr__</span></code> if required in future -</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">hook</span> <span class="o">=</span> <span class="n">sa_attrs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">nval</span> <span class="o">=</span> <span class="n">val</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">nval</span> <span class="o">=</span> <span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+
+    <span class="n">_OBJ_SETATTR</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">nval</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This uses a dictionary lookup (<code class="docutils literal notranslate"><span class="pre">sa_attrs</span></code>) to resolve any validation or conversion hooks, falling back to a plain assignment if the attribute is not registered.</p>
+<blockquote>
+<div><p><strong>Open questions:</strong></p>
+<ul class="simple">
+<li><p>Can <code class="docutils literal notranslate"><span class="pre">__setattr__</span></code> be further optimised and eliminate loops and conditionals?</p></li>
+<li><p>Is there a way to register <code class="docutils literal notranslate"><span class="pre">&#64;cached_property</span></code> attributes in the <code class="docutils literal notranslate"><span class="pre">attrs</span></code> attribute list so that they are handled by <code class="docutils literal notranslate"><span class="pre">on_setattr</span></code>?</p></li>
+<li><p>Is it better to implement custom caching logic with immutability instead of <strong>setattr</strong>?</p></li>
+</ul>
+</div></blockquote>
+<p><strong>More Open Questions</strong></p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">match_args</span></code></strong> — Should this be explicitly set?</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">collect_by_mro</span></code></strong> — Should this be explicitly set?</p></li>
+</ul>
+</section>
+<section id="multiple-inheritance">
+<h2>Multiple Inheritance<a class="headerlink" href="#multiple-inheritance" title="Link to this heading">#</a></h2>
+</section>
+<section id="inheritance-and-mixins">
+<h2>Inheritance and Mixins<a class="headerlink" href="#inheritance-and-mixins" title="Link to this heading">#</a></h2>
+<p>Since we use <code class="docutils literal notranslate"><span class="pre">slots=True</span></code>, multiple inheritance is not straightforward — <code class="docutils literal notranslate"><span class="pre">attrs</span></code> requires that only one of the parent classes can use <code class="docutils literal notranslate"><span class="pre">slots=True</span></code>. And, if you inherit from class that is not using slots then you lose some of the benefits of slots in the child class <strong>especially slot inheritance</strong>.</p>
+<p><strong>By design, we avoid multiple inheritance and prefer association when shared behaviour is needed.</strong></p>
+<p><strong>Rationale:</strong> Multiple inheritance is complex and easy to mess up (the infamous deadly diamond of death). You have to be careful with method resolution order (MRO) so that the correct derived methods are called. Then also you have to use <code class="docutils literal notranslate"><span class="pre">super()</span></code> consistently or never at all.</p>
+<p>When shared behaviour cannot be achieved through association, <strong>Mixins</strong> are the sanctioned exception. A Mixin is a lightweight class that provides a specific set of reusable methods without carrying state. Because they do not use <code class="docutils literal notranslate"><span class="pre">&#64;define</span></code> or <code class="docutils literal notranslate"><span class="pre">&#64;attrs</span></code>, they are compatible with <code class="docutils literal notranslate"><span class="pre">slots=True</span></code> classes and are never meant to be instantiated directly.</p>
+<p>Mixins must be defined with empty <code class="docutils literal notranslate"><span class="pre">__slots__</span></code> to ensure they do not introduce a <code class="docutils literal notranslate"><span class="pre">__dict__</span></code> that would break slot inheritance.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="n">Correct</span><span class="p">:</span> <span class="n">Mixin</span> <span class="n">defined</span> <span class="k">with</span> <span class="n">empty</span> <span class="n">slots</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SerialisableMixin</span><span class="p">:</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="lazy-loading-and-caching">
+<h2>Lazy Loading and Caching<a class="headerlink" href="#lazy-loading-and-caching" title="Link to this heading">#</a></h2>
+<p>For attributes that are not core attributes, we lazy_load them by setting <code class="docutils literal notranslate"><span class="pre">init=False</span></code>. Furthermore <code class="docutils literal notranslate"><span class="pre">functools.cached_property</span></code> is used to cache attributes after first access.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">&#64;cached_property</span></code> is by default not suitable for use with slotted classes because it relies on the presence of a <code class="docutils literal notranslate"><span class="pre">__dict__</span></code> to store cached values. However, as of <code class="docutils literal notranslate"><span class="pre">attrs</span> <span class="pre">&gt;=</span> <span class="pre">24.1.0</span></code>, <code class="docutils literal notranslate"><span class="pre">cached_property</span></code> is <a class="reference external" href="https://github.com/python-attrs/attrs/releases/tag/24.1.0">supported on slotted classes</a>. See also: <a class="reference external" href="https://www.attrs.org/en/23.2.0/how-does-it-work.html#cached-properties-on-slotted-classes">how cached properties work on slotted classes</a>.</p>
+<p><strong>Warning:</strong> <code class="docutils literal notranslate"><span class="pre">cached_property</span></code> is <strong>not thread-safe</strong> by default. If the class may be accessed concurrently, we use a threading lock to guard the property computation.
+Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">RLock</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span><span class="p">:</span>
+    <span class="n">_lock</span><span class="p">:</span> <span class="n">RLock</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="n">RLock</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">expensive_computation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="c1"># perform expensive computation here</span>
+            <span class="o">...</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>Note:</strong> The use of <code class="docutils literal notranslate"><span class="pre">RLock</span></code> instead of <code class="docutils literal notranslate"><span class="pre">Lock</span></code> to prevent deadlocks when trying to access a cached property from a another cached property.</p>
+</div></blockquote>
+</section>
+<section id="containers">
+<h2>Containers<a class="headerlink" href="#containers" title="Link to this heading">#</a></h2>
+<p>We are using containers where we do not want to implement any behavior for an object, but useful to have a named and grouped representation of the data. They are defined using <code class="docutils literal notranslate"><span class="pre">&#64;frozen</span></code> from <code class="docutils literal notranslate"><span class="pre">attrs</span></code> to create immutable data structures and available in <code class="docutils literal notranslate"><span class="pre">ensembl.vep.common.(containers)</span></code>.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="style_conventions.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Style Conventions</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="coordinates_and_slices.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Position in a Sequence Region</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal" tabindex="-1"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#class-naming">Class Naming</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#class-attributes">Class attributes</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#non-derived-attributes">Non-derived attributes</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#core-attributes">Core Attributes</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#externally-set-attributes">Externally-set attributes</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derived-attributes">Derived Attributes</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cache-invalidation">Cache invalidation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#use-of-attrs">Use of attrs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-inheritance">Multiple Inheritance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inheritance-and-mixins">Inheritance and Mixins</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lazy-loading-and-caching">Lazy Loading and Caching</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#containers">Containers</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

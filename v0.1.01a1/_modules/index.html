@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Overview: module code &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/index';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.01a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 18, 2026"/>
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Overview: module code</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>All modules for which code is available</h1>
+<ul><li><a href="builtins.html">builtins</a></li>
+<li><a href="ensembl/vep/annotators/base.html">ensembl.vep.annotators.base</a></li>
+<li><a href="ensembl/vep/annotators/consequence/context/annotator.html">ensembl.vep.annotators.consequence.context.annotator</a></li>
+<li><a href="ensembl/vep/annotators/consequence/context/fact.html">ensembl.vep.annotators.consequence.context.fact</a></li>
+<li><a href="ensembl/vep/annotators/consequence/facts/base.html">ensembl.vep.annotators.consequence.facts.base</a></li>
+<li><a href="ensembl/vep/annotators/consequence/facts/costs.html">ensembl.vep.annotators.consequence.facts.costs</a></li>
+<li><a href="ensembl/vep/annotators/consequence/facts/helper.html">ensembl.vep.annotators.consequence.facts.helper</a></li>
+<li><a href="ensembl/vep/annotators/consequence/facts/kind.html">ensembl.vep.annotators.consequence.facts.kind</a></li>
+<li><a href="ensembl/vep/annotators/consequence/facts/position.html">ensembl.vep.annotators.consequence.facts.position</a></li>
+<li><a href="ensembl/vep/annotators/consequence/facts/sequence.html">ensembl.vep.annotators.consequence.facts.sequence</a></li>
+<li><a href="ensembl/vep/annotators/consequence/graphs.html">ensembl.vep.annotators.consequence.graphs</a></li>
+<li><a href="ensembl/vep/annotators/consequence/rules/catalogue.html">ensembl.vep.annotators.consequence.rules.catalogue</a></li>
+<li><a href="ensembl/vep/annotators/consequence/rules/editing.html">ensembl.vep.annotators.consequence.rules.editing</a></li>
+<li><a href="ensembl/vep/annotators/consequence/rules/expressions.html">ensembl.vep.annotators.consequence.rules.expressions</a></li>
+<li><a href="ensembl/vep/annotators/consequence/rules/rulesets.html">ensembl.vep.annotators.consequence.rules.rulesets</a></li>
+<li><a href="ensembl/vep/annotators/consequence/rules/validation.html">ensembl.vep.annotators.consequence.rules.validation</a></li>
+<li><a href="ensembl/vep/annotators/consequence/strategies/base.html">ensembl.vep.annotators.consequence.strategies.base</a></li>
+<li><a href="ensembl/vep/annotators/consequence/strategies/columnar.html">ensembl.vep.annotators.consequence.strategies.columnar</a></li>
+<li><a href="ensembl/vep/annotators/consequence/strategies/columnar_kernels.html">ensembl.vep.annotators.consequence.strategies.columnar_kernels</a></li>
+<li><a href="ensembl/vep/annotators/consequence/strategies/columnar_staged.html">ensembl.vep.annotators.consequence.strategies.columnar_staged</a></li>
+<li><a href="ensembl/vep/annotators/consequence/strategies/linear.html">ensembl.vep.annotators.consequence.strategies.linear</a></li>
+<li><a href="ensembl/vep/annotators/consequence/strategies/staged.html">ensembl.vep.annotators.consequence.strategies.staged</a></li>
+<li><a href="ensembl/vep/annotators/factory.html">ensembl.vep.annotators.factory</a></li>
+<li><a href="ensembl/vep/annotators/haplo/linear.html">ensembl.vep.annotators.haplo.linear</a></li>
+<li><a href="ensembl/vep/annotators/registry.html">ensembl.vep.annotators.registry</a></li>
+<li><a href="ensembl/vep/bench/baseline.html">ensembl.vep.bench.baseline</a></li>
+<li><a href="ensembl/vep/bench/endtoend.html">ensembl.vep.bench.endtoend</a></li>
+<li><a href="ensembl/vep/bench/harness.html">ensembl.vep.bench.harness</a></li>
+<li><a href="ensembl/vep/bench/oracle.html">ensembl.vep.bench.oracle</a></li>
+<li><a href="ensembl/vep/bench/suites.html">ensembl.vep.bench.suites</a></li>
+<li><a href="ensembl/vep/bench/sweep.html">ensembl.vep.bench.sweep</a></li>
+<li><a href="ensembl/vep/bench/workspace.html">ensembl.vep.bench.workspace</a></li>
+<li><a href="ensembl/vep/buffer/base.html">ensembl.vep.buffer.base</a></li>
+<li><a href="ensembl/vep/buffer/input_buffer/base.html">ensembl.vep.buffer.input_buffer.base</a></li>
+<li><a href="ensembl/vep/buffer/input_buffer/fixed_size.html">ensembl.vep.buffer.input_buffer.fixed_size</a></li>
+<li><a href="ensembl/vep/buffer/registry.html">ensembl.vep.buffer.registry</a></li>
+<li><a href="ensembl/vep/caches/binned_cache.html">ensembl.vep.caches.binned_cache</a></li>
+<li><a href="ensembl/vep/caches/codon_cache.html">ensembl.vep.caches.codon_cache</a></li>
+<li><a href="ensembl/vep/caches/feature_pool.html">ensembl.vep.caches.feature_pool</a></li>
+<li><a href="ensembl/vep/caches/interval_tree.html">ensembl.vep.caches.interval_tree</a></li>
+<li><a href="ensembl/vep/caches/mapper_cache.html">ensembl.vep.caches.mapper_cache</a></li>
+<li><a href="ensembl/vep/caches/sequence_cache.html">ensembl.vep.caches.sequence_cache</a></li>
+<li><a href="ensembl/vep/caches/slice_cache.html">ensembl.vep.caches.slice_cache</a></li>
+<li><a href="ensembl/vep/caches/zone_map.html">ensembl.vep.caches.zone_map</a></li>
+<li><a href="ensembl/vep/cli.html">ensembl.vep.cli</a></li>
+<li><a href="ensembl/vep/common/codons.html">ensembl.vep.common.codons</a></li>
+<li><a href="ensembl/vep/common/containers.html">ensembl.vep.common.containers</a></li>
+<li><a href="ensembl/vep/common/enums.html">ensembl.vep.common.enums</a></li>
+<li><a href="ensembl/vep/common/methods.html">ensembl.vep.common.methods</a></li>
+<li><a href="ensembl/vep/common/mixins.html">ensembl.vep.common.mixins</a></li>
+<li><a href="ensembl/vep/common/vcf.html">ensembl.vep.common.vcf</a></li>
+<li><a href="ensembl/vep/config/base.html">ensembl.vep.config.base</a></li>
+<li><a href="ensembl/vep/config/option_spec.html">ensembl.vep.config.option_spec</a></li>
+<li><a href="ensembl/vep/config/parser/cli.html">ensembl.vep.config.parser.cli</a></li>
+<li><a href="ensembl/vep/config/parser/common.html">ensembl.vep.config.parser.common</a></li>
+<li><a href="ensembl/vep/config/parser/config.html">ensembl.vep.config.parser.config</a></li>
+<li><a href="ensembl/vep/config/parser/env.html">ensembl.vep.config.parser.env</a></li>
+<li><a href="ensembl/vep/config/report.html">ensembl.vep.config.report</a></li>
+<li><a href="ensembl/vep/config/sections/base.html">ensembl.vep.config.sections.base</a></li>
+<li><a href="ensembl/vep/config/sections/bench/bench.html">ensembl.vep.config.sections.bench.bench</a></li>
+<li><a href="ensembl/vep/config/sections/bench/endtoend.html">ensembl.vep.config.sections.bench.endtoend</a></li>
+<li><a href="ensembl/vep/config/sections/bench/matrix.html">ensembl.vep.config.sections.bench.matrix</a></li>
+<li><a href="ensembl/vep/config/sections/bench/oracle.html">ensembl.vep.config.sections.bench.oracle</a></li>
+<li><a href="ensembl/vep/config/sections/bench/sweep.html">ensembl.vep.config.sections.bench.sweep</a></li>
+<li><a href="ensembl/vep/config/sections/catalogue/add.html">ensembl.vep.config.sections.catalogue.add</a></li>
+<li><a href="ensembl/vep/config/sections/catalogue/catalogue.html">ensembl.vep.config.sections.catalogue.catalogue</a></li>
+<li><a href="ensembl/vep/config/sections/catalogue/costs.html">ensembl.vep.config.sections.catalogue.costs</a></li>
+<li><a href="ensembl/vep/config/sections/catalogue/remove.html">ensembl.vep.config.sections.catalogue.remove</a></li>
+<li><a href="ensembl/vep/config/sections/catalogue/show.html">ensembl.vep.config.sections.catalogue.show</a></li>
+<li><a href="ensembl/vep/config/sections/catalogue/validate.html">ensembl.vep.config.sections.catalogue.validate</a></li>
+<li><a href="ensembl/vep/config/sections/catalogue/write.html">ensembl.vep.config.sections.catalogue.write</a></li>
+<li><a href="ensembl/vep/config/sections/common/annotation.html">ensembl.vep.config.sections.common.annotation</a></li>
+<li><a href="ensembl/vep/config/sections/common/corpus.html">ensembl.vep.config.sections.common.corpus</a></li>
+<li><a href="ensembl/vep/config/sections/common/execution.html">ensembl.vep.config.sections.common.execution</a></li>
+<li><a href="ensembl/vep/config/sections/common/logging.html">ensembl.vep.config.sections.common.logging</a></li>
+<li><a href="ensembl/vep/config/sections/common/source.html">ensembl.vep.config.sections.common.source</a></li>
+<li><a href="ensembl/vep/config/sections/corpus/describe.html">ensembl.vep.config.sections.corpus.describe</a></li>
+<li><a href="ensembl/vep/config/sections/corpus/golden.html">ensembl.vep.config.sections.corpus.golden</a></li>
+<li><a href="ensembl/vep/config/sections/corpus/save.html">ensembl.vep.config.sections.corpus.save</a></li>
+<li><a href="ensembl/vep/config/sections/explain/explain.html">ensembl.vep.config.sections.explain.explain</a></li>
+<li><a href="ensembl/vep/config/sections/run/run.html">ensembl.vep.config.sections.run.run</a></li>
+<li><a href="ensembl/vep/config/sections/stats/stats.html">ensembl.vep.config.sections.stats.stats</a></li>
+<li><a href="ensembl/vep/config/sources.html">ensembl.vep.config.sources</a></li>
+<li><a href="ensembl/vep/corpus/annotate.html">ensembl.vep.corpus.annotate</a></li>
+<li><a href="ensembl/vep/corpus/base.html">ensembl.vep.corpus.base</a></li>
+<li><a href="ensembl/vep/corpus/combine.html">ensembl.vep.corpus.combine</a></li>
+<li><a href="ensembl/vep/corpus/describe.html">ensembl.vep.corpus.describe</a></li>
+<li><a href="ensembl/vep/corpus/exporter/base.html">ensembl.vep.corpus.exporter.base</a></li>
+<li><a href="ensembl/vep/corpus/exporter/formats/file/base.html">ensembl.vep.corpus.exporter.formats.file.base</a></li>
+<li><a href="ensembl/vep/corpus/exporter/formats/file/fasta.html">ensembl.vep.corpus.exporter.formats.file.fasta</a></li>
+<li><a href="ensembl/vep/corpus/exporter/formats/file/gff3.html">ensembl.vep.corpus.exporter.formats.file.gff3</a></li>
+<li><a href="ensembl/vep/corpus/exporter/formats/file/vcf.html">ensembl.vep.corpus.exporter.formats.file.vcf</a></li>
+<li><a href="ensembl/vep/corpus/exporter/manifest.html">ensembl.vep.corpus.exporter.manifest</a></li>
+<li><a href="ensembl/vep/corpus/exporter/registry.html">ensembl.vep.corpus.exporter.registry</a></li>
+<li><a href="ensembl/vep/corpus/golden/base.html">ensembl.vep.corpus.golden.base</a></li>
+<li><a href="ensembl/vep/corpus/golden/resolve.html">ensembl.vep.corpus.golden.resolve</a></li>
+<li><a href="ensembl/vep/corpus/golden/terms.html">ensembl.vep.corpus.golden.terms</a></li>
+<li><a href="ensembl/vep/corpus/loaded/base.html">ensembl.vep.corpus.loaded.base</a></li>
+<li><a href="ensembl/vep/corpus/loaded/files.html">ensembl.vep.corpus.loaded.files</a></li>
+<li><a href="ensembl/vep/corpus/overlap.html">ensembl.vep.corpus.overlap</a></li>
+<li><a href="ensembl/vep/corpus/registry.html">ensembl.vep.corpus.registry</a></li>
+<li><a href="ensembl/vep/corpus/spec.html">ensembl.vep.corpus.spec</a></li>
+<li><a href="ensembl/vep/corpus/synthetic/base.html">ensembl.vep.corpus.synthetic.base</a></li>
+<li><a href="ensembl/vep/corpus/synthetic/components/sequence.html">ensembl.vep.corpus.synthetic.components.sequence</a></li>
+<li><a href="ensembl/vep/corpus/synthetic/components/transcript.html">ensembl.vep.corpus.synthetic.components.transcript</a></li>
+<li><a href="ensembl/vep/corpus/synthetic/components/variation.html">ensembl.vep.corpus.synthetic.components.variation</a></li>
+<li><a href="ensembl/vep/corpus/synthetic/default.html">ensembl.vep.corpus.synthetic.default</a></li>
+<li><a href="ensembl/vep/corpus/synthetic/heavy.html">ensembl.vep.corpus.synthetic.heavy</a></li>
+<li><a href="ensembl/vep/corpus/validation.html">ensembl.vep.corpus.validation</a></li>
+<li><a href="ensembl/vep/ensembl_vep_core.html">ensembl.vep.ensembl_vep_core</a></li>
+<li><a href="ensembl/vep/explain/annotate.html">ensembl.vep.explain.annotate</a></li>
+<li><a href="ensembl/vep/explain/compare.html">ensembl.vep.explain.compare</a></li>
+<li><a href="ensembl/vep/explain/selection.html">ensembl.vep.explain.selection</a></li>
+<li><a href="ensembl/vep/explain/summary.html">ensembl.vep.explain.summary</a></li>
+<li><a href="ensembl/vep/matcher/allele.html">ensembl.vep.matcher.allele</a></li>
+<li><a href="ensembl/vep/matcher/base.html">ensembl.vep.matcher.base</a></li>
+<li><a href="ensembl/vep/matcher/exact.html">ensembl.vep.matcher.exact</a></li>
+<li><a href="ensembl/vep/matcher/overlap.html">ensembl.vep.matcher.overlap</a></li>
+<li><a href="ensembl/vep/matcher/reciprocal.html">ensembl.vep.matcher.reciprocal</a></li>
+<li><a href="ensembl/vep/models/custom_feature.html">ensembl.vep.models.custom_feature</a></li>
+<li><a href="ensembl/vep/models/feature.html">ensembl.vep.models.feature</a></li>
+<li><a href="ensembl/vep/models/genic/cdna.html">ensembl.vep.models.genic.cdna</a></li>
+<li><a href="ensembl/vep/models/genic/cds.html">ensembl.vep.models.genic.cds</a></li>
+<li><a href="ensembl/vep/models/genic/exon.html">ensembl.vep.models.genic.exon</a></li>
+<li><a href="ensembl/vep/models/genic/gene.html">ensembl.vep.models.genic.gene</a></li>
+<li><a href="ensembl/vep/models/genic/intron.html">ensembl.vep.models.genic.intron</a></li>
+<li><a href="ensembl/vep/models/genic/transcript.html">ensembl.vep.models.genic.transcript</a></li>
+<li><a href="ensembl/vep/models/genic/translation.html">ensembl.vep.models.genic.translation</a></li>
+<li><a href="ensembl/vep/models/genic/utr.html">ensembl.vep.models.genic.utr</a></li>
+<li><a href="ensembl/vep/models/haplotype/cds_haplotype.html">ensembl.vep.models.haplotype.cds_haplotype</a></li>
+<li><a href="ensembl/vep/models/haplotype/protein_haplotype.html">ensembl.vep.models.haplotype.protein_haplotype</a></li>
+<li><a href="ensembl/vep/models/haplotype/transcript_haplotype.html">ensembl.vep.models.haplotype.transcript_haplotype</a></li>
+<li><a href="ensembl/vep/models/overlap/custom_variation_allele.html">ensembl.vep.models.overlap.custom_variation_allele</a></li>
+<li><a href="ensembl/vep/models/overlap/feature_overlap.html">ensembl.vep.models.overlap.feature_overlap</a></li>
+<li><a href="ensembl/vep/models/overlap/multiple_feature_overlap.html">ensembl.vep.models.overlap.multiple_feature_overlap</a></li>
+<li><a href="ensembl/vep/models/overlap/overlap_consequence.html">ensembl.vep.models.overlap.overlap_consequence</a></li>
+<li><a href="ensembl/vep/models/overlap/transcript_structural_variation_allele.html">ensembl.vep.models.overlap.transcript_structural_variation_allele</a></li>
+<li><a href="ensembl/vep/models/overlap/transcript_variation_allele.html">ensembl.vep.models.overlap.transcript_variation_allele</a></li>
+<li><a href="ensembl/vep/models/regulatory/motif.html">ensembl.vep.models.regulatory.motif</a></li>
+<li><a href="ensembl/vep/models/regulatory/regulatory.html">ensembl.vep.models.regulatory.regulatory</a></li>
+<li><a href="ensembl/vep/models/sequence/circular_slice.html">ensembl.vep.models.sequence.circular_slice</a></li>
+<li><a href="ensembl/vep/models/sequence/coord_system.html">ensembl.vep.models.sequence.coord_system</a></li>
+<li><a href="ensembl/vep/models/sequence/mapper.html">ensembl.vep.models.sequence.mapper</a></li>
+<li><a href="ensembl/vep/models/sequence/slice.html">ensembl.vep.models.sequence.slice</a></li>
+<li><a href="ensembl/vep/models/variation/structural_variation.html">ensembl.vep.models.variation.structural_variation</a></li>
+<li><a href="ensembl/vep/models/variation/structural_variation_allele.html">ensembl.vep.models.variation.structural_variation_allele</a></li>
+<li><a href="ensembl/vep/models/variation/variation.html">ensembl.vep.models.variation.variation</a></li>
+<li><a href="ensembl/vep/models/variation/variation_allele.html">ensembl.vep.models.variation.variation_allele</a></li>
+<li><a href="ensembl/vep/output/factory/base.html">ensembl.vep.output.factory.base</a></li>
+<li><a href="ensembl/vep/output/factory/stream/base.html">ensembl.vep.output.factory.stream.base</a></li>
+<li><a href="ensembl/vep/output/factory/stream/json.html">ensembl.vep.output.factory.stream.json</a></li>
+<li><a href="ensembl/vep/output/factory/write/base.html">ensembl.vep.output.factory.write.base</a></li>
+<li><a href="ensembl/vep/output/factory/write/json.html">ensembl.vep.output.factory.write.json</a></li>
+<li><a href="ensembl/vep/output/factory/write/registry.html">ensembl.vep.output.factory.write.registry</a></li>
+<li><a href="ensembl/vep/output/factory/write/vcf.html">ensembl.vep.output.factory.write.vcf</a></li>
+<li><a href="ensembl/vep/output/parser/base.html">ensembl.vep.output.parser.base</a></li>
+<li><a href="ensembl/vep/output/parser/json.html">ensembl.vep.output.parser.json</a></li>
+<li><a href="ensembl/vep/output/parser/tab.html">ensembl.vep.output.parser.tab</a></li>
+<li><a href="ensembl/vep/output/parser/vcf.html">ensembl.vep.output.parser.vcf</a></li>
+<li><a href="ensembl/vep/overlaps/base.html">ensembl.vep.overlaps.base</a></li>
+<li><a href="ensembl/vep/overlaps/colocated.html">ensembl.vep.overlaps.colocated</a></li>
+<li><a href="ensembl/vep/overlaps/custom.html">ensembl.vep.overlaps.custom</a></li>
+<li><a href="ensembl/vep/overlaps/feature.html">ensembl.vep.overlaps.feature</a></li>
+<li><a href="ensembl/vep/overlaps/regulatory.html">ensembl.vep.overlaps.regulatory</a></li>
+<li><a href="ensembl/vep/overlaps/transcript.html">ensembl.vep.overlaps.transcript</a></li>
+<li><a href="ensembl/vep/parsers/fasta.html">ensembl.vep.parsers.fasta</a></li>
+<li><a href="ensembl/vep/parsers/gff3.html">ensembl.vep.parsers.gff3</a></li>
+<li><a href="ensembl/vep/parsers/gtf.html">ensembl.vep.parsers.gtf</a></li>
+<li><a href="ensembl/vep/parsers/parser.html">ensembl.vep.parsers.parser</a></li>
+<li><a href="ensembl/vep/parsers/tabix.html">ensembl.vep.parsers.tabix</a></li>
+<li><a href="ensembl/vep/parsers/vcf.html">ensembl.vep.parsers.vcf</a></li>
+<li><a href="ensembl/vep/render/chart.html">ensembl.vep.render.chart</a></li>
+<li><a href="ensembl/vep/render/graph/dot.html">ensembl.vep.render.graph.dot</a></li>
+<li><a href="ensembl/vep/render/graph/layout.html">ensembl.vep.render.graph.layout</a></li>
+<li><a href="ensembl/vep/render/graph/mermaid.html">ensembl.vep.render.graph.mermaid</a></li>
+<li><a href="ensembl/vep/render/graph/model.html">ensembl.vep.render.graph.model</a></li>
+<li><a href="ensembl/vep/render/graph/svg.html">ensembl.vep.render.graph.svg</a></li>
+<li><a href="ensembl/vep/render/page.html">ensembl.vep.render.page</a></li>
+<li><a href="ensembl/vep/render/report.html">ensembl.vep.render.report</a></li>
+<li><a href="ensembl/vep/render/table.html">ensembl.vep.render.table</a></li>
+<li><a href="ensembl/vep/render/theme.html">ensembl.vep.render.theme</a></li>
+<li><a href="ensembl/vep/runner/base.html">ensembl.vep.runner.base</a></li>
+<li><a href="ensembl/vep/runner/bench/common.html">ensembl.vep.runner.bench.common</a></li>
+<li><a href="ensembl/vep/runner/bench/endtoend.html">ensembl.vep.runner.bench.endtoend</a></li>
+<li><a href="ensembl/vep/runner/bench/matrix.html">ensembl.vep.runner.bench.matrix</a></li>
+<li><a href="ensembl/vep/runner/bench/oracle.html">ensembl.vep.runner.bench.oracle</a></li>
+<li><a href="ensembl/vep/runner/bench/sweep.html">ensembl.vep.runner.bench.sweep</a></li>
+<li><a href="ensembl/vep/runner/catalogue/add.html">ensembl.vep.runner.catalogue.add</a></li>
+<li><a href="ensembl/vep/runner/catalogue/common.html">ensembl.vep.runner.catalogue.common</a></li>
+<li><a href="ensembl/vep/runner/catalogue/costs.html">ensembl.vep.runner.catalogue.costs</a></li>
+<li><a href="ensembl/vep/runner/catalogue/remove.html">ensembl.vep.runner.catalogue.remove</a></li>
+<li><a href="ensembl/vep/runner/catalogue/show.html">ensembl.vep.runner.catalogue.show</a></li>
+<li><a href="ensembl/vep/runner/catalogue/validate.html">ensembl.vep.runner.catalogue.validate</a></li>
+<li><a href="ensembl/vep/runner/corpus/describe.html">ensembl.vep.runner.corpus.describe</a></li>
+<li><a href="ensembl/vep/runner/corpus/golden.html">ensembl.vep.runner.corpus.golden</a></li>
+<li><a href="ensembl/vep/runner/corpus/save.html">ensembl.vep.runner.corpus.save</a></li>
+<li><a href="ensembl/vep/runner/explain.html">ensembl.vep.runner.explain</a></li>
+<li><a href="ensembl/vep/runner/registry.html">ensembl.vep.runner.registry</a></li>
+<li><a href="ensembl/vep/runner/run/default.html">ensembl.vep.runner.run.default</a></li>
+<li><a href="ensembl/vep/runner/run/haplo.html">ensembl.vep.runner.run.haplo</a></li>
+<li><a href="ensembl/vep/runner/run/output_transaction.html">ensembl.vep.runner.run.output_transaction</a></li>
+<li><a href="ensembl/vep/runner/run/progress.html">ensembl.vep.runner.run.progress</a></li>
+<li><a href="ensembl/vep/runner/stats.html">ensembl.vep.runner.stats</a></li>
+<li><a href="ensembl/vep/sources/build.html">ensembl.vep.sources.build</a></li>
+<li><a href="ensembl/vep/sources/feature_source.html">ensembl.vep.sources.feature_source</a></li>
+<li><a href="ensembl/vep/sources/file/fasta/sequence.html">ensembl.vep.sources.file.fasta.sequence</a></li>
+<li><a href="ensembl/vep/sources/file/file_feature_source.html">ensembl.vep.sources.file.file_feature_source</a></li>
+<li><a href="ensembl/vep/sources/file/gff3/transcript.html">ensembl.vep.sources.file.gff3.transcript</a></li>
+<li><a href="ensembl/vep/sources/file/gtf/transcript.html">ensembl.vep.sources.file.gtf.transcript</a></li>
+<li><a href="ensembl/vep/sources/file/gxf/transcript.html">ensembl.vep.sources.file.gxf.transcript</a></li>
+<li><a href="ensembl/vep/sources/file/vcf/variation.html">ensembl.vep.sources.file.vcf.variation</a></li>
+<li><a href="ensembl/vep/sources/sequence_source.html">ensembl.vep.sources.sequence_source</a></li>
+<li><a href="ensembl/vep/sources/synonym.html">ensembl.vep.sources.synonym</a></li>
+<li><a href="ensembl/vep/stats/profile.html">ensembl.vep.stats.profile</a></li>
+<li><a href="ensembl/vep/stats/report.html">ensembl.vep.stats.report</a></li>
+<li><a href="ensembl/vep/stats/summary.html">ensembl.vep.stats.summary</a></li>
+<li><a href="ensembl/vep/trace/annotation.html">ensembl.vep.trace.annotation</a></li>
+<li><a href="ensembl/vep/trace/events.html">ensembl.vep.trace.events</a></li>
+<li><a href="ensembl/vep/trace/reconstruct.html">ensembl.vep.trace.reconstruct</a></li>
+<li><a href="ensembl/vep/trace/run.html">ensembl.vep.trace.run</a></li>
+<li><a href="ensembl/vep/workflow/base.html">ensembl.vep.workflow.base</a></li>
+<li><a href="ensembl/vep/workflow/build/default.html">ensembl.vep.workflow.build.default</a></li>
+<li><a href="ensembl/vep/workflow/build/haplo.html">ensembl.vep.workflow.build.haplo</a></li>
+<li><a href="ensembl/vep/workflow/build/registry.html">ensembl.vep.workflow.build.registry</a></li>
+<li><a href="ensembl/vep/workflow/executor.html">ensembl.vep.workflow.executor</a></li>
+<li><a href="ensembl/vep/workflow/tracks/base.html">ensembl.vep.workflow.tracks.base</a></li>
+<li><a href="ensembl/vep/workflow/tracks/colocated.html">ensembl.vep.workflow.tracks.colocated</a></li>
+<li><a href="ensembl/vep/workflow/tracks/consequence/regulatory.html">ensembl.vep.workflow.tracks.consequence.regulatory</a></li>
+<li><a href="ensembl/vep/workflow/tracks/consequence/transcript.html">ensembl.vep.workflow.tracks.consequence.transcript</a></li>
+<li><a href="ensembl/vep/workflow/tracks/custom.html">ensembl.vep.workflow.tracks.custom</a></li>
+<li><a href="ensembl/vep/workflow/tracks/registry.html">ensembl.vep.workflow.tracks.registry</a></li>
+<li><a href="ensembl/vep/workflow/worker/annotation.html">ensembl.vep.workflow.worker.annotation</a></li>
+<li><a href="ensembl/vep/workflow/worker/base.html">ensembl.vep.workflow.worker.base</a></li>
+</ul>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

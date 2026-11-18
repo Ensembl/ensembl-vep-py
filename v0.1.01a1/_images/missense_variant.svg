@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683 394" width="683" height="394" font-family="Lato, 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif"><title>missense_variant</title>
+  <defs><marker id="arrow-missense_variant" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#b7c0c8"/></marker></defs>
+  <path d="M 194 41 C 245 41, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-missense_variant)"/>
+  <path d="M 194 93 C 245 93, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-missense_variant)"/>
+  <path d="M 194 145 C 245 145, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-missense_variant)"/>
+  <path d="M 194 197 C 245 197, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-missense_variant)"/>
+  <path d="M 194 249 C 245 249, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-missense_variant)"/>
+  <path d="M 194 301 C 245 301, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-missense_variant)"/>
+  <path d="M 194 353 C 245 353, 245 197, 297 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-missense_variant)"/>
+  <path d="M 361 197 C 400 197, 400 197, 439 197" fill="none" stroke="#b7c0c8" stroke-width="1" marker-end="url(#arrow-missense_variant)"/>
+  <text x="400" y="193" text-anchor="middle" font-size="9" fill="#6f8190">when</text>
+  <rect x="297" y="180" width="64" height="34" fill="#33adff" stroke="#6f8190" stroke-width="1" rx="17"/><text x="305" y="195" font-size="11" fill="#1b2c39">ALL</text>
+  <rect x="24" y="24" width="170" height="34" fill="#33adff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="39" font-size="11" fill="#1b2c39">NOT is_structural</text>
+  <rect x="24" y="76" width="170" height="34" fill="#33adff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="91" font-size="11" fill="#1b2c39">is_transcript</text>
+  <rect x="24" y="128" width="170" height="34" fill="#33adff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="143" font-size="11" fill="#1b2c39">overlap_feature</text>
+  <rect x="24" y="180" width="170" height="34" fill="#33adff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="195" font-size="11" fill="#1b2c39">overlap_cds</text>
+  <rect x="24" y="232" width="170" height="34" fill="#33adff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="247" font-size="11" fill="#1b2c39">NOT peptide_has_X</text>
+  <rect x="24" y="284" width="170" height="34" fill="#33adff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="299" font-size="11" fill="#1b2c39">peptide_changed</text>
+  <rect x="24" y="336" width="170" height="34" fill="#33adff" stroke="#6f8190" stroke-width="1" rx="0"/><text x="32" y="351" font-size="11" fill="#1b2c39">peptide_same_length</text>
+  <rect x="439" y="180" width="220" height="34" fill="#0099ff" stroke="#6f8190" stroke-width="2" rx="0"/><text x="447" y="195" font-size="11" fill="#1b2c39">missense_variant</text><text x="447" y="207" font-size="9" fill="#1b2c39">emitted</text>
+</svg>

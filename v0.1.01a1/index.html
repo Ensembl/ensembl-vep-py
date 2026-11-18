@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta content="Top-level documentation for ensembl-vep package, with links to the rest of the site. " lang="en" name="description" xml:lang="en" />
+
+    <title>Ensembl VEP &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.01a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="User Guide" href="user_guide/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 18, 2026"/>
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="#">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="ensembl-vep">
+<h1><a class="reference external" href="https://github.com/Ensembl/ensembl-vep-py">Ensembl VEP</a><a class="headerlink" href="#ensembl-vep" title="Link to this heading">#</a></h1>
+<p>Ensembl VEP (Variant Effect Predictor) predicts the functional effects of genomic variants.</p>
+<blockquote>
+<div><p><strong><em>NOTE:</em></strong>  This project is in an initial development phase. Many features are incomplete, APIs may change without notice, and documentation is partial. Use at your own risk and feel free to open issues or contribute; your feedback is welcome.</p>
+</div></blockquote>
+<section id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Link to this heading">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user_guide/index.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/install.html">Download and install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/quickstart.html">Quickstart guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/how_to/configuring_a_run.html">Configuring a run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/how_to/annotation_sources.html">Choosing annotation sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/how_to/output.html">Writing output and run summaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/how_to/custom_annotation.html">Using custom annotation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/how_to/plugins.html">Using plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/how_to/filtering_results.html">Filtering results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/how_to/performance.html">Improving performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorials/streaming_annotations.html">Streaming annotations in Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorials/explaining_consequences.html">Explaining a consequence call</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/faq.html">FAQs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/contact.html">Contact Us</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="developer-guide">
+<h2>Developer Guide<a class="headerlink" href="#developer-guide" title="Link to this heading">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide/index.html">Developer Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/setup.html">Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/setup.html#pre-requisites">Pre-requisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/setup.html#clone-the-repository">Clone the repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/setup.html#create-the-development-environment">Create the development environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/setup.html#check-the-setup">Check the setup</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/style_conventions.html">Style Conventions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/style_conventions.html#typing-conventions">Typing Conventions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/style_conventions.html#logging-implementation">Logging Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/style_conventions.html#docstring-style">Docstring Style</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/writing_classes.html">Writing Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/writing_classes.html#class-naming">Class Naming</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/writing_classes.html#class-attributes">Class attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/writing_classes.html#use-of-attrs">Use of attrs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/writing_classes.html#multiple-inheritance">Multiple Inheritance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/writing_classes.html#inheritance-and-mixins">Inheritance and Mixins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/writing_classes.html#lazy-loading-and-caching">Lazy Loading and Caching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/writing_classes.html#containers">Containers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/coordinates_and_slices.html">Position in a Sequence Region</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/coordinates_and_slices.html#coordinate-systems-and-slices">Coordinate Systems and Slices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/coordinates_and_slices.html#coordinate-conventions">Coordinate Conventions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/coordinates_and_slices.html#insertion-coordinates">Insertion coordinates</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/circular_dependencies.html">Avoiding circular dependency</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/circular_dependencies.html#when-importing-from-same-package">When importing from same package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/circular_dependencies.html#importing-for-type-annotations">Importing for type annotations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/circular_dependencies.html#prevent-direct-circular-import">Prevent direct circular import</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/parsers_and_feature_sources.html">Parsers and Feature Sources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/parsers_and_feature_sources.html#parser-interface">Parser interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/parsers_and_feature_sources.html#featuresource-hierarchy">FeatureSource hierarchy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/parsers_and_feature_sources.html#streaming-vs-eager">Streaming vs. eager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/parsers_and_feature_sources.html#parsers">Parsers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/parsers_and_feature_sources.html#sources">Sources</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/benchmarking.html">Benchmarking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/benchmarking.html#the-conformance-gate">The conformance gate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/benchmarking.html#vep-bench-matrix-the-annotator-alone"><code class="docutils literal notranslate"><span class="pre">vep</span> <span class="pre">bench</span> <span class="pre">matrix</span></code>: the annotator alone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/benchmarking.html#vep-bench-endtoend-the-whole-command-line"><code class="docutils literal notranslate"><span class="pre">vep</span> <span class="pre">bench</span> <span class="pre">endtoend</span></code>: the whole command line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/benchmarking.html#other-commands">Other commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/benchmarking.html#recording-and-comparing-results">Recording and comparing results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/documentation.html">Building the Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/documentation.html#changes-to-the-default-configuration">Changes to the default configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/documentation.html#documenting-rust-objects">Documenting Rust objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/documentation.html#generated-pages">Generated pages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/documentation.html#coverage-reports">Coverage reports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/documentation.html#building-the-documentation-locally">Building the documentation locally</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/coverage_report.html">Coverage Report</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/coverage_report.html#python">Python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/coverage_report.html#rust">Rust</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/coverage_report.html#coverage-trends">Coverage Trends</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/writing_plugins.html">Writing Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/adding_annotation_sources.html">Adding an annotation source</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>
+<p>Command-line, data format, consequence term and API reference.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reference/index.html">Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="auto/reference/cli/index.html">CLI reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/data_formats.html">Data formats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auto/reference/consequence_terms.html">Consequence terms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auto/reference/api/ensembl.vep.html">API reference</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Link to this heading">#</a></h2>
+<p>Software as part of <a class="reference external" href="https://github.com/Ensembl/ensembl-vep-py">Ensembl VEP</a> is
+distributed under the <a class="reference external" href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache-2.0 License</a>.</p>
+</section>
+</section>
+<section id="code-of-conduct">
+<h1>Code of Conduct<a class="headerlink" href="#code-of-conduct" title="Link to this heading">#</a></h1>
+<p>The Ensembl project is built on a foundation of collaboration, mutual respect and equality with a diverse and global community. We do not condone discrimination or abusive behaviour of any form. We encourage participation and engagement for everyone, in a professional manner, and wish all members of our community to adhere to the same principles.</p>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="right-next"
+       href="user_guide/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">User Guide</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

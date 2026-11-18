@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta content="The input and output file formats Ensembl VEP reads and writes. " lang="en" name="description" xml:lang="en" />
+
+    <title>Data formats &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/data_formats';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.01a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Consequence terms" href="../auto/reference/consequence_terms.html" />
+    <link rel="prev" title="Common options" href="../auto/reference/cli/common.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 18, 2026"/>
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page" aria-expanded="false" aria-controls="pst-secondary-sidebar-modal">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../auto/reference/cli/index.html">CLI reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../auto/reference/cli/run.html">vep run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto/reference/cli/explain.html">vep explain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto/reference/cli/stats.html">vep stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto/reference/cli/corpus.html">vep corpus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto/reference/cli/bench.html">vep bench</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto/reference/cli/catalogue.html">vep catalogue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto/reference/cli/common.html">Common options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Data formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auto/reference/consequence_terms.html">Consequence terms</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../auto/reference/api/ensembl.vep.html">API reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../auto/reference/api/ensembl.vep.annotators.html">ensembl.vep.annotators package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../auto/reference/api/ensembl.vep.annotators.consequence.html">ensembl.vep.annotators.consequence package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.annotators.consequence.context.html">ensembl.vep.annotators.consequence.context package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.annotators.consequence.facts.html">ensembl.vep.annotators.consequence.facts package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.annotators.consequence.rules.html">ensembl.vep.annotators.consequence.rules package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.annotators.consequence.strategies.html">ensembl.vep.annotators.consequence.strategies package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../auto/reference/api/ensembl.vep.annotators.haplo.html">ensembl.vep.annotators.haplo package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto/reference/api/ensembl.vep.bench.html">ensembl.vep.bench package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../auto/reference/api/ensembl.vep.buffer.html">ensembl.vep.buffer package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../auto/reference/api/ensembl.vep.buffer.input_buffer.html">ensembl.vep.buffer.input_buffer package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto/reference/api/ensembl.vep.caches.html">ensembl.vep.caches package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto/reference/api/ensembl.vep.common.html">ensembl.vep.common package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../auto/reference/api/ensembl.vep.config.html">ensembl.vep.config package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../auto/reference/api/ensembl.vep.config.parser.html">ensembl.vep.config.parser package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../auto/reference/api/ensembl.vep.config.sections.html">ensembl.vep.config.sections package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.config.sections.bench.html">ensembl.vep.config.sections.bench package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.config.sections.catalogue.html">ensembl.vep.config.sections.catalogue package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.config.sections.common.html">ensembl.vep.config.sections.common package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.config.sections.corpus.html">ensembl.vep.config.sections.corpus package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.config.sections.explain.html">ensembl.vep.config.sections.explain package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.config.sections.run.html">ensembl.vep.config.sections.run package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.config.sections.stats.html">ensembl.vep.config.sections.stats package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../auto/reference/api/ensembl.vep.corpus.html">ensembl.vep.corpus package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../auto/reference/api/ensembl.vep.corpus.exporter.html">ensembl.vep.corpus.exporter package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.corpus.exporter.formats.html">ensembl.vep.corpus.exporter.formats package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../auto/reference/api/ensembl.vep.corpus.golden.html">ensembl.vep.corpus.golden package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../auto/reference/api/ensembl.vep.corpus.loaded.html">ensembl.vep.corpus.loaded package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../auto/reference/api/ensembl.vep.corpus.synthetic.html">ensembl.vep.corpus.synthetic package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.corpus.synthetic.components.html">ensembl.vep.corpus.synthetic.components package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto/reference/api/ensembl.vep.explain.html">ensembl.vep.explain package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto/reference/api/ensembl.vep.matcher.html">ensembl.vep.matcher package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../auto/reference/api/ensembl.vep.models.html">ensembl.vep.models package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../auto/reference/api/ensembl.vep.models.genic.html">ensembl.vep.models.genic package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../auto/reference/api/ensembl.vep.models.haplotype.html">ensembl.vep.models.haplotype package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../auto/reference/api/ensembl.vep.models.overlap.html">ensembl.vep.models.overlap package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../auto/reference/api/ensembl.vep.models.regulatory.html">ensembl.vep.models.regulatory package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../auto/reference/api/ensembl.vep.models.sequence.html">ensembl.vep.models.sequence package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../auto/reference/api/ensembl.vep.models.variation.html">ensembl.vep.models.variation package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../auto/reference/api/ensembl.vep.output.html">ensembl.vep.output package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../auto/reference/api/ensembl.vep.output.factory.html">ensembl.vep.output.factory package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.output.factory.stream.html">ensembl.vep.output.factory.stream package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.output.factory.write.html">ensembl.vep.output.factory.write package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../auto/reference/api/ensembl.vep.output.parser.html">ensembl.vep.output.parser package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto/reference/api/ensembl.vep.overlaps.html">ensembl.vep.overlaps package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto/reference/api/ensembl.vep.parsers.html">ensembl.vep.parsers package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../auto/reference/api/ensembl.vep.render.html">ensembl.vep.render package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../auto/reference/api/ensembl.vep.render.graph.html">ensembl.vep.render.graph package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../auto/reference/api/ensembl.vep.runner.html">ensembl.vep.runner package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../auto/reference/api/ensembl.vep.runner.bench.html">ensembl.vep.runner.bench package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../auto/reference/api/ensembl.vep.runner.catalogue.html">ensembl.vep.runner.catalogue package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../auto/reference/api/ensembl.vep.runner.corpus.html">ensembl.vep.runner.corpus package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../auto/reference/api/ensembl.vep.runner.run.html">ensembl.vep.runner.run package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../auto/reference/api/ensembl.vep.sources.html">ensembl.vep.sources package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../auto/reference/api/ensembl.vep.sources.file.html">ensembl.vep.sources.file package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.sources.file.fasta.html">ensembl.vep.sources.file.fasta package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.sources.file.gff3.html">ensembl.vep.sources.file.gff3 package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.sources.file.gtf.html">ensembl.vep.sources.file.gtf package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.sources.file.gxf.html">ensembl.vep.sources.file.gxf package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.sources.file.vcf.html">ensembl.vep.sources.file.vcf namespace</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto/reference/api/ensembl.vep.stats.html">ensembl.vep.stats package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../auto/reference/api/ensembl.vep.trace.html">ensembl.vep.trace package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../auto/reference/api/ensembl.vep.workflow.html">ensembl.vep.workflow package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../auto/reference/api/ensembl.vep.workflow.build.html">ensembl.vep.workflow.build package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../auto/reference/api/ensembl.vep.workflow.tracks.html">ensembl.vep.workflow.tracks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../auto/reference/api/ensembl.vep.workflow.tracks.consequence.html">ensembl.vep.workflow.tracks.consequence package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../auto/reference/api/ensembl.vep.workflow.worker.html">ensembl.vep.workflow.worker package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Reference</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Data formats</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="data-formats">
+<h1>Data formats<a class="headerlink" href="#data-formats" title="Link to this heading">#</a></h1>
+<p>The files Ensembl VEP reads and writes. See <a class="reference internal" href="../user_guide/how_to/annotation_sources.html"><span class="std std-doc">Choosing annotation sources</span></a> and <a class="reference internal" href="../user_guide/how_to/output.html"><span class="std std-doc">Writing output and run summaries</span></a> for how to use them.</p>
+<section id="input">
+<h2>Input<a class="headerlink" href="#input" title="Link to this heading">#</a></h2>
+<section id="variants">
+<h3>Variants<a class="headerlink" href="#variants" title="Link to this heading">#</a></h3>
+<p>Variants are read from a <a class="reference external" href="https://samtools.github.io/hts-specs/VCFv4.3.pdf">VCF</a> file, given with <code class="docutils literal notranslate"><span class="pre">--input_file</span></code>. The file can be plain text or compressed with <code class="docutils literal notranslate"><span class="pre">bgzip</span></code>. A file without header lines is accepted.</p>
+<p>Variants should be sorted by position within each sequence region. A run refuses input that is clearly unsorted, rather than annotating it with transcripts from the wrong region.</p>
+<p>Symbolic alleles such as <code class="docutils literal notranslate"><span class="pre">&lt;DEL&gt;</span></code>, breakend notation, and records with an <code class="docutils literal notranslate"><span class="pre">SVTYPE</span></code> INFO field are read as structural variants; all other records are read as short variants.</p>
+</section>
+<section id="transcripts">
+<h3>Transcripts<a class="headerlink" href="#transcripts" title="Link to this heading">#</a></h3>
+<p>Transcripts are read from one <a class="reference external" href="https://github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md">GFF3</a> file (<code class="docutils literal notranslate"><span class="pre">--gff</span></code>) or one <a class="reference external" href="https://www.ensembl.org/info/website/upload/gff.html">GTF</a> file (<code class="docutils literal notranslate"><span class="pre">--gtf</span></code>). The file can be plain text or compressed with <code class="docutils literal notranslate"><span class="pre">bgzip</span></code>, and can have a <code class="docutils literal notranslate"><span class="pre">tabix</span></code> index.</p>
+<p>A transcript is assembled from its own record, its exon and CDS records, and its parent gene record. With a <code class="docutils literal notranslate"><span class="pre">tabix</span></code> index, these are read for the regions around the variants. Without an index, the file is read from the start, and all the records of a gene must be next to each other.</p>
+</section>
+<section id="reference-sequence">
+<h3>Reference sequence<a class="headerlink" href="#reference-sequence" title="Link to this heading">#</a></h3>
+<p>The reference sequence is read from a <a class="reference external" href="https://www.ncbi.nlm.nih.gov/genbank/fastaformat/">FASTA</a> file given with <code class="docutils literal notranslate"><span class="pre">--fasta</span></code>. The file can be plain text or compressed with <code class="docutils literal notranslate"><span class="pre">bgzip</span></code>. An index is optional: a plain file uses a <code class="docutils literal notranslate"><span class="pre">.fai</span></code> index, and a <code class="docutils literal notranslate"><span class="pre">bgzip</span></code> compressed file uses both a <code class="docutils literal notranslate"><span class="pre">.fai</span></code> and a <code class="docutils literal notranslate"><span class="pre">.gzi</span></code> index.</p>
+</section>
+<section id="sequence-region-synonyms">
+<h3>Sequence-region synonyms<a class="headerlink" href="#sequence-region-synonyms" title="Link to this heading">#</a></h3>
+<p>A synonyms file, given with <code class="docutils literal notranslate"><span class="pre">--synonyms</span></code>, is plain text with two whitespace-separated columns: the name used by the reference sequence and a synonym for it. Lines with fewer than two names are skipped; columns after the second are ignored with a warning.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>22	NC_000022.11
+X	NC_000023.11
+</pre></div>
+</div>
+</section>
+<section id="configuration-files">
+<h3>Configuration files<a class="headerlink" href="#configuration-files" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">--config</span></code> reads a configuration file in TOML or in the Perl VEP format. See <a class="reference internal" href="../user_guide/how_to/configuring_a_run.html#configuration-files"><span class="std std-ref">Configuring a run</span></a>.</p>
+</section>
+</section>
+<section id="output">
+<h2>Output<a class="headerlink" href="#output" title="Link to this heading">#</a></h2>
+<section id="vcf-output">
+<h3>VCF output<a class="headerlink" href="#vcf-output" title="Link to this heading">#</a></h3>
+<p>The default output format, <code class="docutils literal notranslate"><span class="pre">--output_format</span> <span class="pre">vcf</span></code>, writes each input record with its annotations added in a <code class="docutils literal notranslate"><span class="pre">CSQ</span></code> INFO field. The output header adds three lines to the input header:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">##VEP</span></code>, with the version and the time of the run;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">##INFO=&lt;ID=CSQ,...&gt;</span></code>, which declares the fields of the <code class="docutils literal notranslate"><span class="pre">CSQ</span></code> value;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">##VEP-command-line</span></code>, with the command that produced the file.</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">CSQ</span></code> value holds one comma-separated entry per allele and feature. Each entry holds these fields, separated by <code class="docutils literal notranslate"><span class="pre">|</span></code>:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Content</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Allele</span></code></p></td>
+<td><p>The variant allele the entry describes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Consequence</span></code></p></td>
+<td><p>The consequence terms, separated by <code class="docutils literal notranslate"><span class="pre">&amp;</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">IMPACT</span></code></p></td>
+<td><p>The impact rating of the most severe term: <code class="docutils literal notranslate"><span class="pre">HIGH</span></code>, <code class="docutils literal notranslate"><span class="pre">MODERATE</span></code>, <code class="docutils literal notranslate"><span class="pre">LOW</span></code> or <code class="docutils literal notranslate"><span class="pre">MODIFIER</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SYMBOL</span></code></p></td>
+<td><p>The gene symbol.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Gene</span></code></p></td>
+<td><p>The gene stable ID.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Feature_type</span></code></p></td>
+<td><p>The type of the feature, for example <code class="docutils literal notranslate"><span class="pre">Transcript</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Feature</span></code></p></td>
+<td><p>The feature stable ID.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BIOTYPE</span></code></p></td>
+<td><p>The biotype of the transcript.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">EXON</span></code></p></td>
+<td><p>The exon number, out of the total number of exons.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">INTRON</span></code></p></td>
+<td><p>The intron number, out of the total number of introns.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">HGVSc</span></code></p></td>
+<td><p>The HGVS coding sequence name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">HGVSp</span></code></p></td>
+<td><p>The HGVS protein sequence name.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cDNA_position</span></code></p></td>
+<td><p>The position in the cDNA.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">CDS_position</span></code></p></td>
+<td><p>The position in the coding sequence.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Protein_position</span></code></p></td>
+<td><p>The position in the protein.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Amino_acids</span></code></p></td>
+<td><p>The reference and variant amino acids.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Codons</span></code></p></td>
+<td><p>The reference and variant codons, with the changed bases in upper case.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Existing_variation</span></code></p></td>
+<td><p>Identifiers of known variants at the same position.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The fields follow the layout Perl VEP writes, so tools that read its <code class="docutils literal notranslate"><span class="pre">CSQ</span></code> field can read this output. Fields the current implementation does not fill yet are left empty.</p>
+</section>
+<section id="json-output">
+<h3>JSON output<a class="headerlink" href="#json-output" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">--output_format</span> <span class="pre">json</span></code> writes one JSON object per line, one line per variant, in the Ensembl VEP JSON format. A variant object holds:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">id</span></code>, <code class="docutils literal notranslate"><span class="pre">seq_region_name</span></code>, <code class="docutils literal notranslate"><span class="pre">start</span></code>, <code class="docutils literal notranslate"><span class="pre">end</span></code>, <code class="docutils literal notranslate"><span class="pre">strand</span></code> and <code class="docutils literal notranslate"><span class="pre">allele_string</span></code>, describing the variant;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">input</span></code>, the input record it was read from;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">most_severe_consequence</span></code> and <code class="docutils literal notranslate"><span class="pre">variant_class</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">transcript_consequences</span></code>, a list with one object per allele and transcript. Each object holds <code class="docutils literal notranslate"><span class="pre">variant_allele</span></code>, <code class="docutils literal notranslate"><span class="pre">consequence_terms</span></code>, <code class="docutils literal notranslate"><span class="pre">impact</span></code>, <code class="docutils literal notranslate"><span class="pre">transcript_id</span></code>, <code class="docutils literal notranslate"><span class="pre">gene_id</span></code> and <code class="docutils literal notranslate"><span class="pre">strand</span></code>, and, where they apply, the cDNA, CDS and protein positions, <code class="docutils literal notranslate"><span class="pre">amino_acids</span></code> and <code class="docutils literal notranslate"><span class="pre">codons</span></code>.</p></li>
+</ul>
+</section>
+<section id="run-summary">
+<h3>Run summary<a class="headerlink" href="#run-summary" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">vep</span> <span class="pre">run</span></code> writes a run summary beside its output, and <code class="docutils literal notranslate"><span class="pre">vep</span> <span class="pre">stats</span></code> builds one from an annotated VCF file. <code class="docutils literal notranslate"><span class="pre">--stats_format</span></code> (for <code class="docutils literal notranslate"><span class="pre">vep</span> <span class="pre">run</span></code>) or <code class="docutils literal notranslate"><span class="pre">--output_format</span></code> (for <code class="docutils literal notranslate"><span class="pre">vep</span> <span class="pre">stats</span></code>) selects the format:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">html</span></code>, a page with tables and charts;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">text</span></code>, plain-text tables;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">json</span></code>, the same counts as a JSON document.</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../auto/reference/cli/common.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Common options</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../auto/reference/consequence_terms.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Consequence terms</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal" tabindex="-1"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#input">Input</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variants">Variants</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transcripts">Transcripts</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reference-sequence">Reference sequence</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sequence-region-synonyms">Sequence-region synonyms</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration-files">Configuration files</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#output">Output</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vcf-output">VCF output</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#json-output">JSON output</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#run-summary">Run summary</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
