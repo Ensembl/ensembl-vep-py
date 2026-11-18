@@ -115,6 +115,11 @@ where = ["src/python"]
 target = "ensembl.vep.ensembl_vep_core"
 path = "Cargo.toml"
 binding = "PyO3"
+# Build against the stable ABI so one wheel per platform covers Python >= 3.12
+py-limited-api = "auto"
+
+[tool.distutils.bdist_wheel]
+py-limited-api = "cp312"
 
 [build-system]
 build-backend = "setuptools.build_meta"
@@ -215,3 +220,13 @@ omit = [
     "src/python/ensembl/vep/models/haplotype/*",
     "src/python/ensembl/vep/models/custom_feature.py"
 ]
+
+[tool.cibuildwheel]
+# The extension uses the stable ABI (abi3), so a single CPython 3.12 build per platform covers 3.12+.
+build = "cp312-*"
+build-frontend = "build"
+
+[tool.cibuildwheel.linux]
+# Rust is not available inside the manylinux/musllinux containers by default.
+before-all = "curl -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal"
+environment = { PATH = "$HOME/.cargo/bin:$PATH" }
