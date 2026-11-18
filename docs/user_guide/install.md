@@ -37,7 +37,7 @@ If no pre-built wheel is available for your platform, the package is built from 
 Check that the command is available:
 
 ```bash
-uv vep --help
+uv run vep --help
 ```
 
 ## Source
@@ -108,7 +108,7 @@ This is a non-editable installation. uv builds a wheel before installing it, so 
 Check that the command is available:
 
 ```bash
-uv vep --help
+uv run vep --help
 ```
 
 Continue with the [Quickstart guide](quickstart.md) to annotate the example variants included in the repository.

@@ -66,7 +66,7 @@ For more details, see the [Download and install](https://ensembl.github.io/ensem
 Run Ensembl VEP with the example VCF, GTF and FASTA files:
 
 ```bash
-uv vep run \
+uv run vep run \
   --input_file examples/homo_sapiens/homo_sapiens_GRCh38.vcf \
   --gtf examples/homo_sapiens/genes.gtf.bgz \
   --fasta examples/homo_sapiens/unmasked.fa.bgz \

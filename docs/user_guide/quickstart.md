@@ -9,7 +9,7 @@ Follow the [source installation instructions](install.md#source), then run the c
 Run Ensembl VEP with the example VCF, GTF and FASTA files:
 
 ```bash
-vep run \
+uv vep run \
   --input_file examples/homo_sapiens/homo_sapiens_GRCh38.vcf \
   --gtf examples/homo_sapiens/genes.gtf.bgz \
   --fasta examples/homo_sapiens/unmasked.fa.bgz \
