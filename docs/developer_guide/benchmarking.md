@@ -2,7 +2,7 @@
 
 `vep bench` measures annotation speed. Its two main commands answer different questions: `vep bench matrix` asks which annotator is fastest, and `vep bench endtoend` asks how much of that difference reaches a real run. They often disagree, and the gap between them is usually the finding.
 
-Both run over a test corpus, selected with `--kind`. The [`vep bench` reference](../auto/reference/cli/bench.md) lists every option.
+Both run over a [test corpus](../concepts/corpus.md), selected with `--kind`. The [`vep bench` reference](../auto/reference/cli/bench.md) lists every option.
 
 ## The conformance gate
 

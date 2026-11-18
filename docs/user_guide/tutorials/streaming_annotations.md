@@ -157,3 +157,4 @@ with annotations, open("annotated.vcf", "w", encoding="utf-8") as output:
 
 - [Configuring a run](../how_to/configuring_a_run.md) lists the other ways to set options.
 - [Improving performance](../how_to/performance.md) explains the options that make a run faster.
+- [Annotation architecture](../../concepts/architecture.md) explains how the stream is produced.
