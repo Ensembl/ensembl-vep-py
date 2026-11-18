@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ensembl.vep.annotators.consequence.rules.validation &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../../../../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ensembl/vep/annotators/consequence/rules/validation';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.02a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../../../../../../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../../../../../../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 18, 2026"/>
+  
+    
+    <script src="../../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../../_static/language_data.js"></script>
+    <script src="../../../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../../../../../../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.annotators.consequence.rules.validation</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ensembl.vep.annotators.consequence.rules.validation</h1><div class="highlight"><pre>
+<span></span><span class="c1"># See the NOTICE file distributed with this work for additional information</span>
+<span class="c1"># regarding copyright ownership.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1"># http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="sd">"""Validate consequence rule structure and satisfiability.</span>
+
+<span class="sd">Validation has three tiers:</span>
+
+<span class="sd">* ``StructuralChecks`` validates references, ranks, subsumption, and catalogue metadata.</span>
+<span class="sd">* ``RuleReachability`` and ``RulePairFinding`` search bounded ``FactAssignmentSpace`` instances.</span>
+<span class="sd">* Optional ``SolverChecks`` asks equivalent whole-rule-set questions through an SAT solver.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">field</span><span class="p">,</span> <span class="n">frozen</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.rules.catalogue</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">EXCLUDED_TERMS</span><span class="p">,</span>
+    <span class="n">ConsequenceDefinition</span><span class="p">,</span>
+    <span class="n">load_consequence_definitions</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.facts.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">REGISTRY</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.rules.expressions</span><span class="w"> </span><span class="kn">import</span> <span class="n">And</span><span class="p">,</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">Not</span><span class="p">,</span> <span class="n">Or</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.annotators.consequence.rules.rulesets</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">FactRule</span><span class="p">,</span>
+    <span class="n">FactRuleSet</span><span class="p">,</span>
+    <span class="n">build_fact_ruleset_from_definitions</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConsequenceImpact</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"FactAssignmentSpace"</span><span class="p">,</span>
+    <span class="s2">"RulePairFinding"</span><span class="p">,</span>
+    <span class="s2">"RuleReachability"</span><span class="p">,</span>
+    <span class="s2">"SolverChecks"</span><span class="p">,</span>
+    <span class="s2">"StructuralChecks"</span><span class="p">,</span>
+    <span class="s2">"ValidationReport"</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># --------------------------------------------------------------------------</span>
+<span class="c1"># Tier 1: structural checks (no formula evaluation).</span>
+<span class="c1"># --------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="StructuralChecks">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StructuralChecks</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Run validation checks that require no formula evaluation.</span>
+
+<span class="sd">    Grouped rather than left as loose functions because they share one subject - the declared</span>
+<span class="sd">    shape of a rule set.</span>
+<span class="sd">    """</span>
+
+<div class="viewcode-block" id="StructuralChecks.ruleset_problems">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.ruleset_problems">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ruleset_problems</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Run structural checks over a rule set.</span>
+
+<span class="sd">        Rank inversions are warnings rather than errors on purpose: VEP has real ones</span>
+<span class="sd">        (``splice_donor_region_variant`` is ranked below ``splice_region_variant`` yet suppresses</span>
+<span class="sd">        it), so ranking order and suppression order are genuinely two different orders. Making that</span>
+<span class="sd">        visible is more useful than pretending one implies the other.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ruleset (FactRuleSet): The rule set to validate.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple[list[str], list[str]]: ``(errors, warnings)``. A non-empty ``errors`` list means</span>
+<span class="sd">                the rule set is broken (unknown/internal fact reference, duplicate rank, mutual/cyclic</span>
+<span class="sd">                suppression); a non-empty ``warnings`` list flags rank inversions, which are expected</span>
+<span class="sd">                and not a failure.</span>
+<span class="sd">        """</span>
+        <span class="n">errors</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">warnings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">seen_ranks</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">rules</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rule</span><span class="o">.</span><span class="n">rank</span> <span class="ow">in</span> <span class="n">seen_ranks</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"duplicate rank </span><span class="si">{</span><span class="n">rule</span><span class="o">.</span><span class="n">rank</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">rule</span><span class="o">.</span><span class="n">term</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">seen_ranks</span><span class="p">[</span><span class="n">rule</span><span class="o">.</span><span class="n">rank</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">seen_ranks</span><span class="p">[</span><span class="n">rule</span><span class="o">.</span><span class="n">rank</span><span class="p">]</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">term</span>
+
+            <span class="k">for</span> <span class="n">atom_name</span> <span class="ow">in</span> <span class="n">rule</span><span class="o">.</span><span class="n">atoms</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">atom_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">REGISTRY</span><span class="p">:</span>
+                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">rule</span><span class="o">.</span><span class="n">term</span><span class="si">}</span><span class="s2"> references unknown fact </span><span class="si">{</span><span class="n">atom_name</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">atom_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"_"</span><span class="p">):</span>
+                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">rule</span><span class="o">.</span><span class="n">term</span><span class="si">}</span><span class="s2"> references internal fact </span><span class="si">{</span><span class="n">atom_name</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">subsumed_term</span> <span class="ow">in</span> <span class="n">rule</span><span class="o">.</span><span class="n">subsumes</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">subsumed_term</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">by_term</span><span class="p">:</span>
+                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">rule</span><span class="o">.</span><span class="n">term</span><span class="si">}</span><span class="s2"> subsumes unknown term </span><span class="si">{</span><span class="n">subsumed_term</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">by_term</span><span class="p">[</span><span class="n">subsumed_term</span><span class="p">]</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="n">rule</span><span class="o">.</span><span class="n">rank</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"rank inversion: </span><span class="si">{</span><span class="n">rule</span><span class="o">.</span><span class="n">term</span><span class="si">}</span><span class="s2"> (rank </span><span class="si">{</span><span class="n">rule</span><span class="o">.</span><span class="n">rank</span><span class="si">}</span><span class="s2">) suppresses higher-ranked "</span>
+                        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">subsumed_term</span><span class="si">}</span><span class="s2"> (rank </span><span class="si">{</span><span class="n">ruleset</span><span class="o">.</span><span class="n">by_term</span><span class="p">[</span><span class="n">subsumed_term</span><span class="p">]</span><span class="o">.</span><span class="n">rank</span><span class="si">}</span><span class="s2">)"</span>
+                    <span class="p">)</span>
+
+        <span class="c1"># A term that suppresses something which suppresses it back could never settle. This is the</span>
+        <span class="c1"># 2-cycle special case of subsumption_cycles below; kept as its own check (rather than</span>
+        <span class="c1"># folded away) so the "mutual suppression" wording -- and the tests that assert on it -- keep</span>
+        <span class="c1"># working, while subsumption_cycles additionally catches longer cycles.</span>
+        <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">rules</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">subsumed_term</span> <span class="ow">in</span> <span class="n">rule</span><span class="o">.</span><span class="n">subsumes</span><span class="p">:</span>
+                <span class="n">subsumed_rule</span> <span class="o">=</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">by_term</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">subsumed_term</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">subsumed_rule</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rule</span><span class="o">.</span><span class="n">term</span> <span class="ow">in</span> <span class="n">subsumed_rule</span><span class="o">.</span><span class="n">subsumes</span><span class="p">:</span>
+                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"mutual suppression between </span><span class="si">{</span><span class="n">rule</span><span class="o">.</span><span class="n">term</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">subsumed_term</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="n">errors</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">subsumption_cycles</span><span class="p">(</span><span class="n">ruleset</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">errors</span><span class="p">,</span> <span class="n">warnings</span></div>
+
+
+<div class="viewcode-block" id="StructuralChecks.subsumption_cycles">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.subsumption_cycles">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subsumption_cycles</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Detect every cycle in the ``subsumes`` graph via DFS.</span>
+
+<span class="sd">        Stronger than a pairwise mutual-suppression check (which only catches 2-cycles: A subsumes B</span>
+<span class="sd">        and B subsumes A): a longer cycle (A subsumes B subsumes C subsumes A) would let ``prune``</span>
+<span class="sd">        drop every term in the cycle whenever any one of them fires, which is never the intended</span>
+<span class="sd">        suppression shape and is worth surfacing on its own even though the pairwise check in</span>
+<span class="sd">        ruleset_problems also happens to catch the 2-cycle case.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ruleset (FactRuleSet): The rule set to inspect.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[str]: One description per distinct cycle found (deduplicated by member-set, so a</span>
+<span class="sd">                cycle reached via two different DFS roots is reported once), or an empty list if the</span>
+<span class="sd">                ``subsumes`` graph is acyclic.</span>
+<span class="sd">        """</span>
+        <span class="n">reported_cycles</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">cycle_descriptions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">visit_state</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># 0 = unvisited (default), 1 = in progress, 2 = done</span>
+        <span class="n">path</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">visit</span><span class="p">(</span><span class="n">term</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">visit_state</span><span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">term</span><span class="p">)</span>
+            <span class="n">rule</span> <span class="o">=</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">by_term</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">term</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">rule</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">subsumed_term</span> <span class="ow">in</span> <span class="n">rule</span><span class="o">.</span><span class="n">subsumes</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">subsumed_term</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">by_term</span><span class="p">:</span>
+                        <span class="k">continue</span>  <span class="c1"># unknown target: already reported by validate_ruleset</span>
+                    <span class="n">subsumed_state</span> <span class="o">=</span> <span class="n">visit_state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">subsumed_term</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">subsumed_state</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">cycle_start_index</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">subsumed_term</span><span class="p">)</span>
+                        <span class="n">cycle_terms</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="n">cycle_start_index</span><span class="p">:])</span>
+                        <span class="n">dedup_key</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">cycle_terms</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">dedup_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reported_cycles</span><span class="p">:</span>
+                            <span class="n">reported_cycles</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dedup_key</span><span class="p">)</span>
+                            <span class="n">cycle_descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                <span class="s2">"subsumption cycle: "</span> <span class="o">+</span> <span class="s2">" -&gt; "</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="o">*</span><span class="n">cycle_terms</span><span class="p">,</span> <span class="n">subsumed_term</span><span class="p">))</span>
+                            <span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">subsumed_state</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">visit</span><span class="p">(</span><span class="n">subsumed_term</span><span class="p">)</span>
+            <span class="n">path</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="n">visit_state</span><span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+
+        <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">by_term</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">visit_state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">term</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">visit</span><span class="p">(</span><span class="n">term</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cycle_descriptions</span></div>
+
+
+<div class="viewcode-block" id="StructuralChecks.missing_when_terms">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.missing_when_terms">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">missing_when_terms</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Cross-check EXCLUDED_TERMS against the catalogue.</span>
+
+<span class="sd">        ``build_fact_ruleset`` silently skips any catalogue entry without a ``when``, on the</span>
+<span class="sd">        documented assumption that every such entry is listed in ``EXCLUDED_TERMS``. This check makes</span>
+<span class="sd">        that assumption checked rather than trusted: a catalogue edit that adds a ``when``-less term</span>
+<span class="sd">        without updating ``EXCLUDED_TERMS`` (or vice versa) would otherwise silently under- or</span>
+<span class="sd">        over-cover the ruleset.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[str]: One description per catalogue entry whose ``when``-presence disagrees with its</span>
+<span class="sd">                ``EXCLUDED_TERMS`` membership, or an empty list if they agree everywhere.</span>
+<span class="sd">        """</span>
+        <span class="n">problems</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">definition</span> <span class="ow">in</span> <span class="n">load_consequence_definitions</span><span class="p">():</span>
+            <span class="n">has_when</span> <span class="o">=</span> <span class="n">definition</span><span class="o">.</span><span class="n">when</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">is_documented_exclusion</span> <span class="o">=</span> <span class="n">definition</span><span class="o">.</span><span class="n">term</span> <span class="ow">in</span> <span class="n">EXCLUDED_TERMS</span>
+            <span class="k">if</span> <span class="n">has_when</span> <span class="ow">and</span> <span class="n">is_documented_exclusion</span><span class="p">:</span>
+                <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">definition</span><span class="o">.</span><span class="n">term</span><span class="si">}</span><span class="s2"> has a 'when' expression but is listed in EXCLUDED_TERMS"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">has_when</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_documented_exclusion</span><span class="p">:</span>
+                <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">definition</span><span class="o">.</span><span class="n">term</span><span class="si">}</span><span class="s2"> has no 'when' expression but is not listed in EXCLUDED_TERMS"</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">problems</span></div>
+
+
+<div class="viewcode-block" id="StructuralChecks.subsumes_so_parent_drift">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.subsumes_so_parent_drift">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subsumes_so_parent_drift</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Report where the declared ``subsumes`` graph disagrees with the SO ``so_supported_parents``.</span>
+
+<span class="sd">        These are two genuinely different relations that happen to overlap a lot: ``subsumes`` is</span>
+<span class="sd">        VEP's empirical suppression behaviour (term A, if it fires, hides term B), while</span>
+<span class="sd">        ``so_supported_parents`` is the Sequence Ontology's ``is_a`` parent graph (term A *is a kind</span>
+<span class="sd">        of* term B), restricted to parents also represented in this catalogue. A rule can subsume a</span>
+<span class="sd">        term it is not an SO child of (e.g. suppressing a sibling), and a rule can have an SO parent it</span>
+<span class="sd">        does not need to suppress (the parent's own ``when`` may already be false whenever the child's</span>
+<span class="sd">        is true, with no pruning required). So this report is informational context for a catalogue</span>
+<span class="sd">        reviewer, not a pass/fail check -- drift here is common and often fine; it is a prompt to look,</span>
+<span class="sd">        not a bug report.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ruleset (FactRuleSet): The rule set to report drift for.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[str]: One description per rule with at least one asymmetry between its ``subsumes``</span>
+<span class="sd">                set and its SO-parent-derived term set, or an empty list if every rule's two sets</span>
+<span class="sd">                match exactly.</span>
+<span class="sd">        """</span>
+        <span class="n">all_definitions</span> <span class="o">=</span> <span class="n">load_consequence_definitions</span><span class="p">()</span>
+        <span class="n">definitions_by_term</span> <span class="o">=</span> <span class="p">{</span><span class="n">definition</span><span class="o">.</span><span class="n">term</span><span class="p">:</span> <span class="n">definition</span> <span class="k">for</span> <span class="n">definition</span> <span class="ow">in</span> <span class="n">all_definitions</span><span class="p">}</span>
+        <span class="n">term_by_accession</span> <span class="o">=</span> <span class="p">{</span><span class="n">definition</span><span class="o">.</span><span class="n">accession</span><span class="p">:</span> <span class="n">definition</span><span class="o">.</span><span class="n">term</span> <span class="k">for</span> <span class="n">definition</span> <span class="ow">in</span> <span class="n">all_definitions</span><span class="p">}</span>
+
+        <span class="n">drift</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">rules</span><span class="p">:</span>
+            <span class="n">definition</span> <span class="o">=</span> <span class="n">definitions_by_term</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">term</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">definition</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">so_parent_terms</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">term_by_accession</span><span class="p">[</span><span class="n">accession</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">accession</span> <span class="ow">in</span> <span class="n">definition</span><span class="o">.</span><span class="n">so_supported_parents</span>
+                <span class="k">if</span> <span class="n">accession</span> <span class="ow">in</span> <span class="n">term_by_accession</span>
+            <span class="p">}</span>
+            <span class="n">subsumed_terms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">subsumes</span><span class="p">)</span>
+            <span class="n">subsumes_without_so_parent</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">subsumed_terms</span> <span class="o">-</span> <span class="n">so_parent_terms</span><span class="p">)</span>
+            <span class="n">so_parent_without_subsumes</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">so_parent_terms</span> <span class="o">-</span> <span class="n">subsumed_terms</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">subsumes_without_so_parent</span> <span class="ow">or</span> <span class="n">so_parent_without_subsumes</span><span class="p">:</span>
+                <span class="n">drift</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">rule</span><span class="o">.</span><span class="n">term</span><span class="si">}</span><span class="s2">: subsumes-only=</span><span class="si">{</span><span class="n">subsumes_without_so_parent</span><span class="si">}</span><span class="s2">, "</span>
+                    <span class="sa">f</span><span class="s2">"so-parent-only=</span><span class="si">{</span><span class="n">so_parent_without_subsumes</span><span class="si">}</span><span class="s2">"</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">drift</span></div>
+
+
+<div class="viewcode-block" id="StructuralChecks.term_and_rank_uniqueness">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.StructuralChecks.term_and_rank_uniqueness">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">term_and_rank_uniqueness</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">entries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Check term/rank uniqueness across *every* entry, including ``when``-less ones.</span>
+
+<span class="sd">        ruleset_problems only sees entries that made it into a FactRuleSet (i.e. have a ``when``), so</span>
+<span class="sd">        a duplicate rank between two ``when``-less entries -- or between a ``when``-less entry and a</span>
+<span class="sd">        compiled rule -- would otherwise go unnoticed.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            entries (list[dict[str, Any]]): The candidate catalogue's ``consequences`` list.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[str]: One description per duplicate term or rank found, or an empty list if every</span>
+<span class="sd">                term and rank is unique.</span>
+<span class="sd">        """</span>
+        <span class="n">errors</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">seen_terms</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
+            <span class="n">term</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"term"</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">seen_terms</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"duplicate catalogue term: </span><span class="si">{</span><span class="n">term</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">seen_terms</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">term</span><span class="p">)</span>
+
+        <span class="n">seen_ranks</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
+            <span class="n">rank</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"rank"</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">rank</span> <span class="ow">in</span> <span class="n">seen_ranks</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"duplicate catalogue rank </span><span class="si">{</span><span class="n">rank</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">entry</span><span class="p">[</span><span class="s1">'term'</span><span class="p">]</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">seen_ranks</span><span class="p">[</span><span class="n">rank</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">seen_ranks</span><span class="p">[</span><span class="n">rank</span><span class="p">]</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"term"</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">errors</span></div>
+</div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------</span>
+<span class="c1"># Tier 2: per-rule enumeration and per-pair propositional search.</span>
+<span class="c1">#</span>
+<span class="c1"># A rule's atom *support* is its formula's own atoms, extended by the requires-closure (every</span>
+<span class="c1"># atom that some support atom's declared `requires` would force, transitively) and by a small</span>
+<span class="c1"># hand-declared exclusivity/equivalence axiom set covering relationships the fact layer's</span>
+<span class="c1"># `requires` mechanism does not itself express (e.g. "is_insertion and is_deletion cannot both</span>
+<span class="c1"># hold" is true by construction of the two fact functions, but neither fact declares the other in</span>
+<span class="c1"># its `requires`, since `requires` only expresses "if X is False, so am I", not general mutual</span>
+<span class="c1"># exclusion). Enumerating every assignment over that support and discarding the ones the axioms</span>
+<span class="c1"># rule out gives every *possible* combination of fact values a real Context could produce, which</span>
+<span class="c1"># is exactly what "is this rule ever true" needs to be sound. See the module docstring for why</span>
+<span class="c1"># this -- not equality saturation -- is the right tool for that question.</span>
+<span class="c1"># --------------------------------------------------------------------------</span>
+
+<span class="n">_EXCLUSIVITY_AXIOM_PAIRS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="c1"># alternate_allele_length &gt; reference_allele_length and reference_allele_length &gt;</span>
+    <span class="c1"># alternate_allele_length cannot both hold.</span>
+    <span class="p">(</span><span class="s2">"is_insertion"</span><span class="p">,</span> <span class="s2">"is_deletion"</span><span class="p">),</span>
+    <span class="c1"># is_upstream/is_downstream both explicitly return False whenever the variant overlaps the</span>
+    <span class="c1"># transcript at all (facts/position.py).</span>
+    <span class="p">(</span><span class="s2">"overlap_feature"</span><span class="p">,</span> <span class="s2">"is_upstream"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"overlap_feature"</span><span class="p">,</span> <span class="s2">"is_downstream"</span><span class="p">),</span>
+    <span class="c1"># overlap_exon requires overlap_feature, and is_upstream/is_downstream require the opposite,</span>
+    <span class="c1"># so this pair is implied by the two axioms above.</span>
+    <span class="p">(</span><span class="s2">"overlap_exon"</span><span class="p">,</span> <span class="s2">"is_upstream"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"overlap_exon"</span><span class="p">,</span> <span class="s2">"is_downstream"</span><span class="p">),</span>
+    <span class="c1"># A fixed transcript has one 5' side and one 3' side; a variant that misses the transcript</span>
+    <span class="c1"># cannot be simultaneously "before the 5' end" and "after the 3' end" of the same feature.</span>
+    <span class="p">(</span><span class="s2">"is_upstream"</span><span class="p">,</span> <span class="s2">"is_downstream"</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="sd">"""Atom pairs that can never both be True, true by construction of the fact functions involved</span>
+<span class="sd">and not an approximation"""</span>
+
+<span class="n">_EQUIVALENCE_AXIOM_PAIRS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+<span class="sd">"""Atom pairs that always carry the same value (duplicate fact formulas under different names)."""</span>
+
+
+<div class="viewcode-block" id="FactAssignmentSpace">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace">[docs]</a>
+<span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FactAssignmentSpace</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Define consistent Boolean fact assignments over an atom support.</span>
+
+<span class="sd">    Centralises ``requires`` closure, declared axioms, enumeration, and satisfiability searches</span>
+<span class="sd">    used by single-rule and pairwise validation.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        support (tuple[str, ...]): The atom names this space is defined over, sorted.</span>
+<span class="sd">    """</span>
+
+    <span class="n">support</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+
+<div class="viewcode-block" id="FactAssignmentSpace.for_rule">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.for_rule">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">for_rule</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">rule</span><span class="p">:</span> <span class="n">FactRule</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FactAssignmentSpace</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the space a rule's formula must be evaluated over to be judged soundly.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rule (FactRule): The rule to compute a support for.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            FactAssignmentSpace: The space over ``rule.atoms()``, extended by the ``requires`` closure</span>
+<span class="sd">                and by any declared axiom atoms that touch it, sorted for a deterministic</span>
+<span class="sd">                enumeration order.</span>
+<span class="sd">        """</span>
+        <span class="n">support</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_extend_with_relevant_axiom_atoms</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_requires_closure</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">atoms</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">support</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">support</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="FactAssignmentSpace.union">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.union">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">union</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">FactAssignmentSpace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FactAssignmentSpace</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the space covering both supports, for a question about a pair of rules."""</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">support</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">support</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">support</span><span class="p">))))</span></div>
+
+
+<div class="viewcode-block" id="FactAssignmentSpace.allows">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.allows">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">allows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assignment</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return whether an assignment over this support violates no ``requires``/axiom.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            assignment (dict[str, bool]): A full assignment over some atom support.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: False if the assignment sets some atom True while a declared ``requires`` of it is</span>
+<span class="sd">                False in the same assignment, or violates an exclusivity/equivalence axiom; True</span>
+<span class="sd">                otherwise (i.e. this is an assignment a real Context could actually produce, as far as</span>
+<span class="sd">                the declared constraints can tell).</span>
+<span class="sd">        """</span>
+        <span class="k">for</span> <span class="n">atom_name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">assignment</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">registered_fact</span> <span class="o">=</span> <span class="n">REGISTRY</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">atom_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">registered_fact</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">required_atom</span> <span class="ow">in</span> <span class="n">registered_fact</span><span class="o">.</span><span class="n">requires</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">assignment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">required_atom</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">atom_a</span><span class="p">,</span> <span class="n">atom_b</span> <span class="ow">in</span> <span class="n">_EXCLUSIVITY_AXIOM_PAIRS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">assignment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">atom_a</span><span class="p">)</span> <span class="ow">and</span> <span class="n">assignment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">atom_b</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">atom_a</span><span class="p">,</span> <span class="n">atom_b</span> <span class="ow">in</span> <span class="n">_EQUIVALENCE_AXIOM_PAIRS</span><span class="p">:</span>
+            <span class="n">value_a</span><span class="p">,</span> <span class="n">value_b</span> <span class="o">=</span> <span class="n">assignment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">atom_a</span><span class="p">),</span> <span class="n">assignment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">atom_b</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value_a</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">value_b</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">value_a</span> <span class="o">!=</span> <span class="n">value_b</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="FactAssignmentSpace.consistent_assignments">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.consistent_assignments">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">consistent_assignments</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Yield every assignment over this support consistent with ``requires``/the declared axioms.</span>
+
+<span class="sd">        Yields:</span>
+<span class="sd">            dict[str, bool]: One consistent full assignment per iteration.</span>
+<span class="sd">        """</span>
+        <span class="k">for</span> <span class="n">bitmask</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">support</span><span class="p">)):</span>
+            <span class="n">assignment</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">atom_name</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">bitmask</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">index</span><span class="p">))</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">atom_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">support</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">allows</span><span class="p">(</span><span class="n">assignment</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">assignment</span></div>
+
+
+<div class="viewcode-block" id="FactAssignmentSpace.satisfies">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.FactAssignmentSpace.satisfies">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">satisfies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expression</span><span class="p">:</span> <span class="n">Expr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return whether an expression has a consistent assignment over ``support``.</span>
+
+<span class="sd">        This searches different combinations of values of atoms making up an expression to check</span>
+<span class="sd">        whether given the logical constraints of the expression, it is possible for the expression</span>
+<span class="sd">        to be satisfied. It is just checking if it is possible for the expression to be satisfied,</span>
+<span class="sd">        so it stops as soon as it finds a valid set of assignments.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            expression (Expr): The expression whose satisfiability is being checked.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if at least one consistent assignment satisfies ``expression``.</span>
+<span class="sd">        """</span>
+        <span class="n">support_set</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">support</span><span class="p">)</span>
+        <span class="n">forced_values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">add_forced_value</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source_value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target_value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">support_set</span> <span class="ow">and</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">support_set</span><span class="p">:</span>
+                <span class="n">forced_values</span><span class="o">.</span><span class="n">setdefault</span><span class="p">((</span><span class="n">source</span><span class="p">,</span> <span class="n">source_value</span><span class="p">),</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">target</span><span class="p">,</span> <span class="n">target_value</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">atom_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">support</span><span class="p">:</span>
+            <span class="n">registered_fact</span> <span class="o">=</span> <span class="n">REGISTRY</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">atom_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">registered_fact</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">required_atom</span> <span class="ow">in</span> <span class="n">registered_fact</span><span class="o">.</span><span class="n">requires</span><span class="p">:</span>
+                <span class="n">add_forced_value</span><span class="p">(</span><span class="n">atom_name</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">required_atom</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+                <span class="n">add_forced_value</span><span class="p">(</span><span class="n">required_atom</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">atom_name</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">atom_a</span><span class="p">,</span> <span class="n">atom_b</span> <span class="ow">in</span> <span class="n">_EXCLUSIVITY_AXIOM_PAIRS</span><span class="p">:</span>
+            <span class="n">add_forced_value</span><span class="p">(</span><span class="n">atom_a</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">atom_b</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="n">add_forced_value</span><span class="p">(</span><span class="n">atom_b</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">atom_a</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">atom_a</span><span class="p">,</span> <span class="n">atom_b</span> <span class="ow">in</span> <span class="n">_EQUIVALENCE_AXIOM_PAIRS</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+                <span class="n">add_forced_value</span><span class="p">(</span><span class="n">atom_a</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">atom_b</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                <span class="n">add_forced_value</span><span class="p">(</span><span class="n">atom_b</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">atom_a</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">extend</span><span class="p">(</span><span class="n">assignment</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span> <span class="n">atom_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">extended</span> <span class="o">=</span> <span class="n">assignment</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">pending</span> <span class="o">=</span> <span class="p">[(</span><span class="n">atom_name</span><span class="p">,</span> <span class="n">value</span><span class="p">)]</span>
+
+            <span class="k">while</span> <span class="n">pending</span><span class="p">:</span>
+                <span class="n">pending_atom</span><span class="p">,</span> <span class="n">pending_value</span> <span class="o">=</span> <span class="n">pending</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">pending_atom</span> <span class="ow">in</span> <span class="n">extended</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">extended</span><span class="p">[</span><span class="n">pending_atom</span><span class="p">]</span> <span class="o">!=</span> <span class="n">pending_value</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">None</span>
+                    <span class="k">continue</span>
+
+                <span class="n">extended</span><span class="p">[</span><span class="n">pending_atom</span><span class="p">]</span> <span class="o">=</span> <span class="n">pending_value</span>
+                <span class="n">pending</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">forced_values</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">pending_atom</span><span class="p">,</span> <span class="n">pending_value</span><span class="p">),</span> <span class="p">()))</span>
+
+            <span class="k">return</span> <span class="n">extended</span>
+
+        <span class="n">expression_atoms</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="n">expression</span><span class="o">.</span><span class="n">atoms</span><span class="p">(),</span>
+            <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">atom_name</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">forced_values</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">atom_name</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> <span class="p">())),</span>
+            <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span><span class="n">assignment</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">expression</span><span class="o">.</span><span class="n">evaluate_partial</span><span class="p">(</span><span class="n">assignment</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">value</span>
+
+            <span class="k">for</span> <span class="n">atom_name</span> <span class="ow">in</span> <span class="n">expression_atoms</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">atom_name</span> <span class="ow">in</span> <span class="n">assignment</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">for</span> <span class="n">atom_value</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                    <span class="n">extended</span> <span class="o">=</span> <span class="n">extend</span><span class="p">(</span><span class="n">assignment</span><span class="p">,</span> <span class="n">atom_name</span><span class="p">,</span> <span class="n">atom_value</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">extended</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">search</span><span class="p">(</span><span class="n">extended</span><span class="p">):</span>
+                        <span class="k">return</span> <span class="kc">True</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="c1"># A custom Expr may remain unknown after all of its declared atoms are assigned. Preserve</span>
+            <span class="c1"># the exhaustive enumerator's behaviour for that uncommon extension point.</span>
+            <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">expression</span><span class="o">.</span><span class="n">evaluate_partial</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span> <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">consistent_assignments</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="n">search</span><span class="p">({})</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_requires_closure</span><span class="p">(</span><span class="n">atom_names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Extend a set of atom names with everything their declared ``requires`` would pull in.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            atom_names (Iterable[str]): The starting atom names.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            frozenset[str]: ``atom_names`` plus every atom reachable by following ``requires`` edges</span>
+<span class="sd">                to a fixed point.</span>
+<span class="sd">        """</span>
+        <span class="n">support</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">atom_names</span><span class="p">)</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">while</span> <span class="n">changed</span><span class="p">:</span>
+            <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">atom_name</span> <span class="ow">in</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">support</span><span class="p">):</span>
+                <span class="n">registered_fact</span> <span class="o">=</span> <span class="n">REGISTRY</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">atom_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">registered_fact</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">for</span> <span class="n">required_atom</span> <span class="ow">in</span> <span class="n">registered_fact</span><span class="o">.</span><span class="n">requires</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">required_atom</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">support</span><span class="p">:</span>
+                        <span class="n">support</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">required_atom</span><span class="p">)</span>
+                        <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">support</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_extend_with_relevant_axiom_atoms</span><span class="p">(</span><span class="n">support</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Pull in the other half of any declared axiom pair that already touches ``support``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            support (frozenset[str]): The atom support so far.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            frozenset[str]: ``support`` extended with the partner atom of every</span>
+<span class="sd">                _EXCLUSIVITY_AXIOM_PAIRS/_EQUIVALENCE_AXIOM_PAIRS entry that already</span>
+<span class="sd">                has at least one member in ``support``.</span>
+<span class="sd">        """</span>
+        <span class="n">extended</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">support</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">atom_a</span><span class="p">,</span> <span class="n">atom_b</span> <span class="ow">in</span> <span class="p">(</span><span class="o">*</span><span class="n">_EXCLUSIVITY_AXIOM_PAIRS</span><span class="p">,</span> <span class="o">*</span><span class="n">_EQUIVALENCE_AXIOM_PAIRS</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">atom_a</span> <span class="ow">in</span> <span class="n">extended</span> <span class="ow">or</span> <span class="n">atom_b</span> <span class="ow">in</span> <span class="n">extended</span><span class="p">:</span>
+                <span class="n">extended</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">atom_a</span><span class="p">)</span>
+                <span class="n">extended</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">atom_b</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">extended</span><span class="p">)</span></div>
+
+
+
+<span class="n">_MAX_UNION_SUPPORT_FOR_PAIR_ENUMERATION</span> <span class="o">=</span> <span class="mi">18</span>
+<span class="sd">"""Maximum combined atom support for a CONTRADICTORY or REDUNDANT pair search.</span>
+
+<span class="sd">The search propagates constraints and stops as soon as the expression is settled, but remains</span>
+<span class="sd">exponential in the worst case. The cap lets a future, larger catalogue skip oversized pairs</span>
+<span class="sd">instead of allowing an unbounded search.</span>
+<span class="sd">"""</span>
+
+
+<div class="viewcode-block" id="RuleReachability">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RuleReachability">[docs]</a>
+<span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RuleReachability</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Represent the Tier 2 reachability result for one rule.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        term (str): The rule's SO term.</span>
+<span class="sd">        support (tuple[str, ...]): The atom support (see atom_support_for_rule) the rule</span>
+<span class="sd">            was enumerated over.</span>
+<span class="sd">        valid_assignment_count (int): Number of assignments over ``support`` consistent with the</span>
+<span class="sd">            declared ``requires``/axioms.</span>
+<span class="sd">        satisfying_assignment_count (int): Of those, the number for which the rule's ``when``</span>
+<span class="sd">            evaluates True.</span>
+<span class="sd">    """</span>
+
+    <span class="n">term</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">support</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">valid_assignment_count</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">satisfying_assignment_count</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_reachable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return whether a valid assignment satisfies the rule."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">satisfying_assignment_count</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="RuleReachability.for_rule">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RuleReachability.for_rule">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">for_rule</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">rule</span><span class="p">:</span> <span class="n">FactRule</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RuleReachability</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Determine whether a rule is reachable within its fact-assignment space.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rule (FactRule): The rule to check.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            RuleReachability: The enumeration result. ``evaluate_partial`` never returns None here,</span>
+<span class="sd">                because ``support`` is constructed to be a superset of ``rule.atoms()``.</span>
+<span class="sd">        """</span>
+        <span class="n">space</span> <span class="o">=</span> <span class="n">FactAssignmentSpace</span><span class="o">.</span><span class="n">for_rule</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span>
+        <span class="n">valid_assignment_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">satisfying_assignment_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">assignment</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">consistent_assignments</span><span class="p">():</span>
+            <span class="n">valid_assignment_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">rule</span><span class="o">.</span><span class="n">when</span><span class="o">.</span><span class="n">evaluate_partial</span><span class="p">(</span><span class="n">assignment</span><span class="p">):</span>
+                <span class="n">satisfying_assignment_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">term</span><span class="o">=</span><span class="n">rule</span><span class="o">.</span><span class="n">term</span><span class="p">,</span>
+            <span class="n">support</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">support</span><span class="p">,</span>
+            <span class="n">valid_assignment_count</span><span class="o">=</span><span class="n">valid_assignment_count</span><span class="p">,</span>
+            <span class="n">satisfying_assignment_count</span><span class="o">=</span><span class="n">satisfying_assignment_count</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RuleReachability.unreachable_in">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RuleReachability.unreachable_in">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unreachable_in</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">RuleReachability</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return every rule whose ``when`` formula is unsatisfiable under the Tier 2 axioms.</span>
+
+<span class="sd">        An unreachable rule is dead code: it can never contribute a term to any output, which -- unlike</span>
+<span class="sd">        the CONTRADICTORY/REDUNDANT findings below -- is a genuine defect rather than informational</span>
+<span class="sd">        context, so callers (the validation script, the test suite) should treat a non-empty result as</span>
+<span class="sd">        a build-breaking error.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ruleset (FactRuleSet): The rule set to check.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[RuleReachability]: The unreachable rules' results (``is_reachable`` False for all of</span>
+<span class="sd">                them), or an empty list if every rule is reachable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">result</span> <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">rules</span> <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">result</span> <span class="o">:=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">for_rule</span><span class="p">(</span><span class="n">rule</span><span class="p">))</span><span class="o">.</span><span class="n">is_reachable</span><span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RulePairFinding">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RulePairFinding">[docs]</a>
+<span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RulePairFinding</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Record one pairwise rule-validation finding.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        kind (str): Either ``"CONTRADICTORY"`` (the two rules' formulas can never both hold) or</span>
+<span class="sd">            ``"REDUNDANT"`` (rule ``term_a`` subsumes ``term_b`` *and* ``term_a``'s formula</span>
+<span class="sd">            logically entails ``term_b``'s, confirming the subsumption is logically grounded).</span>
+<span class="sd">            Both kinds are informational governance signal, not build-breaking errors -- see</span>
+<span class="sd">            RulePairFinding.contradictory_in/RulePairFinding.redundant_in.</span>
+<span class="sd">        term_a (str): The first rule's term.</span>
+<span class="sd">        term_b (str): The second rule's term.</span>
+<span class="sd">        message (str): Human-readable description.</span>
+<span class="sd">    """</span>
+
+    <span class="n">kind</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">term_a</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">term_b</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span>
+
+<div class="viewcode-block" id="RulePairFinding.contradictory_in">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RulePairFinding.contradictory_in">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contradictory_in</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">max_union_support</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_MAX_UNION_SUPPORT_FOR_PAIR_ENUMERATION</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">RulePairFinding</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Find rule pairs whose formulas can never both hold, and that do not subsume each other.</span>
+
+<span class="sd">        This is informational rather than an error: two rules never co-firing is often simply how the</span>
+<span class="sd">        ruleset is meant to work (e.g. ``stop_gained`` and ``synonymous_variant`` are naturally</span>
+<span class="sd">        mutually exclusive), not a defect. It is useful context for a catalogue reviewer -- a pair</span>
+<span class="sd">        that *should* be able to co-fire but this check finds contradictory would be worth a second</span>
+<span class="sd">        look -- rather than something a script should fail the build over.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ruleset (FactRuleSet): The rule set to check every pair of.</span>
+<span class="sd">            max_union_support (int): Skip a pair whose combined atom support exceeds this size, so a</span>
+<span class="sd">                future larger catalogue degrades to "fewer pairs checked" rather than a slow/unbounded</span>
+<span class="sd">                enumeration.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[RulePairFinding]: One ``"CONTRADICTORY"`` finding per such pair.</span>
+<span class="sd">        """</span>
+        <span class="n">findings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RulePairFinding</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">rules</span> <span class="o">=</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">rules</span>
+        <span class="n">spaces</span> <span class="o">=</span> <span class="p">{</span><span class="n">rule</span><span class="o">.</span><span class="n">term</span><span class="p">:</span> <span class="n">FactAssignmentSpace</span><span class="o">.</span><span class="n">for_rule</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span> <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">rules</span><span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">index_a</span><span class="p">,</span> <span class="n">rule_a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rules</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">index_b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">index_a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rules</span><span class="p">)):</span>
+                <span class="n">rule_b</span> <span class="o">=</span> <span class="n">rules</span><span class="p">[</span><span class="n">index_b</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">rule_b</span><span class="o">.</span><span class="n">term</span> <span class="ow">in</span> <span class="n">rule_a</span><span class="o">.</span><span class="n">subsumes</span> <span class="ow">or</span> <span class="n">rule_a</span><span class="o">.</span><span class="n">term</span> <span class="ow">in</span> <span class="n">rule_b</span><span class="o">.</span><span class="n">subsumes</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">union</span> <span class="o">=</span> <span class="n">spaces</span><span class="p">[</span><span class="n">rule_a</span><span class="o">.</span><span class="n">term</span><span class="p">]</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="n">rule_b</span><span class="o">.</span><span class="n">term</span><span class="p">])</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">union</span><span class="o">.</span><span class="n">support</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_union_support</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">can_both_hold</span> <span class="o">=</span> <span class="n">union</span><span class="o">.</span><span class="n">satisfies</span><span class="p">(</span><span class="n">And</span><span class="p">(</span><span class="n">rule_a</span><span class="o">.</span><span class="n">when</span><span class="p">,</span> <span class="n">rule_b</span><span class="o">.</span><span class="n">when</span><span class="p">))</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">can_both_hold</span><span class="p">:</span>
+                    <span class="n">findings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">RulePairFinding</span><span class="p">(</span>
+                            <span class="n">kind</span><span class="o">=</span><span class="s2">"CONTRADICTORY"</span><span class="p">,</span>
+                            <span class="n">term_a</span><span class="o">=</span><span class="n">rule_a</span><span class="o">.</span><span class="n">term</span><span class="p">,</span>
+                            <span class="n">term_b</span><span class="o">=</span><span class="n">rule_b</span><span class="o">.</span><span class="n">term</span><span class="p">,</span>
+                            <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">rule_a</span><span class="o">.</span><span class="n">term</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">rule_b</span><span class="o">.</span><span class="n">term</span><span class="si">}</span><span class="s2"> never co-fire under the Tier 2 axioms"</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+        <span class="k">return</span> <span class="n">findings</span></div>
+
+
+<div class="viewcode-block" id="RulePairFinding.redundant_in">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.RulePairFinding.redundant_in">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">redundant_in</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">max_union_support</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_MAX_UNION_SUPPORT_FOR_PAIR_ENUMERATION</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">RulePairFinding</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Find declared ``subsumes`` edges whose entailment is confirmed by the formulas themselves.</span>
+
+<span class="sd">        For each declared ``A subsumes B``, check whether ``A.when`` logically entails ``B.when`` over</span>
+<span class="sd">        every valid assignment of their combined support (i.e. whenever A's formula could possibly be</span>
+<span class="sd">        true, B's formula is necessarily true too). Where it holds, the subsumption is *logically</span>
+<span class="sd">        redundant* in the sense that A firing already guarantees B's condition holds -- the ``subsumes``</span>
+<span class="sd">        declaration is provably sound, not merely asserted. Where it does not hold under this bounded</span>
+<span class="sd">        axiom set, that is *not* reported as an error: most of this catalogue's subsumption edges rely</span>
+<span class="sd">        on domain knowledge broader than the small declared axiom set here (e.g. "a deletion spanning</span>
+<span class="sd">        the whole transcript necessarily also overlaps every intron and UTR" is true, but nothing in</span>
+<span class="sd">        _EXCLUSIVITY_AXIOM_PAIRS encodes it), so a pair not appearing in this report is</span>
+<span class="sd">        inconclusive, not suspect.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ruleset (FactRuleSet): The rule set to check every declared ``subsumes`` edge of.</span>
+<span class="sd">            max_union_support (int): Skip an edge whose combined atom support exceeds this size.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[RulePairFinding]: One ``"REDUNDANT"`` finding per confirmed-entailed edge.</span>
+<span class="sd">        """</span>
+        <span class="n">findings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RulePairFinding</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">spaces</span> <span class="o">=</span> <span class="p">{</span><span class="n">rule</span><span class="o">.</span><span class="n">term</span><span class="p">:</span> <span class="n">FactAssignmentSpace</span><span class="o">.</span><span class="n">for_rule</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span> <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">rules</span><span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">rule_a</span> <span class="ow">in</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">rules</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">subsumed_term</span> <span class="ow">in</span> <span class="n">rule_a</span><span class="o">.</span><span class="n">subsumes</span><span class="p">:</span>
+                <span class="n">rule_b</span> <span class="o">=</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">by_term</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">subsumed_term</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">rule_b</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">union</span> <span class="o">=</span> <span class="n">spaces</span><span class="p">[</span><span class="n">rule_a</span><span class="o">.</span><span class="n">term</span><span class="p">]</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="n">rule_b</span><span class="o">.</span><span class="n">term</span><span class="p">])</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">union</span><span class="o">.</span><span class="n">support</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_union_support</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">counterexample</span> <span class="o">=</span> <span class="n">And</span><span class="p">(</span><span class="n">rule_a</span><span class="o">.</span><span class="n">when</span><span class="p">,</span> <span class="n">Not</span><span class="p">(</span><span class="n">rule_b</span><span class="o">.</span><span class="n">when</span><span class="p">))</span>
+                <span class="n">entailed</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">union</span><span class="o">.</span><span class="n">satisfies</span><span class="p">(</span><span class="n">counterexample</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">entailed</span><span class="p">:</span>
+                    <span class="n">findings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">RulePairFinding</span><span class="p">(</span>
+                            <span class="n">kind</span><span class="o">=</span><span class="s2">"REDUNDANT"</span><span class="p">,</span>
+                            <span class="n">term_a</span><span class="o">=</span><span class="n">rule_a</span><span class="o">.</span><span class="n">term</span><span class="p">,</span>
+                            <span class="n">term_b</span><span class="o">=</span><span class="n">subsumed_term</span><span class="p">,</span>
+                            <span class="n">message</span><span class="o">=</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">rule_a</span><span class="o">.</span><span class="n">term</span><span class="si">}</span><span class="s2">'s when provably entails </span><span class="si">{</span><span class="n">subsumed_term</span><span class="si">}</span><span class="s2">'s when -- the "</span>
+                                <span class="s2">"declared subsumption is logically sound, confirmed under the Tier 2 axioms"</span>
+                            <span class="p">),</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+        <span class="k">return</span> <span class="n">findings</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ValidationReport">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport">[docs]</a>
+<span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ValidationReport</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Combine structural and bounded-search validation results.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        errors (list[str]): From validate_ruleset; non-empty means the ruleset is broken.</span>
+<span class="sd">        warnings (list[str]): From validate_ruleset; expected rank inversions.</span>
+<span class="sd">        missing_when_problems (list[str]): From report_missing_when_terms; non-empty means</span>
+<span class="sd">            the catalogue and ``EXCLUDED_TERMS`` have drifted apart -- treat as an error.</span>
+<span class="sd">        so_parent_drift (list[str]): From report_subsumes_so_parent_drift; informational.</span>
+<span class="sd">        unreachable_rules (list[RuleReachability]): From RuleReachability.unreachable_in; non-empty</span>
+<span class="sd">            means a rule can never fire -- treat as an error.</span>
+<span class="sd">        contradictory_pairs (list[RulePairFinding]): From RulePairFinding.contradictory_in;</span>
+<span class="sd">            informational.</span>
+<span class="sd">        redundant_pairs (list[RulePairFinding]): From RulePairFinding.redundant_in;</span>
+<span class="sd">            informational.</span>
+<span class="sd">    """</span>
+
+    <span class="n">errors</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">warnings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">missing_when_problems</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">so_parent_drift</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">unreachable_rules</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RuleReachability</span><span class="p">]</span>
+    <span class="n">contradictory_pairs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RulePairFinding</span><span class="p">]</span>
+    <span class="n">redundant_pairs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RulePairFinding</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return whether the report contains a build-breaking finding."""</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">errors</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">missing_when_problems</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">unreachable_rules</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ValidationReport.for_ruleset">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport.for_ruleset">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">for_ruleset</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidationReport</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Run every Tier 1 + Tier 2 check over a rule set. Pure Python, always on; no z3 required.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ruleset (FactRuleSet): The rule set to validate.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ValidationReport: The combined result. See ValidationReport.has_errors for the</span>
+<span class="sd">                build-breaking subset.</span>
+<span class="sd">        """</span>
+        <span class="n">errors</span><span class="p">,</span> <span class="n">warnings</span> <span class="o">=</span> <span class="n">StructuralChecks</span><span class="o">.</span><span class="n">ruleset_problems</span><span class="p">(</span><span class="n">ruleset</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">errors</span><span class="o">=</span><span class="n">errors</span><span class="p">,</span>
+            <span class="n">warnings</span><span class="o">=</span><span class="n">warnings</span><span class="p">,</span>
+            <span class="n">missing_when_problems</span><span class="o">=</span><span class="n">StructuralChecks</span><span class="o">.</span><span class="n">missing_when_terms</span><span class="p">(),</span>
+            <span class="n">so_parent_drift</span><span class="o">=</span><span class="n">StructuralChecks</span><span class="o">.</span><span class="n">subsumes_so_parent_drift</span><span class="p">(</span><span class="n">ruleset</span><span class="p">),</span>
+            <span class="n">unreachable_rules</span><span class="o">=</span><span class="n">RuleReachability</span><span class="o">.</span><span class="n">unreachable_in</span><span class="p">(</span><span class="n">ruleset</span><span class="p">),</span>
+            <span class="n">contradictory_pairs</span><span class="o">=</span><span class="n">RulePairFinding</span><span class="o">.</span><span class="n">contradictory_in</span><span class="p">(</span><span class="n">ruleset</span><span class="p">),</span>
+            <span class="n">redundant_pairs</span><span class="o">=</span><span class="n">RulePairFinding</span><span class="o">.</span><span class="n">redundant_in</span><span class="p">(</span><span class="n">ruleset</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ValidationReport.for_catalogue_entries">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.ValidationReport.for_catalogue_entries">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">for_catalogue_entries</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">entries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">baseline_entries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidationReport</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Validate a candidate ``consequences`` list before it is ever written to disk.</span>
+
+<span class="sd">        Reuses ensembl.vep.annotators.consequence.rules.validation's structural (Tier 1) and enumeration</span>
+<span class="sd">        (Tier 2) checks over a FactRuleSet built from the *candidate* entries (see</span>
+<span class="sd">        _ruleset_from_entries) -- not the packaged catalogue, which is what makes this safe to</span>
+<span class="sd">        call before a real term has been added or removed on disk. The two checks that hardcode a call</span>
+<span class="sd">        to the packaged load_consequence_definitions() (report_missing_when_terms,</span>
+<span class="sd">        report_subsumes_so_parent_drift) are intentionally not reused here, since they are defined in</span>
+<span class="sd">        terms of the checked-in EXCLUDED_TERMS/catalogue rather than a candidate in-memory one; a</span>
+<span class="sd">        needs-review, ``when``-less addition is instead surfaced separately, at add-time, by</span>
+<span class="sd">        resolve_when's NEEDS REVIEW banner.</span>
+
+<span class="sd">        Unreachable-rule findings are diffed against ``baseline_entries`` (the catalogue before this</span>
+<span class="sd">        add/remove was applied) rather than treated as build-breaking outright: the checked-in</span>
+<span class="sd">        catalogue already carries one known, pre-existing dead rule (``feature_truncation``). Treating</span>
+<span class="sd">        every unreachable rule as build-breaking here would permanently refuse every write against the</span>
+<span class="sd">        real catalogue, for a reason unrelated to whatever term is being added or removed. A rule</span>
+<span class="sd">        unreachable in *both* the baseline and the candidate is downgraded to an informational warning;</span>
+<span class="sd">        one that only became unreachable in the candidate is a genuine regression introduced by this</span>
+<span class="sd">        operation and stays build-breaking.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            entries (list[dict[str, Any]]): The candidate catalogue's ``consequences`` list.</span>
+<span class="sd">            baseline_entries (list[dict[str, Any]]): The catalogue's ``consequences`` list *before*</span>
+<span class="sd">                this operation, used only to distinguish pre-existing unreachable rules from new ones.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ValidationReport: errors/unreachable_rules non-empty means refuse to write; warnings are</span>
+<span class="sd">                informational only (see ValidationReport.has_errors).</span>
+<span class="sd">        """</span>
+        <span class="n">ruleset</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ruleset_from_entries</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span>
+        <span class="n">structural_errors</span><span class="p">,</span> <span class="n">warnings</span> <span class="o">=</span> <span class="n">StructuralChecks</span><span class="o">.</span><span class="n">ruleset_problems</span><span class="p">(</span><span class="n">ruleset</span><span class="p">)</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="n">StructuralChecks</span><span class="o">.</span><span class="n">term_and_rank_uniqueness</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">+</span> <span class="n">structural_errors</span>
+
+        <span class="n">baseline_ruleset</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ruleset_from_entries</span><span class="p">(</span><span class="n">baseline_entries</span><span class="p">)</span>
+        <span class="n">baseline_unreachable_terms</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">term</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">RuleReachability</span><span class="o">.</span><span class="n">unreachable_in</span><span class="p">(</span><span class="n">baseline_ruleset</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">all_unreachable</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RuleReachability</span><span class="p">]</span> <span class="o">=</span> <span class="n">RuleReachability</span><span class="o">.</span><span class="n">unreachable_in</span><span class="p">(</span><span class="n">ruleset</span><span class="p">)</span>
+        <span class="n">new_unreachable</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">result</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">all_unreachable</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">term</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">baseline_unreachable_terms</span>
+        <span class="p">]</span>
+        <span class="n">warnings</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">warnings</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span>
+            <span class="sa">f</span><span class="s2">"pre-existing unreachable rule (not introduced by this change, not build-breaking here): "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">term</span><span class="si">}</span><span class="s2">"</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">all_unreachable</span>
+            <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">term</span> <span class="ow">in</span> <span class="n">baseline_unreachable_terms</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">errors</span><span class="o">=</span><span class="n">errors</span><span class="p">,</span>
+            <span class="n">warnings</span><span class="o">=</span><span class="n">warnings</span><span class="p">,</span>
+            <span class="n">missing_when_problems</span><span class="o">=</span><span class="p">[],</span>
+            <span class="n">so_parent_drift</span><span class="o">=</span><span class="p">[],</span>
+            <span class="n">unreachable_rules</span><span class="o">=</span><span class="n">new_unreachable</span><span class="p">,</span>
+            <span class="n">contradictory_pairs</span><span class="o">=</span><span class="p">[],</span>
+            <span class="n">redundant_pairs</span><span class="o">=</span><span class="p">[],</span>
+        <span class="p">)</span></div>
+
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ruleset_from_entries</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">entries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">FactRuleSet</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Compile a rule set from raw catalogue entry dicts.</span>
+
+<span class="sd">        Parses each entry into a ConsequenceDefinition and hands them to the one compilation path, so</span>
+<span class="sd">        a candidate cannot be validated against a rule set built differently from the one the</span>
+<span class="sd">        annotators will evaluate.</span>
+<span class="sd">        """</span>
+        <span class="n">definitions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
+            <span class="n">impact</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"impact"</span><span class="p">)</span>
+            <span class="n">definitions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">ConsequenceDefinition</span><span class="p">(</span>
+                    <span class="n">term</span><span class="o">=</span><span class="n">entry</span><span class="p">[</span><span class="s2">"term"</span><span class="p">],</span>
+                    <span class="n">accession</span><span class="o">=</span><span class="n">entry</span><span class="p">[</span><span class="s2">"accession"</span><span class="p">],</span>
+                    <span class="n">rank</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"rank"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
+                    <span class="n">tier</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"tier"</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+                    <span class="n">impact</span><span class="o">=</span><span class="n">ConsequenceImpact</span><span class="p">(</span><span class="n">impact</span><span class="p">)</span> <span class="k">if</span> <span class="n">impact</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">when</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"when"</span><span class="p">),</span>
+                    <span class="n">subsumes</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"subsumes"</span><span class="p">,</span> <span class="p">())),</span>
+                    <span class="n">so_supported_parents</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"so_supported_parents"</span><span class="p">,</span> <span class="p">())),</span>
+                    <span class="n">notes</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"notes"</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">build_fact_ruleset_from_definitions</span><span class="p">(</span><span class="n">definitions</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------</span>
+<span class="c1"># Tier 3: whole-ruleset SAT queries via z3 (optional dev dependency).</span>
+<span class="c1">#</span>
+<span class="c1"># Same two query shapes as Tier 2 (reachability, subsumption-edge soundness), same axiom set, but</span>
+<span class="c1"># posed to a solver instead of enumerated -- so a query is not limited to one rule/pair's bounded</span>
+<span class="c1"># atom support the way Tier 2's brute force is. z3 is imported lazily, only when this function is</span>
+<span class="c1"># actually called (--solver=z3), so it stays an optional dependency</span>
+<span class="c1"># ([project.optional-dependencies] validation = ["z3-solver"] in pyproject.toml) rather than a</span>
+<span class="c1"># hard one.</span>
+<span class="c1"># --------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="SolverChecks">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.SolverChecks">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SolverChecks</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Run whole-rule-set validation through z3."""</span>
+
+<div class="viewcode-block" id="SolverChecks.findings">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.annotators.consequence.rules.html#ensembl.vep.annotators.consequence.rules.validation.SolverChecks.findings">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">findings</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ruleset</span><span class="p">:</span> <span class="n">FactRuleSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Run the whole-ruleset reachability and subsumption-soundness queries via z3.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ruleset (FactRuleSet): The rule set to check.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[str]: Findings, prefixed ``"UNREACHABLE (z3): ..."`` (a rule whose formula is</span>
+<span class="sd">                unsatisfiable under the axioms -- a real defect) or ``"NOT ENTAILED (z3): ..."`` (a</span>
+<span class="sd">                declared ``subsumes`` edge not backed by formula entailment -- informational, see</span>
+<span class="sd">                RulePairFinding.redundant_in's docstring for why that is not automatically a bug).</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RuntimeError: If ``z3`` is not installed. Install the optional ``validation`` extra</span>
+<span class="sd">                (``pip install '.[validation]'`` / ``uv sync --extra validation``) to use this.</span>
+<span class="sd">        """</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">z3</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
+        <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">import_error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">"z3-solver is not installed. Install the optional 'validation' extra "</span>
+                <span class="s2">"(e.g. `uv sync --extra validation`) to use --solver=z3."</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">import_error</span>
+
+        <span class="n">atom_names_in_ruleset</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">({</span><span class="n">atom_name</span> <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">rules</span> <span class="k">for</span> <span class="n">atom_name</span> <span class="ow">in</span> <span class="n">rule</span><span class="o">.</span><span class="n">atoms</span><span class="p">()})</span>
+        <span class="n">z3_atoms</span> <span class="o">=</span> <span class="p">{</span><span class="n">atom_name</span><span class="p">:</span> <span class="n">z3</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="n">atom_name</span><span class="p">)</span> <span class="k">for</span> <span class="n">atom_name</span> <span class="ow">in</span> <span class="n">atom_names_in_ruleset</span><span class="p">}</span>
+
+        <span class="n">axioms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">atom_name</span> <span class="ow">in</span> <span class="n">atom_names_in_ruleset</span><span class="p">:</span>
+            <span class="n">registered_fact</span> <span class="o">=</span> <span class="n">REGISTRY</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">atom_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">registered_fact</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">required_atom</span> <span class="ow">in</span> <span class="n">registered_fact</span><span class="o">.</span><span class="n">requires</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">required_atom</span> <span class="ow">in</span> <span class="n">z3_atoms</span><span class="p">:</span>
+                    <span class="n">axioms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z3</span><span class="o">.</span><span class="n">Implies</span><span class="p">(</span><span class="n">z3_atoms</span><span class="p">[</span><span class="n">atom_name</span><span class="p">],</span> <span class="n">z3_atoms</span><span class="p">[</span><span class="n">required_atom</span><span class="p">]))</span>
+        <span class="k">for</span> <span class="n">atom_a</span><span class="p">,</span> <span class="n">atom_b</span> <span class="ow">in</span> <span class="n">_EXCLUSIVITY_AXIOM_PAIRS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">atom_a</span> <span class="ow">in</span> <span class="n">z3_atoms</span> <span class="ow">and</span> <span class="n">atom_b</span> <span class="ow">in</span> <span class="n">z3_atoms</span><span class="p">:</span>
+                <span class="n">axioms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z3</span><span class="o">.</span><span class="n">Not</span><span class="p">(</span><span class="n">z3</span><span class="o">.</span><span class="n">And</span><span class="p">(</span><span class="n">z3_atoms</span><span class="p">[</span><span class="n">atom_a</span><span class="p">],</span> <span class="n">z3_atoms</span><span class="p">[</span><span class="n">atom_b</span><span class="p">])))</span>
+        <span class="k">for</span> <span class="n">atom_a</span><span class="p">,</span> <span class="n">atom_b</span> <span class="ow">in</span> <span class="n">_EQUIVALENCE_AXIOM_PAIRS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">atom_a</span> <span class="ow">in</span> <span class="n">z3_atoms</span> <span class="ow">and</span> <span class="n">atom_b</span> <span class="ow">in</span> <span class="n">z3_atoms</span><span class="p">:</span>
+                <span class="n">axioms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z3_atoms</span><span class="p">[</span><span class="n">atom_a</span><span class="p">]</span> <span class="o">==</span> <span class="n">z3_atoms</span><span class="p">[</span><span class="n">atom_b</span><span class="p">])</span>
+
+        <span class="n">findings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">rules</span><span class="p">:</span>
+            <span class="n">solver</span> <span class="o">=</span> <span class="n">z3</span><span class="o">.</span><span class="n">Solver</span><span class="p">()</span>
+            <span class="n">solver</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">*</span><span class="n">axioms</span><span class="p">)</span>
+            <span class="n">solver</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_expression_to_z3</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">when</span><span class="p">,</span> <span class="n">z3_atoms</span><span class="p">,</span> <span class="n">z3</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">solver</span><span class="o">.</span><span class="n">check</span><span class="p">()</span> <span class="o">==</span> <span class="n">z3</span><span class="o">.</span><span class="n">unsat</span><span class="p">:</span>
+                <span class="n">findings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"UNREACHABLE (z3): </span><span class="si">{</span><span class="n">rule</span><span class="o">.</span><span class="n">term</span><span class="si">}</span><span class="s2"> is unsatisfiable under the declared axioms"</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">rules</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">subsumed_term</span> <span class="ow">in</span> <span class="n">rule</span><span class="o">.</span><span class="n">subsumes</span><span class="p">:</span>
+                <span class="n">subsumed_rule</span> <span class="o">=</span> <span class="n">ruleset</span><span class="o">.</span><span class="n">by_term</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">subsumed_term</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">subsumed_rule</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">solver</span> <span class="o">=</span> <span class="n">z3</span><span class="o">.</span><span class="n">Solver</span><span class="p">()</span>
+                <span class="n">solver</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">*</span><span class="n">axioms</span><span class="p">)</span>
+                <span class="n">solver</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_expression_to_z3</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">when</span><span class="p">,</span> <span class="n">z3_atoms</span><span class="p">,</span> <span class="n">z3</span><span class="p">))</span>
+                <span class="n">solver</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">z3</span><span class="o">.</span><span class="n">Not</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_expression_to_z3</span><span class="p">(</span><span class="n">subsumed_rule</span><span class="o">.</span><span class="n">when</span><span class="p">,</span> <span class="n">z3_atoms</span><span class="p">,</span> <span class="n">z3</span><span class="p">)))</span>
+                <span class="k">if</span> <span class="n">solver</span><span class="o">.</span><span class="n">check</span><span class="p">()</span> <span class="o">==</span> <span class="n">z3</span><span class="o">.</span><span class="n">sat</span><span class="p">:</span>
+                    <span class="n">findings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"NOT ENTAILED (z3): </span><span class="si">{</span><span class="n">rule</span><span class="o">.</span><span class="n">term</span><span class="si">}</span><span class="s2"> subsumes </span><span class="si">{</span><span class="n">subsumed_term</span><span class="si">}</span><span class="s2"> but </span><span class="si">{</span><span class="n">rule</span><span class="o">.</span><span class="n">term</span><span class="si">}</span><span class="s2">'s when "</span>
+                        <span class="sa">f</span><span class="s2">"does not entail </span><span class="si">{</span><span class="n">subsumed_term</span><span class="si">}</span><span class="s2">'s when (informational)"</span>
+                    <span class="p">)</span>
+        <span class="k">return</span> <span class="n">findings</span></div>
+
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_expression_to_z3</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">expression</span><span class="p">:</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">atoms</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">z3_module</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Translate an Expr tree into a z3 boolean expression.</span>
+
+<span class="sd">        Typed with ``Any`` throughout rather than a z3 stub: z3 is an optional dependency (see the</span>
+<span class="sd">        module docstring), so this module must import cleanly whether or not it -- and therefore any</span>
+<span class="sd">        type stub for it -- is installed.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            expression (Expr): The formula to translate.</span>
+<span class="sd">            atoms (dict[str, Any]): Fact atom name -&gt; ``z3.BoolRef`` lookup table.</span>
+<span class="sd">            z3_module (Any): The imported ``z3`` module (passed through rather than imported here</span>
+<span class="sd">                again, since the caller already did the lazy import).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Any: The equivalent ``z3.BoolRef``.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: If ``expression`` is a node type this translator does not support.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">Atom</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">atoms</span><span class="p">[</span><span class="n">expression</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">Not</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">z3_module</span><span class="o">.</span><span class="n">Not</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_expression_to_z3</span><span class="p">(</span><span class="n">expression</span><span class="o">.</span><span class="n">child</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">z3_module</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">And</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">z3_module</span><span class="o">.</span><span class="n">And</span><span class="p">(</span>
+                <span class="o">*</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_expression_to_z3</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">z3_module</span><span class="p">)</span> <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">expression</span><span class="o">.</span><span class="n">children</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">Or</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">z3_module</span><span class="o">.</span><span class="n">Or</span><span class="p">(</span>
+                <span class="o">*</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_expression_to_z3</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">z3_module</span><span class="p">)</span> <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">expression</span><span class="o">.</span><span class="n">children</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"unsupported expression node type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

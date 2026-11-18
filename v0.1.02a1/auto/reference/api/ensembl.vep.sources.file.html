@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ensembl.vep.sources.file package &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto/reference/api/ensembl.vep.sources.file';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.02a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../../../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../../../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="ensembl.vep.sources.file.fasta package" href="ensembl.vep.sources.file.fasta.html" />
+    <link rel="prev" title="ensembl.vep.sources package" href="ensembl.vep.sources.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 18, 2026"/>
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../../../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page" aria-expanded="false" aria-controls="pst-secondary-sidebar-modal">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../cli/index.html">CLI reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../cli/run.html">vep run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/explain.html">vep explain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/stats.html">vep stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/corpus.html">vep corpus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/bench.html">vep bench</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/catalogue.html">vep catalogue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/common.html">Common options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/data_formats.html">Data formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../consequence_terms.html">Consequence terms</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="ensembl.vep.html">API reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.annotators.html">ensembl.vep.annotators package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.annotators.consequence.html">ensembl.vep.annotators.consequence package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html">ensembl.vep.annotators.consequence.context package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html">ensembl.vep.annotators.consequence.facts package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html">ensembl.vep.annotators.consequence.rules package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html">ensembl.vep.annotators.consequence.strategies package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.haplo.html">ensembl.vep.annotators.haplo package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.bench.html">ensembl.vep.bench package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.buffer.html">ensembl.vep.buffer package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.buffer.input_buffer.html">ensembl.vep.buffer.input_buffer package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.caches.html">ensembl.vep.caches package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.common.html">ensembl.vep.common package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.config.html">ensembl.vep.config package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.parser.html">ensembl.vep.config.parser package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.config.sections.html">ensembl.vep.config.sections package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html">ensembl.vep.config.sections.bench package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html">ensembl.vep.config.sections.catalogue package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html">ensembl.vep.config.sections.common package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html">ensembl.vep.config.sections.corpus package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.explain.html">ensembl.vep.config.sections.explain package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.run.html">ensembl.vep.config.sections.run package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.stats.html">ensembl.vep.config.sections.stats package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.corpus.html">ensembl.vep.corpus package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.corpus.exporter.html">ensembl.vep.corpus.exporter package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.corpus.exporter.formats.html">ensembl.vep.corpus.exporter.formats package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.corpus.golden.html">ensembl.vep.corpus.golden package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.corpus.loaded.html">ensembl.vep.corpus.loaded package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.corpus.synthetic.html">ensembl.vep.corpus.synthetic package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.corpus.synthetic.components.html">ensembl.vep.corpus.synthetic.components package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.explain.html">ensembl.vep.explain package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.matcher.html">ensembl.vep.matcher package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.models.html">ensembl.vep.models package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.genic.html">ensembl.vep.models.genic package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.haplotype.html">ensembl.vep.models.haplotype package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.overlap.html">ensembl.vep.models.overlap package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.regulatory.html">ensembl.vep.models.regulatory package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.sequence.html">ensembl.vep.models.sequence package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.variation.html">ensembl.vep.models.variation package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.output.html">ensembl.vep.output package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.output.factory.html">ensembl.vep.output.factory package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.stream.html">ensembl.vep.output.factory.stream package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html">ensembl.vep.output.factory.write package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.output.parser.html">ensembl.vep.output.parser package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.overlaps.html">ensembl.vep.overlaps package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.parsers.html">ensembl.vep.parsers package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.render.html">ensembl.vep.render package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.render.graph.html">ensembl.vep.render.graph package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.runner.html">ensembl.vep.runner package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.bench.html">ensembl.vep.runner.bench package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.catalogue.html">ensembl.vep.runner.catalogue package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.corpus.html">ensembl.vep.runner.corpus package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.run.html">ensembl.vep.runner.run package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="ensembl.vep.sources.html">ensembl.vep.sources package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active has-children"><a aria-current="page" class="current reference internal" href="#">ensembl.vep.sources.file package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.fasta.html">ensembl.vep.sources.file.fasta package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gff3.html">ensembl.vep.sources.file.gff3 package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gtf.html">ensembl.vep.sources.file.gtf package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html">ensembl.vep.sources.file.gxf package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html">ensembl.vep.sources.file.vcf namespace</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.stats.html">ensembl.vep.stats package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.trace.html">ensembl.vep.trace package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.workflow.html">ensembl.vep.workflow package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.workflow.build.html">ensembl.vep.workflow.build package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.workflow.tracks.html">ensembl.vep.workflow.tracks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.workflow.tracks.consequence.html">ensembl.vep.workflow.tracks.consequence package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.workflow.worker.html">ensembl.vep.workflow.worker package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../reference/index.html" class="nav-link">Reference</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ensembl.vep.html" class="nav-link">ensembl.vep package</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ensembl.vep.sources.html" class="nav-link">ensembl.vep.sources package</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.sources.file package</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-ensembl.vep.sources.file">
+<span id="ensembl-vep-sources-file-package"></span><h1>ensembl.vep.sources.file package<a class="headerlink" href="#module-ensembl.vep.sources.file" title="Link to this heading">#</a></h1>
+<p>Feature sources — file-backed and database-backed providers of domain Feature objects.</p>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.sources.file.fasta.html">ensembl.vep.sources.file.fasta package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.sources.file.fasta.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.sources.file.fasta.html#module-ensembl.vep.sources.file.fasta.sequence">ensembl.vep.sources.file.fasta.sequence module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.sources.file.fasta.html#ensembl.vep.sources.file.fasta.sequence.FastaSequenceSource"><code class="docutils literal notranslate"><span class="pre">FastaSequenceSource</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.fasta.html#ensembl.vep.sources.file.fasta.sequence.FastaSequenceSource.adaptor"><code class="docutils literal notranslate"><span class="pre">FastaSequenceSource.adaptor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.fasta.html#ensembl.vep.sources.file.fasta.sequence.FastaSequenceSource.close"><code class="docutils literal notranslate"><span class="pre">FastaSequenceSource.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.fasta.html#ensembl.vep.sources.file.fasta.sequence.FastaSequenceSource.file_path"><code class="docutils literal notranslate"><span class="pre">FastaSequenceSource.file_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.fasta.html#ensembl.vep.sources.file.fasta.sequence.FastaSequenceSource.sequence_region_names"><code class="docutils literal notranslate"><span class="pre">FastaSequenceSource.sequence_region_names</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.fasta.html#ensembl.vep.sources.file.fasta.sequence.FastaSequenceSource.unknown_regions"><code class="docutils literal notranslate"><span class="pre">FastaSequenceSource.unknown_regions</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.sources.file.fasta.html#ensembl.vep.sources.file.fasta.sequence.UNKNOWN_REGION_LENGTH"><code class="docutils literal notranslate"><span class="pre">UNKNOWN_REGION_LENGTH</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.sources.file.gff3.html">ensembl.vep.sources.file.gff3 package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.sources.file.gff3.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.sources.file.gff3.html#module-ensembl.vep.sources.file.gff3.transcript">ensembl.vep.sources.file.gff3.transcript module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.sources.file.gff3.html#ensembl.vep.sources.file.gff3.transcript.GFF3TranscriptSource"><code class="docutils literal notranslate"><span class="pre">GFF3TranscriptSource</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gff3.html#ensembl.vep.sources.file.gff3.transcript.GFF3TranscriptSource.adaptor"><code class="docutils literal notranslate"><span class="pre">GFF3TranscriptSource.adaptor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gff3.html#ensembl.vep.sources.file.gff3.transcript.GFF3TranscriptSource.get_parent_ids"><code class="docutils literal notranslate"><span class="pre">GFF3TranscriptSource.get_parent_ids()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gff3.html#ensembl.vep.sources.file.gff3.transcript.GFF3TranscriptSource.get_record_id"><code class="docutils literal notranslate"><span class="pre">GFF3TranscriptSource.get_record_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gff3.html#ensembl.vep.sources.file.gff3.transcript.GFF3TranscriptSource.transcript_feature_types"><code class="docutils literal notranslate"><span class="pre">GFF3TranscriptSource.transcript_feature_types</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.sources.file.gtf.html">ensembl.vep.sources.file.gtf package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.sources.file.gtf.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.sources.file.gtf.html#module-ensembl.vep.sources.file.gtf.transcript">ensembl.vep.sources.file.gtf.transcript module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.sources.file.gtf.html#ensembl.vep.sources.file.gtf.transcript.GTFTranscriptSource"><code class="docutils literal notranslate"><span class="pre">GTFTranscriptSource</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gtf.html#ensembl.vep.sources.file.gtf.transcript.GTFTranscriptSource.adaptor"><code class="docutils literal notranslate"><span class="pre">GTFTranscriptSource.adaptor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gtf.html#ensembl.vep.sources.file.gtf.transcript.GTFTranscriptSource.coding_feature_types"><code class="docutils literal notranslate"><span class="pre">GTFTranscriptSource.coding_feature_types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gtf.html#ensembl.vep.sources.file.gtf.transcript.GTFTranscriptSource.get_parent_ids"><code class="docutils literal notranslate"><span class="pre">GTFTranscriptSource.get_parent_ids()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gtf.html#ensembl.vep.sources.file.gtf.transcript.GTFTranscriptSource.get_record_id"><code class="docutils literal notranslate"><span class="pre">GTFTranscriptSource.get_record_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gtf.html#ensembl.vep.sources.file.gtf.transcript.GTFTranscriptSource.transcript_feature_types"><code class="docutils literal notranslate"><span class="pre">GTFTranscriptSource.transcript_feature_types</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html">ensembl.vep.sources.file.gxf package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#module-ensembl.vep.sources.file.gxf.transcript">ensembl.vep.sources.file.gxf.transcript module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFRecord"><code class="docutils literal notranslate"><span class="pre">GXFRecord</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFRecord.attribute_values"><code class="docutils literal notranslate"><span class="pre">GXFRecord.attribute_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFRecord.attributes"><code class="docutils literal notranslate"><span class="pre">GXFRecord.attributes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFRecord.end"><code class="docutils literal notranslate"><span class="pre">GXFRecord.end</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFRecord.feature_type"><code class="docutils literal notranslate"><span class="pre">GXFRecord.feature_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFRecord.first_attribute"><code class="docutils literal notranslate"><span class="pre">GXFRecord.first_attribute()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFRecord.phase_value"><code class="docutils literal notranslate"><span class="pre">GXFRecord.phase_value</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFRecord.seqid"><code class="docutils literal notranslate"><span class="pre">GXFRecord.seqid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFRecord.start"><code class="docutils literal notranslate"><span class="pre">GXFRecord.start</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFRecord.strand_symbol"><code class="docutils literal notranslate"><span class="pre">GXFRecord.strand_symbol</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.adaptor"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource.adaptor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.close"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.coding_feature_types"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource.coding_feature_types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.exon_feature_types"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource.exon_feature_types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.gene_feature_types"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource.gene_feature_types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.get_features_by_region"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource.get_features_by_region()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.get_parent_ids"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource.get_parent_ids()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.get_record_id"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource.get_record_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.get_records_by_region"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource.get_records_by_region()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.iter_all_features"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource.iter_all_features()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.iter_features_by_region"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource.iter_features_by_region()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.iter_features_by_regions"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource.iter_features_by_regions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.records_to_features"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource.records_to_features()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.reference_region_resolver"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource.reference_region_resolver</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.sequence_region_names"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource.sequence_region_names</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.source_region_resolver"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource.source_region_resolver</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.transcript_feature_types"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource.transcript_feature_types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.transcript_pool"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource.transcript_pool</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html#ensembl.vep.sources.file.gxf.transcript.GXFTranscriptSource.transcript_pool_poisoned"><code class="docutils literal notranslate"><span class="pre">GXFTranscriptSource.transcript_pool_poisoned</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html">ensembl.vep.sources.file.vcf namespace</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html#module-ensembl.vep.sources.file.vcf.variation">ensembl.vep.sources.file.vcf.variation module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource"><code class="docutils literal notranslate"><span class="pre">PicklableVCFVariationSource</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.get_all_records"><code class="docutils literal notranslate"><span class="pre">PicklableVCFVariationSource.get_all_records()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.get_records_by_region"><code class="docutils literal notranslate"><span class="pre">PicklableVCFVariationSource.get_records_by_region()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.header_lines"><code class="docutils literal notranslate"><span class="pre">PicklableVCFVariationSource.header_lines()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.iter_all_records"><code class="docutils literal notranslate"><span class="pre">PicklableVCFVariationSource.iter_all_records()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.iter_records_by_region"><code class="docutils literal notranslate"><span class="pre">PicklableVCFVariationSource.iter_records_by_region()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.record_columns"><code class="docutils literal notranslate"><span class="pre">PicklableVCFVariationSource.record_columns()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.records_to_features"><code class="docutils literal notranslate"><span class="pre">PicklableVCFVariationSource.records_to_features()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.region_of"><code class="docutils literal notranslate"><span class="pre">PicklableVCFVariationSource.region_of()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.VCFVariationSource"><code class="docutils literal notranslate"><span class="pre">VCFVariationSource</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.VCFVariationSource.adaptor"><code class="docutils literal notranslate"><span class="pre">VCFVariationSource.adaptor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.VCFVariationSource.record_count"><code class="docutils literal notranslate"><span class="pre">VCFVariationSource.record_count()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.VCFVariationSource.records_to_features"><code class="docutils literal notranslate"><span class="pre">VCFVariationSource.records_to_features()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.VCFVariationSource.sequence_region_resolver"><code class="docutils literal notranslate"><span class="pre">VCFVariationSource.sequence_region_resolver</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
+</section>
+<section id="module-ensembl.vep.sources.file.file_feature_source">
+<span id="ensembl-vep-sources-file-file-feature-source-module"></span><h2>ensembl.vep.sources.file.file_feature_source module<a class="headerlink" href="#module-ensembl.vep.sources.file.file_feature_source" title="Link to this heading">#</a></h2>
+<p>The file-backed feature source contract.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ensembl.vep.sources.file.file_feature_source.FileFeatureSource">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ensembl.vep.sources.file.file_feature_source.</span></span><span class="sig-name descname"><span class="pre">FileFeatureSource</span></span><span class="sig-paren">[</span><em class="sig-param"><span class="n"><span class="pre">P</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ensembl.vep.parsers.html#ensembl.vep.parsers.parser.Parser" title="ensembl.vep.parsers.parser.Parser"><span class="pre">Parser</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ensembl.vep.models.html#ensembl.vep.models.feature.Feature" title="ensembl.vep.models.feature.Feature"><span class="pre">Feature</span></a></span></em><span class="sig-paren">]</span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequence_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">WeakSliceCache()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adaptor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/sources/file/file_feature_source.html#FileFeatureSource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.sources.file.file_feature_source.FileFeatureSource" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ensembl.vep.sources.html#ensembl.vep.sources.feature_source.FeatureSource" title="ensembl.vep.sources.feature_source.FeatureSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">FeatureSource</span></code></a>[<code class="docutils literal notranslate"><span class="pre">R</span></code>, <code class="docutils literal notranslate"><span class="pre">F</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="docutils literal notranslate"><span class="pre">P</span></code>, <code class="docutils literal notranslate"><span class="pre">R</span></code>, <code class="docutils literal notranslate"><span class="pre">F</span></code>]</p>
+<p>Feature source backed by a parser-readable file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<em>str</em>) – Path to the feature file.</p></li>
+<li><p><strong>adaptor</strong> (<em>P</em>) – Parser for the file’s record type.</p></li>
+<li><p><strong>source_type</strong> (<a class="reference internal" href="ensembl.vep.common.html#ensembl.vep.common.enums.SourceType" title="ensembl.vep.common.enums.SourceType"><em>SourceType</em></a>) – File source marker.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.sources.file.file_feature_source.FileFeatureSource.adaptor">
+<span class="sig-name descname"><span class="pre">adaptor</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">P</span></span><a class="headerlink" href="#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.adaptor" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.sources.file.file_feature_source.FileFeatureSource.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/sources/file/file_feature_source.html#FileFeatureSource.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.close" title="Link to this definition">#</a></dt>
+<dd><p>Release the attached sequence source, if any.</p>
+<p><code class="docutils literal notranslate"><span class="pre">FeatureSource</span></code> owns the <code class="docutils literal notranslate"><span class="pre">sequence_source</span></code> field and <code class="docutils literal notranslate"><span class="pre">__exit__</span></code> calls <code class="docutils literal notranslate"><span class="pre">close()</span></code>, but
+nothing in the chain ever released it – so a source opened as a context manager leaked its
+sequence handle. Closing it here is what the field’s ownership already implied.</p>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.sources.file.file_feature_source.FileFeatureSource.file_path">
+<span class="sig-name descname"><span class="pre">file_path</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.file_path" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.sources.file.file_feature_source.FileFeatureSource.get_all_records">
+<span class="sig-name descname"><span class="pre">get_all_records</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/sources/file/file_feature_source.html#FileFeatureSource.get_all_records"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.get_all_records" title="Link to this definition">#</a></dt>
+<dd><p>Return every unconverted record in the source file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Every record in the file.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="docutils literal notranslate"><span class="pre">R</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NotImplementedError</strong> – If the adaptor cannot parse a whole file at once. Re-raised with
+    the adaptor named, which the bare error from the parser does not say.</p></li>
+<li><p><strong>FileNotFoundError</strong> – If the file does not exist. Allowed to propagate: its message
+    already names the path.</p></li>
+</ul>
+</dd>
+</dl>
+<p>A library reports what went wrong and lets its caller decide what to do about it. These
+both used to call <code class="docutils literal notranslate"><span class="pre">sys.exit(1)</span></code>, which ended the process from underneath any caller –
+including a test, and including a runner that had a better answer than dying.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.sources.file.file_feature_source.FileFeatureSource.get_records_by_region">
+<span class="sig-name descname"><span class="pre">get_records_by_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_region_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/sources/file/file_feature_source.html#FileFeatureSource.get_records_by_region"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.get_records_by_region" title="Link to this definition">#</a></dt>
+<dd><p>Return unconverted records from an indexed region query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>region</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – The region (e.g., “chr1:1000-2000”) to read.</p></li>
+<li><p><strong>seq_region_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – The name of the sequence region (e.g., “chr1”).</p></li>
+<li><p><strong>start</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – The start position of the region.</p></li>
+<li><p><strong>end</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – The end position of the region.</p></li>
+<li><p><strong>**kwargs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></span>) – Unused here; a format whose query takes more accepts it.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The records the query reads, empty when the region is unreadable.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="docutils literal notranslate"><span class="pre">R</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.sources.file.file_feature_source.FileFeatureSource.iter_all_records">
+<span class="sig-name descname"><span class="pre">iter_all_records</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/sources/file/file_feature_source.html#FileFeatureSource.iter_all_records"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.iter_all_records" title="Link to this definition">#</a></dt>
+<dd><p>Yield every unconverted record in the source file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="docutils literal notranslate"><span class="pre">R</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ensembl.vep.sources.file.file_feature_source.FileFeatureSource.iter_records_by_region">
+<span class="sig-name descname"><span class="pre">iter_records_by_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_region_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ensembl/vep/sources/file/file_feature_source.html#FileFeatureSource.iter_records_by_region"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.iter_records_by_region" title="Link to this definition">#</a></dt>
+<dd><p>Yield unconverted records from an indexed region query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>region</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – The region (e.g., “chr1:1000-2000”) to read.</p></li>
+<li><p><strong>seq_region_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – The name of the sequence region (e.g., “chr1”).</p></li>
+<li><p><strong>start</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – The start position of the region.</p></li>
+<li><p><strong>end</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <span class="highlight sphinx_autodoc_typehints-value"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span></span>, default: <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></span>) – The end position of the region.</p></li>
+<li><p><strong>**kwargs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></span>) – Unused here; a format whose query takes more accepts it.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The records the query reads, in file order.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="docutils literal notranslate"><span class="pre">R</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.sources.file.file_feature_source.FileFeatureSource.source_type">
+<span class="sig-name descname"><span class="pre">source_type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ensembl.vep.common.html#ensembl.vep.common.enums.SourceType" title="ensembl.vep.common.enums.SourceType"><span class="pre">SourceType</span></a></span><a class="headerlink" href="#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.source_type" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="ensembl.vep.sources.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">ensembl.vep.sources package</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="ensembl.vep.sources.file.fasta.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">ensembl.vep.sources.file.fasta package</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal" tabindex="-1"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subpackages">Subpackages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-ensembl.vep.sources.file.file_feature_source">ensembl.vep.sources.file.file_feature_source module</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.sources.file.file_feature_source.FileFeatureSource"><code class="docutils literal notranslate"><span class="pre">FileFeatureSource</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.adaptor"><code class="docutils literal notranslate"><span class="pre">FileFeatureSource.adaptor</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.close"><code class="docutils literal notranslate"><span class="pre">FileFeatureSource.close()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.file_path"><code class="docutils literal notranslate"><span class="pre">FileFeatureSource.file_path</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.get_all_records"><code class="docutils literal notranslate"><span class="pre">FileFeatureSource.get_all_records()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.get_records_by_region"><code class="docutils literal notranslate"><span class="pre">FileFeatureSource.get_records_by_region()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.iter_all_records"><code class="docutils literal notranslate"><span class="pre">FileFeatureSource.iter_all_records()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.iter_records_by_region"><code class="docutils literal notranslate"><span class="pre">FileFeatureSource.iter_records_by_region()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.sources.file.file_feature_source.FileFeatureSource.source_type"><code class="docutils literal notranslate"><span class="pre">FileFeatureSource.source_type</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ensembl.vep.sources.file.vcf.variation &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../../../../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/ensembl/vep/sources/file/vcf/variation';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.02a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../../../../../../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../../../../../../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 18, 2026"/>
+  
+    
+    <script src="../../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../../_static/language_data.js"></script>
+    <script src="../../../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../../../../../../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.sources.file.vcf.variation</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for ensembl.vep.sources.file.vcf.variation</h1><div class="highlight"><pre>
+<span></span><span class="c1"># See the NOTICE file distributed with this work for additional information</span>
+<span class="c1"># regarding copyright ownership.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1"># http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="sd">"""VCF-backed variation feature sources.</span>
+
+<span class="sd">Two of them, differing only in what a record is: ``VCFVariationSource`` reads parsed records, and</span>
+<span class="sd">``PicklableVCFVariationSource`` reads the input's own lines, which is what an annotation run needs</span>
+<span class="sd">because a record it hands a worker has to pickle.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Sequence</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.common.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">EMPTY_ALLELE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">Locus</span><span class="p">,</span> <span class="n">Strand</span><span class="p">,</span> <span class="n">format_region_string</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.sequence</span><span class="w"> </span><span class="kn">import</span> <span class="n">Slice</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.variation.variation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Variation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.models.variation.structural_variation</span><span class="w"> </span><span class="kn">import</span> <span class="n">StructuralVariation</span><span class="p">,</span> <span class="n">StructuralVariationAllele</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.parsers.vcf</span><span class="w"> </span><span class="kn">import</span> <span class="n">VCFParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.sources.file.file_feature_source</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileFeatureSource</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.sources.synonym</span><span class="w"> </span><span class="kn">import</span> <span class="n">SequenceRegionResolver</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ensembl.vep.ensembl_vep_core</span><span class="w"> </span><span class="kn">import</span> <span class="n">VCFRecord</span>  <span class="c1"># noqa: F401,F403 pylint: disable=E0401,E0611</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">BREAKEND_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""\[[^*]+\[ # one or more non-asterisk characters inside opening square brackets</span>
+<span class="sd">    | \][^*]+\]   # OR one or more non-asterisk characters inside closing square brackets</span>
+<span class="sd">    | \.[A-Z]+    # OR a dot followed by base characters</span>
+<span class="sd">    | [A-Z]+\.    # OR base characters followed by a dot"""</span><span class="p">,</span>
+    <span class="n">re</span><span class="o">.</span><span class="n">X</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">SYMBOLIC_ALLELES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"DEL"</span><span class="p">,</span> <span class="s2">"INS"</span><span class="p">,</span> <span class="s2">"DUP"</span><span class="p">,</span> <span class="s2">"INV"</span><span class="p">,</span> <span class="s2">"CNV"</span><span class="p">)</span>
+<span class="n">SVTYPES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"BND"</span><span class="p">,</span> <span class="o">*</span><span class="n">SYMBOLIC_ALLELES</span><span class="p">)</span>
+
+<span class="n">_MINIMAL_HEADER</span> <span class="o">=</span> <span class="s2">"##fileformat=VCFv4.3</span><span class="se">\n</span><span class="s2">#CHROM</span><span class="se">\t</span><span class="s2">POS</span><span class="se">\t</span><span class="s2">ID</span><span class="se">\t</span><span class="s2">REF</span><span class="se">\t</span><span class="s2">ALT</span><span class="se">\t</span><span class="s2">QUAL</span><span class="se">\t</span><span class="s2">FILTER</span><span class="se">\t</span><span class="s2">INFO</span><span class="se">\n</span><span class="s2">"</span>
+<span class="sd">"""Header lines are parsed against when the input's own header cannot be read."""</span>
+
+<span class="n">_FIXED_COLUMN_COUNT</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="sd">"""How many columns every VCF record has before its optional FORMAT and sample columns."""</span>
+
+<span class="n">_RAW_LINE_READ_SIZE</span> <span class="o">=</span> <span class="mi">5000</span>
+<span class="sd">"""How many record lines one read from the parser hands back.</span>
+
+<span class="sd">An I/O step rather than a batch: how many records are annotated together is decided by whoever</span>
+<span class="sd">drives the source, from the execution configuration."""</span>
+
+
+<div class="viewcode-block" id="VCFVariationSource">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.VCFVariationSource">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VCFVariationSource</span><span class="p">(</span><span class="n">FileFeatureSource</span><span class="p">[</span><span class="n">VCFParser</span><span class="p">,</span> <span class="n">VCFRecord</span><span class="p">,</span> <span class="n">Variation</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">"""Variation source backed by a VCF file.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        adaptor: The parser adaptor used to stream VCF records.</span>
+<span class="sd">    """</span>
+
+    <span class="n">adaptor</span><span class="p">:</span> <span class="n">VCFParser</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="n">VCFParser</span><span class="p">)</span>
+    <span class="n">sequence_region_resolver</span><span class="p">:</span> <span class="n">SequenceRegionResolver</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="VCFVariationSource.record_count">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.VCFVariationSource.record_count">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">record_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">scan</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return how many records the input holds, or None when nothing declares it.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            scan (bool): Whether to count by reading the whole input when it has no index.</span>
+<span class="sd">                    Default is False.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: The record count, or None when the input has no index and ``scan`` is</span>
+<span class="sd">                    False.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">VCFParser</span><span class="o">.</span><span class="n">record_count</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="n">scan</span><span class="o">=</span><span class="n">scan</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VCFVariationSource.records_to_features">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.VCFVariationSource.records_to_features">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">records_to_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">records</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">VCFRecord</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Variation</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Convert VCFRecords into Variation or StructuralVariation objects.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            records (list[VCFRecord]): VCF records to convert into variation features.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[Variation]: Variation and StructuralVariation objects created from the VCF records.</span>
+<span class="sd">        """</span>
+
+        <span class="n">features</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Variation</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_structural_variation_record</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
+                <span class="n">features</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_records_to_structural_variation</span><span class="p">([</span><span class="n">record</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">features</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_records_to_variation</span><span class="p">([</span><span class="n">record</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">features</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_records_to_variation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">records</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">VCFRecord</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Variation</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Convert VCFRecords into Variation objects.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            records (list[VCFRecord]): VCF records to convert into Variation objects.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[Variation]: Variation objects created from the VCF records.</span>
+<span class="sd">        """</span>
+
+        <span class="n">variations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Variation</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+            <span class="n">uploaded_allele_string</span> <span class="o">=</span> <span class="s2">"/"</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">record</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="o">*</span><span class="n">record</span><span class="o">.</span><span class="n">alt</span><span class="p">])</span>
+            <span class="n">uploaded_end</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">pos</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">reference</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">ref</span><span class="p">,</span> <span class="n">alts</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove_anchor_bases</span><span class="p">(</span>
+                <span class="n">record</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span>
+                <span class="n">record</span><span class="o">.</span><span class="n">alt</span><span class="p">,</span>
+                <span class="n">start</span><span class="o">=</span><span class="n">record</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span>
+                <span class="n">end</span><span class="o">=</span><span class="n">uploaded_end</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">alts</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+            <span class="n">allele_string</span> <span class="o">=</span> <span class="s2">"/"</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">ref</span><span class="p">,</span> <span class="o">*</span><span class="n">alts</span><span class="p">])</span>
+            <span class="n">variations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">Variation</span><span class="p">(</span>
+                    <span class="n">stable_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stable_id_from_vcf_record</span><span class="p">(</span><span class="n">record</span><span class="p">),</span>
+                    <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span>
+                    <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
+                    <span class="n">strand</span><span class="o">=</span><span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">,</span>
+                    <span class="nb">slice</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">slice_cache</span><span class="o">.</span><span class="n">get_slice</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_sequence_region_name</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">chrom</span><span class="p">),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">sequence_source</span><span class="p">,</span>
+                    <span class="p">),</span>
+                    <span class="n">allele_string</span><span class="o">=</span><span class="n">allele_string</span><span class="p">,</span>
+                    <span class="n">uploaded_locus</span><span class="o">=</span><span class="n">Locus</span><span class="p">(</span>
+                        <span class="n">seq_region_name</span><span class="o">=</span><span class="n">record</span><span class="o">.</span><span class="n">chrom</span><span class="p">,</span>
+                        <span class="n">start</span><span class="o">=</span><span class="n">record</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span>
+                        <span class="n">end</span><span class="o">=</span><span class="n">uploaded_end</span><span class="p">,</span>
+                        <span class="n">allele_string</span><span class="o">=</span><span class="n">uploaded_allele_string</span><span class="p">,</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">variations</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_records_to_structural_variation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">records</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">VCFRecord</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">StructuralVariation</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Convert VCFRecords into StructuralVariation objects.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            records (list[VCFRecord]): VCF records to convert into StructuralVariation objects.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[StructuralVariation]: StructuralVariation objects created from the VCF records.</span>
+<span class="sd">        """</span>
+
+        <span class="n">structural_variations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">StructuralVariation</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+            <span class="n">seq_region_slice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slice_cache</span><span class="o">.</span><span class="n">get_slice</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_sequence_region_name</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">chrom</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sequence_source</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">variation_alleles</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">alt</span><span class="p">)):</span>
+                <span class="n">variation_alleles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_create_sv_allele_from_record</span><span class="p">(</span>
+                        <span class="n">record</span><span class="p">,</span> <span class="n">allele_index</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">seq_region_slice</span><span class="o">=</span><span class="n">seq_region_slice</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">pos</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">end</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variation_alleles</span><span class="p">)</span>
+
+            <span class="n">structural_variation</span> <span class="o">=</span> <span class="n">StructuralVariation</span><span class="p">(</span>
+                <span class="n">stable_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stable_id_from_vcf_record</span><span class="p">(</span><span class="n">record</span><span class="p">),</span>
+                <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span>
+                <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
+                <span class="n">strand</span><span class="o">=</span><span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">,</span>
+                <span class="nb">slice</span><span class="o">=</span><span class="n">seq_region_slice</span><span class="p">,</span>
+                <span class="n">allele_string</span><span class="o">=</span><span class="s2">"/"</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">record</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="o">*</span><span class="n">record</span><span class="o">.</span><span class="n">alt</span><span class="p">]),</span>
+                <span class="n">uploaded_locus</span><span class="o">=</span><span class="n">Locus</span><span class="p">(</span>
+                    <span class="n">seq_region_name</span><span class="o">=</span><span class="n">record</span><span class="o">.</span><span class="n">chrom</span><span class="p">,</span>
+                    <span class="n">start</span><span class="o">=</span><span class="n">record</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span>
+                    <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
+                    <span class="n">allele_string</span><span class="o">=</span><span class="s2">"/"</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">record</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="o">*</span><span class="n">record</span><span class="o">.</span><span class="n">alt</span><span class="p">]),</span>
+                <span class="p">),</span>
+                <span class="n">sv_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_svtype_from_vcf_record</span><span class="p">(</span><span class="n">record</span><span class="p">),</span>
+                <span class="n">copy_number</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_int_info_value</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="s2">"CN"</span><span class="p">),</span>
+            <span class="p">)</span>
+
+            <span class="n">structural_variation</span><span class="o">.</span><span class="n">variation_alleles</span> <span class="o">=</span> <span class="n">variation_alleles</span>
+
+            <span class="n">structural_variations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">structural_variation</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">structural_variations</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sequence_region_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uploaded_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the source name used to construct a variation slice."""</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequence_region_resolver</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">uploaded_name</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequence_region_resolver</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">uploaded_name</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_sv_allele_from_record</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">VCFRecord</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">allele_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">seq_region_slice</span><span class="p">:</span> <span class="n">Slice</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StructuralVariationAllele</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Create a StructuralVariationAllele object from a VCFRecord.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record (VCFRecord): VCF record to convert into StructuralVariation objects.</span>
+<span class="sd">            allele_index (int): index of the alt allele to create object for.</span>
+<span class="sd">            slice (Slice | None): Slice object to add to StructuralVariationAllele.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            StructuralVariationAllele: StructuralVariationAllele object created from the VCF record.</span>
+<span class="sd">        """</span>
+        <span class="n">end</span><span class="p">,</span> <span class="n">svlen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_end_and_svlen_for_sva_from_vcf_record</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">allele_index</span><span class="p">)</span>
+        <span class="n">ref</span><span class="p">,</span> <span class="n">alt</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove_anchor_bases_symbolic_allele</span><span class="p">(</span>
+            <span class="n">record</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="n">record</span><span class="o">.</span><span class="n">alt</span><span class="p">[</span><span class="n">allele_index</span><span class="p">],</span> <span class="n">start</span><span class="o">=</span><span class="n">record</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">StructuralVariationAllele</span><span class="p">(</span>
+            <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span>
+            <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
+            <span class="n">svlen</span><span class="o">=</span><span class="n">svlen</span><span class="p">,</span>
+            <span class="n">strand</span><span class="o">=</span><span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">,</span>
+            <span class="nb">slice</span><span class="o">=</span><span class="n">seq_region_slice</span><span class="p">,</span>
+            <span class="n">reference_allele</span><span class="o">=</span><span class="n">ref</span><span class="p">,</span>
+            <span class="n">alternate_allele</span><span class="o">=</span><span class="n">alt</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_structural_variation_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">VCFRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return whether the VCF record should be represented as a StructuralVariation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record (VCFRecord): VCF record to inspect for structural-variation hints.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the record should be converted to a StructuralVariation, otherwise False.</span>
+<span class="sd">        """</span>
+
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_bases_only</span><span class="p">(</span><span class="n">record</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_has_svtype</span><span class="p">(</span><span class="n">record</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_symbolic</span><span class="p">(</span><span class="n">record</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_breakend</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_bases_only</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="n">VCFRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Is the VCF record a SNV or short INDEL</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record (VCFRecord): VCF record to inspect for structural-variation hints.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the record only contains nucleotide bases in REF and ALT, otherwise False.</span>
+<span class="sd">        """</span>
+
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^[ACGT]+$"</span><span class="p">,</span> <span class="n">allele</span><span class="p">)</span> <span class="k">for</span> <span class="n">allele</span> <span class="ow">in</span> <span class="p">[</span><span class="n">record</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="o">*</span><span class="n">record</span><span class="o">.</span><span class="n">alt</span><span class="p">])</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_has_svtype</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="n">VCFRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Does the record have the SVTYPE info key</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record (VCFRecord): VCF record to inspect for structural-variation hints.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the record has a valid value for SVTYPE, otherwise False.</span>
+<span class="sd">        """</span>
+
+        <span class="n">svtype</span> <span class="o">=</span> <span class="n">VCFVariationSource</span><span class="o">.</span><span class="n">_svtype_from_vcf_record</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">svtype</span> <span class="ow">in</span> <span class="n">SVTYPES</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_svtype_from_vcf_record</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="n">VCFRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the normalized structural-variant type from a VCF record."""</span>
+
+        <span class="n">svtype</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"SVTYPE"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">svtype</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">if</span> <span class="n">svtype</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_symbolic</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="n">VCFRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Do any of the ALT alleles match a symbolic allele</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record (VCFRecord): VCF record to inspect for structural-variation hints.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if ANY of ALT alleles match a symbolic allele, otherwise False.</span>
+<span class="sd">        """</span>
+
+        <span class="c1"># Remove opening angle bracket for comparison</span>
+        <span class="n">alts</span> <span class="o">=</span> <span class="p">[</span><span class="n">allele</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"&lt;"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span> <span class="k">for</span> <span class="n">allele</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">alt</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">allele</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="ow">in</span> <span class="n">SYMBOLIC_ALLELES</span> <span class="k">for</span> <span class="n">allele</span> <span class="ow">in</span> <span class="n">alts</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_breakend</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="n">VCFRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Do any of the ALT alleles match a breakend allele</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record (VCFRecord): VCF record to inspect for structural-variation hints.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if any of ALT alleles match breakend notation, otherwise False.</span>
+<span class="sd">        """</span>
+
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">BREAKEND_REGEX</span><span class="p">,</span> <span class="n">allele</span><span class="p">)</span> <span class="k">for</span> <span class="n">allele</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">alt</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_symbolic_insertion</span><span class="p">(</span><span class="n">alt_allele_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Is the symbolic allele an insertion</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            alt_allele_string (str): Alternate allele string</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the alt string matches an insertion allele.</span>
+<span class="sd">        """</span>
+
+        <span class="k">return</span> <span class="n">alt_allele_string</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"INS"</span><span class="p">,</span> <span class="s2">"&lt;INS&gt;"</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_stable_id_from_vcf_record</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="n">VCFRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return a stable identifier from the VCF ID column, when present.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record (VCFRecord): VCF record containing ID values.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str | None: Semicolon-delimited stable identifier, or None when the record has no IDs.</span>
+<span class="sd">        """</span>
+
+        <span class="k">return</span> <span class="s2">";"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_end_and_svlen_for_sva_from_vcf_record</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">VCFRecord</span><span class="p">,</span> <span class="n">allele_index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return the VCF record end coordinate and length for an allele.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record (VCFRecord): VCF record.</span>
+<span class="sd">            allele_index: index for the allele.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: (End coordinate, SV length).</span>
+<span class="sd">        """</span>
+
+        <span class="k">if</span> <span class="n">allele_index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">alt</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Allele index, </span><span class="si">{</span><span class="n">allele_index</span><span class="si">}</span><span class="s2">, is too large, </span><span class="si">{</span><span class="s1">';'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">lengths</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"SVLEN"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lengths</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">svlen</span> <span class="o">=</span> <span class="n">lengths</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)[</span><span class="n">allele_index</span><span class="p">]</span>
+            <span class="n">svlen</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">svlen</span> <span class="o">==</span> <span class="s2">"."</span> <span class="k">else</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">svlen</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">svlen</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">pos</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">reference</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">pos</span> <span class="o">+</span> <span class="n">svlen</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_int_info_value</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="s2">"END"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">end</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">svlen</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">svlen</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">record</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+
+        <span class="c1"># For insertions, end is not POS + SVLEN</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_symbolic_insertion</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">alt</span><span class="p">[</span><span class="n">allele_index</span><span class="p">]):</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">pos</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">reference</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">end</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">svlen</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not determine END/SVLEN for </span><span class="si">{</span><span class="n">record</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">end</span><span class="p">,</span> <span class="n">svlen</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_int_info_value</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="n">VCFRecord</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return an INFO value parsed as an integer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record (VCFRecord): VCF record containing INFO values.</span>
+<span class="sd">            key (str): INFO field key to parse.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int | None: Parsed integer value, or None when the key is absent or not an integer.</span>
+<span class="sd">        """</span>
+
+        <span class="n">value</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_remove_anchor_bases</span><span class="p">(</span>
+        <span class="n">ref</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">alt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">end</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">strand</span><span class="p">:</span> <span class="n">Strand</span> <span class="o">=</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Remove common leading anchor bases from non-symbolic alleles.</span>
+
+<span class="sd">        For multi-allelic variants, only bases shared by the reference and every alternate allele are</span>
+<span class="sd">        removed so that all alleles retain a common locus.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ref: Reference allele sequence.</span>
+<span class="sd">            alt: One alternate allele or a list of alternate alleles.</span>
+<span class="sd">            start: Start coordinate.</span>
+<span class="sd">            end: End coordinate. Defaults to ``start + len(ref) - 1``.</span>
+<span class="sd">            strand: Strand on which the alleles are represented.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple of (new_ref, new_alt, new_start, new_end, changed). Empty alleles are represented by</span>
+<span class="sd">            ``-`` and the shape of ``new_alt`` matches the input.</span>
+<span class="sd">        """</span>
+
+        <span class="n">end</span> <span class="o">=</span> <span class="n">end</span> <span class="k">if</span> <span class="n">end</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">start</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="c1"># Alternate alleles can be a single string or a list of strings. Normalize to a list for processing.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">alt</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">alt_is_string</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">alt_alleles</span> <span class="o">=</span> <span class="p">[</span><span class="n">alt</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">alt_is_string</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">alt_alleles</span> <span class="o">=</span> <span class="n">alt</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">alt_alleles</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">alt</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">"Strand is unknown, cannot remove anchor bases with confidence. "</span>
+                <span class="s2">"Returning unmodified alleles."</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">alt</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">alleles</span> <span class="o">=</span> <span class="p">[</span><span class="n">ref</span><span class="p">,</span> <span class="o">*</span><span class="n">alt_alleles</span><span class="p">]</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">while</span> <span class="nb">all</span><span class="p">(</span><span class="n">alleles</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">({</span><span class="n">allele</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">allele</span> <span class="ow">in</span> <span class="n">alleles</span><span class="p">})</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">alleles</span> <span class="o">=</span> <span class="p">[</span><span class="n">allele</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">for</span> <span class="n">allele</span> <span class="ow">in</span> <span class="n">alleles</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">:</span>
+                <span class="n">end</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">start</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">new_ref</span> <span class="o">=</span> <span class="n">alleles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">EMPTY_ALLELE</span>
+        <span class="n">new_alts</span> <span class="o">=</span> <span class="p">[</span><span class="n">allele</span> <span class="ow">or</span> <span class="n">EMPTY_ALLELE</span> <span class="k">for</span> <span class="n">allele</span> <span class="ow">in</span> <span class="n">alleles</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+        <span class="n">new_alt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_alts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">alt_is_string</span> <span class="k">else</span> <span class="n">new_alts</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">new_ref</span><span class="p">,</span> <span class="n">new_alt</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">changed</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_remove_anchor_bases_symbolic_allele</span><span class="p">(</span>
+        <span class="n">ref</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">alt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">end</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">strand</span><span class="p">:</span> <span class="n">Strand</span> <span class="o">=</span> <span class="n">Strand</span><span class="o">.</span><span class="n">FORWARD</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Remove the reference anchor bases from a symbolic allele.</span>
+
+<span class="sd">        Converts symbolic allele in the form A/&lt;DEL&gt; to -/&lt;DEL&gt;, adjusting coordinates accordingly.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ref: Reference allele sequence.</span>
+<span class="sd">            alt: Alternate allele sequence.</span>
+<span class="sd">            start: Start coordinate (default 0).</span>
+<span class="sd">            end: End coordinate (default: start + len(ref) - 1).</span>
+<span class="sd">            strand: 1 for forward, -1 for reverse strand.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple of (new_ref, new_alt, new_start, new_end, changed).</span>
+<span class="sd">        """</span>
+
+        <span class="n">end</span> <span class="o">=</span> <span class="n">end</span> <span class="ow">or</span> <span class="p">(</span><span class="n">start</span> <span class="o">+</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">"Strand is unknown, cannot trim alleles with confidence. Returning untrimmed alleles."</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">alt</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">changed</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ref</span> <span class="o">==</span> <span class="n">EMPTY_ALLELE</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Allele is already trimmed. Returning untrimmed alleles."</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">alt</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">changed</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">strand</span> <span class="o">==</span> <span class="n">Strand</span><span class="o">.</span><span class="n">REVERSE</span><span class="p">:</span>
+            <span class="n">end</span> <span class="o">-=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+        <span class="n">ref</span> <span class="o">=</span> <span class="n">EMPTY_ALLELE</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">alt</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">changed</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="PicklableVCFVariationSource">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PicklableVCFVariationSource</span><span class="p">(</span><span class="n">VCFVariationSource</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""VCF variation source whose records are the input's own lines.</span>
+
+<span class="sd">    An annotation run reads in one process and builds models in another: the process driving the</span>
+<span class="sd">    run reads records and the worker annotating them turns records into variations. A record has</span>
+<span class="sd">    to pickle to make that crossing, which the Rust parser's ``VCFRecord`` does not, and output</span>
+<span class="sd">    has to echo the input's own text back, which a record built from a line can no longer give.</span>
+<span class="sd">    The line is both, so this source's record is a line -- narrowing the record type its parent</span>
+<span class="sd">    reads, and leaving everything about building models from them the same.</span>
+
+<span class="sd">    Nothing here batches. ``iter_all_records`` yields one record at a time and whoever drives the</span>
+<span class="sd">    source groups them (``workflow.executor.PayloadIterator``), which is what lets a format say</span>
+<span class="sd">    what a record is without also deciding how many of them cross a process boundary at once.</span>
+<span class="sd">    """</span>
+
+    <span class="n">_header_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PicklableVCFVariationSource.header_lines">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.header_lines">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">header_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return the input's leading header lines, without line endings."""</span>
+        <span class="k">with</span> <span class="n">VCFParser</span><span class="p">(</span><span class="n">file_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"sequential"</span><span class="p">)</span> <span class="k">as</span> <span class="n">parser</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"header"</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="PicklableVCFVariationSource.get_all_records">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.get_all_records">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_records</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return every record line in the input, in input order."""</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iter_all_records</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="PicklableVCFVariationSource.iter_all_records">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.iter_all_records">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">iter_all_records</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Yield each record's line, as the input spells it, without its line ending.</span>
+
+<span class="sd">        Yields:</span>
+<span class="sd">            Iterator[str]: Each record's line, in input order.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If a line holds fewer than the eight fixed VCF columns.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="n">VCFParser</span><span class="p">(</span><span class="n">file_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"sequential"</span><span class="p">)</span> <span class="k">as</span> <span class="n">parser</span><span class="p">:</span>
+            <span class="k">while</span> <span class="n">lines</span> <span class="o">:=</span> <span class="n">parser</span><span class="o">.</span><span class="n">raw_lines</span><span class="p">(</span><span class="n">_RAW_LINE_READ_SIZE</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validated</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PicklableVCFVariationSource.get_records_by_region">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.get_records_by_region">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_records_by_region</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">seq_region_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">end</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return the record lines an indexed region query reads.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            region (str | None): The region (e.g., "chr1:1000-2000") to read.</span>
+<span class="sd">            seq_region_name (str | None): The name of the sequence region (e.g., "chr1").</span>
+<span class="sd">            start (int | None): The start position of the region.</span>
+<span class="sd">            end (int | None): The end position of the region.</span>
+<span class="sd">            **kwargs (object): Unused here; a format whose query takes more accepts it.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[str]: The record lines the query read, empty when the region names none.</span>
+<span class="sd">        """</span>
+        <span class="k">del</span> <span class="n">kwargs</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_iter_region_lines</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="n">seq_region_name</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">read_size</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="PicklableVCFVariationSource.iter_records_by_region">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.iter_records_by_region">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">iter_records_by_region</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">seq_region_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">end</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Yield the record lines an indexed region query reads.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            region (str | None): The region (e.g., "chr1:1000-2000") to read.</span>
+<span class="sd">            seq_region_name (str | None): The name of the sequence region (e.g., "chr1").</span>
+<span class="sd">            start (int | None): The start position of the region.</span>
+<span class="sd">            end (int | None): The end position of the region.</span>
+<span class="sd">            **kwargs (object): Unused here; a format whose query takes more accepts it.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Iterator[str]: The record lines the query reads, in file order.</span>
+<span class="sd">        """</span>
+        <span class="k">del</span> <span class="n">kwargs</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_region_lines</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="n">seq_region_name</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">read_size</span><span class="o">=</span><span class="n">_RAW_LINE_READ_SIZE</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PicklableVCFVariationSource.records_to_features">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.records_to_features">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">records_to_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">records</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Variation</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return the variations for a set of record lines, in input order.</span>
+
+<span class="sd">        A record is a line alone, so the file's own header is read back here: what a line means</span>
+<span class="sd">        can depend on an INFO or contig declaration that only the header holds.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            records (Sequence[str]): The record lines to parse and build models from.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[Variation]: The variations the lines describe.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">records_to_features</span><span class="p">(</span><span class="n">VCFParser</span><span class="o">.</span><span class="n">parse_text</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parsed_header</span><span class="p">()</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">records</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="PicklableVCFVariationSource.region_of">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.region_of">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">region_of</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the sequence region a record names.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record (str): The record line to read.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Its sequence-region name, taken from the line's first field rather than from all</span>
+<span class="sd">                of them: this is read once per record in the process driving a run, and the whole</span>
+<span class="sd">                line is split again only for the records output echoes.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">record</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="PicklableVCFVariationSource.record_columns">
+<a class="viewcode-back" href="../../../../../../auto/reference/api/ensembl.vep.sources.file.vcf.html#ensembl.vep.sources.file.vcf.variation.PicklableVCFVariationSource.record_columns">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">record_columns</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return a record's own columns, which output echoes back as the input gave them.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            record (str): The record line to split.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple[str, ...]: Its columns, in input order.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">))</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_iter_region_lines</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">seq_region_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">end</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">read_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Yield the record lines of one region query, reading ``read_size`` lines at a time."""</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">query_region</span> <span class="o">=</span> <span class="n">format_region_string</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="n">seq_region_name</span><span class="o">=</span><span class="n">seq_region_name</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Cannot parse region: </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2">-</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="n">seq_region_name</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">with</span> <span class="n">VCFParser</span><span class="p">(</span><span class="n">file_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"query"</span><span class="p">)</span> <span class="k">as</span> <span class="n">parser</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">parser</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">query_region</span><span class="p">):</span>
+                <span class="k">return</span>
+            <span class="k">while</span> <span class="n">lines</span> <span class="o">:=</span> <span class="n">parser</span><span class="o">.</span><span class="n">raw_lines</span><span class="p">(</span><span class="n">read_size</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validated</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parsed_header</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the header text records are parsed against, read from the file once per source."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header_text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header_lines</span><span class="p">()</span>
+            <span class="c1"># A header the parser rejects arrives as a ValueError, a missing file as an OSError.</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Could not read the VCF header of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">);"</span>
+                    <span class="s2">"parsing records against a minimal header"</span>
+                <span class="p">)</span>
+                <span class="n">headers</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_header_text</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="k">if</span> <span class="n">headers</span> <span class="k">else</span> <span class="n">_MINIMAL_HEADER</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header_text</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validated</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return a record line, refusing one that cannot hold a record.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            line (str): The record line to check.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The line itself.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the line holds fewer than the eight fixed VCF columns. Counted rather</span>
+<span class="sd">                than split: nothing here needs the fields, and the parser splits the line again</span>
+<span class="sd">                anyway.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">_FIXED_COLUMN_COUNT</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"a VCF record must contain at least eight columns"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">line</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

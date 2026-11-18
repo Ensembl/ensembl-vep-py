@@ -51,7 +51,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.01a1';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.02a1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -530,7 +530,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 </div>
 <p>If no pre-built wheel is available for your platform, the package is built from its source distribution, which needs a Rust toolchain as described in <a class="reference internal" href="#pre-requisites">Pre-requisites</a>.</p>
 <p>Check that the command is available:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>vep<span class="w"> </span>--help
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span>vep<span class="w"> </span>--help
 </pre></div>
 </div>
 </section>
@@ -584,7 +584,7 @@ cargo<span class="w"> </span>--version
 </div>
 <p>This is a non-editable installation. uv builds a wheel before installing it, so the Rust extension is compiled with Cargo’s release profile rather than its debug profile.</p>
 <p>Check that the command is available:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>vep<span class="w"> </span>--help
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span>vep<span class="w"> </span>--help
 </pre></div>
 </div>
 <p>Continue with the <a class="reference internal" href="quickstart.html"><span class="std std-doc">Quickstart guide</span></a> to annotate the example variants included in the repository.</p>

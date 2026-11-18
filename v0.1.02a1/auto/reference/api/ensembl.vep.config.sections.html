@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ensembl.vep.config.sections package &#8212; ensembl-vep</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/ensembl.css?v=25cdf2e9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/vep.css?v=182a79bf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../../_static/documentation_options.js?v=c73c0f3e"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto/reference/api/ensembl.vep.config.sections';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://ensembl.github.io/ensembl-vep-py/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.1.02a1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = true;</script>
+    <script defer="defer" src="../../../_static/extra-icons.js?v=0e6f2a57"></script>
+    <link rel="icon" href="../../../_static/vep-icon.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="ensembl.vep.config.sections.bench package" href="ensembl.vep.config.sections.bench.html" />
+    <link rel="prev" title="ensembl.vep.config.parser package" href="ensembl.vep.config.parser.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+    <meta name="docbuild:last-update" content="Nov 18, 2026"/>
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/vep-icon.svg" class="logo__image only-light" alt="ensembl-vep - Home"/>
+    <img src="../../../_static/vep-icon.svg" class="logo__image only-dark pst-js-only" alt="ensembl-vep - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page" aria-expanded="false" aria-controls="pst-secondary-sidebar-modal">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+          
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../developer_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../reference/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Ensembl/ensembl-vep-py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/ensembl-vep/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-lg" data-prefix="fa-custom" data-icon="pypi" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../cli/index.html">CLI reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../cli/run.html">vep run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/explain.html">vep explain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/stats.html">vep stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/corpus.html">vep corpus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/bench.html">vep bench</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/catalogue.html">vep catalogue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cli/common.html">Common options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/data_formats.html">Data formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../consequence_terms.html">Consequence terms</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="ensembl.vep.html">API reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.annotators.html">ensembl.vep.annotators package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.annotators.consequence.html">ensembl.vep.annotators.consequence package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.context.html">ensembl.vep.annotators.consequence.context package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.facts.html">ensembl.vep.annotators.consequence.facts package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.rules.html">ensembl.vep.annotators.consequence.rules package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.annotators.consequence.strategies.html">ensembl.vep.annotators.consequence.strategies package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.annotators.haplo.html">ensembl.vep.annotators.haplo package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.bench.html">ensembl.vep.bench package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.buffer.html">ensembl.vep.buffer package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.buffer.input_buffer.html">ensembl.vep.buffer.input_buffer package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.caches.html">ensembl.vep.caches package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.common.html">ensembl.vep.common package</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="ensembl.vep.config.html">ensembl.vep.config package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.parser.html">ensembl.vep.config.parser package</a></li>
+<li class="toctree-l3 current active has-children"><a aria-current="page" class="current reference internal" href="#">ensembl.vep.config.sections package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html">ensembl.vep.config.sections.bench package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html">ensembl.vep.config.sections.catalogue package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html">ensembl.vep.config.sections.common package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html">ensembl.vep.config.sections.corpus package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.explain.html">ensembl.vep.config.sections.explain package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.run.html">ensembl.vep.config.sections.run package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.stats.html">ensembl.vep.config.sections.stats package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.corpus.html">ensembl.vep.corpus package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.corpus.exporter.html">ensembl.vep.corpus.exporter package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.corpus.exporter.formats.html">ensembl.vep.corpus.exporter.formats package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.corpus.golden.html">ensembl.vep.corpus.golden package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.corpus.loaded.html">ensembl.vep.corpus.loaded package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.corpus.synthetic.html">ensembl.vep.corpus.synthetic package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.corpus.synthetic.components.html">ensembl.vep.corpus.synthetic.components package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.explain.html">ensembl.vep.explain package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.matcher.html">ensembl.vep.matcher package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.models.html">ensembl.vep.models package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.genic.html">ensembl.vep.models.genic package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.haplotype.html">ensembl.vep.models.haplotype package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.overlap.html">ensembl.vep.models.overlap package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.regulatory.html">ensembl.vep.models.regulatory package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.sequence.html">ensembl.vep.models.sequence package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.models.variation.html">ensembl.vep.models.variation package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.output.html">ensembl.vep.output package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.output.factory.html">ensembl.vep.output.factory package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.stream.html">ensembl.vep.output.factory.stream package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.output.factory.write.html">ensembl.vep.output.factory.write package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.output.parser.html">ensembl.vep.output.parser package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.overlaps.html">ensembl.vep.overlaps package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.parsers.html">ensembl.vep.parsers package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.render.html">ensembl.vep.render package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.render.graph.html">ensembl.vep.render.graph package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.runner.html">ensembl.vep.runner package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.bench.html">ensembl.vep.runner.bench package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.catalogue.html">ensembl.vep.runner.catalogue package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.corpus.html">ensembl.vep.runner.corpus package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.runner.run.html">ensembl.vep.runner.run package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.sources.html">ensembl.vep.sources package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.sources.file.html">ensembl.vep.sources.file package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.fasta.html">ensembl.vep.sources.file.fasta package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gff3.html">ensembl.vep.sources.file.gff3 package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gtf.html">ensembl.vep.sources.file.gtf package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.gxf.html">ensembl.vep.sources.file.gxf package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.sources.file.vcf.html">ensembl.vep.sources.file.vcf namespace</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.stats.html">ensembl.vep.stats package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.trace.html">ensembl.vep.trace package</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ensembl.vep.workflow.html">ensembl.vep.workflow package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.workflow.build.html">ensembl.vep.workflow.build package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ensembl.vep.workflow.tracks.html">ensembl.vep.workflow.tracks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.workflow.tracks.consequence.html">ensembl.vep.workflow.tracks.consequence package</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.workflow.worker.html">ensembl.vep.workflow.worker package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../reference/index.html" class="nav-link">Reference</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ensembl.vep.html" class="nav-link">ensembl.vep package</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="ensembl.vep.config.html" class="nav-link">ensembl.vep.config package</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ensembl.vep.config.sections package</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-ensembl.vep.config.sections">
+<span id="ensembl-vep-config-sections-package"></span><h1>ensembl.vep.config.sections package<a class="headerlink" href="#module-ensembl.vep.config.sections" title="Link to this heading">#</a></h1>
+<p>The configuration sections.</p>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.config.sections.bench.html">ensembl.vep.config.sections.bench package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#module-ensembl.vep.config.sections.bench.bench">ensembl.vep.config.sections.bench.bench module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.bench.BenchConfig"><code class="docutils literal notranslate"><span class="pre">BenchConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.bench.BenchConfig.baseline_file"><code class="docutils literal notranslate"><span class="pre">BenchConfig.baseline_file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.bench.BenchConfig.no_gate"><code class="docutils literal notranslate"><span class="pre">BenchConfig.no_gate</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.bench.BenchConfig.output_format"><code class="docutils literal notranslate"><span class="pre">BenchConfig.output_format</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.bench.BenchConfig.regression_threshold"><code class="docutils literal notranslate"><span class="pre">BenchConfig.regression_threshold</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.bench.BenchConfig.repeats"><code class="docutils literal notranslate"><span class="pre">BenchConfig.repeats</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.bench.BenchConfig.results_file"><code class="docutils literal notranslate"><span class="pre">BenchConfig.results_file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.bench.BenchConfig.section_name"><code class="docutils literal notranslate"><span class="pre">BenchConfig.section_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.bench.BenchConfig.warmup"><code class="docutils literal notranslate"><span class="pre">BenchConfig.warmup</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#module-ensembl.vep.config.sections.bench.endtoend">ensembl.vep.config.sections.bench.endtoend module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.endtoend.BenchEndToEndConfig"><code class="docutils literal notranslate"><span class="pre">BenchEndToEndConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.endtoend.BenchEndToEndConfig.batch_size"><code class="docutils literal notranslate"><span class="pre">BenchEndToEndConfig.batch_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.endtoend.BenchEndToEndConfig.caches"><code class="docutils literal notranslate"><span class="pre">BenchEndToEndConfig.caches</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.endtoend.BenchEndToEndConfig.clean"><code class="docutils literal notranslate"><span class="pre">BenchEndToEndConfig.clean</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.endtoend.BenchEndToEndConfig.processes"><code class="docutils literal notranslate"><span class="pre">BenchEndToEndConfig.processes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.endtoend.BenchEndToEndConfig.section_name"><code class="docutils literal notranslate"><span class="pre">BenchEndToEndConfig.section_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.endtoend.BenchEndToEndConfig.strategies"><code class="docutils literal notranslate"><span class="pre">BenchEndToEndConfig.strategies</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.endtoend.BenchEndToEndConfig.work_dir"><code class="docutils literal notranslate"><span class="pre">BenchEndToEndConfig.work_dir</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#module-ensembl.vep.config.sections.bench.matrix">ensembl.vep.config.sections.bench.matrix module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.matrix.BenchMatrixConfig"><code class="docutils literal notranslate"><span class="pre">BenchMatrixConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.matrix.BenchMatrixConfig.batch_size"><code class="docutils literal notranslate"><span class="pre">BenchMatrixConfig.batch_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.matrix.BenchMatrixConfig.caches"><code class="docutils literal notranslate"><span class="pre">BenchMatrixConfig.caches</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.matrix.BenchMatrixConfig.section_name"><code class="docutils literal notranslate"><span class="pre">BenchMatrixConfig.section_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.matrix.BenchMatrixConfig.strategies"><code class="docutils literal notranslate"><span class="pre">BenchMatrixConfig.strategies</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#module-ensembl.vep.config.sections.bench.oracle">ensembl.vep.config.sections.bench.oracle module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.oracle.BenchOracleConfig"><code class="docutils literal notranslate"><span class="pre">BenchOracleConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.oracle.BenchOracleConfig.oracle_number"><code class="docutils literal notranslate"><span class="pre">BenchOracleConfig.oracle_number</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.oracle.BenchOracleConfig.perl_modules"><code class="docutils literal notranslate"><span class="pre">BenchOracleConfig.perl_modules</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.oracle.BenchOracleConfig.perl_oracle_script"><code class="docutils literal notranslate"><span class="pre">BenchOracleConfig.perl_oracle_script</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.oracle.BenchOracleConfig.section_name"><code class="docutils literal notranslate"><span class="pre">BenchOracleConfig.section_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.oracle.BenchOracleConfig.strategies"><code class="docutils literal notranslate"><span class="pre">BenchOracleConfig.strategies</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#module-ensembl.vep.config.sections.bench.sweep">ensembl.vep.config.sections.bench.sweep module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.sweep.BenchSweepConfig"><code class="docutils literal notranslate"><span class="pre">BenchSweepConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.sweep.BenchSweepConfig.section_name"><code class="docutils literal notranslate"><span class="pre">BenchSweepConfig.section_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.sweep.BenchSweepConfig.strategies"><code class="docutils literal notranslate"><span class="pre">BenchSweepConfig.strategies</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.sweep.BenchSweepConfig.sweep_knob"><code class="docutils literal notranslate"><span class="pre">BenchSweepConfig.sweep_knob</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.sweep.BenchSweepConfig.sweep_values"><code class="docutils literal notranslate"><span class="pre">BenchSweepConfig.sweep_values</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.bench.html#ensembl.vep.config.sections.bench.sweep.SWEEPABLE_KNOBS"><code class="docutils literal notranslate"><span class="pre">SWEEPABLE_KNOBS</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html">ensembl.vep.config.sections.catalogue package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#module-ensembl.vep.config.sections.catalogue.add">ensembl.vep.config.sections.catalogue.add module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.add.CatalogueAddConfig"><code class="docutils literal notranslate"><span class="pre">CatalogueAddConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.add.CatalogueAddConfig.accession"><code class="docutils literal notranslate"><span class="pre">CatalogueAddConfig.accession</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.add.CatalogueAddConfig.allow_missing_when"><code class="docutils literal notranslate"><span class="pre">CatalogueAddConfig.allow_missing_when</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.add.CatalogueAddConfig.impact"><code class="docutils literal notranslate"><span class="pre">CatalogueAddConfig.impact</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.add.CatalogueAddConfig.no_derive_subsumes"><code class="docutils literal notranslate"><span class="pre">CatalogueAddConfig.no_derive_subsumes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.add.CatalogueAddConfig.notes"><code class="docutils literal notranslate"><span class="pre">CatalogueAddConfig.notes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.add.CatalogueAddConfig.rank"><code class="docutils literal notranslate"><span class="pre">CatalogueAddConfig.rank</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.add.CatalogueAddConfig.section_name"><code class="docutils literal notranslate"><span class="pre">CatalogueAddConfig.section_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.add.CatalogueAddConfig.so_parent"><code class="docutils literal notranslate"><span class="pre">CatalogueAddConfig.so_parent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.add.CatalogueAddConfig.subsumes"><code class="docutils literal notranslate"><span class="pre">CatalogueAddConfig.subsumes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.add.CatalogueAddConfig.term"><code class="docutils literal notranslate"><span class="pre">CatalogueAddConfig.term</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.add.CatalogueAddConfig.tier"><code class="docutils literal notranslate"><span class="pre">CatalogueAddConfig.tier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.add.CatalogueAddConfig.when"><code class="docutils literal notranslate"><span class="pre">CatalogueAddConfig.when</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#module-ensembl.vep.config.sections.catalogue.catalogue">ensembl.vep.config.sections.catalogue.catalogue module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.catalogue.CatalogueConfig"><code class="docutils literal notranslate"><span class="pre">CatalogueConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.catalogue.CatalogueConfig.catalogue_file"><code class="docutils literal notranslate"><span class="pre">CatalogueConfig.catalogue_file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.catalogue.CatalogueConfig.section_name"><code class="docutils literal notranslate"><span class="pre">CatalogueConfig.section_name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#module-ensembl.vep.config.sections.catalogue.costs">ensembl.vep.config.sections.catalogue.costs module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.costs.CatalogueCostsConfig"><code class="docutils literal notranslate"><span class="pre">CatalogueCostsConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.costs.CatalogueCostsConfig.output_file"><code class="docutils literal notranslate"><span class="pre">CatalogueCostsConfig.output_file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.costs.CatalogueCostsConfig.output_format"><code class="docutils literal notranslate"><span class="pre">CatalogueCostsConfig.output_format</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.costs.CatalogueCostsConfig.section_name"><code class="docutils literal notranslate"><span class="pre">CatalogueCostsConfig.section_name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#module-ensembl.vep.config.sections.catalogue.remove">ensembl.vep.config.sections.catalogue.remove module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.remove.CatalogueRemoveConfig"><code class="docutils literal notranslate"><span class="pre">CatalogueRemoveConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.remove.CatalogueRemoveConfig.section_name"><code class="docutils literal notranslate"><span class="pre">CatalogueRemoveConfig.section_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.remove.CatalogueRemoveConfig.term"><code class="docutils literal notranslate"><span class="pre">CatalogueRemoveConfig.term</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#module-ensembl.vep.config.sections.catalogue.show">ensembl.vep.config.sections.catalogue.show module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.show.CatalogueShowConfig"><code class="docutils literal notranslate"><span class="pre">CatalogueShowConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.show.CatalogueShowConfig.graph"><code class="docutils literal notranslate"><span class="pre">CatalogueShowConfig.graph</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.show.CatalogueShowConfig.output_file"><code class="docutils literal notranslate"><span class="pre">CatalogueShowConfig.output_file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.show.CatalogueShowConfig.output_format"><code class="docutils literal notranslate"><span class="pre">CatalogueShowConfig.output_format</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.show.CatalogueShowConfig.section_name"><code class="docutils literal notranslate"><span class="pre">CatalogueShowConfig.section_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.show.CatalogueShowConfig.select"><code class="docutils literal notranslate"><span class="pre">CatalogueShowConfig.select</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.show.CatalogueShowConfig.sort"><code class="docutils literal notranslate"><span class="pre">CatalogueShowConfig.sort</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.show.CatalogueShowConfig.subject"><code class="docutils literal notranslate"><span class="pre">CatalogueShowConfig.subject</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#module-ensembl.vep.config.sections.catalogue.validate">ensembl.vep.config.sections.catalogue.validate module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.validate.CatalogueValidateConfig"><code class="docutils literal notranslate"><span class="pre">CatalogueValidateConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.validate.CatalogueValidateConfig.section_name"><code class="docutils literal notranslate"><span class="pre">CatalogueValidateConfig.section_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.validate.CatalogueValidateConfig.solver"><code class="docutils literal notranslate"><span class="pre">CatalogueValidateConfig.solver</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.validate.CatalogueValidateConfig.verify_requires"><code class="docutils literal notranslate"><span class="pre">CatalogueValidateConfig.verify_requires</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#module-ensembl.vep.config.sections.catalogue.write">ensembl.vep.config.sections.catalogue.write module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.write.CatalogueWriteConfig"><code class="docutils literal notranslate"><span class="pre">CatalogueWriteConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.write.CatalogueWriteConfig.catalogue_overwrite"><code class="docutils literal notranslate"><span class="pre">CatalogueWriteConfig.catalogue_overwrite</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.write.CatalogueWriteConfig.dry_run"><code class="docutils literal notranslate"><span class="pre">CatalogueWriteConfig.dry_run</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.catalogue.html#ensembl.vep.config.sections.catalogue.write.CatalogueWriteConfig.section_name"><code class="docutils literal notranslate"><span class="pre">CatalogueWriteConfig.section_name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.config.sections.common.html">ensembl.vep.config.sections.common package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.common.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.common.html#module-ensembl.vep.config.sections.common.annotation">ensembl.vep.config.sections.common.annotation module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.annotation.AnnotationConfig"><code class="docutils literal notranslate"><span class="pre">AnnotationConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.annotation.AnnotationConfig.annotator"><code class="docutils literal notranslate"><span class="pre">AnnotationConfig.annotator</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.annotation.AnnotationConfig.batch_size"><code class="docutils literal notranslate"><span class="pre">AnnotationConfig.batch_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.annotation.AnnotationConfig.codon_cache"><code class="docutils literal notranslate"><span class="pre">AnnotationConfig.codon_cache</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.annotation.AnnotationConfig.codon_cache_entries"><code class="docutils literal notranslate"><span class="pre">AnnotationConfig.codon_cache_entries</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.annotation.AnnotationConfig.early_subsumption_skip"><code class="docutils literal notranslate"><span class="pre">AnnotationConfig.early_subsumption_skip</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.annotation.AnnotationConfig.fact_cost_override"><code class="docutils literal notranslate"><span class="pre">AnnotationConfig.fact_cost_override</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.annotation.AnnotationConfig.mapper_cache"><code class="docutils literal notranslate"><span class="pre">AnnotationConfig.mapper_cache</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.annotation.AnnotationConfig.mapper_cache_bytes"><code class="docutils literal notranslate"><span class="pre">AnnotationConfig.mapper_cache_bytes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.annotation.AnnotationConfig.readthrough"><code class="docutils literal notranslate"><span class="pre">AnnotationConfig.readthrough</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.annotation.AnnotationConfig.section_name"><code class="docutils literal notranslate"><span class="pre">AnnotationConfig.section_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.annotation.AnnotationConfig.zone_map"><code class="docutils literal notranslate"><span class="pre">AnnotationConfig.zone_map</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.annotation.AnnotationConfig.zone_map_bytes"><code class="docutils literal notranslate"><span class="pre">AnnotationConfig.zone_map_bytes</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.common.html#module-ensembl.vep.config.sections.common.corpus">ensembl.vep.config.sections.common.corpus module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.corpus.CorpusConfig"><code class="docutils literal notranslate"><span class="pre">CorpusConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.corpus.CorpusConfig.boundary_seed"><code class="docutils literal notranslate"><span class="pre">CorpusConfig.boundary_seed</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.corpus.CorpusConfig.corpus_dir"><code class="docutils literal notranslate"><span class="pre">CorpusConfig.corpus_dir</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.corpus.CorpusConfig.fuzz"><code class="docutils literal notranslate"><span class="pre">CorpusConfig.fuzz</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.corpus.CorpusConfig.fuzz_seed"><code class="docutils literal notranslate"><span class="pre">CorpusConfig.fuzz_seed</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.corpus.CorpusConfig.genome_seed"><code class="docutils literal notranslate"><span class="pre">CorpusConfig.genome_seed</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.corpus.CorpusConfig.heavy_genome_seed"><code class="docutils literal notranslate"><span class="pre">CorpusConfig.heavy_genome_seed</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.corpus.CorpusConfig.kind"><code class="docutils literal notranslate"><span class="pre">CorpusConfig.kind</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.corpus.CorpusConfig.parameters"><code class="docutils literal notranslate"><span class="pre">CorpusConfig.parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.corpus.CorpusConfig.section_name"><code class="docutils literal notranslate"><span class="pre">CorpusConfig.section_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.corpus.CorpusConfig.step"><code class="docutils literal notranslate"><span class="pre">CorpusConfig.step</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.corpus.CorpusConfig.sweep_seed"><code class="docutils literal notranslate"><span class="pre">CorpusConfig.sweep_seed</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.common.html#module-ensembl.vep.config.sections.common.execution">ensembl.vep.config.sections.common.execution module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.execution.ExecutionConfig"><code class="docutils literal notranslate"><span class="pre">ExecutionConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.execution.ExecutionConfig.annotation_window"><code class="docutils literal notranslate"><span class="pre">ExecutionConfig.annotation_window</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.execution.ExecutionConfig.buffer_size"><code class="docutils literal notranslate"><span class="pre">ExecutionConfig.buffer_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.execution.ExecutionConfig.max_in_flight"><code class="docutils literal notranslate"><span class="pre">ExecutionConfig.max_in_flight</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.execution.ExecutionConfig.processes"><code class="docutils literal notranslate"><span class="pre">ExecutionConfig.processes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.execution.ExecutionConfig.section_name"><code class="docutils literal notranslate"><span class="pre">ExecutionConfig.section_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.execution.ExecutionConfig.start_method"><code class="docutils literal notranslate"><span class="pre">ExecutionConfig.start_method</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.execution.ExecutionConfig.threads"><code class="docutils literal notranslate"><span class="pre">ExecutionConfig.threads</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.execution.ExecutionConfig.transcript_pool_bytes"><code class="docutils literal notranslate"><span class="pre">ExecutionConfig.transcript_pool_bytes</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.common.html#module-ensembl.vep.config.sections.common.logging">ensembl.vep.config.sections.common.logging module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.logging.LoggingConfig"><code class="docutils literal notranslate"><span class="pre">LoggingConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.logging.LoggingConfig.effective_level"><code class="docutils literal notranslate"><span class="pre">LoggingConfig.effective_level()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.logging.LoggingConfig.log_file"><code class="docutils literal notranslate"><span class="pre">LoggingConfig.log_file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.logging.LoggingConfig.log_level"><code class="docutils literal notranslate"><span class="pre">LoggingConfig.log_level</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.logging.LoggingConfig.quiet"><code class="docutils literal notranslate"><span class="pre">LoggingConfig.quiet</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.logging.LoggingConfig.section_name"><code class="docutils literal notranslate"><span class="pre">LoggingConfig.section_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.logging.LoggingConfig.verbose"><code class="docutils literal notranslate"><span class="pre">LoggingConfig.verbose</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.common.html#module-ensembl.vep.config.sections.common.source">ensembl.vep.config.sections.common.source module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig"><code class="docutils literal notranslate"><span class="pre">SourceConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig.cache"><code class="docutils literal notranslate"><span class="pre">SourceConfig.cache</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig.custom"><code class="docutils literal notranslate"><span class="pre">SourceConfig.custom</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig.database"><code class="docutils literal notranslate"><span class="pre">SourceConfig.database</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig.dir_cache"><code class="docutils literal notranslate"><span class="pre">SourceConfig.dir_cache</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig.distance"><code class="docutils literal notranslate"><span class="pre">SourceConfig.distance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig.downstream_distance"><code class="docutils literal notranslate"><span class="pre">SourceConfig.downstream_distance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig.fasta"><code class="docutils literal notranslate"><span class="pre">SourceConfig.fasta</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig.format"><code class="docutils literal notranslate"><span class="pre">SourceConfig.format</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig.gff"><code class="docutils literal notranslate"><span class="pre">SourceConfig.gff</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig.gtf"><code class="docutils literal notranslate"><span class="pre">SourceConfig.gtf</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig.has_features"><code class="docutils literal notranslate"><span class="pre">SourceConfig.has_features()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig.input_file"><code class="docutils literal notranslate"><span class="pre">SourceConfig.input_file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig.section_name"><code class="docutils literal notranslate"><span class="pre">SourceConfig.section_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig.synonyms"><code class="docutils literal notranslate"><span class="pre">SourceConfig.synonyms</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.common.html#ensembl.vep.config.sections.common.source.SourceConfig.upstream_distance"><code class="docutils literal notranslate"><span class="pre">SourceConfig.upstream_distance</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html">ensembl.vep.config.sections.corpus package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#module-ensembl.vep.config.sections.corpus.describe">ensembl.vep.config.sections.corpus.describe module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#ensembl.vep.config.sections.corpus.describe.CorpusDescribeConfig"><code class="docutils literal notranslate"><span class="pre">CorpusDescribeConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#ensembl.vep.config.sections.corpus.describe.CorpusDescribeConfig.annotate"><code class="docutils literal notranslate"><span class="pre">CorpusDescribeConfig.annotate</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#ensembl.vep.config.sections.corpus.describe.CorpusDescribeConfig.output_file"><code class="docutils literal notranslate"><span class="pre">CorpusDescribeConfig.output_file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#ensembl.vep.config.sections.corpus.describe.CorpusDescribeConfig.output_format"><code class="docutils literal notranslate"><span class="pre">CorpusDescribeConfig.output_format</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#ensembl.vep.config.sections.corpus.describe.CorpusDescribeConfig.section_name"><code class="docutils literal notranslate"><span class="pre">CorpusDescribeConfig.section_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#ensembl.vep.config.sections.corpus.describe.CorpusDescribeConfig.select"><code class="docutils literal notranslate"><span class="pre">CorpusDescribeConfig.select</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#module-ensembl.vep.config.sections.corpus.golden">ensembl.vep.config.sections.corpus.golden module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#ensembl.vep.config.sections.corpus.golden.CorpusGoldenConfig"><code class="docutils literal notranslate"><span class="pre">CorpusGoldenConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#ensembl.vep.config.sections.corpus.golden.CorpusGoldenConfig.golden_file"><code class="docutils literal notranslate"><span class="pre">CorpusGoldenConfig.golden_file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#ensembl.vep.config.sections.corpus.golden.CorpusGoldenConfig.section_name"><code class="docutils literal notranslate"><span class="pre">CorpusGoldenConfig.section_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#ensembl.vep.config.sections.corpus.golden.CorpusGoldenConfig.update_golden"><code class="docutils literal notranslate"><span class="pre">CorpusGoldenConfig.update_golden</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#module-ensembl.vep.config.sections.corpus.save">ensembl.vep.config.sections.corpus.save module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#ensembl.vep.config.sections.corpus.save.CorpusSaveConfig"><code class="docutils literal notranslate"><span class="pre">CorpusSaveConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#ensembl.vep.config.sections.corpus.save.CorpusSaveConfig.exporter"><code class="docutils literal notranslate"><span class="pre">CorpusSaveConfig.exporter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#ensembl.vep.config.sections.corpus.save.CorpusSaveConfig.force"><code class="docutils literal notranslate"><span class="pre">CorpusSaveConfig.force</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.corpus.html#ensembl.vep.config.sections.corpus.save.CorpusSaveConfig.section_name"><code class="docutils literal notranslate"><span class="pre">CorpusSaveConfig.section_name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.config.sections.explain.html">ensembl.vep.config.sections.explain package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.explain.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.explain.html#module-ensembl.vep.config.sections.explain.explain">ensembl.vep.config.sections.explain.explain module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.explain.html#ensembl.vep.config.sections.explain.explain.ExplainConfig"><code class="docutils literal notranslate"><span class="pre">ExplainConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.explain.html#ensembl.vep.config.sections.explain.explain.ExplainConfig.allele_num"><code class="docutils literal notranslate"><span class="pre">ExplainConfig.allele_num</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.explain.html#ensembl.vep.config.sections.explain.explain.ExplainConfig.compare"><code class="docutils literal notranslate"><span class="pre">ExplainConfig.compare</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.explain.html#ensembl.vep.config.sections.explain.explain.ExplainConfig.graph"><code class="docutils literal notranslate"><span class="pre">ExplainConfig.graph</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.explain.html#ensembl.vep.config.sections.explain.explain.ExplainConfig.index"><code class="docutils literal notranslate"><span class="pre">ExplainConfig.index</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.explain.html#ensembl.vep.config.sections.explain.explain.ExplainConfig.list_overlaps"><code class="docutils literal notranslate"><span class="pre">ExplainConfig.list_overlaps</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.explain.html#ensembl.vep.config.sections.explain.explain.ExplainConfig.name"><code class="docutils literal notranslate"><span class="pre">ExplainConfig.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.explain.html#ensembl.vep.config.sections.explain.explain.ExplainConfig.output_file"><code class="docutils literal notranslate"><span class="pre">ExplainConfig.output_file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.explain.html#ensembl.vep.config.sections.explain.explain.ExplainConfig.output_format"><code class="docutils literal notranslate"><span class="pre">ExplainConfig.output_format</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.explain.html#ensembl.vep.config.sections.explain.explain.ExplainConfig.section_name"><code class="docutils literal notranslate"><span class="pre">ExplainConfig.section_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.explain.html#ensembl.vep.config.sections.explain.explain.ExplainConfig.transcript"><code class="docutils literal notranslate"><span class="pre">ExplainConfig.transcript</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.explain.html#ensembl.vep.config.sections.explain.explain.ExplainConfig.variant"><code class="docutils literal notranslate"><span class="pre">ExplainConfig.variant</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.config.sections.run.html">ensembl.vep.config.sections.run package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.run.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.run.html#module-ensembl.vep.config.sections.run.run">ensembl.vep.config.sections.run.run module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.run.html#ensembl.vep.config.sections.run.run.RunConfig"><code class="docutils literal notranslate"><span class="pre">RunConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.run.html#ensembl.vep.config.sections.run.run.RunConfig.force_overwrite"><code class="docutils literal notranslate"><span class="pre">RunConfig.force_overwrite</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.run.html#ensembl.vep.config.sections.run.run.RunConfig.no_progress"><code class="docutils literal notranslate"><span class="pre">RunConfig.no_progress</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.run.html#ensembl.vep.config.sections.run.run.RunConfig.no_stats"><code class="docutils literal notranslate"><span class="pre">RunConfig.no_stats</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.run.html#ensembl.vep.config.sections.run.run.RunConfig.output_file"><code class="docutils literal notranslate"><span class="pre">RunConfig.output_file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.run.html#ensembl.vep.config.sections.run.run.RunConfig.output_format"><code class="docutils literal notranslate"><span class="pre">RunConfig.output_format</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.run.html#ensembl.vep.config.sections.run.run.RunConfig.section_name"><code class="docutils literal notranslate"><span class="pre">RunConfig.section_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.run.html#ensembl.vep.config.sections.run.run.RunConfig.stats_file"><code class="docutils literal notranslate"><span class="pre">RunConfig.stats_file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.run.html#ensembl.vep.config.sections.run.run.RunConfig.stats_format"><code class="docutils literal notranslate"><span class="pre">RunConfig.stats_format</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ensembl.vep.config.sections.stats.html">ensembl.vep.config.sections.stats package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.stats.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensembl.vep.config.sections.stats.html#module-ensembl.vep.config.sections.stats.stats">ensembl.vep.config.sections.stats.stats module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ensembl.vep.config.sections.stats.html#ensembl.vep.config.sections.stats.stats.StatsConfig"><code class="docutils literal notranslate"><span class="pre">StatsConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.stats.html#ensembl.vep.config.sections.stats.stats.StatsConfig.output_file"><code class="docutils literal notranslate"><span class="pre">StatsConfig.output_file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.stats.html#ensembl.vep.config.sections.stats.stats.StatsConfig.output_format"><code class="docutils literal notranslate"><span class="pre">StatsConfig.output_format</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.stats.html#ensembl.vep.config.sections.stats.stats.StatsConfig.profile"><code class="docutils literal notranslate"><span class="pre">StatsConfig.profile</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ensembl.vep.config.sections.stats.html#ensembl.vep.config.sections.stats.stats.StatsConfig.section_name"><code class="docutils literal notranslate"><span class="pre">StatsConfig.section_name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
+</section>
+<section id="module-ensembl.vep.config.sections.base">
+<span id="ensembl-vep-config-sections-base-module"></span><h2>ensembl.vep.config.sections.base module<a class="headerlink" href="#module-ensembl.vep.config.sections.base" title="Link to this heading">#</a></h2>
+<p>The base class for configuration sections.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ensembl.vep.config.sections.base.ConfigSection">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ensembl.vep.config.sections.base.</span></span><span class="sig-name descname"><span class="pre">ConfigSection</span></span><a class="reference internal" href="../../../_modules/ensembl/vep/config/sections/base.html#ConfigSection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ensembl.vep.config.sections.base.ConfigSection" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A named group of options.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ensembl.vep.config.sections.base.ConfigSection.section_name">
+<span class="sig-name descname"><span class="pre">section_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></span><a class="headerlink" href="#ensembl.vep.config.sections.base.ConfigSection.section_name" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="ensembl.vep.config.parser.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">ensembl.vep.config.parser package</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="ensembl.vep.config.sections.bench.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">ensembl.vep.config.sections.bench package</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal" tabindex="-1"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subpackages">Subpackages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-ensembl.vep.config.sections.base">ensembl.vep.config.sections.base module</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.sections.base.ConfigSection"><code class="docutils literal notranslate"><span class="pre">ConfigSection</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensembl.vep.config.sections.base.ConfigSection.section_name"><code class="docutils literal notranslate"><span class="pre">ConfigSection.section_name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2016-2026, EMBL-European Bioinformatics Institute.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__center">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.24.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
