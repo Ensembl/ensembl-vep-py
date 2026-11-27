@@ -211,7 +211,12 @@ def _coordinate_base(name: str, transcript: Transcript, *, row: _Row, column: st
 
 
 def _resolve_coordinate(expression: str, transcript: Transcript, *, row: _Row, column: str) -> int:
-    """Resolve an integer or a simple transcript-relative coordinate expression."""
+    """Resolve an integer or a simple transcript-relative coordinate expression.
+
+    A bare integer is a genomic coordinate, so it must name a base in the
+    transcript span supplied by the test case. Named coordinates and their
+    offsets remain free to describe flanking cases.
+    """
 
     match = _COORDINATE_EXPRESSION.fullmatch(expression)
     if match is None:
@@ -219,7 +224,17 @@ def _resolve_coordinate(expression: str, transcript: Transcript, *, row: _Row, c
             f"row {row.line_number}: {column} has invalid coordinate expression {expression!r}"
         )
     base = match["base"]
-    value = int(base) if base.isdecimal() else _coordinate_base(base, transcript, row=row, column=column)
+    if base.isdecimal():
+        value = int(base)
+        transcript_start = _integer(row.value("Start"), row=row, column="Start")
+        transcript_end = _integer(row.value("End"), row=row, column="End")
+        if not transcript_start <= value <= transcript_end:
+            raise GoldenVcfInputError(
+                f"row {row.line_number}: {column} integer coordinate {value} is outside transcript span "
+                f"{transcript_start}-{transcript_end}"
+            )
+    else:
+        value = _coordinate_base(base, transcript, row=row, column=column)
     for offset in _OFFSET.finditer(match["offsets"]):
         adjustment = int(offset["value"])
         value += adjustment if offset["operator"] == "+" else -adjustment
@@ -227,6 +242,7 @@ def _resolve_coordinate(expression: str, transcript: Transcript, *, row: _Row, c
         raise GoldenVcfInputError(
             f"row {row.line_number}: {column} resolves to {value}, but genomic coordinates start at 1"
         )
+
     return value
 
 

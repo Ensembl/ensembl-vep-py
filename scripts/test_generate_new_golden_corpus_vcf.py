@@ -304,6 +304,47 @@ def test_fails_before_writing_for_an_invalid_row(tmp_path: Path, reference_files
     assert output_json.read_text(encoding="utf-8") == "original terms\n"
 
 
+@pytest.mark.parametrize(
+    ("column", "coordinate"),
+    [
+        ("AlleleStart", "9"),
+        ("AlleleEnd", "31"),
+    ],
+)
+def test_rejects_an_integer_allele_coordinate_outside_its_transcript_span(
+    tmp_path: Path,
+    reference_files: tuple[Path, Path],
+    column: str,
+    coordinate: str,
+) -> None:
+    """Literal genomic coordinates must remain inside the row's transcript span."""
+
+    fasta, gff3 = reference_files
+    cases = tmp_path / "cases.tsv"
+    allele_start, allele_end = (coordinate, "10") if column == "AlleleStart" else ("10", coordinate)
+    _write_cases(
+        cases,
+        [
+            _row(
+                "outside-span",
+                "tx-forward",
+                allele_start,
+                allele_end,
+                "NA",
+                "A",
+                "synonymous_variant",
+                "integer coordinate outside transcript",
+            )
+        ],
+    )
+
+    with pytest.raises(
+        GoldenVcfInputError,
+        match=rf"row 2: {column} integer coordinate {coordinate} is outside transcript span 10-30",
+    ):
+        write_vcf(cases, fasta, gff3, tmp_path / "corpus.vcf", tmp_path / "terms.json")
+
+
 def test_rejects_a_reordered_header(tmp_path: Path, reference_files: tuple[Path, Path]) -> None:
     """The documented table order is unambiguous and enforced."""
 
