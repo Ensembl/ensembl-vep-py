@@ -36,8 +36,8 @@ def _loaded_spec(directory: Path) -> CorpusSpec:
     return CorpusSpec(
         kind="loaded.files",
         parameters={
-            "fasta": str(directory / "corpus.fa"),
-            "gff3": str(directory / "corpus.gff3"),
+            "fasta": str(directory / "corpus.fa.bgz"),
+            "gff3": str(directory / "corpus.gff3.gz"),
             "vcf": str(directory / "corpus.vcf"),
         },
     )
@@ -123,7 +123,12 @@ def load_golden_corpus(
         raise FileNotFoundError(directory)
 
     terms_path = directory / "terms.json"
-    required = (directory / "corpus.fa", directory / "corpus.gff3", directory / "corpus.vcf", terms_path)
+    required = (
+        directory / "corpus.fa.bgz",
+        directory / "corpus.gff3.gz",
+        directory / "corpus.vcf",
+        terms_path,
+    )
     missing = [path for path in required if not path.is_file()]
     if missing:
         if resource_context is not None:
